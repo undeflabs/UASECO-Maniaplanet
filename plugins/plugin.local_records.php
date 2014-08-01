@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1042,7 +1042,7 @@ class PluginLocalRecords extends Plugin {
 			UNIQUE KEY `PlayerId` (`PlayerId`,`MapId`),
 			KEY `MapId` (`MapId`),
 			KEY `Score` (`Score`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 		";
 		$aseco->mysqli->query($query);
 
@@ -1060,7 +1060,7 @@ class PluginLocalRecords extends Plugin {
 		$check = array();
 		$check[1] = in_array('records', $tables);
 		if ( !$check[1] ) {
-			trigger_error('[LocalRecords] Table structure incorrect! Use [newinstall/database/records.sql] to correct this', E_USER_ERROR);
+			trigger_error('[LocalRecords] ERROR: Table structure incorrect, use [newinstall/database/uaseco.sql] to correct this!', E_USER_ERROR);
 		}
 
 		$aseco->console('[LocalRecords] ...successfully done!');
