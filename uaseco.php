@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Date:	2014-07-31
+ * Date:	2014-08-01
  * Copyright:	May 2014 - Jul 2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1033,12 +1033,30 @@ class UASECO extends Helper {
 			`Uid` varchar(27) NOT NULL DEFAULT '',
 			`Name` varchar(100) NOT NULL DEFAULT '',
 			`Author` varchar(30) NOT NULL DEFAULT '',
+			`AuthorScore` int(4) UNSIGNED NOT NULL,
+			`AuthorTime` int(4) UNSIGNED NOT NULL,
+			`GoldTime` int(4) UNSIGNED NOT NULL,
+			`SilverTime` int(4) UNSIGNED NOT NULL,
+			`BronzeTime` int(4) UNSIGNED NOT NULL,
 			`Environment` varchar(10) NOT NULL DEFAULT '',
-			`NbLaps` tinyint(1) unsigned NOT NULL,
-			`NbCheckpoints` tinyint(1) unsigned NOT NULL,
+			`Mood` enum('None', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`NbLaps` tinyint(1) UNSIGNED NOT NULL,
+			`NbCheckpoints` tinyint(1) UNSIGNED NOT NULL,
 			PRIMARY KEY (`Id`),
-			UNIQUE KEY `Uid` (`Uid`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+			UNIQUE KEY `Uid` (`Uid`),
+			Key `Author` (`Author`),
+			Key `AuthorScore` (`AuthorScore`),
+			Key `AuthorTime` (`AuthorTime`),
+			Key `GoldTime` (`GoldTime`),
+			Key `SilverTime` (`SilverTime`),
+			Key `BronzeTime` (`BronzeTime`),
+			Key `Environment` (`Environment`),
+			Key `Mood` (`Mood`),
+			Key `MultiLap` (`MultiLap`),
+			Key `NbLaps` (`NbLaps`),
+			Key `NbCheckpoints` (`NbCheckpoints`)
+		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 		";
 		$this->mysqli->query($query);
 		$this->displayLoadStatus('Checking database structure...', 0.65);
@@ -1055,18 +1073,19 @@ class UASECO extends Helper {
 			`Nation` varchar(3) NOT NULL DEFAULT '',
 			`UpdatedAt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			`Wins` mediumint(9) NOT NULL DEFAULT '0',
-			`Visits` mediumint(3) NOT NULL DEFAULT '0',
-			`TimePlayed` int(10) unsigned NOT NULL DEFAULT '0',
+			`Visits` mediumint(9) UNSIGNED NOT NULL DEFAULT '0',
+			`TimePlayed` int(10) UNSIGNED NOT NULL DEFAULT '0',
 			`TeamName` char(60) NOT NULL DEFAULT '',
 			PRIMARY KEY (`Id`),
 			UNIQUE KEY `Login` (`Login`),
 			KEY `Game` (`Game`),
+			KEY `Continent` (`Continent`),
 			KEY `Nation` (`Nation`),
-			KEY `Wins` (`Wins`),
-			KEY `Wins` (`Visits`),
 			KEY `UpdatedAt` (`UpdatedAt`),
-			KEY `Continent` (`Continent`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+			KEY `Wins` (`Wins`),
+			KEY `Visits` (`Visits`),
+			KEY `TimePlayed` (`TimePlayed`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 		";
 		$this->mysqli->query($query);
 		$this->displayLoadStatus('Checking database structure...', 0.7);
@@ -1084,7 +1103,7 @@ class UASECO extends Helper {
 			`PanelBG` varchar(30) NOT NULL DEFAULT '',
 			PRIMARY KEY (`PlayerId`),
 			KEY `Donations` (`Donations`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
 		";
 		$this->mysqli->query($query);
 		$this->displayLoadStatus('Checking database structure...', 0.75);
@@ -1105,7 +1124,7 @@ class UASECO extends Helper {
 		$check[2] = in_array('players', $tables);
 		$check[3] = in_array('players_extra', $tables);
 		if (!($check[1] && $check[2] && $check[3])) {
-			trigger_error('[Database] Table structure incorrect! Use [newinstall/database/uaseco.sql] to correct this', E_USER_ERROR);
+			trigger_error('[Database] ERROR: Table structure incorrect, use [newinstall/database/uaseco.sql] to correct this!', E_USER_ERROR);
 		}
 		$this->displayLoadStatus('Checking database structure...', 0.8);
 
@@ -1145,7 +1164,7 @@ class UASECO extends Helper {
 		$this->displayLoadStatus('Checking database structure...', 0.9);
 
 
-		// Add `maps` `NbLaps` and `NbCheckpoints` column
+		// Add at `maps` the new columns
 		$fields = array();
 		$res = $this->mysqli->query('SHOW COLUMNS FROM `maps`;');
 		if ($res) {
@@ -1154,9 +1173,37 @@ class UASECO extends Helper {
 			}
 			$res->free_result();
 		}
+		if (!in_array('AuthorScore', $fields)) {
+			$this->console("[Database] » Add `maps` column `AuthorScore`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorScore` int(4) UNSIGNED NOT NULL AFTER `Author`, ADD INDEX (`AuthorScore`);");
+		}
+		if (!in_array('AuthorTime', $fields)) {
+			$this->console("[Database] » Add `maps` column `AuthorTime`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorTime` int(4) UNSIGNED NOT NULL AFTER `AuthorScore`, ADD INDEX (`AuthorTime`);");
+		}
+		if (!in_array('GoldTime', $fields)) {
+			$this->console("[Database] » Add `maps` column `GoldTime`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `GoldTime` int(4) UNSIGNED NOT NULL AFTER `AuthorTime`, ADD INDEX (`GoldTime`);");
+		}
+		if (!in_array('SilverTime', $fields)) {
+			$this->console("[Database] » Add `maps` column `SilverTime`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `SilverTime` int(4) UNSIGNED NOT NULL AFTER `GoldTime`, ADD INDEX (`SilverTime`);");
+		}
+		if (!in_array('BronzeTime', $fields)) {
+			$this->console("[Database] » Add `maps` column `BronzeTime`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `BronzeTime` int(4) UNSIGNED NOT NULL AFTER `SilverTime`, ADD INDEX (`BronzeTime`);");
+		}
+		if (!in_array('Mood', $fields)) {
+			$this->console("[Database] » Add `maps` column `Mood`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Mood` enum('None', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Environment`, ADD INDEX (`Mood`);");
+		}
+		if (!in_array('MultiLap', $fields)) {
+			$this->console("[Database] » Add `maps` column `MultiLap`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Mood`, ADD INDEX (`MultiLap`);");
+		}
 		if (!in_array('NbLaps', $fields)) {
 			$this->console("[Database] » Add `maps` column `NbLaps`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `NbLaps` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `Environment`;");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `NbLaps` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `MultiLap`;");
 		}
 		if (!in_array('NbCheckpoints', $fields)) {
 			$this->console("[Database] » Add `maps` column `NbCheckpoints`...");
