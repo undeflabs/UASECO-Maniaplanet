@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,7 +28,7 @@
  *
  * Dependencies:
  *  - includes/core/window.class.php
- *  - includes/gbxdatafetcher.inc.php
+ *  - includes/core/gbxdatafetcher.class.php
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.rasp_votes.php
@@ -99,7 +99,7 @@ class PluginRasp extends Plugin {
 
 		$aseco->console('[Rasp] Checking database structure...');
 		if (!$this->checkTables($aseco)) {
-			trigger_error('[Rasp] ERROR: Table structure incorrect! Use [newinstall/uaseco.sql] to correct this', E_USER_ERROR);
+			trigger_error('[Rasp] ERROR: Table structure incorrect, use [newinstall/database/uaseco.sql] to correct this!', E_USER_ERROR);
 		}
 		$aseco->console('[Rasp] ...successfully done!');
 
@@ -573,7 +573,7 @@ class PluginRasp extends Plugin {
 			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
 			`Avg` float NOT NULL DEFAULT '0',
 			KEY `PlayerId` (`PlayerId`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
 		";
 		$aseco->mysqli->query($query);
 
@@ -591,7 +591,7 @@ class PluginRasp extends Plugin {
 			KEY `PlayerMapId` (`PlayerId`,`MapId`),
 			KEY `MapId` (`MapId`),
 			KEY `Score` (`Score`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 		";
 		$aseco->mysqli->query($query);
 
@@ -607,7 +607,7 @@ class PluginRasp extends Plugin {
 			UNIQUE KEY `PlayerMapId` (`PlayerId`,`MapId`),
 			KEY `MapId` (`MapId`),
 			KEY `Score` (`Score`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 		";
 		$aseco->mysqli->query($query);
 
