@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-23
+ * Date:	2014-08-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1605,7 +1605,7 @@ class Helper {
 	// Writes a logfile of all output messages in daily chunks inside the logs/ directory.
 	public function logMessage ($text) {
 
-		// if new daily file, close old logfile
+		// If new daily file, close old logfile
 		if (!file_exists($this->logfile['file']) && $this->logfile['handle']) {
 			fclose($this->logfile['handle']);
 			$this->logfile['handle'] = false;
@@ -1617,6 +1617,10 @@ class Helper {
 		fwrite($this->logfile['handle'], $text);
 		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
 			chmod($this->logfile['file'], 0666);
+		}
+		else {
+			// Echo to console on Windows
+			echo $text;
 		}
 	}
 }
