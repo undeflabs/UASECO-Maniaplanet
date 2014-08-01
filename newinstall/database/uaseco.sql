@@ -13,12 +13,30 @@ CREATE TABLE IF NOT EXISTS `maps` (
   `Uid` varchar(27) NOT NULL DEFAULT '',
   `Name` varchar(100) NOT NULL DEFAULT '',
   `Author` varchar(30) NOT NULL DEFAULT '',
+  `AuthorScore` int(4) UNSIGNED NOT NULL,
+  `AuthorTime` int(4) UNSIGNED NOT NULL,
+  `GoldTime` int(4) UNSIGNED NOT NULL,
+  `SilverTime` int(4) UNSIGNED NOT NULL,
+  `BronzeTime` int(4) UNSIGNED NOT NULL,
   `Environment` varchar(10) NOT NULL DEFAULT '',
-  `NbLaps` tinyint(1) unsigned NOT NULL,
-  `NbCheckpoints` tinyint(1) unsigned NOT NULL,
+  `Mood` enum('None', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `NbLaps` tinyint(1) UNSIGNED NOT NULL,
+  `NbCheckpoints` tinyint(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`Id`),
-  UNIQUE KEY `Uid` (`Uid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+  UNIQUE KEY `Uid` (`Uid`),
+  Key `Author` (`Author`),
+  Key `AuthorScore` (`AuthorScore`),
+  Key `AuthorTime` (`AuthorTime`),
+  Key `GoldTime` (`GoldTime`),
+  Key `SilverTime` (`SilverTime`),
+  Key `BronzeTime` (`BronzeTime`),
+  Key `Environment` (`Environment`),
+  Key `Mood` (`Mood`),
+  Key `MultiLap` (`MultiLap`),
+  Key `NbLaps` (`NbLaps`),
+  Key `NbCheckpoints` (`NbCheckpoints`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 
 
 
@@ -31,16 +49,19 @@ CREATE TABLE IF NOT EXISTS `players` (
   `Nation` varchar(3) NOT NULL DEFAULT '',
   `UpdatedAt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `Wins` mediumint(9) NOT NULL DEFAULT '0',
-  `TimePlayed` int(10) unsigned NOT NULL DEFAULT '0',
+  `Visits` mediumint(9) UNSIGNED NOT NULL DEFAULT '0',
+  `TimePlayed` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `TeamName` char(60) NOT NULL DEFAULT '',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Login` (`Login`),
   KEY `Game` (`Game`),
+  KEY `Continent` (`Continent`),
   KEY `Nation` (`Nation`),
-  KEY `Wins` (`Wins`),
   KEY `UpdatedAt` (`UpdatedAt`),
-  KEY `Continent` (`Continent`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+  KEY `Wins` (`Wins`),
+  KEY `Visits` (`Visits`),
+  KEY `TimePlayed` (`TimePlayed`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 
 
 
@@ -54,7 +75,58 @@ CREATE TABLE IF NOT EXISTS `players_extra` (
   `PanelBG` varchar(30) NOT NULL DEFAULT '',
   PRIMARY KEY (`PlayerId`),
   KEY `Donations` (`Donations`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
+
+
+
+CREATE TABLE IF NOT EXISTS `records` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `MapId` mediumint(9) NOT NULL DEFAULT '0',
+  `PlayerId` mediumint(9) NOT NULL DEFAULT '0',
+  `Score` int(11) NOT NULL DEFAULT '0',
+  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `Checkpoints` text NOT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `PlayerId` (`PlayerId`,`MapId`),
+  KEY `MapId` (`MapId`),
+  KEY `Score` (`Score`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
+
+
+
+CREATE TABLE IF NOT EXISTS `rs_karma` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `MapId` mediumint(9) NOT NULL DEFAULT '0',
+  `PlayerId` mediumint(9) NOT NULL DEFAULT '0',
+  `Score` tinyint(3) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `PlayerMapId` (`PlayerId`,`MapId`),
+  KEY `MapId` (`MapId`),
+  KEY `Score` (`Score`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
+
+
+
+CREATE TABLE IF NOT EXISTS `rs_rank` (
+  `PlayerId` mediumint(9) NOT NULL DEFAULT '0',
+  `Avg` float NOT NULL DEFAULT '0',
+  KEY `PlayerId` (`PlayerId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
+
+
+
+CREATE TABLE IF NOT EXISTS `rs_times` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `MapId` mediumint(9) NOT NULL DEFAULT '0',
+  `PlayerId` mediumint(9) NOT NULL DEFAULT '0',
+  `Score` int(11) NOT NULL DEFAULT '0',
+  `Date` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `Checkpoints` text NOT NULL,
+  PRIMARY KEY (`Id`),
+  KEY `PlayerMapId` (`PlayerId`,`MapId`),
+  KEY `MapId` (`MapId`),
+  KEY `Score` (`Score`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
