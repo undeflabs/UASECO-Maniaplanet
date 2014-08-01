@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-07-26
+ * Date:		2014-08-01
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -30,7 +30,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - includes/web_access.inc.php
+ *  - includes/core/webaccess.inc.php
  *
  */
 
@@ -61,8 +61,6 @@
  * 91117		id for action on disabled (red) buttons, tell the Player to finish this Map x times
  * 91118		id for action that is ignored
  */
-
-	require_once('includes/web_access.inc.php');
 
 	// Start the plugin
 	$_PLUGIN = new PluginManiaKarma();
