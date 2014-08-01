@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1497,13 +1497,18 @@ class PluginPanels extends Plugin {
 			$dbextra = $result->fetch_object();
 			$result->free_result();
 
-			$panel = explode('/', $dbextra->Panels);
-			$panels = array();
-			$panels['admin'] = $panel[0];
-			$panels['donate'] = $panel[1];
-			$panels['records'] = $panel[2];
-			$panels['vote'] = $panel[3];
-			return $panels;
+			if ($dbextra->Panels != '') {
+				$panel = explode('/', $dbextra->Panels);
+				$panels = array();
+				$panels['admin'] = $panel[0];
+				$panels['donate'] = $panel[1];
+				$panels['records'] = $panel[2];
+				$panels['vote'] = $panel[3];
+				return $panels;
+			}
+			else {
+				return false;
+			}
 		}
 		else {
 			trigger_error('[LocalRecords] Could not get player\'s panels! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
