@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-21
+ * Date:	2014-08-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -266,7 +266,7 @@ class PluginRaspKarma extends Plugin {
 		// check for possible public karma vote
 		if ($this->allow_public_karma) {
 			if ( ($chat[2] == '++') || ($chat[2] == '--') ) {
-				chat_playervote($aseco, $chat[1], $chat[2], '');
+				$this->chat_playervote($aseco, $chat[1], $chat[2], '');
 			}
 		}
 		else {
