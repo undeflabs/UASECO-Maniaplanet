@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,7 +28,7 @@
  *
  * Dependencies:
  *  - includes/core/map.class.php
- *  - includes/gbxdatafetcher.inc.php
+ *  - includes/core/gbxdatafetcher.class.php
  *
  */
 
@@ -46,6 +46,13 @@ class MapList {
 
 	public $max_age_mxinfo	= 86400;				// Age max. 86400 = 1 day
 	public $size_limit	= 2097152;				// 2048 kB: Changed map size limit to 2MB: http://forum.maniaplanet.com/viewtopic.php?p=212999#p212999
+
+	private $moods		= array(
+		'Sunrise',
+		'Day',
+		'Sunset',
+		'Night',
+	);
 
 
 	/*
@@ -277,12 +284,12 @@ class MapList {
 		foreach ($maplist as $map) {
 			$uids[] = $aseco->mysqli->quote($map['UId']);
 		}
-		$dbinfos = $this->_getDatabaseMapInfos($uids);
+		$dbinfos = $this->getDatabaseMapInfos($uids);
 
 
 
 		// Calculate karma for each map in database
-		$karma = $this->_calculateRaspKarma();
+		$karma = $this->calculateRaspKarma();
 
 
 
@@ -352,14 +359,21 @@ class MapList {
 	public function insertMapIntoDatabase ($map) {
 		global $aseco;
 
-		// `NbLaps` and `NbCheckpoints` only accessible with the ListMethod 'GetCurrentMapInfo',
-		// update where made at $this->getCurrentMapInfo()
+		// `NbLaps` and `NbCheckpoints` only accessible with the ListMethod 'GetCurrentMapInfo'
+		// and when the Map is actual loaded, update where made at $this->getCurrentMapInfo()
 		$query = "
 		INSERT INTO `maps` (
 			`Uid`,
 			`Name`,
 			`Author`,
+			`AuthorScore`,
+			`AuthorTime`,
+			`GoldTime`,
+			`SilverTime`,
+			`BronzeTime`,
 			`Environment`,
+			`Mood`,
+			`MultiLap`,
 			`NbLaps`,
 			`NbCheckpoints`
 		)
@@ -367,7 +381,14 @@ class MapList {
 			". $aseco->mysqli->quote($map->uid) .",
 			". $aseco->mysqli->quote($map->name) .",
 			". $aseco->mysqli->quote($map->author) .",
+			". $map->authorscore .",
+			". $map->authortime .",
+			". $map->goldtime .",
+			". $map->silvertime .",
+			". $map->bronzetime .",
 			". $aseco->mysqli->quote($map->environment) .",
+			". $aseco->mysqli->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'None') ) .",
+			". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
 			". 0 .",
 			". 0 ."
 		);
@@ -453,7 +474,7 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _getDatabaseMapInfos ($uids) {
+	private function getDatabaseMapInfos ($uids) {
 		global $aseco;
 
 		$data = array();
@@ -494,7 +515,7 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _calculateRaspKarma () {
+	private function calculateRaspKarma () {
 		global $aseco;
 
 		// Calculate the local Karma like RASP/Karma
