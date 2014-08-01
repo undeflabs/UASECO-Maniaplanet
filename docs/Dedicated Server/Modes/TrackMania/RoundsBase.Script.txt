@@ -1,0 +1,185 @@
+/**
+ *	Rounds base mode
+ */
+
+#Extends "Modes/TrackMania/ModeBase.Script.txt"
+
+#Const	RoundsBaseVersion		"2014-07-02"
+#Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
+
+#Include "Libs/Nadeo/TrackMania/UI.Script.txt" as UI
+
+// ---------------------------------- //
+// Settings
+// ---------------------------------- //
+#Setting S_PointsLimit 			100		as _("Points limit : ")
+#Setting S_FinishTimeout		-1		as _("Finish timeout :")
+#Setting S_UseAlternateRules	False	as _("Use alternate rules :")
+#Setting S_ForceLapsNb			-1		as _("Force number of laps :")
+#Setting S_DisplayTimeDiff		False	as _("Display time difference at checkpoint :")
+
+// ---------------------------------- //
+// Constants
+// ---------------------------------- //
+#Const C_PointsRepartition [10, 6, 4, 3, 2, 1]
+
+// ---------------------------------- //
+// Globales
+// ---------------------------------- //
+declare Integer G_RoundStartTime;
+declare Integer[] G_PointsRepartition;
+
+// ---------------------------------- //
+// Extend
+// ---------------------------------- //
+***LogVersion***
+***
+MB_LogVersion(RoundsBaseScriptName, RoundsBaseVersion);
+MB_LogVersion(UI::GetScriptName(), UI::GetScriptVersion());
+***
+
+***StartServer***
+***
+// ---------------------------------- //
+// Initialize mode
+UiRounds = True;
+MB_UseSectionRound = True;
+G_PointsRepartition = C_PointsRepartition;
+
+UI::Load(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime"]);
+UI::DisplayTimeDiff(S_DisplayTimeDiff);
+***
+
+***InitMap***
+***
+MB_SetLapsNb(S_ForceLapsNb);
+***
+
+***StartMap***
+***
+// ---------------------------------- //
+// Open ladder
+MB_Ladder_OpenMatch_All();
+MB_SetLapsNb(S_ForceLapsNb);
+***
+
+***CanSpawn***
+***
+foreach (Score in Scores) {
+	declare CanSpawn for Score = True;
+	CanSpawn = True;
+}
+***
+
+***InitRound***
+***
+declare ForceEndRound = False;
+***
+
+***StartRound***
+***
+// ---------------------------------- //
+// Initialize round
+UIManager.UIAll.UISequence = CUIConfig::EUISequence::Playing;
+G_RoundStartTime = Now + 3000;
+if (S_UseAlternateRules) CutOffTimeLimit = GetFinishTimeout();
+else CutOffTimeLimit = -1;
+MB_SetLapsNb(S_ForceLapsNb);
+ForceEndRound = False;
+
+// ---------------------------------- //
+// Initialize scores
+foreach (Score in Scores) {
+	Score.PrevRace = Null;
+	Score.PrevRaceDeltaPoints = 0;
+}
+
+// ---------------------------------- //
+// Set the players who can spawn
+---CanSpawn---
+
+// ---------------------------------- //
+// Spawn players for the race
+foreach (Player in Players) {
+	if (Player.Score == Null) continue;
+	
+	declare CanSpawn for Player.Score = True;
+	if (CanSpawn) {
+		TM2::StartRace(Player, G_RoundStartTime);
+		CanSpawn = False;
+	} else {
+		TM2::WaitRace(Player);
+	}
+}
+***
+
+***PlayLoopSpawnPlayers***
+***
+// ---------------------------------- //
+// Spawn allowed players
+foreach (Player in Players) {
+	if (Player.Score == Null) continue;
+	
+	declare CanSpawn for Player.Score = True;
+	if (TM2::IsWaiting(Player) && CanSpawn) {
+		TM2::StartRace(Player, G_RoundStartTime);
+		CanSpawn = False;
+	}
+}
+***
+
+***Yield***
+***
+UI::XmlRpcLoop();
+***
+
+***PlayLoop***
+***
+// ---------------------------------- //
+// Spawn players joining during the round
+---PlayLoopSpawnPlayers---
+
+// ---------------------------------- //
+// Manage XmlRpc events
+foreach (Event in XmlRpc.PendingEvents) {
+	if (Event.ParamArray1 == "Rounds_SetPointsRepartition") {
+		declare PointsRepartition = Integer[];
+		foreach (Point in Event.ParamArray2) {
+			PointsRepartition.add(TL::ToInteger(Point));
+		}
+		if (PointsRepartition.count > 1) G_PointsRepartition = PointsRepartition;
+	} else if (Event.Param1 == "Rounds_GetPointsRepartition") {
+		declare PointsRepartition = Text[];
+		foreach (Point in G_PointsRepartition) {
+			PointsRepartition.add(TL::ToText(Point));
+		}
+		XmlRpc.SendCallbackArray("Rounds_PointsRepartition", PointsRepartition);
+	} else if (Event.Param1 == "Rounds_ForceEndRound") {
+		ForceEndRound = True;
+	}
+}
+
+// ---------------------------------- //
+// End the round 
+// If All players finished
+if (Players.count > 0 && PlayersRacing.count <= 0) MB_StopRound = True;
+// If time limit is reached
+if (CutOffTimeLimit > 0 && Now >= CutOffTimeLimit) MB_StopRound = True;
+// If forced end round
+if (ForceEndRound) MB_StopRound = True;
+***
+
+***EndServer***
+***
+UI::Unload();
+***
+
+// ---------------------------------- //
+// Display a message if the round was skipped
+Void ForcedEndRoundSequence() {
+	UIManager.UIAll.UISequence = CUIConfig::EUISequence::EndRound;
+	UIManager.UIAll.BigMessage = _("Round skipped");
+	MB_Sleep(3000);
+	UIManager.UIAll.BigMessage = "";
+	UIManager.UIAll.UISequence = CUIConfig::EUISequence::Playing;
+}

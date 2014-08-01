@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!--
+	True = display individual stats panels for each player during the scoreboard
+	False = show only rank messages
+	//-->
+	<sb_stats_panels>false</sb_stats_panels>
+
+	<!--
+	Default panels: empty for no panel, otherwise a
+	filename that should exists in "config/panels/<filename>.xml"
+	//-->
+	<admin_panel>AdminAboveCPListSmall2</admin_panel>
+	<donate_panel>DonateBelowChat</donate_panel>
+	<records_panel>RecordsRightCorner</records_panel>
+	<vote_panel>VoteBottomCenter</vote_panel>
+
+	<!--
+	Default panel background: Card if empty, or a
+	filename that should exists in "config/panels/<filename>.xml"
+	//-->
+	<panel_bg>PanelBGCard</panel_bg>
+</settings>

@@ -1,0 +1,35 @@
+$this->addDependence('PluginRasp',	Dependence::REQUIRED,	'1.0.0', null);
+$this->addDependence('PluginDonate',	Dependence::REQUIRED,	'1.0.0', null);
+
+
+// To call a public method from an other plugin class:
+$aseco->plugins['PluginUptodate']->checkUasecoUptodate($aseco);
+
+// To access a public property from an other plugin class:
+$aseco->plugins['PluginMuting']->muting_available
+
+// But first test if it is available:
+isset($aseco->plugins['PluginUptodate'])
+
+
+
+// For calling a chat command from an other plugin, just use this function,
+// but note, if the plugin is not loaded, the command does nothing!
+$aseco->releaseChatCommand('/list short', $login);
+
+
+
+
+Aseco::registerChatCommand(
+	'list',							// Chat command
+	'chat_list',						// Callback function
+	'Lists maps currently on the server (see: /list help)',	// Description of chat command
+	Player::PLAYERS,					// Access rights
+	array()							// Chat command available parameters and descriptions (only for display in /helpall)
+);
+
+
+
+For converting `Visits` from Records-Eyepiece to UASECO:
+UPDATE `players` AS `p` SET `p`.`Visits`=(SELECT `pe`.`Visits` FROM `players_extra` AS `pe` WHERE `p`.`Id` = `pe`.`PlayerId`);
+ALTER TABLE `players_extra` DROP `Visits`;

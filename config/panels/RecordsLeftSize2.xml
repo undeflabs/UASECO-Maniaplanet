@@ -1,0 +1,13 @@
+<manialink id="UASECO-4"><frame posn="-64.5 32.9 0">
+<quad sizen="13.8 11.5" style="%STYLE%" substyle="%SUBST%"/>
+<format textsize="2" textcolor="dddf"/>
+<label posn="5.7 -1.9 2" sizen="4.5 2" halign="right" valign="center" text="PB:"/>
+<label posn="5.7 -4.4 2" sizen="4.5 2" halign="right" valign="center" text="Local:"/>
+<label posn="5.7 -6.9 2" sizen="4.5 2" halign="right" valign="center" text="Dedi:"/>
+<label posn="5.7 -9.4 2" sizen="4.5 2" halign="right" valign="center" text="MX:"/>
+<format textsize="2" textcolor="ffff"/>
+<label posn="6.2 -1.9 2" sizen="7.0 2" halign="left" valign="center" text="%PB%" action="7"/>
+<label posn="6.2 -4.4 2" sizen="7.0 2" halign="left" valign="center" text="%LCL%" action="8"/>
+<label posn="6.2 -6.9 2" sizen="7.0 2" halign="left" valign="center" text="%DED%" action="9"/>
+<label posn="6.2 -9.4 2" sizen="7.0 2" halign="left" valign="center" text="%MX%" action="10"/>
+</frame></manialink>

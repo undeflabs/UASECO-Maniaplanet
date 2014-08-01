@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mistral_idlekick>
+
+	<!--
+	Player idle this number of maps and get kicked or specced
+	//-->
+	<kick_player_after>2</kick_player_after>
+
+	<!--
+	Spectator idle this number of maps and get kicked
+	//-->
+	<kick_spectator_after>4</kick_spectator_after>
+
+	<!--
+	Kick spectators too
+	//-->
+	<kick_spectators>true</kick_spectators>
+
+	<!--
+	Set idle player to spectator first instead of kick
+	//-->
+	<force_spectator_first>true</force_spectator_first>
+
+	<!-- Reset idle counter... -->
+	<reset>
+		<!-- ...on chat use -->
+		<chat>true</chat>
+
+		<!-- ...when passing a checkpoint -->
+		<checkpoint>true</checkpoint>
+
+		<!-- ...when reaching the finish -->
+		<!-- Do not use this in rounds or team mode, because every player will "finish"! -->
+		<finish>false</finish>
+	</reset>
+
+</mistral_idlekick>

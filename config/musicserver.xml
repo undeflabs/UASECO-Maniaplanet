@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!-- override a map's custom music? -->
+	<override_map>true</override_map>
+
+	<!-- automatically load next song upon next map? -->
+	<auto_nextsong>true</auto_nextsong>
+
+	<!-- automatically shuffle songs at start-up & reload? -->
+	<auto_shuffle>true</auto_shuffle>
+
+	<!-- allow jukeboxing songs by players? -->
+	<allow_jukebox>true</allow_jukebox>
+
+	<!-- strip subdirs when showing song files? -->
+	<strip_subdirs>true</strip_subdirs>
+
+	<!-- strip extensions when showing song files? -->
+	<strip_exts>true</strip_exts>
+
+	<!-- read tags from all .ogg songs? -->
+	<cache_tags>true</cache_tags>
+
+	<!-- use read-only cache file? -->
+	<cache_readonly>false</cache_readonly>
+
+	<!-- filename in main directory to store tags -->
+	<cache_file>cache/musictagscache.xml</cache_file>
+
+	<!-- full http link to directory holding the song files     -->
+	<!-- http server must allow direct download of those files  -->
+	<!-- OR a path below the server's UserData directory (e.g.  -->
+	<!-- "Music/") which allows serving songs without webserver -->
+	<music_server>http://static.undef.name/servers/music/</music_server>
+
+	<!-- list of song files at your music server in .ogg or .mux   -->
+	<!-- avoid spaces and special characters in the filenames and  -->
+	<!-- http link, and observe correct upper/lowercase characters -->
+	<song_files>
+		<song>Trackmania2-Canyon1.ogg</song>
+		<song>Trackmania2-Canyon1b.ogg</song>
+		<song>Trackmania2-Canyon2.ogg</song>
+		<song>Trackmania2-Canyon2b.ogg</song>
+		<song>Trackmania2-Canyon3.ogg</song>
+		<song>Trackmania2-Canyon3b.ogg</song>
+		<song>Trackmania2-Canyon4.ogg</song>
+		<song>Trackmania2-Canyon4b.ogg</song>
+		<song>Trackmania2-MenuMusic.ogg</song>
+		<song>Trackmania-Forever-Menu.ogg</song>
+		<song>Trackmania-Nations-ESWC-Menu.ogg</song>
+		<song>Trackmania-Nations-ESWC-Pulp.ogg</song>
+		<song>Trackmania-Nations-ESWC-Start-Off.ogg</song>
+		<song>Trackmania-Nations-ESWC-Tictac.ogg</song>
+		<song>Trackmania-United-Bay.ogg</song>
+		<song>Trackmania-United-Coast.ogg</song>
+		<song>Trackmania-United-Desert.ogg</song>
+		<song>Trackmania-United-Island.ogg</song>
+		<song>Trackmania-United-Rally.ogg</song>
+		<song>Trackmania-United-Snow.ogg</song>
+		<song>Trackmania-United-Stadium-Pulp-remix.ogg</song>
+		<song>Trackmania-United-Stadium-Start-Off-remix.ogg</song>
+		<song>Trackmania-United-Stadium-Tictac-remix.ogg</song>
+		<song>ManiaPlanet-Main.ogg</song>
+		<song>MenuMusic-SMStorm.ogg</song>
+		<song>MenuMusic-TMCanyon.ogg</song>
+		<song>MenuMusic-TMStadium.ogg</song>
+		<song>MenuMusic-TMValley.ogg</song>
+		<song>ShootmaniaStorm-DAY_01_Track_03.ogg</song>
+		<song>ShootmaniaStorm-DAY_02_Track_04.ogg</song>
+		<song>ShootmaniaStorm-DAY_03_Track_05.ogg</song>
+		<song>ShootmaniaStorm-NIGHT_01_Track_06.ogg</song>
+		<song>ShootmaniaStorm-NIGHT_02_Track_07.ogg</song>
+		<song>TMStadiumSountrack-AirTime.ogg</song>
+		<song>TMStadiumSountrack-Dashboard.ogg</song>
+		<song>TMStadiumSountrack-Hydroplane.ogg</song>
+		<song>TMStadiumSountrack-Tachmania.ogg</song>
+		<song>TMStadiumSountrack-TailLights.ogg</song>
+		<song>TMValley-1.SunriseForecast.ogg</song>
+		<song>TMValley-2.SunriseDayOrange.ogg</song>
+		<song>TMValley-3.DayVastVeridian.ogg</song>
+		<song>TMValley-4.Sunset-PerforatedLandscape.ogg</song>
+		<song>TMValley-5.Sunset-Setting.ogg</song>
+		<song>TMValley-6.NightExtraCologne.ogg</song>
+		<song>TMValley-7.NightRitual.ogg</song>
+	</song_files>
+
+	<messages>
+		<current>{#server}» {#music}The current song is: {#highlite}{1}</current>
+		<next>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} loaded the next song: {#highlite}{3}</next>
+		<reloaded>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} reloaded music config and cleared jukebox!</reloaded>
+		<sorted>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} sorted song list and cleared jukebox!</sorted>
+		<shuffled>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} shuffled song list and cleared jukebox!</shuffled>
+		<jukebox>{#server}» {#highlite}{1}{#music} jukeboxed song: {#highlite}{2}</jukebox>
+		<jukebox_already>{#server}» {#music}You already have a song in the jukebox! Wait till it's been played before adding another.</jukebox_already>
+		<jukebox_dupl>{#server}» {#music}This song has already been added to the jukebox, pick another one.</jukebox_dupl>
+		<jukebox_notfound>{#server}» {#music}Song_ID not found - Type {#highlite}/music list{#music} to see all songs.</jukebox_notfound>
+		<jukebox_drop>{#server}» {#music}Player {#highlite}{1}{#music} dropped his/her song {#highlite}{2}{#music} from jukebox!</jukebox_drop>
+		<jukebox_nodrop>{#server}» {#music}You don't have a song in the jukebox, use {#highlite}/music Song_ID{#music} to add one...</jukebox_nodrop>
+		<jukebox_empty>{#server}» {#music}No songs in the jukebox, use {#highlite}/music Song_ID{#music} to add one...</jukebox_empty>
+		<no_jukebox>{#server}» {#highlite}/music #{#music} is not currently enabled on this server.</no_jukebox>
+		<shutdown>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} disabled server music!</shutdown>
+	</messages>
+</settings>

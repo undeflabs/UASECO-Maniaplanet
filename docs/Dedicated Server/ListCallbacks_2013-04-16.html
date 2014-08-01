@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>ManiaPlanet callbacks - API version 2013-04-16</title>
+</head>
+<body>
+<p>
+When the api is set to "2013-04-16" (or later), by calling SetApiVersion("2013-04-16").
+</p>
+
+<h1>Available callbacks:</h1>
+<ul>
+
+	<li>
+		ManiaPlanet.<b>PlayerConnect</b>(string Login, bool IsSpectator);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>PlayerDisconnect</b>(string Login, string DisconnectionReason);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>PlayerChat</b>(int PlayerUid, string Login, string Text, bool IsRegistredCmd);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>PlayerManialinkPageAnswer</b>(int PlayerUid, string Login, string Answer, SEntryVal Entries[]);<br/>
+		<pre>
+	struct SEntryVal
+	{
+		string Name;
+		string Value;
+	}</pre>
+	</li>
+
+	<li>
+		ManiaPlanet.<b>Echo</b>(string Internal, string Public);
+	</li>
+	
+	<li>
+		ManiaPlanet.<b>ServerStart</b>();
+	</li>
+
+	<li>
+		ManiaPlanet.<b>ServerStop</b>();
+	</li>
+
+	<li>
+		ManiaPlanet.<b>BeginMatch</b>();	
+	</li>
+
+	<li>
+		ManiaPlanet.<b>EndMatch</b>(SPlayerRanking Rankings[], int WinnerTeam);
+		<pre>
+	struct SPlayerRanking
+	{
+		string Login;
+		string NickName;
+		int PlayerId;
+		int Rank;
+	[for legacy TrackMania modes also:
+		int BestTime;
+		int[] BestCheckpoints;
+		int Score;
+		int NbrLapsFinished;
+		double LadderScore;
+	]
+	}
+	</pre>
+	</li>
+
+	<li>
+		ManiaPlanet.<b>BeginMap</b>(SMapInfo Map);
+		<pre>
+	struct SMapInfo
+	{
+		string Uid;
+		string Name;
+		string FileName;
+		string Author;
+		string Environnement;
+		string Mood;
+		int BronzeTime;
+		int SilverTime;
+		int GoldTime;
+		int AuthorTime;
+		int CopperPrice;
+		bool LapRace;
+		int NbLaps;
+		int NbCheckpoints;
+		string MapType;
+		string MapStyle;
+	}</pre>
+	</li>
+
+	<li>
+		ManiaPlanet.<b>EndMap</b>(SMapInfo Map);
+	</li>
+		
+	<li>
+		ManiaPlanet.<b>StatusChanged</b>(int StatusCode, string StatusName);
+	</li>
+
+	<li>
+		TrackMania.<b>PlayerCheckpoint</b>(int PlayerUid, string Login, int TimeOrScore, int CurLap, int CheckpointIndex);
+	</li>
+
+	<li>
+		TrackMania.<b>PlayerFinish</b>(int PlayerUid, string Login, int TimeOrScore);
+	</li>
+
+	<li>
+		TrackMania.<b>PlayerIncoherence</b>(int PlayerUid, string Login);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>BillUpdated</b>(int BillId, int State, string StateName, int TransactionId);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>TunnelDataReceived</b>(int PlayerUid, string Login, base64 Data);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>MapListModified</b>(int CurMapIndex, int NextMapIndex, bool IsListModified);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>PlayerInfoChanged</b>(SPlayerInfo PlayerInfo);
+		<pre>
+	struct SPlayerInfo
+	{
+		string Login;
+		string NickName;
+		int PlayerId;
+		int TeamId;
+		int SpectatorStatus;
+		int LadderRanking;
+		int Flags;
+	}
+	</pre>
+	</li>
+
+	<li>
+		ManiaPlanet.<b>VoteUpdated</b>(string StateName, string Login, string CmdName, string CmdParam);<br/>
+		<i>StateName values: NewVote, VoteCancelled, VotePassed or VoteFailed</i>
+	</li>
+
+	<li>
+		ManiaPlanet.<b>ModeScriptCallback</b>(string Param1, string Param2);
+	</li>
+	<li>
+		ManiaPlanet.<b>ModeScriptCallbackArray</b>(string Param1, string Params[]);
+	</li>
+
+	<li>
+		ManiaPlanet.<b>PlayerAlliesChanged</b>(string Login);
+	</li>
+
+	<li>
+		ScriptCloud.<b>LoadData</b>(string Type, string Id);<br/>
+		<i>You must answer this callback by calling SetScriptCloudVariables for given object.</i>
+	</li>
+
+	<li>
+		ScriptCloud.<b>SaveData</b>(string Type, string Id);<br/>
+		<i>You must answer this callback by calling GetScriptCloudVariables for given object.</i>
+	</li>
+
+</ul>
+</body>
+</html>

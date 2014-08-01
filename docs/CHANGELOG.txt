@@ -1,0 +1,96 @@
+Version 1.0.0
+~~~~~~~~~~~~~
+ - Notes:
+   - Third-party Plugins for XAseco2 are NOT compatible without changes (see "Differences between XAseco2 and UASECO" below)
+   - A database from XAseco2/1.03 is fully compatible with UASECO (only indexes has been added), you can switch easily to UASECO (and back to XAseco2)
+   - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed before first stable release!
+     Use Class Window instead: http://www.uaseco.org/Development/Classes/Window.php
+   - Plugin "plugin.styles.php" and related files in the folder "config/styles" are deprecated and get removed before first stable release!
+   - Plugin "plugin.panels.php" and related files in the folder "config/panels" are deprecated and get removed before first stable release!
+
+ - Requirements:
+   - Requires PHP/5.2.1 or higher
+   - Requires MySQL/5.x or higher
+   - Requires a Maniaplanet dedicated Server build 2014-07-24_19_00 or higher
+   - Requires dedicated Server API-Version 2013-04-16 or higher
+
+ - Changes:
+   - Changed "memory_limit" to 192MB
+   - Included support for Modescript Gamemodes from the Maniaplanet 3 update, e.g. "TimeAttack.Script.txt", "Rounds.Script.txt"...
+   - Added many new callback events like "onPlayerStartCountdown", "onPlayerStartLine", "onPlayerFinishLine", "onPlayerRespawn", "onBeginPodium"..., see documentation for details
+   - Included Database support into controller and changed all MySQL statements from "MySQL Extension" to "MySQL Improved Extension"
+   - Took some classes/ideas from MPAseco/0.83 and Aseco/2.2.0c
+   - Splitted types.inc.php into single file classes
+   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIMEATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
+   - Added constant Gameinfo::TEAMATTACK
+   - Extended class Player
+   - Extended class PlayerList
+   - Extended class Server
+   - Extended class Gameinfo
+   - Extended class Map
+   - Added class Dependence
+   - Added class Continent
+   - Added class Country
+   - Added class Helper (which holds the most UASECO Methods)
+   - Added class MapList
+   - Added class Database (mysqli)
+   - Added class Plugin
+   - Added class RankingList
+   - Added class Window
+   - Rewritten all Plugins into a own class and documented all dependencies
+   - Merged several Plugins into one Plugin
+   - Renamed several Plugins
+   - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
+
+ - Bugfix (in XAseco2):
+   - includes/xmlparser.inc.php: Changed to make sure that '0' values from <tags> in XML files are not interpreted as 'false' and are stored too
+   - includes/web_access.inc.php: [PHP Notice] Undefined offset: 0 on line 1184 till 1190
+   - plugins/chat.server.php: Changed forgotten changes for Gameinfo::* constants
+
+ - Differences between XAseco2 and UASECO
+   - All XML configuration files has to be located into the "config" folder
+   - The folder "panels" has been moved into the "config" folder
+   - The folder "styles" has been moved into the "config" folder
+   - All "mysql_*()" does not work anymore, use "$aseco->mysqli->*" instead (e.g. "$res = "$aseco->mysqli->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php
+   - Renamed "config/config.xml" to  "config/UASECO.xml"
+   - Removed "manialinks.inc.php", moved parts from it into the related Plugins and replaced the "Window" with the new class "window.class.php"
+   - Removed Plugin "plugin.matchsave.php", and related files "matchsave.xml", "html.tpl" and "text.tpl"
+   - Removed Jfreu-Plugins "jfreu.chat.php", "jfreu.lite.php" and "jfreu.plugin.php" with all related files ("plugin.welcome_center.php" replaces "jfreu.lite.php")
+   - Removed "addChatCommand()" and added "$this->registerChatCommand()" (in the Class Plugin)
+   - A callback handler of a registered chat command has now four parameter instead of two: ($aseco, $login, $chat_command, $chat_parameter)
+   - Added "$aseco->server->rankings->ranking_list[]" which holds the current ranking for all Players in all Gamemodes (no need to call the ListMethod "GetCurrentRanking")
+   - Added "$aseco->server->maps->map_list[]" which holds all Maps from the dedicated Server (no need to call the ListMethod "GetMapList")
+   - Moved "$aseco->xml_parser" to "$aseco->parser" and renamed the method "parseXML()" to "xmlToArray()" and "parseArray()" to "arrayToXml()"
+   - Moved "$aseco->server->map" to "$aseco->server->maps->current"
+   - Moved "$aseco->records" from controller into Local Records Plugin
+   - Moved "$aseco->rasp" from controller into the RASP Plugins
+   - Moved "$aseco->getPlayerId()" to "$aseco->server->players->getPlayerId()"
+   - Moved "$aseco->getPlayerNick()" to "$aseco->server->players->getPlayerNickname()"
+   - Moved "$aseco->getPlayerParam()" to "$aseco->server->players->getPlayerParam()"
+   - Renamed "$aseco->ip_match()" to "$aseco->matchIP()"
+   - Renamed "$aseco->server->serverlogin" to "$aseco->server->login"
+   - Changed "quotedString()" to "$aseco->mysqli->quote()"
+   - Changed "validateUTF8String()" to "$aseco->validateUTF8String()"
+   - Changed "stripNewlines()" to "$aseco->stripNewlines()"
+   - Changed "formatText()" to "$aseco->formatText()"
+   - Changed "stripColors()" to "$aseco->stripColors()"
+   - Changed "stripSizes()" to "$aseco->stripSizes()"
+   - Changed "stripNewlines()" to "$aseco->stripNewlines()"
+   - Changed "http_get_file()" to "$aseco->http_get_file()"
+   - Changed "bool2text()" to "$aseco->bool2string()"
+   - Changed "mapCountry()" to "$aseco->country->countryToIoc()"
+   - Changed "continent2cid()" to "$aseco->continent->continentToId()"
+   - Changed "cid2continent()" to "$aseco->continent->idToContinent()"
+   - Merged "formatTime()" and "formatTimeH()" to only "$aseco->formatTime()"
+   - Removed "$aseco->server->getGame()", because in Maniaplanet it was useless
+   - Removed "$aseco->isSpectator($player)", use "$player->isspectator" instead
+   - Event parameters has been changed for many events, see documentation for details: http://www.uaseco.org/Development/Events.php
+   - Event "onCheckpoint" renamed to "onPlayerCheckpoint"
+   - Event "onChat" splitted into "onServerChat" and "onPlayerChat" (no need to check for a Server message at "onPlayerChat")
+   - Event "onRestartMap" removed and renamed "onRestartMap2" to "onRestartMap" (there is no more a difference between the restarts)
+   - Event "onBeginMap2" renamed to "onBeginMap1"
+   - Event "onBeginMap" is now send after "$aseco->server->maps->current" is updated
+   - Event "onDediRecsLoaded" renamed to "onDedimaniaRecordsLoaded"
+   - Event "onMaplistChanged" renamed to "onMapListChanged" (uppercase "L")
+   - Event "onPlayerConnect2" renamed to "onPlayerConnect1"
+   - PLEASE NOTE: I only hope that this list are all differences, but i'm not really sure about this. I was starting too late to write this list, sorry!

@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mania_karma>
+	<!--
+		For an list of Nationcodes in 'ISO 3166 ALPHA-3', see the row "Alpha-3" at
+		http://en.wikipedia.org/wiki/ISO_3166-1#Officially_assigned_code_elements
+		Examples: Germany = 'DEU', Belgium = 'BEL', Denmark = 'DNK', United States = 'USA'...
+	//-->
+	<nation>YOUR_SERVER_NATION</nation>
+
+
+	<!-- Style for the Widget -->
+	<widget_styles>
+		<!-- Styles used for the Widgets at Race/Scoretable -->
+		<vote_buttons>
+			<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
+			<positive>
+				<bgcolor_default>DFDF</bgcolor_default>
+				<bgcolor_focus>FFFF</bgcolor_focus>
+				<text_color>070F</text_color>
+			</positive>
+			<negative>
+				<bgcolor_default>FDDF</bgcolor_default>
+				<bgcolor_focus>FFFF</bgcolor_focus>
+				<text_color>700F</text_color>
+			</negative>
+
+			<votes>
+				<bgcolor_disabled>9CFF</bgcolor_disabled>
+				<bgcolor_vote>F70F</bgcolor_vote>
+			</votes>
+		</vote_buttons>
+
+		<!-- Styles used for the Widgets at Race -->
+		<race>
+			<title>$FFFManiaKarma</title>
+			<icon_style>Icons64x64_1</icon_style>
+			<icon_substyle>ToolLeague1</icon_substyle>
+
+			<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
+			<background_color>3342</background_color>
+			<background_focus>3335</background_focus>
+
+			<background_style>Bgs1</background_style>
+			<background_substyle>BgEmpty</background_substyle>
+
+			<border_style>Bgs1InRace</border_style>
+			<border_substyle>BgTitleShadow</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', 'BgList' or 'BgEmpty' are useful) -->
+
+			<title_style>BgsPlayerCard</title_style>
+			<title_substyle>BgRacePlayerName</title_substyle>
+		</race>
+
+		<!-- Styles used for the Widgets at Scoretable -->
+		<score>
+			<title>$FFFManiaKarma</title>
+			<icon_style>Icons64x64_1</icon_style>
+			<icon_substyle>ToolLeague1</icon_substyle>
+
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+
+			<title_style>BgsPlayerCard</title_style>
+			<title_substyle>BgRacePlayerName</title_substyle>
+		</score>
+	</widget_styles>
+
+
+	<!-- Setup the formatting of numbers (e.g. Amount of Planets, Won...), pick on of the following:
+		'english'	= 1,234.56
+		'german'	= 1.234,56
+		'french'	= 1 234,56
+	-->
+	<number_format>english</number_format>
+
+
+	<!--
+		Show welcome message in chat?
+		Set to 'true' or 'false'
+	//-->
+	<show_welcome>true</show_welcome>
+
+	<!--
+		Replace (theoretical) in the description below all 'plus' with '+' and 'dash' with '-',
+		can't write it here, otherwise the xml-parser returns an error :(
+		Set to 'true' if you allow 'plusplus' and 'dashdash' votes as well as '/plusplus' & '/dashdash', otherwise set 'false'
+	//-->
+	<allow_public_vote>true</allow_public_vote>
+
+	<!--
+		Set to true if you want to show the karma message at the start of each Map
+	//-->
+	<show_at_start>true</show_at_start>
+
+	<!--
+		Set to 'true' if you want to show vote counts & percentages, otherwise set 'false'
+	//-->
+	<show_details>true</show_details>
+
+	<!--
+		Set to 'true' if you want to show players their actual votes, otherwise set 'false'
+	//-->
+	<show_votes>true</show_votes>
+
+	<!--
+		Set to 'true' if you want to show players the actual Karma, otherwise set 'false'
+	//-->
+	<show_karma>true</show_karma>
+
+	<!--
+		Set to the number of times a player should have finished a Map
+		before being allowed to karma vote for it.
+		Note: this is the total number of finishes since the first time a
+		player tried a Map, not the number in the current session
+		For Server with 50+ Player, set to 0
+	//-->
+	<require_finish>1</require_finish>
+
+	<!--
+		Remind player to vote karma if [s]he has not yet
+		'always' to remind on finish and at Score
+		'finished' to remind on every finish
+		'score' to remind at score
+		'off' to never remind
+	//-->
+	<remind_to_vote>score</remind_to_vote>
+
+
+	<reminder_window>
+		<!--
+			Display a reminder in a popup-window?
+			'always' to remind on finish and at Score
+			'finished' to remind on every finish
+			'score' to remind at score
+			'off' to never remind
+		//-->
+		<display>always</display>
+
+		<!-- The position where the reminder window should be displayed -->
+		<race>
+			<pos_x>-41</pos_x>
+			<pos_y>-29.35</pos_y>
+		</race>
+		<score>
+			<pos_x>-41</pos_x>
+			<pos_y>-26</pos_y>
+		</score>
+	</reminder_window>
+
+
+	<!--
+		Display a MX-Link in a popup-window?
+		'true' for enable at Score
+		'false' for disable at Score
+	//-->
+	<score_mx_window>true</score_mx_window>
+
+
+	<!--
+		Lottery only available with an TMU server account!
+	//-->
+	<karma_lottery>
+		<!-- Set to 'true' if you wish to enable the Karma Lottery, otherwise set 'false' -->
+		<enabled>false</enabled>
+
+		<!-- How many Players must logged in to start the Lottery? -->
+		<minimum_players>5</minimum_players>
+
+		<!-- The amount of Planets to win -->
+		<planets_win>5</planets_win>
+
+		<!-- Minimum amount of server Planets to enable payout	-->
+		<minimum_server_planets>50</minimum_server_planets>
+	</karma_lottery>
+
+	<!--
+		Set to 'true' if you want karma messages diverted to TMF message window, otherwise set 'false'
+	//-->
+	<messages_in_window>true</messages_in_window>
+
+	<!--
+		Set to 'true' if a player vote should showed to all players, otherwise set 'false'
+	//-->
+	<show_player_vote_public>true</show_player_vote_public>
+
+	<!--
+		Set to 'true' if you wish to save the karma votes local too, otherwise set 'false'
+	//-->
+	<save_karma_also_local>true</save_karma_also_local>
+
+	<!--
+		Set to 'true' if you wish to sync the local with the global votes for each Player, otherwise set 'false'
+	//-->
+	<sync_global_karma_local>true</sync_global_karma_local>
+
+	<!-- Here you can select the method how the Karma is calculated:
+		'default'	= calculate like Mania-Karma.com it does
+		'rasp'		= calculate like XAseco with RASP/Karma
+	//-->
+	<karma_calculation_method>default</karma_calculation_method>
+
+	<!-- Position of the Widget and selection of the Gamemode to enable/disable the displaying of the Widget -->
+	<karma_widget>
+		<gamemode>
+			<rounds>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>39.2</pos_y>
+				<scale>1.0</scale>
+			</rounds>
+			<time_attack>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>39.2</pos_y>
+				<scale>1.0</scale>
+			</time_attack>
+			<team>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>39.2</pos_y>
+				<scale>1.0</scale>
+			</team>
+			<laps>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>39.2</pos_y>
+				<scale>1.0</scale>
+			</laps>
+			<cup>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>39.2</pos_y>
+				<scale>1.0</scale>
+			</cup>
+			<stunts>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>39.2</pos_y>
+				<scale>1.0</scale>
+			</stunts>
+			<score>
+				<enabled>true</enabled>
+				<pos_x>47.8</pos_x>
+				<pos_y>33.2</pos_y>
+				<scale>1.0</scale>
+			</score>
+		</gamemode>
+	</karma_widget>
+
+	<messages>
+		<!-- Misc. messages -->
+		<welcome>{#server}*** This Server uses the ManiaKarma world Map vote system at {#highlite}$l[{1}]{2}$l{br}{#server}*** Type {#highlite}/karma help{#server} for more info.</welcome>
+		<uptodate_ok>{#emotic}*** This ManiaKarma plugin version {#highlite}{1}{#emotic} is up to date.</uptodate_ok>
+		<uptodate_new>{#emotic}*** New ManiaKarma plugin version {#highlite}{1}{#emotic} available from {#highlite}{2}</uptodate_new>
+		<uptodate_failed>{#error}*** Could not check plugin version, connection failed.</uptodate_failed>
+
+		<!-- Vote messages -->
+		<karma_message>{#server}» {#karma}Karma of {#highlite}{1}{#karma} is {#highlite}{2}</karma_message>
+		<karma_your_vote>{#karma}, you think this Map is {#highlite}{1}{#karma}. Command {#highlite}{2}</karma_your_vote>
+		<karma_not_voted>{#karma}, you have {#highlite}not yet voted!</karma_not_voted>
+		<karma_details>{#server}» {#karma}Fantastic: {#highlite}{2}%{#karma} ($n{#highlite}{3}{#karma}$m), Beautiful: {#highlite}{4}%{#karma} ($n{#highlite}{5}{#karma}$m), Good: {#highlite}{6}%{#karma} ($n{#highlite}{7}{#karma}$m), Bad: {#highlite}{8}%{#karma} ($n{#highlite}{9}{#karma}$m), Poor: {#highlite}{10}%{#karma} ($n{#highlite}{11}{#karma}$m), Waste: {#highlite}{12}%{#karma} ($n{#highlite}{13}{#karma}$m)</karma_details>
+		<karma_done>{#server}» {#karma}Vote successful for Map {#highlite}{1}{#karma}!</karma_done>
+		<karma_change>{#server}» {#karma}Vote changed for Map {#highlite}{1}{#karma}!</karma_change>
+		<karma_voted>{#server}» {#karma}You have already voted for this Map</karma_voted>
+		<karma_remind>{#server}» {#karma}Remember to vote karma for this Map! Type {#highlite}/karma help{#server} for more info.</karma_remind>
+		<karma_require_finish>{#server}» {#error}You need to finish this Map at least {#highlite}$I {1}{#error} time{2} before being able to vote!</karma_require_finish>
+		<karma_no_public>{#server}» {#error}Public karma votes disabled, use $i{#highlite}{1}{#error} instead!</karma_no_public>
+		<karma_list_help>{#server}» {#emotic}Use {#highlite}/list{#emotic} first - Type {#highlite}/list help{#emotic} for more info.</karma_list_help>
+		<karma_help>{#server}This is the World Map vote System, with this system all votes are stored in a central Database and not only at this Server. The Karma of each Map {#server}are from all votes Worldwide.{br}{br}The Map-Authors and the Server-Admins need to know how good the Maps are, so please vote all Maps!{br}{br}{#server}You can vote with:{br}  {#highlite}/+++{#server} for fantastic{br}  {#highlite}/++{#server}   for beautiful{br}  {#highlite}/+{#server}     for good{br}  {#highlite}/-{#server}      for bad{br}  {#highlite}/--{#server}     for poor{br}  {#highlite}/---{#server}    for waste{br}{br}{#server}You can also use the {#highlite}Karma-Widget{#server} or the {#highlite}Reminder-Window{#server} at the Scoretable.{br}{br}{#server}Enter {#highlite}/karma{#server} to see the Karma of the current Map.{br}{br}{#server}Enter {#highlite}/karma details{#server} to see the detailed Karma of the current Map.</karma_help>
+
+		<!-- ReminderWindow and KarmaWidget -->
+		<karma_reminder_at_score>How did you like this Map?</karma_reminder_at_score>
+		<karma_vote_singular>vote</karma_vote_singular>
+		<karma_vote_plural>votes</karma_vote_plural>
+		<karma_you_have_voted>You have voted:</karma_you_have_voted>
+		<karma_fantastic>fantastic</karma_fantastic>
+		<karma_beautiful>beautiful</karma_beautiful>
+		<karma_good>good</karma_good>
+		<karma_undecided>undecided</karma_undecided>
+		<karma_bad>bad</karma_bad>
+		<karma_poor>poor</karma_poor>
+		<karma_waste>waste</karma_waste>
+		<karma_show_opinion>{#server}» {#highlite}[{1}]{#server} thinks this Map is {#highlite}{2}{#server}! What do you think?</karma_show_opinion>
+		<karma_show_undecided>{#server}» {#highlite}[{1}]{#server} is {#highlite}undecided{#server} about this Map. What do you think?</karma_show_undecided>
+
+		<!-- Lottery messages -->
+		<lottery_mail_body>{br}{#karma}Congratulations! You have won at the ManiaKarma lottery on {#highlite}{1}{#karma}!{br}You won {#highlite}{2} Planets{#karma}!!!{br}{br}$L[tmtp://#addfavourite={3}]Click here to add this server to your favorites!$L</lottery_mail_body>
+		<lottery_player_won>{#server}» {1}$Z$S{#karma} won the ManiaKarma lottery and got {#highlite}{2} Planets{#karma}!!! Congratulations!</lottery_player_won>
+		<lottery_low_planets>{#server}» {#message}The ManiaKarma lottery has too few Planets, please donate some Planets to enable lottery.</lottery_low_planets>
+		<lottery_to_few_players>{#server}» {#message}The ManiaKarma lottery did not draw a winner, because there are not enough players online or too few voted.</lottery_to_few_players>
+		<lottery_total_player_win>{#server}» {#karma}You have won a total of {#highlite}{1} Planets{#karma} until now.</lottery_total_player_win>
+		<lottery_help>{br}{br}{#server}Enter {#highlite}/karma lottery{#server} to see your current total win at ManiaKarma lottery (lottery only available for TMU players).</lottery_help>
+	</messages>
+
+
+	<!-- Image links -->
+	<images>
+		<widget_open_left>http://static.undef.name/ingame/mania-karma/edge-open-ld-dark.png</widget_open_left>
+		<widget_open_right>http://static.undef.name/ingame/mania-karma/edge-open-rd-dark.png</widget_open_right>
+
+		<mx_logo_normal>http://static.undef.name/ingame/mania-karma/logo-maniaexchange-normal.png</mx_logo_normal>
+		<mx_logo_focus>http://static.undef.name/ingame/mania-karma/logo-maniaexchange-focus.png</mx_logo_focus>
+
+		<button_normal>http://static.undef.name/ingame/mania-karma/button-normal.png</button_normal>
+		<button_focus>http://static.undef.name/ingame/mania-karma/button-focus.png</button_focus>
+
+		<cup_gold>http://static.undef.name/ingame/mania-karma/cup_gold.png</cup_gold>
+		<cup_silver>http://static.undef.name/ingame/mania-karma/cup_silver.png</cup_silver>
+
+		<maniakarma_logo>http://static.undef.name/ingame/mania-karma/logo-tm-karma.png</maniakarma_logo>
+		<progress_indicator>http://static.undef.name/ingame/mania-karma/progress_bar_yellow_2D.bik</progress_indicator>
+	</images>
+
+	<!--
+		Set to 'true' to check if there is an new version of this plugin at MasterAdmin connect, otherwise set 'false'
+		It is highly recommend to set this to 'true'
+	//-->
+	<uptodate_check>true</uptodate_check>
+
+	<!--
+		Set to 'default' for a <uptodate_ok>-message or 'update' for only
+		the <uptodate_new>-message if an update is out. If an error occurs,
+		the <uptodate_failed> will always displayed.
+	//-->
+	<uptodate_info>default</uptodate_info>
+
+
+
+<!--
+#################################################################################
+#		  DO NOT MODIFY THESE LINES BELOW HERE!				#
+#################################################################################
+//-->
+
+	<!-- Communication links -->
+	<urls>
+		<website>www.mania-karma.com</website>
+		<api_auth>http://worldwide.mania-karma.com/api/maniaplanet-trackmania2-v4.php</api_auth>
+	</urls>
+
+	<!-- Wait timeout, min. 40 sec. -->
+	<wait_timeout>40</wait_timeout>
+
+	<!-- Connect timeout, min. 30 sec. -->
+	<connect_timeout>30</connect_timeout>
+
+	<!-- Keep-Alive timeout, min. 100 sec. -->
+	<keepalive_min_timeout>100</keepalive_min_timeout>
+</mania_karma>

@@ -1,0 +1,225 @@
+onDedimaniaRecordsLoaded
+XAseco2:	onDediRecsLoaded
+Data:		xxx
+Example:	xxx
+Note:		xxx
+
+
+onMapListChanged
+XAseco2:	onMaplistChanged
+Data:		xxx
+Example:	xxx
+Note:		xxx
+
+
+onPlayerConnect
+Data:		Player object
+Example:	-
+Note:		This event is sent when a Player connects
+
+
+onPlayerConnect1
+XAseco2:	onPlayerConnect2
+Data:		Player object
+Example:	-
+Note:		This event is sent after the event 'onPlayerConnect' when a Player connects, main usage is access control
+
+
+onPlayerChat
+Data:		An array with user id from where this chat is coming from (no server chat), the login of this user, the text or command, if this was a registered chat-command.
+Example:	[237, 'undef.de', '/help', 1]
+Note:		This event is sent when a player uses chat
+
+
+onServerChat
+Data:		An array with user id from where this chat is coming from (no user chat), the login of this user, the text or command, if this was a registered chat-command.
+Example:	[0, 'labs_undef', '$ff0» $f00$iYou don't have a Local Record on this map yet...', '']
+Note:		This event is sent when a server message is send to chat
+
+
+onPlayerStartCountdown
+Data:		An String with the login of the starting player
+Example:	Login
+Note:		This event is sent when a player is spawned on the track before the 3,2,1,Go! countdown.
+
+
+onPlayerStartLine
+Data:		An string with the login of the starting player
+Example:	Login
+Note:		This event is sent when a player starts a race.
+
+
+onPlayerCheckpoint
+Data:		An array with the login of the player crossing the checkpoint, the id of the waypoint block, the current race time, the waypoint number in the race, the current lap time, the waypoint number in the lap
+Example:	[0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
+Note:		This event is sent when a player crosses a checkpoint.
+
+
+onPlayerFinishLine
+Data:		An array with the login of the player crossing the finish line, the id of the waypoint block, the current race time, the waypoint number in the race, the current lap time, the waypoint number in the lap
+Example:	[0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
+Note:		This event is sent when a player crosses a finish line.
+
+
+onPlayerLapFinished
+Data:		An array with the login of the player finished a lap, the id of the waypoint block, the current race time, the waypoint number in the race, the current lap time, the waypoint number in the lap
+Example:	[0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
+Note:		This event is sent when a player finished a lap.
+
+
+onPlayerRespawn
+Data:		An array with the login of the player respawning, the id of the waypoint block, the waypoint number in the race, the waypoint number in the lap and the number of respawns since the beginning of the race.
+Example:	[0]=Login, [1]=WaypointBlockId, [2]=WaypointIndexRace, [3]=WaypointIndexLap, [4]=TotalRespawns
+Note:		This event is sent when a player respawns at a waypoint (checkpoint, multilap, ...).
+
+
+onPlayerGiveUp
+Data:		An string with the login of the restarting player
+Example:	Login
+Note:		This event is sent when a player restarts.
+
+
+onPlayerStunt
+Data:		An array with the player login, the stunt points, the combo, the total stunts score, the factor, the stunt name, the angle, if the stunt is straight, if the stunt is reversed, if the stunt is a master jump
+Example:	[0]=Login, [1]=StuntPoints, [2]=Combo, [3]=TotalStuntsScore, [4]=StuntFactor, [5]=StuntName, [6]=StuntAngle, [7]=IsStraightStunt, [8]=IsStuntReversed, [9]=IsMasterJump
+Note:		This event is sent when a player made a stunt figure
+
+
+onPlayerRankingUpdated
+Data:		Nothing
+Example:	null
+Note:		This event is sent when the Player Rankings has been changed/reseted.
+
+
+onPlayerWins
+Data:		Player object
+Example:	-
+Note:		This event is sent when a player won the last run.
+
+
+onWarmUpStatusChanged
+Data:		Status of the WarmUp
+Example:	boolean
+Note:		This event is sent when the status of the warm up has been changed
+
+
+onBeginPlaying
+Data:		Nothing
+Example:	null
+Note:		This event is sent at the beginning of the play loop
+
+
+onEndPlaying
+Data:		Nothing
+Example:	null
+Note:		This event is sent at the end of the play loop
+
+
+onBeginPodium
+Data:		Nothing
+Example:	null
+Note:		This event is sent at the beginning of podium sequence
+
+
+onEndPodium
+Data:		Nothing
+Example:	null
+Note:		This event is sent at the end of the podium sequence
+
+
+onLoadingMap
+Data:		An integer with the number of the map
+Example:	1
+Note:		This event is sent when the script start to load a map
+
+
+onUnloadingMap
+Data:		An integer with the number of the map
+Example:	1
+Note:		This event is sent when the script start to unload a map
+
+
+onBeginMap
+Data:		Map object
+Example:	-
+Note:		This event is sent when all map data are loaded (without loaded records)
+
+
+onBeginMap1
+XAseco2:	onBeginMap2
+Data:		Map object
+Example:	-
+Note:		This event is sent after 'onBeginMap' when all map data and local records are loaded
+
+
+onRestartMap
+XAseco2:	onRestartMap2
+Data:		String with the Uid from Map
+Example:	'Cvy2ESexF365pzcEfsBWJe4pL58'
+Note:		This event is sent when the map was restarted
+
+
+onEndMap1
+Data:		An array with the number of the map and its UID
+Example:	[0]=IndexOfMap, [1]=Uid
+Note:		This event is sent at the end of map (prefix event for chat-based votes) and is send before the event 'onEndMap'
+
+
+onEndMap
+Data:		An array with the number of the map and its UID
+Example:	[0]=IndexOfMap, [1]=Uid
+Note:		This event is sent at the end of map (Main event)
+
+
+onBeginMatch
+Data:		An integer with the number of the match
+Example:	int(3)
+Note:		This event is sent at the beginning of each match
+
+
+onEndMatch
+Data:		An integer with the number of the match
+Example:	int(3)
+Note:		This event is sent at the end of each match
+
+
+onBeginSubMatch
+Data:		An integer with the number of the submatch
+Example:	int(2)
+Note:		This event is sent at the beginning of each submatch if the mode uses submatches
+
+
+onEndSubMatch
+Data:		An integer with the number of the submatch
+Example:	int(2)
+Note:		This event is sent at the end of each submatch if the mode uses submatches
+
+
+onBeginTurn
+Data:		An integer with the number of the turn
+Example:	int(5)
+Note:		This event is sent at the beginning of each turn if the mode uses turns
+
+
+onEndTurn
+Data:		An integer with the number of the turn
+Example:	int(5)
+Note:		This event is sent at the end of each turn if the mode uses turns
+
+
+onBeginRound
+Data:		An integer with the number of the round
+Example:	int(4)
+Note:		This event is sent at the beginning of each round if the mode uses rounds
+
+
+onEndRound
+Data:		An integer with the number of the round
+Example:	int(4)
+Note:		This event is sent at the end of each round if the mode uses rounds
+
+
+onPointsRepartitionLoaded
+Data:		An array with the current point setup
+Example:	array()
+Note:		This event is sent when the point setup has been changed

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<panel>
+	<!-- background container -->
+	<background>
+		<style>BgsPlayerCard</style>
+		<substyle>BgCardSystem</substyle>
+	</background>
+</panel>

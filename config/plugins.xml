@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugins>
+	<!-- Required plugins -->
+	<plugin>plugin.manialinks.php</plugin>
+	<plugin>plugin.modescript_handler.php</plugin>
+	<plugin>plugin.map.php</plugin>
+	<plugin>plugin.local_records.php</plugin>
+	<plugin>plugin.rasp.php</plugin>
+	<plugin>chat.admin.php</plugin>
+	<plugin>plugin.panels.php</plugin>
+	<plugin>plugin.styles.php</plugin>
+
+	<!-- Optional plugins -->
+	<plugin>plugin.welcome_center.php</plugin>
+<!--	<plugin>plugin.checkpoints_OLD.php</plugin>	-->
+	<plugin>plugin.checkpoints.php</plugin>		<!-- 2014-07-11: UNFINISHED, not all Gamemodes included	-->
+	<plugin>plugin.dedimania.php</plugin>
+	<plugin>plugin.rounds.php</plugin>
+	<plugin>plugin.round_points.php</plugin>
+	<plugin>plugin.mania_exchange_info.php</plugin>
+	<plugin>plugin.stunt_messages.php</plugin>
+	<plugin>plugin.mistral_idlekick.php</plugin>
+	<plugin>plugin.rasp_jukebox.php</plugin>
+<!--	<plugin>plugin.rasp_karma.php</plugin>		-->
+<!--	<plugin>plugin.rasp_votes.php</plugin>		-->
+	<plugin>plugin.music_server.php</plugin>
+	<plugin>plugin.autotime.php</plugin>
+	<plugin>plugin.access.php</plugin>
+	<plugin>plugin.muting.php</plugin>
+	<plugin>plugin.chat_log.php</plugin>
+	<plugin>plugin.message_log.php</plugin>
+	<plugin>plugin.donate.php</plugin>
+	<plugin>plugin.uptodate.php</plugin>
+
+	<!-- Optional chat related plugins -->
+	<plugin>chat.help.php</plugin>
+	<plugin>chat.records.php</plugin>
+	<plugin>chat.record_relations.php</plugin>
+	<plugin>chat.player_infos.php</plugin>
+	<plugin>chat.wins.php</plugin>
+	<plugin>chat.last_online.php</plugin>
+	<plugin>chat.last_window.php</plugin>
+	<plugin>chat.stats.php</plugin>
+	<plugin>chat.server.php</plugin>
+	<plugin>chat.map_mods.php</plugin>
+	<plugin>chat.me.php</plugin>
+	<plugin>chat.rasp.php</plugin>
+	<plugin>chat.rasp_nextrank.php</plugin>
+
+	<!-- Add here third-party plugins -->
+	<plugin>plugin.records_eyepiece.php</plugin>
+	<plugin>plugin.mania_karma.php</plugin>
+	<plugin>plugin.vote_manager.php</plugin>
+<!--	<plugin>test.chatcmds.php</plugin>		ONLY FOR DEVELOPMENT, DO NOT ACTIVATE THIS!!!	-->
+</plugins>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!--
+	Setup for connection to the dedicated server, make sure this is
+	the same as you have set in "UserData/Config/dedicated_cfg.txt"
+	//-->
+	<dedicated_server>
+		<login>SuperAdmin</login>
+		<password>SuperAdmin</password>
+		<ip>127.0.0.1</ip>
+		<port>5000</port>
+		<timeout>180</timeout>
+	</dedicated_server>
+
+	<masteradmins>
+		<!-- /ip:port in tmlogin only useful when joining server over LAN -->
+		<!-- ipaddress can be specified to guard each login against       -->
+		<!-- unauthorized use of admin commands from other IP addresses   -->
+		<!-- format:
+		<tmlogin>YOUR_MASTERADMIN_LOGIN</tmlogin> <ipaddress>YOUR_MASTERADMIN_IP</ipaddress>
+		//-->
+		<tmlogin>undef.de</tmlogin>
+	</masteradmins>
+
+	<!--
+	MySQL Server Settings for mysqli connection
+	//-->
+	<mysql>
+		<host>localhost</host>
+		<login>LOGIN</login>
+		<password>PASSWORD</password>
+		<database>DATABASE</database>
+	</mysql>
+
+	<!--
+	Set to contact (email, ICQ, etc) to show in /server command, leave empty to skip entry
+	//-->
+	<admin_contact>YOUR@EMAIL.COM</admin_contact>
+
+	<!--
+	Set to 'false' to log passwords in the logfile
+	//-->
+	<mask_password>true</mask_password>
+
+	<!--
+	Set to true to perform UASECO version check at start-up & MasterAdmin connect
+	//-->
+	<uptodate_check>true</uptodate_check>
+
+	<!--
+	Set to true to perform global blacklist merge at MasterAdmin connect
+	//-->
+	<global_blacklist_merge>true</global_blacklist_merge>
+
+	<!--
+	Set to global blacklist in XML format, same as <blacklist_url> in dedicated_cfg.txt,
+	e.g. http://www.gamers.org/tm2/dedimania_blacklist.txt
+	//-->
+	<global_blacklist_url>http://www.gamers.org/tm2/dedimania_blacklist.txt</global_blacklist_url>
+
+
+	<welcome_msg_window>false</welcome_msg_window>
+	<lock_password></lock_password>
+	<log_all_chat>false</log_all_chat>
+	<chatpmlog_times>true</chatpmlog_times>
+
+	<!--
+	How to handle cheating player:
+	0 = do nothing
+	1 = set to spec
+	2 = kick
+	3 = ban (& kick)
+	4 = blacklist & kick
+	5 = blacklist & ban
+	//-->
+	<cheater_action>0</cheater_action>
+
+	<!--
+	2 = in message window, 1 = in chat, 0 = none
+	//-->
+	<show_mxrec>1</show_mxrec>
+
+	<!--
+	2 = in message window, 1 = in chat, 0 = none
+	//-->
+	<show_playtime>1</show_playtime>
+
+	<!--
+	2 = in message window, 1 = in chat, 0 = none
+	//-->
+	<show_curmap>0</show_curmap>
+
+	<!--
+	Maplist used by the dedicated server, typical located in
+	"UserData/Maps/MatchSettings/"
+	//-->
+	<default_maplist>TMCanyonA.txt</default_maplist>
+	<writemaplist_random>true</writemaplist_random>
+
+	<!--
+	Filename in main directory to cache map informations from dedicated server map list
+	//-->
+	<maplist_cache_file>cache/maplist_cache.txt</maplist_cache_file>
+
+
+	<lists_colornicks>true</lists_colornicks>
+	<lists_colormaps>true</lists_colormaps>
+	<topclans_minplayers>2</topclans_minplayers>
+	<global_win_multiple>50</global_win_multiple>
+
+	<display_checkpoints>true</display_checkpoints>
+	<enable_cpsspec>false</enable_cpsspec>
+	<auto_enable_cps>true</auto_enable_cps>
+	<auto_enable_dedicps>false</auto_enable_dedicps>
+
+	<auto_admin_addip>false</auto_admin_addip>
+	<adminops_file>config/adminops.xml</adminops_file>
+	<bannedips_file>config/bannedips.xml</bannedips_file>
+	<blacklist_file>config/blacklist.txt</blacklist_file>
+	<guestlist_file>config/guestlist.txt</guestlist_file>
+
+
+	<admin_client_version></admin_client_version>
+	<player_client_version></player_client_version>
+
+	<!--
+	Setup own round points system, this require plugin.round_points.php to be included.
+	//-->
+	<default_rpoints>motogp</default_rpoints>
+
+	<afk_force_spec>true</afk_force_spec>
+	<clickable_lists>true</clickable_lists>
+	<show_rec_logins>true</show_rec_logins>
+
+	<!--
+	True = in message window, False = in chat
+	//-->
+	<rounds_in_window>false</rounds_in_window>
+
+	<!--
+	Timeout of the message window in seconds
+	//-->
+	<window_timeout>6</window_timeout>
+
+	<colors>
+		<error>$F00$I</error>
+		<welcome>$F00</welcome>
+		<server>$FF0</server>
+		<highlite>$FFF</highlite>
+		<timelite>$BBB</timelite>
+		<record>$0F3</record>
+		<emotic>$FA0</emotic>
+		<music>$D80</music>
+		<message>$39F</message>
+		<rank>$FF3</rank>
+		<vote>$F8F</vote>
+		<karma>$FF0</karma>
+		<donate>$F0F</donate>
+		<admin>$FF0</admin>
+		<black>$000</black>
+		<grey>$888</grey>
+		<login>$00F</login>
+		<logina>$0C0</logina>
+		<nick>$F00</nick>
+		<interact>$FF0$I</interact>
+		<dedimsg>$28B</dedimsg>
+		<dedirec>$0B3</dedirec>
+	</colors>
+
+	<messages>
+		<!-- init messages -->
+		<startup>{#server}» {#highlite}UASECO/{1}{#server} running on {#highlite}{2}{#server}:{#highlite}{3}{#server}</startup>
+		<welcome>{#server}» {#welcome}Welcome {#highlite}{1}{#welcome} to {#highlite}{2}$z$s{br}{#server}» {#welcome}This server uses {#highlite}UASECO/{3}{#welcome} to manage your records.</welcome>
+		<warning>$s{#welcome}This is an administrative warning.{br}{br}$gWhatever you wrote is against our server's{br}policy. Not respecting other players, or{br}using offensive language might result in a{br}{#welcome}kick, or ban {#message}the next time.{br}{br}$gThe server administrators.</warning>
+
+		<!-- record misc. messages -->
+		<ranking_record2>{#rank}{1}{#message}.{#timelite}{2}{#message}, </ranking_record2>
+		<ranking_record>{#rank}{1}{#message}.{#timelite}{2}{#message}[{#timelite}{3}{#message}], </ranking_record>
+
+		<!-- record relation messages -->
+		<first_record>{#server}» {#record}The first Local record is: </first_record>
+		<last_record>{#server}» {#record}The last Local record is: </last_record>
+		<diff_record>{#server}» {#record}Difference between {1}{#record} and {2}{#record} is: {#highlite}{3}</diff_record>
+		<summary>{#server}» {#highlite}{1} $z$s{#record}has {#highlite}{2}{#record} Local record{3}, the top {4} being: </summary>
+		<sum_entry>{#highlite}{1} {#record}rec{2} #{#rank}{3}{#record}, </sum_entry>
+
+		<!-- ranking messages -->
+		<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}], </ranking_record_new>
+
+		<!-- win messages -->
+		<wins>{#server}» {#record}You have already won {#highlite}{1}{#record} race{2}</wins>
+		<wins_other>{#server}» {#record}Player {#highlite}{1}{#record} has won {#highlite}{2}{#record} race{3}</wins_other>
+		<win_new>{#server}» {#record}Congratulations, you won your {#highlite}{1}{#record}. race!</win_new>
+		<win_multi>{#server}» {#record}Congratulations, {#highlite}{1}{#record} won his/her {#highlite}{2}{#record}. race!</win_multi>
+
+		<!-- muting messages -->
+		<mute>{#server}» Player {#highlite}{1}$z$s{#server} is muted!</mute>
+		<unmute>{#server}» Player {#highlite}{1}$z$s{#server} is unmuted!</unmute>
+		<muted>{#server}» {#highlite}{1}{#error} disabled because you are on the global mute list!</muted>
+
+		<!-- donate/pay messages -->
+		<donation>{#donate} Donate {#highlite}{1}{#donate} planets to {#highlite}{2}$z</donation>
+		<thanks_all>{#server}» {#highlite}{1}$z$s{#donate} received a donation of {#highlite}{2}{#donate} planets from {#highlite}{3}$z$s{#donate}.  Thank You!</thanks_all>
+		<thanks_you>{#server}» {#donate}You made a donation of {#highlite}{1}{#donate} planets.  Thank You!</thanks_you>
+		<donate_minimum>{#server}» {#error}Minimum donation amount is {#highlite}$i {1}{#error} planets!</donate_minimum>
+		<donate_help>{#server}» {#error}Use {#highlite}$i /donate &lt;number&gt;{#error} to donate planets to the server</donate_help>
+		<payment>{#donate} Send {#highlite}{1}{#donate} planets to {#highlite}{2}$z</payment>
+		<pay_insuff>{#server}» {#error}Insufficient server planets: {#highlite}$i {1}{#error}!</pay_insuff>
+		<pay_server>{#server}» {#error}Cannot pay this server itself!</pay_server>
+		<pay_confirm>{#server}» {#donate}Payment of {#highlite}{1}{#donate} planets to {#highlite}{2}{#donate} confirmed! Remaining planets: {#highlite}{3}</pay_confirm>
+		<pay_cancel>{#server}» {#donate}Payment to {#highlite}{1}{#donate} cancelled!</pay_cancel>
+		<pay_help>{#server}» {#error}Use {#highlite}$i /admin pay &lt;login&gt; $m&lt;number&gt;{#error} to send server planets to a login</pay_help>
+
+		<!-- playtime/map messages -->
+		<playtime>{#server}» Current map {#highlite}{1}{#server} has been played for {#highlite}{2}</playtime>
+		<playtime_finish>{#server}» Current map {#highlite}{1}{#server} finished after {#highlite}{2}</playtime_finish>
+		<playtime_replay> {#server}({#highlite}{1}{#server} replay{2}, total {#highlite}{3}{#server})</playtime_replay>
+		<map>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3} {#server}Gold: {#highlite}{4} {#server}Silver: {#highlite}{5} {#server}Bronze: {#highlite}{6} {#server}Cost: {#highlite}{7}</map>
+		<current_map>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3}</current_map>
+		<next_map>{#server}» The next Map will be: {#timelite}[{1}] {#highlite}{2}</next_map>
+
+		<!-- rounds points messages -->
+		<rpoints_named>{#server}» {1}Custom points system set to {#highlite}{2}{3}: {#highlite}{4},...</rpoints_named>
+		<rpoints_nameless>{#server}» {1}Custom points system set to: {#highlite}{2},...</rpoints_nameless>
+		<no_rpoints>{#server}» {1}No custom Rounds points system defined!</no_rpoints>
+
+		<!-- relay messages -->
+		<no_relays>{#server}» {#error}No relay servers connected</no_relays>
+		<relaymaster>{#server}» This server relays master server: {#highlite}{1}{#server} ({#highlite}{2}{#server})</relaymaster>
+		<notonrelay>{#server}» {#error}Command unavailable on relay server</notonrelay>
+
+		<!-- uptodate messages -->
+		<uptodate_ok>{#server}» {#message}This UASECO version {#highlite}{1}{#message} is up to date</uptodate_ok>
+		<uptodate_new>{#server}» {#message}New UASECO version {#highlite}{1}{#message} available from {#highlite}{2}</uptodate_new>
+
+		<!-- connection messages -->
+		<banip_dialog>{#welcome}Your IP was banned from this server.$z</banip_dialog>
+		<banip_error>{#welcome}Could not connect:{br}{br}Your IP was banned from this server!</banip_error>
+		<client_dialog>{#welcome}Obsolete client version, please $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]upgrade$l.$z</client_dialog>
+		<client_error>{#welcome}Obsolete client version!{br}Please upgrade to the $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]latest version$l.</client_error>
+		<connect_dialog>{#welcome}Connection problem, please retry.$z</connect_dialog>
+		<connect_error>{#welcome}$sThis is an administrative notice.$z{br}{br}UASECO encountered a very rare player connection{br}problem. Please re-join the server to correct it.{br}Apologies for the inconvenience.{br}{br}$sThe server administrators.</connect_error>
+
+		<!-- idlekick messages -->
+		<idlekick_play>{#server}» IdleKick player {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}!</idlekick_play>
+		<idlespec_play>{#server}» IdleSpec player {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}</idlespec_play>
+		<idlekick_spec>{#server}» IdleKick spectator {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}!</idlekick_spec>
+
+		<!-- miscellaneous messages -->
+		<song>{#server}» Map {#highlite}{1} {#server}plays song: {#highlite}{2}</song>
+		<mod>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</mod>
+		<planets>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets!</planets>
+		<time>{#server}» {#interact}Current Server Time: {#highlite}$i {1}{#interact} on {#highlite}$i {2}</time>
+		<mxrec>{#server}» {#record}MX World Record: {#highlite}{1}{#record} by {#highlite}{2}</mxrec>
+		<round>$n{#message}Round {#highlite}{1}{#message}: </round>
+		<no_cpsspec>{#server}» {#highlite}/cpsspec{#server} is not currently enabled on this server.</no_cpsspec>
+		<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>
+	</messages>
+
+
+
+	<!--
+	For details see: http://www.php.net/manual/en/function.set-time-limit.php
+	//-->
+	<script_timeout>120</script_timeout>
+
+	<!--
+	If you are not a developer of plugins, please let this settings
+	unchanged, otherwise your logfile will grow faster.
+	//-->
+	<developer_options>
+		<debug>false</debug>
+
+		<log_events>
+			<!-- Log events like '[Event] Begin Map' -->
+			<common>true</common>
+
+			<!--
+			Log events like '[EventType] Releasing "onPlayerConnect"',
+			without "onMainLoop", "onEverySecond", "onModeScriptCallbackArray"
+			and "onModeScriptCallback", but only if a plugin is listening
+			for this event.
+			//-->
+			<registered_types>false</registered_types>
+
+			<!--
+			Log ALL events like '[EventType] Releasing "onMainLoop"',
+			also if there is no plugin is listening for.
+			//-->
+			<all_types>false</all_types>
+		</log_events>
+	</developer_options>
+</settings>

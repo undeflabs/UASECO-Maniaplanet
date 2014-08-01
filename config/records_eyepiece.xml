@@ -1,0 +1,1272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<records_eyepiece>
+	<!-- THIS IS THE CONFIG FILE FOR THE TM2-PORT ONLY -->
+
+	<!-- Here you can setup some special features -->
+	<features>
+		<!-- Amount of seconds the record widgets wait until they refresh if required (increase if you experience problems on populated servers) -->
+		<refresh_interval>10</refresh_interval>
+
+		<!-- If you want to mark at the Record-Widgets the current online Players records set to 'true', otherwise set 'false' -->
+		<mark_online_player_records>true</mark_online_player_records>
+
+		<!-- This allows you to illuminate all too dark colored names from $000 till $555 to $AAA; set to 'true' to enabled, otherwise set 'false' -->
+		<illuminate_names>false</illuminate_names>
+
+		<!-- Setup the formatting of numbers (e.g. Amount of Planets, Won...), pick on of the following:
+			'english'	= 1,234.56
+			'german'	= 1.234,56
+			'french'	= 1 234,56
+		-->
+		<number_format>english</number_format>
+
+		<!-- If you want to shorten high numbers like 21,425 to 21k then set to 'true', otherwise set 'false' -->
+		<shorten_numbers>false</shorten_numbers>
+
+		<karma>
+			<!-- With this you adjust the min. amount of Votes for a Map to come into the TopMaps list, Maps below this limit are skipped from TopMaps list. -->
+			<min_votes>30</min_votes>
+
+			<!-- Here you can select the method how the Karma is calculated:
+				'tmkarma'	= calculate like TM-Karma.com it does (default)
+				'rasp'		= calculate like XAseco with RASP/Karma
+			//-->
+			<calculation_method>tmkarma</calculation_method>
+		</karma>
+
+		<songlist>
+			<!-- If you want to sort the Songlist, then set to 'true', otherwise (for the unsorted Songlist) 'false' -->
+			<sorting>true</sorting>
+
+			<!-- If set to 'true', then display the MusiclistWindow after unjuke one Song or clear the entire jukebox. To disable set to 'false' -->
+			<force_songlist>true</force_songlist>
+		</songlist>
+
+		<maplist>
+			<!-- Sorting the Maplist:
+				'author'	= Order by Authorname (default)
+				'map'		= Order by Mapname
+				'false'		= unsorted Maplist
+			//-->
+			<sorting>author</sorting>
+
+			<!-- If set to 'true', then display the MaplistWindow after unjuke one Map or clear the entire jukebox. To disable set to 'false' -->
+			<force_maplist>true</force_maplist>
+
+			<!-- This feature is for Maps that are not at mania-exchange.com, but you want to see the map image in the Last/Current/Next-Window -->
+			<mapimages>
+				<!-- If set to 'true', then the Images from the Mapfile are extracted and stored. To disable set to 'false' -->
+				<enabled>true</enabled>
+
+				<!--
+				Path where the Images are stored
+
+				Some examples for <storing_path>:
+				 - Linux (local):		<storing_path>/home/user/htdocs/mapimages/</storing_path>
+				 - Windows (local):		<storing_path>C:/server/htdocs/mapimages/</storing_path>
+				//-->
+				<storing_path>/home/midi/public_html/mapimages/</storing_path>
+
+				<!-- URL from <storing_path> to access over HTTP the Images, e.g. 'http://www.example.com/mapimages/' -->
+				<access_url>http://192.168.0.102/mapimages/</access_url>
+			</mapimages>
+		</maplist>
+
+		<!--
+			Setup the limit of displayed amounts (and memory consumption) of all 'MORE RANKING'* lists,
+			set to '-1' for no limit, or to a wanted amount (e.g. 5000 entries = default)
+			*) Not used for Dedimania-Records, Local-Records, Live-Rankings and Top-Maps!
+		//-->
+		<toplist_limit>-1</toplist_limit>
+	</features>
+
+
+	<!-- Display a progress indicator for functions that need a little bit of time to load -->
+	<show_progress_indicator>
+		<!-- If the amount of Maps is larger then this configured value, then display the progress indicator. Set to '0' to disable -->
+		<maplist>300</maplist>
+	</show_progress_indicator>
+
+
+	<!-- Styles of Widgets and Windows -->
+	<style>
+		<!-- Styles used for the Widgets at Race -->
+		<widget_race>
+			<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
+			<background_color>3332</background_color>
+			<background_focus>3335</background_focus>
+
+			<background_style>Bgs1</background_style>
+			<background_substyle>BgEmpty</background_substyle>
+
+			<border_style>Bgs1</border_style>
+			<border_substyle>BgTitleShadow</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', or 'BgList' are useful) -->
+
+			<title_style>BgsPlayerCard</title_style>
+			<title_substyle>BgRacePlayerName</title_substyle>
+
+			<!-- Style for the top X players entries in the records Widgets -->
+			<top_style>BgsPlayerCard</top_style>
+			<top_substyle>BgCardSystem</top_substyle>
+
+			<!-- Style for the highlite entries in the records Widgets -->
+			<highlite_self_style>BgsPlayerCard</highlite_self_style>
+			<highlite_self_substyle>BgCardSystem</highlite_self_substyle>
+			<highlite_other_style>BgsPlayerCard</highlite_other_style>
+			<highlite_other_substyle>BgCardSystem</highlite_other_substyle>
+
+			<!-- Here you can set all possible Formating-Codes of TM, but do not enter colors here! -->
+			<formatting_codes></formatting_codes>
+
+			<!-- Textcolor (NO formating Codes!); Format: RGBA (A = Alphachanal, Opacity) -->
+			<colors>
+				<default>FFFF</default>
+				<scores>DDDF</scores>
+				<top>FF0F</top>
+				<better>F00F</better>
+				<worse>CCCF</worse>
+				<self>3F5F</self>
+
+				<!-- Highlite the Ranks, Score and Player, if unwished set to '0000' -->
+				<background_rank>AAA5</background_rank>
+				<background_score>AAA3</background_score>
+				<background_name>AAA1</background_name>
+			</colors>
+		</widget_race>
+
+
+		<!-- Styles used for the Widgets at Scoretable -->
+		<widget_score>
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+
+			<title_style>BgsPlayerCard</title_style>
+			<title_substyle>BgRacePlayerName</title_substyle>
+
+			<!-- Here you can set all possible Formating-Codes of TM, but do not enter colors here! -->
+			<formatting_codes></formatting_codes>
+
+			<!-- Textcolor (NO formating Codes!); Format: RGBA (A = Alphachanal, Opacity) -->
+			<colors>
+				<default>FFFF</default>
+				<scores>DDDF</scores>
+			</colors>
+		</widget_score>
+
+
+		<!-- Here you can adjust the colors of all the Windows; Format: RGBA (A = Alphachanal, Opacity) -->
+		<window>
+			<headline_textcolor>09FF</headline_textcolor>
+
+			<background_style>Bgs1InRace</background_style>
+			<background_substyle>BgTitle2</background_substyle>
+
+			<!-- Background-Color for the Content inside the Window; Format: RGBA (A = Alphachanal, Opacity) -->
+			<content_bgcolor>0018</content_bgcolor>
+
+			<title_style>Bgs1InRace</title_style>
+			<title_substyle>BgTitle3_3</title_substyle>
+
+			<!-- This obscure all other displays -->
+			<lightbox>
+				<enabled>false</enabled>
+				<bgcolor>0008</bgcolor>
+			</lightbox>
+		</window>
+	</style>
+
+
+	<!-- Adjust the CustomUI send by Records-Eyepiece. Please note, that other plugins can override your configuration (if they require them)! -->
+	<custom_ui>
+		<!-- Set to 'true' if you want to send the whole <custom_ui> at player connect, otherwise set 'false' -->
+		<enabled>true</enabled>
+
+		<!-- Set to 'true' for messages like "Player xyz connects to the game.", "Player xyz get the 1. place.", otherwise set 'false' -->
+		<notice>false</notice>
+
+		<!-- Set to 'true' if you want the default Challenge-Info at top right, otherwise set 'false'. If <map_widget> is enabled, then disabled by default! -->
+		<challenge_info>true</challenge_info>
+
+		<!-- Set to 'true' if you want to see at top right the orange progress bar, otherwise set 'false' -->
+		<net_infos>true</net_infos>
+
+		<!-- Set to 'true' if you want to enabled the chatbox at the bottom, otherwise set 'false' -->
+		<chat>true</chat>
+
+		<!-- Set to 'true' if you want to see the Checkpoint-List between Time- and Speed-Box, otherwise set 'false' -->
+		<checkpoint_list>true</checkpoint_list>
+
+		<!-- Set to 'true' if you want to see the automatic Round-Score-Panel at the right side, otherwise set 'false'. If <round_score> is enabled, then disabled by default! -->
+		<round_scores>true</round_scores>
+
+		<!-- Set to 'true' if you want to see the automatic Scoretable at Score, otherwise set 'false' -->
+		<scoretable>true</scoretable>
+	</custom_ui>
+
+
+	<!-- The Map Widget where the current Map are displayed and the next and last Map are accessible -->
+	<map_widget>
+		<enabled>true</enabled>
+		<width>15.76</width>
+
+		<icons>
+			<last_map>
+				<icon_style>Icons128x128_1</icon_style>
+				<icon_substyle>NewTrack</icon_substyle>
+			</last_map>
+			<current_map>
+				<icon_style>Icons128x128_1</icon_style>
+				<icon_substyle>Challenge</icon_substyle>
+			</current_map>
+			<next_map>
+				<icon_style>Icons128x128_1</icon_style>
+				<icon_substyle>LoadTrack</icon_substyle>
+			</next_map>
+		</icons>
+		<title>
+			<last_map>Last Map</last_map>
+			<current_map>Current Map</current_map>
+			<next_map>Next Map</next_map>
+		</title>
+
+		<race>
+			<pos_x>48.64</pos_x>
+			<pos_y>48</pos_y>
+			<scale>1.0</scale>
+		</race>
+		<score>
+			<pos_x>47.8</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+
+			<!-- Setup which Map you want to display at Score:
+			     - 'next' is the next upcoming Map (default)
+			     - 'current' is the current finished Map
+			//-->
+			<display>next</display>
+		</score>
+	</map_widget>
+
+
+	<!-- Displays the current song (only if all your Songs has Ogg Vorbis Infotags) -->
+	<!-- Required plugin.musicserver.php in the plugins.xml and <cache_tags> in musicserver.xml set to 'True' -->
+	<music_widget>
+		<enabled>true</enabled>
+		<advertise>true</advertise>
+		<title>Current Song</title>
+		<width>15.76</width>
+
+		<pos_x>32.62</pos_x>
+		<pos_y>48</pos_y>
+		<scale>1.0</scale>
+
+		<icon_style>Icons128x128_1</icon_style>
+		<icon_substyle>MediaTracker</icon_substyle>
+	</music_widget>
+
+
+	<!-- Displays the current Checkpoint count, useful for RPG-Server. -->
+	<checkpointcount_widget>
+		<enabled>true</enabled>
+		<text_color>DDEF</text_color>
+
+		<pos_x>-7.9</pos_x>
+		<pos_y>-34.1</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>BgCardSystem</background_substyle>
+	</checkpointcount_widget>
+
+
+	<!-- Dedimania supports the Gamemodes Rounds, Time Attack, Team, Laps and Cup (Stunts currently not supported) -->
+	<dedimania_records>
+		<title>Dedimania Records</title>
+		<width>15.76</width>
+
+		<!-- Limit the max. records to display, setup to '0' to unlimited, see for details: http://www.tm-forum.com/viewtopic.php?p=210661#p210661 -->
+		<display_max_records>0</display_max_records>
+
+		<icon_style>BgRaceScore2</icon_style>
+		<icon_substyle>LadderRank</icon_substyle>
+
+		<gamemode>
+			<rounds>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>15</entries>
+				<topcount>3</topcount>
+			</rounds>
+
+			<time_attack>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>20</entries>
+				<topcount>3</topcount>
+			</time_attack>
+
+			<team>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>15</entries>
+				<topcount>3</topcount>
+			</team>
+
+			<laps>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>15</entries>
+				<topcount>3</topcount>
+			</laps>
+
+			<cup>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>15</entries>
+				<topcount>3</topcount>
+			</cup>
+
+			<stunts>						<!-- Unsupported by Dedimania, leave as is! -->
+				<enabled>false</enabled>
+			</stunts>
+		</gamemode>
+	</dedimania_records>
+
+
+	<local_records>
+		<title>Local Records</title>
+		<width>15.76</width>
+
+		<icon_style>BgRaceScore2</icon_style>
+		<icon_substyle>LadderRank</icon_substyle>
+
+		<gamemode>
+			<rounds>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>2.5</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
+			</rounds>
+
+			<time_attack>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>28.2</pos_y>
+				<scale>1.0</scale>
+				<entries>16</entries>
+				<topcount>3</topcount>
+			</time_attack>
+
+			<team>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>2.5</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
+			</team>
+
+			<laps>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>2.5</pos_y>
+				<scale>1.0</scale>
+				<entries>13</entries>
+				<topcount>3</topcount>
+			</laps>
+
+			<cup>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>2.5</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
+			</cup>
+
+			<stunts>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>6.6</pos_y>
+				<scale>1.0</scale>
+				<entries>10</entries>
+				<topcount>3</topcount>
+			</stunts>
+		</gamemode>
+	</local_records>
+
+
+	<live_rankings>
+		<title>Live Rankings</title>
+		<width>15.76</width>
+
+		<icon_style>BgRaceScore2</icon_style>
+		<icon_substyle>LadderRank</icon_substyle>
+
+		<gamemode>
+			<rounds>
+				<enabled>true</enabled>
+				<display_type>scores</display_type>		<!-- Display 'score' or 'time' in the LiveRankings? -->
+				<format>{score} ({remaining})</format>		<!-- Placeholder '{score}', '{remaining}' and '{pointlimit}' are replaced with e.g. "25 (74)" -->
+				<pos_x>48.64</pos_x>
+				<pos_y>-0.3</pos_y>
+				<scale>1.0</scale>
+				<entries>11</entries>
+				<topcount>3</topcount>
+			</rounds>
+
+			<time_attack>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>-4</pos_y>
+				<scale>1.0</scale>
+				<entries>9</entries>
+				<topcount>3</topcount>
+			</time_attack>
+
+			<team>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>28.3</pos_y>
+				<scale>1.0</scale>
+				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
+				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
+			</team>
+
+			<laps>
+				<enabled>true</enabled>
+				<display_type>checkpoints</display_type>	<!-- Display 'checkpoints' or 'time' in the LiveRankings? -->
+				<pos_x>48.64</pos_x>
+				<pos_y>-5.06</pos_y>
+				<scale>1.0</scale>
+				<entries>8</entries>
+				<topcount>3</topcount>
+			</laps>
+
+			<cup>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>-0.3</pos_y>
+				<scale>1.0</scale>
+				<entries>11</entries>
+				<topcount>3</topcount>
+			</cup>
+
+			<stunts>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>-14.8</pos_y>
+				<scale>1.0</scale>
+				<entries>6</entries>
+				<topcount>3</topcount>
+			</stunts>
+		</gamemode>
+	</live_rankings>
+
+
+	<!-- This disables the default Round-Score at the right side and display an own one -->
+	<round_score>
+		<title>Round Score</title>
+		<width>15.76</width>
+
+		<race>
+			<icon_style>Icons64x64_1</icon_style>
+			<icon_substyle>RestartRace</icon_substyle>
+		</race>
+		<warmup>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>Warmup</icon_substyle>
+		</warmup>
+
+		<gamemode>
+			<rounds>
+				<enabled>true</enabled>
+				<race>
+					<pos_x>48.64</pos_x>
+					<pos_y>28.3</pos_y>
+					<scale>1.0</scale>
+					<entries>14</entries>
+					<topcount>3</topcount>
+				</race>
+				<warmup>
+					<pos_x>48.64</pos_x>
+					<pos_y>28.3</pos_y>
+					<scale>1.0</scale>
+					<entries>2</entries>			<!-- max. 2 -->
+					<topcount>2</topcount>			<!-- max. 2 -->
+				</warmup>
+			</rounds>
+
+			<time_attack>						<!-- Unsupported, leave as is! -->
+				<enabled>false</enabled>
+			</time_attack>
+
+			<team>
+				<enabled>true</enabled>
+				<race>
+					<pos_x>48.64</pos_x>
+					<pos_y>21.3</pos_y>
+					<scale>1.0</scale>
+					<entries>23</entries>
+					<topcount>3</topcount>
+				</race>
+				<warmup>
+					<pos_x>48.64</pos_x>
+					<pos_y>21.3</pos_y>
+					<scale>1.0</scale>
+					<entries>2</entries>			<!-- max. 2 -->
+					<topcount>2</topcount>			<!-- max. 2 -->
+				</warmup>
+			</team>
+
+			<laps>
+				<enabled>true</enabled>
+				<race>
+					<pos_x>48.64</pos_x>
+					<pos_y>23.64</pos_y>
+					<scale>1.0</scale>
+					<entries>14</entries>
+					<topcount>3</topcount>
+				</race>
+				<warmup>
+					<pos_x>48.64</pos_x>
+					<pos_y>23.64</pos_y>
+					<scale>1.0</scale>
+					<entries>2</entries>			<!-- max. 2 -->
+					<topcount>2</topcount>			<!-- max. 2 -->
+				</warmup>
+			</laps>
+
+			<cup>
+				<enabled>true</enabled>
+				<race>
+					<pos_x>48.64</pos_x>
+					<pos_y>28.3</pos_y>
+					<scale>1.0</scale>
+					<entries>14</entries>
+					<topcount>3</topcount>
+				</race>
+				<warmup>
+					<pos_x>48.64</pos_x>
+					<pos_y>28.3</pos_y>
+					<scale>1.0</scale>
+					<entries>2</entries>			<!-- max. 2 -->
+					<topcount>2</topcount>			<!-- max. 2 -->
+				</warmup>
+			</cup>
+
+			<stunts>
+				<enabled>false</enabled>			<!-- Unsupported, leave as is! -->
+			</stunts>
+		</gamemode>
+	</round_score>
+
+
+
+	<!-- Paying Planets to first three ranked Players and display a Widget at Score -->
+	<!-- NOTE: This is automatic disabled in Gamemode 'Team' -->
+	<winning_payout>
+		<enabled>true</enabled>
+
+		<minimum_server_planets>250</minimum_server_planets>	<!-- If Server gets lower this limit, then payout is disabled -->
+
+		<players>
+			<minimum_amount>1</minimum_amount>		<!-- Min. amount of Players to enable winning payout. If less Players online, payout at Score are disabled (hardlimit min. 3 Players) -->
+			<rank_limit>500</rank_limit>			<!-- Every Player below this limit can not win Planets, set to '0' to disable -->
+
+			<maximum_planets>300</maximum_planets>		<!-- Limit of Planets a Player can win for each Session, set to '0' to disable -->
+			<reset_limit>86400</reset_limit>		<!-- The given Limit at <maximum_planets> are stored for <reset_limit> seconds, within this time the Player are disabled to win. Set to '0' to disable. -->
+		</players>
+
+		<pay_planets>
+			<first>20</first>				<!-- Player at the 1. Place receive this amount of Planets (default min. 20 p) -->
+			<second>15</second>				<!-- Player at the 2. Place receive this amount of Planets (default min. 15 p) -->
+			<third>10</third>				<!-- Player at the 3. Place receive this amount of Planets (default min. 10 p) -->
+		</pay_planets>
+
+		<!-- Here you can setup which group can not win, set to 'true' to ignore the entire list or 'false' to include -->
+		<ignore>
+			<operator>false</operator>
+			<admin>false</admin>
+			<masteradmin>true</masteradmin>
+		</ignore>
+
+		<widget>
+			<title>Finish Winners</title>
+			<pos_x>37.8</pos_x>
+			<pos_y>-32</pos_y>
+			<scale>1.0</scale>
+
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+
+			<title_style>BgsPlayerCard</title_style>
+			<title_substyle>BgRacePlayerName</title_substyle>
+
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>Fame</icon_substyle>
+		</widget>
+
+		<!-- Format: RGBA (A = Alphachanal, Opacity) -->
+		<colors>
+			<won>5F0F</won>
+			<planets>FF9F</planets>
+			<rank_limit>F00F</rank_limit>
+			<disconnected>F00F</disconnected>
+		</colors>
+	</winning_payout>
+
+
+	<!-- Displays the DonationWidget at Score (only) -->
+	<donation_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<!-- Adjust here the wished amounts of Planets the Players can donate (min. 7 and max. 10 values, seperated by ",")
+		     NOTE: Only the first 7 values are setup to the original Donation-Widget!
+		//-->
+		<amounts>20,50,100,200,500,1000,1500,2000,2500,5000</amounts>
+
+		<!-- Public appreciation threshold (show "Thank You" to all) -->
+		<public_appreciation_threshold>50</public_appreciation_threshold>
+
+		<widget>
+			<pos_x>-47.74</pos_x>
+			<pos_y>26.5</pos_y>
+			<scale>1.0</scale>
+
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>Coppers</icon_substyle>
+
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+
+			<button_style>UIConstructionSimple_Buttons</button_style>
+			<button_substyle>Item</button_substyle>
+
+			<!-- Format: RGBA (A = Alphachanal, Opacity) -->
+			<button_color>000F</button_color>
+		</widget>
+	</donation_widget>
+
+
+	<!-- Displays the current LadderLimits like "40-80k" -->
+	<ladderlimit_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<!--
+                     If your Server is an RoC-Ladder (Races of Champions), then you have to set this to 'true',
+		     otherwise this Widget display the wrong LadderLimits when Nadeo change it to 80-100k.
+		     The check are always run at Sunday at each Map change. All other Server have set this to 'false'.
+		-->
+		<roc_server>false</roc_server>
+
+		<pos_x>-63.85</pos_x>
+		<pos_y>39.8</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</ladderlimit_widget>
+
+
+	<!-- Displays the current Gamemode -->
+	<gamemode_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>-59.05</pos_x>
+		<pos_y>39.8</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</gamemode_widget>
+
+
+	<!-- Displays the current Player- and Spectator-Count and also the max. values of them -->
+	<player_spectator_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>-54.25</pos_x>
+		<pos_y>39.8</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</player_spectator_widget>
+
+
+	<!-- Displays the current Rankings -->
+	<current_ranking_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>-49.45</pos_x>
+		<pos_y>39.8</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</current_ranking_widget>
+
+
+	<!-- Displays a button for ManiaExchange -->
+	<maniaexchange_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>24.58</pos_x>
+		<pos_y>39.3</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</maniaexchange_widget>
+
+
+	<!-- Displays a button for the Toplists at score into the Race with the 'MORE RANKING'-Button -->
+	<toplist_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>29.38</pos_x>
+		<pos_y>39.3</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</toplist_widget>
+
+
+	<!-- Displays the current Mapcount -->
+	<mapcount_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>34.18</pos_x>
+		<pos_y>39.3</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</mapcount_widget>
+
+
+	<!-- Displays the Player-Visits -->
+	<visitors_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>38.98</pos_x>
+		<pos_y>39.3</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</visitors_widget>
+
+
+	<!-- Just a clock where the Player can adjust her/his own timezone to display the localtime -->
+	<clock_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<race>
+			<pos_x>43.78</pos_x>
+			<pos_y>39.3</pos_y>
+			<scale>1.0</scale>
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+		</race>
+		<score>
+			<pos_x>43</pos_x>
+			<pos_y>33.2</pos_y>
+			<scale>1.0</scale>
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+		</score>
+	</clock_widget>
+
+
+	<!-- Displays the Add-To-Favorite -->
+	<favorite_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<race>
+			<pos_x>43.78</pos_x>
+			<pos_y>32.6</pos_y>
+			<scale>1.0</scale>
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+		</race>
+		<score>
+			<pos_x>-47.74</pos_x>
+			<pos_y>33.2</pos_y>
+			<scale>1.0</scale>
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+		</score>
+	</favorite_widget>
+
+
+	<!-- Displays the NEXT Environment at Score -->
+	<next_environment_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>-63.7</pos_x>
+		<pos_y>33.2</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</next_environment_widget>
+
+
+	<!-- Displays the NEXT Gamemode at Score -->
+	<next_gamemode_widget>
+		<enabled>true</enabled>
+		<text_color>FC0F</text_color>
+
+		<pos_x>-52.5</pos_x>
+		<pos_y>33.2</pos_y>
+		<scale>1.0</scale>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</next_gamemode_widget>
+
+
+	<!-- Displays the Eyepiece-Logo -->
+	<eyepiece_widget>
+		<text_color>FC0F</text_color>
+
+		<race>
+			<enabled>true</enabled>
+			<pos_x>-62</pos_x>
+			<pos_y>47</pos_y>
+			<scale>1.0</scale>
+		</race>
+		<score>
+			<enabled>true</enabled>
+			<pos_x>43</pos_x>
+			<pos_y>26.5</pos_y>
+			<scale>1.0</scale>
+			<background_style>BgsPlayerCard</background_style>
+			<background_substyle>ProgressBar</background_substyle>
+		</score>
+	</eyepiece_widget>
+
+
+	<!-- This Lists are only displayed at Scoretable -->
+	<scoretable_lists>
+		<top_average_times>
+			<enabled>true</enabled>
+			<title>Average Last Round</title>
+			<pos_x>-63.7</pos_x>
+			<pos_y>26.5</pos_y>
+			<scale>1.0</scale>
+			<entries>8</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>ScoreLink</icon_substyle>
+		</top_average_times>
+
+		<dedimania_records>				<!-- Disabled in Gamemode 'Stunts' -->
+			<enabled>true</enabled>
+			<title>Dedimania Records</title>
+			<pos_x>-63.7</pos_x>
+			<pos_y>-9.25</pos_y>
+			<scale>1.0</scale>
+			<entries>8</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>LadderRank</icon_substyle>
+		</dedimania_records>
+
+		<local_records>
+			<enabled>true</enabled>
+			<title>Local Records</title>
+			<pos_x>-63.7</pos_x>
+			<pos_y>8.6</pos_y>
+			<scale>1.0</scale>
+			<entries>8</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>LadderRank</icon_substyle>
+		</local_records>
+
+		<top_rankings>
+			<enabled>true</enabled>
+			<title>Top Ranks</title>
+			<pos_x>-63.7</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>Podium</icon_substyle>
+		</top_rankings>
+
+		<top_winners>
+			<enabled>true</enabled>
+			<title>Top Winners</title>
+			<pos_x>-47.78</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons128x32_1</icon_style>
+			<icon_substyle>RT_Cup</icon_substyle>
+		</top_winners>
+
+		<most_records>
+			<enabled>true</enabled>
+			<title>Most Records</title>
+			<pos_x>-31.86</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons64x64_1</icon_style>
+			<icon_substyle>RestartRace</icon_substyle>
+		</most_records>
+
+		<most_finished>
+			<enabled>true</enabled>
+			<title>Most Finished</title>
+			<pos_x>-15.94</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>Race</icon_substyle>
+		</most_finished>
+
+		<top_playtime>
+			<enabled>true</enabled>
+			<title>Hours Played</title>
+			<pos_x>-0.02</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons128x32_1</icon_style>
+			<icon_substyle>RT_TimeAttack</icon_substyle>
+		</top_playtime>
+
+		<top_donators>
+			<enabled>true</enabled>
+			<title>Top Donators</title>
+			<pos_x>15.9</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>Coppers</icon_substyle>
+		</top_donators>
+
+		<top_nations>
+			<enabled>true</enabled>
+			<title>Top Nations</title>
+			<pos_x>31.82</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons64x64_1</icon_style>
+			<icon_substyle>ToolLeague1</icon_substyle>
+		</top_nations>
+
+		<top_continents>
+			<enabled>false</enabled>
+			<title>Top Continents</title>
+			<pos_x>31.82</pos_x>
+			<pos_y>47.5</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons64x64_1</icon_style>
+			<icon_substyle>ToolLeague1</icon_substyle>
+		</top_continents>
+
+		<top_maps>
+			<enabled>true</enabled>
+			<title>Top Maps</title>
+			<pos_x>47.8</pos_x>
+			<pos_y>22.3</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>NewTrack</icon_substyle>
+		</top_maps>
+
+		<top_voters>
+			<enabled>true</enabled>
+			<title>Top Voters</title>
+			<pos_x>47.8</pos_x>
+			<pos_y>8</pos_y>
+			<scale>1.0</scale>
+			<entries>6</entries>
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>Invite</icon_substyle>
+		</top_voters>
+
+		<top_visitors>
+			<enabled>false</enabled>
+			<title>Top Visitors</title>
+			<pos_x>47.8</pos_x>
+			<pos_y>-6.28</pos_y>
+			<scale>1.0</scale>
+			<entries>7</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>LadderRank</icon_substyle>
+		</top_visitors>
+
+		<top_active_players>
+			<enabled>true</enabled>
+			<title>Top Active Players</title>
+			<pos_x>47.8</pos_x>
+			<pos_y>-6.28</pos_y>
+			<scale>1.0</scale>
+			<entries>7</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>LadderRank</icon_substyle>
+		</top_active_players>
+
+		<top_winning_payouts>
+			<enabled>false</enabled>
+			<title>Top Finish Winners</title>
+			<pos_x>47.8</pos_x>
+			<pos_y>-6.28</pos_y>
+			<scale>1.0</scale>
+			<entries>7</entries>
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>Coppers</icon_substyle>
+		</top_winning_payouts>
+
+		<top_betwins>
+			<enabled>false</enabled>
+			<title>Top Betwins</title>
+			<display>average</display>			<!-- Want to see the 'average' of betwins, or the 'planets' the Players won? -->
+			<pos_x>47.8</pos_x>
+			<pos_y>-6.28</pos_y>
+			<scale>1.0</scale>
+			<entries>7</entries>
+			<icon_style>Icons128x128_1</icon_style>
+			<icon_substyle>Coppers</icon_substyle>
+		</top_betwins>
+
+		<!-- This Widget is only available at the Gamemodes 'Rounds' and 'Cup' -->
+		<top_roundscore>
+			<enabled>false</enabled>
+			<title>Top Roundscore</title>
+			<pos_x>47.8</pos_x>
+			<pos_y>-6.28</pos_y>
+			<scale>1.0</scale>
+			<entries>7</entries>
+			<icon_style>BgRaceScore2</icon_style>
+			<icon_substyle>LadderRank</icon_substyle>
+		</top_roundscore>
+	</scoretable_lists>
+
+
+	<!--
+		Displays multiple fully customizable widgets all over the HUD containing images or bik-videos.
+		This content needs its loading time so please be patient if it does not show up immediately and
+		you need to press DEL to get the loaded content to be displayed.
+		Have a look at the sample placements to see how the widget is used. You can combine the tags in nearly every
+		possible way, having a manialink on a video that becomes an image on mouseover or something like that.
+		You can add as many <placement>-Blocks as you want but be sure to not overload your HUD for your players.
+	//-->
+	<placement_widget>
+		<enabled>true</enabled>
+
+		<!--	Placeholder for <placement>'s
+			PLEASE NOTE: If a Map are not at MX, the <placement> with %MAP_MX_*% inside are not displayed!
+			Supported only in <display>-Mode 'score' and as parameter in <url> and <manialink>!
+
+			%MAP_MX_PREFIX%		= MX prefix for URL (e.g. 'tm' for http://tm.mania-exchange.com/...)
+			%MAP_MX_ID%		= MX-Id from current Map
+			%MAP_MX_PAGEURL%	= MX-URL directly to the Map
+			%MAP_UID%		= Uid from current Map
+			%MAP_NAME%		= Name of the Map
+		//-->
+
+		<!--	All possible supported entries and values for a <placement>
+			If you set <url>, <manialink>, <action_id> and <chat_command> together, only <url> will be used
+			Min. required are (without <include>): <enabled>, <display>, <pos_x>, <pos_y>, <width> and <height>
+			Min. required are (with <include>): <enabled>, <display> and <include> (all other are ignored)
+		<placement>
+			<enabled>[true|false]</enabled>
+			<description>enter here whatever you want as an description (this is just for you to remember what this is)</description>
+			<display>[rounds|time_attack|team|laps|cup|stunts|race|score|always]</display>
+			<pos_x>[signed/unsigned float]</pos_x>
+			<pos_y>[signed/unsigned float]</pos_y>
+			<layer>[signed/unsigned float]</layer>				from "-3" till "20"
+			<width>[unsigned float]</width>
+			<height>[unsigned float]</height>
+			<background_style>[empty|style]</background_style>
+			<background_substyle>[empty|substyle]</background_substyle>
+			<icon_style>[empty|style]</icon_style>
+			<icon_substyle>[empty|substyle]</icon_substyle>
+			<halign>[empty|left|center|right]</halign>
+			<valign>[top|center|bottom]</valign>
+			<text>[string with formating codes]</text>
+			<textsize>[int]</textsize>
+			<textscale>[0.0|0.1|0.2|0.3|0.4|0.5|0.6|0.7|0.8|0.9|1.0]</textscale>
+			<image>[empty|url]</image>
+			<imagefocus>[empty|url]</imagefocus>
+			<opacity>[unsigned float]</opacity>				working only in combination with <image> and <text>
+			<colorize>[RGB]</colorize>					working only in combination with <image>
+			<modulatecolor>[RGBA]</modulatecolor>				working only in combination with <image>
+			<url>[empty|url]</url>
+			<manialink>[empty|manialink]</manialink>
+			<action_id>[signed/unsigned int]</action_id>			enter here an action id from other Plugins
+			<chat_command>[string]</chat_command>				enter here a chat-command from other Plugins, e.g. "/karma help"
+			<include>[path to a file]</include>				enter here the path to the file you want to include (relative from the xaseco2.php location)
+		</placement>
+		//-->
+
+
+		<placement>
+			<enabled>false</enabled>
+			<description>Dark Background at Score behind the Widgets</description>
+			<display>score</display>
+			<pos_x>-64</pos_x>
+			<pos_y>48</pos_y>
+			<layer>-3</layer>
+			<width>128</width>
+			<height>96</height>
+			<image>http://www.abload.de/img/background-scoretablew1byd.png</image>
+		</placement>
+
+		<placement>
+			<enabled>false</enabled>
+			<description>Sample entry for in-game graphics (displayed only at Race)</description>
+			<display>race</display>
+			<pos_x>0.0</pos_x>
+			<pos_y>0.0</pos_y>
+			<width>16</width>
+			<height>16</height>
+			<background_style>Bgs1InRace</background_style>
+			<background_substyle>NavButton</background_substyle>
+			<image>file://Skins/Avatars/Flags/GER.dds</image>
+			<imagefocus>file://Skins/Avatars/Flags/USA.dds</imagefocus>
+			<chat_command>/karma help</chat_command>
+		</placement>
+
+	</placement_widget>
+
+
+	<!-- The nicemode is an attempt to reduce the manialink calls, if a specific amount of players is on the server -->
+	<nicemode>
+		<enabled>true</enabled>				<!-- If you want to enable the nicemode, you need to say 'true' here! -->
+		<force>false</force>				<!-- For servers with as usual 100+ Player, you can force nicemode by default -->
+
+		<refresh_interval>10</refresh_interval>		<!-- If the nice mode is turned on then increase to this refresh interval -->
+		<limits>
+			<lower_limit>24</lower_limit>		<!-- If the playercount gets equal to or BELOW that limit, the widgets will revert to default mode -->
+			<upper_limit>25</upper_limit>		<!-- If the playercount gets equal to or ABOVE that limit, the widgets will switch to nice mode -->
+		</limits>
+
+		<colors>
+			<top>FF0F</top>
+			<worse>19FF</worse>
+		</colors>
+
+		 <!-- These settings specify which widgets will be shown in high performance mode, by deactivating some of them, you can also gain performance -->
+		<allow>
+			<dedimania_records>true</dedimania_records>
+			<local_records>true</local_records>
+			<live_rankings>true</live_rankings>
+		</allow>
+	</nicemode>
+
+
+	<!-- Define the text shown in the chat when you disactivate/activate the display of the record widgets -->
+	<messages>
+		<widgets_disabled>{#server}>> Your record widgets are now hidden, press F7 to reactivate them.</widgets_disabled>
+		<widgets_enabled>{#server}>> Your record widgets are now shown, press F7 to hide them.</widgets_enabled>
+		<widgets_preference_disabled>{#server}>> Your record widgets are now permanent hidden and your preference was saved, type {#highlite}/eyepiece show{#server} to reactivate them.</widgets_preference_disabled>
+		<widgets_preference_enabled>{#server}>> Your record widgets are now permanent shown and your preference was saved, type {#highlite}/eyepiece hide{#server} to hide them.</widgets_preference_enabled>
+		<toggling_disabled>{#server}>> Sorry, you can not toggle the record widgets at the moment. There are too many players on the server, so they are in static mode now.</toggling_disabled>
+		<disallow_windows_at_score>{#server}>> Could not display this window at score! Please try again when the race is started.</disallow_windows_at_score>
+		<winning_mail_body>{#karma}You won several races and won {#highlite}{1} Planets{#karma}!{br}$L[maniaplanet://#addfavourite={2}]Please add {3}{#karma} to favorites!$L</winning_mail_body>
+	</messages>
+
+
+	<!-- URLs of the Images, you can use this locations or just copy the images to your Server -->
+	<images>
+		<widget_open_left>http://static.undef.name/ingame/records-eyepiece/edge-open-ld-dark.png</widget_open_left>
+		<widget_close_left>http://static.undef.name/ingame/records-eyepiece/edge-close-lu-dark.png</widget_close_left>
+		<widget_open_right>http://static.undef.name/ingame/records-eyepiece/edge-open-rd-dark.png</widget_open_right>
+		<widget_open_small>http://static.undef.name/ingame/records-eyepiece/edge-open-ld-light.png</widget_open_small>
+
+		<widget_plus_normal>http://static.undef.name/ingame/records-eyepiece/button-plus-normal.png</widget_plus_normal>
+		<widget_plus_focus>http://static.undef.name/ingame/records-eyepiece/button-plus-focus.png</widget_plus_focus>
+		<widget_minus_normal>http://static.undef.name/ingame/records-eyepiece/button-minus-normal.png</widget_minus_normal>
+		<widget_minus_focus>http://static.undef.name/ingame/records-eyepiece/button-minus-focus.png</widget_minus_focus>
+		<widget_ok_normal>http://static.undef.name/ingame/records-eyepiece/button-ok-normal.png</widget_ok_normal>
+		<widget_ok_focus>http://static.undef.name/ingame/records-eyepiece/button-ok-focus.png</widget_ok_focus>
+
+		<mx_logo_normal>http://static.undef.name/ingame/records-eyepiece/logo-maniaexchange-normal.png</mx_logo_normal>
+		<mx_logo_focus>http://static.undef.name/ingame/records-eyepiece/logo-maniaexchange-focus.png</mx_logo_focus>
+
+		<clock_icon>http://static.undef.name/ingame/records-eyepiece/clock-icon.png</clock_icon>
+		<worldmap>http://static.undef.name/ingame/records-eyepiece/worldmap-pure.png</worldmap>
+		<no_screenshot>http://static.undef.name/ingame/records-eyepiece/no-screenshot-tm2.jpg</no_screenshot>
+		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.bik</progress_indicator>
+
+		<environment>
+			<logos>
+				<canyon>http://static.undef.name/ingame/records-eyepiece/env-canyon.png</canyon>
+				<stadium>http://static.undef.name/ingame/records-eyepiece/env-stadium2.png</stadium>
+				<valley>http://static.undef.name/ingame/records-eyepiece/env-valley.png</valley>
+			</logos>
+			<enabled>
+				<icon_canyon>http://static.undef.name/ingame/records-eyepiece/env-canyon-enabled.png</icon_canyon>
+				<icon_stadium>http://static.undef.name/ingame/records-eyepiece/env-stadium2-enabled.png</icon_stadium>
+				<icon_valley>http://static.undef.name/ingame/records-eyepiece/env-valley-enabled.png</icon_valley>
+			</enabled>
+			<focus>
+				<icon_canyon>http://static.undef.name/ingame/records-eyepiece/env-canyon-focus.png</icon_canyon>
+				<icon_stadium>http://static.undef.name/ingame/records-eyepiece/env-stadium2-focus.png</icon_stadium>
+				<icon_valley>http://static.undef.name/ingame/records-eyepiece/env-valley-focus.png</icon_valley>
+			</focus>
+		</environment>
+
+		<mood>
+			<enabled>
+				<sunrise>http://static.undef.name/ingame/records-eyepiece/mood-sunrise-normal.png</sunrise>
+				<day>http://static.undef.name/ingame/records-eyepiece/mood-day-normal.png</day>
+				<sunset>http://static.undef.name/ingame/records-eyepiece/mood-sunset-normal.png</sunset>
+				<night>http://static.undef.name/ingame/records-eyepiece/mood-night-normal.png</night>
+			</enabled>
+			<focus>
+				<sunrise>http://static.undef.name/ingame/records-eyepiece/mood-sunrise-focus.png</sunrise>
+				<day>http://static.undef.name/ingame/records-eyepiece/mood-day-focus.png</day>
+				<sunset>http://static.undef.name/ingame/records-eyepiece/mood-sunset-focus.png</sunset>
+				<night>http://static.undef.name/ingame/records-eyepiece/mood-night-focus.png</night>
+			</focus>
+		</mood>
+
+		<continents>
+			<africa>http://static.undef.name/ingame/records-eyepiece/continents-africa.png</africa>
+			<asia>http://static.undef.name/ingame/records-eyepiece/continents-asia.png</asia>
+			<europe>http://static.undef.name/ingame/records-eyepiece/continents-europe.png</europe>
+			<middle_east>http://static.undef.name/ingame/records-eyepiece/continents-middle-east.png</middle_east>
+			<north_america>http://static.undef.name/ingame/records-eyepiece/continents-north-america.png</north_america>
+			<south_america>http://static.undef.name/ingame/records-eyepiece/continents-south-america.png</south_america>
+			<oceania>http://static.undef.name/ingame/records-eyepiece/continents-oceania.png</oceania>
+		</continents>
+	</images>
+
+</records_eyepiece>

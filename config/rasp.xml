@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rasp>
+	<!--
+	##################################################################
+	#                          Features                              #
+	#  Specify here which features you would like to be activated    #
+	##################################################################
+	//-->
+
+	<!--
+	Set to true if you want the rank system active
+	-->
+	<feature_ranks>true</feature_ranks>
+
+	<!--
+	Set to true if you want /nextrank to show the difference in record positions,
+	i.e. the combined number of positions that your records need to be improved
+	in order to catch up with the next better ranked player
+	-->
+	<nextrank_show_points>true</nextrank_show_points>
+
+	<!--
+	Set to true if you want all times recorded, and /pb command to be active
+	//-->
+	<feature_stats>true</feature_stats>
+
+	<!--
+	Set to true to always show PB at map start
+	If false and <show_recs_before> is 2 or 6 AND player has ranked record, OR
+	player uses the records panel, then PB message is not shown at map start
+	//-->
+	<always_show_pb>true</always_show_pb>
+
+	<!--
+	Set to true ONLY if you use the karma feature.
+	If you set this to true when you are not, it will produce errors
+	//-->
+	<feature_karma>true</feature_karma>
+
+	<!--
+	Set to true if you allow vote shortforms (++ as well as /++)
+	//-->
+	<allow_public_karma>true</allow_public_karma>
+
+	<!--
+	Set to true if you want to show the karma message at the start of each map
+	//-->
+	<karma_show_start>true</karma_show_start>
+
+	<!--
+	Set to true if you want to show vote counts & percentages
+	//-->
+	<karma_show_details>true</karma_show_details>
+
+	<!--
+	Set to true if you want to show players their actual votes
+	//-->
+	<karma_show_votes>true</karma_show_votes>
+
+	<!--
+	Set to the number of times a player should have finished a map before
+	being allowed to karma vote for it
+	Note: this is the total number of finishes since the first time a player
+	tried a map, not the number in the current session
+	//-->
+	<karma_require_finish>0</karma_require_finish>
+
+	<!--
+	Set to true if you want to show players their actual votes
+	2 = every finish; 1 = at end of race; 0 = none
+	//-->
+	<remind_karma>0</remind_karma>
+
+	<!--
+	Set to true if you want to show players their actual votes
+	//-->
+	<feature_jukebox>true</feature_jukebox>
+
+	<!--
+	Set to true if you want to show players their actual votes
+	//-->
+	<feature_mxadd>false</feature_mxadd>
+
+	<!--
+	Set to true if you want jukebox to skip maps requested by players that left
+	//-->
+	<jukebox_skipleft>true</jukebox_skipleft>
+
+	<!--
+	Set to true if you want jukebox to _not_ skip maps requested by admins
+	(any tier) that left (and <jukebox_skipleft> is true)
+	//-->
+	<jukebox_adminnoskip>false</jukebox_adminnoskip>
+
+	<!--
+	Set to true if you want /add to permanently add maps to the server
+	//-->
+	<jukebox_permadd>false</jukebox_permadd>
+
+	<!--
+	Set to true if you want /admin add to automatically jukebox the downloaded map
+	(just like a passed /add vote)
+	//-->
+	<jukebox_adminadd>true</jukebox_adminadd>
+
+	<!--
+	Set to true if you want jukebox messages diverted to message window
+	//-->
+	<jukebox_in_window>false</jukebox_in_window>
+
+	<!--
+	Set to true to reset the map list cache at the start of each map
+	//-->
+	<reset_cache_start>false</reset_cache_start>
+
+	<!--
+	Path to a file where the map history can be stored, used in jukebox
+	//-->
+	<maphistory_file>cache/maphistory.txt</maphistory_file>
+
+	<!--
+	Set to filename to enable autosaving matchsettings upon every map switch,
+	e.g. 'autosave_matchsettings.txt'.
+	Gets stored at "UserData/Maps/MatchSettings/" directory.
+	//-->
+	<autosave_matchsettings></autosave_matchsettings>
+
+	<!--
+	Set to true if you want start-up to prune records/rs_times for players and
+	maps deleted from database, and for maps deleted from the server
+	Only enable this if you know what you're doing!
+	//-->
+	<prune_records_times>false</prune_records_times>
+
+	<!--
+	Set to true if you want to disable normal CallVotes & enable chat-based votes
+	//-->
+	<feature_votes>false</feature_votes>
+
+
+	<!--
+	##################################################################
+	#                      Performance Variables                     #
+	#  These variables are used in the main plugin.                  #
+	#  They specify how much data should be used for calculations    #
+	#                                                                #
+	#  If your server slows down considerably when calculating       #
+	#  ranks it is recommended that you lower/increase these values  #
+	##################################################################
+	//-->
+
+	<!--
+	Sets the minimum amount of records required for a player to be ranked: Higher = Faster
+	//-->
+	<min_rank>3</min_rank>
+
+	<!--
+	Sets the maximum number of records stored per map: Lower = Faster
+	//-->
+	<max_avg>10</max_avg>
+
+
+	<!--
+	##################################################################
+	#                     Jukebox Variables                          #
+	#  These variables are used by the jukebox.                      #
+	##################################################################
+	//-->
+
+	<!--
+	Specifies how large the map history buffer is.
+	If a map that is in the buffer gets requested, it won't be jukeboxed.
+	//-->
+	<buffer_size>20</buffer_size>
+
+	<!--
+	Specifies the required vote ratio for a MX /add request to be successful.
+	//-->
+	<mx_voteratio>0.66</mx_voteratio>
+
+	<!--
+	The location of the maps folders for saving MX maps, relative
+	to the dedicated server's UserData/Maps/ directory:
+	mx_dir for maps downloaded via /admin add, and user maps approved
+	via /admin addthis.
+	mx_tmpdir for maps downloaded via /add user votes.
+	There must be full write permissions on these folders.
+	In linux the command will be:  chmod 777.
+	Regardless of OS, use the / character for pathing.
+	//-->
+	<mx_dir>MX</mx_dir>
+	<mx_tmpdir>MXtmp</mx_tmpdir>
+
+
+	<!--
+	##################################################################
+	#                         IRC Variables                          #
+	#  These variables are used by the IRC plugin.                   #
+	##################################################################
+	//-->
+
+	<!--
+	Hostname of the irc-server (i.e. irc.gamesnet.net)
+	//-->
+	<irc_server>localhost</irc_server>
+
+	<!--
+	Port of the irc-server (standard: 6667)
+	//-->
+	<irc_port>6667</irc_port>
+
+	<!--
+	Name of the irc-channel (i.e. #php)
+	//-->
+	<irc_channel>#channel</irc_channel>
+
+	<!--
+	Name of the irc-bot (i.e. demonbot)
+	//-->
+	<irc_botname>botlogin</irc_botname>
+
+	<!--
+	Nick of the irc-bot (i.e. demonbot)
+	-->
+	<irc_botnick>botname</irc_botnick>
+
+	<!--
+	If set to true, the IRC connection messages will be displayed in the console.
+	//-->
+	<irc_show_connect>false</irc_show_connect>
+
+
+	<!--
+	##################################################################
+	#                          Vote Settings                         #
+	#                     Specify the vote settings                  #
+	##################################################################
+	//-->
+
+	<!--
+	If true, vote command automatically votes for starter
+	if false, the old way remains where starter has to vote /y too
+	this option also applies to MX /add votes
+	//-->
+	<auto_vote_starter>false</auto_vote_starter>
+
+	<!--
+	can spectators start votes or vote for another player's votes?
+	these options also apply to MX /add votes
+	//-->
+	<allow_spec_startvote>true</allow_spec_startvote>
+	<allow_spec_voting>false</allow_spec_voting>
+
+	<!--
+	if true, does restart via quick RestartMap
+	this is what most users are accustomed to, but it stops
+	a map's music (if in use)
+
+	if false, does restart via jukebox prepend & NextMap
+	this takes longer and may confuse users into thinking
+	the restart is actually loading the next map, but
+	it insures music resumes playing
+	//-->
+	<ladder_fast_restart>true</ladder_fast_restart>
+
+	<!--
+	as votes scroll (quickly) out of the chat window, and most users
+	are not (yet) familiar with them, votes can keep on lingering
+	until the end of the map (except /endround votes which are
+	cancelled at the end of the round) or simply fail to pass because
+	not enough players agree, and thus block players from starting a
+	different type of vote;
+	therefore limits can be set how long a vote runs in Rounds/Team and
+	TimeAttack/Laps/Stunts modes, expiring it after a certain number of
+	rounds or a certain amount of time, respectively;
+	in TA this uses Checkpoint events as a trigger, so it depends on
+	players regularly crossing them;
+	these limits also apply to MX /add votes
+	//-->
+
+	<!-- maximum number of rounds before a vote expires -->
+	<r_expire_limit_endround>1</r_expire_limit_endround>
+	<r_expire_limit_ladder>2</r_expire_limit_ladder>
+	<r_expire_limit_replay>3</r_expire_limit_replay>
+	<r_expire_limit_skip>2</r_expire_limit_skip>
+	<r_expire_limit_kick>3</r_expire_limit_kick>
+	<r_expire_limit_add>3</r_expire_limit_add>
+	<r_expire_limit_ignore>3</r_expire_limit_ignore>
+
+	<!-- set to true to show a vote reminder at each of those rounds -->
+	<r_show_reminder>true</r_show_reminder>
+
+	<!-- maximum number of seconds before a vote expires [s] -->
+	<ta_expire_limit_endround>0</ta_expire_limit_endround>
+	<ta_expire_limit_ladder>90</ta_expire_limit_ladder>
+	<ta_expire_limit_replay>120</ta_expire_limit_replay>
+	<ta_expire_limit_skip>90</ta_expire_limit_skip>
+	<ta_expire_limit_kick>120</ta_expire_limit_kick>
+	<ta_expire_limit_add>120</ta_expire_limit_add>
+	<ta_expire_limit_ignore>120</ta_expire_limit_ignore>
+
+	<!-- set to true to show a vote reminder at an (approx.) interval -->
+	<ta_show_reminder>true</ta_show_reminder>
+
+	<!-- interval length at which to (approx.) repeat reminder [s] -->
+	<ta_show_interval>30</ta_show_interval>
+
+	<!--
+	##################################################################
+	#                    Feature Votes Settings                      #
+	#            Only if <feature_votes> are activated               #
+	##################################################################
+	//-->
+
+	<!--
+	if 2, the voting explanation is sent to all players when one new player joins; use this during an introduction period
+	if 1, the voting explanation is only sent to the new player upon joining
+	if 0, no explanations are sent at all
+	//-->
+	<global_explain>30</global_explain>
+
+	<!-- define the vote ratios for all types -->
+	<vote_ratio_endround>0.4</vote_ratio_endround>
+	<vote_ratio_ladder>0.5</vote_ratio_ladder>
+	<vote_ratio_replay>0.6</vote_ratio_replay>
+	<vote_ratio_skip>0.6</vote_ratio_skip>
+	<vote_ratio_kick>0.7</vote_ratio_kick>
+	<vote_ratio_ignore>0.6</vote_ratio_ignore>
+
+	<!-- add - ignored, defined by <mx_voteratio> in rasp_settings.xml -->
+	<vote_ratio_add>1.0</vote_ratio_add>
+
+	<!-- divert vote messages to message window? -->
+	<vote_in_window>false</vote_in_window>
+
+	<!-- disable voting commands while an admin (any tier) is online? -->
+	<disable_upon_admin>false</disable_upon_admin>
+
+	<!-- disable voting commands during scoreboard at end of map? -->
+	<disable_while_sb>true</disable_while_sb>
+
+	<!-- allow kicks & allow user to kick-vote any admin? -->
+	<allow_kickvotes>true</allow_kickvotes>
+	<allow_admin_kick>false</allow_admin_kick>
+
+	<!-- allow ignores & allow user to ignore-vote any admin? -->
+	<allow_ignorevotes>true</allow_ignorevotes>
+	<allow_admin_ignore>false</allow_admin_ignore>
+
+	<!--
+	maximum number of these votes per map; set to 0 to disable a
+	vote type, or to some really high number for unlimited votes
+	//-->
+	<max_laddervotes>2</max_laddervotes>
+	<max_replayvotes>2</max_replayvotes>
+	<max_skipvotes>2</max_skipvotes>
+
+	<!-- limit the number of times a map can be /replay-ed; 0 = unlimited -->
+	<replays_limit>0</replays_limit>
+
+	<!--
+	##################################################################
+	#  The next settings are not real relevant for SM at the moment  #
+	##################################################################
+	//-->
+
+	<!--
+	enable Rounds points limits?  use this to restrict the use of the
+	map-related votes if the _first_ player already has reached a
+	specific percentage of the server's Rounds points limit
+	-->
+	<r_points_limits>true</r_points_limits>
+
+	<!-- percentage of Rounds points limit _after_ which /ladder is disabled -->
+	<r_ladder_max>0.4</r_ladder_max>
+
+	<!-- percentage of Rounds points limit _before_ which /replay is disabled -->
+	<r_replay_min>0.5</r_replay_min>
+
+	<!-- percentage of Rounds points limit _after_ which /skip is disabled -->
+	<r_skip_max>0.5</r_skip_max>
+
+	<!--
+	enable Time Attack time limits?  use this to restrict the use of the
+	map-related votes if the current map is already _running_ for a
+	specific percentage of the server's TA time limit
+	this requires function time_playing() from plugin.map.php  -->
+	<ta_time_limits>true</ta_time_limits>
+
+	<!-- percentage of TA time limit _after_ which /ladder is disabled -->
+	<ta_ladder_max>0.4</ta_ladder_max>
+
+	<!-- percentage of TA time limit _before_ which /replay is disabled -->
+	<ta_replay_min>0.5</ta_replay_min>
+
+	<!-- percentage of  TA time limit _after_ which /skip is disabled -->
+	<ta_skip_max>0.5</ta_skip_max>
+
+
+	<messages>
+		<!-- rank/pb messages -->
+		<rank>{#server}» {#record}Your server rank is {#rank}{1}{#record}/{#highlite}{2}{#record} Average: {#highlite}{3}</rank>
+		<rank_none>{#server}» {#record}You must have {#highlite}{1}{#record} Local Records on this server before recieving a rank...</rank_none>
+		<nextrank>{#server}» {#record}The next better ranked player is {#highlite}{1}{#record}: {#highlite}{2}</nextrank>
+		<nextrank_rp> $n{#record}[{#highlite}-{1}{#record} RP]</nextrank_rp>
+		<toprank>{#server}» {#record}No better ranked player :-)</toprank>
+		<pb>{#server}» {#record}Personal Best: {#highlite}{1}{#record}({#rank}{2}{#record}) Average: {#highlite}{3}</pb>
+		<pb_none>{#server}» {#error}You don't have a Local Record on this map yet...</pb_none>
+
+		<!-- jukebox messages -->
+		<jukebox>{#server}» {#highlite}{1}{#emotic} was added to the jukebox by {#highlite}{2}</jukebox>
+		<jukebox_already>{#server}» {#emotic}You already have a map in the jukebox! Wait till it's been played before adding another.</jukebox_already>
+		<jukebox_dupl>{#server}» {#emotic}This map has already been added to the jukebox, pick another one.</jukebox_dupl>
+		<jukebox_repeat>{#server}» {#emotic}This map has been played recently. Wait a while before adding it again.</jukebox_repeat>
+		<jukebox_next>{#server}» {#emotic}The next map will be {#highlite}{1}{#emotic} as requested by {#highlite}{2}</jukebox_next>
+		<jukebox_nextenv>{#server}» {#emotic}The next map will be {#timelite}[{1}] {#highlite}{2}{#emotic} as requested by {#highlite}{3}</jukebox_nextenv>
+		<jukebox_skipleft>{#server}» {#emotic}Map {#highlite}{1}{#emotic} skipped because {#highlite}{2}{#emotic} left...</jukebox_skipleft>
+		<jukebox_ignored>{#server}» {#emotic}Map {#highlite}{1}{#emotic} ignored: {#error}{2}</jukebox_ignored>
+		<jukebox_drop>{#server}» {#emotic}Player {#highlite}{1}{#emotic} dropped his/her map {#highlite}{2}{#emotic} from jukebox!</jukebox_drop>
+		<jukebox_nodrop>{#server}» {#emotic}You don't have a map in the jukebox, use {#highlite}/jukebox Map_ID{#emotic} to add one...</jukebox_nodrop>
+		<jukebox_add>{#server}» {#highlite}{1}{#emotic} is requesting {#highlite}{2}{#emotic} from {3}.{br}{#emotic}This will require {#highlite}{4}{#emotic} votes to pass. Type {#highlite}/y{#emotic} to vote yes.</jukebox_add>
+		<jukebox_y>{#server}» {#highlite}{1}{#emotic} more vote{2} needed to add {#highlite}{3}{#emotic}. Type {#highlite}/y{#emotic} to vote yes.</jukebox_y>
+		<jukebox_pass>{#server}» {#emotic}Vote Passed! {#highlite}{1}{#emotic} has been added to the jukebox.</jukebox_pass>
+		<jukebox_end>{#server}» {#emotic}Vote to add {#highlite}{1}{#emotic} {2} by {#highlite}{3}{#emotic}!</jukebox_end>
+		<jukebox_cancel>{#server}» {#emotic}Current /add vote cancelled!</jukebox_cancel>
+		<jukebox_notfound>{#server}» {#emotic}Map_ID not found - Type {#highlite}/list{#emotic} to see all maps.</jukebox_notfound>
+		<jukebox_empty>{#server}» {#emotic}No maps in the jukebox, use {#highlite}/jukebox Map_ID{#emotic} to add one...</jukebox_empty>
+
+		<!-- jukebox misc. messages -->
+		<jukebox_help>{#server}» {#emotic}You have to include a Map_ID, e.g {#highlite}/jukebox 12{#emotic} - Type {#highlite}/jukebox help{#emotic} for more info.</jukebox_help>
+		<jukebox_list>{#server}» {#emotic}Upcoming maps in the jukebox: </jukebox_list>
+		<list_help>{#server}» {#emotic}Use {#highlite}/list{#emotic} first - Type {#highlite}/list help{#emotic} for more info.</list_help>
+		<no_jukebox>{#server}» {#highlite}/jukebox{#emotic} is not currently enabled on this server.</no_jukebox>
+		<history>{#server}» {#emotic}Recently played maps: </history>
+		<add_present>{#server}» {#highlite}Map already in server list, not added.</add_present>
+		<add_presentjb>{#server}» {#highlite}Map already in server list, adding via jukebox.</add_presentjb>
+		<add_dupl>{#server}» {#emotic}Map is already /add-ed to jukebox.</add_dupl>
+		<no_add>{#server}» {#highlite}/add{#emotic} is not currently enabled on this server.</no_add>
+		<map_too_large>{#server}» {#error}Map is too large ({#highlite}{1}$i{#error} > {2} KB) - not added!</map_too_large>
+
+		<!-- chat-based vote messages -->
+		<vote_explain>{#server}» {#vote}CallVotes disabled - see {#highlite}/helpvote{#vote} for info on chat-based voting</vote_explain>
+		<vote_already>{#server}» {#error}A vote is already in progress. Wait for this to complete.</vote_already>
+		<vote_limit>{#server}» {#error}Already ran {#highlite}$i {1}{#error} {2} vote{3} for this map - that's enough!</vote_limit>
+		<vote_start>{#server}» {#highlite}{1}{#vote} is requesting to {#highlite}{2}{#vote}.{br}{#vote}This will require {#highlite}{3}{#vote} votes to pass. Type {#highlite}/y{#vote} to vote yes.</vote_start>
+		<vote_y>{#server}» {#highlite}{1}{#vote} more vote{2} needed to {#highlite}{3}{#vote}. Type {#highlite}/y{#vote} to vote yes.</vote_y>
+		<vote_pass>{#server}» {#vote}Vote Passed! Server to {#highlite}{1}{#vote}.</vote_pass>
+		<vote_end>{#server}» {#vote}Vote to {#highlite}{1}{#vote} {2} by {#highlite}{3}{#vote}!</vote_end>
+		<vote_cancel>{#server}» {#vote}Current vote cancelled!</vote_cancel>
+		<no_more_replay>{#server}» {#vote}No more than {#highlite}{1}{#vote} replay{2} per map allowed!</no_more_replay>
+		<no_admin_kick>{#server}» {#vote}Player {#highlite}{1}{#vote} fruitlessly tried to kick-vote {#logina}admin {#highlite}{2}{#vote}!</no_admin_kick>
+		<no_admin_ignore>{#server}» {#vote}Player {#highlite}{1}{#vote} fruitlessly tried to ignore-vote {#logina}admin {#highlite}{2}{#vote}!</no_admin_ignore>
+		<ask_admin>{#server}» {#error}Chat-based votes disabled - ask the currently available admin to</ask_admin>
+		<no_spectators>{#server}» {#error}Spectators not allowed to start votes!</no_spectators>
+		<no_sb_vote>{#server}» {#error}Chat-based votes disabled during scoreboard!</no_sb_vote>
+		<no_vote>{#server}» {#error}Chat-based votes disabled - use normal CallVotes.</no_vote>
+
+		<!-- karma messages -->
+		<karma>{#server}» {#karma}Current Map Karma: {#highlite}{1}</karma>
+		<karma_map>{#server}» {#karma}Map {#highlite}{1}{#karma} Karma: {#highlite}{2}</karma_map>
+		<karma_details>{1} $n{#karma}[++: {#highlite}{2}{#karma} ({#highlite}{3}%{#karma}), --: {#highlite}{4}{#karma} ({#highlite}{5}%{#karma})]</karma_details>
+		<karma_vote> $n{#karma}$i{Your vote:  {#highlite}$i{1}{#karma}$i}</karma_vote>
+		<karma_done>{#server}» {#highlite}Vote Successful!</karma_done>
+		<karma_change>{#server}» {#highlite}Vote Changed!</karma_change>
+		<karma_fail>{#server}» {#highlite}Vote Failed!</karma_fail>
+		<karma_voted>{#server}» {#highlite}You have already voted for this map</karma_voted>
+		<karma_remind>{#server}» {#karma}Remember to vote karma ({#highlite}/++{#karma} or {#highlite}/--{#karma}) for this map</karma_remind>
+		<karma_require>{#server}» {#error}You need to finish this map at least {#highlite}$i {1}{#error} time{2} before voting!</karma_require>
+		<karma_nopublic>{#server}» {#error}Public karma votes disabled, use $i{#highlite}/++{#error} or $i{#highlite}/--{#error} instead!</karma_nopublic>
+
+		<!-- misc. messages -->
+		<official>{#server}» {#highlite}That is not a valid command on ANY server - just wait until the next map to become official.</official>
+		<bootme>{#server}» {#highlite}{1}$z$s{#message} chooses to boot back to the real world.</bootme>
+		<bootme_dialog>{#message}Thanks for playing, please come back soon!</bootme_dialog>
+	</messages>
+</rasp>

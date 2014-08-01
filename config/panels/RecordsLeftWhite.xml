@@ -1,0 +1,13 @@
+<manialink id="UASECO-4"><frame posn="-64.5 32.9 0">
+<quad sizen="13.8 11.5" style="%STYLE%" substyle="%SUBST%"/>
+<format style="TextCardSmallScores2Rank"/>
+<label posn="5.7 -1.2 2" sizen="4.5 2" halign="right" text="PB:"/>
+<label posn="5.7 -3.7 2" sizen="4.5 2" halign="right" text="Local:"/>
+<label posn="5.7 -6.2 2" sizen="4.5 2" halign="right" text="Dedi:"/>
+<label posn="5.7 -8.7 2" sizen="4.5 2" halign="right" text="MX:"/>
+<format style="TextCardSmallScores2"/>
+<label posn="6.2 -1.2 2" sizen="7.0 2" halign="left" text="%PB%" action="7"/>
+<label posn="6.2 -3.7 2" sizen="7.0 2" halign="left" text="%LCL%" action="8"/>
+<label posn="6.2 -6.2 2" sizen="7.0 2" halign="left" text="%DED%" action="9"/>
+<label posn="6.2 -8.7 2" sizen="7.0 2" halign="left" text="%MX%" action="10"/>
+</frame></manialink>
