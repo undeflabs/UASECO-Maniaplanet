@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-01
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1062,12 +1062,6 @@ class PluginPanels extends Plugin {
 			$player = $aseco->server->players->getPlayer($answer[1]);
 			$panel = $player->maplist[abs($action)-49]['panel'];
 
-//			// log clicked command
-//			$aseco->console('[Panel] Player [{1}] clicked command "/recpanel {2}"',
-//				$player->login,
-//				$panel
-//			);
-
 			// select new panel
 			$aseco->releaseChatCommand('/recpanel '. $panel, $player->login);
 		}
@@ -1075,12 +1069,6 @@ class PluginPanels extends Plugin {
 			// get player & admin panel
 			$player = $aseco->server->players->getPlayer($answer[1]);
 			$panel = $player->maplist[abs($action)-7]['panel'];
-
-//			// log clicked command
-//			$aseco->console('[Panel] Player [{1}] clicked command "/admin panel {2}"',
-//				$player->login,
-//				$panel
-//			);
 
 			// select new panel
 			$aseco->releaseChatCommand('/admin panel '. $panel, $player->login);
@@ -1090,12 +1078,6 @@ class PluginPanels extends Plugin {
 			$player = $aseco->server->players->getPlayer($answer[1]);
 			$panel = $player->maplist[$action-37]['panel'];
 
-//			// log clicked command
-//			$aseco->console('[Panel] Player [{1}] clicked command "/votepanel {2}"',
-//				$player->login,
-//				$panel
-//			);
-
 			// select new panel
 			$aseco->releaseChatCommand('/votepanel '. $panel, $player->login);
 		}
@@ -1104,12 +1086,6 @@ class PluginPanels extends Plugin {
 			$player = $aseco->server->players->getPlayer($answer[1]);
 			$panel = $player->maplist[abs($action)-7201]['panel'];
 
-//			// log clicked command
-//			$aseco->console('[Panel] Player [{1}] clicked command "/donpanel {2}"',
-//				$player->login,
-//				$panel
-//			);
-
 			// select new panel
 			$aseco->releaseChatCommand('/donpanel '. $panel, $player->login);
 		}
@@ -1117,12 +1093,6 @@ class PluginPanels extends Plugin {
 			// get player & panel background
 			$player = $aseco->server->players->getPlayer($answer[1]);
 			$panel = $player->maplist[abs($action)-7231]['panel'];
-
-//			// log clicked command
-//			$aseco->console('[Panel] Player [{1}] clicked command "/panelbg {2}"',
-//				$player->login,
-//				$panel
-//			);
 
 			// select new background
 			$aseco->releaseChatCommand('/panelbg '. $panel, $player->login);
