@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-24
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1139,7 +1139,7 @@ class PluginChatAdmin extends Plugin {
 							else {
 								$aseco->client->resetError();
 								$aseco->client->query('GetMapInfo', $partialdir);
-								$map = $aseco->client->getResponse();
+								$mapinfo = $aseco->client->getResponse();
 								if ($aseco->client->isError()) {
 									trigger_error('[' . $aseco->client->getErrorCode() . '] GetMapInfo - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
 									$message = $aseco->formatText('{#server}» {#error}Error getting info on map {#highlite}$i {1} {#error}!',
@@ -1147,30 +1147,35 @@ class PluginChatAdmin extends Plugin {
 									$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
 								}
 								else {
-									$map['Name'] = $aseco->stripNewlines($map['Name']);
+									$mapinfo['Name'] = $aseco->stripNewlines($mapinfo['Name']);
+
+									// Create Map object
+									$map = new Map($gbx, $mapinfo['FileName']);
+									$map = $aseco->server->maps->insertMapIntoDatabase($map);
+									$aseco->server->maps->map_list[$map->uid] = $map;
+
 									// check whether to jukebox as well
 									// overrules /add-ed but not yet played map
 									if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
-										$uid = $map['UId'];
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['FileName'] = $map['FileName'];
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Name'] = $map['Name'];
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Env'] = $map['Environnement'];
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Login'] = $login;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Nick'] = $admin->nickname;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['source'] = $source;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['mx'] = false;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['uid'] = $uid;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['FileName'] = $map->filename;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Name'] = $map->name;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Env'] = $map->environment;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Login'] = $login;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Nick'] = $admin->nickname;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['source'] = $source;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['mx'] = false;
+										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['uid'] = $map->uid;
 									}
 
 									// log console message
-									$aseco->console('[Admin] {1} [{2}] adds map [{3}] from {4}!', $logtitle, $login, $aseco->stripColors($map['Name'], false), $source);
+									$aseco->console('[Admin] {1} [{2}] adds map [{3}] from {4}!', $logtitle, $login, $map->name_stripped, $source);
 
 									// show chat message
 									$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}adds {3}map: {#highlite}{4} {#admin}from {5}',
 										$chattitle,
 										$admin->nickname,
 										((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''),
-										$aseco->stripColors($map['Name']),
+										$map->name_stripped,
 										$source
 									);
 									$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
@@ -1180,7 +1185,7 @@ class PluginChatAdmin extends Plugin {
 
 									// throw 'jukebox changed' event
 									if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
-										$aseco->releaseEvent('onJukeboxChanged', array('add', $aseco->plugins['PluginRaspJukebox']->jukebox[$uid]));
+										$aseco->releaseEvent('onJukeboxChanged', array('add', $aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]));
 									}
 								}
 							}
@@ -1301,7 +1306,7 @@ class PluginChatAdmin extends Plugin {
 						else {
 							$aseco->client->resetError();
 							$aseco->client->query('GetMapInfo', $partialdir);
-							$map = $aseco->client->getResponse();
+							$mapinfo = $aseco->client->getResponse();
 							if ($aseco->client->isError()) {
 								trigger_error('[' . $aseco->client->getErrorCode() . '] GetMapInfo - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
 								$message = $aseco->formatText('{#server}» {#error}Error getting info on map {#highlite}$i {1} {#error}!',
@@ -1309,14 +1314,15 @@ class PluginChatAdmin extends Plugin {
 								$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
 							}
 							else {
-								$map['Name'] = $aseco->stripNewlines($map['Name']);
+								$mapinfo['Name'] = $aseco->stripNewlines($mapinfo['Name']);
+
 								// check whether to jukebox as well
 								// overrules /add-ed but not yet played map
 								if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
-									$uid = $map['UId'];
-									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['FileName'] = $map['FileName'];
-									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Name'] = $map['Name'];
-									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Env'] = $map['Environnement'];
+									$uid = $mapinfo['UId'];
+									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['FileName'] = $mapinfo['FileName'];
+									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Name'] = $mapinfo['Name'];
+									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Env'] = $mapinfo['Environnement'];
 									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Login'] = $login;
 									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['Nick'] = $admin->nickname;
 									$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['source'] = 'Local';
@@ -1325,14 +1331,14 @@ class PluginChatAdmin extends Plugin {
 								}
 
 								// log console message
-								$aseco->console('[Admin] {1} [{2}] adds local map {3} !', $logtitle, $login, $aseco->stripColors($map['Name'], false));
+								$aseco->console('[Admin] {1} [{2}] adds local map {3} !', $logtitle, $login, $aseco->stripColors($mapinfo['Name'], false));
 
 								// show chat message
 								$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}adds {3}map: {#highlite}{4}',
 									$chattitle,
 									$admin->nickname,
 									((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''),
-									$aseco->stripColors($map['Name'])
+									$aseco->stripColors($mapinfo['Name'])
 								);
 								$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
 
@@ -5155,12 +5161,6 @@ class PluginChatAdmin extends Plugin {
 		if ($action >= 2201 && $action <= 2400) {
 			$target = $player->playerlist[$action-2201]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin warn {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// warn selected player
 			$aseco->releaseChatCommand('/admin warn '. $target, $player->login);
 		}
@@ -5169,20 +5169,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 2401 && $action <= 2600) {
 			$target = $player->playerlist[$action-2401]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin ignore {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// ignore selected player
 			$aseco->releaseChatCommand('/admin ignore '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5192,20 +5180,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 2601 && $action <= 2800) {
 			$target = $player->playerlist[$action-2601]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unignore {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// unignore selected player
 			$aseco->releaseChatCommand('/admin unignore '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5215,20 +5191,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 2801 && $action <= 3000) {
 			$target = $player->playerlist[$action-2801]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin kick {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// kick selected player
 			$aseco->releaseChatCommand('/admin kick '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5238,20 +5202,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 3001 && $action <= 3200) {
 			$target = $player->playerlist[$action-3001]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin ban {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// ban selected player
 			$aseco->releaseChatCommand('/admin ban '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5261,20 +5213,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 3201 && $action <= 3400) {
 			$target = $player->playerlist[$action-3201]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unban {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// unban selected player
 			$aseco->releaseChatCommand('/admin unban '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5284,20 +5224,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 3401 && $action <= 3600) {
 			$target = $player->playerlist[$action-3401]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin black {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// black selected player
 			$aseco->releaseChatCommand('/admin black '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5307,20 +5235,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 3601 && $action <= 3800) {
 			$target = $player->playerlist[$action-3601]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unblack {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// unblack selected player
 			$aseco->releaseChatCommand('/admin unblack '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5330,20 +5246,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 3801 && $action <= 4000) {
 			$target = $player->playerlist[$action-3801]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin addguest {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// addguest selected player
 			$aseco->releaseChatCommand('/admin addguest '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5353,20 +5257,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 4001 && $action <= 4200) {
 			$target = $player->playerlist[$action-4001]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin removeguest {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// removeguest selected player
 			$aseco->releaseChatCommand('/admin removeguest '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5376,20 +5268,8 @@ class PluginChatAdmin extends Plugin {
 		else if ($action >= 4201 && $action <= 4400) {
 			$target = $player->playerlist[$action-4201]['login'];
 
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin forcespec {2}"',
-//				$player->login,
-//				$target
-//			);
-
 			// forcespec selected player
 			$aseco->releaseChatCommand('/admin forcespec '. $target, $player->login);
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin players {2}"',
-//				$player->login,
-//				$param
-//			);
 
 			// refresh players window
 			$aseco->releaseChatCommand('/admin players '. $param, $player->login);
@@ -5398,12 +5278,6 @@ class PluginChatAdmin extends Plugin {
 		// check for /admin unignore command in listignores
 		else if ($action >= 4401 && $action <= 4600) {
 			$target = $player->playerlist[$action-4401]['login'];
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unignore {2}"',
-//				$player->login,
-//				$target
-//			);
 
 			// unignore selected player
 			$aseco->releaseChatCommand('/admin unignore '. $target, $player->login);
@@ -5415,11 +5289,6 @@ class PluginChatAdmin extends Plugin {
 				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 			}
 			else {
-//				// log clicked command
-//				$aseco->console('[Admin] Player [{1}] clicked command "/admin listignores"',
-//					$player->login
-//				);
-
 				// refresh listignores window
 				$aseco->releaseChatCommand('/admin listignores', $player->login);
 			}
@@ -5428,12 +5297,6 @@ class PluginChatAdmin extends Plugin {
 		// check for /admin unban command in listbans
 		else if ($action >= 4601 && $action <= 4800) {
 			$target = $player->playerlist[$action-4601]['login'];
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unban {2}"',
-//				$player->login,
-//				$target
-//			);
 
 			// unban selected player
 			$aseco->releaseChatCommand('/admin unban '. $target, $player->login);
@@ -5445,11 +5308,6 @@ class PluginChatAdmin extends Plugin {
 				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 			}
 			else {
-//				// log clicked command
-//				$aseco->console('[Admin] Player [{1}] clicked command "/admin listbans"',
-//					$player->login
-//				);
-
 				// refresh listbans window
 				$aseco->releaseChatCommand('/admin listbans', $player->login);
 			}
@@ -5458,12 +5316,6 @@ class PluginChatAdmin extends Plugin {
 		// check for /admin unblack command in listblacks
 		else if ($action >= 4801 && $action <= 5000) {
 			$target = $player->playerlist[$action-4801]['login'];
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unblack {2}"',
-//				$player->login,
-//				$target
-//			);
 
 			// unblack selected player
 			$aseco->releaseChatCommand('/admin unblack '. $target, $player->login);
@@ -5475,11 +5327,6 @@ class PluginChatAdmin extends Plugin {
 				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 			}
 			else {
-//				// log clicked command
-//				$aseco->console('[Admin] Player [{1}] clicked command "/admin listblacks"',
-//					$player->login
-//				);
-
 				// refresh listblacks window
 				$aseco->releaseChatCommand('/admin listblacks', $player->login);
 			}
@@ -5488,12 +5335,6 @@ class PluginChatAdmin extends Plugin {
 		// check for /admin removeguest command in listguests
 		else if ($action >= 5001 && $action <= 5200) {
 			$target = $player->playerlist[$action-5001]['login'];
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin removeguest {2}"',
-//				$player->login,
-//				$target
-//			);
 
 			// removeguest selected player
 			$aseco->releaseChatCommand('/admin removeguest '. $target, $player->login);
@@ -5505,11 +5346,6 @@ class PluginChatAdmin extends Plugin {
 				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 			}
 			else {
-//				// log clicked command
-//				$aseco->console('[Admin] Player [{1}] clicked command "/admin listguests"',
-//					$player->login
-//				);
-
 				// refresh listguests window
 				$aseco->releaseChatCommand('/admin listguest', $player->login);
 			}
@@ -5518,12 +5354,6 @@ class PluginChatAdmin extends Plugin {
 		// check for /admin unbanip command
 		else if ($action >= -8100 && $action <= -7901) {
 			$target = $player->playerlist[abs($action)-7901]['ip'];
-
-//			// log clicked command
-//			$aseco->console('[Admin] Player [{1}] clicked command "/admin unbanip {2}"',
-//				$player->login,
-//				$target
-//			);
 
 			// unbanip selected IP
 			$aseco->releaseChatCommand('/admin unbanip '. $target, $player->login);
@@ -5543,11 +5373,6 @@ class PluginChatAdmin extends Plugin {
 				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 			}
 			else {
-//				// log clicked command
-//				$aseco->console('[Admin] Player [{1}] clicked command "/admin listips"',
-//					$player->login
-//				);
-
 				// refresh listips window
 				$aseco->releaseChatCommand('/admin listips '. $target, $player->login);
 			}
