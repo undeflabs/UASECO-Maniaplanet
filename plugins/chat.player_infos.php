@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -84,12 +84,6 @@ class PluginPlayerInfos extends Plugin {
 			// get player
 			$player = $aseco->server->players->getPlayer($answer[1]);
 			$target = $player->playerlist[$action-2001]['login'];
-
-//			// log clicked command
-//			$aseco->console('[PlayerInfos] Player [{1}] clicked command "/stats {2}"',
-//				$player->login,
-//				$target
-//			);
 
 			// close main window because /stats can take a while
 			$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
