@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-26
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -126,7 +126,7 @@ class PluginChatStats extends Plugin {
 			// count total ranked records
 			foreach ($list as $name => $rec) {
 				// stop upon unranked record
-				if ($rec > $aseco->plugins['PluginLocalRecords']->settings['max_recs']) {
+				if ($rec > $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) {
 					break;
 				}
 
