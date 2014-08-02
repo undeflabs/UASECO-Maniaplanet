@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-01
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -92,7 +92,7 @@ class PluginLocalRecords extends Plugin {
 		$this->settings['recs_in_window'] = $aseco->string2bool($settings['RECS_IN_WINDOW'][0]);
 
 		// Set highest record still to be displayed
-		$this->settings['max_recs'] = (int)$settings['MAX_RECS'][0];
+		$this->settings['max_records'] = (int)$settings['MAX_RECORDS'][0];
 
 		// Set highest record still to be displayed
 		$this->settings['limit'] = (int)$settings['LIMIT'][0];
@@ -113,7 +113,7 @@ class PluginLocalRecords extends Plugin {
 		$this->checkDatabaseStructure($aseco);
 
 		// Initiate records list
-		$this->records = new RecordList($this->settings['max_recs']);
+		$this->records = new RecordList($this->settings['max_records']);
 	}
 
 	/*
@@ -143,7 +143,8 @@ class PluginLocalRecords extends Plugin {
 				$aseco->stripColors($cur_record->player->nickname)
 			);
 		}
-		else {  // If there should be no record to display
+		else {
+			// If there should be no record to display
 			// display a no-record message
 			$message = $aseco->formatText($this->settings['messages']['RECORD_NONE'][0],
 				$aseco->stripColors($aseco->server->maps->current->name)
@@ -194,10 +195,11 @@ class PluginLocalRecords extends Plugin {
 			return;
 		}
 
+		// Load all current local records for current Map
 		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 		$query = "
 		SELECT
-			`m`.`Id` AS `MapId`,
+			`m`.`Id`,
 			`r`.`Score`,
 			`p`.`NickName`,
 			`p`.`Login`,
@@ -209,7 +211,7 @@ class PluginLocalRecords extends Plugin {
 		WHERE `m`.`Uid` = ". $aseco->mysqli->quote($map->uid) ."
 		GROUP BY `r`.`Id`
 		ORDER BY `r`.`Score` ". $order .", `r`.`Date` ASC
-		LIMIT ". ($this->records->getMaxRecs() ? $this->records->getMaxRecs() : 50) .";
+		LIMIT ". ($this->records->getMaxRecords() ? $this->records->getMaxRecords() : 50) .";
 		";
 
 		$result = $aseco->mysqli->query($query);
@@ -401,7 +403,7 @@ class PluginLocalRecords extends Plugin {
 
 		// drove a new record?
 		// go through each of the XX records
-		for ($i = 0; $i < $this->records->getMaxRecs(); $i++) {
+		for ($i = 0; $i < $this->records->getMaxRecords(); $i++) {
 			$cur_record = $this->records->getRecord($i);
 
 			// if player's time/score is better, or record isn't set (thanks eyez)
@@ -663,7 +665,7 @@ class PluginLocalRecords extends Plugin {
 		$this->records->deleteRecord($recno);
 
 		// check if fill up is needed
-		if ($this->records->count() == ($this->records->getMaxRecs() - 1)) {
+		if ($this->records->count() == ($this->records->getMaxRecords() - 1)) {
 			// get max'th time
 			$query = "
 			SELECT DISTINCT
@@ -679,7 +681,7 @@ class PluginLocalRecords extends Plugin {
 				AND `t1`.`PlayerId` = `t2`.`PlayerId`
 			)
 			ORDER BY `Score`, `Date`
-			LIMIT ". ($this->records->getMaxRecs() - 1) .",1;
+			LIMIT ". ($this->records->getMaxRecords() - 1) .",1;
 			";
 
 			$result = $aseco->mysqli->query($query);
@@ -779,7 +781,7 @@ class PluginLocalRecords extends Plugin {
 
 		// Find ranked record
 		$found = false;
-		for ($i = 0; $i < $this->records->getMaxRecs(); $i++) {
+		for ($i = 0; $i < $this->records->getMaxRecords(); $i++) {
 			if (($rec = $this->records->getRecord($i)) !== false) {
 				if ($rec->player->login == $login) {
 					$pb['time'] = $rec->score;
