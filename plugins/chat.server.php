@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-26
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -164,7 +164,7 @@ class PluginChatServer extends Plugin {
 		$stats[] = array('Max Players', '{#black}' . $aseco->server->options['CurrentMaxPlayers']);
 		$stats[] = array('Max Specs', '{#black}' . $aseco->server->options['CurrentMaxSpectators']);
 		if ( isset($aseco->plugins['PluginLocalRecords']) ) {
-			$stats[] = array('Recs/Map', '{#black}' . $aseco->plugins['PluginLocalRecords']->settings['max_recs']);
+			$stats[] = array('Recs/Map', '{#black}'. $aseco->plugins['PluginLocalRecords']->records->getMaxRecords());
 		}
 		if (isset($aseco->plugins['PluginRaspVotes']) && $aseco->plugins['PluginRaspVotes']->feature_votes) {
 			$stats[] = array('Voting info', '{#black}/helpvote');
