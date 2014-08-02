@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-12
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -160,7 +160,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// display ManiaLink window
-		$head = 'Current TOP '. $aseco->plugins['PluginLocalRecords']->records->getMaxRecs() .' Local Records:';
+		$head = 'Current TOP '. $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .' Local Records:';
 		$msg = array();
 		$lines = 0;
 		$player->msgs = array();
@@ -334,7 +334,7 @@ class PluginChatRecords extends Plugin {
 			$currec = 0;
 			foreach ($list as $uid => $rec) {
 				// stop upon unranked record
-				if ($rec > $aseco->plugins['PluginLocalRecords']->records->getMaxRecs()) {
+				if ($rec > $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) {
 					break;
 				}
 
@@ -557,7 +557,7 @@ class PluginChatRecords extends Plugin {
 			WHERE `players`.`Id` = `records`.`Playerid`
 			AND `MapId` = ". $map->id ."
 			ORDER BY `Score` ". $order .", `Date` ASC
-			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecs() .";
+			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";
 			$result = $aseco->mysqli->query($query);
 			if ($result) {
