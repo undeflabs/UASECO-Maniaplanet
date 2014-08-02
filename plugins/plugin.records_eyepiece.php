@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-07-27
+ * Date:		2014-08-02
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -10958,7 +10958,7 @@ EOL;
 				// Player Rank
 				$pos = isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ? $player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'] : 0;
 				$xml .= '<quad posn="6.3 -6.8 0.04" sizen="2 1.6" style="BgRaceScore2" substyle="LadderRank"/>';
-				$xml .= '<label posn="8.1 -7.15 0.04" sizen="3.8 1.5" scale="0.75" text="'. (($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecs()) ? sprintf("%0". strlen($aseco->plugins['PluginLocalRecords']->records->getMaxRecs()) ."d.", $pos) : '$ZNone') .'"/>';
+				$xml .= '<label posn="8.1 -7.15 0.04" sizen="3.8 1.5" scale="0.75" text="'. (($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ? sprintf("%0". strlen($aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ."d.", $pos) : '$ZNone') .'"/>';
 
 				// Local Map Karma
 				$xml .= '<quad posn="11.2 -6.8 0.04" sizen="1.6 1.6" style="Icons64x64_1" substyle="StateFavourite"/>';
@@ -14925,6 +14925,10 @@ EOL;
 		}
 
 //		if ( !empty($mapinfos) ) {
+
+			// Clean up before filling
+			$this->cache['MapList'] = array();
+			$this->cache['MapAuthors'] = array();
 
 			foreach ($aseco->server->maps->map_list as $mapob) {
 				$map = array();
