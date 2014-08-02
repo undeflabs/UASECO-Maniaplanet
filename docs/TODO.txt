@@ -1,14 +1,9 @@
 UASECO
 ~~~~~~
+ - STYLE: At score, the score table overlaps the reminder of ManiaKarma plugin.
  - BUG: Class Window registers more then once the callback 'onPlayerManialinkPageAnswer', which results into a massive problem on the second call of e.g. "/help" and the next pages
+ - BUG: Output into the Windows console with utf8 chars messed up
  - Build a ET function into uaseco.php that communicates the amount of players/specs, server infos (login, name... neighborhood like) and the maps of the server
- - BUG: Add Map from MX does not read GBX data from Map file?!?
- - Splitt plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
- - Splitt plugin.panels.php into the related plugins and remove it
+ - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
+ - Split plugin.panels.php into the related plugins and remove it
  - Lift dependecies from plugin.styles.php and remove it
-
-
-
-Records-Eyepiece
-~~~~~~~~~~~~~~~~
- - BUG: Juke Song does not work
