@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-21
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -40,7 +40,7 @@
 
 class RecordList {
 	public $record_list;
-	public $maxrecs;
+	public $max_records;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -48,9 +48,9 @@ class RecordList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct ($maxrecs) {
+	public function __construct ($max_records) {
 		$this->record_list = array();
-		$this->maxrecs = $maxrecs;
+		$this->max_records = $max_records;
 	}
 
 	/*
@@ -79,8 +79,8 @@ class RecordList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setMaxRecs ($limit) {
-		$this->maxrecs = $limit;
+	public function setMaxRecords ($limit) {
+		$this->max_records = $limit;
 	}
 
 	/*
@@ -89,8 +89,8 @@ class RecordList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getMaxRecs () {
-		return $this->maxrecs;
+	public function getMaxRecords () {
+		return $this->max_records;
 	}
 
 	/*
@@ -149,7 +149,7 @@ class RecordList {
 		}
 
 		// do not insert a record behind the border of the list
-		if ($rank >= $this->maxrecs) {
+		if ($rank >= $this->max_records) {
 			return false;
 		}
 
@@ -162,7 +162,7 @@ class RecordList {
 		if (get_class($record) == 'Record') {
 
 			// if records are getting too much, drop the last from the list
-			if (count($this->record_list) >= $this->maxrecs) {
+			if (count($this->record_list) >= $this->max_records) {
 				array_pop($this->record_list);
 			}
 
