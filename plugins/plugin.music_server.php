@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -165,14 +165,8 @@ class PluginMusicServer extends Plugin {
 			// get player
 			$player = $aseco->server->players->getPlayer($answer[1]);
 
-//			// log clicked command
-//			$aseco->console('[MusicServer] Player [{1}] clicked command "/music {2}"',
-//				$player->login,
-//				abs($action)-2100
-//			);
-
 			// jukebox selected song
-			$aseco->releaseChatCommand('/music '. abs($action)-2100, $player->login);
+			$aseco->releaseChatCommand('/music '. (abs($action) - 2100), $player->login);
 		}
 	}
 
