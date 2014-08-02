@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-01
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -803,7 +803,7 @@ class PluginRasp extends Plugin {
 					FROM `records`
 					WHERE `MapId` = ". $map->id ."
 					ORDER BY `Score` ". $order .", `Date` ASC
-					LIMIT ". $aseco->plugins['PluginLocalRecords']->settings['max_recs'] .";
+					LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 					";
 
 					$res = $aseco->mysqli->query($query);
@@ -828,8 +828,8 @@ class PluginRasp extends Plugin {
 				$query = 'INSERT INTO `rs_rank` VALUES ';
 				// compute each player's new average score
 				foreach ($players as $player => $ranked) {
-					// ranked maps sum + $aseco->plugins['PluginLocalRecords']->settings['max_recs'] rank for all remaining maps
-					$avg = ($ranked[0] + ($total - $ranked[1]) * $aseco->plugins['PluginLocalRecords']->settings['max_recs']) / $total;
+					// ranked maps sum + $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() rank for all remaining maps
+					$avg = ($ranked[0] + ($total - $ranked[1]) * $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) / $total;
 					$query .= '('. $player .','. round($avg * 10000) .'),';
 				}
 				$query = substr($query, 0, strlen($query)-1);  // strip trailing ','
@@ -859,7 +859,7 @@ class PluginRasp extends Plugin {
 		$ret = array();
 		$found = false;
 		// find ranked record
-		for ($i = 0; $i < $aseco->plugins['PluginLocalRecords']->settings['max_recs']; $i++) {
+		for ($i = 0; $i < $aseco->plugins['PluginLocalRecords']->records->getMaxRecords(); $i++) {
 			if (($rec = $aseco->plugins['PluginLocalRecords']->records->getRecord($i)) !== false) {
 				if ($rec->player->login == $player->login) {
 					$ret['time'] = $rec->score;
@@ -1201,7 +1201,7 @@ class PluginRasp extends Plugin {
 
 				// Get corresponding record
 				$pos = isset($reclist[$map->uid]) ? $reclist[$map->uid] : 0;
-				$pos = ($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->settings['max_recs']) ? str_pad($pos, 2, '0', STR_PAD_LEFT) : '--';
+				$pos = ($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ? str_pad($pos, 2, '0', STR_PAD_LEFT) : '--';
 
 				$msg[] = array(
 					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
