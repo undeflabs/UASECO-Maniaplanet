@@ -29,7 +29,7 @@
 	<!--
 	Sets the maximum number of records stored per map: Lower = Faster
 	//-->
-	<max_recs>50</max_recs>
+	<max_records>50</max_records>
 
 	<!--
 	Limit the highest record that will be displayed to all.
