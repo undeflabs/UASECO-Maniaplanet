@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-08-01
+ * Date:		2014-08-03
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -149,7 +149,7 @@ class PluginManiaKarma extends Plugin {
 			'AFG' => array("Afghanistan",					'ASIA'),
 			'AGO' => array("Angola",					'AFRICA'),
 			'AIA' => array("Anguilla",					'NORTHAMERICA'),
-			'ALA' => array("Åland Islands",					'EUROPE'),
+			'ALA' => array("Ã…land Islands",					'EUROPE'),
 			'ALB' => array("Albania",					'EUROPE'),
 			'AND' => array("Andorra",					'EUROPE'),
 			'ANT' => array("Netherlands Antilles",				'NORTHAMERICA'),
@@ -172,7 +172,7 @@ class PluginManiaKarma extends Plugin {
 			'BHR' => array("Bahrain",					'ASIA'),
 			'BHS' => array("Bahamas",					'NORTHAMERICA'),
 			'BIH' => array("Bosnia and Herzegovina",			'EUROPE'),
-			'BLM' => array("Saint Barthélemy",				'NORTHAMERICA'),
+			'BLM' => array("Saint BarthÃ©lemy",				'NORTHAMERICA'),
 			'BLR' => array("Belarus",					'EUROPE'),
 			'BLZ' => array("Belize",					'NORTHAMERICA'),
 			'BMU' => array("Bermuda",					'NORTHAMERICA'),
@@ -189,7 +189,7 @@ class PluginManiaKarma extends Plugin {
 			'CHE' => array("Switzerland",					'EUROPE'),
 			'CHL' => array("Chile",						'SOUTHAMERICA'),
 			'CHN' => array("China",						'ASIA'),
-			'CIV' => array("Côte d'Ivoire",					'AFRICA'),
+			'CIV' => array("CÃ´te d'Ivoire",					'AFRICA'),
 			'CMR' => array("Cameroon",					'AFRICA'),
 			'COD' => array("Democratic Republic of Congo",			'AFRICA'),
 			'COG' => array("Republic of Congo",				'AFRICA'),
@@ -331,7 +331,7 @@ class PluginManiaKarma extends Plugin {
 			'PSE' => array("Palestinian Territory, Occupied",		'ASIA'),
 			'PYF' => array("French Polynesia",				'OCEANIA'),
 			'QAT' => array("Qatar",						'ASIA'),
-			'REU' => array("Réunion",					'AFRICA'),
+			'REU' => array("RÃ©union",					'AFRICA'),
 			'ROU' => array("Romania",					'EUROPE'),
 			'RUS' => array("Russian Federation",				'RUSSIA'),
 			'RWA' => array("Rwanda",					'AFRICA'),
@@ -469,8 +469,8 @@ class PluginManiaKarma extends Plugin {
 		// Create a User-Agent-Identifier for the authentication
 		$this->config['user_agent'] = 'UASECO/'. UASECO_VERSION .' mania-karma/'. $this->getVersion() .' '. $aseco->server->game .'/'. $aseco->server->build .' php/'. phpversion() .' '. php_uname('s') .'/'. php_uname('r') .' '. php_uname('m');
 
-		$aseco->console('[ManiaKarma] » Set Server location to "'. $iso3166Alpha3[$this->config['account']['nation']][0] .'"');
-		$aseco->console('[ManiaKarma] » Trying to authenticate with central database "'. $this->config['urls']['api_auth'] .'"...');
+		$aseco->console('[ManiaKarma] Â» Set Server location to "'. $iso3166Alpha3[$this->config['account']['nation']][0] .'"');
+		$aseco->console('[ManiaKarma] Â» Trying to authenticate with central database "'. $this->config['urls']['api_auth'] .'"...');
 
 		// Generate the url for the first Auth-Request
 		$api_url = sprintf("%s?Action=Auth&login=%s&name=%s&game=%s&zone=%s&nation=%s",
@@ -495,8 +495,8 @@ class PluginManiaKarma extends Plugin {
 				// Fake import done to do not ask a MasterAdmin to export
 				$this->config['import_done'] = true;
 
-				$aseco->console('[ManiaKarma] » Could not read/parse response from mania-karma.com "'. $response['Message'] .'"!');
-				$aseco->console('[ManiaKarma] » Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
+				$aseco->console('[ManiaKarma] Â» Could not read/parse response from mania-karma.com "'. $response['Message'] .'"!');
+				$aseco->console('[ManiaKarma] Â» Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
 				$aseco->console('[ManiaKarma] ********************************************************');
 			}
 			else {
@@ -507,8 +507,8 @@ class PluginManiaKarma extends Plugin {
 
 					$this->config['import_done'] = ((strtoupper((string)$xml->import_done) == 'TRUE') ? true : false);
 
-					$aseco->console('[ManiaKarma] » Successfully started with async communication.');
-					$aseco->console('[ManiaKarma] » The API set the Request-URL to "'. $this->config['urls']['api'] .'"');
+					$aseco->console('[ManiaKarma] Â» Successfully started with async communication.');
+					$aseco->console('[ManiaKarma] Â» The API set the Request-URL to "'. $this->config['urls']['api'] .'"');
 					$aseco->console('[ManiaKarma] ********************************************************');
 				}
 				else {
@@ -519,7 +519,7 @@ class PluginManiaKarma extends Plugin {
 					// Fake import done to do not ask a MasterAdmin to export
 					$this->config['import_done'] = true;
 
-					$aseco->console('[ManiaKarma] » Authentication failed with error code "'. $xml->status .'", votes are not possible!!!');
+					$aseco->console('[ManiaKarma] Â» Authentication failed with error code "'. $xml->status .'", votes are not possible!!!');
 					$aseco->console('[ManiaKarma] ********************************************************');
 				}
 			}
@@ -532,7 +532,7 @@ class PluginManiaKarma extends Plugin {
 			// Fake import done to do not ask a MasterAdmin to export
 			$this->config['import_done'] = true;
 
-			$aseco->console('[ManiaKarma] » Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
+			$aseco->console('[ManiaKarma] Â» Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
 			$aseco->console('[ManiaKarma] ********************************************************');
 		}
 
