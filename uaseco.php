@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-08-03
  * Copyright:	May 2014 - Jul 2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -474,7 +474,9 @@ class UASECO extends Helper {
 		$this->console_text('» CurrentStatus: [{1}] {2}', $this->current_status, $this->server->state_names[$this->current_status]);
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» Uptime:        {1}', $uptime_uaseco);
-		$this->console_text('» System Load:   {1}', implode(', ', sys_getloadavg()));
+		if ( function_exists('sys_getloadavg') ) {
+			$this->console_text('» System Load:   {1}', implode(', ', sys_getloadavg()));
+		}
 		$this->console_text('» MEM-Usage:     {1} MB, PEAK: {2} MB', round(memory_get_usage() / pow(1024,2), 4), round(memory_get_peak_usage() / pow(1024,2), 4));
 		if (function_exists('posix_getuid') && function_exists('posix_getgid')) {
 			$this->console_text('» Process user:  {1}:{2} (UID/GID)', posix_getuid(), posix_getgid());
