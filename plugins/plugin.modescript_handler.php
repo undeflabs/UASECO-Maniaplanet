@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-25
+ * Date:	2014-08-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -26,10 +26,10 @@
  * ----------------------------------------------------------------------------------
  *
  * Documentation:
- * » http://maniaplanet.github.io/documentation/dedicated-server/xml-rpc-scripts.html
- * » http://maniaplanet.github.io/documentation/dedicated-server/settings-list.html
- * » http://maniaplanet.github.io/documentation/dedicated-server/methods/latest.html
- * » http://maniaplanet.github.io/documentation//dedicated-server/customize-scores-table.html
+ * » http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
+ * » http://doc.maniaplanet.com/dedicated-server/settings-list.html
+ * » http://doc.maniaplanet.com/dedicated-server/xmlrpc/methods/latest.html
+ * » http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
  * » docs/Dedicated Server/ListCallbacks_2013-04-16.html
  *
  * Dependencies:
@@ -120,7 +120,7 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	public function onSync ($aseco) {
-		// http://maniaplanet.github.io/documentation/dedicated-server/settings-list.html
+		// http://doc.maniaplanet.com/dedicated-server/settings-list.html
 
 
 		// ModeBase
@@ -214,7 +214,7 @@ class PluginModescriptHandler extends Plugin {
 
 
 		// Show/Hide the small scores table displayed on the right of the screen when finishing the map.
-		// http://maniaplanet.github.io/documentation/dedicated-server/xml-rpc-scripts.html
+		// http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
 		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_DisplaySmallScoresTable', 'False');
 
 //		foreach (range(0,20) as $id) {
@@ -222,7 +222,7 @@ class PluginModescriptHandler extends Plugin {
 //		}
 //		$aseco->client->queryIgnoreResult('DisconnectFakePlayer', '*');
 
-		// http://maniaplanet.github.io/documentation//dedicated-server/customize-scores-table.html
+		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
 		$xml .= '<scorestable version="1">';
 		$xml .= ' <properties>';
@@ -343,22 +343,24 @@ class PluginModescriptHandler extends Plugin {
 				// - 'WaypointIsFinishLine' == true
 				// - 'WaypointIsFinishLap' == true
 				if ( ($aseco->string2bool($params[4]) === true) || ($aseco->string2bool($params[7]) === true) ) {
-					if ( ($aseco->warmup_phase == false) && ($aseco->server->gameinfo->mode != Gameinfo::TEAM) ) {
+					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
 						$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
 					}
 				}
 
-				// Event params: [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 				if ($aseco->string2bool($params[4]) === false) {
 					$aseco->releaseEvent('onPlayerCheckpoint', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
 				}
 				else if ($aseco->string2bool($params[4]) === true) {
 					$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
-					$aseco->playerFinish(array($params[0], (int)$params[2]));
 				}
 				if ($aseco->string2bool($params[7]) === true) {
-					$aseco->releaseEvent('onPlayerLapFinished', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
+					$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
+				}
+				if ( ($aseco->string2bool($params[4]) === true) || ($aseco->string2bool($params[7]) === true) ) {
+					// Player finished the Map or the Lap
+					$aseco->playerFinish(array($params[0], (int)$params[2]));
 				}
 		    		break;
 
