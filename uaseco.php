@@ -19,8 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Date:	2014-08-03
- * Copyright:	May 2014 - Jul 2014 by undef.de
+ * Copyright:	May 2014 - Aug 2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -41,11 +40,21 @@
  */
 
 
-/*
-#///////////////////////////////////////////////////////////////////////#
-# System definitions - no changes below this point!!!!			#
-#///////////////////////////////////////////////////////////////////////#
-*/
+	// Current project name, version and website
+	define('UASECO_NAME',		'UASECO');
+	define('UASECO_VERSION',	'1.0.0');
+	define('UASECO_BUILD',		'2014-08-07');
+	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
+
+	// Setup required official dedicated server build, Api-Version and PHP-Version
+	define('MANIAPLANET_BUILD',	'2014-07-24_19_00');
+	define('API_VERSION',		'2013-04-16');
+	define('REQUIRED_PHP_VERSION',	'5.2.1');
+
+	define('CRLF', PHP_EOL);
+	if (!defined('LF')) {
+		define('LF', "\n");
+	}
 
 	// Report all
 	error_reporting(-1);
@@ -74,21 +83,6 @@
 	require_once('includes/core/rankinglist.class.php');
 	require_once('includes/core/map.class.php');			// Required by includes/core/maplist.class.php
 	require_once('includes/core/maplist.class.php');
-
-	// Current project name, version and website
-	define('UASECO_NAME',		'UASECO');
-	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
-
-	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2014-07-24_19_00');
-	define('API_VERSION',		'2013-04-16');
-	define('REQUIRED_PHP_VERSION',	'5.2.1');
-
-	define('CRLF', PHP_EOL);
-	if (!defined('LF')) {
-		define('LF', "\n");
-	}
 
 
 /*
@@ -420,7 +414,7 @@ class UASECO extends Helper {
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»            Uptime: {1}, Send: {2} KB, Receive: {3} KB', $uptime_dedicated, $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
 		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» UASECO:    Version {1} running on {2}:{3}', UASECO_VERSION, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
+		$this->console_text('» UASECO:    Version {1}, build {2} running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
     		$this->console_text('»            based upon work of the authors and projects of:');
     		$this->console_text('»            - Xymph (XAseco2),');
     		$this->console_text('»            - Florian Schnell, AssemblerManiac and many others (ASECO),');
