@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -70,7 +70,8 @@ class PluginCheckpoint extends Plugin {
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
 		$this->registerEvent('onPlayerStartCountdown',	'onPlayerStartCountdown');
 		$this->registerEvent('onPlayerCheckpoint',	'onPlayerCheckpoint');
-		$this->registerEvent('onPlayerFinishLine',	'onPlayerFinishLine');
+		$this->registerEvent('onPlayerFinishLine',	'onPlayerFinishHandling');
+		$this->registerEvent('onPlayerFinishLap',	'onPlayerFinishHandling');
 		$this->registerEvent('onLocalRecord',		'onLocalRecord');
 
 
@@ -434,7 +435,7 @@ class PluginCheckpoint extends Plugin {
 	*/
 
 	// [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
-	public function onPlayerFinishLine ($aseco, $param) {
+	public function onPlayerFinishHandling ($aseco, $param) {
 
 		// If Stunts mode, bail out immediately
 		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
