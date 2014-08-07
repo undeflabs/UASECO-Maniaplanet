@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-14
+ * Date:	2014-08-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -62,7 +62,7 @@ class RankingList {
 		if ($player->login != '') {
 			// Preset
 			$this->ranking_list[$player->login] = array(
-				'rank'		=> PHP_INT_MAX,
+				'rank'		=> 0,
 				'login'		=> $player->login,
 				'nickname'	=> $player->nickname,
 				'time'		=> 0,
@@ -91,20 +91,48 @@ class RankingList {
 		// Update full player entry
 		$this->ranking_list[$item['login']] = $item;
 
-		// Now sort array at Rank
-		$rank = array();
-		foreach ($this->ranking_list as $key => $row) {
-			$rank[$key] = $row['rank'];
-		}
-		unset($key, $row);
-
+		$new = $this->ranking_list;
 		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			array_multisort($rank, SORT_NUMERIC, SORT_DESC, $this->ranking_list);
+			$scores = array();
+			foreach ($new as $key => &$row) {
+				$scores[$key] = $row['score'];
+			}
+			unset($key, $row);
+
+			// Now sort array by score DESC
+			array_multisort($scores, SORT_NUMERIC, SORT_DESC, $new);
+			unset($scores);
 		}
 		else {
-			array_multisort($rank, SORT_NUMERIC, SORT_ASC, $this->ranking_list);
+			$times = array();
+			foreach ($this->ranking_list as $key => &$row) {
+				if ($row['time'] <= 0) {
+					$row['time'] = PHP_INT_MAX;
+				}
+				$times[$key] = $row['time'];
+			}
+			unset($key, $row);
+
+			// Now sort array by time ASC
+			array_multisort($times, SORT_NUMERIC, SORT_ASC, $new);
+			unset($times);
 		}
-		unset($rank);
+
+		$i = 1;
+		foreach ($new as $login => &$data) {
+			// Replace PHP_INT_MAX times with -1
+			if ($data['time'] == PHP_INT_MAX) {
+				$data['time'] = 0;
+			}
+
+			// Give each Player a Rank
+			$data['rank'] = $i;
+			$i += 1;
+		}
+		unset($login, $data);
+
+		// Update current RankingList with the new updated and sorted list
+		$this->ranking_list = $new;
 	}
 
 	/*
