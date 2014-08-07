@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1976,12 +1976,20 @@ class PluginDedimania extends Plugin {
 
 		// check finish/checkpoints consistency, unless Stunts mode
 		if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
+			if ($aseco->checkpoints[$login]->current['finish'] == PHP_INT_MAX) {
+				// Skip if no checkpoint times are stored
+				return;
+			}
 			if (count($aseco->checkpoints[$login]->current['cps']) < 2 && $aseco->server->maps->current->author != 'Nadeo') {
 				$aseco->console('[Dedimania] Player ['. $login .'] checks < 2, finish ignored: '. $aseco->formatTime($finish_item->score));
 				return;
 			}
-			if (($aseco->server->gameinfo->mode != Gameinfo::LAPS && $finish_item->score != $aseco->checkpoints[$login]->current['finish']) || $finish_item->score != end($aseco->checkpoints[$login]->current['cps'])) {
-				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish/checks, ignored: '. $aseco->formatTime($finish_item->score));
+			if ($aseco->server->gameinfo->mode != Gameinfo::LAPS && $finish_item->score != $aseco->checkpoints[$login]->current['finish']) {
+				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish time and checkpoint finish time, ignored time ['. $finish_item->score .'] != ['. $aseco->checkpoints[$login]->current['finish'] .']');
+				return;
+			}
+			if ($finish_item->score != end($aseco->checkpoints[$login]->current['cps'])) {
+				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish time and last checkpoint time, ignored time ['. $finish_item->score .'] != ['. end($aseco->checkpoints[$login]->current['cps']) .']');
 				return;
 			}
 		}
