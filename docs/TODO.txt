@@ -1,9 +1,14 @@
 UASECO
 ~~~~~~
- - STYLE: At score, the score table overlaps the reminder of ManiaKarma plugin.
+ - BUG: Multilap handling: No local record after finishing a lap on multilap Maps in the second lap (because the LibXmlRpc_OnWayPoint didn't reset the time, the time grows up on each lap)
  - BUG: Class Window registers more then once the callback 'onPlayerManialinkPageAnswer', which results into a massive problem on the second call of e.g. "/help" and the next pages
- - BUG: Output into the Windows console with utf8 chars messed up
+ - STYLE: At score, the score table overlaps the reminder of ManiaKarma plugin.
  - Build a ET function into uaseco.php that communicates the amount of players/specs, server infos (login, name... neighborhood like) and the maps of the server
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
  - Lift dependecies from plugin.styles.php and remove it
+
+
+Records-Eyepiece
+~~~~~~~~~~~~~~~~
+ - BUG: After juke a song, the next/prev page buttons does not work
