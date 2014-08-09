@@ -72,12 +72,12 @@
 	<remind_karma>0</remind_karma>
 
 	<!--
-	Set to true if you want to show players their actual votes
+	Set to true if you want jukebox functionality
 	//-->
 	<feature_jukebox>true</feature_jukebox>
 
 	<!--
-	Set to true if you want to show players their actual votes
+	Set to true if you want jukebox to be extended to include the MX /add feature
 	//-->
 	<feature_mxadd>false</feature_mxadd>
 
