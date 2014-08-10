@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-08-02
+ * Date:		2014-08-10
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -2457,7 +2457,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['States']['LiveRankings']['UpdateDisplay']	= true;
 
 		// Build and send the CurrentRankingWidget to all Players
-		if ($this->config['CURRENT_RANKING_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['CURRENT_RANKING_WIDGET'][0]['ENABLED'][0] == true && $aseco->server->gamestate == Server::RACE) {
 			$this->buildCurrentRankingWidget(false);
 		}
 	}

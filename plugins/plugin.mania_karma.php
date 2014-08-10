@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-08-03
+ * Date:		2014-08-10
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -97,9 +97,9 @@ class PluginManiaKarma extends Plugin {
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerFinish',			'onPlayerFinish');
 		$this->registerEvent('onBeginMap',			'onBeginMap');
-		$this->registerEvent('onBeginMap1',			'onBeginMap1');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
 		$this->registerEvent('onEndMap1',			'onEndMap1');
+		$this->registerEvent('onUnloadingMap',			'onUnloadingMap');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onKarmaChange',			'onKarmaChange');
 		$this->registerEvent('onShutdown',			'onShutdown');
@@ -1211,7 +1211,7 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onUnloadingMap ($aseco, $id) {
 
 		// Set $gamemode for the KarmaWidget
 		$this->config['widget']['current_state'] = $aseco->server->gameinfo->mode;
@@ -1222,7 +1222,7 @@ class PluginManiaKarma extends Plugin {
 		// Remove all marker at all connected Players
 		$this->sendWidgetCombination(array('hide_all'), false);
 
-		// Save all Votes into the global and local (if enabled) Database
+		// Save all Votes into the global and local (if enabled) Databases
 		$this->storeKarmaVotes();
 
 		if ($this->config['require_finish'] > 0) {
@@ -1241,7 +1241,7 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $map) {
+	public function onBeginMap ($aseco, $map) {
 
 		// Store current map infos
 		$this->config['CurrentMap'] 	= $this->getCurrentMapInfo();
