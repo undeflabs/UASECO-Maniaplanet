@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-08-07');
+	define('UASECO_BUILD',		'2014-08-10');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -73,7 +73,8 @@
 	require_once('includes/core/server.class.php');
 	require_once('includes/core/dependence.class.php');		// Required by includes/core/plugin.class.php
 	require_once('includes/core/plugin.class.php');
-	require_once('includes/core/window.class.php');			// Requires includes/core/plugin.class.php
+	require_once('includes/core/window.class.php');			// Required includes/core/windowlist.class.php
+	require_once('includes/core/windowlist.class.php');
 	require_once('includes/core/player.class.php');
 	require_once('includes/core/playerlist.class.php');
 	require_once('includes/core/checkpoint.class.php');
@@ -96,9 +97,10 @@ class UASECO extends Helper {
 	public $client;
 	public $parser;
 	public $debug;
-	public $server;
 	public $continent;
 	public $country;
+	public $windows;
+	public $server;
 	public $registered_events;
 	public $registered_chatcmds;
 	public $chat_colors;
@@ -153,6 +155,16 @@ class UASECO extends Helper {
 			$this->console('[ERROR] UASECO requires min. PHP/'. REQUIRED_PHP_VERSION .' and can not run with current PHP/'. PHP_VERSION .', please update PHP!');
 			die();
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Runs the server.
+	public function run () {
 
 		// Initialize
 		$this->debug			= false;
@@ -164,6 +176,7 @@ class UASECO extends Helper {
 		$this->parser			= new XmlParser();
 		$this->continent		= new Continent();
 		$this->country			= new Country();
+		$this->windows			= new WindowList($this);
 		$this->server			= new Server('127.0.0.1', 5000, 'SuperAdmin', 'SuperAdmin');
 		$this->server->maps		= new MapList();
 		$this->server->players		= new PlayerList();
@@ -183,16 +196,7 @@ class UASECO extends Helper {
 		$this->changing_to_gamemode	= false;
 		$this->current_status		= 0;
 		$this->checkpoints		= array();
-	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Runs the server.
-	public function run () {
 		// Setup config file
 		$config_file = 'config/UASECO.xml';
 
@@ -414,7 +418,7 @@ class UASECO extends Helper {
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»            Uptime: {1}, Send: {2} KB, Receive: {3} KB', $uptime_dedicated, $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
 		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» UASECO:    Version {1}, build {2} running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
+		$this->console_text('» UASECO:    Version {1} build {2}, running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
     		$this->console_text('»            based upon work of the authors and projects of:');
     		$this->console_text('»            - Xymph (XAseco2),');
     		$this->console_text('»            - Florian Schnell, AssemblerManiac and many others (ASECO),');
@@ -1882,7 +1886,7 @@ class UASECO extends Helper {
 	*/
 
 	// Player reaches finish.
-	public function playerFinish ($finish) {
+	public function playerFinish ($login, $score) {
 
 		// If no map info bail out immediately
 		if ($this->server->maps->current->name == '') {
@@ -1895,25 +1899,25 @@ class UASECO extends Helper {
 		}
 
 		// Check for valid player
-		if ((!$player = $this->server->players->getPlayer($finish[0])) || $player->login == '') {
+		if ((!$player = $this->server->players->getPlayer($login)) || $player->login == '') {
 			return;
 		}
 
 		// Build a record object with the current finish information
-		$finish_item = new Record();
-		$finish_item->player		= $player;
-		$finish_item->score		= $finish[1];
-		$finish_item->checkpoints	= (isset($this->checkpoints[$player->login]) ? $this->checkpoints[$player->login]->current['cps'] : array());
-		$finish_item->date		= strftime('%Y-%m-%d %H:%M:%S');
-		$finish_item->new		= false;
-		$finish_item->map		= clone $this->server->maps->current;
-		unset($finish_item->map->mx);	// reduce memory usage
+		$finish			= new Record();
+		$finish->player		= $player;
+		$finish->score		= $score;
+		$finish->checkpoints	= (isset($this->checkpoints[$player->login]) ? $this->checkpoints[$player->login]->current['cps'] : array());
+		$finish->date		= strftime('%Y-%m-%d %H:%M:%S');
+		$finish->new		= false;
+		$finish->map		= clone $this->server->maps->current;
+		unset($finish->map->mx);	// reduce memory usage
 
 		// Throw prefix 'player finishes' event (checkpoints)
-		$this->releaseEvent('onPlayerFinish1', $finish_item);
+		$this->releaseEvent('onPlayerFinish1', $finish);
 
 		// Throw main 'player finishes' event
-		$this->releaseEvent('onPlayerFinish', $finish_item);
+		$this->releaseEvent('onPlayerFinish', $finish);
 	}
 
 	/*
