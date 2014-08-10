@@ -2,12 +2,12 @@
 /*
  * Plugin: Last Window
  * ~~~~~~~~~~~~~~~~~~~
- * » Re-displays last closed multi-page window.
+ * » Re-opens the last closed window.
  * » Based upon chat.lastwin.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-07
+ * Date:	2014-08-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - plugins/plugin.manialinks.php
+ *  - none
  *
  */
 
@@ -52,11 +52,9 @@ class PluginLastWindow extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Re-displays last closed multi-page window.');
+		$this->setDescription('Re-opens the last closed window.');
 
-		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
-
-		$this->registerChatCommand('lastwin', 'chat_lastwin', 'Re-opens the last closed multi-page window', Player::PLAYERS);
+		$this->registerChatCommand('lastwin', 'chat_lastwin', 'Re-opens the last closed window.', Player::PLAYERS);
 	}
 
 	/*
@@ -67,14 +65,19 @@ class PluginLastWindow extends Plugin {
 
 	public function chat_lastwin ($aseco, $login, $chat_command, $chat_parameter) {
 
+		// Get Player object
 		$player = $aseco->server->players->getPlayer($login);
-		if (!isset($player->msgs) || empty($player->msgs)) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No multi-page window available!'), $player->login);
-			return;
-		}
 
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+		// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
+		$answer = array(
+			$player->pid,
+			$login,
+			'ClassWindowRefreshPage',
+			false,
+		);
+
+		// Simulate a Player click event
+		$aseco->releaseEvent('onPlayerManialinkPageAnswer', $answer);
 	}
 }
 
