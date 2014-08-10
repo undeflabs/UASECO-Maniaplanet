@@ -1,7 +1,7 @@
 UASECO
 ~~~~~~
+ - BUG: /jukebox display not working properly
  - BUG: Multilap handling: No local record after finishing a lap on multilap Maps in the second lap (because the LibXmlRpc_OnWayPoint didn't reset the time, the time grows up on each lap)
- - BUG: Class Window registers more then once the callback 'onPlayerManialinkPageAnswer', which results into a massive problem on the second call of e.g. "/help" and the next pages
  - STYLE: At score, the score table overlaps the reminder of ManiaKarma plugin.
  - Build a ET function into uaseco.php that communicates the amount of players/specs, server infos (login, name... neighborhood like) and the maps of the server
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
