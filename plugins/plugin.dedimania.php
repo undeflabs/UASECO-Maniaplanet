@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-07
+ * Date:	2014-08-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -110,10 +110,10 @@ class PluginDedimania extends Plugin {
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onEverySecond',		'onEverySecond');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
+		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
 		$this->registerEvent('onEndMap',		'onEndMap');
-		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 
 		$this->registerChatCommand('helpdedi',		'chat_helpdedi',	'Displays info about the Dedimania records system',	Player::PLAYERS);
 		$this->registerChatCommand('dedihelp',		'chat_helpdedi',	'Displays info about the Dedimania records system',	Player::PLAYERS);
@@ -398,7 +398,6 @@ class PluginDedimania extends Plugin {
 	public function chat_dedilast ($aseco, $login, $chat_command, $chat_parameter) {
 
 		$dedi_recs = $this->db['Map']['Records'];
-
 		if ($total = count($dedi_recs)) {
 			// get the last Dedimania record
 			$record = $dedi_recs[$total-1];
@@ -558,7 +557,6 @@ class PluginDedimania extends Plugin {
 	public function chat_dedidiff ($aseco, $login, $chat_command, $chat_parameter) {
 
 		$dedi_recs = $this->db['Map']['Records'];
-
 		if ($total = count($dedi_recs)) {
 			$found = false;
 			// find Dedimania record
@@ -626,7 +624,6 @@ class PluginDedimania extends Plugin {
 	public function chat_dedirange ($aseco, $login, $chat_command, $chat_parameter) {
 
 		$dedi_recs = $this->db['Map']['Records'];
-
 		if ($total = count($dedi_recs)) {
 			// get the first & last Dedimania records
 			$first = $dedi_recs[0];
@@ -1755,7 +1752,7 @@ class PluginDedimania extends Plugin {
 							$times[] = array(
 								'Login'		=> $rec['Login'],
 								'Best'		=> $rec['Best'],
-								'Checks'	=> implode(',', $rec['Checks'])
+								'Checks'	=> implode(',', $rec['Checks']),
 							);
 						}
 					}
@@ -2029,7 +2026,7 @@ class PluginDedimania extends Plugin {
 
 				if ($cur_rank != -1) {  // player has a record in topXX already
 
-					// compute difference to old record
+					// Compute difference to old record
 					if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
 						$diff = $cur_score - $finish_item->score;
 						$sec = floor($diff/1000);
@@ -2040,15 +2037,18 @@ class PluginDedimania extends Plugin {
 						$diff = $finish_item->score - $cur_score;
 					}
 
-					// update the record if improved
+					// Update the record if improved
 					if ($diff > 0) {
-						// ignore 'Rank' field - not used in /dedi* commands
+						// Get the ranking for the Player (to have the checkpoint times)
+						$plrank = $aseco->server->rankings->getRankByLogin($login);
+
+						// Ignore 'Rank' field - not used in /dedi* commands
 						$dedi_recs[$cur_rank]['Best'] = $finish_item->score;
-						$dedi_recs[$cur_rank]['Checks'] = $aseco->checkpoints[$login]->current['cps'];
+						$dedi_recs[$cur_rank]['Checks'] = $plrank['cps'];
 						$dedi_recs[$cur_rank]['NewBest'] = true;
 					}
 
-					// player moved up in Dedimania list
+					// Player moved up in Dedimania list
 					if ($cur_rank > $i) {
 
 						// move record to the new position
@@ -2340,8 +2340,6 @@ class PluginDedimania extends Plugin {
 //		    $parser->cpsLap != $aseco->server->maps->current->nbcheckpoints ||
 		    $parser->cpsCur != count($allcps) ||
 		    $parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-
-$aseco->dump('DEBUG, PLEASE REPORT!!!', $parser, $entry, $allcps);
 			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .']: skipped '. $entry['Best'] .' ('. $entry['Checks'] .') race: '. $cpsrace .' all: '. count($allcps));
 			return false;
 		}
