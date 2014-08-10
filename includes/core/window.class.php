@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-30
+ * Date:	2014-08-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -26,7 +26,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - none
+ *  - includes/core/windowlist.class.php
  *
  */
 
@@ -102,7 +102,6 @@ class Window {
 			'halign'		=> array(),			// Inner columns
 			'bgcolors'		=> array(),			// RGBA
 			'textcolors'		=> array(),			// RGBA
-			'event_registered'	=> false,
 		);
 
 		if ($unique_manialink_id === true) {
@@ -121,230 +120,11 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
-
-		// If id = 0, bail out immediately
-		if ($answer[2] === 0) {
-			return;
-		}
-
-
-		// Get Player object
-		$player = $aseco->server->players->getPlayer($answer[1]);
-
-		// Restore stored data from Player object
-		if ( $this->existsPlayerData($player, 'ClassWindow') ) {
-			$stored = $this->getPlayerData($player, 'ClassWindow');
-			$this->content	= $stored->content;
-			$this->layout	= $stored->layout;
-			$this->settings	= $stored->settings;
-			$stored = null;
-			unset($stored);
-		}
-
-
-		$send = false;
-		if ($answer[2] == 'ClassWindowPagePrev') {
-
-			$this->content['page'] -= 1;
-			if ($this->content['page'] < 0) {
-				$this->content['page'] = 0;
-			}
-			$send = true;
-
-		}
-		else if ($answer[2] == 'ClassWindowPagePrevTwo') {
-
-			$this->content['page'] -= 2;
-			if ($this->content['page'] < 0) {
-				$this->content['page'] = 0;
-			}
-			$send = true;
-
-		}
-		else if ($answer[2] == 'ClassWindowPageFirst') {
-
-			$this->content['page'] = 0;
-			$send = true;
-
-		}
-		else if ($answer[2] == 'ClassWindowPageNext') {
-
-			$this->content['page'] += 1;
-			if ($this->content['page'] > $this->content['maxpage']) {
-				$this->content['page'] = $this->content['maxpage'];
-			}
-			$send = true;
-
-		}
-		else if ($answer[2] == 'ClassWindowPageNextTwo') {
-
-			$this->content['page'] += 2;
-			if ($this->content['page'] > $this->content['maxpage']) {
-				$this->content['page'] = $this->content['maxpage'];
-			}
-			$send = true;
-
-		}
-		else if ($answer[2] == 'ClassWindowPageLast') {
-
-			$this->content['page'] = $this->content['maxpage'];
-			$send = true;
-
-		}
-
-		if ($send == true) {
-			$this->send($player, $this->settings['hideclick'], $this->settings['hideclick']);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	private function storePlayerData ($player, $key, $data) {
-		if (!isset($player)) {
-			return;
-		}
-		$player->data['ClassWindow'][$key] = $data;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	private function getPlayerData ($player, $key) {
-		if (!isset($player)) {
-			return;
-		}
-		return $player->data['ClassWindow'][$key];
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	private function removePlayerData ($player, $key) {
-		if (!isset($player)) {
-			return;
-		}
-		if ( (isset($key)) && (isset($player->data['ClassWindow'][$key])) ) {
-			unset($player->data['ClassWindow'][$key]);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	private function existsPlayerData ($player, $key) {
-		if ( (isset($key)) && (isset($player->data['ClassWindow'][$key])) ) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function send ($player, $timeout = 0, $hideclick = false) {
 		global $aseco;
 
-		if (get_class($player) == 'Player' && $player->id > 0) {
-
-			// Make sure there are haligns for inner columns
-			if (count($this->settings['halign']) == 0) {
-				$widths = (100 / $this->settings['columns']);
-				for ($i = $widths; $i <= 100; $i += $widths) {
-					$this->settings['halign'][] = 'left';
-				}
-			}
-
-			// Make sure there are widths for inner columns
-			if (count($this->settings['widths']) == 0) {
-				$widths = (100 / $this->settings['columns']);
-				for ($i = $widths; $i <= 100; $i += $widths) {
-					$this->settings['widths'][] = $widths;
-				}
-			}
-
-			// Make sure there are textcolors for inner columns
-			if (count($this->settings['textcolors']) == 0) {
-				$widths = (100 / $this->settings['columns']);
-				for ($i = $widths; $i <= 100; $i += $widths) {
-					$this->settings['textcolors'][] = 'FFFF';
-				}
-			}
-
-			$this->settings['timeout'] = $timeout;
-			$this->settings['hideclick'] = $hideclick;
-			$this->settings['login'] = $player->login;
-
-			// Store Window into Player object
-			$this->storePlayerData($player, 'ClassWindow', $this);
-
-			// Concat all the elements
-			if ( is_array($this->content['data']) ) {
-				$xml = str_replace(
-					array(
-						'%content%',
-						'%page%',
-						'%buttons%',
-						'%maniascript%',
-					),
-					array(
-						$this->buildColumns(),
-						$this->buildPageinfo(),
-						$this->buildButtons(),
-						$this->buildManiascript(),
-					),
-					$this->buildWindow()
-				);
-			}
-			else if ( is_string($this->content['data']) ) {
-				$xml = str_replace(
-					array(
-						'%content%',
-						'%page%',
-						'%buttons%',
-						'%maniascript%',
-					),
-					array(
-						$this->content['data'],
-						$this->buildPageinfo(),
-						$this->buildButtons(),
-						$this->buildManiascript(),
-					),
-					$this->buildWindow()
-				);
-			}
-
-			if ($this->settings['event_registered'] == false) {
-				$this->settings['event_registered'] = true;
-
-				// Register callback for this new Window
-				$aseco->registerEvent('onPlayerManialinkPageAnswer', array($this, 'onPlayerManialinkPageAnswer'));
-			}
-
-			// Send to Player
-			$aseco->sendManialink($xml, $player->login, $timeout, $hideclick);
-		}
-		else {
-			$aseco->console('[ClassWindow] Given Player does not exists in the current PlayerList.');
-		}
+		$aseco->windows->send($this, $player, $timeout, $hideclick);
 	}
-
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -446,7 +226,7 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function generateManialinkId () {
+	public function generateManialinkId () {
 
 		$pool = array_merge(
 			range('0', '9'),
@@ -472,7 +252,7 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildColumns () {
+	public function buildColumns () {
 		global $aseco;
 
 		// Total width
@@ -523,10 +303,10 @@ class Window {
 					$posy		= -(3.47 * $row + 1.45);
 					if (isset($this->settings['halign'][$innercol]) && strtolower($this->settings['halign'][$innercol]) == 'right') {
 						$posx = $posx + ($sizew - $inner_gap);
-						$xml .= '<label posn="'. $posx .' '. $posy .' 0.04" sizen="'. $sizew .' 3.188" halign="right" valign="center" scale="0.9" textcolor="'. $textcolor .'" text="'. $this->handleSpecialChars($value) .'"/>';
+						$xml .= '<label posn="'. $posx .' '. $posy .' 0.04" sizen="'. $sizew .' 3.188" halign="right" valign="center" scale="0.9" textcolor="'. $textcolor .'" text="'. $this->normalizeString($value) .'"/>';
 					}
 					else {
-						$xml .= '<label posn="'. $posx .' '. $posy .' 0.04" sizen="'. $sizew .' 3.188" valign="center" scale="0.9" textcolor="'. $textcolor .'" text="'. $this->handleSpecialChars($value) .'"/>';
+						$xml .= '<label posn="'. $posx .' '. $posy .' 0.04" sizen="'. $sizew .' 3.188" valign="center" scale="0.9" textcolor="'. $textcolor .'" text="'. $this->normalizeString($value) .'"/>';
 					}
 					$last_element_width += $element_width + $inner_gap;
 					$innercol ++;
@@ -557,7 +337,7 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildButtons () {
+	public function buildButtons () {
 
 		$totalentries			= count($this->content['data']);
 		$this->content['maxpage']	= ceil($totalentries / ($this->settings['columns'] * 25));
@@ -634,7 +414,7 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildPageinfo () {
+	public function buildPageinfo () {
 		return '';
 	}
 
@@ -644,7 +424,7 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildWindow () {
+	public function buildWindow () {
 
 		// Placeholder:
 		// - %content%
@@ -707,7 +487,7 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildManiascript () {
+	public function buildManiascript () {
 $maniascript = <<<EOL
 <script><!--
  /*
@@ -817,7 +597,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function handleSpecialChars ($string) {
+	public function normalizeString ($string) {
 		global $aseco;
 
 		// Remove links, e.g. "$(L|H|P)[...]...$(L|H|P)"
