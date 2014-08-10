@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-20
+ * Date:	2014-08-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -435,7 +435,7 @@ class Country {
 	public function countryToIoc ($country) {
 
 		if ( array_key_exists(ucfirst($country), $this->country_list) ) {
-			$nation = $this->country_list[$country];
+			$nation = $this->country_list[ucfirst($country)];
 		}
 		else {
 			$nation = 'OTH';
