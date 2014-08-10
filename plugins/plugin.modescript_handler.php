@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-07
+ * Date:	2014-08-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -54,11 +54,14 @@ class PluginModescriptHandler extends Plugin {
 		'challenge_info'	=> true,	// 2014-07-25: Works
 		'chat'			=> true,	// 2014-07-25: Works
 		'scoretable'		=> true,	// 2014-07-25: Works
-//		'notice'		=> true,	// 2014-07-25: No effect, because this messages are removed(?)
+		'round_scores'		=> true,	// 2014-07-25: No effect, alternate method: UI_DisplaySmallScoresTable
+//		'notice'		=> true,	// 2014-07-25: No effect, because this messages are already removed(?)
 //		'net_infos'		=> true,	// 2014-07-25: No effect
 //		'checkpoint_list'	=> true,	// 2014-07-25: No effect
-//		'round_scores'		=> true,	// 2014-07-25: No effect
 	);
+
+	// Stores the state of finished Players
+	private $player_finished	= array();
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -85,198 +88,89 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setCustomUIField ($field, $value) {
-		if ( isset($this->custom_ui[$field]) ) {
-			$this->custom_ui[$field] = $value;
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getCustomUIBlock () {
-		global $aseco;
-
-		$xml  = '<custom_ui>';
-		$xml .= '<global visible="'. $aseco->bool2string($this->custom_ui['global']) .'"/>';
-		$xml .= '<challenge_info visible="'. $aseco->bool2string($this->custom_ui['challenge_info']) .'"/>';
-		$xml .= '<chat visible="'. $aseco->bool2string($this->custom_ui['chat']) .'"/>';
-		$xml .= '<scoretable visible="'. $aseco->bool2string($this->custom_ui['scoretable']) .'"/>';
-//		$xml .= '<notice visible="'. $aseco->bool2string($this->custom_ui['notice']) .'"/>';
-//		$xml .= '<net_infos visible="'. $aseco->bool2string($this->custom_ui['net_infos']) .'"/>';
-//		$xml .= '<checkpoint_list visible="'. $aseco->bool2string($this->custom_ui['checkpoint_list']) .'"/>';
-//		$xml .= '<round_scores visible="'. $aseco->bool2string($this->custom_ui['round_scores']) .'"/>';
-		$xml .= '</custom_ui>';
-		return $xml;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onSync ($aseco) {
-		// http://doc.maniaplanet.com/dedicated-server/settings-list.html
+
+		// Read Configuration
+		if (!$settings = $aseco->parser->xmlToArray('config/modescript_settings.xml', true, true)) {
+			trigger_error('[ModescriptHandler] Could not read/parse config file "config/modescript_settings.xml"!', E_USER_ERROR);
+		}
+		$settings = $settings['MODESCRIPT_SETTINGS'];
 
 
 		// ModeBase
-		$modebase = array(
-			'S_ChatTime'				=> 20,			// Chat time at the end of the map
-			'S_AllowRespawn'			=> true,		// Allow the players to respawn or not
-			'S_WarmUpDuration'			=> 1,			// Duration of the warm up phase (<= 0 to disable)
-			'S_UseScriptCallbacks'			=> true,		// Turn on/off the script callbacks, useful for server manager
-			'S_UseLegacyCallbacks'			=> false,		// Enable the legacy callbacks (default value: True)
-			'S_ScoresTableStylePath'		=> '',			// Try to load a scores table style from an XML file
-		);
-
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
-			// Rounds (+RoundsBase)
-			$modesetup = array(
-				// RoundsBase
-				'S_PointsLimit'			=> 99,			// Points limit (<= 0 to disable)
-				'S_FinishTimeout'		=> -1,			// Finish timeout (<= 0 to disable)
-				'S_UseAlternateRules'		=> false,		// Use alternate rules
-				'S_ForceLapsNb'			=> -1,			// Force number of laps (<= 0 to disable)
-				'S_DisplayTimeDiff'		=> false,		// Display time difference at checkpoint
-
-				// Rounds
-				'S_UseTieBreak'			=> true,		// Continue to play the map until the tie is broken
-			);
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
-			// TimeAttack
-			$modesetup = array(
-				'S_TimeLimit'			=> 1200,		// Time limit
-			);
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-			// Team  (+RoundsBase)
-			$modesetup = array(
-				// RoundsBase
-				'S_PointsLimit'			=> 5,			// Points limit (<= 0 to disable)
-				'S_FinishTimeout'		=> -1,			// Finish timeout (<= 0 to disable)
-				'S_UseAlternateRules'		=> false,		// Use alternate rules
-				'S_ForceLapsNb'			=> -1,			// Force number of laps (<= 0 to disable)
-				'S_DisplayTimeDiff'		=> false,		// Display time difference at checkpoint
-
-				// Team
-				'S_MaxPointsPerRound'		=> 6,			// The maxium number of points attributed to the first player to cross the finish line
-				'S_PointsGap'			=> 1,			// The number of points lead a team must have to win the map
-				'S_UsePlayerClublinks'		=> false,		// Use the players clublinks, or otherwise use the default teams
-			);
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			// Laps
-			$modesetup = array(
-				'S_FinishTimeout'		=> -1,			// Finish timeout (<= 0 to disable)
-				'S_ForceLapsNb'			=> -1,			// Number of Laps (<= 0 to disable)
-				'S_TimeLimit'			=> 1200,		// Time limit (<= 0 to disable)
-			);
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
-			// Cup (+RoundsBase)
-			$modesetup = array(
-				// RoundsBase
-				'S_PointsLimit'			=> 99,			// Points limit (<= 0 to disable)
-				'S_FinishTimeout'		=> -1,			// Finish timeout (<= 0 to disable)
-				'S_UseAlternateRules'		=> false,		// Use alternate rules
-				'S_ForceLapsNb'			=> -1,			// Force number of laps (<= 0 to disable)
-				'S_DisplayTimeDiff'		=> false,		// Display time difference at checkpoint
-
-				// Cup
-				'S_RoundsPerMap'		=> 5,			// Rounds per map
-				'S_NbOfWinners'			=> 3,			// Number of winners
-				'S_WarmUpDuration'		=> 2,			// Duration of the warm up phase (<= 0 to disable)
-			);
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAMATTACK) {
-			// TeamAttack
-			$modesetup = array(
-				'S_TimeLimit'			=> 300,			// Time limit
-				'S_MinPlayerPerClan'		=> 3,			// Minimum number of players per clan
-				'S_MaxPlayerPerClan'		=> 3,			// Maximum number of players per clan
-				'S_MaxClanNb'			=> -1,			// Maximum number of clans (<= 0 to disable)
-			);
-		}
-//		else if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-//			// Stunt
-//			$modesetup = array(
-//
-//			);
-//		}
-
-		// Setup the settings
-		$aseco->client->query('SetModeScriptSettings', array_merge($modebase, $modesetup));
+		$aseco->server->gameinfo->options['UseScriptCallbacks']		= true;	// Turn on/off the script callbacks
+		$aseco->server->gameinfo->options['UseLegacyCallbacks']		= false;	// Enable the legacy callbacks (default value: True)
+		$aseco->server->gameinfo->options['ChatTime']			= (int)$settings['MODEBASE'][0]['CHAT_TIME'][0];
+		$aseco->server->gameinfo->options['AllowRespawn']		= $aseco->string2bool($settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
+		$aseco->server->gameinfo->options['WarmUpDuration']		= (int)$settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
+		$aseco->server->gameinfo->options['ScoresTableStylePath']	= $settings['MODEBASE'][0]['SCORES_TABLE_STYLE_PATH'][0];
 
 
+		// Rounds +RoundsBase
+		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->rounds['FinishTimeout']		= (int)$settings['MODESETUP'][0]['ROUNDS'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->rounds['UseAlternateRules']		= $aseco->string2bool($settings['MODESETUP'][0]['ROUNDS'][0]['USE_ALTERNATE_RULES'][0]);
+		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->rounds['DisplayTimeDiff']		= $aseco->string2bool($settings['MODESETUP'][0]['ROUNDS'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->rounds['UseTieBreak']			= $aseco->string2bool($settings['MODESETUP'][0]['ROUNDS'][0]['USE_TIE_BREAK'][0]);
+
+
+		// TimeAttack
+		$aseco->server->gameinfo->time_attack['TimeLimit']		= (int)$settings['MODESETUP'][0]['TIMEATTACK'][0]['TIME_LIMIT'][0];
+
+
+		// Team +RoundsBase
+		$aseco->server->gameinfo->team['PointsLimit']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->team['FinishTimeout']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->team['UseAlternateRules']		= $aseco->string2bool($settings['MODESETUP'][0]['TEAM'][0]['USE_ALTERNATE_RULES'][0]);
+		$aseco->server->gameinfo->team['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->team['DisplayTimeDiff']		= $aseco->string2bool($settings['MODESETUP'][0]['TEAM'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->team['MaxPointsPerRound']		= (int)$settings['MODESETUP'][0]['TEAM'][0]['MAX_POINTS_PER_ROUND'][0];
+		$aseco->server->gameinfo->team['PointsGap']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['POINTS_GAP'][0];
+		$aseco->server->gameinfo->team['UsePlayerClublinks']		= $aseco->string2bool($settings['MODESETUP'][0]['TEAM'][0]['USE_PLAYER_CLUBLINKS'][0]);
+
+
+		// Laps
+		$aseco->server->gameinfo->laps['TimeLimit']			= (int)$settings['MODESETUP'][0]['LAPS'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->laps['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['LAPS'][0]['FORCE_NUMBER_LAPS'][0];
+
+
+		// Cup +RoundsBase
+		$aseco->server->gameinfo->cup['PointsLimit']			= (int)$settings['MODESETUP'][0]['CUP'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->cup['FinishTimeout']			= (int)$settings['MODESETUP'][0]['CUP'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->cup['UseAlternateRules']		= $aseco->string2bool($settings['MODESETUP'][0]['CUP'][0]['USE_ALTERNATE_RULES'][0]);
+		$aseco->server->gameinfo->cup['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['CUP'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->cup['DisplayTimeDiff']		= $aseco->string2bool($settings['MODESETUP'][0]['CUP'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->cup['RoundsPerMap']			= (int)$settings['MODESETUP'][0]['CUP'][0]['ROUNDS_PER_MAP'][0];
+		$aseco->server->gameinfo->cup['NbOfWinners']			= (int)$settings['MODESETUP'][0]['CUP'][0]['NUMBER_OF_WINNERS'][0];
+		$aseco->server->gameinfo->cup['WarmUpDuration']			= (int)$settings['MODESETUP'][0]['CUP'][0]['WARM_UP_DURATION'][0];
+
+
+		// TeamAttack
+		$aseco->server->gameinfo->team_attack['TimeLimit']		= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->team_attack['MinPlayerPerClan']	= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MIN_PLAYER_PER_CLAN'][0];
+		$aseco->server->gameinfo->team_attack['MaxPlayerPerClan']	= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_PLAYER_PER_CLAN'][0];
+		$aseco->server->gameinfo->team_attack['MaxClanNb']		= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_CLAN_NUMBER'][0];
+
+
+		// Store the settings at the dedicated Server
+		$this->setupModescriptSettings($aseco);
+
+		// Setup the custom Scoretable
+		$this->setupCustomScoretable($aseco);
+
+
+		// Setup <custom_ui>
+		$this->setCustomUIField('challenge_info', $aseco->string2bool($settings['CUSTOM_UI'][0]['CHALLENGE_INFO'][0]));
+		$this->setCustomUIField('chat', $aseco->string2bool($settings['CUSTOM_UI'][0]['CHAT'][0]));
+		$this->setCustomUIField('scoretable', $aseco->string2bool($settings['CUSTOM_UI'][0]['SCORETABLE'][0]));
+		$this->setCustomUIField('round_scores', $aseco->string2bool($settings['CUSTOM_UI'][0]['ROUND_SCORES'][0]));
+
+		// Special handling for 'round_scores':
 		// Show/Hide the small scores table displayed on the right of the screen when finishing the map.
 		// http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
-		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_DisplaySmallScoresTable', 'False');
-
-//		foreach (range(0,20) as $id) {
-//			$aseco->client->queryIgnoreResult('ConnectFakePlayer');
-//		}
-//		$aseco->client->queryIgnoreResult('DisconnectFakePlayer', '*');
-
-		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
-		$xml = '<?xml version="1.0" encoding="utf-8"?>';
-		$xml .= '<scorestable version="1">';
-		$xml .= ' <properties>';
-		$xml .= '  <position x="0.0" y="55.0" z="20.0" />';
-		$xml .= '  <headersize x="70.0" y="8.7" />';
-		$xml .= '  <modeicon icon="Icons64x64_1|ToolLeague1" />';
-		$xml .= '  <tablesize x="182.0" y="69.0" />';
-		$xml .= '  <taleformat columns="2" lines="8" />';
-		$xml .= '  <footersize x="180.0" y="20.0" />';
-		$xml .= '</properties>';
-
-		$xml .= '<images>';
-		$xml .= ' <background>';
-		$xml .= '  <position x="0.0" y="6.0" />';
-		$xml .= '  <size width="240.0" height="115.0" />';
-//		$xml .= '  <collection>';
-//		$xml .= '   <image environment="Canyon" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
-//		$xml .= '   <image environment="Valley" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
-//		$xml .= '   <image environment="Stadium" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
-////		$xml .= '   <image environment="Canyon" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-canyon.dds" />';
-////		$xml .= '   <image environment="Valley" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-valley.dds" />';
-////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds" />';
-//		$xml .= '  </collection>';
-		$xml .= ' </background>';
-		$xml .= '</images>';
-
-//		$xml .= '<columns>';
-//		$xml .= ' <column id="LibST_Avatar" action="create" />';
-//		$xml .= ' <column id="LibST_Name" action="create" />';
-//		$xml .= ' <column id="LibST_ManiaStars" action="create" />';
-//		$xml .= ' <column id="LibST_Tools" action="create" />';
-//		$xml .= ' <column id="LibST_TMBestTime" action="destroy" />';
-//		$xml .= ' <column id="LibST_PrevTime" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMStunts" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMRespawns" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMCheckpoints" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMPoints" action="create" />';
-//		$xml .= ' <column id="LibST_TMPrevRaceDeltaPoints" action="destroy" />';
-//
-//		$xml .= ' <column id="LibST_Avatar" action="create">';
-//		$xml .= '  <legend>TestFull</legend>';
-//		$xml .= '  <defaultvalue>DefaultValue</defaultvalue>';
-//		$xml .= '  <width>20.0</width>';
-//		$xml .= '  <weight>20.0</weight>';
-//		$xml .= '  <textstyle>TextRaceMessageBig</textstyle>';
-//		$xml .= '  <textsize>1</textsize>';
-//		$xml .= '  <textalign>left</textalign>';
-//		$xml .= ' </column>';
-//		$xml .= '</columns>';
-
-		$xml .= '</scorestable>';
-
-		$aseco->client->queryIgnoreResult('TriggerModeScriptEventArray', 'LibScoresTable2_SetStyleFromXml', array('TM', $xml));
-
+		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_DisplaySmallScoresTable', ucfirst($aseco->bool2string($this->getCustomUIField('round_scores'))));
 	}
 
 	/*
@@ -301,15 +195,25 @@ class PluginModescriptHandler extends Plugin {
 
 	public function onRestartMap ($aseco, $uid) {
 
-		// On restart it is required to set the most settings again,
-		// because a restart resets the most settings in a Modescript.
-		// Details: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
-		$this->onSync($aseco);
-
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
 			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
 			$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
 		}
+
+		// On restart it is required to set the settings again,
+		// because a restart resets the most settings in a Modescript.
+		// Details: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
+
+		// Store the settings at the dedicated Server
+		$this->setupModescriptSettings($aseco);
+
+		// Setup the custom Scoretable
+		$this->setupCustomScoretable($aseco);
+
+		// Special handling for 'round_scores':
+		// Show/Hide the small scores table displayed on the right of the screen when finishing the map.
+		// http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
+		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_DisplaySmallScoresTable', ucfirst($aseco->bool2string($this->getCustomUIField('round_scores'))));
 	}
 
 	/*
@@ -344,6 +248,9 @@ class PluginModescriptHandler extends Plugin {
 				// - 'WaypointIsFinishLap' == true
 				if ( ($aseco->string2bool($params[4]) === true) || ($aseco->string2bool($params[7]) === true) ) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
+						// Mark this Player that he has finished the Map
+						$this->player_finished[$params[0]] = (int)$params[2];
+
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
 						$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
 					}
@@ -358,17 +265,12 @@ class PluginModescriptHandler extends Plugin {
 				if ($aseco->string2bool($params[7]) === true) {
 					$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
 				}
-				if ( ($aseco->string2bool($params[4]) === true) || ($aseco->string2bool($params[7]) === true) ) {
-					// Player finished the Map or the Lap
-					$aseco->playerFinish(array($params[0], (int)$params[2]));
-				}
 		    		break;
 
 
 
 			// [0]=Login, [1]=WaypointBlockId, [2]=WaypointIndexRace, [3]=WaypointIndexLap, [4]=TotalRespawns
 			case 'LibXmlRpc_OnRespawn':
-$aseco->dump('LibXmlRpc_OnRespawn: ', $params );
 				$aseco->releaseEvent('onPlayerRespawn', array($params[0], $params[1], (int)$params[2], (int)$params[3], (int)$params[4]));
 		    		break;
 
@@ -477,7 +379,6 @@ $aseco->dump('LibXmlRpc_OnRespawn: ', $params );
 				$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetWarmUp', '');
 				if ($aseco->string2bool($params[2]) === true) {
 					$aseco->restarting = true;			// Map was restarted
-					$this->onSync($aseco);				// It is required to re-setup the settings for the Modescripts: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
 				}
 				else {
 					$aseco->restarting = false;			// No Restart
@@ -613,9 +514,16 @@ $aseco->dump('LibXmlRpc_OnRespawn: ', $params );
 					// Update current ranking cache
 					$aseco->server->rankings->update($update);
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
-						$aseco->console('[Event] Player Ranking Updated');
+						$aseco->console('[Event] Player Ranking Updated (Player)');
 					}
 					$aseco->releaseEvent('onPlayerRankingUpdated', null);
+				}
+				if ( isset($this->player_finished[$params[1]]) ) {
+					// Player finished the Map or the Lap
+					$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
+
+					// Remove finish status
+					unset($this->player_finished[$params[1]]);
 				}
 		    		break;
 
@@ -651,7 +559,7 @@ $aseco->dump('LibXmlRpc_OnRespawn: ', $params );
 					}
 
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
-						$aseco->console('[Event] Player Ranking Updated');
+						$aseco->console('[Event] Player Ranking Updated (Players)');
 					}
 					$aseco->releaseEvent('onPlayerRankingUpdated', null);
 				}
@@ -707,7 +615,7 @@ $aseco->dump('LibXmlRpc_OnRespawn: ', $params );
 					$aseco->server->rankings->update($update);
 
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
-						$aseco->console('[Event] Player Ranking Updated');
+						$aseco->console('[Event] Player Ranking Updated (Team)');
 					}
 					$aseco->releaseEvent('onPlayerRankingUpdated', null);
 				}
@@ -769,6 +677,221 @@ $aseco->dump('LibXmlRpc_OnRespawn: ', $params );
 		$params = isset($data[1]) ? $data[1] : '';
 
 		$aseco->console('[onModeScriptCallback] Unsupported callback received: ['. $name .'], please report this!');
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setCustomUIField ($field, $value) {
+		if ( isset($this->custom_ui[$field]) ) {
+			$this->custom_ui[$field] = $value;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getCustomUIField ($field) {
+		if ( isset($this->custom_ui[$field]) ) {
+			return $this->custom_ui[$field];
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getCustomUIBlock () {
+		global $aseco;
+
+		$xml  = '<custom_ui>';
+		$xml .= '<global visible="'. $aseco->bool2string($this->custom_ui['global']) .'"/>';
+		$xml .= '<challenge_info visible="'. $aseco->bool2string($this->custom_ui['challenge_info']) .'"/>';
+		$xml .= '<chat visible="'. $aseco->bool2string($this->custom_ui['chat']) .'"/>';
+		$xml .= '<scoretable visible="'. $aseco->bool2string($this->custom_ui['scoretable']) .'"/>';
+//		$xml .= '<notice visible="'. $aseco->bool2string($this->custom_ui['notice']) .'"/>';
+//		$xml .= '<net_infos visible="'. $aseco->bool2string($this->custom_ui['net_infos']) .'"/>';
+//		$xml .= '<checkpoint_list visible="'. $aseco->bool2string($this->custom_ui['checkpoint_list']) .'"/>';
+//		$xml .= '<round_scores visible="'. $aseco->bool2string($this->custom_ui['round_scores']) .'"/>';
+		$xml .= '</custom_ui>';
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// http://doc.maniaplanet.com/dedicated-server/settings-list.html
+	private function setupModescriptSettings ($aseco) {
+
+		// ModeBase
+		$modebase = array(
+			'S_UseScriptCallbacks'			=> $aseco->server->gameinfo->options['UseScriptCallbacks'],
+			'S_UseLegacyCallbacks'			=> $aseco->server->gameinfo->options['UseLegacyCallbacks'],
+			'S_ChatTime'				=> $aseco->server->gameinfo->options['ChatTime'],
+			'S_AllowRespawn'			=> $aseco->server->gameinfo->options['AllowRespawn'],
+			'S_WarmUpDuration'			=> $aseco->server->gameinfo->options['WarmUpDuration'],
+			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->options['ScoresTableStylePath'],
+		);
+
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+			// Rounds (+RoundsBase)
+			$modesetup = array(
+				// RoundsBase
+				'S_PointsLimit'			=> $aseco->server->gameinfo->rounds['PointsLimit'],
+				'S_FinishTimeout'		=> $aseco->server->gameinfo->rounds['FinishTimeout'],
+				'S_UseAlternateRules'		=> $aseco->server->gameinfo->rounds['UseAlternateRules'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->rounds['ForceLapsNb'],
+				'S_DisplayTimeDiff'		=> $aseco->server->gameinfo->rounds['DisplayTimeDiff'],
+
+				// Rounds
+				'S_UseTieBreak'			=> $aseco->server->gameinfo->rounds['UseTieBreak'],
+			);
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
+			// TimeAttack
+			$modesetup = array(
+				'S_TimeLimit'			=> $aseco->server->gameinfo->time_attack['TimeLimit'],
+			);
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+			// Team  (+RoundsBase)
+			$modesetup = array(
+				// RoundsBase
+				'S_PointsLimit'			=> $aseco->server->gameinfo->team['PointsLimit'],
+				'S_FinishTimeout'		=> $aseco->server->gameinfo->team['FinishTimeout'],
+				'S_UseAlternateRules'		=> $aseco->server->gameinfo->team['UseAlternateRules'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->team['ForceLapsNb'],
+				'S_DisplayTimeDiff'		=> $aseco->server->gameinfo->team['DisplayTimeDiff'],
+
+				// Team
+				'S_MaxPointsPerRound'		=> $aseco->server->gameinfo->team['MaxPointsPerRound'],
+				'S_PointsGap'			=> $aseco->server->gameinfo->team['PointsGap'],
+				'S_UsePlayerClublinks'		=> $aseco->server->gameinfo->team['UsePlayerClublinks'],
+			);
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			// Laps
+			$modesetup = array(
+				'S_FinishTimeout'		=> $aseco->server->gameinfo->laps['S_TimeLimit'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->laps['S_FinishTimeout'],
+				'S_TimeLimit'			=> $aseco->server->gameinfo->laps['S_ForceLapsNb'],
+			);
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			// Cup (+RoundsBase)
+			$modesetup = array(
+				// RoundsBase
+				'S_PointsLimit'			=> $aseco->server->gameinfo->cup['PointsLimit'],
+				'S_FinishTimeout'		=> $aseco->server->gameinfo->cup['FinishTimeout'],
+				'S_UseAlternateRules'		=> $aseco->server->gameinfo->cup['UseAlternateRules'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->cup['ForceLapsNb'],
+				'S_DisplayTimeDiff'		=> $aseco->server->gameinfo->cup['DisplayTimeDiff'],
+
+				// Cup
+				'S_RoundsPerMap'		=> $aseco->server->gameinfo->cup['RoundsPerMap'],
+				'S_NbOfWinners'			=> $aseco->server->gameinfo->cup['NbOfWinners'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->cup['WarmUpDuration'],
+			);
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAMATTACK) {
+			// TeamAttack
+			$modesetup = array(
+				'S_TimeLimit'			=> $aseco->server->gameinfo->team_attack['TimeLimit'],
+				'S_MinPlayerPerClan'		=> $aseco->server->gameinfo->team_attack['MinPlayerPerClan'],
+				'S_MaxPlayerPerClan'		=> $aseco->server->gameinfo->team_attack['MaxPlayerPerClan'],
+				'S_MaxClanNb'			=> $aseco->server->gameinfo->team_attack['MaxClanNb'],
+			);
+		}
+//		else if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+//			// Stunt
+//			$modesetup = array(
+//
+//			);
+//		}
+
+		// Setup the settings
+		$aseco->client->query('SetModeScriptSettings', array_merge($modebase, $modesetup));
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
+	private function setupCustomScoretable ($aseco) {
+
+//		foreach (range(0,20) as $id) {
+//			$aseco->client->queryIgnoreResult('ConnectFakePlayer');
+//		}
+//		$aseco->client->queryIgnoreResult('DisconnectFakePlayer', '*');
+
+		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
+		$xml = '<?xml version="1.0" encoding="utf-8"?>';
+		$xml .= '<scorestable version="1">';
+		$xml .= ' <properties>';
+		$xml .= '  <position x="0.0" y="51.0" z="20.0" />';
+		$xml .= '  <headersize x="70.0" y="8.7" />';
+		$xml .= '  <modeicon icon="Icons64x64_1|ToolLeague1" />';
+		$xml .= '  <tablesize x="182.0" y="67.0" />';
+		$xml .= '  <taleformat columns="2" lines="8" />';
+		$xml .= '  <footersize x="180.0" y="17.0" />';
+		$xml .= '</properties>';
+
+		$xml .= '<images>';
+		$xml .= ' <background>';
+		$xml .= '  <position x="0.0" y="6.0" />';
+		$xml .= '  <size width="240.0" height="108.0" />';
+//		$xml .= '  <collection>';
+//		$xml .= '   <image environment="Canyon" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
+//		$xml .= '   <image environment="Valley" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
+//		$xml .= '   <image environment="Stadium" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
+////		$xml .= '   <image environment="Canyon" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-canyon.dds" />';
+////		$xml .= '   <image environment="Valley" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-valley.dds" />';
+////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds" />';
+//		$xml .= '  </collection>';
+		$xml .= ' </background>';
+		$xml .= '</images>';
+
+//		$xml .= '<columns>';
+//		$xml .= ' <column id="LibST_Avatar" action="create" />';
+//		$xml .= ' <column id="LibST_Name" action="create" />';
+//		$xml .= ' <column id="LibST_ManiaStars" action="create" />';
+//		$xml .= ' <column id="LibST_Tools" action="create" />';
+//		$xml .= ' <column id="LibST_TMBestTime" action="destroy" />';
+//		$xml .= ' <column id="LibST_PrevTime" action="destroy" />';
+//		$xml .= ' <column id="LibST_TMStunts" action="destroy" />';
+//		$xml .= ' <column id="LibST_TMRespawns" action="destroy" />';
+//		$xml .= ' <column id="LibST_TMCheckpoints" action="destroy" />';
+//		$xml .= ' <column id="LibST_TMPoints" action="create" />';
+//		$xml .= ' <column id="LibST_TMPrevRaceDeltaPoints" action="destroy" />';
+//
+//		$xml .= ' <column id="LibST_Avatar" action="create">';
+//		$xml .= '  <legend>TestFull</legend>';
+//		$xml .= '  <defaultvalue>DefaultValue</defaultvalue>';
+//		$xml .= '  <width>20.0</width>';
+//		$xml .= '  <weight>20.0</weight>';
+//		$xml .= '  <textstyle>TextRaceMessageBig</textstyle>';
+//		$xml .= '  <textsize>1</textsize>';
+//		$xml .= '  <textalign>left</textalign>';
+//		$xml .= ' </column>';
+//		$xml .= '</columns>';
+
+		$xml .= '</scorestable>';
+
+		$aseco->client->queryIgnoreResult('TriggerModeScriptEventArray', 'LibScoresTable2_SetStyleFromXml', array('TM', $xml));
 	}
 }
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modescript_settings>
+	<custom_ui>
+		<!-- Set to 'true' if you want the default Challenge-Info at top right, otherwise set 'false'. -->
+		<challenge_info>true</challenge_info>
+
+		<!-- Set to 'true' if you want to enabled the chatbox at the bottom, otherwise set 'false' -->
+		<chat>true</chat>
+
+		<!-- Set to 'true' if you want to see the automatic Scoretable at Score, otherwise set 'false' -->
+		<scoretable>true</scoretable>
+
+		<!-- Set to 'true' if you want to see the automatic Round-Score-Panel at the right side, otherwise set 'false'. -->
+		<round_scores>false</round_scores>
+	</custom_ui>
+
+
+
+
+	<modebase>
+		<!-- Chat time in seconds at the end of the map -->
+		<chat_time>15</chat_time>
+
+		<!-- Allow the players to respawn ('true') or not ('false') -->
+		<allow_respawn>true</allow_respawn>
+
+		<!-- Duration of the warm up phase in rounds (e.g. '2' for two warm up rounds), set to '-1' to disable warm up -->
+		<warm_up_duration>1</warm_up_duration>
+
+		<!--
+		Path/URL to a scores table style from an XML file,
+		see for details: http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
+		//-->
+		<scores_table_style_path></scores_table_style_path>
+	</modebase>
+
+
+
+
+	<modesetup>
+		<!-- Settings for TimeAttack.Script.txt -->
+		<timeattack>
+			<!-- Time limit in seconds, until the next Map is loaded -->
+			<time_limit>300</time_limit>
+		</timeattack>
+
+
+
+		<!-- Settings for Rounds.Script.txt -->
+		<rounds>
+			<!-- Points limit to finish the Map, set to '-1' to disable -->
+			<points_limit>99</points_limit>
+
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<finish_timeout>10</finish_timeout>
+
+			<!--
+			Set to 'true' to use alternate rules, otherwise 'false',
+			see 'rounds_usenewrules' for details: http://wiki.maniaplanet.com/en/Dedicated_servers#The_configuration_of_the_rounds_mode
+			//-->
+			<use_alternate_rules>false</use_alternate_rules>
+
+			<!-- Force number of laps, '-1' to disable -->
+			<force_number_laps>-1</force_number_laps>
+
+			<!-- Set to 'true' to display time difference at each checkpoint, otherwise 'false' -->
+			<display_time_diff>false</display_time_diff>
+
+			<!-- Set to 'true' to continue to play the Map until the tie is broken, otherwise 'false' -->
+			<use_tie_break>true</use_tie_break>
+		</rounds>
+
+
+
+
+		<!-- Settings for Team.Script.txt -->
+		<team>
+			<!-- Points limit to finish the Map, set to '-1' to disable -->
+			<points_limit>99</points_limit>
+
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<finish_timeout>10</finish_timeout>
+
+			<!--
+			Set to 'true' to use alternate rules, otherwise 'false',
+			see 'team_usenewrules' for details: http://wiki.maniaplanet.com/en/Dedicated_servers#The_configuration_of_the_team_mode
+			//-->
+			<use_alternate_rules>false</use_alternate_rules>
+
+			<!-- Force number of laps, '-1' to disable -->
+			<force_number_laps>-1</force_number_laps>
+
+			<!-- Set to 'true' to display time difference at each checkpoint, otherwise 'false' -->
+			<display_time_diff>false</display_time_diff>
+
+			<!-- The maxium number of points attributed to the first Player to cross the finish line -->
+			<max_points_per_round>6</max_points_per_round>
+
+			<!-- The number of points lead a team must have to win the Map -->
+			<points_gap>1</points_gap>
+
+			<!-- Set to 'true' to use the Players clublinks, or otherwise use the default teams, otherwise 'false' -->
+			<use_player_clublinks>false</use_player_clublinks>
+		</team>
+
+
+
+
+		<!-- Settings for Laps.Script.txt -->
+		<laps>
+			<!-- Time limit in seconds, until the next Map is loaded -->
+			<time_limit>300</time_limit>
+
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<finish_timeout>10</finish_timeout>
+
+			<!-- Force number of laps, '-1' to disable -->
+			<force_number_laps>5</force_number_laps>
+		</laps>
+
+
+
+		<!-- Settings for Cup.Script.txt -->
+		<cup>
+			<!-- Points limit to finish the Map, set to '-1' to disable -->
+			<points_limit>99</points_limit>
+
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<finish_timeout>10</finish_timeout>
+
+			<!-- Does not have any effect in this mode, let the default 'false' -->
+			<use_alternate_rules>false</use_alternate_rules>
+
+			<!-- Force number of laps, '-1' to disable -->
+			<force_number_laps>-1</force_number_laps>
+
+			<!-- Set to 'true' to display time difference at each checkpoint, otherwise 'false' -->
+			<display_time_diff>false</display_time_diff>
+
+			<!-- Defines the number of rounds to do by the Players before changing map -->
+			<rounds_per_map>5</rounds_per_map>
+
+			<!-- Defines the number of winners determined by victory with the finalist's status -->
+			<number_of_winners>3</number_of_winners>
+
+			<!-- Duration of the warm up phase in rounds (e.g. '2' for two warm up rounds), set to '-1' to disable warm up -->
+			<warm_up_duration>2</warm_up_duration>
+		</cup>
+
+
+
+		<!-- Settings for TeamAttack.Script.txt -->
+		<teamattack>
+			<!-- Time limit in seconds, until the next Map is loaded -->
+			<time_limit>300</time_limit>
+
+			<!-- Minimum number of Players per clan -->
+			<min_player_per_clan>3</min_player_per_clan>
+
+			<!-- Maximum number of Players per clan -->
+			<max_player_per_clan>3</max_player_per_clan>
+
+			<!-- Maximum number of clans, set to '-1' to disable -->
+			<max_clan_number>-1</max_clan_number>
+		</teamattack>
+	</modesetup>
+</modescript_settings>

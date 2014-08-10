@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-20
+ * Date:	2014-08-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -126,11 +126,11 @@ class Gameinfo {
 
 
 		// ModeBase
+		$this->options['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
+		$this->options['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
 		$this->options['ChatTime']		= $modescript['settings']['S_ChatTime'];
 		$this->options['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
 		$this->options['WarmUpDuration']	= $modescript['settings']['S_WarmUpDuration'];
-		$this->options['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
-		$this->options['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
 		$this->options['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
 
 
@@ -155,6 +155,7 @@ class Gameinfo {
 			}
 			$this->rounds['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->rounds['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
+			$this->rounds['DisplayTimeDiff']		= false;
 
 			$this->rounds['UseTieBreak']			= $modescript['settings']['S_UseTieBreak'];
 		}
@@ -180,6 +181,7 @@ class Gameinfo {
 			}
 			$this->team['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->team['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
+			$this->team['DisplayTimeDiff']			= false;
 
 			$this->team['MaxPointsPerRound']		= $modescript['settings']['S_MaxPointsPerRound'];
 			$this->team['PointsGap']			= $modescript['settings']['S_PointsGap'];
@@ -200,6 +202,8 @@ class Gameinfo {
 				$this->cup['PointsRepartition']		= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onBeginMap' event
 			}
 			$this->cup['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
+			$this->cup['DisplayTimeDiff']			= false;
+
 			$this->cup['RoundsPerMap']			= $modescript['settings']['S_RoundsPerMap'];
 			$this->cup['NbOfWinners']			= $modescript['settings']['S_NbOfWinners'];
 			$this->cup['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
