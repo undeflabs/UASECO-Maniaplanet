@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-08-10');
+	define('UASECO_BUILD',		'2014-08-13');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1517,6 +1517,12 @@ class UASECO extends Helper {
 
 		// Setup race status
 		$this->server->gamestate = Server::RACE;
+
+		// Check for changing the daily logfile
+		if ($this->logfile['file'] != './logs'.DIRECTORY_SEPARATOR.date('Y-m-d').'-current.txt') {
+			// Setup new logfile
+			$this->setupLogfile();
+		}
 
 		// Cleanup Player rankings
 		$this->server->rankings->reset();
