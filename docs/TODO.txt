@@ -4,6 +4,7 @@ UASECO
  - BUG: Multilap handling: No local record after finishing a lap on multilap Maps in the second lap (because the LibXmlRpc_OnWayPoint didn't reset the time, the time grows up on each lap)
  - STYLE: At score, the score table overlaps the reminder of ManiaKarma plugin.
  - Build a ET function into uaseco.php that communicates the amount of players/specs, server infos (login, name... neighborhood like) and the maps of the server
+ - When jukebox a map that's recently been played, it gives the message (recently played, please wait) but then jukes it anyway. I imagine it's because I'm a masteradmin so it overrides but it's odd to get both messages in any case.
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
  - Lift dependecies from plugin.styles.php and remove it

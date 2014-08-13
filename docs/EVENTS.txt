@@ -61,10 +61,10 @@ Example:	[0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=Current
 Note:		This event is sent when a player crosses a finish line.
 
 
-onPlayerLapFinished
+onPlayerFinishLap
 Data:		An array with the login of the player finished a lap, the id of the waypoint block, the current race time, the waypoint number in the race, the current lap time, the waypoint number in the lap
 Example:	[0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
-Note:		This event is sent when a player finished a lap.
+Note:		This event is sent when a player finished a lap on a multilap Map.
 
 
 onPlayerRespawn
