@@ -33,7 +33,7 @@
 
 	<!--
 	Limit the highest record that will be displayed to all.
-	If lower than <max_recs>, records above this limit will
+	If lower than <max_records>, records above this limit will
 	only be displayed to the pertaining player.
 	//-->
 	<limit>1000</limit>

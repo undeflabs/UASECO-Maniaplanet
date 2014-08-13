@@ -26,7 +26,7 @@
 		<!-- Display records in message window or in chat?       -->
 		<recs_in_window>false</recs_in_window>
 		<!-- Limit the highest record that will be displayed to all? -->
-		<!-- If lower than <max_recs>, records above this limit will -->
+		<!-- If lower than <max_records> (local_records.xml), records above this limit will -->
 		<!-- only be displayed to the pertaining player              -->
 		<limit_recs>30</limit_recs>
 		<!-- Store best validation replays per track and session? -->
