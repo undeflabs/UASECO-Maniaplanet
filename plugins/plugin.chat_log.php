@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-07
+ * Date:	2014-08-13
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -107,7 +107,7 @@ class PluginChatlog extends Plugin {
 				// break up long lines into chunks with continuation strings
 				$multi = explode(LF, wordwrap($aseco->stripColors($item[2]), $this->max_line_length + 30, LF . '...'));
 				foreach ($multi as $line) {
-					$line = substr($line, 0, $$this->max_line_length + 33);  // chop off excessively long words
+					$line = substr($line, 0, $this->max_line_length + 33);  // chop off excessively long words
 					$msg[] = array(
 						'$z'. ($aseco->settings['chatpmlog_times'] ? '<{#server}' . $item[0] . '$z> ' : '') .
 						'[{#black}'. $item[1] .'$z] '. $line
