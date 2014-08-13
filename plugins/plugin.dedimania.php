@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-10
+ * Date:	2014-08-13
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -2122,14 +2122,6 @@ class PluginDedimania extends Plugin {
 				}
 				else {
 					// player hasn't got a record yet
-
-					// if previously tracking own/last Dedi record, now track new one
-					if ($aseco->checkpoints[$login]->tracking['dedimania_records'] == 0) {
-						$aseco->checkpoints[$login]->best['finish'] = $aseco->checkpoints[$login]->current['finish'];
-						$aseco->checkpoints[$login]->best['cps'] = $aseco->checkpoints[$login]->current['cps'];
-						// store timestamp for sorting in case of equal bests
-						$aseco->checkpoints[$login]->best['timestamp'] = microtime(true);
-					}
 
 					// insert new record at the specified position
 					// ignore 'Rank' field - not used in /dedi* commands

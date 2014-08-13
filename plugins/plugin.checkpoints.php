@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-07
+ * Date:	2014-08-13
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -72,7 +72,6 @@ class PluginCheckpoint extends Plugin {
 		$this->registerEvent('onPlayerCheckpoint',	'onPlayerCheckpoint');
 		$this->registerEvent('onPlayerFinishLine',	'onPlayerFinishHandling');
 		$this->registerEvent('onPlayerFinishLap',	'onPlayerFinishHandling');
-		$this->registerEvent('onLocalRecord',		'onLocalRecord');
 
 
 		$this->manialinkid			= 'PluginCheckpointWidget';
@@ -471,23 +470,6 @@ class PluginCheckpoint extends Plugin {
 				// store timestamp for sorting in case of equal bests
 				$aseco->checkpoints[$login]->best['timestamp'] = microtime(true);
 			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onLocalRecord ($aseco, $finish_item) {
-
-		$login = $finish_item->player->login;
-
-		// If previously tracking own/last local record, now track new one
-		if (isset($aseco->checkpoints[$login]) && $aseco->checkpoints[$login]->tracking['local_records'] == 0 && $aseco->checkpoints[$login]->tracking['dedimania_records'] == -1) {
-			$aseco->checkpoints[$login]->best['finish'] = $aseco->checkpoints[$login]->current['finish'];
-			$aseco->checkpoints[$login]->best['cps'] = $aseco->checkpoints[$login]->current['cps'];
 		}
 	}
 

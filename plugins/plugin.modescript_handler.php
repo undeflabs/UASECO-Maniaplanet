@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-10
+ * Date:	2014-08-13
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -259,10 +259,10 @@ class PluginModescriptHandler extends Plugin {
 				if ($aseco->string2bool($params[4]) === false) {
 					$aseco->releaseEvent('onPlayerCheckpoint', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
 				}
-				else if ($aseco->string2bool($params[4]) === true) {
+				else if ($aseco->string2bool($params[4]) === true && $aseco->server->maps->current->multilap === false) {
 					$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
 				}
-				if ($aseco->string2bool($params[7]) === true) {
+				else if ($aseco->string2bool($params[7]) === true && $aseco->server->maps->current->multilap === true) {
 					$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
 				}
 		    		break;
@@ -518,7 +518,7 @@ class PluginModescriptHandler extends Plugin {
 					}
 					$aseco->releaseEvent('onPlayerRankingUpdated', null);
 				}
-				if ( isset($this->player_finished[$params[1]]) ) {
+				if (isset($params[1]) && isset($this->player_finished[$params[1]])) {
 					// Player finished the Map or the Lap
 					$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
 
