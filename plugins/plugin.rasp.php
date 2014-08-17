@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-08-17
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -585,8 +585,8 @@ class PluginRasp extends Plugin {
 			`MapId` mediumint(9) NOT NULL DEFAULT '0',
 			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
 			`Score` int(11) NOT NULL DEFAULT '0',
-			`Date` int(10) unsigned NOT NULL DEFAULT '0',
-			`Checkpoints` text NOT NULL,
+			`Date` int(10) unsigned NOT NULL default 0,
+			`Checkpoints` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 			PRIMARY KEY (`Id`),
 			KEY `PlayerMapId` (`PlayerId`,`MapId`),
 			KEY `MapId` (`MapId`),
@@ -834,7 +834,7 @@ class PluginRasp extends Plugin {
 				}
 				$query = substr($query, 0, strlen($query)-1);  // strip trailing ','
 				$aseco->mysqli->query($query);
-				if ($aseco->mysqli->affected_rows < 1) {
+				if ($aseco->mysqli->affected_rows === -1) {
 					trigger_error('[Rasp] ERROR: Could not insert any player averages! ('. $aseco->mysqli->errmsg() .')', E_USER_WARNING);
 				}
 				else if ($aseco->mysqli->affected_rows != count($players)) {
@@ -1063,22 +1063,22 @@ class PluginRasp extends Plugin {
 		if ($pid != 0) {
 			$query = "
 			INSERT INTO `rs_times` (
-				`PlayerId`,
 				`MapId`,
+				`PlayerId`,
 				`Score`,
 				`Date`,
 				`Checkpoints`
 			)
 			VALUES (
-				". $pid .",
 				". $time->map->id .",
+				". $pid .",
 				". $time->score .",
-				". $aseco->mysqli->quote(time()) .",
+				UNIX_TIMESTAMP(),
 				". $aseco->mysqli->quote($cps) ."
 			);
 			";
 			$aseco->mysqli->query($query);
-			if ($aseco->mysqli->affected_rows != 1) {
+			if ($aseco->mysqli->affected_rows === -1) {
 				trigger_error('[Rasp] ERROR: Could not insert time! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 			}
 		}
@@ -1102,7 +1102,7 @@ class PluginRasp extends Plugin {
 		AND `PlayerId` = ". $pid .";
 		";
 		$aseco->mysqli->query($query);
-		if ($aseco->mysqli->affected_rows <= 0) {
+		if ($aseco->mysqli->affected_rows === -1) {
 			trigger_error('[Rasp] ERROR: Could not remove time(s)! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 	}
