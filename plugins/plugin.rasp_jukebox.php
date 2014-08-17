@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-08-17
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -837,7 +837,6 @@ class PluginRaspJukebox extends Plugin {
 					$dropall = $aseco->allowAbility($player, 'dropjukebox');
 					$head = 'Upcoming maps in the jukebox:';
 					$page = array();
-
 					if ($aseco->settings['clickable_lists']) {
 						$page[] = array('Id', 'Name (click to drop)', 'Requester');
 					}
@@ -848,6 +847,7 @@ class PluginRaspJukebox extends Plugin {
 					$tid = 1;
 					$lines = 0;
 					$player->msgs = array();
+
 					// reserve extra width for $w tags
 					$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
 					$player->msgs[0] = array(1, $head, array(1.10+$extra, 0.1, 0.6+$extra, 0.4), array('Icons128x128_1', 'LoadTrack', 0.02));
@@ -863,12 +863,12 @@ class PluginRaspJukebox extends Plugin {
 						}
 						else {
 							$mapname = '{#black}' . $mapname;
-							$page[] = array(str_pad($tid, 2, '0', STR_PAD_LEFT) . '.',
-								$mapname,
-								'{#black}' . $aseco->stripColors($item['Nick'])
-							);
 						}
-
+						$page[] = array(
+							str_pad($tid, 2, '0', STR_PAD_LEFT) .'.',
+							$mapname,
+							'{#black}'. $aseco->stripColors($item['Nick'])
+						);
 						$tid++;
 						if (++$lines > 14) {
 							if ($aseco->allowAbility($player, 'clearjukebox')) {
@@ -886,6 +886,7 @@ class PluginRaspJukebox extends Plugin {
 							}
 						}
 					}
+
 					// add if last batch exists
 					if (count($page) > 1) {
 						if ($aseco->allowAbility($player, 'clearjukebox')) {
@@ -894,6 +895,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 						$player->msgs[] = $page;
 					}
+
 					// display ManiaLink message
 					$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 				}
