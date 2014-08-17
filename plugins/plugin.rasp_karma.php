@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-01
+ * Date:	2014-08-17
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -214,7 +214,7 @@ class PluginRaspKarma extends Plugin {
 				WHERE `Id` = ". $row->Id .";
 				";
 				$aseco->mysqli->query($query2);
-				if ($aseco->mysqli->affected_rows < 1) {
+				if ($aseco->mysqli->affected_rows === -1) {
 					$message = $this->messages['KARMA_FAIL'][0];
 					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $caller->login);
 				}
@@ -240,7 +240,7 @@ class PluginRaspKarma extends Plugin {
 			);
 			";
 			$aseco->mysqli->query($query2);
-			if ($aseco->mysqli->affected_rows < 1) {
+			if ($aseco->mysqli->affected_rows === -1) {
 				$message = $this->messages['KARMA_FAIL'][0];
 				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $caller->login);
 			}
