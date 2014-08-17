@@ -19,7 +19,6 @@
 		<!-- format:
 		<tmlogin>YOUR_MASTERADMIN_LOGIN</tmlogin> <ipaddress>YOUR_MASTERADMIN_IP</ipaddress>
 		//-->
-		<tmlogin>undef.de</tmlogin>
 	</masteradmins>
 
 	<!--
@@ -100,7 +99,7 @@
 	<!--
 	Filename in main directory to cache map informations from dedicated server map list
 	//-->
-	<maplist_cache_file>cache/maplist_cache.txt</maplist_cache_file>
+	<maplist_cache_file>cache/maplist.txt</maplist_cache_file>
 
 
 	<lists_colornicks>true</lists_colornicks>
