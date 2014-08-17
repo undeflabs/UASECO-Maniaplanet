@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-08-13');
+	define('UASECO_BUILD',		'2014-08-17');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -96,6 +96,7 @@ class UASECO extends Helper {
 	public $logfile;
 	public $client;
 	public $parser;
+	public $webaccess;					// used by webaccess.class.php
 	public $debug;
 	public $continent;
 	public $country;
@@ -174,6 +175,7 @@ class UASECO extends Helper {
 		$this->rpc_calls		= array();
 		$this->client			= new IXR_ClientMulticall_Gbx();		// includes/core/gbxremote.class.php
 		$this->parser			= new XmlParser();
+		$this->webaccess		= new Webaccess();
 		$this->continent		= new Continent();
 		$this->country			= new Country();
 		$this->windows			= new WindowList($this);
@@ -320,6 +322,12 @@ class UASECO extends Helper {
 			$this->releaseEvent('onMainLoop', null);
 
 			if (time() >= $this->next_second) {
+				// Trigger pending callbacks
+				$read = array();
+				$write = null;
+				$except = null;
+				$this->webaccess->select($read, $write, $except, 0);
+
 				$this->next_second = (time() + 1);
 				$this->releaseEvent('onEverySecond', null);
 			}
@@ -1030,19 +1038,34 @@ class UASECO extends Helper {
 		$query = "
 		CREATE TABLE IF NOT EXISTS `maps` (
 			`Id` mediumint(9) NOT NULL AUTO_INCREMENT,
-			`Uid` varchar(27) NOT NULL DEFAULT '',
-			`Name` varchar(100) NOT NULL DEFAULT '',
-			`Author` varchar(30) NOT NULL DEFAULT '',
+			`Uid` varchar(27) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Author` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`AuthorNickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`AuthorZone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`AuthorContinent` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`AuthorNation` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`AuthorScore` int(4) UNSIGNED NOT NULL,
 			`AuthorTime` int(4) UNSIGNED NOT NULL,
 			`GoldTime` int(4) UNSIGNED NOT NULL,
 			`SilverTime` int(4) UNSIGNED NOT NULL,
 			`BronzeTime` int(4) UNSIGNED NOT NULL,
-			`Environment` varchar(10) NOT NULL DEFAULT '',
-			`Mood` enum('None', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`Environment` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Mood` enum('unknown', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`Cost` mediumint(3) unsigned NOT NULL,
+			`Type` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Style` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 			`NbLaps` tinyint(1) UNSIGNED NOT NULL,
 			`NbCheckpoints` tinyint(1) UNSIGNED NOT NULL,
+			`Validated` enum('unknown','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`ExeVersion` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`ExeBuild` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`ModName` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`ModFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`ModUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`SongFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`SongUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			PRIMARY KEY (`Id`),
 			UNIQUE KEY `Uid` (`Uid`),
 			Key `Author` (`Author`),
@@ -1066,16 +1089,16 @@ class UASECO extends Helper {
 		$query = "
 		CREATE TABLE IF NOT EXISTS `players` (
 			`Id` mediumint(9) NOT NULL AUTO_INCREMENT,
-			`Login` varchar(50) NOT NULL DEFAULT '',
-			`Game` varchar(3) NOT NULL DEFAULT '',
-			`NickName` varchar(100) NOT NULL DEFAULT '',
+			`Login` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Game` varchar(3) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`NickName` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`Continent` tinyint(3) NOT NULL DEFAULT '0',
-			`Nation` varchar(3) NOT NULL DEFAULT '',
+			`Nation` varchar(3) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`UpdatedAt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			`Wins` mediumint(9) NOT NULL DEFAULT '0',
 			`Visits` mediumint(9) UNSIGNED NOT NULL DEFAULT '0',
 			`TimePlayed` int(10) UNSIGNED NOT NULL DEFAULT '0',
-			`TeamName` char(60) NOT NULL DEFAULT '',
+			`TeamName` char(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			PRIMARY KEY (`Id`),
 			UNIQUE KEY `Login` (`Login`),
 			KEY `Game` (`Game`),
@@ -1098,9 +1121,9 @@ class UASECO extends Helper {
 			`Cps` smallint(3) NOT NULL DEFAULT '-1',
 			`DediCps` smallint(3) NOT NULL DEFAULT '-1',
 			`Donations` mediumint(9) NOT NULL DEFAULT '0',
-			`Style` varchar(20) NOT NULL DEFAULT '',
-			`Panels` varchar(255) NOT NULL DEFAULT '',
-			`PanelBG` varchar(30) NOT NULL DEFAULT '',
+			`Style` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Panels` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`PanelBG` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			PRIMARY KEY (`PlayerId`),
 			KEY `Donations` (`Donations`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
@@ -1173,9 +1196,25 @@ class UASECO extends Helper {
 			}
 			$res->free_result();
 		}
+		if (!in_array('AuthorNickname', $fields)) {
+			$this->console("[Database] » Add `maps` column `AuthorNickname`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorNickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Author`;");
+		}
+		if (!in_array('AuthorZone', $fields)) {
+			$this->console("[Database] » Add `maps` column `AuthorZone`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorZone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `AuthorNickname`;");
+		}
+		if (!in_array('AuthorContinent', $fields)) {
+			$this->console("[Database] » Add `maps` column `AuthorContinent`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorContinent` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `AuthorZone`;");
+		}
+		if (!in_array('AuthorNation', $fields)) {
+			$this->console("[Database] » Add `maps` column `AuthorNation`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorNation` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `AuthorContinent`;");
+		}
 		if (!in_array('AuthorScore', $fields)) {
 			$this->console("[Database] » Add `maps` column `AuthorScore`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorScore` int(4) UNSIGNED NOT NULL AFTER `Author`, ADD INDEX (`AuthorScore`);");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorScore` int(4) UNSIGNED NOT NULL AFTER `AuthorNation`, ADD INDEX (`AuthorScore`);");
 		}
 		if (!in_array('AuthorTime', $fields)) {
 			$this->console("[Database] » Add `maps` column `AuthorTime`...");
@@ -1195,11 +1234,23 @@ class UASECO extends Helper {
 		}
 		if (!in_array('Mood', $fields)) {
 			$this->console("[Database] » Add `maps` column `Mood`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Mood` enum('None', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Environment`, ADD INDEX (`Mood`);");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Mood` enum('unknown', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Environment`, ADD INDEX (`Mood`);");
+		}
+		if (!in_array('Cost', $fields)) {
+			$this->console("[Database] » Add `maps` column `Cost`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Cost` mediumint(3) unsigned NOT NULL AFTER `Mood`;");
+		}
+		if (!in_array('Type', $fields)) {
+			$this->console("[Database] » Add `maps` column `Type`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Type` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Cost`;");
+		}
+		if (!in_array('Style', $fields)) {
+			$this->console("[Database] » Add `maps` column `Style`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Style` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Type`;");
 		}
 		if (!in_array('MultiLap', $fields)) {
 			$this->console("[Database] » Add `maps` column `MultiLap`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Mood`, ADD INDEX (`MultiLap`);");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Style`, ADD INDEX (`MultiLap`);");
 		}
 		if (!in_array('NbLaps', $fields)) {
 			$this->console("[Database] » Add `maps` column `NbLaps`...");
@@ -1208,6 +1259,38 @@ class UASECO extends Helper {
 		if (!in_array('NbCheckpoints', $fields)) {
 			$this->console("[Database] » Add `maps` column `NbCheckpoints`...");
 			$this->mysqli->query("ALTER TABLE `maps` ADD `NbCheckpoints` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `NbLaps`;");
+		}
+		if (!in_array('Validated', $fields)) {
+			$this->console("[Database] » Add `maps` column `Validated`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Validated` enum('unknown','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `NbCheckpoints`;");
+		}
+		if (!in_array('ExeVersion', $fields)) {
+			$this->console("[Database] » Add `maps` column `ExeVersion`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `ExeVersion` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Validated`;");
+		}
+		if (!in_array('ExeBuild', $fields)) {
+			$this->console("[Database] » Add `maps` column `ExeBuild`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `ExeBuild` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ExeVersion`;");
+		}
+		if (!in_array('ModName', $fields)) {
+			$this->console("[Database] » Add `maps` column `ModName`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `ModName` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ExeBuild`;");
+		}
+		if (!in_array('ModFile', $fields)) {
+			$this->console("[Database] » Add `maps` column `ModFile`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `ModFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ModName`;");
+		}
+		if (!in_array('ModUrl', $fields)) {
+			$this->console("[Database] » Add `maps` column `ModUrl`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `ModUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ModFile`;");
+		}
+		if (!in_array('SongFile', $fields)) {
+			$this->console("[Database] » Add `maps` column `SongFile`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `SongFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ModUrl`;");
+		}
+		if (!in_array('SongUrl', $fields)) {
+			$this->console("[Database] » Add `maps` column `SongUrl`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `SongUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `SongFile`;");
 		}
 		$this->displayLoadStatus('Checking database structure...', 0.95);
 
@@ -1560,6 +1643,9 @@ class UASECO extends Helper {
 		else if ($this->debug) {
 			$this->console('[Map] MX infos cached, last fetched at '. date('Y-m-d H:i:s', $map->mx->timestamp_fetched));
 		}
+
+		// Report usage back to home website
+		$this->reportServerInfo();
 
 		// Write map cache file with updated map (including MX info)
 		$this->server->maps->writeMapListCacheFile();
