@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-17
+ * Date:	2014-08-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1039,7 +1039,7 @@ class PluginLocalRecords extends Plugin {
 			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
 			`Score` int(11) NOT NULL DEFAULT '0',
 			`Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`Checkpoints` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`Checkpoints` text NOT NULL,
 			PRIMARY KEY (`Id`),
 			UNIQUE KEY `PlayerId` (`PlayerId`,`MapId`),
 			KEY `MapId` (`MapId`),
