@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-03
+ * Date:	2014-08-16
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -92,6 +92,100 @@ class Helper {
 		);
 		$string = $this->stripNewlines($string);
 		return $this->validateUTF8String($string);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function reportServerInfo () {
+
+		$amount_players = $this->server->players->count();
+		$amount_spectators = 0;
+		foreach ($this->server->players->player_list as $player) {
+				if ($player->isspectator == 1) {
+					$amount_spectators++;
+				}
+		}
+		$amount_players = $amount_players - $amount_spectators;
+
+		// Create Server informations
+		$xml = '<?xml version="1.0" encoding="utf-8"?>'.LF;
+		$xml .= '<info>'.LF;
+		$xml .= ' <last_modified>'. date('Y-m-d H:i:s', time()) .'</last_modified>'.LF;
+		$xml .= ' <uaseco>'.LF;
+		$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
+		$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;
+		$xml .= ' </uaseco>'.LF;
+		$xml .= ' <dedicated>'.LF;
+		$xml .= '  <version>'. $this->server->version .'</version>'.LF;
+		$xml .= '  <build>'. $this->server->build .'</build>'.LF;
+		$xml .= ' </dedicated>'.LF;
+		$xml .= ' <server>'.LF;
+		$xml .= '  <login>'. $this->server->login .'</login>'.LF;
+		$xml .= '  <name>'. $this->stripColors($this->server->name) .'</name>'.LF;
+		$xml .= '  <continent>'. $this->server->zone[0] .'</continent>'.LF;
+		$xml .= '  <country>'. $this->server->zone[1] .'</country>'.LF;
+		$xml .= '  <protected>'. ((!empty($this->server->options['Password'])) ? 'true' : 'false') .'</protected>'.LF;
+		$xml .= '  <mode>'.LF;
+		$xml .= '   <title>'. $this->server->title .'</title>'.LF;
+		$xml .= '   <script>'.LF;
+		$xml .= '    <name>'. $this->server->gameinfo->getGamemodeScriptname() .'</name>'.LF;
+		$xml .= '    <version>'. $this->server->gameinfo->getGamemodeVersion() .'</version>'.LF;
+		$xml .= '   </script>'.LF;
+		$xml .= '  </mode>'.LF;
+		$xml .= '  <players>'.LF;
+		$xml .= '   <current>'. $amount_players .'</current>'.LF;
+		$xml .= '   <maximum>'. $this->server->options['CurrentMaxPlayers'] .'</maximum>'.LF;
+		$xml .= '  </players>'.LF;
+		$xml .= '  <spectators>'.LF;
+		$xml .= '   <current>'. $amount_spectators .'</current>'.LF;
+		$xml .= '   <maximum>'. $this->server->options['CurrentMaxSpectators'] .'</maximum>'.LF;
+		$xml .= '  </spectators>'.LF;
+		$xml .= '  <ladder>'.LF;
+		$xml .= '   <minimum>'. $this->server->ladder_limit_min .'</minimum>'.LF;
+		$xml .= '   <maximum>'. $this->server->ladder_limit_max .'</maximum>'.LF;
+		$xml .= '  </ladder>'.LF;
+		$xml .= ' </server>'.LF;
+		$xml .= ' <current>'.LF;
+		$xml .= '  <map>'.LF;
+		$xml .= '   <name>'. $this->handleSpecialChars($this->server->maps->current->name_stripped) .'</name>'.LF;
+		$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
+		$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
+		$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
+		$xml .= '   <authortime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->authorscore	: $this->server->maps->current->authortime) .'</authortime>'.LF;
+		$xml .= '   <goldtime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->goldtime	: $this->server->maps->current->goldtime) .'</goldtime>'.LF;
+		$xml .= '   <silvertime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->silvertime	: $this->server->maps->current->silvertime) .'</silvertime>'.LF;
+		$xml .= '   <bronzetime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->bronzetime	: $this->server->maps->current->bronzetime) .'</bronzetime>'.LF;
+		$xml .= '   <mxurl>'. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .'</mxurl>'.LF;
+		$xml .= '  </map>'.LF;
+//		$xml .= '  <players>'.LF;
+//		foreach ($this->server->players->player_list as $player) {
+//				$xml .= '   <player>'.LF;
+//				$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripColors($player->nickname)) .'</nickname>'.LF;
+//				$xml .= '     <login>'. $player->login .'</login>'.LF;
+//				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
+//				$xml .= '     <ladder>'. $player->ladderrank .'</ladder>'.LF;
+//				$xml .= '     <spectator>'. $this->bool2string($player->isspectator) .'</spectator>'.LF;
+//				$xml .= '   </player>'.LF;
+//		}
+//		$xml .= '  </players>'.LF;
+		$xml .= ' </current>'.LF;
+		$xml .= '</info>'.LF;
+
+		// Send and ignore response
+		$this->webaccess->request(
+			UASECO_WEBSITE .'usagereport.php',				// URL
+			null,								// Callback
+			$xml,								// POST data
+			false,								// IsXmlRpc
+			100,								// KeepaliveMinTimeout
+			30,								// OpenTimeout
+			40,								// WaitTimeout
+			UASECO_NAME .'/'. UASECO_VERSION .' ('. UASECO_BUILD .')'	// UserAgent
+		);
 	}
 
 	/*
