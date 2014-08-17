@@ -25,7 +25,7 @@
 	<cache_readonly>false</cache_readonly>
 
 	<!-- filename in main directory to store tags -->
-	<cache_file>cache/musictagscache.xml</cache_file>
+	<cache_file>cache/musictags.xml</cache_file>
 
 	<!-- full http link to directory holding the song files     -->
 	<!-- http server must allow direct download of those files  -->
