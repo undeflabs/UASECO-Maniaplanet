@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-21
+ * Date:	2014-08-18
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -57,11 +57,17 @@ class Database extends mysqli {
 		if ( !$this->query('SET AUTOCOMMIT='. $setup['autocommit'] .';') ) {
 			trigger_error('[MySQL] Could not "SET AUTOCOMMIT='. $setup['autocommit'] .'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
 		}
-		if ( !$this->query('SET NAMES "'. $setup['charset_keys'] .'" COLLATE "'. $setup['charset_collate'] .'";') ) {
-			trigger_error('[MySQL] Could not "SET NAMES \''. $setup['charset_keys'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
+		if ( !$this->query('SET character_set_client = "'. $setup['charset'] .'";') ) {
+			trigger_error('[MySQL] Could not "SET character_set_client \''. $setup['charset'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
 		}
-		if ( !$this->query('SET CHARACTER SET "'. $setup['charset_values'] .'";') ) {
-			trigger_error('[MySQL] Could not "SET CHARACTER SET \''. $setup['charset_values'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
+		if ( !$this->query('SET character_set_results = "'. $setup['charset'] .'";') ) {
+			trigger_error('[MySQL] Could not "SET character_set_results \''. $setup['charset'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
+		}
+		if ( !$this->query('SET character_set_connection = "'. $setup['charset'] .'";') ) {
+			trigger_error('[MySQL] Could not "SET character_set_connection \''. $setup['charset'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
+		}
+		if ( !$this->query('SET collation_connection = "'. $setup['collate'] .'";') ) {
+			trigger_error('[MySQL] Could not "SET collation_connection \''. $setup['collate'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
 		}
 		$this->debug = $setup['debug'];
 	}
@@ -197,7 +203,7 @@ class Database extends mysqli {
 	*/
 
 	public function disconnect () {
-		if ($this->stat() !== false) {
+		if (get_class($this) == 'Database' && $this->stat() !== false) {
 			$this->close();
 		}
 	}

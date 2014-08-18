@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-08-17');
+	define('UASECO_BUILD',		'2014-08-18');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1013,9 +1013,8 @@ class UASECO extends Helper {
 	                'password'		=> $this->settings['mysql']['password'],
 			'database'		=> $this->settings['mysql']['database'],
 			'autocommit'		=> 1,
-			'charset_keys'		=> 'utf8',
-			'charset_collate'	=> 'utf8_bin',
-			'charset_values'	=> 'utf8',
+			'charset'		=> 'utf8',
+			'collate'		=> 'utf8_bin',
 			'debug'			=> $this->debug,
 		);
 
