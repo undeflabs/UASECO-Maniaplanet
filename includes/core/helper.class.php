@@ -114,7 +114,6 @@ class Helper {
 		// Create Server informations
 		$xml = '<?xml version="1.0" encoding="utf-8"?>'.LF;
 		$xml .= '<info>'.LF;
-		$xml .= ' <last_modified>'. date('Y-m-d H:i:s', time()) .'</last_modified>'.LF;
 		$xml .= ' <uaseco>'.LF;
 		$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
 		$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;
