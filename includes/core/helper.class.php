@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-16
+ * Date:	2014-08-27
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1673,11 +1673,12 @@ class Helper {
 
 					if ($lastmodified < (time() - 60*60*24*14)) {
 						// Delete all logfiles older then 14 days
-						unlink($dir . DIRECTORY_SEPARATOR . $file);
+						unlink($dir . DIRECTORY_SEPARATOR . $logfile);
 					}
-					if ($lastmodified < (time() - 60*60*6)) {
+					if ($lastmodified < (time() - 60*60)) {
 						$result = preg_match('/-current\.txt$/', $logfile);
 						if ($result !== false && $result >= 1) {
+							// Rename all logfiles marked with "-current.txt" and older then one hour
 							rename(
 								$dir . DIRECTORY_SEPARATOR . $logfile,
 								$dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s', $lastmodified) .'.txt'
