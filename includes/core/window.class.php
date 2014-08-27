@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-10
+ * Date:	2014-08-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -65,7 +65,7 @@ class Window {
 			'position' => array(
 				'x' => -102.00001,
 				'y' => 57.28125,
-				'z' => 23,
+				'z' => 25,
 			),
 			'main' => array(
 				'background' => array(
@@ -91,6 +91,10 @@ class Window {
 					'substyle'	=> 'BgRacePlayerName',
 				),
 			),
+			'heading' => array(
+				'textcolors'		=> 'FA0F',
+				'seperator_color'	=> 'AAAF',
+			),
 		);
 
 		$this->settings = array(
@@ -100,6 +104,7 @@ class Window {
 			'columns'		=> 2,
 			'widths'		=> array(),			// Inner columns
 			'halign'		=> array(),			// Inner columns
+			'heading'		=> array(),			// Inner columns
 			'bgcolors'		=> array(),			// RGBA
 			'textcolors'		=> array(),			// RGBA
 		);
@@ -158,24 +163,52 @@ class Window {
 			$this->settings['columns'] = $param['columns'];
 		}
 
-		// Make sure there is min. 1 alignment
+		// Make sure there is min. one alignment
 		if (isset($param['halign']) && count($param['halign']) > 0) {
 			$this->settings['halign'] = $param['halign'];
 		}
 
-		// Make sure there is min. 1 width
+		// Make sure there is min. one width
 		if (isset($param['widths']) && count($param['widths']) > 0) {
 			$this->settings['widths'] = $param['widths'];
 		}
 
-		// Make sure there is min. 1 background color
+		// Make sure there is min. one background color
 		if (isset($param['bgcolors']) && count($param['bgcolors']) > 0) {
 			$this->settings['bgcolors'] = $param['bgcolors'];
 		}
 
-		// Make sure there is min. 1 text color
+		// Make sure there is min. one text color
 		if (isset($param['textcolors']) && count($param['textcolors']) > 0) {
 			$this->settings['textcolors'] = $param['textcolors'];
+		}
+
+		// Make sure there is min. one heading
+		if (isset($param['heading']) && count($param['heading']) > 0) {
+			$this->settings['heading'] = $param['heading'];
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setLayoutTitle ($param = array()) {
+
+		if (isset($param['textcolor']) && $param['textcolor']) {
+			$this->layout['title']['textcolor'] = trim($param['textcolor']);
+		}
+		if (isset($param['background']) && $param['background']) {
+			list($this->layout['title']['background']['style'], $this->layout['title']['background']['substyle']) = explode(',', $param['background']);
+			$this->layout['title']['background']['style'] = trim($this->layout['title']['background']['style']);
+			$this->layout['title']['background']['substyle'] = trim($this->layout['title']['background']['substyle']);
+		}
+		if (isset($param['icon']) && $param['icon']) {
+			list($this->layout['title']['icon']['style'], $this->layout['title']['icon']['substyle']) = explode(',', $param['icon']);
+			$this->layout['title']['icon']['style'] = trim($this->layout['title']['icon']['style']);
+			$this->layout['title']['icon']['substyle'] = trim($this->layout['title']['icon']['substyle']);
 		}
 	}
 
@@ -203,20 +236,10 @@ class Window {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setLayoutTitle ($param = array()) {
+	public function setLayoutHeading ($param = array()) {
 
-		if (isset($param['textcolor']) && $param['textcolor']) {
-			$this->layout['title']['textcolor'] = trim($param['textcolor']);
-		}
-		if (isset($param['background']) && $param['background']) {
-			list($this->layout['title']['background']['style'], $this->layout['title']['background']['substyle']) = explode(',', $param['background']);
-			$this->layout['title']['background']['style'] = trim($this->layout['title']['background']['style']);
-			$this->layout['title']['background']['substyle'] = trim($this->layout['title']['background']['substyle']);
-		}
-		if (isset($param['icon']) && $param['icon']) {
-			list($this->layout['title']['icon']['style'], $this->layout['title']['icon']['substyle']) = explode(',', $param['icon']);
-			$this->layout['title']['icon']['style'] = trim($this->layout['title']['icon']['style']);
-			$this->layout['title']['icon']['substyle'] = trim($this->layout['title']['icon']['substyle']);
+		if (isset($param['textcolors']) && $param['textcolors']) {
+			$this->layout['heading']['textcolors'] = $param['textcolors'];
 		}
 	}
 
@@ -255,6 +278,12 @@ class Window {
 	public function buildColumns () {
 		global $aseco;
 
+		// Headings handling?
+		$headings = false;
+		if (count($this->settings['heading']) > 0) {
+			$headings = true;
+		}
+
 		// Total width
 		$frame_width = 187.5;
 
@@ -266,20 +295,52 @@ class Window {
 			$xml .= '<quad posn="'. ($i * ($column_width + $outer_gap)) .' 1.5 0.02" sizen="'. $column_width .' 87.9" style="'. $this->layout['column']['background']['style'] .'" substyle="'. $this->layout['column']['background']['substyle'] .'"/>';
 		}
 		$xml .= '</frame>';
-
+		$xml .= '<format textsize="1" textcolor="FFF"/>';
 
 		// Include rows, if there is some data
 		if (count($this->content['data']) > 0) {
-			$xml .= '<frame posn="8.95 -11.4 0.02">';
-			$xml .= '<format textsize="1" textcolor="FFF"/>';
+
+			// Prepared settings
+			$entries = 0;
+			$row = 0;
+			$inner_gap = 0.625;
+			$offset = 0;
+			$line_height = 3.47;
+			if ($headings == true) {
+				$line_height = 3.32;
+				$xml .= '<frame posn="8.95 -11.4 0.02">';
+				foreach (range(0, ($this->settings['columns'] - 1)) as $i) {
+					$innercol = 0;
+					$last_element_width = 0;
+					for ($j = 0; $j <= count($this->settings['heading']) - 1; $j++) {
+						$inner_width	= ($column_width - $outer_gap) - ($j * $inner_gap);
+						$element_width	= (($inner_width / 100) * $this->settings['widths'][$innercol]);
+
+						$textcolor	= ((isset($this->layout['heading']['textcolors'][$innercol])) ? $this->layout['heading']['textcolors'][$innercol] : end($this->layout['heading']['textcolors']));
+						$text		= strtoupper((isset($this->settings['heading'][$innercol])) ? $this->settings['heading'][$innercol] : end($this->settings['heading']));
+						$sizew		= (($element_width - ($inner_gap / 2)) + (($element_width - ($inner_gap / 2)) / 100 * 10));
+						$posx		= (($inner_gap / 2) + $last_element_width + $offset) + (($sizew - $inner_gap) / 2.2);
+						$xml .= '<label posn="'. $posx .' -0.3 0.01" sizen="'. ($sizew / 100 * 135) .' 3.32" halign="center" textcolor="'. $textcolor .'" scale="0.65" text="'. $text .'"/>';
+
+						$last_element_width += $element_width + $inner_gap;
+						$innercol ++;
+					}
+					$offset += (($frame_width + $outer_gap) / $this->settings['columns']);
+
+					$xml .= '<quad posn="'. ($i * ($column_width + $outer_gap)) .' -2.8 0.02" sizen="'. ($column_width - $outer_gap) .' 0.05" bgcolor="'. $this->layout['heading']['seperator_color'] .'"/>';
+				}
+				$xml .= '</frame>';
+				$xml .= '<frame posn="8.95 -14.9 0.02">';
+			}
+			else {
+				$xml .= '<frame posn="8.95 -11.4 0.02">';
+			}
 
 			$entries = 0;
 			$row = 0;
 			$offset = 0;
-			$inner_gap = 0.625;
 			for ($i = ($this->content['page'] * ($this->settings['columns'] * 25)); $i < (($this->content['page'] * ($this->settings['columns'] * 25)) + ($this->settings['columns'] * 25)); $i ++) {
-
-				// Is there a entry?
+				// Is there a entry to display?
 				if ( !isset($this->content['data'][$i]) ) {
 					break;
 				}
@@ -288,19 +349,19 @@ class Window {
 				$innercol = 0;
 				$last_element_width = 0;
 				foreach ($item as $value) {
-					$inner_width = ($column_width - $outer_gap) - ((count($item) - 1) * $inner_gap);
-					$element_width = (($inner_width / 100) * $this->settings['widths'][$innercol]);
+					$inner_width	= ($column_width - $outer_gap) - ((count($item) - 1) * $inner_gap);
+					$element_width	= (($inner_width / 100) * $this->settings['widths'][$innercol]);
 
 					// Setup background <quad...>
 					if (count($this->settings['bgcolors']) > 0) {
-						$xml .= '<quad posn="'. ($last_element_width + $offset) .' -'. (3.47 * $row) .' 0.03" sizen="'. $element_width .' 3.188" bgcolor="'. ((isset($this->settings['bgcolors'][$innercol])) ? $this->settings['bgcolors'][$innercol] : end($this->settings['bgcolors']) ) .'"/>';
+						$xml .= '<quad posn="'. ($last_element_width + $offset) .' -'. ($line_height * $row) .' 0.03" sizen="'. $element_width .' 3.188" bgcolor="'. ((isset($this->settings['bgcolors'][$innercol])) ? $this->settings['bgcolors'][$innercol] : end($this->settings['bgcolors']) ) .'"/>';
 					}
 
 					// Setup <label...>
-					$textcolor	= ((isset($this->settings['textcolors'][$innercol])) ? $this->settings['textcolors'][$innercol] : end($this->settings['textcolors']) );
-					$sizew		= (($element_width - ($inner_gap/2)) + (($element_width - ($inner_gap/2)) / 100 * 10));		// Add +10% of width because of scale="0.9"
-					$posx		= (($inner_gap/2) + $last_element_width + $offset);
-					$posy		= -(3.47 * $row + 1.45);
+					$textcolor	= ((isset($this->settings['textcolors'][$innercol])) ? $this->settings['textcolors'][$innercol] : end($this->settings['textcolors']));
+					$sizew		= (($element_width - ($inner_gap/2)) + (($element_width - ($inner_gap / 2)) / 100 * 10)); // Add +10% of width because of scale="0.9"
+					$posx		= (($inner_gap / 2) + $last_element_width + $offset);
+					$posy		= -($line_height * $row + 1.45);
 					if (isset($this->settings['halign'][$innercol]) && strtolower($this->settings['halign'][$innercol]) == 'right') {
 						$posx = $posx + ($sizew - $inner_gap);
 						$xml .= '<label posn="'. $posx .' '. $posy .' 0.04" sizen="'. $sizew .' 3.188" halign="right" valign="center" scale="0.9" textcolor="'. $textcolor .'" text="'. $this->normalizeString($value) .'"/>';
