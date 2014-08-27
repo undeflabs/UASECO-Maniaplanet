@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-10
+ * Date:	2014-08-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -232,6 +232,13 @@ class Country {
 		'Zimbabwe'			=> 'ZIM',
 
 		'Other'				=> 'OTH',
+		'Other Countries'		=> 'OTH',	// Europe
+		'Other Countries (AF)'		=> 'OTH',	// Africa
+		'Other Countries (AS)'		=> 'OTH',	// Asia
+		'Other Countries (ME)'		=> 'OTH',	// Middle East
+		'Other Countries (NA)'		=> 'OTH',	// North America
+		'Other Countries (OC)'		=> 'OTH',	// Oceania
+		'Other Countries (SA)'		=> 'OTH',	// South America
 	);
 
 	public $ioc_list = array(
@@ -440,7 +447,7 @@ class Country {
 		else {
 			$nation = 'OTH';
 			if ($country != '') {
-				trigger_error('Country::country_list(): Could not map country: '. $country, E_USER_WARNING);
+				trigger_error('Country::countryToIoc(): Could not map country: '. $country, E_USER_WARNING);
 			}
 		}
 		return $nation;
@@ -462,7 +469,7 @@ class Country {
 		else {
 			$country = 'Other Countries';
 			if ($ioc != '') {
-				trigger_error('Country::ioc_list(): Could not map IOC: '. $ioc, E_USER_WARNING);
+				trigger_error('Country::iocToCountry(): Could not map IOC: '. $ioc, E_USER_WARNING);
 			}
 		}
 		return $country;
