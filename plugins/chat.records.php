@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-08-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -229,7 +229,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// Show only newly driven records
-		$aseco->show_maprecs($aseco, $login, 0, 0);
+		$aseco->plugins['PluginLocalRecords']->show_maprecs($aseco, $login, 0, 0);
 	}
 
 	/*
@@ -248,7 +248,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// Show online & show_min_recs-2 records
-		$aseco->show_maprecs($aseco, $login, 2, 0);
+		$aseco->plugins['PluginLocalRecords']->show_maprecs($aseco, $login, 2, 0);
 	}
 
 	/*
@@ -425,11 +425,6 @@ class PluginChatRecords extends Plugin {
 			return;
 		}
 
-		$head = 'TOP 100 of Top-3 Record Holders:';
-		$top = 100;
-		$bgn = '{#black}';  // nickname begin
-
-
 		// collect top-3 records
 		$recs = array();
 		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
@@ -484,13 +479,8 @@ class PluginChatRecords extends Plugin {
 		uasort($recs, array($this, 'top3_compare'));
 
 		$records = array();
+		$top = 100;
 		$i = 1;
-		$lines = 0;
-		$player->msgs = array();
-		// reserve extra width for $w tags
-		$extra = ($aseco->settings['lists_colornicks'] ? 0.2 : 0);
-		$player->msgs[0] = array(1, $head, array(0.85+$extra, 0.1, 0.45+$extra, 0.3), array('BgRaceScore2', 'LadderRank'));
-
 		foreach ($recs as $login => $top3) {
 			// obtain nickname for this login
 			$nick = $aseco->server->players->getPlayerNickname($login);
@@ -499,28 +489,41 @@ class PluginChatRecords extends Plugin {
 			}
 
 			$records[] = array(
-				str_pad($i, 2, '0', STR_PAD_LEFT) . '.',
-				$bgn . $nick,
-				str_pad($top3[0], 3, ' ', STR_PAD_LEFT) .' / '. str_pad($top3[1], 3, ' ', STR_PAD_LEFT) .' / '. str_pad($top3[2], 3, ' ', STR_PAD_LEFT)
+				$i .'.',
+				$top3[0],
+				$top3[1],
+				$top3[2],
+				' ',
+				$nick,
 			);
-			$i++;
-			if (++$lines > 14) {
-				$player->msgs[] = $records;
-				$lines = 0;
-				$records = array();
-			}
-			if ($i > $top) {
+			if ($i >= $top) {
 				break;
 			}
+			$i++;
 		}
 
-		// add if last batch exists
-		if (!empty($records)) {
-			$player->msgs[] = $records;
-		}
 
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+		// Setup settings for Window
+		$settings_title = array(
+			'icon'	=> 'BgRaceScore2,LadderRank',
+		);
+		$settings_heading = array(
+			'textcolors'	=> array('FFFF', '0F0F', '0F0F', '0F0F', 'FFFF', 'FFFF'),
+		);
+		$settings_columns = array(
+			'columns'	=> 2,
+			'widths'	=> array(5, 8, 8, 8, 2, 69),
+			'halign'	=> array('right', 'right', 'right', 'right', 'left', 'left'),
+			'textcolors'	=> array('EEEF', 'EEEF', 'EEEF', 'EEEF', 'FFFF', 'FFFF'),
+			'heading'	=> array('#', '#1', '#2', '#3', '', 'Player'),
+		);
+
+		$window = new Window();
+		$window->setLayoutTitle($settings_title);
+		$window->setLayoutHeading($settings_heading);
+		$window->setColumns($settings_columns);
+		$window->setContent('TOP 100 of Top-3 Record Holders', $records);
+		$window->send($player, 0, false);
 	}
 
 	/*
@@ -539,11 +542,6 @@ class PluginChatRecords extends Plugin {
 			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
 			return;
 		}
-
-		$head = 'TOP 100 Ranked Record Holders:';
-		$top = 100;
-		$bgn = '{#black}';  // nickname begin
-
 
 		// collect record totals
 		$recs = array();
@@ -584,14 +582,10 @@ class PluginChatRecords extends Plugin {
 		// sort for most records
 		arsort($recs);
 
+
+		$top = 100;
 		$records = array();
 		$i = 1;
-		$lines = 0;
-		$player->msgs = array();
-
-		// reserve extra width for $w tags
-		$extra = ($aseco->settings['lists_colornicks'] ? 0.2 : 0);
-		$player->msgs[0] = array(1, $head, array(0.7+$extra, 0.1, 0.45+$extra, 0.15), array('BgRaceScore2', 'LadderRank'));
 		foreach ($recs as $login => $rec) {
 			// obtain nickname for this login
 			$nick = $aseco->server->players->getPlayerNickname($login);
@@ -600,28 +594,38 @@ class PluginChatRecords extends Plugin {
 			}
 
 			$records[] = array(
-				str_pad($i, 2, '0', STR_PAD_LEFT) . '.',
-				$bgn . $nick,
-				$rec
+				$i .'.',
+				$rec,
+				$nick,
 			);
 			$i++;
-			if (++$lines > 14) {
-				$player->msgs[] = $records;
-				$lines = 0;
-				$records = array();
-			}
 			if ($i > $top) {
 				break;
 			}
 		}
 
-		// add if last batch exists
-		if (!empty($records)) {
-			$player->msgs[] = $records;
-		}
 
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+		// Setup settings for Window
+		$settings_title = array(
+			'icon'	=> 'BgRaceScore2,LadderRank',
+		);
+		$settings_heading = array(
+			'textcolors'	=> array('FFFF', 'FFFF', 'FFFF'),
+		);
+		$settings_columns = array(
+			'columns'	=> 4,
+			'widths'	=> array(11, 22, 67),
+			'halign'	=> array('right', 'right', 'left'),
+			'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
+			'heading'	=> array('#', 'Records', 'Player'),
+		);
+
+		$window = new Window();
+		$window->setLayoutTitle($settings_title);
+		$window->setLayoutHeading($settings_heading);
+		$window->setColumns($settings_columns);
+		$window->setContent('TOP 100 Ranked Record Holders', $records);
+		$window->send($player, 0, false);
 	}
 
 	/*
