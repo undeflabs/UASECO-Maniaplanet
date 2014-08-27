@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-08-18');
+	define('UASECO_BUILD',		'2014-08-27');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -305,12 +305,6 @@ class UASECO extends Helper {
 
 		// Main loop
 		while (true) {
-			// Check for Database connection and reconnect on lost connection
-			if ($this->mysqli->ping() === false) {
-				$this->console('[Database] Lost connection, try to reconnect...');
-				$this->connectDatabase();
-			}
-
 			$starttime = microtime(true);
 			// Get callbacks from the server
 			$this->executeCallbacks();
@@ -333,6 +327,12 @@ class UASECO extends Helper {
 			}
 
 			if (time() >= $this->next_tenth) {
+				// Check for Database connection and reconnect on lost connection
+				if ($this->mysqli->ping() === false) {
+					$this->console('[Database] Lost connection, try to reconnect...');
+					$this->connectDatabase();
+				}
+
 				$this->next_tenth = (time() + 10);
 				$this->releaseEvent('onEveryTenSeconds', null);
 			}
