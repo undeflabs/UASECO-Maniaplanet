@@ -12,7 +12,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-08-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -148,7 +148,7 @@ class PluginDonate extends Plugin {
 					}
 					$dons[] = array(
 						$i .'.',
-						$aseco->formatNumber($row->Donations, 0) .' P',
+						$aseco->formatNumber($row->Donations, 0),
 						$nickname,
 					);
 					$i++;
@@ -159,14 +159,19 @@ class PluginDonate extends Plugin {
 				$settings_title = array(
 					'icon'	=> 'Icons128x128_1,Coppers',
 				);
+				$settings_heading = array(
+					'textcolors'	=> array('FFFF', 'FFFF', 'FFFF'),
+				);
 				$settings_columns = array(
 					'columns'	=> 4,
 					'widths'	=> array(11, 22, 67),
 					'halign'	=> array('right', 'right', 'left'),
 					'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
+					'heading'	=> array('#', 'Planets', 'Player'),
 				);
 				$window = new Window();
 				$window->setLayoutTitle($settings_title);
+				$window->setLayoutHeading($settings_heading);
 				$window->setColumns($settings_columns);
 				$window->setContent('Current TOP 100 Donators', $dons);
 				$window->send($player, 0, false);

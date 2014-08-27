@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-30
+ * Date:	2014-08-19
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -113,14 +113,19 @@ class PluginChatHelp extends Plugin {
 		$settings_title = array(
 			'icon'	=> 'ManiaPlanetMainMenu,IconStore',
 		);
+		$settings_heading = array(
+			'textcolors'	=> array('FF5F', 'FFFF'),
+		);
 		$settings_columns = array(
 			'columns'	=> 2,
 			'widths'	=> array(25, 75),
 			'textcolors'	=> array('FF5F', 'FFFF'),
+			'heading'	=> array('Command', 'Description'),
 		);
 
 		$window = new Window();
 		$window->setLayoutTitle($settings_title);
+		$window->setLayoutHeading($settings_heading);
 		$window->setColumns($settings_columns);
 		$window->setContent('Currently supported chat commands', $data);
 		$window->send($player, 0, false);
