@@ -115,8 +115,12 @@
 	<auto_admin_addip>false</auto_admin_addip>
 	<adminops_file>config/adminops.xml</adminops_file>
 	<bannedips_file>config/bannedips.xml</bannedips_file>
-	<blacklist_file>config/blacklist.txt</blacklist_file>
-	<guestlist_file>config/guestlist.txt</guestlist_file>
+
+	<!--
+	Will be stored into "UserData/Config" folder of the dedicated server.
+	-->
+	<blacklist_file>blacklist.txt</blacklist_file>
+	<guestlist_file>guestlist.txt</guestlist_file>
 
 
 	<admin_client_version></admin_client_version>

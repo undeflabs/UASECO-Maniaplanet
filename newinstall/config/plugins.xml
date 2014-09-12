@@ -11,6 +11,7 @@
 	<plugin>plugin.styles.php</plugin>
 
 	<!-- Optional plugins -->
+	<plugin>plugin.info_bar.php</plugin>
 	<plugin>plugin.welcome_center.php</plugin>
 <!--	<plugin>plugin.checkpoints_OLD.php</plugin>	-->
 	<plugin>plugin.checkpoints.php</plugin>		<!-- 2014-07-11: UNFINISHED, not all Gamemodes included	-->

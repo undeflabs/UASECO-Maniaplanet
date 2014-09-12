@@ -51,7 +51,7 @@
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
 
-			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' for automatic (based on author time) -->
 			<finish_timeout>10</finish_timeout>
 
 			<!--
@@ -78,7 +78,7 @@
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
 
-			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' for automatic (based on author time) -->
 			<finish_timeout>10</finish_timeout>
 
 			<!--
@@ -125,7 +125,7 @@
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
 
-			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
+			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' for automatic (based on author time) -->
 			<finish_timeout>10</finish_timeout>
 
 			<!-- Does not have any effect in this mode, let the default 'false' -->

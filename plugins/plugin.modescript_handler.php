@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-13
+ * Date:	2014-09-09
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -98,8 +98,8 @@ class PluginModescriptHandler extends Plugin {
 
 
 		// ModeBase
-		$aseco->server->gameinfo->options['UseScriptCallbacks']		= true;	// Turn on/off the script callbacks
-		$aseco->server->gameinfo->options['UseLegacyCallbacks']		= false;	// Enable the legacy callbacks (default value: True)
+		$aseco->server->gameinfo->options['UseScriptCallbacks']		= true;		// Turn on the script callbacks
+		$aseco->server->gameinfo->options['UseLegacyCallbacks']		= false;	// Disable the legacy callbacks (default value: True)
 		$aseco->server->gameinfo->options['ChatTime']			= (int)$settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->options['AllowRespawn']		= $aseco->string2bool($settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
 		$aseco->server->gameinfo->options['WarmUpDuration']		= (int)$settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
@@ -395,12 +395,18 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			// [0]=NbMatch
+			// [0]=NbMatch, [1]=RestartFlag
 			case 'LibXmlRpc_BeginMatch':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Begin Match');
 				}
-				$aseco->releaseEvent('onBeginMatch', (int)$params[0]);
+				if ($aseco->string2bool($params[1]) === true) {
+					$aseco->restarting = true;			// Map was restarted
+				}
+				else {
+					$aseco->restarting = false;			// No Restart
+				}
+				$aseco->releaseEvent('onBeginMatch', (int)$params[0], $aseco->string2bool($params[1]));
 				break;
 
 
@@ -783,9 +789,9 @@ class PluginModescriptHandler extends Plugin {
 		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 			// Laps
 			$modesetup = array(
-				'S_FinishTimeout'		=> $aseco->server->gameinfo->laps['S_TimeLimit'],
-				'S_ForceLapsNb'			=> $aseco->server->gameinfo->laps['S_FinishTimeout'],
-				'S_TimeLimit'			=> $aseco->server->gameinfo->laps['S_ForceLapsNb'],
+				'S_TimeLimit'			=> $aseco->server->gameinfo->laps['TimeLimit'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->laps['ForceLapsNb'],
+				'S_FinishTimeout'		=> $aseco->server->gameinfo->laps['FinishTimeout'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
