@@ -11,7 +11,7 @@ Version 1.0.0
  - Requirements:
    - Requires PHP/5.2.1 or higher
    - Requires MySQL/5.x or higher
-   - Requires a Maniaplanet dedicated Server build 2014-07-24_19_00 or higher
+   - Requires a Maniaplanet dedicated Server build 2014-09-10_14_00 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
 
  - Changes:

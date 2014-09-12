@@ -173,7 +173,7 @@ Note:		This event is sent at the end of map (Main event)
 
 onBeginMatch
 Data:		An integer with the number of the match
-Example:	int(3)
+Example:	int(3), boolean(true)
 Note:		This event is sent at the beginning of each match
 
 
