@@ -8,7 +8,8 @@
 // Author:    Gilles Masson
 // Updated:   Xymph
 // Updated:   undef.de
-//            » included file "urlsafebase64.php" into class WebaccessUrl
+//            » 2014-07-14: Included file "urlsafebase64.php" into class WebaccessUrl
+//            » 2014-09-09: Bugfix for [PHP Notice] Undefined offset: 0 on line 1188 till 1194
 //
 ////////////////////////////////////////////////////////////////
 
@@ -904,7 +905,7 @@ class WebaccessUrl {
 				$this->_socket = null;
 			}
 
-			$this->infos();
+//			$this->infos();		// 2014-09-09: No need for this infos on success.
 
 			// request completed, remove it from spool!
 			array_shift($this->_spool);
@@ -1182,17 +1183,19 @@ class WebaccessUrl {
 	function infos() {
 		global $aseco;
 
-		$size = (isset($this->_spool[0]['Response']['Message'])) ? strlen($this->_spool[0]['Response']['Message']) : 0;
-		$msg = $this->_webaccess_str
-			. sprintf('[%s,%s]: %0.3f / %0.3f / %0.3f (%0.3f) / %d [%d,%d,%d]',
-			          $this->_state, $this->_spool[0]['State'],
-			          $this->_spool[0]['Times']['open'][1],
-			          $this->_spool[0]['Times']['send'][1],
-			          $this->_spool[0]['Times']['receive'][1],
-			          $this->_spool[0]['Times']['receive'][2],
-			          $this->_query_num, $this->_spool[0]['DatasSize'],
-			          $size, $this->_spool[0]['ResponseSize']);
-		//$aseco->console($msg);
+		if ( isset($this->_spool[0]) ) {
+			$size = (isset($this->_spool[0]['Response']['Message'])) ? strlen($this->_spool[0]['Response']['Message']) : 0;
+			$msg = $this->_webaccess_str
+				. sprintf('[%s,%s]: %0.3f / %0.3f / %0.3f (%0.3f) / %d [%d,%d,%d]',
+				          $this->_state, $this->_spool[0]['State'],
+				          $this->_spool[0]['Times']['open'][1],
+				          $this->_spool[0]['Times']['send'][1],
+				          $this->_spool[0]['Times']['receive'][1],
+				          $this->_spool[0]['Times']['receive'][2],
+				          $this->_query_num, $this->_spool[0]['DatasSize'],
+				          $size, $this->_spool[0]['ResponseSize']);
+			$aseco->console($msg);
+		}
 	}  // infos
 
 	// Alternative base64 url compatible decode and encode functions

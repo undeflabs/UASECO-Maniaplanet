@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - Aug 2014 by undef.de
+ * Copyright:	May 2014 - Sep 2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -43,11 +43,11 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-08-27');
+	define('UASECO_BUILD',		'2014-09-10');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2014-07-24_19_00');
+	define('MANIAPLANET_BUILD',	'2014-09-10_14_00');
 	define('API_VERSION',		'2013-04-16');
 	define('REQUIRED_PHP_VERSION',	'5.2.1');
 
@@ -376,7 +376,7 @@ class UASECO extends Helper {
 		$this->client->query('SetApiVersion', API_VERSION);
 
 		// Trigger 'LibXmlRpc_PlayersRanking'
-		$this->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
+		$this->client->queryIgnoreResult('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
 
 		// Get basic server info, server id, login, nickname, zone, name, options, mode, limits...
 		$this->server->getServerSettings();
