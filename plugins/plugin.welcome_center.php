@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-09-06
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -74,24 +74,7 @@ class PluginWelcomeCenter extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onSync ($aseco, $reload = null) {
-
-		// Check for the right UASECO-Version
-		$uaseco_min_version = '1.0.0';
-		if ( defined('UASECO_VERSION') ) {
-			$version = str_replace(
-				array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'),
-				array('.1','.2','.3','.4','.5','.6','.7','.8','.9'),
-				UASECO_VERSION
-			);
-			if ( version_compare($version, $uaseco_min_version, '<') ) {
-				trigger_error('[WelcomeCenter] Not supported USAECO version ('. $version .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
-			}
-		}
-		else {
-			trigger_error('[WelcomeCenter] Can not identify the System, "UASECO_VERSION" is unset! This plugin runs only with UASECO/'. $uaseco_min_version .'+', E_USER_ERROR);
-		}
-
+	public function onSync ($aseco) {
 
 		// Read Configuration
 		if (!$this->config = $aseco->parser->xmlToArray('config/welcome_center.xml', true, true)) {
