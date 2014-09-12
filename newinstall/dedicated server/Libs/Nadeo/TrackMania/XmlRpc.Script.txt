@@ -3,7 +3,7 @@
  *	Simple commons callbacks
  *	And mode specific callbacks
  */
-#Const	Version		"2014-07-11"
+#Const	Version		"2014-08-01"
 #Const	ScriptName	"XmlRpc.Script.txt"
 
 #Include "TextLib" as TL
@@ -333,12 +333,20 @@ Void UnloadingMap(Integer _Number) {
 // ---------------------------------- //
 /** Callback sent at the beginning of the match
  *	Data:
- *	[Number of the match]
+ *	[Number of the match, Script restarted]
  */
-Void BeginMatch(Integer _Number) {
+Void BeginMatch(Integer _Number, Boolean _Restarted) {
 	if (!G_UseLibXmlRpc) return;
 	
-	Private_SendCallbackArray("LibXmlRpc_BeginMatch", [TL::ToText(_Number)]);
+	declare Restarted = "False";
+	if (_Restarted) Restarted = "True";
+	Private_SendCallbackArray("LibXmlRpc_BeginMatch", [TL::ToText(_Number), Restarted]);
+}
+
+// ---------------------------------- //
+/// BeginMatch() overload
+Void BeginMatch(Integer _Number) {
+	BeginMatch(_Number, False);
 }
 
 // ---------------------------------- //

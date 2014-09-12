@@ -4,7 +4,7 @@
 
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const	RoundsBaseVersion		"2014-07-02"
+#Const	RoundsBaseVersion		"2014-09-08"
 #Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
 
 #Include "Libs/Nadeo/TrackMania/UI.Script.txt" as UI
@@ -19,15 +19,9 @@
 #Setting S_DisplayTimeDiff		False	as _("Display time difference at checkpoint :")
 
 // ---------------------------------- //
-// Constants
-// ---------------------------------- //
-#Const C_PointsRepartition [10, 6, 4, 3, 2, 1]
-
-// ---------------------------------- //
 // Globales
 // ---------------------------------- //
 declare Integer G_RoundStartTime;
-declare Integer[] G_PointsRepartition;
 
 // ---------------------------------- //
 // Extend
@@ -44,7 +38,7 @@ MB_LogVersion(UI::GetScriptName(), UI::GetScriptVersion());
 // Initialize mode
 UiRounds = True;
 MB_UseSectionRound = True;
-G_PointsRepartition = C_PointsRepartition;
+MB_PointsRepartition = C_PointsRepartition;
 
 UI::Load(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime"]);
 UI::DisplayTimeDiff(S_DisplayTimeDiff);
@@ -131,6 +125,24 @@ foreach (Player in Players) {
 ***Yield***
 ***
 UI::XmlRpcLoop();
+
+// ---------------------------------- //
+// Manage XmlRpc events
+foreach (Event in XmlRpc.PendingEvents) {
+	if (Event.ParamArray1 == "Rounds_SetPointsRepartition") {
+		declare PointsRepartition = Integer[];
+		foreach (Point in Event.ParamArray2) {
+			PointsRepartition.add(TL::ToInteger(Point));
+		}
+		if (PointsRepartition.count > 1) MB_PointsRepartition = PointsRepartition;
+	} else if (Event.Param1 == "Rounds_GetPointsRepartition") {
+		declare PointsRepartition = Text[];
+		foreach (Point in MB_PointsRepartition) {
+			PointsRepartition.add(TL::ToText(Point));
+		}
+		XmlRpc.SendCallbackArray("Rounds_PointsRepartition", PointsRepartition);
+	}
+}
 ***
 
 ***PlayLoop***
@@ -142,19 +154,7 @@ UI::XmlRpcLoop();
 // ---------------------------------- //
 // Manage XmlRpc events
 foreach (Event in XmlRpc.PendingEvents) {
-	if (Event.ParamArray1 == "Rounds_SetPointsRepartition") {
-		declare PointsRepartition = Integer[];
-		foreach (Point in Event.ParamArray2) {
-			PointsRepartition.add(TL::ToInteger(Point));
-		}
-		if (PointsRepartition.count > 1) G_PointsRepartition = PointsRepartition;
-	} else if (Event.Param1 == "Rounds_GetPointsRepartition") {
-		declare PointsRepartition = Text[];
-		foreach (Point in G_PointsRepartition) {
-			PointsRepartition.add(TL::ToText(Point));
-		}
-		XmlRpc.SendCallbackArray("Rounds_PointsRepartition", PointsRepartition);
-	} else if (Event.Param1 == "Rounds_ForceEndRound") {
+	if (Event.Param1 == "Rounds_ForceEndRound") {
 		ForceEndRound = True;
 	}
 }
