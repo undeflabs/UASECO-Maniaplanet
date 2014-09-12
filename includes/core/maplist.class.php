@@ -416,7 +416,7 @@ class MapList {
 			". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
 			". 0 .",
 			". 0 .",
-			". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) ."
+			". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
 			". $aseco->mysqli->quote($map->exeversion) .",
 			". $aseco->mysqli->quote($map->exebuild) .",
 			". $aseco->mysqli->quote($map->modname) .",
