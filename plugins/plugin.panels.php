@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-09-06
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,7 +28,6 @@
  *
  * Dependencies:
  *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.local_records.php
  *  - plugins/plugin.rasp.php
  *  - plugins/plugin.donate.php
  *  - plugins/plugin.rasp_votes.php
@@ -66,24 +65,18 @@ class PluginPanels extends Plugin {
 		$this->setDescription('Selects ManiaLink panel templates.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDonate',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
 
-		$this->registerEvent('onStartup',			'onStartup');
-		$this->registerEvent('onSync',				'onSync');
-		$this->registerEvent('onEndMap1',			'onEndMap1');
-		$this->registerEvent('onEndMap',			'onEndMap');
-		$this->registerEvent('onBeginMap',			'onBeginMap');
-		$this->registerEvent('onBeginMap1',			'onBeginMap1');
-		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
-		$this->registerEvent('onPlayerFinish',			'onPlayerFinish');
-		$this->registerEvent('onLocalRecordBestLoaded',		'onLocalRecordBestLoaded');
-		$this->registerEvent('onLocalRecord',			'onLocalRecord');
-		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
-		$this->registerEvent('onDedimaniaRecord',		'onDedimaniaRecord');
-		$this->registerEvent('onManiaExchangeBestLoaded',	'onManiaExchangeBestLoaded');
+		$this->registerEvent('onStartup',		'onStartup');
+		$this->registerEvent('onSync',			'onSync');
+		$this->registerEvent('onEndMap1',		'onEndMap1');
+		$this->registerEvent('onEndMap',		'onEndMap');
+		$this->registerEvent('onBeginMap',		'onBeginMap');
+		$this->registerEvent('onBeginMap1',		'onBeginMap1');
+		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
+
 
 		// handles action id's "-100"-"-49" for selecting from max. 50 record panel templates
 		// handles action id's "-48"-"-7" for selecting from max. 40 admin panel templates
@@ -94,9 +87,6 @@ class PluginPanels extends Plugin {
 
 // Move to "plugin.donate.php"
 		$this->registerChatCommand('donpanel',	'chat_donpanel',	'Selects donate panel (see: /donpanel help)',		Player::PLAYERS);
-
-// Move to "chat.records.php" and include "chat.records.php" into ""plugin.local_records.php"
-		$this->registerChatCommand('recpanel',	'chat_recpanel',	'Selects records panel (see: /recpanel help)',		Player::PLAYERS);
 
 // Maybe move to "plugin.rasp_jukebox.php"
 		$this->registerChatCommand('votepanel',	'chat_votepanel',	'Selects vote panel (see: /votepanel help)',		Player::PLAYERS);
@@ -595,7 +585,6 @@ class PluginPanels extends Plugin {
 				$this->init_playerpanels($aseco, $player);
 				$this->load_donpanel($aseco, $player);
 				$this->load_admpanel($aseco, $player);
-				$this->load_recpanel($aseco, $player);
 				$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
 			}
 			else {
@@ -612,7 +601,6 @@ class PluginPanels extends Plugin {
 					$this->init_playerpanels($aseco, $player);
 					$this->load_donpanel($aseco, $player);
 					$this->load_admpanel($aseco, $player);
-					$this->load_recpanel($aseco, $player);
 					$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
 				}
 				else {
@@ -844,9 +832,6 @@ class PluginPanels extends Plugin {
 
 	public function onBeginMap1 ($aseco, $data) {
 
-		// update records panel for all players
-		$this->updateRecordsPanelAllPlayers($aseco, $data);
-
 		// check for donation plugin
 		if ( isset($aseco->plugins['PluginDonate']) ) {
 			// display donate panel for all players that use a panel
@@ -857,106 +842,6 @@ class PluginPanels extends Plugin {
 			}
 			unset($player);
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Event from plugin.mania_exchange_info.php
-	public function onManiaExchangeBestLoaded ($aseco, $score) {
-
-		if ($score > 0) {
-			$score = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $score : $aseco->formatTime($score));
-		}
-		else {
-			$score = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']);
-		}
-
-		$this->setRecordsPanel('mx', $score);
-		$this->updateRecordsPanelAllPlayers($aseco, null);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Event from plugin.local_records.php
-	public function onLocalRecordBestLoaded ($aseco, $score) {
-
-		if ($score > 0) {
-			$score = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $score : $aseco->formatTime($score));
-		}
-		else {
-			$score = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']);
-		}
-
-		$this->setRecordsPanel('local',	$score);
-		$this->updateRecordsPanelAllPlayers($aseco, null);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Event from plugin.local_records.php
-	public function onLocalRecord ($aseco, $record) {
-
-		if ($record->score > 0) {
-			$score = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record->score : $aseco->formatTime($record->score));
-		}
-		else {
-			$score = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']);
-		}
-
-		$this->setRecordsPanel('local', $score);
-		$this->updateRecordsPanelAllPlayers($aseco, null);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Event from plugin.dedimania.php
-	public function onDedimaniaRecordsLoaded ($aseco, $records) {
-
-		if (count($records) > 0) {
-			$score = $aseco->formatTime($records[0]['Best']);
-		}
-		else {
-			$score = $this->placeholder['time'];
-		}
-
-		$this->setRecordsPanel('dedi', $score);
-		$this->updateRecordsPanelAllPlayers($aseco, null);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Event from plugin.dedimania.php
-	public function onDedimaniaRecord ($aseco, $record) {
-
-		if ($record['Best'] > 0) {
-			$score = $aseco->formatTime($record['Best']);
-		}
-		else {
-			$score = $this->placeholder['time'];
-		}
-
-		$this->setRecordsPanel('dedi', $score);
-		$this->updateRecordsPanelAllPlayers($aseco, null);
 	}
 
 	/*
@@ -1018,32 +903,6 @@ class PluginPanels extends Plugin {
 		$this->init_playerpanels($aseco, $player);
 		$this->load_donpanel($aseco, $player);
 		$this->load_admpanel($aseco, $player);
-		$this->load_recpanel($aseco, $player);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onPlayerFinish ($aseco, $finish_item) {
-
-		if ($finish_item->score > 0) {
-			// check for improved score (Stunts) or time (others)
-			if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-				if ($finish_item->player->panels['pb'] < $finish_item->score) {
-					$finish_item->player->panels['pb'] = $finish_item->score;
-					$this->updateRecordsPanel($aseco, $finish_item->player, $finish_item->score);
-				}
-			}
-			else {
-				if ($finish_item->player->panels['pb'] == 0 || $finish_item->player->panels['pb'] > $finish_item->score) {
-					$finish_item->player->panels['pb'] = $finish_item->score;
-					$this->updateRecordsPanel($aseco, $finish_item->player, $finish_item->score);
-				}
-			}
-		}
 	}
 
 	/*
@@ -1189,108 +1048,12 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function load_recpanel ($aseco, $player) {
-
-		// remember personal best
-		$pb = $aseco->plugins['PluginLocalRecords']->getPersonalBest($player->login, $aseco->server->maps->current->id);
-		$player->panels['pb'] = $pb['time'];
-
-		$this->updateRecordsPanel($aseco, $player, $pb['time']);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function load_admpanel ($aseco, $player) {
 
 		// check for any admin
 		if ($aseco->isAnyAdmin($player) && $player->panels['admin'] != '') {
 			$this->display_adminpanel($aseco, $player);
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function updateRecordsPanel ($aseco, $player, $pb) {
-
-		// check whether to display records panel
-		if ($player->panels['records'] != '') {
-			if ($pb != 0) {
-				$pb = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $pb : $aseco->formatTime($pb));
-			}
-			else {
-				$pb = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']);
-			}
-			$this->showRecordsPanel($aseco, $player, $pb);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function updateRecordsPanelAllPlayers ($aseco, $data) {
-
-		// Update records panel for all players
-		foreach ($aseco->server->players->player_list as $player) {
-			// Remember personal best at start of map
-			$pb = $aseco->plugins['PluginLocalRecords']->getPersonalBest($player->login, $aseco->server->maps->current->id);
-			$player->panels['pb'] = $pb['time'];
-			$this->updateRecordsPanel($aseco, $player, $player->panels['pb']);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Displays a Records panel
-	 *
-	 * $player: player to send panel to
-	 * $pb    : personal best
-	 */
-	public function showRecordsPanel ($aseco, $player, $pb) {
-
-		// build manialink
-		$xml = str_replace(
-			array(
-				'%PB%',
-				'%MX%',
-				'%LCL%',
-				'%DED%'
-			),
-			array(
-				$pb,
-				$this->record_defaults['mx'],
-				$this->record_defaults['local'],
-				$this->record_defaults['dedi']
-			),
-			$player->panels['records']
-		);
-
-		$aseco->addManialink($xml, $player->login, 0);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function setRecordsPanel ($field, $value) {
-		$this->record_defaults[$field] = $value;
 	}
 
 	/*
