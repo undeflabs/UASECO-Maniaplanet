@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-09-14
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -126,7 +126,7 @@ class Server {
 			2		=> 'Launching',
 			3		=> 'Running - Synchronization',
 			4		=> 'Running - Play',
-			5		=> 'Unknown Status, please report!',
+			5		=> 'Unknown Status, please report at '. UASECO_WEBSITE,
 			6		=> 'Running - Exit',
 		);
 	}
@@ -156,34 +156,34 @@ class Server {
 	public function getServerSettings () {
 
 		// Get basic server info
-		$this->_callMethodGetVersion();
+		$this->callMethodGetVersion();
 
 		// Get server id, login, name, zone...
-		$this->_callMethodGetSystemInfo();
+		$this->callMethodGetSystemInfo();
 
 		// Get server name, options
-		$this->_callMethodGetServerOptions();
+		$this->callMethodGetServerOptions();
 
 		// Get server planets
-		$this->_callMethodGetServerPlanets();
+		$this->callMethodGetServerPlanets();
 
 		// Get server ladder limits
-		$this->_callMethodGetLadderServerLimits();
+		$this->callMethodGetLadderServerLimits();
 
 		// Get gamedir
-		$this->_callMethodGameDataDirectory();
+		$this->callMethodGameDataDirectory();
 
 		// Get mapdir
-		$this->_callMethodGetMapsDirectory();
+		$this->callMethodGetMapsDirectory();
 
 		// Check for relay server
-		$this->_callMethodIsRelayServer();
+		$this->callMethodIsRelayServer();
 
 		// Get mode and limits
 		$this->getCurrentGameInfo();
 
 		// Get server stats: uptime...
-		$this->_callMethodGetNetworkStats();
+		$this->callMethodGetNetworkStats();
 	}
 
 	/*
@@ -195,19 +195,19 @@ class Server {
 	public function updateServerOptions () {
 
 		// Update basic server info
-		$this->_callMethodGetVersion();
+		$this->callMethodGetVersion();
 
 		// Update server name, options
-		$this->_callMethodGetServerOptions();
+		$this->callMethodGetServerOptions();
 
 		// Update server planets
-		$this->_callMethodGetServerPlanets();
+		$this->callMethodGetServerPlanets();
 
 		// Update server ladder limits (almost for RoC-Servers)
-		$this->_callMethodGetLadderServerLimits();
+		$this->callMethodGetLadderServerLimits();
 
 		// Update server stats: uptime...
-		$this->_callMethodGetNetworkStats();
+		$this->callMethodGetNetworkStats();
 	}
 
 	/*
@@ -216,7 +216,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetNetworkStats () {
+	private function callMethodGetNetworkStats () {
 		global $aseco;
 
 		// Get server stats: uptime...
@@ -240,7 +240,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodIsRelayServer () {
+	private function callMethodIsRelayServer () {
 		global $aseco;
 
 		$aseco->client->query('IsRelayServer');
@@ -257,7 +257,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetMapsDirectory () {
+	private function callMethodGetMapsDirectory () {
 		global $aseco;
 
 		// Get mapdir
@@ -271,7 +271,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGameDataDirectory () {
+	private function callMethodGameDataDirectory () {
 		global $aseco;
 
 		// Get gamedir
@@ -285,7 +285,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetLadderServerLimits () {
+	private function callMethodGetLadderServerLimits () {
 		global $aseco;
 
 		// Get server ladder limits
@@ -302,7 +302,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetServerPlanets () {
+	private function callMethodGetServerPlanets () {
 		global $aseco;
 
 		// Gets current server name and options
@@ -316,7 +316,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetServerOptions () {
+	private function callMethodGetServerOptions () {
 		global $aseco;
 
 		// Gets current server name and options
@@ -359,7 +359,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetSystemInfo () {
+	private function callMethodGetSystemInfo () {
 		global $aseco;
 
 		// Get server id, login, name, zone
@@ -385,7 +385,7 @@ class Server {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _callMethodGetVersion () {
+	private function callMethodGetVersion () {
 		global $aseco;
 
 		// Get basic server info
