@@ -2,7 +2,7 @@ Version 1.0.0
 ~~~~~~~~~~~~~
  - Notes:
    - Third-party Plugins for XAseco2 are NOT compatible without changes (see "Differences between XAseco2 and UASECO" below)
-   - A database from XAseco2/1.03 is fully compatible with UASECO (only indexes has been added), you can switch easily to UASECO (and back to XAseco2)
+   - A database from XAseco2/1.03 is fully compatible with UASECO (indexes and columns has been added), you can switch easily to UASECO (and back to XAseco2)
    - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed before first stable release!
      Use Class Window instead: http://www.uaseco.org/Development/Classes/Window.php
    - Plugin "plugin.styles.php" and related files in the folder "config/styles" are deprecated and get removed before first stable release!
