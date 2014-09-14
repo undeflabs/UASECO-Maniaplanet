@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-13
+ * Date:	2014-09-14
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -51,7 +51,6 @@
 */
 
 class PluginDedimania extends Plugin {
-
 	public $db;
 
 	// Overrule these in config/dedimania.xml, do not change them here!
@@ -91,6 +90,186 @@ class PluginDedimania extends Plugin {
 	private $greplay_dir		= 'GReplays';
 	private $vreplay_dir		= 'VReplays';
 
+	// Title to Packmask list
+	private $title_packmask		= array(
+		// Official Nadeo Titles
+		'TMCanyon'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'TMStadium'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'TMValley'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'Trackmania_2@nadeolabs'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Trackmania_2@nadeolabs',
+		),
+		'Platform@nadeolive'	=> array(
+			'supported'		=> false,
+			'packmask'		=> 'Canyon',
+		),
+
+
+		// Custom Titles "Canyon"
+		'Acrobatic@mr.dvd'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'_f00Canyon_00fStar@mcmart1'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'CanyonCity@darkpuddle_'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'Canyon_Inverted_edk@edk'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'DD_RailwaySystem@divingduck'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'Glide@darmaya'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'LEGO_Racing@macio6'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'POLSO@darmaya'			=> array(			// THUMBLER.Title.Pack.Gbx
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'Raid@meuh21'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'TM2_Canyon_Sparkstedition@sparkster'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'Mr.DvDCanyon_dvd@mr.dvd'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'Wastelands@mpmandark'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+		'wtc@woutre'			=> array(			// http://worldtrialclub.com/
+			'supported'		=> true,
+			'packmask'		=> 'Canyon',
+		),
+
+
+		// Custom Titles "Stadium"
+		'Dirt_World_TM2@bernatf'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'Dirt_@mr.dvd'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'edenia@nexxusdrako'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'ESLTitlePack@nilakite2'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'Nations_Forever@citiroller'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'Nations_ESWC@tm-jinzo'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'Minimalize@mvv0105'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'only_stadium_car@adamkooo'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'RPG@tmrpg'			=> array(			// manialink:///:TrackmaniaRPG
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'SRE@tm-nascar'			=> array(			// http://cms.tm-nascar.com/
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'StadiumPlatform@darkpuddle_'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+		'Ultimate_Challenge_2@mr.dvd'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
+
+
+		// Custom Titles "Valley"
+		'adrenalin@flighthigh'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'endless_Valley@flighthigh'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'F1_Abu_Dhabi@darkpuddle_'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'miniahoy3@kaeptniglu'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'RaidValley@meuh21'		=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'ValleyCity@darkpuddle_'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+		'Valley_Extensions@dag_bert'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Valley',
+		),
+
+
+		// Custom Titles multi environment
+		'Stunts@spaii'			=> array(
+			'supported'		=> false,
+			'packmask'		=> 'Trackmania_2@nadeolabs',
+		),
+		'Maximum_30_Seconds@kata78'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Trackmania_2@nadeolabs',
+		),
+		'MrLag_s_Pack@yo12cool__tmstunt'	=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Trackmania_2@nadeolabs',
+		),
+		'PMC@redix'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Trackmania_2@nadeolabs',
+		),
+	);
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -1221,6 +1400,27 @@ class PluginDedimania extends Plugin {
 		if (!isset($this->db['XmlrpcDB']) && (!isset($this->db['XmlrpcDBbadTime']) || ($time - $this->db['XmlrpcDBbadTime']) > $this->timeout)) {
 
 			$aseco->console('[Dedimania] ********************************************************');
+			if ( !isset($this->title_packmask[$aseco->server->title]) ) {
+				$aseco->console('[Dedimania] Unknown Title "'. $aseco->server->title .'", please report this at '. UASECO_WEBSITE);
+				$aseco->console('[Dedimania] ********************************************************');
+
+				// Prevent from retrying in short time
+				$this->timeout = (60 * 60 * 24 * 365);
+				$this->db['XmlrpcDBbadTime'] = $time;
+				return;
+			}
+			else if (isset($this->title_packmask[$aseco->server->title]) && $this->title_packmask[$aseco->server->title]['supported'] == false) {
+				$aseco->console('[Dedimania] Unsupported Title "'. $aseco->server->title .'", no dedimania records available!');
+				$aseco->console('[Dedimania] ********************************************************');
+
+				// Prevent from retrying in short time
+				$this->timeout = (60 * 60 * 24 * 365);
+				$this->db['XmlrpcDBbadTime'] = $time;
+				return;
+			}
+			else {
+				$aseco->console('[Dedimania] Using Packmask "'. $this->title_packmask[$aseco->server->title]['packmask'] .'" for Title "'. $aseco->server->title .'".');
+			}
 			$aseco->console('[Dedimania] Dataserver connection on '. $this->db['Name'] .'...');
 			$aseco->console('[Dedimania] Try connection on '. $this->db['Url'] .'...');
 
@@ -1233,7 +1433,7 @@ class PluginDedimania extends Plugin {
 					'Login'		=> $this->db['Login'],
 					'Code'		=> $this->db['DediCode'],
 					'Path'		=> implode('|', array_merge(array('World'), $aseco->server->zone)),
-					'Packmask'	=> str_replace('TM', '', $aseco->server->title),
+					'Packmask'	=> $this->title_packmask[$aseco->server->title]['packmask'],
 					'ServerVersion'	=> $aseco->server->version,
 					'ServerBuild'	=> $aseco->server->build,
 					'Tool'		=> UASECO_NAME,
