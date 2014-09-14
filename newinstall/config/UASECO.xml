@@ -96,11 +96,6 @@
 	<default_maplist>TMCanyonA.txt</default_maplist>
 	<writemaplist_random>true</writemaplist_random>
 
-	<!--
-	Filename in main directory to cache map informations from dedicated server map list
-	//-->
-	<maplist_cache_file>cache/maplist.txt</maplist_cache_file>
-
 
 	<lists_colornicks>true</lists_colornicks>
 	<lists_colormaps>true</lists_colormaps>

@@ -11,7 +11,9 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `maps` (
   `Id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `Uid` varchar(27) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Filename` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `Name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `Comment` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `Author` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `AuthorNickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `AuthorZone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',

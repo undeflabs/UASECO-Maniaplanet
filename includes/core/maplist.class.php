@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-12
+ * Date:	2014-09-14
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -164,52 +164,8 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function writeMapListCacheFile () {
-		global $aseco;
-
-		if ($fh = @fopen($aseco->settings['maplist_cache_file'], 'wb')) {
-			fwrite($fh, serialize($aseco->server->maps->map_list));
-			fclose($fh);
-		}
-		else {
-			trigger_error('[MapList] Could not write map cache file ['. $aseco->settings['maplist_cache_file'] .']!', E_USER_WARNING);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function readMapListCacheFile () {
-		global $aseco;
-
-		if (file_exists($aseco->settings['maplist_cache_file']) && is_readable($aseco->settings['maplist_cache_file'])) {
-			$cache = @file_get_contents($aseco->settings['maplist_cache_file']);
-			return unserialize($cache);
-		}
-		else {
-			return false;
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function readMapList () {
 		global $aseco;
-
-		// Try to read <maplist_cache_file>
-		$mapcache = $this->readMapListCacheFile();
-		if ($mapcache !== false) {
-			$count = count($mapcache);
-			$aseco->console('[MapList] Found maplist cache file with '. $count .' map'. ($count == 1 ? '' : 's') .'.');
-		}
-
 
 		// Get the MapList from Server
 		$maplist = array();
@@ -217,10 +173,9 @@ class MapList {
 		$done = false;
 		$size = 50;
 		$i = 0;
-
-		$aseco->client->resetError();
 		while (!$done) {
 			// GetMapList response: Name, UId, FileName, Environnement, Author, GoldTime, CopperPrice, MapType, MapStyle.
+			$aseco->client->resetError();
 			$aseco->client->query('GetMapList', $size, $i);
 			$newlist = $aseco->client->getResponse();
 
@@ -235,7 +190,7 @@ class MapList {
 				$maplist = array_merge($maplist, $newlist);
 
 				if (count($newlist) < $size) {
-					// got less than $size maps, might as well leave
+					// Got less than $size maps, might as well leave
 					$done = true;
 				}
 				else {
@@ -248,38 +203,7 @@ class MapList {
 			}
 		}
 
-
-		// Compare mapcache with received maplist
-		if ($mapcache !== false) {
-			$found = array();
-			foreach ($maplist as $map) {
-				if ( isset($mapcache[$map['UId']]) ) {
-					$found[$map['UId']] = $mapcache[$map['UId']];
-				}
-			}
-			if (count($maplist) == count($found)) {
-				// 100% same, add and return
-				$aseco->console('[MapList] Maplist cache file is identical to dedicated server maplist, using it.');
-				$this->map_list = $found;
-
-				// Find the current running map
-				$this->current = $this->getCurrentMapInfo();
-
-				// Remove outdated MX data
-				foreach ($this->map_list as &$map) {
-					if ( ($map->mx != false) && (time() > ($map->mx->timestamp_fetched + $this->max_age_mxinfo)) ) {
-						$map->mx = false;
-					}
-				}
-				unset($map);
-
-				// No need for more work
-				return;
-			}
-		}
-
-
-		// Load map Ids from Database for all maps
+		// Load map infos from Database for all maps
 		$uids = array();
 		foreach ($maplist as $map) {
 			$uids[] = $aseco->mysqli->quote($map['UId']);
@@ -287,31 +211,58 @@ class MapList {
 		$dbinfos = $this->getDatabaseMapInfos($uids);
 
 
-
 		// Calculate karma for each map in database
 		$karma = $this->calculateRaspKarma();
-
 
 
 		$add_database = array();
 		foreach ($maplist as $mapinfo) {
 
-			// Retrieve MapInfo from GBXInfoFetcher
-			$gbx = $this->parseMap($aseco->server->mapdir . $mapinfo['FileName']);
-
-			// Create Map object
-			$map = new Map($gbx, $mapinfo['FileName']);
-
-			// Setup database id, if not present, add this to the list for adding into database
+			// Setup from database, if not present, add this to the list for adding into database
 			if (isset($dbinfos[$mapinfo['UId']])) {
+				// Create and setup dummy Map with data from the database
+				$map			= new Map(null, null);
 				$map->id		= $dbinfos[$mapinfo['UId']]['id'];
+				$map->uid		= $dbinfos[$mapinfo['UId']]['uid'];
+				$map->filename		= $dbinfos[$mapinfo['UId']]['filename'];
+				$map->name		= $dbinfos[$mapinfo['UId']]['name'];
+				$map->name_stripped	= $dbinfos[$mapinfo['UId']]['name_stripped'];
+				$map->comment		= $dbinfos[$mapinfo['UId']]['comment'];
+				$map->author		= $dbinfos[$mapinfo['UId']]['author'];
+				$map->author_nickname	= $dbinfos[$mapinfo['UId']]['author_nickname'];
+				$map->author_zone	= $dbinfos[$mapinfo['UId']]['author_zone'];
+				$map->author_continent	= $dbinfos[$mapinfo['UId']]['author_continent'];
+				$map->author_nation	= $dbinfos[$mapinfo['UId']]['author_nation'];
+				$map->authorscore	= $dbinfos[$mapinfo['UId']]['authorscore'];
+				$map->authortime	= $dbinfos[$mapinfo['UId']]['authortime'];
+				$map->goldtime		= $dbinfos[$mapinfo['UId']]['goldtime'];
+				$map->silvertime	= $dbinfos[$mapinfo['UId']]['silvertime'];
+				$map->bronzetime	= $dbinfos[$mapinfo['UId']]['bronzetime'];
 				$map->nblaps		= $dbinfos[$mapinfo['UId']]['nblaps'];
+				$map->multilap		= $dbinfos[$mapinfo['UId']]['multilap'];
 				$map->nbcheckpoints	= $dbinfos[$mapinfo['UId']]['nbcheckpoints'];
-
-				// Update Map in database
-				$this->updateMapInDatabase($map);
+				$map->cost		= $dbinfos[$mapinfo['UId']]['cost'];
+				$map->environment	= $dbinfos[$mapinfo['UId']]['environment'];
+				$map->mood		= $dbinfos[$mapinfo['UId']]['mood'];
+				$map->type		= $dbinfos[$mapinfo['UId']]['type'];
+				$map->style		= $dbinfos[$mapinfo['UId']]['style'];
+				$map->validated		= $dbinfos[$mapinfo['UId']]['validated'];
+				$map->exeversion	= $dbinfos[$mapinfo['UId']]['exeversion'];
+				$map->exebuild		= $dbinfos[$mapinfo['UId']]['exebuild'];
+				$map->modname		= $dbinfos[$mapinfo['UId']]['modname'];
+				$map->modfile		= $dbinfos[$mapinfo['UId']]['modfile'];
+				$map->modurl		= $dbinfos[$mapinfo['UId']]['modurl'];
+				$map->songfile		= $dbinfos[$mapinfo['UId']]['songfile'];
+				$map->songurl		= $dbinfos[$mapinfo['UId']]['songurl'];
 			}
 			else {
+				// Retrieve MapInfo from GBXInfoFetcher
+				$gbx = $this->parseMap($aseco->server->mapdir . $mapinfo['FileName']);
+
+				// Create Map object
+				$map = new Map($gbx, $mapinfo['FileName']);
+
+				// Add this new Map to the database
 				$add_database[] = $map;
 			}
 
@@ -341,7 +292,7 @@ class MapList {
 		foreach ($add_database as $map) {
 			$new = $this->insertMapIntoDatabase($map);
 
-			// Update the Maplist
+			// Update the Maplist (made here, because now there is a $map->id)
 			if ($new->uid) {
 				$this->map_list[$new->uid] = $new;
 			}
@@ -363,11 +314,14 @@ class MapList {
 		global $aseco;
 
 		// `NbLaps` and `NbCheckpoints` only accessible with the ListMethod 'GetCurrentMapInfo'
-		// and when the Map is actual loaded, update where made at $this->getCurrentMapInfo()
+		// and when the Map is actual loaded, update where made at $this->getCurrentMapInfo().
+		// In Maps with chunk version 13 (0x03043002), these information are accessible too.
 		$query = "
 		INSERT INTO `maps` (
 			`Uid`,
+			`Filename`,
 			`Name`,
+			`Comment`,
 			`Author`,
 			`AuthorNickname`,
 			`AuthorZone`,
@@ -397,7 +351,9 @@ class MapList {
 		)
 		VALUES (
 			". $aseco->mysqli->quote($map->uid) .",
+			". $aseco->mysqli->quote($map->filename) .",
 			". $aseco->mysqli->quote($map->name) .",
+			". $aseco->mysqli->quote($map->comment) .",
 			". $aseco->mysqli->quote($map->author) .",
 			". $aseco->mysqli->quote($map->author_nickname) .",
 			". $aseco->mysqli->quote($map->author_zone) .",
@@ -414,8 +370,8 @@ class MapList {
 			". $aseco->mysqli->quote($map->type) .",
 			". $aseco->mysqli->quote($map->style) .",
 			". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
-			". 0 .",
-			". 0 .",
+			". (($map->multilap == true) ? $map->nblaps : 0) .",
+			". $map->nbcheckpoints .",
 			". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
 			". $aseco->mysqli->quote($map->exeversion) .",
 			". $aseco->mysqli->quote($map->exebuild) .",
@@ -450,7 +406,9 @@ class MapList {
 		$query = "
 		UPDATE `maps`
 		SET
+			`Filename` = ". $aseco->mysqli->quote($map->filename) .",
 			`Name` = ". $aseco->mysqli->quote($map->name) .",
+			`Comment` = ". $aseco->mysqli->quote($map->comment) .",
 			`Author` = ". $aseco->mysqli->quote($map->author) .",
 			`AuthorNickname` = ". $aseco->mysqli->quote($map->author_nickname) .",
 			`AuthorZone` = ". $aseco->mysqli->quote($map->author_zone) .",
@@ -488,6 +446,103 @@ class MapList {
 		else {
 			return true;
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function getDatabaseMapInfos ($uids) {
+		global $aseco;
+
+		$data = array();
+
+		// Read Map infos
+		$query = "
+		SELECT
+			`Id`,
+			`Uid`,
+			`Filename`,
+			`Name`,
+			`Comment`,
+			`Author`,
+			`AuthorNickname`,
+			`AuthorZone`,
+			`AuthorContinent`,
+			`AuthorNation`,
+			`AuthorScore`,
+			`AuthorTime`,
+			`GoldTime`,
+			`SilverTime`,
+			`BronzeTime`,
+			`Environment`,
+			`Mood`,
+			`Cost`,
+			`Type`,
+			`Style`,
+			`MultiLap`,
+			`NbLaps`,
+			`NbCheckpoints`,
+			`Validated`,
+			`ExeVersion`,
+			`ExeBuild`,
+			`ModName`,
+			`ModFile`,
+			`ModUrl`,
+			`SongFile`,
+			`SongUrl`
+		FROM `maps`
+		WHERE `Uid` IN (". implode(',', $uids) .");
+		";
+
+		$res = $aseco->mysqli->query($query);
+		if ($res) {
+			if ($res->num_rows > 0) {
+				while ($row = $res->fetch_array()) {
+					$data[$row['Uid']] = array(
+						'id'			=> (int)$row['Id'],
+						'uid'			=> $row['Uid'],
+						'filename'		=> $row['Filename'],
+						'name'			=> $row['Name'],
+						'name_stripped'		=> $aseco->stripColors($row['Name'], true),
+						'comment'		=> $row['Comment'],
+						'author'		=> $row['Author'],
+						'author_nickname'	=> $row['AuthorNickname'],
+						'author_zone'		=> $row['AuthorZone'],
+						'author_continent'	=> $row['AuthorContinent'],
+						'author_nation'		=> $row['AuthorNation'],
+						'authorscore'		=> $row['AuthorScore'],
+						'authortime'		=> $row['AuthorTime'],
+						'goldtime'		=> $row['GoldTime'],
+						'silvertime'		=> $row['SilverTime'],
+						'bronzetime'		=> $row['BronzeTime'],
+						'nblaps'		=> (int)$row['NbLaps'],
+						'multilap'		=> $row['MultiLap'],
+						'nbcheckpoints'		=> (int)$row['NbCheckpoints'],
+						'cost'			=> $row['Cost'],
+						'environment'		=> $row['Environment'],
+						'mood'			=> $row['Mood'],
+						'type'			=> $row['Type'],
+						'style'			=> $row['Style'],
+						'validated'		=> $row['Validated'],
+						'exeversion'		=> $row['ExeVersion'],
+						'exebuild'		=> $row['ExeBuild'],
+						'modname'		=> $row['ModName'],
+						'modfile'		=> $row['ModFile'],
+						'modurl'		=> $row['ModUrl'],
+						'songfile'		=> $row['SongFile'],
+						'songurl'		=> $row['SongUrl'],
+					);
+				}
+			}
+			$res->free_result();
+		}
+		else {
+			trigger_error('[MapList] Could not query map datas: ('. $aseco->mysqli->errmsg() .')'. CRLF .' for statement ['. $query .']', E_USER_WARNING);
+		}
+		return $data;
 	}
 
 	/*
@@ -540,47 +595,6 @@ class MapList {
 		$this->updateMapInDatabase($map);
 
 		return $map;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	private function getDatabaseMapInfos ($uids) {
-		global $aseco;
-
-		$data = array();
-
-		// Find a map ID from its UID.
-		$query = "
-		SELECT
-			`Id`,
-			`Uid`,
-			`NbLaps`,
-			`NbCheckpoints`
-		FROM `maps`
-		WHERE `Uid` IN (". implode(',', $uids) .");
-		";
-
-		$res = $aseco->mysqli->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				while ($row = $res->fetch_array()) {
-					$data[$row['Uid']] = array(
-						'id'		=> (int)$row['Id'],
-						'nblaps'	=> (int)$row['NbLaps'],
-						'nbcheckpoints'	=> (int)$row['NbCheckpoints'],
-					);
-				}
-			}
-			$res->free_result();
-		}
-		else {
-			trigger_error('[MapList] Could not query map ids: ('. $aseco->mysqli->errmsg() .')'. CRLF .' for statement ['. $query .']', E_USER_WARNING);
-		}
-		return $data;
 	}
 
 	/*

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-20
+ * Date:	2014-09-14
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -91,7 +91,7 @@ class Map {
 	*/
 
 	// $gbx contains a GBX object from GBXChallMapFetcher class
-	public function __construct ($gbx = null, $filename) {
+	public function __construct ($gbx = null, $filename = null) {
 		global $aseco;
 
 		if ($gbx != null) {
@@ -140,7 +140,7 @@ class Map {
 				}
 				else {
 					$this->author_continent = '';
-					$this->author_nation = 'other';
+					$this->author_nation = 'Other';
 				}
 			}
 
@@ -156,7 +156,7 @@ class Map {
 
 			$this->cost		= $gbx->cost;
 			$this->environment	= $gbx->envir;
-			$this->mood		= $gbx->mood;
+			$this->mood		= str_replace('64x64', '', $gbx->mood);		// "64x64Day" to "Day", for Stadium 64x64 (with no Stadium decoration for custom titles)
 			$this->type		= $gbx->mapType;
 			$this->style		= trim($gbx->mapStyle);
 
@@ -187,7 +187,7 @@ class Map {
 			$this->author_nickname	= 'Unknown';
 			$this->author_zone	= '';
 			$this->author_continent	= '';
-			$this->author_nation	= 'other';
+			$this->author_nation	= 'Other';
 
 			$this->authorscore	= 0;
 			$this->authortime	= 0;

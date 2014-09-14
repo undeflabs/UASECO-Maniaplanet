@@ -43,13 +43,13 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-09-10');
+	define('UASECO_BUILD',		'2014-09-14');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
 	define('MANIAPLANET_BUILD',	'2014-09-10_14_00');
 	define('API_VERSION',		'2013-04-16');
-	define('REQUIRED_PHP_VERSION',	'5.2.1');
+	define('MIN_PHP_VERSION',	'5.2.1');
 
 	define('CRLF', PHP_EOL);
 	if (!defined('LF')) {
@@ -93,11 +93,12 @@
 */
 
 class UASECO extends Helper {
+	public $debug;
 	public $logfile;
 	public $client;
 	public $parser;
-	public $webaccess;					// used by webaccess.class.php
-	public $debug;
+	public $webaccess;
+	public $mysqli;
 	public $continent;
 	public $country;
 	public $windows;
@@ -115,13 +116,12 @@ class UASECO extends Helper {
 	public $operator_list;
 	public $operator_abilities;
 	public $banned_ips;
+	public $uptime;						// UASECO start-up time
 	public $startup_phase;					// UASECO start-up phase
 	public $warmup_phase;					// warm-up phase
 	public $restarting;					// restarting map (true or false)
 	public $changing_to_gamemode;
-	public $uptime;						// UASECO start-up time
 	public $checkpoints;
-	public $mysqli;						// used by mysqli.class.php
 
 	private $current_status;				// server status changes
 	private $rpc_calls;
@@ -152,8 +152,8 @@ class UASECO extends Helper {
 		$this->console('###############################################################################');
 		$this->console('Initializing UASECO...');
 
-		if ( version_compare(PHP_VERSION, REQUIRED_PHP_VERSION, '<') ) {
-			$this->console('[ERROR] UASECO requires min. PHP/'. REQUIRED_PHP_VERSION .' and can not run with current PHP/'. PHP_VERSION .', please update PHP!');
+		if ( version_compare(PHP_VERSION, MIN_PHP_VERSION, '<') ) {
+			$this->console('[ERROR] UASECO requires min. PHP/'. MIN_PHP_VERSION .' and can not run with current PHP/'. PHP_VERSION .', please update PHP!');
 			die();
 		}
 	}
@@ -173,7 +173,7 @@ class UASECO extends Helper {
 		$this->registered_events	= array();
 		$this->registered_chatcmds	= array();
 		$this->rpc_calls		= array();
-		$this->client			= new IXR_ClientMulticall_Gbx();		// includes/core/gbxremote.class.php
+		$this->client			= new IXR_ClientMulticall_Gbx();	// includes/core/gbxremote.class.php
 		$this->parser			= new XmlParser();
 		$this->webaccess		= new Webaccess();
 		$this->continent		= new Continent();
@@ -590,9 +590,6 @@ class UASECO extends Helper {
 
 			// add random filter to /admin writemaplist output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
-
-			// set default filename for maplist cache file
-			$this->settings['maplist_cache_file'] = $settings['MAPLIST_CACHE_FILE'][0];
 
 			// set minimum number of ranked players in a clan to be included in /topclans
 			$this->settings['topclans_minplayers'] = $settings['TOPCLANS_MINPLAYERS'][0];
@@ -1038,7 +1035,9 @@ class UASECO extends Helper {
 		CREATE TABLE IF NOT EXISTS `maps` (
 			`Id` mediumint(9) NOT NULL AUTO_INCREMENT,
 			`Uid` varchar(27) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Filename` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`Name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+			`Comment` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`Author` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`AuthorNickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`AuthorZone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
@@ -1645,9 +1644,6 @@ class UASECO extends Helper {
 
 		// Report usage back to home website
 		$this->reportServerInfo();
-
-		// Write map cache file with updated map (including MX info)
-		$this->server->maps->writeMapListCacheFile();
 
 		// Refresh game info
 		$this->server->getCurrentGameInfo();
