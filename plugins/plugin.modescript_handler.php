@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-09
+ * Date:	2014-09-14
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -666,7 +666,7 @@ class PluginModescriptHandler extends Plugin {
 
 
 			default:
-				$aseco->console('[onModeScriptCallbackArray] Unsupported callback received: ['. $name .'], please report this!');
+				$aseco->console('[onModeScriptCallbackArray] Unsupported callback received: ['. $name .'], please report this at '. UASECO_WEBSITE);
 		    		break;
 		}
 	}
@@ -682,7 +682,7 @@ class PluginModescriptHandler extends Plugin {
 		$name = $data[0];
 		$params = isset($data[1]) ? $data[1] : '';
 
-		$aseco->console('[onModeScriptCallback] Unsupported callback received: ['. $name .'], please report this!');
+		$aseco->console('[onModeScriptCallback] Unsupported callback received: ['. $name .'], please report this at '. UASECO_WEBSITE);
 	}
 
 	/*
