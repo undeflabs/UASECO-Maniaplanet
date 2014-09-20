@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-09-14');
+	define('UASECO_BUILD',		'2014-09-15');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1193,6 +1193,14 @@ class UASECO extends Helper {
 				$fields[] = $row[0];
 			}
 			$res->free_result();
+		}
+		if (!in_array('Filename', $fields)) {
+			$this->console("[Database] » Add `maps` column `Filename`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Filename` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Uid`;");
+		}
+		if (!in_array('Comment', $fields)) {
+			$this->console("[Database] » Add `maps` column `Comment`...");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Comment` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Name`;");
 		}
 		if (!in_array('AuthorNickname', $fields)) {
 			$this->console("[Database] » Add `maps` column `AuthorNickname`...");
