@@ -4,10 +4,8 @@
 
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const	RoundsBaseVersion		"2014-09-08"
+#Const	RoundsBaseVersion		"2014-09-16"
 #Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
-
-#Include "Libs/Nadeo/TrackMania/UI.Script.txt" as UI
 
 // ---------------------------------- //
 // Settings
@@ -29,7 +27,6 @@ declare Integer G_RoundStartTime;
 ***LogVersion***
 ***
 MB_LogVersion(RoundsBaseScriptName, RoundsBaseVersion);
-MB_LogVersion(UI::GetScriptName(), UI::GetScriptVersion());
 ***
 
 ***StartServer***
@@ -40,7 +37,7 @@ UiRounds = True;
 MB_UseSectionRound = True;
 MB_PointsRepartition = C_PointsRepartition;
 
-UI::Load(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime"]);
+UI::LoadModules(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime"]);
 UI::DisplayTimeDiff(S_DisplayTimeDiff);
 ***
 
@@ -124,8 +121,6 @@ foreach (Player in Players) {
 
 ***Yield***
 ***
-UI::XmlRpcLoop();
-
 // ---------------------------------- //
 // Manage XmlRpc events
 foreach (Event in XmlRpc.PendingEvents) {
@@ -167,11 +162,6 @@ if (Players.count > 0 && PlayersRacing.count <= 0) MB_StopRound = True;
 if (CutOffTimeLimit > 0 && Now >= CutOffTimeLimit) MB_StopRound = True;
 // If forced end round
 if (ForceEndRound) MB_StopRound = True;
-***
-
-***EndServer***
-***
-UI::Unload();
 ***
 
 // ---------------------------------- //

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-13
+ * Date:	2014-09-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -73,6 +73,7 @@ class PluginCheckpoint extends Plugin {
 		$this->registerEvent('onPlayerFinishLine',	'onPlayerFinishHandling');
 		$this->registerEvent('onPlayerFinishLap',	'onPlayerFinishHandling');
 
+		$this->registerChatCommand('cps',		'chat_cps',	'Sets local/dedimania record checkpoints tracking',	Player::PLAYERS);
 
 		$this->manialinkid			= 'PluginCheckpointWidget';
 		$this->nbcheckpoints			= 0;
@@ -93,13 +94,82 @@ class PluginCheckpoint extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function chat_cps ($aseco, $login, $chat_command, $chat_parameter) {
+
+		$player = $aseco->server->players->getPlayer($login);
+
+		// Check for relay server
+		if ($aseco->server->isrelay) {
+			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
+			$aseco->sendChatMessage($message, $login);
+			return;
+		}
+
+		if ($aseco->settings['display_checkpoints']) {
+			// Set local checkpoints tracking
+			$param = $command['params'];
+			if (strtolower($param) == 'off') {
+				$aseco->checkpoints[$login]->tracking['local_records'] = -1;
+				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
+				$message = '{#server}> Checkpoints tracking: {#highlite}OFF';
+			}
+			else if ($param == '') {
+				$aseco->checkpoints[$login]->tracking['local_records'] = 0;
+				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
+				$message = '{#server}> Checkpoints tracking: {#highlite}ON {#server}(your own or the last record)';
+			}
+			else if (is_numeric($param) && $param > 0 && $param <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) {
+				$aseco->checkpoints[$login]->tracking['local_records'] = intval($param);
+				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
+				$message = '{#server}> Checkpoints tracking record: {#highlite}' . $aseco->checkpoints[$login]->tracking['local_records'];
+			}
+			else {
+				$message = '{#server}> {#error}No such local record {#highlite}$i ' . $param;
+			}
+
+			// Handle checkpoints panel
+			if ($aseco->checkpoints[$login]->tracking['local_records'] == -1) {
+				// Disable CP panel
+//				if ($aseco->settings['enable_cpsspec'] && !empty($aseco->checkpoints[$login]->spectators)) {
+//					$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
+//					$aseco->sendManialink($xml, $login .','. implode(',', $aseco->checkpoints[$login]->spectators), 0);
+//				}
+//				else {
+					$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
+					$aseco->sendManialink($xml, $login, 0);
+//				}
+			}
+			else {
+				// Enable CP panel unless spectator, Stunts mode, or warm-up
+				if (!$player->isspectator && $aseco->server->gameinfo->mode != Gameinfo::STUNT && !$aseco->warmup_phase) {
+//					if ($aseco->settings['enable_cpsspec'] && !empty($aseco->checkpoints[$login]->spectators)) {
+//						$this->checkUpdateCheckpointWidget($aseco, $login . ',' . implode(',', $aseco->checkpoints[$login]->spectators), 0, '$00f -.--');
+//					}
+//					else {
+						$this->checkUpdateCheckpointWidget($login, 1);
+//					}
+				}
+			}
+		}
+		else {
+			$message = '{#server}> {#error}Checkpoints tracking permanently disabled by server';
+		}
+		$aseco->sendChatMessage($message, $login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function onBeginMap ($aseco, $map) {
 
 		// Clear all checkpoints
 		foreach ($aseco->checkpoints as $login => $cp) {
+			$aseco->checkpoints[$login]->best['finish'] = PHP_INT_MAX;
 			$aseco->checkpoints[$login]->best['cps'] = array();
 			$aseco->checkpoints[$login]->current['cps'] = array();
-			$aseco->checkpoints[$login]->best['finish'] = PHP_INT_MAX;
 
 			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 				$aseco->checkpoints[$login]->current['finish'] = 0;
@@ -266,7 +336,7 @@ class PluginCheckpoint extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $param = [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
+	// $param = [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 	public function onPlayerCheckpoint ($aseco, $param) {
 
 		// If Stunts mode, bail out immediately
@@ -279,152 +349,41 @@ class PluginCheckpoint extends Plugin {
 			return;
 		}
 
-		$login = $param[0];
-		$time = $param[2];
-		$cpid = $param[3];
 
 		// Check for Laps mode
-		if ($aseco->server->gameinfo->mode != Gameinfo::LAPS) {
+		$login = $param[0];
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			// Set the "[4]=CurrentLapTime"
+			$time = $param[4];
 
-			// check for cheated checkpoints:
-			// non-positive time, wrong index, or time less than preceding one
-//			if ($time <= 0 || $cpid != count($aseco->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($aseco->checkpoints[$login]->current['cps']))) {
-//				if ($checkpoint_tests) {
-//					$aseco->processCheater($login, $aseco->checkpoints[$login]->current['cps'], $param, -1);
-//					return;
-//				}
-//			}
-
-			// Store current checkpoint
-			$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
-			ksort($aseco->checkpoints[$login]->current['cps']);
-
-			// Check if displaying for this player, and for best checkpoints
-			$this->checkUpdateCheckpointWidget($login, $cpid);
-
+			// Use "[5]=LapWaypointNumber"
+			$cpid = $param[5];
 		}
-//		else {
-// TODO
-//			// check for cheated checkpoints:
-//			// non-positive time, negative index
-//			if ($checkpt[2] <= 0 || $checkpt[4] < 0) {
-//				if ($checkpoint_tests) {
-//					$aseco->processCheater($login, $checkpoints[$login]->current['cps'], $checkpt, -1);
-//					return;
-//				}
-//			}
-//
-//			// get relative CP in this lap
-//			$relcheck = $checkpt[4] % $nbcheckpoints;
-//
-//			// check for cheated checkpoints:
-//			// wrong index, time not more than reference, relative time less than preceding one
-//			if ($relcheck != count($checkpoints[$login]->current['cps']) ||
-//			    $checkpt[2] < $checkpoints[$login]->current['finish'] ||
-//			    ($relcheck > 0 && $checkpt[2] - $checkpoints[$login]->current['finish'] < end($checkpoints[$login]->current['cps']))) {
-//				if ($checkpoint_tests) {
-//					$aseco->processCheater($login, $checkpoints[$login]->current['cps'], $checkpt, -1);
-//					return;
-//				}
-//			}
-//
-//			// store current checkpoint for current lap, relative to reference
-//			$checkpoints[$login]->current['cps'][$relcheck] = $checkpt[2] - $checkpoints[$login]->current['finish'];
-//
-//			// check for a completed lap
-//			if ($checkpt[3] * $nbcheckpoints != $checkpt[4] + 1) {
-//
-//				// check if displaying for this player, and for best checkpoints
-//				if ($checkpoints[$login]->tracking['local_records'] != -1 &&
-//				    isset($checkpoints[$login]->best['cps'][$relcheck])) {
-//
-//					// check for improvement
-//					$diff = $checkpoints[$login]->current['cps'][$relcheck] - $checkpoints[$login]->best['cps'][$relcheck];
-//					if ($diff < 0) {
-//						$diff = abs($diff);
-//						$sign = '$00f-';  // blue
-//					} else if ($diff == 0) {
-//						$sign = '$00f';  // blue
-//					} else {  // $diff > 0
-//						$sign = '$f00+';  // red
-//					}
-//					$sec = floor($diff/1000);
-//					$ths = $diff - ($sec * 1000);
-//
-//					// update CP panel
-//					if ($aseco->settings['enable_cpsspec'] && !empty($checkpoints[$login]->spectators))
-//						$aseco->plugins['PluginManialinks']->display_cpspanel($aseco, $login . ',' . implode(',', $checkpoints[$login]->spectators), $relcheck + 1,
-//						                 $sign . sprintf('%d.%03d', $sec, $ths));
-//					else
-//						$aseco->plugins['PluginManialinks']->display_cpspanel($aseco, $login, $relcheck + 1,
-//						                 $sign . sprintf('%d.%03d', $sec, $ths));
-//				}
-//
-//			}
-//			else {  // completed lap
-//
-//				// store current lap finish as reference for next lap
-//				$checkpoints[$login]->current['finish'] = $checkpt[2];
-//
-//				// build a record object with the current lap information
-//				$finish_item = new Record();
-//				$finish_item->player = $aseco->server->players->getPlayer($login);
-//				$finish_item->score = $checkpoints[$login]->current['cps'][$relcheck];
-//				$finish_item->date = strftime('%Y-%m-%d %H:%M:%S');
-//				$finish_item->map = clone $aseco->server->maps->current;
-//				unset($finish_item->map->mx);	// reduce memory usage
-//
-//				// store current lap
-//				if ($aseco->plugins['PluginRasp']->feature_stats) {
-//					$rasp->insertTime($finish_item, implode(',', $checkpoints[$login]->current['cps']));
-//				}
-//
-//				// process for local and Dedimania records
-//				$finish_item->new = true;  // set lap 'Finish' flag
-//				ldb_playerFinish($aseco, $finish_item);
-//				$finish_item->new = true;  // ditto
-//				if (function_exists('dedimania_playerfinish'))
-//					dedimania_playerfinish($aseco, $finish_item);
-//
-//				// check for new best lap
-//				$diff = $checkpoints[$login]->current['cps'][$relcheck] - $checkpoints[$login]->best['finish'];
-//				if ($diff < 0) {
-//					// store new best lap
-//					$checkpoints[$login]->best['finish'] = $checkpoints[$login]->current['cps'][$relcheck];
-//					$checkpoints[$login]->best['cps'] = $checkpoints[$login]->current['cps'];
-//					// store timestamp for sorting in case of equal bests
-//					$checkpoints[$login]->best['timestamp'] = microtime(true);
-//				}
-//
-//				// check if displaying for this player, and not first lap
-//				if ($checkpoints[$login]->tracking['local_records'] != -1 && $checkpt[4] + 1 >= $nbcheckpoints) {
-//					// check for improvement
-//					if ($diff < 0) {
-//						$diff = abs($diff);
-//						$sign = '$00f-';  // blue
-//					} else if ($diff == 0) {
-//						$sign = '$00f';  // blue
-//					} else {  // $diff > 0
-//						$sign = '$f00+';  // red
-//					}
-//					$sec = floor($diff/1000);
-//					$ths = $diff - ($sec * 1000);
-//
-//					// indicate Lap Finish checkpoint
-//					$relcheck = 'L';
-//					// update CP panel
-//					if ($aseco->settings['enable_cpsspec'] && !empty($checkpoints[$login]->spectators))
-//						$aseco->plugins['PluginManialinks']->display_cpspanel($aseco, $login . ',' . implode(',', $checkpoints[$login]->spectators), $relcheck,
-//						                 $sign . sprintf('%d.%03d', $sec, $ths));
-//					else
-//						$aseco->plugins['PluginManialinks']->display_cpspanel($aseco, $login, $relcheck,
-//						                 $sign . sprintf('%d.%03d', $sec, $ths));
-//				}
-//
-//				// reset for next lap
-//				$checkpoints[$login]->current['cps'] = array();
+		else {
+			// Set the "[2]=Time"
+			$time = $param[2];
+
+			// Use "[3]=WaypointIndex"
+			$cpid = $param[3];
+		}
+
+
+		// check for cheated checkpoints:
+		// non-positive time, wrong index, or time less than preceding one
+//		if ($time <= 0 || $cpid != count($aseco->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($aseco->checkpoints[$login]->current['cps']))) {
+//			if ($checkpoint_tests) {
+//				$aseco->processCheater($login, $aseco->checkpoints[$login]->current['cps'], $param, -1);
+//				return;
 //			}
 //		}
+
+
+		// Store current checkpoint
+		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		ksort($aseco->checkpoints[$login]->current['cps']);
+
+		// Check if displaying for this player, and for best checkpoints
+		$this->checkUpdateCheckpointWidget($login, $cpid);
 	}
 
 	/*
@@ -433,7 +392,7 @@ class PluginCheckpoint extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
+	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 	public function onPlayerFinishHandling ($aseco, $param) {
 
 		// If Stunts mode, bail out immediately
@@ -446,30 +405,42 @@ class PluginCheckpoint extends Plugin {
 			return;
 		}
 
-		$login = $param[0];
-		$time = $param[2];
-		$cpid = $param[3];
 
 		// Check for Laps mode
-		if ($aseco->server->gameinfo->mode != Gameinfo::LAPS) {
+		$login = $param[0];
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			// Set the "[4]=CurrentLapTime"
+			$time = $param[4];
 
-			// Store finish
-			$aseco->checkpoints[$login]->current['finish'] = $time;
+			// Use "[5]=LapWaypointNumber"
+			$cpid = $param[5];
+		}
+		else {
+			// Set the "[2]=Time"
+			$time = $param[2];
 
-			// Store finish as checkpoint too
-			$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
-			ksort($aseco->checkpoints[$login]->current['cps']);
+			// Use "[3]=WaypointIndex"
+			$cpid = $param[3];
+		}
 
-			// Check if displaying for this player, and for best checkpoints
-			$this->checkUpdateCheckpointWidget($login, $cpid);
 
-			// Check for improvement and update
-			if ($aseco->checkpoints[$login]->current['finish'] < $aseco->checkpoints[$login]->best['finish']) {
-				$aseco->checkpoints[$login]->best['finish'] = $aseco->checkpoints[$login]->current['finish'];
-				$aseco->checkpoints[$login]->best['cps'] = $aseco->checkpoints[$login]->current['cps'];
-				// store timestamp for sorting in case of equal bests
-				$aseco->checkpoints[$login]->best['timestamp'] = microtime(true);
-			}
+		// Store finish as finish time
+		$aseco->checkpoints[$login]->current['finish'] = $time;
+
+
+		// Store finish as checkpoint too
+		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		ksort($aseco->checkpoints[$login]->current['cps']);
+
+		// Check if displaying for this player, and for best checkpoints
+		$this->checkUpdateCheckpointWidget($login, $cpid);
+
+		// Check for improvement and update
+		if ($aseco->checkpoints[$login]->current['finish'] < $aseco->checkpoints[$login]->best['finish']) {
+			$aseco->checkpoints[$login]->best['finish'] = $aseco->checkpoints[$login]->current['finish'];
+			$aseco->checkpoints[$login]->best['cps'] = $aseco->checkpoints[$login]->current['cps'];
+			// store timestamp for sorting in case of equal bests
+			$aseco->checkpoints[$login]->best['timestamp'] = microtime(true);
 		}
 	}
 
@@ -483,40 +454,60 @@ class PluginCheckpoint extends Plugin {
 		global $aseco;
 
 		// Check if displaying for this player, and for best checkpoints
-		if ($aseco->checkpoints[$login]->tracking['local_records'] != -1 && isset($aseco->checkpoints[$login]->best['cps'][($cpid-1)])) {
+		if ($aseco->checkpoints[$login]->tracking['local_records'] != -1) {
 
-			// Check for improvement
-			$diff = $aseco->checkpoints[$login]->current['cps'][($cpid-1)] - $aseco->checkpoints[$login]->best['cps'][($cpid-1)];
-			if ($diff < 0) {
-				$diff = abs($diff);
-				$sign = '$'. $this->textcolors['time_improved'] .'-';
-			}
-			else if ($diff == 0) {
-				$sign = '$'. $this->textcolors['time_equal'];
+			if ( isset($aseco->checkpoints[$login]->best['cps'][($cpid-1)]) ) {
+				// Check for improvement
+				$diff = $aseco->checkpoints[$login]->current['cps'][($cpid-1)] - $aseco->checkpoints[$login]->best['cps'][($cpid-1)];
+				if ($diff < 0) {
+					$diff = abs($diff);
+					$sign = '$'. $this->textcolors['time_improved'] .'-';
+				}
+				else if ($diff == 0) {
+					$sign = '$'. $this->textcolors['time_equal'];
+				}
+				else {
+					// $diff > 0
+					$sign = '$'. $this->textcolors['time_worse'] .'+';
+				}
+				$sec = floor($diff / 1000);
+				$ths = $diff - ($sec * 1000);
+
+				// Setup format of the time
+				if ($sec >= 60) {
+					$current_checkpoint_time = $aseco->formatTime($diff);
+				}
+				else {
+					$current_checkpoint_time = sprintf('%d.%03d', $sec, $ths);
+				}
+
+				// Setup the best time for this CP
+				$best_checkpoint_time = $aseco->formatTime($aseco->checkpoints[$login]->best['cps'][($cpid-1)]);
+
 			}
 			else {
-				// $diff > 0
-				$sign = '$'. $this->textcolors['time_worse'] .'+';
-			}
-			$sec = floor($diff/1000);
-			$ths = $diff - ($sec * 1000);
+				$sign = '';
 
-			// Setup format of the time
-			if ($sec >= 60) {
-				$current_checkpoint_time = $aseco->formatTime($diff);
-			}
-			else {
-				$current_checkpoint_time = sprintf('%d.%03d', $sec, $ths);
+				$sec = floor($aseco->checkpoints[$login]->current['cps'][($cpid-1)] / 1000);
+				$ths = $aseco->checkpoints[$login]->current['cps'][($cpid-1)] - ($sec * 1000);
+
+				// Setup format of the time
+				if ($sec >= 60) {
+					$current_checkpoint_time = $aseco->formatTime($aseco->checkpoints[$login]->current['cps'][($cpid-1)]);
+				}
+				else {
+					$current_checkpoint_time = sprintf('%d.%03d', $sec, $ths);
+				}
+
+				// Setup the best time for this CP
+				$best_checkpoint_time = '-.---';
 			}
 
 			// Check for Finish checkpoint
-			$cpcount = count($aseco->checkpoints[$login]->best['cps']);
-			if ($cpid == $cpcount) {
-				$best_checkpoint_time = $aseco->formatTime($aseco->checkpoints[$login]->best['cps'][$cpid-1]);
+			if ($cpid == $aseco->server->maps->current->nbcheckpoints) {
 				$cpid = 'FINISH';
 			}
 			else {
-				$best_checkpoint_time = $aseco->formatTime($aseco->checkpoints[$login]->best['cps'][($cpid-1)]);
 				$cpid = 'CP'. $cpid;
 			}
 
@@ -549,7 +540,6 @@ class PluginCheckpoint extends Plugin {
 		$xml .= '</manialink>';
 		$aseco->sendManialink($xml, $logins, 0);
 	}
-
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

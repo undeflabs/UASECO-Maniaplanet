@@ -93,4 +93,5 @@ Version 1.0.0
    - Event "onDediRecsLoaded" renamed to "onDedimaniaRecordsLoaded"
    - Event "onMaplistChanged" renamed to "onMapListChanged" (uppercase "L")
    - Event "onPlayerConnect2" renamed to "onPlayerConnect1"
+   - Removed <custom_ui> handling (deprecated) and replaced by <ui_properties> from modescript_settings.xml (Details: http://forum.maniaplanet.com/viewtopic.php?p=228997#p228997)
    - PLEASE NOTE: I only hope that this list are all differences, but i'm not really sure about this. I was starting too late to write this list, sorry!

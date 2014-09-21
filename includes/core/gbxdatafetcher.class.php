@@ -1,6 +1,6 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » 2014-07-27: No changes made for UASECO */
+/* » 2014-09-20: No changes made for UASECO */
 
 /**
  * GBXDataFetcher - Fetch GBX challenge/map/replay/pack data for TrackMania (TM)
@@ -902,7 +902,6 @@ class GBXChallMapFetcher extends GBXBaseFetcher
 
 										if ($version >= 13) {
 											$this->nbChecks = $this->readInt32();
-
 											$this->nbLaps = $this->readInt32();
 										}
 									}

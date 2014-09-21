@@ -1,19 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modescript_settings>
-	<custom_ui>
-		<!-- Set to 'true' if you want the default Challenge-Info at top right, otherwise set 'false'. -->
-		<challenge_info>true</challenge_info>
+	<ui_properties>
+		<!-- The map name and author displayed in the top right of the screen when viewing the scores table -->
+		<map_info>
+			<visible>true</visible>
+		</map_info>
 
-		<!-- Set to 'true' if you want to enabled the chatbox at the bottom, otherwise set 'false' -->
-		<chat>true</chat>
+		<!-- ... -->
+		<opponents_info>
+			<visible>true</visible>
+		</opponents_info>
 
-		<!-- Set to 'true' if you want to see the automatic Scoretable at Score, otherwise set 'false' -->
-		<scoretable>true</scoretable>
+		<!--
+		The server chat displayed on the bottom right of the screen,
+		the offset values range from 0.0 to -3.2 for x and from 0.0 to 1.8 for y,
+		the linecount property must be between 0 and 40
+		//-->
+		<chat>
+			<visible>true</visible>
+			<offset>
+				<x>0.0</x>
+				<y>0.0</y>
+			</offset>
+			<linecount>7</linecount>
+		</chat>
 
-		<!-- Set to 'true' if you want to see the automatic Round-Score-Panel at the right side, otherwise set 'false'. -->
-		<round_scores>false</round_scores>
-	</custom_ui>
+		<!-- Time of the players at the current checkpoint displayed at the bottom of the screen -->
+		<checkpoint_list>
+			<visible>true</visible>
+			<position>
+				<x>40.0</x>
+				<y>-90.0</y>
+				<z>5.0</z>
+			</position>
+		</checkpoint_list>
 
+		<!-- Small scores table displayed at the end of race of the round based modes (Rounds, Cup, ...) on the right of the screen -->
+		<round_scores>
+			<visible>true</visible>
+			<position>
+				<x>104.0</x>
+				<y>14.0</y>
+				<z>5.0</z>
+			</position>
+		</round_scores>
+
+		<!-- Race time left displayed at the bottom right of the screen -->
+		<countdown>
+			<visible>true</visible>
+		</countdown>
+
+		<!-- 3, 2, 1, Go! message displayed on the middle of the screen when spawning -->
+		<go>
+			<visible>true</visible>
+		</go>
+
+		<!-- Current race chrono displayed at the bottom center of the screen -->
+		<chrono>
+			<visible>true</visible>
+			<position>
+				<x>0.0</x>
+				<y>-80.0</y>
+				<z>5.0</z>
+			</position>
+		</chrono>
+
+		<!-- Speed and distance raced displayed in the bottom right of the screen -->
+		<speed_and_distance>
+			<visible>true</visible>
+		</speed_and_distance>
+
+		<!-- Previous and best times displayed at the bottom right of the screen -->
+		<personal_best_and_rank>
+			<visible>true</visible>
+			<position>
+				<x>158.0</x>
+				<y>-61.0</y>
+				<z>5.0</z>
+			</position>
+		</personal_best_and_rank>
+
+		<!-- Current position in the map ranking displayed at the bottom right of the screen -->
+		<position>
+			<visible>true</visible>
+		</position>
+
+		<!-- Checkpoint time information displayed in the middle of the screen when crossing a checkpoint -->
+		<checkpoint_time>
+			<visible>true</visible>
+			<position>
+				<x>-8.0</x>
+				<y>31.8</y>
+				<z>-10.0</z>
+			</position>
+		</checkpoint_time>
+
+		<!-- The avatar of the last player speaking in the chat displayed above the chat -->
+		<chat_avatar>
+			<visible>true</visible>
+		</chat_avatar>
+
+		<!-- Warm-up progression displayed on the right of the screen during warm-up -->
+		<warmup>
+			<visible>true</visible>
+			<position>
+				<x>170.0</x>
+				<y>27.0</y>
+				<z>0.0</z>
+			</position>
+		</warmup>
+	</ui_properties>
 
 
 
@@ -25,7 +121,7 @@
 		<allow_respawn>true</allow_respawn>
 
 		<!-- Duration of the warm up phase in rounds (e.g. '2' for two warm up rounds), set to '-1' to disable warm up -->
-		<warm_up_duration>1</warm_up_duration>
+		<warm_up_duration>-1</warm_up_duration>
 
 		<!--
 		Path/URL to a scores table style from an XML file,
@@ -36,12 +132,11 @@
 
 
 
-
 	<modesetup>
 		<!-- Settings for TimeAttack.Script.txt -->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
-			<time_limit>300</time_limit>
+			<time_limit>1200</time_limit>
 		</timeattack>
 
 

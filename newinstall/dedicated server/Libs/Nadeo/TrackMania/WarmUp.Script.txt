@@ -1,15 +1,15 @@
 /**
  *	WarmUp lib
  */
-#Const	Version		"2014-04-29"
-#Const	ScriptName	"WarmUp2.Script.txt"
+#Const	Version		"2014-09-18"
+#Const	ScriptName	"WarmUp.Script.txt"
 
 #Include "Libs/Nadeo/TrackMania/TM2.Script.txt" as TM2
 
 // ---------------------------------- //
 // Constant
 // ---------------------------------- //
-#Const C_LibWarmUp2_LayerPosition <170., 27.>
+#Const C_LibWarmUp2_LayerPosition <170., 27., 0.>
 
 // ---------------------------------- //
 // Globales
@@ -32,7 +32,7 @@ declare Boolean	G_LibWU2_StopWarmUp;
  */
 Text Private_CreateLayerWarmUp() {
 	return """
-<frame posn="{{{C_LibWarmUp2_LayerPosition.X}}} {{{C_LibWarmUp2_LayerPosition.Y}}}" id="Frame_WarmUp">
+<frame posn="{{{C_LibWarmUp2_LayerPosition.X}}} {{{C_LibWarmUp2_LayerPosition.Y}}} {{{C_LibWarmUp2_LayerPosition.Z}}}" id="Frame_WarmUp">
 	<format textemboss="1" textsize="2" textcolor="f90" />
 	<quad sizen="40 12" halign="right" style="Bgs1InRace" substyle="BgHealthBar" />
 	<frame posn="-10 -1 1">
@@ -43,13 +43,19 @@ Text Private_CreateLayerWarmUp() {
 </frame>
 <script><!--
 main() {
+	declare Frame_WarmUp <=> (Page.GetFirstChild("Frame_WarmUp") as CMlFrame);
 	declare Label_WarmUpProgression <=> (Page.GetFirstChild("Label_WarmUpProgression") as CMlLabel);
 	
 	declare netread Integer Net_LibWU2_WarmUpPlayedNb for Teams[0];
 	declare netread Integer Net_LibWU2_WarmUpDuration for Teams[0];
+	declare netread Integer Net_LibWU2_LayerPositionUpdate for Teams[0];
+	declare netread Vec3 Net_LibWU2_LayerPosition for Teams[0];
+	declare netread Boolean Net_LibWU2_LayerVisibility for Teams[0];
 	
 	declare PrevWarmUpPlayedNb = -1;
 	declare PrevWarmUpDuration = -1;
+	declare PrevLayerPositionUpdate = -1;
+	declare PrevLayerVisibility = True;
 	
 	while (True) {
 		yield;
@@ -62,6 +68,16 @@ main() {
 			PrevWarmUpDuration = Net_LibWU2_WarmUpDuration;
 			
 			Label_WarmUpProgression.Value = Net_LibWU2_WarmUpPlayedNb^" / "^Net_LibWU2_WarmUpDuration;
+		}
+		
+		if (PrevLayerVisibility != Net_LibWU2_LayerVisibility) {
+			PrevLayerVisibility = Net_LibWU2_LayerVisibility;
+			Frame_WarmUp.Visible = Net_LibWU2_LayerVisibility;
+		}
+		
+		if (PrevLayerPositionUpdate != Net_LibWU2_LayerPositionUpdate) {
+			PrevLayerPositionUpdate = Net_LibWU2_LayerPositionUpdate;
+			Frame_WarmUp.RelativePosition = Net_LibWU2_LayerPosition;
 		}
 	}
 }
@@ -108,6 +124,49 @@ Text GetScriptName() {
 }
 
 // ---------------------------------- //
+/** Set the position of the layer on the screen
+ *
+ *	@param	_Pos		The new position
+ */
+Void SetLayerPosition(Vec3 _Pos) {
+	declare netwrite Integer Net_LibWU2_LayerPositionUpdate for Teams[0];
+	declare netwrite Vec3 Net_LibWU2_LayerPosition for Teams[0];
+	Net_LibWU2_LayerPosition = _Pos;
+	Net_LibWU2_LayerPositionUpdate = Now;
+}
+
+// ---------------------------------- //
+/** Get the position of the layer on the screen
+ *
+ *	@return		The position of the layer
+ */
+Vec3 GetLayerPosition() {
+	declare netwrite Integer Net_LibWU2_LayerPositionUpdate for Teams[0];
+	declare netwrite Vec3 Net_LibWU2_LayerPosition for Teams[0];
+	return Net_LibWU2_LayerPosition;
+}
+
+// ---------------------------------- //
+/** Set the visibility of the layer on the screen
+ *
+ *	@param	_Visibility		The new visibility
+ */
+Void SetLayerVisibility(Boolean _Visibility) {
+	declare netwrite Boolean Net_LibWU2_LayerVisibility for Teams[0];
+	Net_LibWU2_LayerVisibility = _Visibility;
+}
+
+// ---------------------------------- //
+/** Get the visibility of the layer on the screen
+ *
+ *	@return		The visibility of the layer
+ */
+Boolean GetLayerVisibility() {
+	declare netwrite Boolean Net_LibWU2_LayerVisibility for Teams[0];
+	return Net_LibWU2_LayerVisibility;
+}
+
+// ---------------------------------- //
 /// Unload the library
 Void Unload() {
 	if (UIManager.UILayers.existskey(G_LibWarmUp2_LayerWarmUpId)) {
@@ -133,6 +192,9 @@ Void Load() {
 	
 	G_LibWU2_RoundStartTime = -1;
 	G_LibWU2_StopWarmUp = False;
+	
+	SetLayerVisibility(True);
+	SetLayerPosition(C_LibWarmUp2_LayerPosition);
 }
 
 // ---------------------------------- //

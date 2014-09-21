@@ -6,25 +6,29 @@
  *	- SmallScoresTable -> display the player ranking at the end of the round
  *	- Chrono -> display a chrono at the bottom of the screen
  */
-#Const	Version		"2014-07-11"
+#Const	Version		"2014-09-18"
 #Const	ScriptName	"UI.Script.txt"
 
 #Include "TextLib" as TL
+#Include "Libs/Nadeo/TrackMania/WarmUp.Script.txt" as WarmUp
 
 // ---------------------------------- //
 // Constants
 // ---------------------------------- //
 #Const C_LibUI_TimeGapPos <40., -90., 5.>
 #Const C_LibUI_SmallScoresTablePos <104., 14., 5.>
-#Const C_LibUI_Chrono <0., -80., 5.>
-#Const C_LibUI_CheckpointTime <-8., 31.8, -10.>
-#Const C_LibUI_PrevBestTime <158., -61., 5.>
+#Const C_LibUI_ChronoPos <0., -80., 5.>
+#Const C_LibUI_CheckpointTimePos <-8., 31.8, -10.>
+#Const C_LibUI_PrevBestTimePos <158., -61., 5.>
+#Const C_LibST_RequestTimeout 5000
 
 // ---------------------------------- //
 // Globales
 // ---------------------------------- //
 declare Text[] G_LibUI_ModulesLoaded;
 declare Ident[Text] G_LibUI_LayersIds;
+declare Boolean[Text] G_LibUI_ModuleVisibility;
+declare Vec3[Text] G_LibUI_ModulePosition;
 
 // ---------------------------------- //
 // Functions
@@ -33,6 +37,30 @@ declare Ident[Text] G_LibUI_LayersIds;
 // ---------------------------------- //
 // Private
 // ---------------------------------- //
+// ---------------------------------- //
+/** Check if a module is loaded
+ *
+ *	@param	_ModuleId		The module to check
+ *
+ *	@return					True if the given module is loaded, False otherwise
+ */
+Boolean Private_ModuleIsLoaded(Text _ModuleId) {
+	return (G_LibUI_ModulesLoaded.exists(_ModuleId));
+}
+
+// ---------------------------------- //
+/** Update the settings for a module
+ *
+ *	@param	_Name		The name of the setting
+ *	@param	_Value		The value of the setting
+ */
+Void Private_SetModuleSetting(Text _Name, Text _Value) {
+	declare netwrite Net_LibUI_SettingsUpdate for Teams[0] = 0;
+	declare netwrite Net_LibUI_Settings for Teams[0] = Text[Text];
+	Net_LibUI_SettingsUpdate = Now;
+	Net_LibUI_Settings[_Name] = _Value;
+}
+
 // ---------------------------------- //
 /** Create a layer for a module
  *
@@ -59,6 +87,40 @@ Void Private_DestroyModuleLayer(Text _ModuleId) {
 		LayerRemoved = UIManager.UIAll.UILayers.remove(Layer);
 		UIManager.UILayerDestroy(Layer);
 	}
+}
+
+// ---------------------------------- //
+/** Convert a Boolean to a Text
+ *
+ *	@param	_Boolean	The Boolean to convert
+ *
+ *	@return				The Text
+ */
+Text Private_BooleanToText(Boolean _Boolean) {
+	if (_Boolean) return "true";
+	return "false";
+}
+
+// ---------------------------------- //
+/** Convert a Vec2 to a Text
+ *
+ *	@param	_Vec2		The Vec2 to convert
+ *
+ *	@return				The Text
+ */
+Text Private_Vec2ToText(Vec2 _Vec2) {
+	return _Vec2.X^" "^_Vec2.Y;
+}
+
+// ---------------------------------- //
+/** Convert a Vec3 to a Text
+ *
+ *	@param	_Vec3		The Vec3 to convert
+ *
+ *	@return				The Text
+ */
+Text Private_Vec3ToText(Vec3 _Vec3) {
+	return _Vec3.X^" "^_Vec3.Y^" "^_Vec3.Z;
 }
 
 // ---------------------------------- //
@@ -222,18 +284,44 @@ main() {
 		Frames_Player.add((Control as CMlFrame));
 	}
 	
+	declare netread Integer Net_LibUI_SettingsUpdate for Teams[0];
 	declare netread Text[Text] Net_LibUI_Settings for Teams[0];
+	declare PrevSettingsUpdate = -1;
+	declare DisplayTimeGap = True;
 	
 	while (True) {
 		sleep(250);
 		if (InputPlayer == Null) continue;
 		if (InputPlayer.Score == Null) continue;
 		if (!PageIsVisible) continue;
-			
-		if (InputPlayer.CurRace.Checkpoints.count <= 0 && Frame_TimeGap.Visible) {
-			Frame_TimeGap.Visible = False;
-		} else if (InputPlayer.CurRace.Checkpoints.count > 0 && !Frame_TimeGap.Visible) {
-			Frame_TimeGap.Visible = True;
+		
+		if (PrevSettingsUpdate != Net_LibUI_SettingsUpdate) {
+			PrevSettingsUpdate = Net_LibUI_SettingsUpdate;
+			foreach (SettingName => SettingValue in Net_LibUI_Settings) {
+				switch (SettingName) {
+					case "TimeGap_Display": {
+						if (SettingValue == "True") {
+							Frame_TimeGap.Visible = True;
+							DisplayTimeGap = True;
+						} else {
+							Frame_TimeGap.Visible = False;
+							DisplayTimeGap = False;
+						}
+					}
+					case "TimeGap_Position": {
+						declare PositionSplit = TL::Split(" ", SettingValue);
+						Frame_TimeGap.RelativePosition = <TL::ToReal(PositionSplit[0]), TL::ToReal(PositionSplit[1]), TL::ToReal(PositionSplit[2])>;
+					}
+				}
+			}
+		}
+		
+		if (DisplayTimeGap) {
+			if (InputPlayer.CurRace.Checkpoints.count <= 0 && Frame_TimeGap.Visible) {
+				Frame_TimeGap.Visible = False;
+			} else if (InputPlayer.CurRace.Checkpoints.count > 0 && !Frame_TimeGap.Visible) {
+				Frame_TimeGap.Visible = True;
+			}
 		}
 		
 		declare NeedUpdate = False;
@@ -375,10 +463,11 @@ main() {
 		Frames_Player.add((Control as CMlFrame));
 	}
 	
-	declare netread Boolean Net_LibUI_DisplaySmallScoresTable for Teams[0];
+	declare netread Integer Net_LibUI_SettingsUpdate for Teams[0];
+	declare netread Text[Text] Net_LibUI_Settings for Teams[0];
 	
-	declare PrevDisplaySmallScoresTable = True;
 	declare PrevUseClans = False;
+	declare PrevSettingsUpdate = -1;
 	
 	while (True) {
 		sleep(250);
@@ -395,9 +484,20 @@ main() {
 			}
 		}
 		
-		if (PrevDisplaySmallScoresTable != Net_LibUI_DisplaySmallScoresTable) {
-			PrevDisplaySmallScoresTable = Net_LibUI_DisplaySmallScoresTable;
-			Frame_Global.Visible = PrevDisplaySmallScoresTable;
+		if (PrevSettingsUpdate != Net_LibUI_SettingsUpdate) {
+			PrevSettingsUpdate = Net_LibUI_SettingsUpdate;
+			foreach (SettingName => SettingValue in Net_LibUI_Settings) {
+				switch (SettingName) {
+					case "SmallScoresTable_Display": {
+						if (SettingValue == "True") Frame_Global.Visible = True;
+						else Frame_Global.Visible = False;
+					}
+					case "SmallScoresTable_Position": {
+						declare PositionSplit = TL::Split(" ", SettingValue);
+						Frame_SmallScoresTable.RelativePosition = <TL::ToReal(PositionSplit[0]), TL::ToReal(PositionSplit[1]), TL::ToReal(PositionSplit[2])>;
+					}
+				}
+			}
 		}
 		
 		if (!Frame_Global.Visible) continue;
@@ -438,7 +538,7 @@ main() {
  */
 Text Private_CreateMLChrono() {
 	return """
-<frame posn="{{{C_LibUI_Chrono.X}}} {{{C_LibUI_Chrono.Y}}} {{{C_LibUI_Chrono.Z}}}" hidden="1" id="Frame_Chrono">
+<frame posn="{{{C_LibUI_ChronoPos.X}}} {{{C_LibUI_ChronoPos.Y}}} {{{C_LibUI_ChronoPos.Z}}}" hidden="1" id="Frame_Chrono">
 	<label halign="center" style="TextRaceChrono" text="--:--.--" id="Label_Chrono" />
 </frame>
 <script><!--
@@ -451,6 +551,7 @@ main() {
 	declare netread Text[Text] Net_LibUI_Settings for Teams[0];
 	
 	declare IndependantLaps = False;
+	declare DisplayChrono = True;
 	
 	declare PrevSettingsUpdate = -1;
 	declare PrevRaceState = CTmMlPlayer::ERaceState::Running;
@@ -462,9 +563,26 @@ main() {
 		
 		if (PrevSettingsUpdate != Net_LibUI_SettingsUpdate) {
 			PrevSettingsUpdate = Net_LibUI_SettingsUpdate;
-			if (Net_LibUI_Settings.existskey("IndependantLaps")) {
-				if (Net_LibUI_Settings["IndependantLaps"] == "True") IndependantLaps = True;
-				else IndependantLaps = False;
+			foreach (SettingName => SettingValue in Net_LibUI_Settings) {
+				switch (SettingName) {
+					case "Chrono_Display": {
+						if (SettingValue == "True") {
+							Frame_Chrono.Visible = True;
+							DisplayChrono = True;
+						} else {
+							Frame_Chrono.Visible = False;
+							DisplayChrono = False;
+						}
+					}
+					case "Chrono_Position": {
+						declare PositionSplit = TL::Split(" ", SettingValue);
+						Frame_Chrono.RelativePosition = <TL::ToReal(PositionSplit[0]), TL::ToReal(PositionSplit[1]), TL::ToReal(PositionSplit[2])>;
+					}
+					case "IndependantLaps": {
+						if (SettingValue == "True") IndependantLaps = True;
+						else IndependantLaps = False;
+					}
+				}
 			}
 		}
 		
@@ -500,10 +618,12 @@ main() {
 			}
 		}
 		
-		if (InputPlayer.IsSpawned) {
-			if (!Frame_Chrono.Visible) Frame_Chrono.Visible = True;
-		} else if (Frame_Chrono.Visible) {
-			Frame_Chrono.Visible = False;
+		if (DisplayChrono) {
+			if (InputPlayer.IsSpawned) {
+				if (!Frame_Chrono.Visible) Frame_Chrono.Visible = True;
+			} else if (Frame_Chrono.Visible) {
+				Frame_Chrono.Visible = False;
+			}
 		}
 	}
 }
@@ -517,7 +637,7 @@ main() {
  */
 Text Private_CreateMLCheckpointTime() {
 	return """
-<frame posn="{{{C_LibUI_CheckpointTime.X}}} {{{C_LibUI_CheckpointTime.Y}}} {{{C_LibUI_CheckpointTime.Z}}}" hidden="1" id="Frame_Global">
+<frame posn="{{{C_LibUI_CheckpointTimePos.X}}} {{{C_LibUI_CheckpointTimePos.Y}}} {{{C_LibUI_CheckpointTimePos.Z}}}" hidden="1" id="Frame_Global">
 	<format textemboss="1" />
 	<frame posn="0 6.2" hidden="1" id="Frame_Lap">
 		<label posn="0.3 -0.8" sizen="50 10" scale="0.98" valign="center2" style="TextRaceChrono" textsize="4" textcolor="fd0" id="Label_LapTime" />
@@ -591,15 +711,35 @@ main() {
 	declare Label_CheckpointSign	<=> (Page.GetFirstChild("Label_CheckpointSign")	as CMlLabel);
 	declare Label_CheckpointDiff	<=> (Page.GetFirstChild("Label_CheckpointDiff")	as CMlLabel);
 	
+	declare netread Integer Net_LibUI_SettingsUpdate for Teams[0];
 	declare netread Text[Text] Net_LibUI_Settings for Teams[0];
 	
+	declare PrevSettingsUpdate = -1;
 	declare PrevLapRaceTime = -1;
 	declare PrevCurCheckpointRaceTime = -1;
 	declare HideTime = -1;
 	
+	declare CheckpointTimeVisible = True;
+	
 	while (True) {
 		yield;
 		if (!PageIsVisible || InputPlayer == Null) continue;
+		
+		if (PrevSettingsUpdate != Net_LibUI_SettingsUpdate) {
+			PrevSettingsUpdate = Net_LibUI_SettingsUpdate;
+			foreach (SettingName => SettingValue in Net_LibUI_Settings) {
+				switch (SettingName) {
+					case "CheckpointTime_Display": {
+						if (SettingValue == "True") CheckpointTimeVisible = True;
+						else CheckpointTimeVisible = False;
+					}
+					case "CheckpointTime_Position": {
+						declare PositionSplit = TL::Split(" ", SettingValue);
+						Frame_Global.RelativePosition = <TL::ToReal(PositionSplit[0]), TL::ToReal(PositionSplit[1]), TL::ToReal(PositionSplit[2])>;
+					}
+				}
+			}
+		}
 		
 		if (Frame_Global.Visible && (HideTime <= Now || InputPlayer.CurCheckpointRaceTime < 0)) {
 			Frame_Global.Visible = False;
@@ -610,7 +750,7 @@ main() {
 			
 			if (InputPlayer.CurCheckpointRaceTime >= 0) {
 				HideTime = Now + C_DisplayDuration;
-				Frame_Global.Visible = True;
+				Frame_Global.Visible = CheckpointTimeVisible;
 				
 				declare CheckpointIndex = -1;
 				declare CheckpointTime = -1;
@@ -748,7 +888,7 @@ main() {
  */
 Text Private_CreateMLPrevBestTime() {
 	return """
-<frame posn="{{{C_LibUI_PrevBestTime.X}}} {{{C_LibUI_PrevBestTime.Y}}} {{{C_LibUI_PrevBestTime.Z}}}" id="Frame_Global">
+<frame posn="{{{C_LibUI_PrevBestTimePos.X}}} {{{C_LibUI_PrevBestTimePos.Y}}} {{{C_LibUI_PrevBestTimePos.Z}}}" id="Frame_Global">
 	<format textsize="1" />
 	<label sizen="10 6" scale="1.1" halign="right" text="-" id="Label_PrevTime" />
 	<label posn="0 -4" sizen="10 6" scale="1.1" halign="right" text="-" id="Label_BestTime" />
@@ -770,8 +910,14 @@ main() {
 	declare Label_PrevTime	<=> (Page.GetFirstChild("Label_PrevTime")	as CMlLabel);
 	declare Label_BestTime	<=> (Page.GetFirstChild("Label_BestTime")	as CMlLabel);
 	
+	declare netread Integer Net_LibUI_SettingsUpdate for Teams[0];
+	declare netread Text[Text] Net_LibUI_Settings for Teams[0];
+	
+	declare PrevSettingsUpdate = -1;
 	declare PrevPrevTime = -1;
 	declare PrevBestTime = -1;
+	
+	declare PrevBestTimeVisible = True;
 	
 	while (True) {
 		sleep(150);
@@ -780,10 +926,33 @@ main() {
 			|| InputPlayer.Score.PrevRace == Null || InputPlayer.Score.BestRace == Null
 		) continue;
 		
-		if (InputPlayer.IsSpawned) {
-			if (!Frame_Global.Visible) Frame_Global.Visible = True;
-		} else if (Frame_Global.Visible) {
-			Frame_Global.Visible = False;
+		if (PrevSettingsUpdate != Net_LibUI_SettingsUpdate) {
+			PrevSettingsUpdate = Net_LibUI_SettingsUpdate;
+			foreach (SettingName => SettingValue in Net_LibUI_Settings) {
+				switch (SettingName) {
+					case "PrevBestTime_Display": {
+						if (SettingValue == "True") {
+							PrevBestTimeVisible = True;
+							Frame_Global.Visible = True;
+						} else {
+							PrevBestTimeVisible = False;
+							Frame_Global.Visible = False;
+						}
+					}
+					case "PrevBestTime_Position": {
+						declare PositionSplit = TL::Split(" ", SettingValue);
+						Frame_Global.RelativePosition = <TL::ToReal(PositionSplit[0]), TL::ToReal(PositionSplit[1]), TL::ToReal(PositionSplit[2])>;
+					}
+				}
+			}
+		}
+		
+		if (PrevBestTimeVisible) {
+			if (InputPlayer.IsSpawned) {
+				if (!Frame_Global.Visible) Frame_Global.Visible = True;
+			} else if (Frame_Global.Visible) {
+				Frame_Global.Visible = False;
+			}
 		}
 		
 		if (!Frame_Global.Visible) continue;
@@ -832,19 +1001,6 @@ Text GetScriptName() {
 }
 
 // ---------------------------------- //
-/** Update the settings for a module
- *
- *	@param	_Name		The name of the setting
- *	@param	_Value		The value of the setting
- */
-Void SetModuleSetting(Text _Name, Text _Value) {
-	declare netwrite Net_LibUI_SettingsUpdate for Teams[0] = 0;
-	declare netwrite Net_LibUI_Settings for Teams[0] = Text[Text];
-	Net_LibUI_SettingsUpdate = Now;
-	Net_LibUI_Settings[_Name] = _Value;
-}
-
-// ---------------------------------- //
 /** Set the time gap mode for the TM time gap module
  *
  *	@param	_Mode		The mode to use between "BestRace" and "CurRace"
@@ -853,7 +1009,160 @@ Void SetModuleSetting(Text _Name, Text _Value) {
  */
 Void SetTimeGapMode(Text _Mode) {
 	if (_Mode != "BestRace" && _Mode != "CurRace") return;
-	SetModuleSetting("TimeGap_Mode", _Mode);
+	Private_SetModuleSetting("TimeGap_Mode", _Mode);
+}
+
+// ---------------------------------- //
+/** Display the time gap module
+ *
+ *	@param	_Display	Show or not the time gap module
+ */
+Void DisplayTimeGap(Boolean _Display) {
+	if (Private_ModuleIsLoaded("TimeGap")) {
+		UIManager.UIAll.OverlayHideCheckPointList = True;
+		Private_SetModuleSetting("TimeGap_Display", TL::ToText(_Display));
+	} else {
+		UIManager.UIAll.OverlayHideCheckPointList = !_Display;
+	}
+	G_LibUI_ModuleVisibility["TimeGap"] = _Display;
+}
+
+// ---------------------------------- //
+/** Get the visibility of the time gap module
+ *
+ *	@return		True if the module is visible, False otherwise
+ */
+Boolean DisplayTimeGap() {
+	if (Private_ModuleIsLoaded("TimeGap") && G_LibUI_ModuleVisibility.existskey("TimeGap")) {
+		return G_LibUI_ModuleVisibility["TimeGap"];
+	}
+	return !UIManager.UIAll.OverlayHideCheckPointList;
+}
+
+// ---------------------------------- //
+/** Set the position of the time gap module
+ *
+ *	@param	_Pos	The new position of the time gap module
+ */
+Void SetTimeGapPosition(Vec3 _Pos) {
+	if (Private_ModuleIsLoaded("TimeGap")) {
+		Private_SetModuleSetting("TimeGap_Position", Private_Vec3ToText(_Pos));
+	}
+	G_LibUI_ModulePosition["TimeGap"] = _Pos;
+}
+
+// ---------------------------------- //
+/** Get the position of the time gap module
+ *
+ *	@return		The position of the time gap module
+ */
+Vec3 GetTimeGapPosition() {
+	if (Private_ModuleIsLoaded("TimeGap") && G_LibUI_ModulePosition.existskey("TimeGap")) {
+		return G_LibUI_ModulePosition["TimeGap"];
+	}
+	return C_LibUI_TimeGapPos;
+}
+
+// ---------------------------------- //
+/** Display the small scores table module
+ *
+ *	@param	_Display	Show or not the small scores table module
+ */
+Void DisplaySmallScoresTable(Boolean _Display) {
+	if (Private_ModuleIsLoaded("SmallScoresTable")) {
+		UIManager.UIAll.OverlayHideRoundScores = True;
+		Private_SetModuleSetting("SmallScoresTable_Display", TL::ToText(_Display));
+	} else {
+		UIManager.UIAll.OverlayHideRoundScores = !_Display;
+	}
+	G_LibUI_ModuleVisibility["SmallScoresTable"] = _Display;
+}
+
+// ---------------------------------- //
+/** Get the visibility of the small scores table module
+ *
+ *	@return		True if the module is visible, False otherwise
+ */
+Boolean DisplaySmallScoresTable() {
+	if (Private_ModuleIsLoaded("SmallScoresTable") && G_LibUI_ModuleVisibility.existskey("SmallScoresTable")) {
+		return G_LibUI_ModuleVisibility["SmallScoresTable"];
+	}
+	return !UIManager.UIAll.OverlayHideRoundScores;
+}
+
+// ---------------------------------- //
+/** Set the position of the small scores table module
+ *
+ *	@param	_Pos	The new position of the small scores table module
+ */
+Void SetSmallScoresTablePosition(Vec3 _Pos) {
+	if (Private_ModuleIsLoaded("SmallScoresTable")) {
+		Private_SetModuleSetting("SmallScoresTable_Position", Private_Vec3ToText(_Pos));
+	}
+	G_LibUI_ModulePosition["SmallScoresTable"] = _Pos;
+}
+
+// ---------------------------------- //
+/** Get the position of the small scores table module
+ *
+ *	@return		The position of the small scores table module
+ */
+Vec3 GetSmallScoresTablePosition() {
+	if (Private_ModuleIsLoaded("SmallScoresTable") && G_LibUI_ModulePosition.existskey("SmallScoresTable")) {
+		return G_LibUI_ModulePosition["SmallScoresTable"];
+	}
+	return C_LibUI_SmallScoresTablePos;
+}
+
+// ---------------------------------- //
+/** Display the chrono module
+ *
+ *	@param	_Display	Show or not the chrono module
+ */
+Void DisplayChrono(Boolean _Display) {
+	if (Private_ModuleIsLoaded("Chrono")) {
+		UIManager.UIAll.OverlayHideChrono = True;
+		Private_SetModuleSetting("Chrono_Display", TL::ToText(_Display));
+	} else {
+		UIManager.UIAll.OverlayHideChrono = !_Display;
+	}
+	G_LibUI_ModuleVisibility["Chrono"] = _Display;
+}
+
+// ---------------------------------- //
+/** Get the visibility of the chrono module
+ *
+ *	@return		True if the module is visible, False otherwise
+ */
+Boolean DisplayChrono() {
+	if (Private_ModuleIsLoaded("Chrono") && G_LibUI_ModuleVisibility.existskey("Chrono")) {
+		return G_LibUI_ModuleVisibility["Chrono"];
+	}
+	return !UIManager.UIAll.OverlayHideChrono;
+}
+
+// ---------------------------------- //
+/** Set the position of the chrono module
+ *
+ *	@param	_Pos	The new position of the chrono module
+ */
+Void SetChronoPosition(Vec3 _Pos) {
+	if (Private_ModuleIsLoaded("Chrono")) {
+		Private_SetModuleSetting("Chrono_Position", Private_Vec3ToText(_Pos));
+	}
+	G_LibUI_ModulePosition["Chrono"] = _Pos;
+}
+
+// ---------------------------------- //
+/** Get the position of the chrono module
+ *
+ *	@return		The position of the chrono module
+ */
+Vec3 GetChronoPosition() {
+	if (Private_ModuleIsLoaded("Chrono") && G_LibUI_ModulePosition.existskey("Chrono")) {
+		return G_LibUI_ModulePosition["Chrono"];
+	}
+	return C_LibUI_ChronoPos;
 }
 
 // ---------------------------------- //
@@ -865,19 +1174,118 @@ Void SetTimeGapMode(Text _Mode) {
  */
 Void SetCheckpointTimeMode(Text _Mode) {
 	if (_Mode != "BestRace" && _Mode != "CurRace") return;
-	SetModuleSetting("CheckpointTime_Mode", _Mode);
+	Private_SetModuleSetting("CheckpointTime_Mode", _Mode);
 }
 
-
+// ---------------------------------- //
+/** Display the time diff in the checkpoint time module
+ *
+ *	@param	_Display	Show or not the time diff
+ */
 Void DisplayTimeDiff(Boolean _Display) {
-	declare Display = "False";
-	if (_Display) Display = "True";
-	SetModuleSetting("CheckpointTime_DisplayTimeDiff", Display);
+	Private_SetModuleSetting("CheckpointTime_DisplayTimeDiff", TL::ToText(_Display));
 }
 
-Void DisplaySmallScoresTable(Boolean _Display) {
-	declare netwrite Net_LibUI_DisplaySmallScoresTable for Teams[0] = True;
-	Net_LibUI_DisplaySmallScoresTable = _Display;
+// ---------------------------------- //
+/** Display the checkpoint time module
+ *
+ *	@param	_Display	Show or not the checkpoint time module
+ */
+Void DisplayCheckpointTime(Boolean _Display) {
+	if (Private_ModuleIsLoaded("CheckpointTime")) {
+		UIManager.UIAll.OverlayHideCheckPointTime = True;
+		Private_SetModuleSetting("CheckpointTime_Display", TL::ToText(_Display));
+	} else {
+		UIManager.UIAll.OverlayHideCheckPointTime = !_Display;
+	}
+	G_LibUI_ModuleVisibility["CheckpointTime"] = _Display;
+}
+
+// ---------------------------------- //
+/** Get the visibility of the checkpoint time module
+ *
+ *	@return		True if the module is visible, False otherwise
+ */
+Boolean DisplayCheckpointTime() {
+	if (Private_ModuleIsLoaded("CheckpointTime") && G_LibUI_ModuleVisibility.existskey("CheckpointTime")) {
+		return G_LibUI_ModuleVisibility["CheckpointTime"];
+	}
+	return !UIManager.UIAll.OverlayHideCheckPointTime;
+}
+
+// ---------------------------------- //
+/** Set the position of the checkpoint time module
+ *
+ *	@param	_Pos	The new position of the checkpoint time module
+ */
+Void SetCheckpointTimePosition(Vec3 _Pos) {
+	if (Private_ModuleIsLoaded("CheckpointTime")) {
+		Private_SetModuleSetting("CheckpointTime_Position", Private_Vec3ToText(_Pos));
+	}
+	G_LibUI_ModulePosition["CheckpointTime"] = _Pos;
+}
+
+// ---------------------------------- //
+/** Get the position of the checkpoint time module
+ *
+ *	@return		The position of the checkpoint time module
+ */
+Vec3 GetCheckpointTimePosition() {
+	if (Private_ModuleIsLoaded("CheckpointTime") && G_LibUI_ModulePosition.existskey("CheckpointTime")) {
+		return G_LibUI_ModulePosition["CheckpointTime"];
+	}
+	return C_LibUI_CheckpointTimePos;
+}
+
+// ---------------------------------- //
+/** Display the prev best time module
+ *
+ *	@param	_Display	Show or not the prev best time module
+ */
+Void DisplayPrevBestTime(Boolean _Display) {
+	if (Private_ModuleIsLoaded("PrevBestTime")) {
+		UIManager.UIAll.OverlayHidePersonnalBestAndRank = True;
+		Private_SetModuleSetting("PrevBestTime_Display", TL::ToText(_Display));
+	} else {
+		UIManager.UIAll.OverlayHidePersonnalBestAndRank = !_Display;
+	}
+	G_LibUI_ModuleVisibility["PrevBestTime"] = _Display;
+}
+
+// ---------------------------------- //
+/** Get the visibility of the prev best time module
+ *
+ *	@return		True if the module is visible, False otherwise
+ */
+Boolean DisplayPrevBestTime() {
+	if (Private_ModuleIsLoaded("PrevBestTime") && G_LibUI_ModuleVisibility.existskey("PrevBestTime")) {
+		return G_LibUI_ModuleVisibility["PrevBestTime"];
+	}
+	return !UIManager.UIAll.OverlayHidePersonnalBestAndRank;
+}
+
+// ---------------------------------- //
+/** Set the position of the prev best time module
+ *
+ *	@param	_Pos	The new position of the prev best time module
+ */
+Void SetPrevBestTimePosition(Vec3 _Pos) {
+	if (Private_ModuleIsLoaded("PrevBestTime")) {
+		Private_SetModuleSetting("PrevBestTime_Position", Private_Vec3ToText(_Pos));
+	}
+	G_LibUI_ModulePosition["PrevBestTime"] = _Pos;
+}
+
+// ---------------------------------- //
+/** Get the position of the prev best time module
+ *
+ *	@return		The position of the prev best time module
+ */
+Vec3 GetPrevBestTimePosition() {
+	if (Private_ModuleIsLoaded("PrevBestTime") && G_LibUI_ModulePosition.existskey("PrevBestTime")) {
+		return G_LibUI_ModulePosition["PrevBestTime"];
+	}
+	return C_LibUI_PrevBestTimePos;
 }
 
 // ---------------------------------- //
@@ -886,7 +1294,27 @@ Void DisplaySmallScoresTable(Boolean _Display) {
  *	@param	_IndependantLaps		True if the mode has IndependantLaps, false otherwise
  */
 Void SetIndependantLaps(Boolean _IndependantLaps) {
-	SetModuleSetting("IndependantLaps", TL::ToText(_IndependantLaps));
+	Private_SetModuleSetting("IndependantLaps", TL::ToText(_IndependantLaps));
+}
+
+// ---------------------------------- //
+/** Set the number of lines of the chat
+ *
+ *	@param	_LineCount		The number of lines of the chat
+ */
+Void SetChatLineCount(Integer _LineCount) {
+	if (_LineCount >= 0 && _LineCount <= 40) UIManager.UIAll.OverlayChatLineCount = _LineCount;
+	else if (_LineCount < 0) UIManager.UIAll.OverlayChatLineCount = 0;
+	else if (_LineCount > 40) UIManager.UIAll.OverlayChatLineCount = 40;
+}
+
+// ---------------------------------- //
+/** Get the number of lines of the chat
+ *
+ *	@return			The number of lines of the chat
+ */
+Integer GetChatLineCount() {
+	return UIManager.UIAll.OverlayChatLineCount;
 }
 
 // ---------------------------------- //
@@ -895,43 +1323,39 @@ Void SetIndependantLaps(Boolean _IndependantLaps) {
  *	@param	_ModuleId		The name of the module to load
  */
 Void LoadModule(Text _ModuleId) {
-	if (G_LibUI_ModulesLoaded.exists(_ModuleId)) return;
+	if (Private_ModuleIsLoaded(_ModuleId)) return;
 	
-	declare ModuleLoaded = False;
+	G_LibUI_ModulesLoaded.add(_ModuleId);
+			
 	switch (_ModuleId) {
 		case "TimeGap": {
 			Private_CreateModuleLayer(_ModuleId).ManialinkPage = Private_CreateMLTimeGap();
 			SetTimeGapMode("CurRace");
-			UIManager.UIAll.OverlayHideCheckPointList = True;
-			ModuleLoaded = True;
+			DisplayTimeGap(True);
+			SetTimeGapPosition(C_LibUI_TimeGapPos);
 		}
 		case "SmallScoresTable": {
 			Private_CreateModuleLayer(_ModuleId).ManialinkPage = Private_CreateMLSmallScoresTable();
-			UIManager.UIAll.SmallScoreTableVisibility = CUIConfig::EVisibility::ForcedHidden;
 			DisplaySmallScoresTable(True);
-			ModuleLoaded = True;
+			SetSmallScoresTablePosition(C_LibUI_SmallScoresTablePos);
 		}
 		case "Chrono": {
 			Private_CreateModuleLayer(_ModuleId).ManialinkPage = Private_CreateMLChrono();
-			UIManager.UIAll.OverlayHideChrono = True;
-			ModuleLoaded = True;
+			DisplayChrono(True);
+			SetChronoPosition(C_LibUI_ChronoPos);
 		}
 		case "CheckpointTime": {
 			Private_CreateModuleLayer(_ModuleId).ManialinkPage = Private_CreateMLCheckpointTime();
-			UIManager.UIAll.OverlayHideCheckPointTime = True;
 			SetCheckpointTimeMode("CurRace");
 			DisplayTimeDiff(True);
-			ModuleLoaded = True;
+			DisplayCheckpointTime(True);
+			SetCheckpointTimePosition(C_LibUI_CheckpointTimePos);
 		}
 		case "PrevBestTime": {
 			Private_CreateModuleLayer(_ModuleId).ManialinkPage = Private_CreateMLPrevBestTime();
-			UIManager.UIAll.OverlayHidePersonnalBestAndRank = True;
-			ModuleLoaded = True;
+			DisplayPrevBestTime(True);
+			SetPrevBestTimePosition(C_LibUI_PrevBestTimePos);
 		}
-	}
-	
-	if (ModuleLoaded) {
-		G_LibUI_ModulesLoaded.add(_ModuleId);
 	}
 }
 // ---------------------------------- //
@@ -960,19 +1384,19 @@ Void UnloadModule(Text _ModuleId) {
 		// Unload the module
 		switch (_ModuleId) {
 			case "TimeGap": {
-				UIManager.UIAll.OverlayHideCheckPointList = False;
+				DisplayTimeGap(True);
 			}
 			case "SmallScoresTable": {
-				UIManager.UIAll.SmallScoreTableVisibility = CUIConfig::EVisibility::Normal;
+				DisplaySmallScoresTable(True);
 			}
 			case "Chrono": {
-				UIManager.UIAll.OverlayHideChrono = False;
+				DisplayChrono(True);
 			}
 			case "CheckpointTime": {
-				UIManager.UIAll.OverlayHideCheckPointTime = False;
+				DisplayCheckpointTime(True);
 			}
 			case "PrevBestTime": {
-				UIManager.UIAll.OverlayHidePersonnalBestAndRank = False;
+				DisplayPrevBestTime(True);
 			}
 		}
 	}
@@ -992,6 +1416,8 @@ Void Unload() {
 	
 	G_LibUI_ModulesLoaded.clear();
 	G_LibUI_LayersIds.clear();
+	G_LibUI_ModuleVisibility.clear();
+	G_LibUI_ModulePosition.clear();
 }
 
 // ---------------------------------- //
@@ -1012,6 +1438,114 @@ Void Load(Text[] _AutoLoadModules) {
 }
 
 // ---------------------------------- //
+// Custom UI XmlRpc
+// ---------------------------------- //
+// ---------------------------------- //
+/** Set the visibility of the UI overlays
+ *
+ *	@param	_Name			The name of the overlay
+ *	@param	_Visible		The visibility of the overlay
+ */
+Void Private_SetVisibility(Text _Name, Text _Visible) {
+	if (_Visible == "") return;
+	
+	declare Hide = False;
+	if (_Visible == "False" || _Visible == "false" || _Visible == "0") Hide = True;
+	
+	switch (_Name) {
+		case "map_info" 				: UIManager.UIAll.OverlayHideMapInfo = Hide;
+		case "opponents_info" 			: UIManager.UIAll.OverlayHideOpponentsInfo = Hide;
+		case "chat"						: UIManager.UIAll.OverlayHideChat = Hide;
+		case "countdown"				: UIManager.UIAll.OverlayHideCountdown = Hide;
+		case "321_go"					: UIManager.UIAll.OverlayHide321Go = Hide;
+		case "speed_and_dist"			: UIManager.UIAll.OverlayHideSpeedAndDist = Hide;
+		case "position"					: UIManager.UIAll.OverlayHidePosition = Hide;
+		case "chat_avatar"				: UIManager.UIAll.OverlayChatHideAvatar = Hide;
+		case "checkpoint_list"			: DisplayTimeGap(!Hide);
+		case "round_scores"				: DisplaySmallScoresTable(!Hide);
+		case "chrono"					: DisplayChrono(!Hide);
+		case "checkpoint_time"			: DisplayCheckpointTime(!Hide);
+		case "personnal_best_and_rank"	: DisplayPrevBestTime(!Hide);
+		case "warmup"					: WarmUp::SetLayerVisibility(!Hide);
+	}
+}
+
+// ---------------------------------- //
+/** Set the visibility of the UI overlays
+ *
+ *	@param	_Name			The name of the overlay
+ *	@param	_Position		The position of the overlay
+ */
+Void Private_SetPosition(Text _Name, Text _Position) {
+	if (_Position == "") return;
+	
+	declare Vec3 Position;
+	declare PositionSplit = TL::Split(" ", _Position);
+	if (PositionSplit.existskey(0)) Position.X = TL::ToReal(PositionSplit[0]);
+	if (PositionSplit.existskey(1)) Position.Y = TL::ToReal(PositionSplit[1]);
+	if (PositionSplit.existskey(2)) Position.Z = TL::ToReal(PositionSplit[2]);
+	
+	switch (_Name) {
+		case "checkpoint_list"			: SetTimeGapPosition(Position);
+		case "round_scores"				: SetSmallScoresTablePosition(Position);
+		case "chrono"					: SetChronoPosition(Position);
+		case "personnal_best_and_rank"	: SetPrevBestTimePosition(Position);
+		case "checkpoint_time"			: SetCheckpointTimePosition(Position);
+		case "chat"						: UIManager.UIAll.OverlayChatOffset = <Position.X, Position.Y>;
+		case "countdown"				: UIManager.UIAll.CountdownCoord = <Position.X, Position.Y>;
+		case "warmup"					: WarmUp::SetLayerPosition(Position);
+	}
+}
+
+// ---------------------------------- //
+/** Parse the properties xml
+ *
+ *	@param	_Xml	The xml to parse
+ */
+Void Private_SetProperties(Text _Xml) {
+	if (_Xml == "") return;
+	declare XmlDoc <=> Xml.Create(_Xml);
+	if (XmlDoc == Null) return;
+	if (XmlDoc.Root.Name != "ui_properties") return;
+	
+	foreach (Node in XmlDoc.Root.Children) {
+		Private_SetVisibility(Node.Name, Node.GetAttributeText("visible", ""));
+		Private_SetPosition(Node.Name, Node.GetAttributeText("pos", ""));
+		if (Node.Name == "chat") {
+			SetChatLineCount(Node.GetAttributeInteger("linecount", -1));
+			Private_SetPosition(Node.Name, Node.GetAttributeText("offset", ""));
+		}
+	}
+	
+	Xml.Destroy(XmlDoc);
+}
+
+// ---------------------------------- //
+/** Get the current properties xml
+ *
+ *	@return		The properties xml
+ */
+Text Private_GetProperties() {
+	return """
+<ui_properties>
+	<map_info visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideMapInfo)}}}" />
+	<opponents_info visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideOpponentsInfo)}}}" />
+	<chat visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideChat)}}}" offset="{{{Private_Vec2ToText(UIManager.UIAll.OverlayChatOffset)}}}" linecount="{{{GetChatLineCount()}}}" />
+	<checkpoint_list visible="{{{Private_BooleanToText(DisplayTimeGap())}}}" pos="{{{Private_Vec3ToText(GetTimeGapPosition())}}}" />
+	<round_scores visible="{{{Private_BooleanToText(DisplaySmallScoresTable())}}}" pos="{{{Private_Vec3ToText(GetSmallScoresTablePosition())}}}" />
+	<countdown visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideCountdown)}}}" />
+	<go visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHide321Go)}}}" />
+	<chrono visible="{{{Private_BooleanToText(DisplayChrono())}}}" pos="{{{Private_Vec3ToText(GetChronoPosition())}}}" />
+	<speed_and_dist visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideSpeedAndDist)}}}" />
+	<personnal_best_and_rank visible="{{{Private_BooleanToText(DisplayPrevBestTime())}}}" pos="{{{Private_Vec3ToText(GetPrevBestTimePosition())}}}" />
+	<position visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHidePosition)}}}" />
+	<checkpoint_time visible="{{{Private_BooleanToText(DisplayCheckpointTime())}}}" pos="{{{Private_Vec3ToText(GetCheckpointTimePosition())}}}" />
+	<chat_avatar visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayChatHideAvatar)}}}" />
+	<warmup visible="{{{Private_BooleanToText(WarmUp::GetLayerVisibility())}}}" pos="{{{Private_Vec3ToText(WarmUp::GetLayerPosition())}}}" />
+</ui_properties>""";
+}
+
+// ---------------------------------- //
 /// Manage XmlRpc callbacks
 Void XmlRpcLoop() {
 	foreach (Event in XmlRpc.PendingEvents) {
@@ -1021,6 +1555,12 @@ Void XmlRpcLoop() {
 					declare Display = True;
 					if (Event.Param2 == "False") Display = False;
 					DisplaySmallScoresTable(Display);
+				}
+				case "UI_SetProperties": {
+					Private_SetProperties(Event.Param2);
+				}
+				case "UI_GetProperties": {
+					XmlRpc.SendCallbackArray("UI_Properties", [Private_GetProperties()]);
 				}
 			}
 		}

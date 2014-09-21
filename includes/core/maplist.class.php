@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-14
+ * Date:	2014-09-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -370,7 +370,7 @@ class MapList {
 			". $aseco->mysqli->quote($map->type) .",
 			". $aseco->mysqli->quote($map->style) .",
 			". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
-			". (($map->multilap == true) ? $map->nblaps : 0) .",
+			". (($map->nblaps > 1) ? $map->nblaps : 0) .",
 			". $map->nbcheckpoints .",
 			". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
 			". $aseco->mysqli->quote($map->exeversion) .",
@@ -425,7 +425,7 @@ class MapList {
 			`Type` = ". $aseco->mysqli->quote($map->type) .",
 			`Style` = ". $aseco->mysqli->quote($map->style) .",
 			`MultiLap` = ". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
-			`NbLaps` = ". $map->nblaps .",
+			`NbLaps` = ". (($map->nblaps > 1) ? $map->nblaps : 0) .",
 			`NbCheckpoints` = ". $map->nbcheckpoints .",
 			`Validated` = ". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
 			`ExeVersion` = ". $aseco->mysqli->quote($map->exeversion) .",
@@ -519,14 +519,14 @@ class MapList {
 						'silvertime'		=> $row['SilverTime'],
 						'bronzetime'		=> $row['BronzeTime'],
 						'nblaps'		=> (int)$row['NbLaps'],
-						'multilap'		=> $row['MultiLap'],
+						'multilap'		=> $aseco->string2bool($row['MultiLap']),
 						'nbcheckpoints'		=> (int)$row['NbCheckpoints'],
 						'cost'			=> $row['Cost'],
 						'environment'		=> $row['Environment'],
 						'mood'			=> $row['Mood'],
 						'type'			=> $row['Type'],
 						'style'			=> $row['Style'],
-						'validated'		=> $row['Validated'],
+						'validated'		=> $aseco->string2bool($row['Validated']),
 						'exeversion'		=> $row['ExeVersion'],
 						'exebuild'		=> $row['ExeBuild'],
 						'modname'		=> $row['ModName'],

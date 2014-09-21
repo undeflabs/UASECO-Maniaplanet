@@ -1,12 +1,13 @@
 <?php
-/* Plugin: Modescript Handler
+/*
+ * Plugin: Modescript Handler
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~
  * » Handle the Modescript Callbacks send by the dedicated server and related settings.
  * » Based upon the plugin.modescriptcallback.php from MPAseco, written by the MPAseco team for ShootMania
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-14
+ * Date:	2014-09-21
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -30,6 +31,7 @@
  * » http://doc.maniaplanet.com/dedicated-server/settings-list.html
  * » http://doc.maniaplanet.com/dedicated-server/xmlrpc/methods/latest.html
  * » http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
+ * » http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html
  * » docs/Dedicated Server/ListCallbacks_2013-04-16.html
  *
  * Dependencies:
@@ -48,20 +50,11 @@
 
 class PluginModescriptHandler extends Plugin {
 
-	// stores/inits <custom_ui> block fields
-	private $custom_ui = array(
-		'global'		=> true,	// 2014-07-25: Works, for all working settings below
-		'challenge_info'	=> true,	// 2014-07-25: Works
-		'chat'			=> true,	// 2014-07-25: Works
-		'scoretable'		=> true,	// 2014-07-25: Works
-		'round_scores'		=> true,	// 2014-07-25: No effect, alternate method: UI_DisplaySmallScoresTable
-//		'notice'		=> true,	// 2014-07-25: No effect, because this messages are already removed(?)
-//		'net_infos'		=> true,	// 2014-07-25: No effect
-//		'checkpoint_list'	=> true,	// 2014-07-25: No effect
-	);
-
 	// Stores the state of finished Players
 	private $player_finished	= array();
+
+	// Stores the <ui_properties>
+	private $ui_properties		= array();
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -161,16 +154,27 @@ class PluginModescriptHandler extends Plugin {
 		$this->setupCustomScoretable($aseco);
 
 
-		// Setup <custom_ui>
-		$this->setCustomUIField('challenge_info', $aseco->string2bool($settings['CUSTOM_UI'][0]['CHALLENGE_INFO'][0]));
-		$this->setCustomUIField('chat', $aseco->string2bool($settings['CUSTOM_UI'][0]['CHAT'][0]));
-		$this->setCustomUIField('scoretable', $aseco->string2bool($settings['CUSTOM_UI'][0]['SCORETABLE'][0]));
-		$this->setCustomUIField('round_scores', $aseco->string2bool($settings['CUSTOM_UI'][0]['ROUND_SCORES'][0]));
+		// Setup the UI
+		$this->ui_properties = $settings['UI_PROPERTIES'][0];
 
-		// Special handling for 'round_scores':
-		// Show/Hide the small scores table displayed on the right of the screen when finishing the map.
-		// http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
-		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_DisplaySmallScoresTable', ucfirst($aseco->bool2string($this->getCustomUIField('round_scores'))));
+		// Transform 'TRUE' or 'FALSE' from string to boolean
+		$this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['CHAT'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHAT'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['GO'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['GO'][0]['VISIBLE'][0]) == 'TRUE')				? true : false);
+		$this->ui_properties['CHRONO'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) == 'TRUE')	? true : false);
+		$this->ui_properties['POSITION'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['POSITION'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+
+		// Send the UI settings
+		$this->setupUserInterface($aseco);
 	}
 
 	/*
@@ -210,10 +214,8 @@ class PluginModescriptHandler extends Plugin {
 		// Setup the custom Scoretable
 		$this->setupCustomScoretable($aseco);
 
-		// Special handling for 'round_scores':
-		// Show/Hide the small scores table displayed on the right of the screen when finishing the map.
-		// http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
-		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_DisplaySmallScoresTable', ucfirst($aseco->bool2string($this->getCustomUIField('round_scores'))));
+		// Setup the UI
+		$this->setupUserInterface($aseco);
 	}
 
 	/*
@@ -241,29 +243,39 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			// [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=WaypointIsFinishLine, [5]=CurrentLapTime, [6]=LapWaypointNumber, [7]=WaypointIsFinishLap
+			// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=WaypointIsFinishLine, [5]=CurrentLapTime, [6]=LapWaypointNumber, [7]=WaypointIsFinishLap
 			case 'LibXmlRpc_OnWayPoint':
-				// Go ahead, only when
-				// - 'WaypointIsFinishLine' == true
-				// - 'WaypointIsFinishLap' == true
-				if ( ($aseco->string2bool($params[4]) === true) || ($aseco->string2bool($params[7]) === true) ) {
+				if ($aseco->string2bool($params[4]) === false && $aseco->string2bool($params[7]) === false) {
+					$aseco->releaseEvent('onPlayerCheckpoint', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+
+					if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking',
+						// required to be up-to-date on each Checkpoint in Laps
+						$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
+					}
+				}
+				else {
+					if ($aseco->string2bool($params[4]) === true && $aseco->server->maps->current->multilap === false) {
+						$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+					}
+					else if ($aseco->string2bool($params[7]) === true && $aseco->server->maps->current->multilap === true) {
+						$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+					}
+				}
+				if ($aseco->string2bool($params[4]) === true || $aseco->string2bool($params[7]) === true) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
-						// Mark this Player that he has finished the Map
-						$this->player_finished[$params[0]] = (int)$params[2];
+						if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+							// Store time from Player (finished the Lap)
+							$this->player_finished[$params[0]] = (int)$params[5];
+						}
+						else {
+							// Store time from Player (finished the Map)
+							$this->player_finished[$params[0]] = (int)$params[2];
+						}
 
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
 						$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
 					}
-				}
-
-				if ($aseco->string2bool($params[4]) === false) {
-					$aseco->releaseEvent('onPlayerCheckpoint', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
-				}
-				else if ($aseco->string2bool($params[4]) === true && $aseco->server->maps->current->multilap === false) {
-					$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
-				}
-				else if ($aseco->string2bool($params[7]) === true && $aseco->server->maps->current->multilap === true) {
-					$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], (int)$params[6]));
 				}
 		    		break;
 
@@ -678,11 +690,7 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	public function onModeScriptCallback ($aseco, $data) {
-
-		$name = $data[0];
-		$params = isset($data[1]) ? $data[1] : '';
-
-		$aseco->console('[onModeScriptCallback] Unsupported callback received: ['. $name .'], please report this at '. UASECO_WEBSITE);
+		$aseco->console('[onModeScriptCallback] Unsupported callback received: ['. $data[0] .'], please report this at '. UASECO_WEBSITE);
 	}
 
 	/*
@@ -691,9 +699,58 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setCustomUIField ($field, $value) {
-		if ( isset($this->custom_ui[$field]) ) {
-			$this->custom_ui[$field] = $value;
+	public function setupUserInterface ($aseco) {
+
+		// Check some limitations, details:
+		// http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html
+		if ($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0] > 0) {
+			$this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0] = 0.0;
+		}
+		if ($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0] < -3.2) {
+			$this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0] = -3.2;
+		}
+		if ($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0] < 0) {
+			$this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0] = 0.0;
+		}
+		if ($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0] > 1.8) {
+			$this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0] = 1.8;
+		}
+		if ($this->ui_properties['CHAT'][0]['LINECOUNT'][0] < 0) {
+			$this->ui_properties['CHAT'][0]['LINECOUNT'][0] = 0;
+		}
+		if ($this->ui_properties['CHAT'][0]['LINECOUNT'][0] > 40) {
+			$this->ui_properties['CHAT'][0]['LINECOUNT'][0] = 40;
+		}
+
+		$settings  = '<ui_properties>';
+		$settings .= ' <map_info visible="'. $aseco->bool2string($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <opponents_info visible="'. $aseco->bool2string($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'" />';
+		$settings .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <chrono visible="'. $aseco->bool2string($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <speed_and_dist visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <personnal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= '</ui_properties>';
+
+		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_SetProperties', $settings);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setUserInterfaceVisibility ($field, $value) {
+		if ( isset($this->ui_properties[strtoupper($field)][0]) ) {
+			$this->ui_properties[strtoupper($field)][0]['VISIBLE'][0] = $value;
 		}
 	}
 
@@ -703,32 +760,10 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getCustomUIField ($field) {
-		if ( isset($this->custom_ui[$field]) ) {
-			return $this->custom_ui[$field];
+	public function getUserInterfaceField ($field) {
+		if ( isset($this->ui_properties[strtoupper($field)][0]) ) {
+			return $this->ui_properties[strtoupper($field)][0];
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getCustomUIBlock () {
-		global $aseco;
-
-		$xml  = '<custom_ui>';
-		$xml .= '<global visible="'. $aseco->bool2string($this->custom_ui['global']) .'"/>';
-		$xml .= '<challenge_info visible="'. $aseco->bool2string($this->custom_ui['challenge_info']) .'"/>';
-		$xml .= '<chat visible="'. $aseco->bool2string($this->custom_ui['chat']) .'"/>';
-		$xml .= '<scoretable visible="'. $aseco->bool2string($this->custom_ui['scoretable']) .'"/>';
-//		$xml .= '<notice visible="'. $aseco->bool2string($this->custom_ui['notice']) .'"/>';
-//		$xml .= '<net_infos visible="'. $aseco->bool2string($this->custom_ui['net_infos']) .'"/>';
-//		$xml .= '<checkpoint_list visible="'. $aseco->bool2string($this->custom_ui['checkpoint_list']) .'"/>';
-//		$xml .= '<round_scores visible="'. $aseco->bool2string($this->custom_ui['round_scores']) .'"/>';
-		$xml .= '</custom_ui>';
-		return $xml;
 	}
 
 	/*

@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
 #Const	CompatibleMapTypes	"Race"
-#Const	Version		"2014-07-15"
+#Const	Version		"2014-09-16"
 #Const	ScriptName	"TeamAttack.Script.txt"
 
 #Include "TextLib" as TL
@@ -13,7 +13,6 @@
 #Include "Libs/Nadeo/Layers2.Script.txt" as Layers
 #Include "Libs/Nadeo/Message.Script.txt" as Message
 #Include "Libs/Nadeo/Manialink.Script.txt" as Manialink
-#Include "Libs/Nadeo/TrackMania/UI.Script.txt" as UI
 #Include "Libs/Nadeo/TrackMania/MultiClans.Script.txt" as MultiClans
 #Include "Libs/Nadeo/TrackMania/UI/TeamModes.Script.txt" as UITeamModes
 
@@ -37,7 +36,6 @@
 ***LogVersion***
 ***
 MB_LogVersion(ScriptName, Version);
-MB_LogVersion(UI::GetScriptName(), UI::GetScriptVersion());
 MB_LogVersion(Layers::GetScriptName(), Layers::GetScriptVersion());
 MB_LogVersion(Message::GetScriptName(), Message::GetScriptVersion());
 MB_LogVersion(Manialink::GetScriptName(), Manialink::GetScriptVersion());
@@ -61,7 +59,7 @@ IndependantLaps = True;
 
 // ---------------------------------- //
 // Initialize UI
-UI::Load(["TimeGap", "Chrono", "CheckpointTime", "PrevBestTime"]);
+UI::LoadModules(["TimeGap", "Chrono", "CheckpointTime", "PrevBestTime"]);
 UI::SetTimeGapMode("BestRace");
 UI::SetIndependantLaps(IndependantLaps);
 Layers::Create("ClanSelection", UITeamModes::GetMLClanSelection());
@@ -462,7 +460,6 @@ if (Scores.existskey(0) &&  Scores[0].Points > 0) {
 ***
 Layers::Destroy("ClanSelection");
 Layers::Destroy("ClanInfo");
-UI::Unload();
 ***
 
 // ---------------------------------- //

@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-08-10
+ * Date:		2014-09-21
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -31,7 +31,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - plugins/plugin.manialinks.php		Required
+ *  - plugins/plugin.modescript_handler.php	Required
  *  - plugins/plugin.local_records.php		Required, for Datasbase access and LocalRecordsWidget
  *  - plugins/plugin.welcome_center.php		Required, for TopVisitors
  *  - plugins/plugin.mxinfo.php			Required, for MapWidget, MXMapInfoWindow and <placement>-Placeholder
@@ -204,7 +204,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
-		$this->addDependence('PluginManialinks',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginWelcomeCenter',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginManiaExchangeInfo',		Dependence::REQUIRED,	'1.0.0', null);
@@ -329,14 +329,9 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['NICEMODE'][0]['FORCE'][0]					= ((strtoupper($this->config['NICEMODE'][0]['FORCE'][0]) == 'TRUE')					? true : false);
 		$this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0]		= ((strtoupper($this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0]) == 'TRUE')		? true : false);
 		$this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0]		= ((strtoupper($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0]) == 'AVERAGE')	? true : false);
-		$this->config['CUSTOM_UI'][0]['ENABLED'][0]					= ((strtoupper($this->config['CUSTOM_UI'][0]['ENABLED'][0]) == 'TRUE')					? true : false);
-		$this->config['CUSTOM_UI'][0]['NOTICE'][0]					= ((strtoupper($this->config['CUSTOM_UI'][0]['NOTICE'][0]) == 'TRUE')					? true : false);
-		$this->config['CUSTOM_UI'][0]['CHALLENGE_INFO'][0]				= ((strtoupper($this->config['CUSTOM_UI'][0]['CHALLENGE_INFO'][0]) == 'TRUE')				? true : false);
-		$this->config['CUSTOM_UI'][0]['NET_INFOS'][0]					= ((strtoupper($this->config['CUSTOM_UI'][0]['NET_INFOS'][0]) == 'TRUE')				? true : false);
-		$this->config['CUSTOM_UI'][0]['CHAT'][0]					= ((strtoupper($this->config['CUSTOM_UI'][0]['CHAT'][0]) == 'TRUE')					? true : false);
-		$this->config['CUSTOM_UI'][0]['CHECKPOINT_LIST'][0]				= ((strtoupper($this->config['CUSTOM_UI'][0]['CHECKPOINT_LIST'][0]) == 'TRUE')				? true : false);
-		$this->config['CUSTOM_UI'][0]['ROUND_SCORES'][0]				= ((strtoupper($this->config['CUSTOM_UI'][0]['ROUND_SCORES'][0]) == 'TRUE')				? true : false);
-		$this->config['CUSTOM_UI'][0]['SCORETABLE'][0]					= ((strtoupper($this->config['CUSTOM_UI'][0]['SCORETABLE'][0]) == 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]) == 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]) == 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['WARMUP'][0]					= ((strtoupper($this->config['UI_PROPERTIES'][0]['WARMUP'][0]) == 'TRUE')				? true : false);
 		$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]			= ((strtoupper($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]) == 'TRUE')		? true : false);
 		$this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]				= ((strtoupper($this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]) == 'TRUE')				? true : false);
 		$this->config['FEATURES'][0]['NUMBER_FORMAT'][0]				= strtolower($this->config['FEATURES'][0]['NUMBER_FORMAT'][0]);
@@ -886,7 +881,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->cache['Map']['Current']		= $this->getEmptyMapInfo();
 		$this->cache['Map']['Next']		= $this->getEmptyMapInfo();
 		$this->cache['Map']['Jukebox']		= false;
-		$this->cache['Map']['NbCheckpoints']	= false;
+		$this->cache['Map']['NbCheckpoints']	= 0;
 
 
 
@@ -1271,85 +1266,34 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		$aseco->console('[RecordsEyepiece] Setup <custom_ui> settings...');
-		// Disable 'notice'
-		if ($this->config['CUSTOM_UI'][0]['NOTICE'][0] == false) {
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('notice', false);
+		// Setup 'map_info'
+		if ( ($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0] == false) || ($this->config['MAP_WIDGET'][0]['ENABLED'][0] == true) ) {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('map_info', false);
+		}
+		else {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('map_info', true);
 		}
 
-		// Disable 'challenge_info' and use own MapWidget (if enabled)
-		if ( ($this->config['CUSTOM_UI'][0]['CHALLENGE_INFO'][0] == false) || ($this->config['MAP_WIDGET'][0]['ENABLED'][0] == true) ) {
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('challenge_info', false);
+		// Setup 'round_scores' and use own RoundScoreWidget (if enabled)
+		if ( ($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0] == false) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::ROUNDS][0]['ENABLED'][0] == true) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TEAM][0]['ENABLED'][0] == true) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CUP][0]['ENABLED'][0] == true) ) {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('round_scores', false);
+		}
+		else {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('round_scores', true);
 		}
 
-		// Disable 'net_infos'
-		if ($this->config['CUSTOM_UI'][0]['NET_INFOS'][0] == false) {
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('net_infos', false);
+		// Setup 'warmup'
+		if ($this->config['UI_PROPERTIES'][0]['WARMUP'][0] == false) {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('warmup', false);
+		}
+		else {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('warmup', true);
 		}
 
-		// Disable 'chat'
-		if ($this->config['CUSTOM_UI'][0]['CHAT'][0] == false) {
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('chat', false);
-		}
+		// Send the UI settings
+		$aseco->plugins['PluginModescriptHandler']->setupUserInterface($aseco);
 
-		// Disable 'checkpoint_list'
-		if ($this->config['CUSTOM_UI'][0]['CHECKPOINT_LIST'][0] == false) {
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('checkpoint_list', false);
-		}
 
-		// Disable 'round_scores' and use own RoundScoreWidget (if enabled)
-		if ( ($this->config['CUSTOM_UI'][0]['ROUND_SCORES'][0] == false) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::ROUNDS][0]['ENABLED'][0] == true) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TEAM][0]['ENABLED'][0] == true) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CUP][0]['ENABLED'][0] == true) ) {
-
-			// Remove the function roundspanel_on() and roundspanel_off() from manialinks.inc.php at the event 'onPlayerFinish' / 'onBeginRound'
-			// to prevent displaying the automatic instead own one
-			$array_pos = 0;
-			foreach ($aseco->registered_events['onPlayerFinish'] as $func_name) {
-				if ($func_name == 'roundspanel_on') {
-					unset($aseco->registered_events['onPlayerFinish'][$array_pos]);
-					break;
-				}
-				$array_pos ++;
-			}
-
-			$array_pos = 0;
-			foreach ($aseco->registered_events['onBeginRound'] as $func_name) {
-				if ($func_name == 'roundspanel_off') {
-					unset($aseco->registered_events['onBeginRound'][$array_pos]);
-					break;
-				}
-				$array_pos ++;
-			}
-
-			// Disable
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('round_scores', false);
-		}
-
-		// Disable 'scoretable'
-		if ($this->config['CUSTOM_UI'][0]['SCORETABLE'][0] == false) {
-
-			// Remove the function scorepanel_on() and scorepanel_off() from manialinks.inc.php at the event 'onEndMap' / 'onBeginMap'
-			// to prevent displaying Automatic Scoretable
-			$array_pos = 0;
-			foreach ($aseco->registered_events['onEndMap'] as $func_name) {
-				if ($func_name == 'scorepanel_on') {
-					unset($aseco->registered_events['onEndMap'][$array_pos]);
-					break;
-				}
-				$array_pos ++;
-			}
-
-			$array_pos = 0;
-			foreach ($aseco->registered_events['onBeginMap'] as $func_name) {
-				if ($func_name == 'scorepanel_off') {
-					unset($aseco->registered_events['onBeginMap'][$array_pos]);
-					break;
-				}
-				$array_pos ++;
-			}
-
-			// Disable
-			$aseco->plugins['PluginModescriptHandler']->setCustomUIField('scoretable', false);
-		}
 
 		// Get the current Maplist
 		$this->getMaplist(false);
@@ -2403,11 +2347,6 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Send all widgets
 		if ($widgets != '') {
-			// Add complete CustomUI block
-			if ($this->config['CUSTOM_UI'][0]['ENABLED'][0] == true) {
-				$widgets .= $aseco->plugins['PluginModescriptHandler']->getCustomUIBlock();
-			}
-
 			// Send Manialink
 			$this->sendManialink($widgets, $player->login, 0);
 		}
@@ -2529,25 +2468,38 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		// Store the finish time for the RoundScore and display the RoundScoreWidget, but not in Gameinfo::LAPS
-		if ( ($gamemode != Gameinfo::LAPS) && ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) ) {
+		// Store the finish time for the RoundScore and display the RoundScoreWidget
+		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
 
-			// Add the Score
-			$this->scores['RoundScore'][$finish_item->score][] = array(
-				'team'		=> $player->data['RecordsEyepiece']['Prefs']['TeamId'],
-				'playerid'	=> $player->pid,
-				'login'		=> $player->login,
-				'nickname'	=> $this->handleSpecialChars($player->nickname),
-				'score'		=> $aseco->formatTime($finish_item->score),
-				'scoplain'	=> $finish_item->score
-			);
-
-			// Store personal best round-score for sorting on equal times of more Players
-			if ( ( isset($this->scores['RoundScorePB'][$player->login]) ) && ($this->scores['RoundScorePB'][$player->login] > $finish_item->score) ) {
-				$this->scores['RoundScorePB'][$player->login] = $finish_item->score;
+			if ($gamemode == Gameinfo::LAPS) {
+				// Add the Score
+				$this->scores['RoundScore'][$player->login] = array(
+					'checkpointid'	=> ($aseco->server->maps->current->nbcheckpoints - 1),
+					'playerid'	=> $player->pid,
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $aseco->formatTime($finish_item->score),
+					'scoplain'	=> $finish_item->score
+				);
 			}
 			else {
-				$this->scores['RoundScorePB'][$player->login] = $finish_item->score;
+				// Add the Score
+				$this->scores['RoundScore'][$finish_item->score][] = array(
+					'team'		=> $player->data['RecordsEyepiece']['Prefs']['TeamId'],
+					'playerid'	=> $player->pid,
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $aseco->formatTime($finish_item->score),
+					'scoplain'	=> $finish_item->score
+				);
+
+				// Store personal best round-score for sorting on equal times of more Players
+				if ( ( isset($this->scores['RoundScorePB'][$player->login]) ) && ($this->scores['RoundScorePB'][$player->login] > $finish_item->score) ) {
+					$this->scores['RoundScorePB'][$player->login] = $finish_item->score;
+				}
+				else {
+					$this->scores['RoundScorePB'][$player->login] = $finish_item->score;
+				}
 			}
 
 			// Display the Widget
@@ -3103,9 +3055,6 @@ class PluginRecordsEyepiece extends Plugin {
 
 			if ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] == true) {
 				// Refresh on drop map from jukebox (action from plugin.rasp_jukebox.php)
-
-				// Turn of the automatic "/jukebox display"
-				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 
 				$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 				$require_action = true;
@@ -3894,33 +3843,30 @@ class PluginRecordsEyepiece extends Plugin {
 		// Get current Gamemode
 		$gamemode = $aseco->server->gameinfo->mode;
 
-
 		// Special handling for Gamemode 'Laps'
 		if ( ($gamemode != Gameinfo::LAPS) && (!empty($aseco->registered_events['onPlayerCheckpoint'])) ) {
 			// Unregister (possible registered) 'onPlayerCheckpoint' event for Gamemode 'Laps' if this is not 'Laps'
-			$array_pos = 0;
-			foreach ($aseco->registered_events['onPlayerCheckpoint'] as $func_name) {
-				if ($func_name == 'onPlayerCheckpoint') {
+			foreach ($aseco->registered_events['onPlayerCheckpoint'] as &$item) {
+				if ($item[0]->getClassname() == $this->getClassname()) {
 					$aseco->console('[RecordsEyepiece] Unregister event "onPlayerCheckpoint", currently not required.');
-					unset($aseco->registered_events['onPlayerCheckpoint'][$array_pos]);
+					unset($item);
 					break;
 				}
-				$array_pos ++;
 			}
-			unset($func_name);
+			unset($item);
 		}
 		else if ( ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) ) {
 			// Register event 'onPlayerCheckpoint' in Gamemode 'Laps'
 			// if <live_rankings><laps> is enabled
 			// or when <round_score><gamemode><laps> is enabled
 			$found = false;
-			foreach ($aseco->registered_events['onPlayerCheckpoint'] as $func_name) {
-				if ($func_name == 'onPlayerCheckpoint') {
+			foreach ($aseco->registered_events['onPlayerCheckpoint'] as $item) {
+				if ($item[0]->getClassname() == $this->getClassname()) {
 					$found = true;
 					break;
 				}
-
 			}
+			unset($item);
 			if ($found == false) {
 				$aseco->registerEvent('onPlayerCheckpoint', array($this, 'onPlayerCheckpoint'));
 				$aseco->console('[RecordsEyepiece] Register event "onPlayerCheckpoint" to enabled wanted Widgets.');
@@ -4265,14 +4211,14 @@ class PluginRecordsEyepiece extends Plugin {
 	// or when <round_score><gamemode><laps> is enabled
 	public function onPlayerCheckpoint ($aseco, $checkpt) {
 
-		if ( ($aseco->server->gameinfo->mode == Gameinfo::LAPS) && ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) ) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) {
 
 			// Get the Player object
 			$player = $aseco->server->players->player_list[$checkpt[0]];
 
 			// Add the Score
 			$this->scores['RoundScore'][$player->login] = array(
-				'checkpointid'	=> $checkpt[3],
+				'checkpointid'	=> ($checkpt[3] - 1),
 				'playerid'	=> $player->pid,
 				'login'		=> $player->login,
 				'nickname'	=> $this->handleSpecialChars($player->nickname),
@@ -4285,7 +4231,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Only work at 'Laps'
-		if ( ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) && ($this->cache['Map']['NbCheckpoints'] !== false) ) {
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true && $this->cache['Map']['NbCheckpoints'] > 0) {
 			// Let the LiveRankings refresh, when a Player drive through one
 			$this->config['States']['LiveRankings']['NeedUpdate'] = true;
 			$this->config['States']['LiveRankings']['NoRecordsFound'] = false;
@@ -4430,8 +4376,8 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->scores['RoundScore']	= array();
 			$this->scores['RoundScorePB']	= array();
 
-			// Hide Widget
-			$widgets .= '<manialink id="RoundScoreWidget" name="RoundScoreWidget"></manialink>';
+			// Reset Widget
+			$widgets .= $this->buildRoundScoreWidget($gamemode, false);
 		}
 
 		// Send all widgets
@@ -6476,11 +6422,16 @@ class PluginRecordsEyepiece extends Plugin {
 							$this->scores['LiveRankings'][$i]['score'] = $aseco->formatTime($data['time']);
 						}
 						else {
-							if ( ( isset($this->config['Challenge']['NbCheckpoints']) ) && ( isset($this->config['Challenge']['NbLaps']) ) ) {
-								$this->scores['LiveRankings'][$i]['score'] = $data['score'] .'/'. ($this->config['Challenge']['NbCheckpoints'] * $this->config['Challenge']['NbLaps']);
+							if (isset($this->cache['Map']['NbCheckpoints']) && isset($this->cache['Map']['NbLaps'])) {
+								if ($aseco->server->maps->current->multilap == true) {
+									$this->scores['LiveRankings'][$i]['score'] = count($data['cps']) .'/'. ($this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps']);
+								}
+								else {
+									$this->scores['LiveRankings'][$i]['score'] = count($data['cps']) .'/'. $this->cache['Map']['NbCheckpoints'];
+								}
 							}
 							else {
-								$this->scores['LiveRankings'][$i]['score'] = $data['score'] . (($data['score'] == 1) ? ' cp.' : ' cps.');
+								$this->scores['LiveRankings'][$i]['score'] = count($data['cps']) . ((count($data['cps']) == 1) ? ' cp.' : ' cps.');
 							}
 						}
 					}
@@ -6679,10 +6630,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['MostRecords'][$i]['rank']		= ($i+1);
-					$this->scores['MostRecords'][$i]['login']		= $row->Login;
+					$this->scores['MostRecords'][$i]['rank']	= ($i+1);
+					$this->scores['MostRecords'][$i]['login']	= $row->Login;
 					$this->scores['MostRecords'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['MostRecords'][$i]['score']		= $this->formatNumber((int)$row->MostRecords, 0);
+					$this->scores['MostRecords'][$i]['score']	= $this->formatNumber((int)$row->MostRecords, 0);
 					$this->scores['MostRecords'][$i]['scoplain']	= (int)$row->MostRecords;
 
 					$i++;
@@ -8717,8 +8668,8 @@ EOL;
 		}
 		else if ( ($gamemode == Gameinfo::LAPS) && ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] == false) ) {
 			// Only set this if 'checkpoints' are to display, if 'time' use the default
-			if ( ( isset($this->config['Challenge']['NbCheckpoints']) ) && ( isset($this->config['Challenge']['NbLaps']) ) ) {
-				$placeholder = '0/'. ($this->config['Challenge']['NbCheckpoints'] * $this->config['Challenge']['NbLaps']);
+			if (isset($this->cache['Map']['NbCheckpoints']) && isset($this->cache['Map']['NbLaps'])) {
+				$placeholder = '0/'. ($this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps']);
 			}
 			else {
 				$placeholder = '0 cps.';
@@ -12485,11 +12436,6 @@ EOL;
 	public function buildCheckpointCountWidget ($checkpoint = -1, $login = false) {
 		global $aseco;
 
-		// Bail out if we did not know the number of Checkpoints for this Map (at XAseco startup)
-		if ($this->cache['Map']['NbCheckpoints'] === false) {
-			return;
-		}
-
 		// Get current Gamemode
 		$gamemode = $aseco->server->gameinfo->mode;
 
@@ -12507,7 +12453,13 @@ EOL;
 			}
 		}
 		else if ( ($this->cache['Map']['NbLaps'] > 0) && ($gamemode == Gameinfo::LAPS) ) {
-			$totalcps = $this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps'];
+			// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
+			if ($aseco->server->maps->current->multilap == true) {
+				$totalcps = $this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps'];
+			}
+			else {
+				$totalcps = $this->cache['Map']['NbCheckpoints'];
+			}
 		}
 		else {
 			// All other Gamemodes
@@ -14865,7 +14817,6 @@ EOL;
 		global $aseco;
 
 		$mapinfos = array();
-		$database_ids = array();
 
 		// If $map == false, read the whole Maplist from Server,
 		// otherwise add only given Map to the $this->cache['MapList']
@@ -14934,6 +14885,7 @@ EOL;
 				$map = array();
 
 				$map['uid']		= $mapob->uid;
+				$map['dbid']		= $mapob->id;
 				$map['name']		= $this->handleSpecialChars($mapob->name);
 				$map['name_stripped']	= $this->handleSpecialChars($mapob->name_stripped);
 				$map['author']		= $mapob->author;
@@ -15014,20 +14966,6 @@ EOL;
 					unset($name);
 				}
 
-				// Now add an own created ID and the responding Database Id (from Table `maps`) to each Map
-				$i = 0;
-				foreach ($this->cache['MapList'] as &$map) {
-					$map['id'] = $i;
-
-					// XAseco adds an new Map to the Database `maps` only at a
-					// call of getMaps() from plugin.rasp.php. But here i need the
-					// `Id` for sorting the newest/oldest Maps. Therefor i just calculate
-					// "count(array) + $i" to get a higher id then the possible one.
-					// Never use the $map['dbid'] for access to the Database!!!
-					$map['dbid'] = (isset($database_ids[$map['uid']]) ? $database_ids[$map['uid']] : (count($database_ids) + $i) );
-					$i ++;
-				}
-				unset($database_ids, $map);
 
 				// Load the Karma for all Maps
 				$this->calculateMapKarma();

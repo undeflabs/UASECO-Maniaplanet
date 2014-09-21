@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-14
+ * Date:	2014-09-21
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -256,7 +256,7 @@ class Gameinfo {
 				return 'Rounds';
 
 			case self::TIMEATTACK:
-				return 'TimeAttack';
+				return 'Time Attack';
 
 			case self::TEAM:
 				return 'Team';
@@ -268,7 +268,7 @@ class Gameinfo {
 				return 'Cup';
 
 			case self::TEAMATTACK:
-				return 'TeamAttack';
+				return 'Team Attack';
 
 			case self::STUNTS:
 				return 'Stunts';
@@ -294,7 +294,7 @@ class Gameinfo {
 			case 'rounds':
 				return self::ROUNDS;
 
-			case 'timeattack':
+			case 'time attack':
 				return self::TIMEATTACK;
 
 			case 'team':
@@ -306,7 +306,7 @@ class Gameinfo {
 			case 'cup':
 				return self::CUP;
 
-			case 'teamattack':
+			case 'team attack':
 				return self::TEAMATTACK;
 
 			case 'stunts':

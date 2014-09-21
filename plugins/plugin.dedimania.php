@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-14
+ * Date:	2014-09-21
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -425,7 +425,7 @@ class PluginDedimania extends Plugin {
 		$maxrank = max($this->db['ServerMaxRank'], $player->dedirank);
 
 		// display ManiaLink window
-		$head = 'Current TOP ' . $maxrank . ' Dedimania Records:';
+		$head = 'Current TOP '. $maxrank .' Dedimania Records:';
 		$msg = array();
 		$lines = 0;
 		$player->msgs = array();
@@ -446,17 +446,17 @@ class PluginDedimania extends Plugin {
 				$nick = $aseco->stripColors($nick);
 			}
 			if ($this->db['ShowRecLogins']) {
-				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) . '.',
-					'{#black}' . $nick,
-					'{#login}' . $cur_record['Login'],
+				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) .'.',
+					'{#black}'. $nick,
+					'{#login}'. $cur_record['Login'],
 					((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}': '') .
 					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ?
 					$cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
 				);
 			}
 			else {
-				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) . '.',
-					'{#black}' . $nick,
+				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) .'.',
+					'{#black}'. $nick,
 					((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}': '') .
 					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ?
 					$cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
@@ -939,7 +939,7 @@ class PluginDedimania extends Plugin {
 		$cpscnt = count(explode(',', $dedi_recs[0]['Checks']));
 
 		// display ManiaLink window
-		$head = 'Current TOP ' . $maxrank . ' Dedimania ' . ($diff ? 'Sector' : 'CP') . ' Times (' . $cpscnt . '):';
+		$head = 'Current TOP '. $maxrank .' Dedimania '. ($diff ? 'Sector' : 'CP') .' Times ('. $cpscnt .'):';
 		$cpsmax = 12;
 
 		// compute widths
@@ -965,7 +965,7 @@ class PluginDedimania extends Plugin {
 			$cur_record = $dedi_recs[$i];
 			$cpsrec = explode(',', $cur_record['Checks']);
 			$line = array();
-			$line[] = str_pad($i+1, 2, '0', STR_PAD_LEFT) . '.';
+			$line[] = str_pad($i+1, 2, '0', STR_PAD_LEFT) .'.';
 			$line[] = ((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}' : '') . $aseco->formatTime($cur_record['Best']);
 
 			// append up to $cpsmax sector/CP times
@@ -973,7 +973,7 @@ class PluginDedimania extends Plugin {
 				$j = 1;
 				$pr = 0;
 				foreach ($cpsrec as $cp) {
-					$line[] = '$n' . $aseco->formatTime($cp - $pr);
+					$line[] = '$n'. $aseco->formatTime($cp - $pr);
 					if ($diff) {
 						$pr = $cp;
 					}
@@ -1020,7 +1020,7 @@ class PluginDedimania extends Plugin {
 		$records = '$n';  // use narrow font
 
 		if ($this->debug > 2) {
-			$aseco->console('[Dedimania] showDedimaniaRecords() - dedi_recs' . CRLF . print_r($dedi_recs, true));
+			$aseco->console('[Dedimania] showDedimaniaRecords() - dedi_recs'. CRLF . print_r($dedi_recs, true));
 		}
 
 		// check for records
@@ -1132,7 +1132,7 @@ class PluginDedimania extends Plugin {
 
 		// hyperlink map name
 		$name = $aseco->stripColors($name);
-		$name = '$l[http://www.dedimania.com/tm2stats/?do=stat&Show=RECORDS&RecOrder3=RANK-ASC&UId='. $uid .']' . $name . '$l';
+		$name = '$l[http://www.dedimania.com/tm2stats/?do=stat&Show=RECORDS&RecOrder3=RANK-ASC&UId='. $uid .']'. $name .'$l';
 
 		// define the ranking message
 		if ($totalnew > 0) {
@@ -1348,7 +1348,7 @@ class PluginDedimania extends Plugin {
 					}
 
 					if (strtolower($this->db['Login']) != $aseco->server->login) {
-						trigger_error('Dedimania misconfigured! <masterserver_account><login> (' . $this->db['Login'] . ') is not the actual server login (' . $aseco->server->login . ')', E_USER_ERROR);
+						trigger_error('Dedimania misconfigured! <masterserver_account><login> ('. $this->db['Login'] .') is not the actual server login ('. $aseco->server->login .')', E_USER_ERROR);
 					}
 
 					$this->db['Messages'] = &$config['DEDIMANIA']['MESSAGES'][0];
@@ -1442,10 +1442,10 @@ class PluginDedimania extends Plugin {
 
 				$response = $xmlrpcdb->RequestWait('dedimania.OpenSession', $srvconnect);
 				if ($this->debug > 3) {
-					$aseco->console('[Dedimania] dedimaniaConnect() - response' . CRLF . print_r($response, true));
+					$aseco->console('[Dedimania] dedimaniaConnect() - response'. CRLF . print_r($response, true));
 				}
 				else if ($this->debug > 2) {
-					$aseco->console('[Dedimania] dedimaniaConnect() - response[Data]' . CRLF . print_r($response['Data'], true));
+					$aseco->console('[Dedimania] dedimaniaConnect() - response[Data]'. CRLF . print_r($response['Data'], true));
 				}
 
 				// Reply a struct {'SessionId': string, 'Error': string}
@@ -1458,26 +1458,26 @@ class PluginDedimania extends Plugin {
 					$this->db['XmlrpcDB'] = $xmlrpcdb;
 					$this->db['SessionId'] = $response['Data']['params']['SessionId'];
 					$this->db['ConnectName'] = $response['Headers']['server'][0];
-					$aseco->console('[Dedimania] Connection and status ok! (' . $response['Headers']['server'][0] . ')');
+					$aseco->console('[Dedimania] Connection and status ok! ('. $response['Headers']['server'][0] .')');
 					if (($errors = $this->is_error($response)) !== false) {
 						$aseco->console('[Dedimania] ...with authentication warning(s): '. $errors);
 					}
 				}
 				else if (($errors = $this->is_error($response)) !== false) {
-					$aseco->console('[Dedimania] Connection Error!!! (' . $response['Headers']['server'][0] . ')' . CRLF . $errors . CRLF . '  !!!');
+					$aseco->console('[Dedimania] Connection Error!!! ('. $response['Headers']['server'][0] .')'. CRLF . $errors . CRLF .'  !!!');
 				}
 				else if (!isset($response['Code'])) {
-					$aseco->console('[Dedimania] Error no database response (' . $this->db['Url'] . ')' . CRLF . '  !!!');
+					$aseco->console('[Dedimania] Error no database response ('. $this->db['Url'] .')'. CRLF .'  !!!');
 				}
 				else {
-					$aseco->console('[Dedimania] Error bad database response or contents (' . $response['Headers']['server'][0] . ') ['
-					                     . $response['Code'] . ', ' . $response['Reason'] . ']' . CRLF . '  !!!');
+					$aseco->console('[Dedimania] Error bad database response or contents ('. $response['Headers']['server'][0] .') ['
+					                     . $response['Code'] .', '. $response['Reason'] .']'. CRLF .'  !!!');
 					if ($this->debug > 1) {
 						if ($response['Code'] == 200) {
-							$aseco->console('[Dedimania] dedimaniaConnect() - response[Message]' . CRLF . $response['Message']);
+							$aseco->console('[Dedimania] dedimaniaConnect() - response[Message]'. CRLF . $response['Message']);
 						}
 						else if ($response['Code'] != 404) {
-							$aseco->console('[Dedimania] dedimaniaConnect() - response' . CRLF . print_r($response, true));
+							$aseco->console('[Dedimania] dedimaniaConnect() - response'. CRLF . print_r($response, true));
 						}
 					}
 				}
@@ -1546,13 +1546,13 @@ class PluginDedimania extends Plugin {
 		// Reply true
 		if (($errors = $this->is_error($response)) !== false) {
 			if ($this->debug > 3) {
-				$aseco->console('[Dedimania] dedimaniaAnnounceCallbackHandler() - response' . CRLF . print_r($response, true));
+				$aseco->console('[Dedimania] dedimaniaAnnounceCallbackHandler() - response'. CRLF . print_r($response, true));
 			}
 			else if ($this->debug > 2) {
-				$aseco->console('[Dedimania] dedimaniaAnnounceCallbackHandler() - response[Data]' . CRLF . print_r($response['Data'], true));
+				$aseco->console('[Dedimania] dedimaniaAnnounceCallbackHandler() - response[Data]'. CRLF . print_r($response['Data'], true));
 			}
 			else {
-				$aseco->console('[Dedimania] dedimaniaAnnounceCallbackHandler() - error(s): ' . $errors);
+				$aseco->console('[Dedimania] dedimaniaAnnounceCallbackHandler() - error(s): '. $errors);
 			}
 		}
 	}
@@ -1575,14 +1575,14 @@ class PluginDedimania extends Plugin {
 			if ($this->db['XmlrpcDB']->isBad()) {
 				// retry after 30 mins of bad state
 				if ($this->db['XmlrpcDB']->badTime() > $this->timeout) {
-					$aseco->console('[Dedimania] Retry to send after ' . round($this->timeout/60) . ' minutes...');
+					$aseco->console('[Dedimania] Retry to send after '. round($this->timeout/60) .' minutes...');
 					$this->db['XmlrpcDB']->retry();
 				}
 			}
 			else {
 				$response = $this->db['XmlrpcDB']->sendRequests();
 				if (!$response) {
-					$message = '{#server}» ' . $aseco->formatText($this->db['Timeout'], round($this->timeout/60));
+					$message = '{#server}» '. $aseco->formatText($this->db['Timeout'], round($this->timeout/60));
 					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
 					trigger_error('Dedimania has consecutive connection errors!', E_USER_WARNING);
 				}
@@ -1609,13 +1609,13 @@ class PluginDedimania extends Plugin {
 	public function onPlayerConnect ($aseco, $player) {
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] onPlayerConnect() - ' . $player->login . ' : ' . $aseco->stripColors($player->nickname, false));
+			$aseco->console('[Dedimania] onPlayerConnect() - '. $player->login .' : '. $aseco->stripColors($player->nickname, false));
 		}
 
 		// get player info & check for non-LAN login
 		if ($pinfo = $this->dedimania_playerinfo($aseco, $player)) {
 			if ($this->debug > 1) {
-				$aseco->console('[Dedimania] onPlayerConnect() - pinfo' . CRLF . print_r($pinfo, true));
+				$aseco->console('[Dedimania] onPlayerConnect() - pinfo'. CRLF . print_r($pinfo, true));
 			}
 
 			// check for valid connection
@@ -1648,13 +1648,13 @@ class PluginDedimania extends Plugin {
 		//                 'OptionsEnabled': boolean, 'ToolOption': string}
 
 		if ($this->debug > 3) {
-			$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - response' . CRLF . print_r($response, true));
+			$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - response'. CRLF . print_r($response, true));
 		}
 		else if ($this->debug > 2) {
-			$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - response[Data]' . CRLF . print_r($response['Data'], true));
+			$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - response[Data]'. CRLF . print_r($response['Data'], true));
 		}
 		else if (($errors = $this->is_error($response)) !== false) {
-			$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - error(s): ' . $errors);
+			$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - error(s): '. $errors);
 		}
 
 		// check response
@@ -1676,7 +1676,7 @@ class PluginDedimania extends Plugin {
 
 			// show welcome message
 			if ($this->db['ShowWelcome']) {
-				$message = '{#server}» ' . $this->db['Welcome'];
+				$message = '{#server}» '. $this->db['Welcome'];
 				$message = str_replace('{br}', LF, $message);  // split long message
 				// hyperlink Dedimania site
 				$message = str_replace('www.dedimania.com', '$l[http://www.dedimania.com/]www.dedimania.com$l', $message);
@@ -1691,7 +1691,7 @@ class PluginDedimania extends Plugin {
 
 			// check for banned player
 			if (!isset($response['Data']['params']['Banned'])) {
-				trigger_error('[Dedimania] Incomplete response on PlayerConnect - missing Banned field!' . CRLF . print_r($response['Data']['params'], true), E_USER_WARNING);
+				trigger_error('[Dedimania] Incomplete response on PlayerConnect - missing Banned field!'. CRLF . print_r($response['Data']['params'], true), E_USER_WARNING);
 			}
 			else if ($response['Data']['params']['Banned']) {
 				// remember banned login
@@ -1723,7 +1723,7 @@ class PluginDedimania extends Plugin {
 	public function onPlayerDisconnect ($aseco, $player) {
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] onPlayerDisconnect() - ' . $player->login . ' : ' . $aseco->stripColors($player->nickname, false));
+			$aseco->console('[Dedimania] onPlayerDisconnect() - '. $player->login .' : '. $aseco->stripColors($player->nickname, false));
 		}
 
 		// check for non-LAN login
@@ -1757,7 +1757,7 @@ class PluginDedimania extends Plugin {
 	public function onBeginMap ($aseco, $map) {
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] onBeginMap() - map' . CRLF . print_r($map, true));
+			$aseco->console('[Dedimania] onBeginMap() - map'. CRLF . print_r($map, true));
 		}
 
 		// check for valid connection
@@ -1807,7 +1807,7 @@ class PluginDedimania extends Plugin {
 		}
 		else if ($map->authortime < $this->min_author_time) {
 			// check for minimum author time
-			$aseco->console('[Dedimania] Map\'s Author time < ' . ($this->min_author_time / 1000) . 's: records ignored');
+			$aseco->console('[Dedimania] Map\'s Author time < '. ($this->min_author_time / 1000) .'s: records ignored');
 		}
 		else {
 			$this->db['TrackValid'] = true;
@@ -1836,13 +1836,13 @@ class PluginDedimania extends Plugin {
 		}
 
 		if ($this->debug > 3) {
-			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - response' . CRLF . print_r($response, true));
+			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - response'. CRLF . print_r($response, true));
 		}
 		else if ($this->debug > 2) {
-			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - response[Data]' . CRLF . print_r($response['Data'], true));
+			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - response[Data]'. CRLF . print_r($response['Data'], true));
 		}
 		else if (($errors = $this->is_error($response)) !== false) {
-			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - error(s): ' . $errors);
+			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - error(s): '. $errors);
 		}
 
 		// check response
@@ -1854,7 +1854,7 @@ class PluginDedimania extends Plugin {
 			}
 
 			if ($this->debug > 1) {
-				$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - records' . CRLF . print_r($this->db['Map']['Records'], true));
+				$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - records'. CRLF . print_r($this->db['Map']['Records'], true));
 			}
 
 			// check for records
@@ -1896,7 +1896,7 @@ class PluginDedimania extends Plugin {
 					}
 				}
 				if ($this->debug > 4) {
-					$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - checkpoints' . CRLF . print_r($aseco->checkpoints, true));
+					$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - checkpoints'. CRLF . print_r($aseco->checkpoints, true));
 				}
 			}
 
@@ -1936,7 +1936,7 @@ class PluginDedimania extends Plugin {
 		}
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] onEndMap - data' . CRLF . print_r($data, true));
+			$aseco->console('[Dedimania] onEndMap - data'. CRLF . print_r($data, true));
 		}
 
 		// check for valid map
@@ -1964,8 +1964,8 @@ class PluginDedimania extends Plugin {
 					}
 
 					if ($this->debug > 1) {
-						$aseco->console('[Dedimania] onEndMap - numchecks: ' . $aseco->server->maps->current->nbcheckpoints);
-						$aseco->console('[Dedimania] onEndMap - times' . CRLF . print_r($times, true));
+						$aseco->console('[Dedimania] onEndMap - numchecks: '. $aseco->server->maps->current->nbcheckpoints);
+						$aseco->console('[Dedimania] onEndMap - times'. CRLF . print_r($times, true));
 					}
 
 					// collect logins with all checkpoints
@@ -2074,13 +2074,13 @@ class PluginDedimania extends Plugin {
 		//                                            'Checks': string (list of int), 'NewBest': boolean} }
 
 		if ($this->debug > 3) {
-			$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - response' . CRLF . print_r($response, true));
+			$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - response'. CRLF . print_r($response, true));
 		}
 		else if ($this->debug > 2) {
-			$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - response[Data]' . CRLF . print_r($response['Data'], true));
+			$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - response[Data]'. CRLF . print_r($response['Data'], true));
 		}
 		else if (($errors = $this->is_error($response)) !== false) {
-			$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - error(s): ' . $errors);
+			$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - error(s): '. $errors);
 		}
 
 		// check response
@@ -2094,7 +2094,7 @@ class PluginDedimania extends Plugin {
 					$rec['NickName'] = str_replace("\n", '', $rec['NickName']);
 				}
 				if ($this->debug > 1) {
-					$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - results' . CRLF . print_r($this->db['Results'], true));
+					$aseco->console('[Dedimania] dedimaniaEndMapCallbackHandler() - results'. CRLF . print_r($this->db['Results'], true));
 				}
 
 				if ($this->db['ShowRecsAfter'] > 0) {
@@ -2134,7 +2134,6 @@ class PluginDedimania extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// called @ onPlayerFinish
 	public function onPlayerFinish ($aseco, $finish_item) {
 
 		// if no Dedimania records, bail out - Stunts mode temporarily too
@@ -2147,10 +2146,10 @@ class PluginDedimania extends Plugin {
 			return;
 		}
 
-		// in Laps mode on real PlayerFinish event, bail out too
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && !$finish_item->new) {
-			return;
-		}
+//		// in Laps mode on real PlayerFinish event, bail out too
+//		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && !$finish_item->new) {
+//			return;
+//		}
 
 		$login = $finish_item->player->login;
 		$nickname = $aseco->stripColors($finish_item->player->nickname);
@@ -2168,8 +2167,9 @@ class PluginDedimania extends Plugin {
 		}
 
 		if ($this->debug > 4) {
-			$aseco->console('[Dedimania] onPlayerFinish - checkpoints ' . $login . CRLF . print_r($aseco->checkpoints[$login], true));
+			$aseco->console('[Dedimania] onPlayerFinish - checkpoints '. $login . CRLF . print_r($aseco->checkpoints[$login], true));
 		}
+
 
 		// check finish/checkpoints consistency, unless Stunts mode
 		if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
@@ -2225,7 +2225,6 @@ class PluginDedimania extends Plugin {
 				}
 
 				if ($cur_rank != -1) {  // player has a record in topXX already
-
 					// Compute difference to old record
 					if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
 						$diff = $cur_score - $finish_item->score;
@@ -2239,12 +2238,9 @@ class PluginDedimania extends Plugin {
 
 					// Update the record if improved
 					if ($diff > 0) {
-						// Get the ranking for the Player (to have the checkpoint times)
-						$plrank = $aseco->server->rankings->getRankByLogin($login);
-
 						// Ignore 'Rank' field - not used in /dedi* commands
 						$dedi_recs[$cur_rank]['Best'] = $finish_item->score;
-						$dedi_recs[$cur_rank]['Checks'] = $plrank['cps'];
+						$dedi_recs[$cur_rank]['Checks'] = $aseco->checkpoints[$login]->current['cps'];
 						$dedi_recs[$cur_rank]['NewBest'] = true;
 					}
 
@@ -2261,7 +2257,7 @@ class PluginDedimania extends Plugin {
 							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 							$finish_time,
 							$cur_rank + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+' . $diff : sprintf('-%d.%03d', $sec, $ths))
+							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : sprintf('-%d.%03d', $sec, $ths))
 						);
 
 						// show chat message to all or player
@@ -2298,7 +2294,7 @@ class PluginDedimania extends Plugin {
 								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+' . $diff : sprintf('-%d.%03d', $sec, $ths))
+								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : sprintf('-%d.%03d', $sec, $ths))
 							);
 						}
 
@@ -2361,7 +2357,6 @@ class PluginDedimania extends Plugin {
 
 				// log a new Dedimania record (not an equalled one)
 				if (isset($dedi_recs[$i]['NewBest']) && $dedi_recs[$i]['NewBest']) {
-
 					// log record message in console
 					$aseco->console('[Dedimania] Player [{1}] finished with {2} and took the {3}. WR place!',
 						$login,
@@ -2374,7 +2369,7 @@ class PluginDedimania extends Plugin {
 					$aseco->releaseEvent('onDedimaniaRecord', $dedi_recs[$i]);
 				}
 				if ($this->debug > 1) {
-					$aseco->console('[Dedimania] onPlayerFinish - dedi_recs' . CRLF . print_r($dedi_recs, true));
+					$aseco->console('[Dedimania] onPlayerFinish - dedi_recs'. CRLF . print_r($dedi_recs, true));
 				}
 
 				// got the record, now stop!
@@ -2403,7 +2398,7 @@ class PluginDedimania extends Plugin {
 			}
 		}
 		if ($this->debug > 2 || ($this->debug > 1 && count($players) > 0)) {
-			$aseco->console('[Dedimania] dedimania_players() - players' . CRLF . print_r($players, true));
+			$aseco->console('[Dedimania] dedimania_players() - players'. CRLF . print_r($players, true));
 		}
 
 		return $players;
@@ -2483,7 +2478,7 @@ class PluginDedimania extends Plugin {
 			'MaxSpecs'	=> $options['CurrentMaxSpectators'],
 		);
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] dedimania_serverinfo() - serverinfo' . CRLF . print_r($serverinfo, true));
+			$aseco->console('[Dedimania] dedimania_serverinfo() - serverinfo'. CRLF . print_r($serverinfo, true));
 		}
 		return $serverinfo;
 	}
@@ -2498,7 +2493,7 @@ class PluginDedimania extends Plugin {
 
 		// get validation replay
 		if (!$aseco->client->query('GetValidationReplay', $entry['Login'])) {
-			$aseco->console('[Dedimania] Unable to get validation replay for Player ['. $entry['Login'] .']: skipped '. $entry['Best'] .' ('. $entry['Checks'] .')');
+			$aseco->console('[Dedimania] Unable to get validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: Dedicated Server Error Message [' . $aseco->client->getErrorCode() . '] ' . $aseco->client->getErrorMessage());
 			return false;
 		}
 		$vreplay = $aseco->client->getResponse();
@@ -2509,34 +2504,70 @@ class PluginDedimania extends Plugin {
 			$parser->processData($vreplay);
 		}
 		catch (Exception $e) {
-			$aseco->console('[Dedimania] Unable to parse validation replay for Player ['. $entry['Login'] .']: '. $e->getMessage() .' - skipped '. $entry['Best'] .' ('. $entry['Checks'] .')');
+			$aseco->console('[Dedimania] Unable to parse validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
 			return false;
 		}
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] get_vreplay() - parsed validation replay:' . CRLF . print_r($parser->xml, true));
+			$aseco->console('[Dedimania] get_vreplay() - parsed validation replay:'. CRLF . print_r($parser->xml, true));
 		}
 		if ($parser->uid != $uid) {
 			$aseco->console('[Dedimania] Validation replay UID not matched for Player ['. $entry['Login'] .']: skipped all records');
 			return null;
 		}
 
+
 		// check finish/checkpoints consistency
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
+			if ($aseco->server->maps->current->multilap == true) {
+				$cpsrace = $aseco->server->maps->current->nbcheckpoints * $aseco->server->gameinfo->laps['ForceLapsNb'];
+			}
+			else {
+				$cpsrace = $aseco->server->maps->current->nbcheckpoints;
+			}
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
 			$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 		}
 		else {
 			$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
 		}
-		if ($cpsrace != count(explode(',', $entry['Checks'])) ||
-//		    $parser->cpsLap != $aseco->server->maps->current->nbcheckpoints ||
-		    $parser->cpsCur != count($allcps) ||
-		    $parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .']: skipped '. $entry['Best'] .' ('. $entry['Checks'] .') race: '. $cpsrace .' all: '. count($allcps));
-			return false;
+
+		$validation_success = true;
+// 2014-09-20: Disabled because of the "onelap" Bug: http://forum.maniaplanet.com/viewtopic.php?p=217747#p217747
+//		if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
+//			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+//			$validation_success = false;
+//		}
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
+			if ($cpsrace != count($allcps)) {
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+				$validation_success = false;
+			}
+		}
+		else {
+			if ($cpsrace != count(explode(',', $entry['Checks']))) {
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count(explode(',', $entry['Checks'])) .']');
+				$validation_success = false;
+			}
+		}
+		if ($parser->cpsCur != count($allcps)) {
+			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
+			$validation_success = false;
+		}
+		if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
+			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
+			$validation_success = false;
 		}
 
-		return $vreplay;
+		// Success?
+		if ($validation_success === true) {
+			return $vreplay;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/*
@@ -2555,11 +2586,11 @@ class PluginDedimania extends Plugin {
 			$entry['Login']
 		);
 		if (!$aseco->client->query('SaveBestGhostsReplay', $entry['Login'], $this->greplay_dir . $grfile)) {
-			$aseco->console('[Dedimania] Unable to save ghost replay for Player ['. $entry['Login'] .']: skipped '. $entry['Best'] .' ('. $entry['Checks'] .')');
+			$aseco->console('[Dedimania] Unable to save ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: Dedicated Server Error Message [' . $aseco->client->getErrorCode() . '] ' . $aseco->client->getErrorMessage());
 			return false;
 		}
 		if (!$greplay = file_get_contents($aseco->server->gamedir .'Replays/'. $this->greplay_dir . $grfile)) {
-			$aseco->console('[Dedimania] Unable to load ghost replay for Player ['. $entry['Login'] .']: skipped '. $entry['Best'] .' ('. $entry['Checks'] .')');
+			$aseco->console('[Dedimania] Unable to load ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']');
 			return false;
 		}
 
@@ -2569,34 +2600,70 @@ class PluginDedimania extends Plugin {
 			$parser->processData($greplay);
 		}
 		catch (Exception $e) {
-			$aseco->console('[Dedimania] Unable to parse ghost replay for Player ['. $entry['Login'] .']: '. $e->getMessage() .' - skipped '. $entry['Best'] .' ('. $entry['Checks'] .')');
+			$aseco->console('[Dedimania] Unable to parse ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
 			return false;
 		}
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] get_greplay() - parsed ghost replay:' . CRLF . print_r($parser->xml, true));
+			$aseco->console('[Dedimania] get_greplay() - parsed ghost replay:'. CRLF . print_r($parser->xml, true));
 		}
 		if ($parser->uid != $uid) {
 			$aseco->console('[Dedimania] Ghost replay UID not matched for Player ['. $entry['Login'] .']: skipped all records');
 			return null;
 		}
 
+
 		// check finish/checkpoints consistency
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
+			if ($aseco->server->maps->current->multilap == true) {
+				$cpsrace = $aseco->server->maps->current->nbcheckpoints * $aseco->server->gameinfo->laps['ForceLapsNb'];
+			}
+			else {
+				$cpsrace = $aseco->server->maps->current->nbcheckpoints;
+			}
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
 			$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 		}
 		else {
 			$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
 		}
-		if ($cpsrace != count(explode(',', $entry['Checks'])) ||
-		    $parser->cpsLap != $aseco->server->maps->current->nbcheckpoints ||
-		    $parser->cpsCur != count($allcps) ||
-		    $parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .']: skipped '. $entry['Best'] .' ('. $entry['Checks'] .') race: '. $cpsrace .' all: '. count($allcps));
-			return false;
+
+		$validation_success = true;
+// 2014-09-20: Disabled because of the "onelap" Bug: http://forum.maniaplanet.com/viewtopic.php?p=217747#p217747
+//		if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
+//			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+//			$validation_success = false;
+//		}
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
+			if ($cpsrace != count($allcps)) {
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+				$validation_success = false;
+			}
+		}
+		else {
+			if ($cpsrace != count(explode(',', $entry['Checks']))) {
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count(explode(',', $entry['Checks'])) .']');
+				$validation_success = false;
+			}
+		}
+		if ($parser->cpsCur != count($allcps)) {
+			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
+			$validation_success = false;
+		}
+		if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
+			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
+			$validation_success = false;
 		}
 
-		return $greplay;
+		// Success?
+		if ($validation_success === true) {
+			return $greplay;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/*

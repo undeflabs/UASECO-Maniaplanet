@@ -5,6 +5,7 @@ UASECO
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
  - Lift dependecies from plugin.styles.php and remove it
+ - Replace GBXRemote with this https://github.com/NewboO/dedicated-server-api/blob/master/libraries/Maniaplanet/DedicatedServer/Xmlrpc/GbxRemote.php
 
 
 Records-Eyepiece

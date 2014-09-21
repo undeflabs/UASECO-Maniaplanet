@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-17
+ * Date:	2014-09-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -390,10 +390,10 @@ class PluginLocalRecords extends Plugin {
 			return;
 		}
 
-		// In Laps mode on real PlayerFinish event, bail out too
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && !$finish_item->new) {
-			return;
-		}
+//		// In Laps mode on real PlayerFinish event, bail out too
+//		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && !$finish_item->new) {
+//			return;
+//		}
 
 		$login = $finish_item->player->login;
 		$nickname = $aseco->stripColors($finish_item->player->nickname);

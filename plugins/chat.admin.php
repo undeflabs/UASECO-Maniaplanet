@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-09-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1407,7 +1407,7 @@ class PluginChatAdmin extends Plugin {
 			// get player information
 			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
 				// log console message
-				$aseco->console('{1} [{2}] kicked player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+				$aseco->console('[Admin] {1} [{2}] kicked player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} kicked {#highlite}{3}$z$s{#admin} !',
@@ -1432,7 +1432,7 @@ class PluginChatAdmin extends Plugin {
 			$target = $command['params'][1];
 
 			// log console message
-			$aseco->console('{1} [{2}] kicked ghost player {3}!', $logtitle, $login, $target);
+			$aseco->console('[Admin] {1} [{2}] kicked ghost player {3}!', $logtitle, $login, $target);
 
 			// show chat message
 			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} kicked ghost {#highlite}{3}$z$s{#admin} !',
@@ -1453,7 +1453,7 @@ class PluginChatAdmin extends Plugin {
 			// get player information
 			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
 				// log console message
-				$aseco->console('{1} [{2}] bans player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+				$aseco->console('[Admin] {1} [{2}] bans player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} bans {#highlite}{3}$z$s{#admin} !',
@@ -1494,7 +1494,7 @@ class PluginChatAdmin extends Plugin {
 					}
 
 					// log console message
-					$aseco->console('{1} [{2}] unbans player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] unbans player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-bans {#highlite}{3}',
@@ -1516,7 +1516,7 @@ class PluginChatAdmin extends Plugin {
 			if (preg_match('/^\d+\.\d+\.\d+\.\d+$/', $ipaddr)) {
 				if (empty($aseco->banned_ips) || !in_array($ipaddr, $aseco->banned_ips)) {
 					// log console message
-					$aseco->console('{1} [{2}] banned IP {3}!', $logtitle, $login, $ipaddr);
+					$aseco->console('[Admin] {1} [{2}] banned IP {3}!', $logtitle, $login, $ipaddr);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} bans IP {#highlite}{3}$z$s{#admin} !',
@@ -1561,7 +1561,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->writeIPs();
 
 				// log console message
-				$aseco->console('{1} [{2}] unbans IP {3}', $logtitle, $login, $command['params'][1]);
+				$aseco->console('[Admin] {1} [{2}] unbans IP {3}', $logtitle, $login, $command['params'][1]);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-bans IP {#highlite}{3}',
@@ -1580,7 +1580,7 @@ class PluginChatAdmin extends Plugin {
 			// get player information
 			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1], true)) {
 				// log console message
-				$aseco->console('{1} [{2}] blacklists player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+				$aseco->console('[Admin] {1} [{2}] blacklists player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} blacklists {#highlite}{3}$z$s{#admin} !',
@@ -1655,7 +1655,7 @@ class PluginChatAdmin extends Plugin {
 				}
 				else {
 					// log console message
-					$aseco->console('{1} [{2}] unblacklists player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] unblacklists player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-blacklists {#highlite}{3}',
@@ -1689,7 +1689,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('AddGuest', $target->login);
 
 				// log console message
-				$aseco->console('{1} [{2}] adds guest player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+				$aseco->console('[Admin] {1} [{2}] adds guest player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} adds guest {#highlite}{3}',
@@ -1724,7 +1724,7 @@ class PluginChatAdmin extends Plugin {
 				}
 				else {
 					// log console message
-					$aseco->console('{1} [{2}] removes guest player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] removes guest player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} removes guest {#highlite}{3}',
@@ -1762,7 +1762,7 @@ class PluginChatAdmin extends Plugin {
 			}
 
 			// log console message
-			$aseco->console('{1} [{2}] passes vote!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] passes vote!', $logtitle, $login);
 
 			// show chat message
 			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} passes vote!',
@@ -1799,7 +1799,7 @@ class PluginChatAdmin extends Plugin {
 			}
 
 			// log console message
-			$aseco->console('{1} [{2}] cancels vote!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] cancels vote!', $logtitle, $login);
 
 			// show chat message
 			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} cancels vote!',
@@ -1829,7 +1829,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->client->query('TriggerModeScriptEvent', 'Rounds_ForceEndRound', '');
 
 			// log console message
-			$aseco->console('{1} [{2}] forces round end!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] forces round end!', $logtitle, $login);
 
 			// show chat message
 			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces round end!',
@@ -2323,7 +2323,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}written';
 			}
@@ -2342,7 +2342,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] read ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] read ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}read';
 			}
@@ -2362,7 +2362,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}written';
 			}
@@ -2382,7 +2382,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] read ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] read ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}read';
 			}
@@ -2402,7 +2402,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}written';
 			}
@@ -2422,7 +2422,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] read ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] read ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}read';
 			}
@@ -2438,7 +2438,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->client->query('CleanBanList');
 
 			// log console message
-			$aseco->console('{1} [{2}] cleaned ban list!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] cleaned ban list!', $logtitle, $login);
 
 			// show chat message
 			$message = '{#server}» {#admin}Cleaned ban list!';
@@ -2454,7 +2454,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->writeIPs();
 
 			// log console message
-			$aseco->console('{1} [{2}] cleaned banned IPs list!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] cleaned banned IPs list!', $logtitle, $login);
 
 			// show chat message
 			$message = '{#server}» {#admin}Cleaned banned IPs list!';
@@ -2469,7 +2469,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->client->query('CleanBlackList');
 
 			// log console message
-			$aseco->console('{1} [{2}] cleaned black list!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] cleaned black list!', $logtitle, $login);
 
 			// show chat message
 			$message = '{#server}» {#admin}Cleaned black list!';
@@ -2484,7 +2484,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->client->query('CleanGuestList');
 
 			// log console message
-			$aseco->console('{1} [{2}] cleaned guest list!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] cleaned guest list!', $logtitle, $login);
 
 			// show chat message
 			$message = '{#server}» {#admin}Cleaned guest list!';
@@ -2573,7 +2573,7 @@ class PluginChatAdmin extends Plugin {
 				}
 
 				// log console message
-				$aseco->console('{1} [{2}] wrote map list: {3} !', $logtitle, $login, $filename);
+				$aseco->console('[Admin] {1} [{2}] wrote map list: {3} !', $logtitle, $login, $filename);
 
 				$message = '{#server}» {#highlite}' . $filename . '{#admin} written';
 
@@ -2607,7 +2607,7 @@ class PluginChatAdmin extends Plugin {
 					$cnt = $aseco->client->getResponse();
 
 					// log console message
-					$aseco->console('{1} [{2}] read map list: {3} ({4} maps)!', $logtitle, $login, $filename, $cnt);
+					$aseco->console('[Admin] {1} [{2}] read map list: {3} ({4} maps)!', $logtitle, $login, $filename, $cnt);
 
 					$message = '{#server}» {#highlite}' . $filename . '{#admin} read with {#highlite}' . $cnt . '{#admin} map' . ($cnt == 1 ? '' : 's');
 
@@ -2639,7 +2639,7 @@ class PluginChatAdmin extends Plugin {
 							$cnt = $aseco->client->getResponse();
 
 							// log console message
-							$aseco->console('{1} [{2}] shuffled map list: {3} ({4} maps)!', $logtitle, $login, $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings, $cnt);
+							$aseco->console('[Admin] {1} [{2}] shuffled map list: {3} ({4} maps)!', $logtitle, $login, $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings, $cnt);
 
 							$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} shuffled map list with {#highlite}{3}{#admin} map{4}!',
 								$chattitle,
@@ -2823,7 +2823,7 @@ class PluginChatAdmin extends Plugin {
 						// show chat message
 						$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
 						// log console message
-						$aseco->console('{1} [{2}] ' . $command['params'][0] . 'd map {3}', $logtitle, $login, $aseco->stripColors($name, false));
+						$aseco->console('[Admin] {1} [{2}] ' . $command['params'][0] . 'd map {3}', $logtitle, $login, $aseco->stripColors($name, false));
 
 						// throw 'maplist changed' event
 						$aseco->releaseEvent('onMapListChanged', array('remove', $filename));
@@ -2883,7 +2883,7 @@ class PluginChatAdmin extends Plugin {
 				// show chat message
 				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
 				// log console message
-				$aseco->console('{1} [{2}] ' . $command['params'][0] . '-ed map {3}', $logtitle, $login, $aseco->stripColors($name, false));
+				$aseco->console('[Admin] {1} [{2}] ' . $command['params'][0] . '-ed map {3}', $logtitle, $login, $aseco->stripColors($name, false));
 
 				// throw 'maplist changed' event
 				$aseco->releaseEvent('onMapListChanged', array('remove', $filename));
@@ -2907,7 +2907,7 @@ class PluginChatAdmin extends Plugin {
 				}
 
 				// log console message
-				$aseco->console('{1} [{2}] ignores player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+				$aseco->console('[Admin] {1} [{2}] ignores player {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} ignores {#highlite}{3}$z$s{#admin} !',
@@ -2940,7 +2940,7 @@ class PluginChatAdmin extends Plugin {
 					}
 
 					// log console message
-					$aseco->console('{1} [{2}] unignores player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] unignores player {3}', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-ignores {#highlite}{3}',
@@ -3024,7 +3024,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->client->query('CleanIgnoreList');
 
 			// log console message
-			$aseco->console('{1} [{2}] cleaned global mute/ignore list!', $logtitle, $login);
+			$aseco->console('[Admin] {1} [{2}] cleaned global mute/ignore list!', $logtitle, $login);
 
 			// show chat message
 			$message = '{#server}» {#admin}Cleaned global mute/ignore list!';
@@ -3045,7 +3045,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->writeLists();
 
 					// log console message
-					$aseco->console('{1} [{2}] adds admin [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] adds admin [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} adds new {3}$z$s{#admin}: {#highlite}{4}$z$s{#admin} !',
@@ -3077,7 +3077,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->writeLists();
 
 					// log console message
-					$aseco->console('{1} [{2}] removes admin [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] removes admin [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} removes {3}$z$s{#admin}: {#highlite}{4}$z$s{#admin} !',
@@ -3109,7 +3109,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->writeLists();
 
 					// log console message
-					$aseco->console('{1} [{2}] adds operator [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] adds operator [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} adds new {3}$z$s{#admin}: {#highlite}{4}$z$s{#admin} !',
@@ -3141,7 +3141,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->writeLists();
 
 					// log console message
-					$aseco->console('{1} [{2}] removes operator [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
+					$aseco->console('[Admin] {1} [{2}] removes operator [{3} : {4}]!', $logtitle, $login, $target->login, $aseco->stripColors($target->nickname, false));
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} removes {3}$z$s{#admin}: {#highlite}{4}$z$s{#admin} !',
@@ -3326,14 +3326,14 @@ class PluginChatAdmin extends Plugin {
 							$aseco->writeLists();
 
 							// log console message
-							$aseco->console('{1} [{2}] set new Admin ability: {3} ON', $logtitle, $login, strtolower($ability));
+							$aseco->console('[Admin] {1} [{2}] set new Admin ability: {3} ON', $logtitle, $login, strtolower($ability));
 						}
 						else if (strtoupper($command['params'][2]) == 'OFF') {
 							$aseco->admin_abilities[$ability][0] = false;
 							$aseco->writeLists();
 
 							// log console message
-							$aseco->console('{1} [{2}] set new Admin ability: {3} OFF', $logtitle, $login, strtolower($ability));
+							$aseco->console('[Admin] {1} [{2}] set new Admin ability: {3} OFF', $logtitle, $login, strtolower($ability));
 						}  // else ignore bogus parameter
 					}
 					// show current/new ability message
@@ -3375,14 +3375,14 @@ class PluginChatAdmin extends Plugin {
 							$aseco->writeLists();
 
 							// log console message
-							$aseco->console('{1} [{2}] set new Operator ability: {3} ON', $logtitle, $login, strtolower($ability));
+							$aseco->console('[Admin] {1} [{2}] set new Operator ability: {3} ON', $logtitle, $login, strtolower($ability));
 						}
 						else if (strtoupper($command['params'][2]) == 'OFF') {
 							$aseco->operator_abilities[$ability][0] = false;
 							$aseco->writeLists();
 
 							// log console message
-							$aseco->console('{1} [{2}] set new Operator ability: {3} OFF', $logtitle, $login, strtolower($ability));
+							$aseco->console('[Admin] {1} [{2}] set new Operator ability: {3} OFF', $logtitle, $login, strtolower($ability));
 						}  // else ignore bogus parameter
 					}
 					// show current/new ability message
@@ -3558,7 +3558,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] wrote ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}written';
 			}
@@ -3577,7 +3577,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				// log console message
-				$aseco->console('{1} [{2}] read ' . $filename . '!', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] read ' . $filename . '!', $logtitle, $login);
 
 				$message = '{#server}» {#highlite}' . $filename . ' {#admin}read';
 			}
@@ -3606,7 +3606,7 @@ class PluginChatAdmin extends Plugin {
 				}
 
 				// log console message
-				$aseco->console('{1} [{2}] sent wall message: {3}', $logtitle, $login, $arglist[1]);
+				$aseco->console('[Admin] {1} [{2}] sent wall message: {3}', $logtitle, $login, $arglist[1]);
 			}
 			else {
 				$message = '{#server}» {#error}No message!';
@@ -3637,7 +3637,7 @@ class PluginChatAdmin extends Plugin {
 					$param++;
 
 					// log console message
-					$aseco->console('{1} [{2}] removed record {3} by {4} !', $logtitle, $login, $param, $record->player->login);
+					$aseco->console('[Admin] {1} [{2}] removed record {3} by {4} !', $logtitle, $login, $param, $record->player->login);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}removes record {#highlite}{3}{#admin} by {#highlite}{4}',
@@ -3688,7 +3688,7 @@ class PluginChatAdmin extends Plugin {
 						$aseco->mysqli->query($query);
 
 						// log console message
-						$aseco->console('{1} [{2}] pruned records/times for map {3} !', $logtitle, $login, $aseco->stripColors($name, false));
+						$aseco->console('[Admin] {1} [{2}] pruned records/times for map {3} !', $logtitle, $login, $aseco->stripColors($name, false));
 
 						// show chat message
 						$message = '{#server}» {#admin}Deleted all records & times for map: {#highlite}' . $name;
@@ -3735,7 +3735,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('AllowMapDownload', $enabled);
 
 				// log console message
-				$aseco->console('{1} [{2}] set AllowMapDownload {3} !', $logtitle, $login, ($enabled ? 'ON' : 'OFF'));
+				$aseco->console('[Admin] {1} [{2}] set AllowMapDownload {3} !', $logtitle, $login, ($enabled ? 'ON' : 'OFF'));
 
 				// show chat message
 				$message = '{#server}» {#admin}AllowMapDownload set to ' . ($enabled ? 'Enabled' : 'Disabled');
@@ -3764,7 +3764,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->plugins['PluginAutotime']->active = ($param == 'on');
 
 					// log console message
-					$aseco->console('{1} [{2}] set Auto TimeLimit {3} !', $logtitle, $login, ($aseco->plugins['PluginAutotime']->active ? 'ON' : 'OFF'));
+					$aseco->console('[Admin] {1} [{2}] set Auto TimeLimit {3} !', $logtitle, $login, ($aseco->plugins['PluginAutotime']->active ? 'ON' : 'OFF'));
 
 					// show chat message
 					$message = '{#server}» {#admin}Auto TimeLimit set to ' . ($aseco->plugins['PluginAutotime']->active ? 'Enabled' : 'Disabled');
@@ -3793,7 +3793,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('SetDisableRespawn', $enabled);
 
 				// log console message
-				$aseco->console('{1} [{2}] set DisableRespawn {3} !', $logtitle, $login, ($enabled ? 'ON' : 'OFF'));
+				$aseco->console('[Admin] {1} [{2}] set DisableRespawn {3} !', $logtitle, $login, ($enabled ? 'ON' : 'OFF'));
 
 				// show chat message
 				$message = '{#server}» {#admin}DisableRespawn set to ' . ($enabled ? 'Enabled' : 'Disabled') . ' on the next map';
@@ -3819,7 +3819,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('SetForceShowAllOpponents', $enabled);
 
 				// log console message
-				$aseco->console('{1} [{2}] set ForceShowAllOpponents {3} !', $logtitle, $login, ($enabled ? 'ALL' : 'OFF'));
+				$aseco->console('[Admin] {1} [{2}] set ForceShowAllOpponents {3} !', $logtitle, $login, ($enabled ? 'ALL' : 'OFF'));
 
 				// show chat message
 				$message = '{#server}» {#admin}ForceShowAllOpponents set to {#highlite}' . ($enabled ? 'Enabled' : 'Disabled') . '{#admin} on the next map';
@@ -3830,7 +3830,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('SetForceShowAllOpponents', $enabled);
 
 				// log console message
-				$aseco->console('{1} [{2}] set ForceShowAllOpponents to {3} !', $logtitle, $login, $enabled);
+				$aseco->console('[Admin] {1} [{2}] set ForceShowAllOpponents to {3} !', $logtitle, $login, $enabled);
 
 				// show chat message
 				$message = '{#server}» {#admin}ForceShowAllOpponents set to {#highlite}' . $enabled . '{#admin} on the next map';
@@ -3854,10 +3854,9 @@ class PluginChatAdmin extends Plugin {
 			$param = strtolower($command['params'][1]);
 			if ($param == 'on' || $param == 'off') {
 				$aseco->plugins['PluginManialinks']->auto_scorepanel = ($param == 'on');
-				$aseco->plugins['PluginManialinks']->scorepanel_off($aseco, null);
 
 				// log console message
-				$aseco->console('{1} [{2}] set Automatic ScorePanel {3} !', $logtitle, $login, ($aseco->plugins['PluginManialinks']->auto_scorepanel ? 'ON' : 'OFF'));
+				$aseco->console('[Admin] {1} [{2}] set Automatic ScorePanel {3} !', $logtitle, $login, ($aseco->plugins['PluginManialinks']->auto_scorepanel ? 'ON' : 'OFF'));
 
 				// show chat message
 				$message = '{#server}» {#admin}Automatic ScorePanel set to ' . ($aseco->plugins['PluginManialinks']->auto_scorepanel ? 'Enabled' : 'Disabled');
@@ -3879,7 +3878,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->plugins['PluginManialinks']->rounds_finishpanel = ($param == 'on');
 
 				// log console message
-				$aseco->console('{1} [{2}] set Rounds Finishpanel {3} !', $logtitle, $login, ($aseco->plugins['PluginManialinks']->rounds_finishpanel ? 'ON' : 'OFF'));
+				$aseco->console('[Admin] {1} [{2}] set Rounds Finishpanel {3} !', $logtitle, $login, ($aseco->plugins['PluginManialinks']->rounds_finishpanel ? 'ON' : 'OFF'));
 
 				// show chat message
 				$message = '{#server}» {#admin}Rounds Finishpanel set to ' . ($aseco->plugins['PluginManialinks']->rounds_finishpanel ? 'Enabled' : 'Disabled');
@@ -3913,7 +3912,7 @@ class PluginChatAdmin extends Plugin {
 								$aseco->client->query('ForcePlayerTeam', $target->login, 0);
 
 								// log console message
-								$aseco->console('{1} [{2}] forces {3} into Blue team!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+								$aseco->console('[Admin] {1} [{2}] forces {3} into Blue team!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 								// show chat message
 								$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces {#highlite}{3}$z$s{#admin} into $00fBlue{#admin} team!',
@@ -3934,7 +3933,7 @@ class PluginChatAdmin extends Plugin {
 								$aseco->client->query('ForcePlayerTeam', $target->login, 1);
 
 								// log console message
-								$aseco->console('{1} [{2}] forces {3} into Red team!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+								$aseco->console('[Admin] {1} [{2}] forces {3} into Red team!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 								// show chat message
 								$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces {#highlite}{3}$z$s{#admin} into $f00Red{#admin} team!',
@@ -3990,7 +3989,7 @@ class PluginChatAdmin extends Plugin {
 						// free up player slot
 						$aseco->client->addCall('SpectatorReleasePlayerSlot', array($target->login));
 						// log console message
-						$aseco->console('{1} [{2}] forces player {3} into spectator!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+						$aseco->console('[Admin] {1} [{2}] forces player {3} into spectator!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 						// show chat message
 						$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces player {#highlite}{3}$z$s{#admin} into spectator!',
@@ -4024,7 +4023,7 @@ class PluginChatAdmin extends Plugin {
 					}
 					else {
 						// log console message
-						$aseco->console('{1} [{2}] forces spectator free mode on {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
+						$aseco->console('[Admin] {1} [{2}] forces spectator free mode on {3}!', $logtitle, $login, $aseco->stripColors($target->nickname, false));
 
 						// show chat message
 						$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces spectator free mode on {#highlite}{3}$z$s{#admin} !',
@@ -4069,7 +4068,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->style = $style['STYLES'];
 
 				// log console message
-				$aseco->console('{1} [{2}] selects default window style [{3}]', $logtitle, $login, $command['params'][1]);
+				$aseco->console('[Admin] {1} [{2}] selects default window style [{3}]', $logtitle, $login, $command['params'][1]);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default window style {#highlite}{3}',
@@ -4095,7 +4094,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->settings['admin_panel'] = 'Off';
 
 				// log console message
-				$aseco->console('{1} [{2}] reset default admin panel', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] reset default admin panel', $logtitle, $login);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default admin panel',
@@ -4117,7 +4116,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->panels['admin'] = $panel;
 
 					// log console message
-					$aseco->console('{1} [{2}] selects default admin panel [{3}]', $logtitle, $login, $command['params'][1]);
+					$aseco->console('[Admin] {1} [{2}] selects default admin panel [{3}]', $logtitle, $login, $command['params'][1]);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default admin panel {#highlite}{3}',
@@ -4144,7 +4143,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->settings['donate_panel'] = 'Off';
 
 				// log console message
-				$aseco->console('{1} [{2}] reset default donate panel', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] reset default donate panel', $logtitle, $login);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default donate panel',
@@ -4166,7 +4165,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->panels['donate'] = $panel;
 
 					// log console message
-					$aseco->console('{1} [{2}] selects default donate panel [{3}]', $logtitle, $login, $command['params'][1]);
+					$aseco->console('[Admin] {1} [{2}] selects default donate panel [{3}]', $logtitle, $login, $command['params'][1]);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default donate panel {#highlite}{3}',
@@ -4193,7 +4192,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->settings['records_panel'] = 'Off';
 
 				// log console message
-				$aseco->console('{1} [{2}] reset default records panel', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] reset default records panel', $logtitle, $login);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default records panel',
@@ -4215,7 +4214,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->panels['records'] = $panel;
 
 					// log console message
-					$aseco->console('{1} [{2}] selects default records panel [{3}]', $logtitle, $login, $command['params'][1]);
+					$aseco->console('[Admin] {1} [{2}] selects default records panel [{3}]', $logtitle, $login, $command['params'][1]);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default records panel {#highlite}{3}',
@@ -4242,7 +4241,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->settings['vote_panel'] = 'Off';
 
 				// log console message
-				$aseco->console('{1} [{2}] reset default vote panel', $logtitle, $login);
+				$aseco->console('[Admin] {1} [{2}] reset default vote panel', $logtitle, $login);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default vote panel',
@@ -4264,7 +4263,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->panels['vote'] = $panel;
 
 					// log console message
-					$aseco->console('{1} [{2}] selects default vote panel [{3}]', $logtitle, $login, $command['params'][1]);
+					$aseco->console('[Admin] {1} [{2}] selects default vote panel [{3}]', $logtitle, $login, $command['params'][1]);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default vote panel {#highlite}{3}',
@@ -4298,7 +4297,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->panelbg = $panelbg['PANEL']['BACKGROUND'][0];
 
 				// log console message
-				$aseco->console('{1} [{2}] selects default panel background [{3}]', $logtitle, $login, $command['params'][1]);
+				$aseco->console('[Admin] {1} [{2}] selects default panel background [{3}]', $logtitle, $login, $command['params'][1]);
 
 				// show chat message
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default panel background {#highlite}{3}',

@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-09-15');
+	define('UASECO_BUILD',		'2014-09-21');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1056,7 +1056,7 @@ class UASECO extends Helper {
 			`MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 			`NbLaps` tinyint(1) UNSIGNED NOT NULL,
 			`NbCheckpoints` tinyint(1) UNSIGNED NOT NULL,
-			`Validated` enum('unknown','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+			`Validated` enum('null','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 			`ExeVersion` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`ExeBuild` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
 			`ModName` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
@@ -1268,7 +1268,7 @@ class UASECO extends Helper {
 		}
 		if (!in_array('Validated', $fields)) {
 			$this->console("[Database] » Add `maps` column `Validated`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Validated` enum('unknown','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `NbCheckpoints`;");
+			$this->mysqli->query("ALTER TABLE `maps` ADD `Validated` enum('null','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `NbCheckpoints`;");
 		}
 		if (!in_array('ExeVersion', $fields)) {
 			$this->console("[Database] » Add `maps` column `ExeVersion`...");

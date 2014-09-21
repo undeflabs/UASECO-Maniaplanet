@@ -4,12 +4,13 @@
 
 #RequireContext CTmMode
 
-#Const	ModeBaseVersion		"2014-09-08"
+#Const	ModeBaseVersion		"2014-09-16"
 #Const	ModeBaseScriptName	"ModeBase.Script.txt"
 
 #Include "Libs/Nadeo/Mode.Script.txt" as Mode
 #Include "Libs/Nadeo/ScoresTable2.Script.txt" as ST2
 #Include "Libs/Nadeo/Clublink.Script.txt" as Clublink
+#Include "Libs/Nadeo/TrackMania/UI.Script.txt" as UI
 #Include "Libs/Nadeo/TrackMania/TM2.Script.txt" as TM2
 #Include "Libs/Nadeo/TrackMania/WarmUp.Script.txt" as WarmUp
 #Include "Libs/Nadeo/TrackMania/XmlRpc.Script.txt" as XmlRpc
@@ -36,6 +37,7 @@
 ***LogVersion***
 ***
 MB_LogVersion(ModeBaseScriptName, ModeBaseVersion);
+MB_LogVersion(UI::GetScriptName(), UI::GetScriptVersion());
 MB_LogVersion(TM2::GetScriptName(), TM2::GetScriptVersion());
 MB_LogVersion(Mode::GetScriptName(), Mode::GetScriptVersion());
 MB_LogVersion(XmlRpc::GetScriptName(), XmlRpc::GetScriptVersion());
@@ -240,6 +242,7 @@ Void MB_Yield() {
 	Clublink::Update();
 	TM2::Loop();
 	ST2::XmlRpcLoop();
+	UI::XmlRpcLoop();
 	
 	+++Yield+++
 }
@@ -496,6 +499,7 @@ main() {
 	
 	if (MB_UseLogging) MB_Log("StartServer");
 	
+	UI::Load();
 	TM2::Load();
 	WarmUp::Load();
 	ST2::Load();
@@ -791,4 +795,5 @@ main() {
 	ST2::Unload();
 	TM2::Unload();
 	WarmUp::Unload();
+	UI::Unload();
 }

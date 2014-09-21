@@ -53,9 +53,9 @@
 
 	<!--
 	Set to global blacklist in XML format, same as <blacklist_url> in dedicated_cfg.txt,
-	e.g. http://www.gamers.org/tm2/dedimania_blacklist.txt
+	e.g. http://www.uaseco.org/uptodate/blacklist_trackmania_dedimania.xml
 	//-->
-	<global_blacklist_url>http://www.gamers.org/tm2/dedimania_blacklist.txt</global_blacklist_url>
+	<global_blacklist_url>http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml</global_blacklist_url>
 
 
 	<welcome_msg_window>false</welcome_msg_window>

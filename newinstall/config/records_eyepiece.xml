@@ -176,32 +176,19 @@
 	</style>
 
 
-	<!-- Adjust the CustomUI send by Records-Eyepiece. Please note, that other plugins can override your configuration (if they require them)! -->
-	<custom_ui>
-		<!-- Set to 'true' if you want to send the whole <custom_ui> at player connect, otherwise set 'false' -->
-		<enabled>true</enabled>
 
-		<!-- Set to 'true' for messages like "Player xyz connects to the game.", "Player xyz get the 1. place.", otherwise set 'false' -->
-		<notice>false</notice>
-
-		<!-- Set to 'true' if you want the default Challenge-Info at top right, otherwise set 'false'. If <map_widget> is enabled, then disabled by default! -->
-		<challenge_info>true</challenge_info>
-
-		<!-- Set to 'true' if you want to see at top right the orange progress bar, otherwise set 'false' -->
-		<net_infos>true</net_infos>
-
-		<!-- Set to 'true' if you want to enabled the chatbox at the bottom, otherwise set 'false' -->
-		<chat>true</chat>
-
-		<!-- Set to 'true' if you want to see the Checkpoint-List between Time- and Speed-Box, otherwise set 'false' -->
-		<checkpoint_list>true</checkpoint_list>
+	<!-- Adjust the UserInterface settings. Please note, that other plugins can override your configuration (if they require them)! -->
+	<ui_properties>
+		<!-- Set to 'true' for the map name and author displayed in the top right of the screen when viewing the scores table, otherwise set 'false'. If <map_widget> is enabled, then disabled by default! -->
+		<map_info>false</map_info>
 
 		<!-- Set to 'true' if you want to see the automatic Round-Score-Panel at the right side, otherwise set 'false'. If <round_score> is enabled, then disabled by default! -->
-		<round_scores>true</round_scores>
+		<round_scores>false</round_scores>
 
-		<!-- Set to 'true' if you want to see the automatic Scoretable at Score, otherwise set 'false' -->
-		<scoretable>true</scoretable>
-	</custom_ui>
+		<!-- Set to 'true' if you want to see the warm-up progression displayed on the right of the screen during warm-up, otherwise set 'false' -->
+		<warmup>false</warmup>
+	</ui_properties>
+
 
 
 	<!-- The Map Widget where the current Map are displayed and the next and last Map are accessible -->
@@ -256,8 +243,8 @@
 		<title>Current Song</title>
 		<width>15.76</width>
 
-		<pos_x>32.62</pos_x>
-		<pos_y>48</pos_y>
+		<pos_x>-64.54</pos_x>
+		<pos_y>41.6</pos_y>
 		<scale>1.0</scale>
 
 		<icon_style>Icons128x128_1</icon_style>
@@ -664,7 +651,7 @@
 
 	<!-- Displays the current LadderLimits like "40-80k" -->
 	<ladderlimit_widget>
-		<enabled>true</enabled>
+		<enabled>false</enabled>
 		<text_color>FC0F</text_color>
 
 		<!--
@@ -685,7 +672,7 @@
 
 	<!-- Displays the current Gamemode -->
 	<gamemode_widget>
-		<enabled>true</enabled>
+		<enabled>false</enabled>
 		<text_color>FC0F</text_color>
 
 		<pos_x>-59.05</pos_x>
@@ -699,7 +686,7 @@
 
 	<!-- Displays the current Player- and Spectator-Count and also the max. values of them -->
 	<player_spectator_widget>
-		<enabled>true</enabled>
+		<enabled>false</enabled>
 		<text_color>FC0F</text_color>
 
 		<pos_x>-54.25</pos_x>
@@ -713,7 +700,7 @@
 
 	<!-- Displays the current Rankings -->
 	<current_ranking_widget>
-		<enabled>true</enabled>
+		<enabled>false</enabled>
 		<text_color>FC0F</text_color>
 
 		<pos_x>-49.45</pos_x>

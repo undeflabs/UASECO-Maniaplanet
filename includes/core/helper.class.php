@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-06
+ * Date:	2014-09-21
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -674,7 +674,7 @@ class Helper {
 			}
 		}
 		else {
-			return '-:--:---';
+			return '0:00:000';
 		}
 	}
 
@@ -694,13 +694,26 @@ class Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function formatFloat ($number, $decimals = 4, $dec_point = '.', $thousands_sep = '') {
+		return number_format($number, $decimals, $dec_point, $thousands_sep);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	// Convert boolean value to text string
 	public function bool2string ($boolean) {
-		if ($boolean) {
+		if ($boolean === true) {
 			return 'true';
 		}
-		else {
+		else if ($boolean === false) {
 			return 'false';
+		}
+		else {
+			return 'null';
 		}
 	}
 
@@ -715,8 +728,11 @@ class Helper {
 		if (strtoupper($string) == 'TRUE') {
 			return true;
 		}
-		else {
+		else if (strtoupper($string) == 'FALSE') {
 			return false;
+		}
+		else {
+			return null;
 		}
 	}
 
