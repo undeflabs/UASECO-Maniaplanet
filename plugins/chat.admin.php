@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-20
+ * Date:	2014-09-25
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -4538,7 +4538,7 @@ class PluginChatAdmin extends Plugin {
 						$aseco->client->addCall('ChatSendServerMessageToLogin', array($msg, $pl->login));
 
 						// check if player muting is enabled
-						if ((class_exists('PluginMuting')) && (PluginMuting::$muting_available) ) {
+						if (isset($aseco->plugins['PluginMuting']) && $aseco->plugins['PluginMuting']->muting_available) {
 							// drop oldest message if receiver's mute buffer full
 							if (count($pl->mutebuf) >= 28) {  // chat window length
 								array_shift($pl->mutebuf);
@@ -4564,7 +4564,7 @@ class PluginChatAdmin extends Plugin {
 				}
 
 				// check if player muting is enabled
-				if (isset($aseco->plugins['PluginMuting']) && ($aseco->plugins['PluginMuting']->muting_available) ) {
+				if (isset($aseco->plugins['PluginMuting']) && $aseco->plugins['PluginMuting']->muting_available) {
 					// drop oldest message if sender's mute buffer full
 					if (count($admin->mutebuf) >= 28) {  // chat window length
 						array_shift($admin->mutebuf);
