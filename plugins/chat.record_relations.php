@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-29
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -75,7 +75,7 @@ class PluginRecordRelations extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -92,10 +92,10 @@ class PluginRecordRelations extends Plugin {
 			);
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $login);
 		}
 	}
 
@@ -110,7 +110,7 @@ class PluginRecordRelations extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -127,10 +127,10 @@ class PluginRecordRelations extends Plugin {
 			);
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $login);
 		}
 	}
 
@@ -147,7 +147,7 @@ class PluginRecordRelations extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -202,7 +202,7 @@ class PluginRecordRelations extends Plugin {
 					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 				);
 
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 			else {
 				// look for unranked time instead
@@ -262,16 +262,16 @@ class PluginRecordRelations extends Plugin {
 						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 					);
 
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 				else {
 					$message = '{#server}» {#error}You don\'t have a record on this map yet... use {#highlite}$i/lastrec';
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $player->login);
 		}
 	}
 
@@ -286,7 +286,7 @@ class PluginRecordRelations extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -339,15 +339,15 @@ class PluginRecordRelations extends Plugin {
 					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 				);
 
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 			else {
 				$message = '{#server}» {#error}You don\'t have a record on this map yet... use {#highlite}$i/lastrec';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $login);
 		}
 	}
 
@@ -362,7 +362,7 @@ class PluginRecordRelations extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -403,10 +403,10 @@ class PluginRecordRelations extends Plugin {
 				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 			);
 
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $login);
 		}
 	}
 }

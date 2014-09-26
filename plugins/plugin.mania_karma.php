@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-08-10
+ * Date:		2014-09-26
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -853,7 +853,7 @@ class PluginManiaKarma extends Plugin {
 				send_window_message($aseco, $message, ($player->login ? $player : false));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 	}
@@ -922,7 +922,7 @@ class PluginManiaKarma extends Plugin {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 	}
@@ -983,7 +983,7 @@ class PluginManiaKarma extends Plugin {
 					$this->config['urls']['website']
 			);
 			$message = str_replace('{br}', LF, $message);  // split long message
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 
 
@@ -999,7 +999,7 @@ class PluginManiaKarma extends Plugin {
 				$message = '{#server}> {#emotic}#################################################'. LF;
 				$message .= '{#server}> {#emotic}Please start the export of your current local votes with the command "/karma export". Thanks!'. LF;
 				$message .= '{#server}> {#emotic}#################################################'. LF;
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 
@@ -1141,7 +1141,7 @@ class PluginManiaKarma extends Plugin {
 						send_window_message($aseco, $message, $finish_item->player);
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $finish_item->player->login);
+						$aseco->sendChatMessage($message, $finish_item->player->login);
 					}
 				}
 			}
@@ -1385,7 +1385,7 @@ class PluginManiaKarma extends Plugin {
 				send_window_message($aseco, $message, false);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}
@@ -1480,7 +1480,7 @@ class PluginManiaKarma extends Plugin {
 				else {
 					// Show reminder message (not to the TMF-Message Window)
 					$message = $this->config['messages']['karma_remind'];
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), implode(',', $players_reminder));
+					$aseco->sendChatMessage($message, implode(',', $players_reminder));
 				}
 			}
 			unset($players_reminder);
@@ -2674,7 +2674,7 @@ EOL;
 				send_window_message($aseco, $message, $player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 			return;
 		}
@@ -2688,7 +2688,7 @@ EOL;
 				send_window_message($aseco, $message, $player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 			return;
 		}
@@ -2857,7 +2857,7 @@ EOL;
 				send_window_message($aseco, $message, $player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 
 		}
@@ -2867,7 +2867,7 @@ EOL;
 				send_window_message($aseco, $message, $player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 
@@ -2879,7 +2879,7 @@ EOL;
 				send_window_message($aseco, $message, $player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 
@@ -2941,7 +2941,7 @@ EOL;
 					$player_voted
 			);
 			$message = str_replace('{br}', LF, $message);  // split long message
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), implode(',', $logins));
+			$aseco->sendChatMessage($message, implode(',', $logins));
 			unset($logins);
 		}
 
@@ -2987,7 +2987,7 @@ EOL;
 					send_window_message($aseco, $message, $player);
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+					$aseco->sendChatMessage($message, $login);
 				}
 			}
 			else {
@@ -2995,7 +2995,7 @@ EOL;
 					send_window_message($aseco, $message, false);
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 		}
@@ -3093,7 +3093,7 @@ EOL;
 							$aseco->stripColors($command['author']->nickname)
 					);
 					$message = str_replace('{br}', LF, $message);  // split long message
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 		}
@@ -3774,19 +3774,19 @@ EOL;
 								$current_release,
 								'$L[' . $release_url . ']' . $release_url . '$L'
 							);
-							$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+							$aseco->sendChatMessage($message, $target->login);
 						}
 						else {
 							if ($this->config['uptodate_info'] == 'DEFAULT') {
 								$message = $aseco->formatText($this->config['messages']['uptodate_ok'],
 									$this->getVersion()
 								);
-								$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+								$aseco->sendChatMessage($message, $target->login);
 							}
 						}
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['messages']['uptodate_failed']), $target->login);
+						$aseco->sendChatMessage($this->config['messages']['uptodate_failed'], $target->login);
 						$aseco->console('[ManiaKarma] handleWebaccess() on type "'. $type .'": Could not read/parse xml response!');
 						$this->config['retrytime'] = (time() + $this->config['retrywait']);
 						$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
@@ -3796,19 +3796,19 @@ EOL;
 					if ($response['Code'] == 200) {
 						$this->config['import_done'] = true;		// Set to true, otherwise only after restart UASECO knows that
 						$message = '{#server}>> {#admin}Export done. Thanks for supporting mania-karma.com!';
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+						$aseco->sendChatMessage($message, $target->login);
 					}
 					else if ($response['Code'] == 406) {
 						$message = '{#server}>> {#error}Export rejected! Please check your <login> and <nation> in config file "mania_karma.xml"!';
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+						$aseco->sendChatMessage($message, $target->login);
 					}
 					else if ($response['Code'] == 409) {
 						$message = '{#server}>> {#error}Export rejected! Export was already done, allowed only one time!';
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+						$aseco->sendChatMessage($message, $target->login);
 					}
 					else {
 						$message = '{#server}>> {#error}Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .']' ."\n\r";
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+						$aseco->sendChatMessage($message, $target->login);
 					}
 				}
 				else if ($type == 'PING') {
@@ -4318,12 +4318,12 @@ EOL;
 
 		if ($this->config['import_done'] != false) {
 			$message = "{#server}>> {#admin}Export of local votes already done, skipping...";
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		$message = "{#server}>> {#admin}Collecting players with their votes on Maps...";
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 
 		// Generate the content for this export
 		$csv = false;
@@ -4365,23 +4365,23 @@ EOL;
 		}
 
 		$message = "{#server}>> {#admin}Found ". number_format($count, 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." votes in database.";
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 
 
 		// gzip the CSV
 		$message = "{#server}>> {#admin}Compressing collected data...";
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 		$csv = gzencode($csv, 9, FORCE_GZIP);
 
 
 		// Encode them Base64
 		$message = "{#server}>> {#admin}Encoding data...";
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 		$csv = base64_encode($csv);
 
 
 		$message = "{#server}>> {#admin}Sending now the export with size of ". number_format(strlen($csv), 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." bytes...";
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 
 		// Generate the url for the Import-Request
 		$api_url = sprintf("%s?Action=Import&login=%s&authcode=%s&nation=%s",

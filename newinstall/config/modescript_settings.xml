@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modescript_settings>
+	<!-- Documentation: http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html -->
 	<ui_properties>
 		<!-- The map name and author displayed in the top right of the screen when viewing the scores table -->
 		<map_info>
@@ -48,6 +49,11 @@
 		<!-- Race time left displayed at the bottom right of the screen -->
 		<countdown>
 			<visible>true</visible>
+			<position>
+				<x>154.0</x>
+				<y>-57.0</y>
+				<z>5.0</z>
+			</position>
 		</countdown>
 
 		<!-- 3, 2, 1, Go! message displayed on the middle of the screen when spawning -->
@@ -68,6 +74,11 @@
 		<!-- Speed and distance raced displayed in the bottom right of the screen -->
 		<speed_and_distance>
 			<visible>true</visible>
+			<position>
+				<x>158.0</x>
+				<y>-79.5</y>
+				<z>5.0</z>
+			</position>
 		</speed_and_distance>
 
 		<!-- Previous and best times displayed at the bottom right of the screen -->
@@ -75,7 +86,7 @@
 			<visible>true</visible>
 			<position>
 				<x>158.0</x>
-				<y>-61.0</y>
+				<y>-67.0</y>
 				<z>5.0</z>
 			</position>
 		</personal_best_and_rank>

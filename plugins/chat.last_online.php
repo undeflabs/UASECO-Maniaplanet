@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-09
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -97,7 +97,7 @@ class PluginLastOnline extends Plugin {
 		}
 
 		// Show chat message
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 	}
 }
 

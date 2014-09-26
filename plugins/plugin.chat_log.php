@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-13
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -129,7 +129,7 @@ class PluginChatlog extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No chat history found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No chat history found!', $player->login);
 		}
 	}
 }

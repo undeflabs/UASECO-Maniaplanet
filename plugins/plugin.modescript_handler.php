@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-21
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -148,10 +148,10 @@ class PluginModescriptHandler extends Plugin {
 
 
 		// Store the settings at the dedicated Server
-		$this->setupModescriptSettings($aseco);
+		$this->setupModescriptSettings();
 
 		// Setup the custom Scoretable
-		$this->setupCustomScoretable($aseco);
+		$this->setupCustomScoretable();
 
 
 		// Setup the UI
@@ -174,7 +174,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 
 		// Send the UI settings
-		$this->setupUserInterface($aseco);
+		$this->setupUserInterface();
 	}
 
 	/*
@@ -209,13 +209,13 @@ class PluginModescriptHandler extends Plugin {
 		// Details: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
 
 		// Store the settings at the dedicated Server
-		$this->setupModescriptSettings($aseco);
+		$this->setupModescriptSettings();
 
 		// Setup the custom Scoretable
-		$this->setupCustomScoretable($aseco);
+		$this->setupCustomScoretable();
 
 		// Setup the UI
-		$this->setupUserInterface($aseco);
+		$this->setupUserInterface();
 	}
 
 	/*
@@ -699,7 +699,8 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setupUserInterface ($aseco) {
+	public function setupUserInterface () {
+		global $aseco;
 
 		// Check some limitations, details:
 		// http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html
@@ -728,11 +729,11 @@ class PluginModescriptHandler extends Plugin {
 		$settings .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'" />';
 		$settings .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Z'][0]) .'" />';
 		$settings .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Z'][0]) .'" />';
 		$settings .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'" />';
 		$settings .= ' <chrono visible="'. $aseco->bool2string($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <speed_and_dist visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <personnal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <speed_and_distance visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <personal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Z'][0]) .'" />';
 		$settings .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" />';
 		$settings .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Z'][0]) .'" />';
 		$settings .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'" />';
@@ -749,7 +750,7 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	public function setUserInterfaceVisibility ($field, $value) {
-		if ( isset($this->ui_properties[strtoupper($field)][0]) ) {
+		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
 			$this->ui_properties[strtoupper($field)][0]['VISIBLE'][0] = $value;
 		}
 	}
@@ -761,7 +762,7 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	public function getUserInterfaceField ($field) {
-		if ( isset($this->ui_properties[strtoupper($field)][0]) ) {
+		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
 			return $this->ui_properties[strtoupper($field)][0];
 		}
 	}
@@ -773,7 +774,8 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	// http://doc.maniaplanet.com/dedicated-server/settings-list.html
-	private function setupModescriptSettings ($aseco) {
+	private function setupModescriptSettings () {
+		global $aseco;
 
 		// ModeBase
 		$modebase = array(
@@ -872,7 +874,8 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
-	private function setupCustomScoretable ($aseco) {
+	private function setupCustomScoretable () {
+		global $aseco;
 
 //		foreach (range(0,20) as $id) {
 //			$aseco->client->queryIgnoreResult('ConnectFakePlayer');

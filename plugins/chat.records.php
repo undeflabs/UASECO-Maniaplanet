@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-20
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -150,12 +150,12 @@ class PluginChatRecords extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
 		if (!$total = $aseco->plugins['PluginLocalRecords']->records->count()) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $login);
 			return;
 		}
 
@@ -224,7 +224,7 @@ class PluginChatRecords extends Plugin {
 		// Check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -243,7 +243,7 @@ class PluginChatRecords extends Plugin {
 		// Check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -262,7 +262,7 @@ class PluginChatRecords extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -285,7 +285,7 @@ class PluginChatRecords extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -310,7 +310,7 @@ class PluginChatRecords extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+			$aseco->sendChatMessage($message, $target->login);
 			return;
 		}
 
@@ -397,14 +397,14 @@ class PluginChatRecords extends Plugin {
 					$total, ($total > 1 ? 's' : ''),
 					$show
 				). $message;
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $target->login);
+				$aseco->sendChatMessage($message, $target->login);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No ranked records found!'), $target->login);
+				$aseco->sendChatMessage('{#server}» {#error}No ranked records found!', $target->login);
 			}
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No ranked records found!'), $target->login);
+			$aseco->sendChatMessage('{#server}» {#error}No ranked records found!', $target->login);
 		}
 	}
 
@@ -421,7 +421,7 @@ class PluginChatRecords extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -471,7 +471,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		if (empty($recs)) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No players with ranked records found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No players with ranked records found!', $player->login);
 			return;
 		}
 
@@ -539,7 +539,7 @@ class PluginChatRecords extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -575,7 +575,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		if (empty($recs)) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No players with ranked records found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No players with ranked records found!', $player->login);
 			return;
 		}
 
@@ -738,11 +738,11 @@ class PluginChatRecords extends Plugin {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $player->login);
+				$aseco->sendChatMessage('{#server}» {#error}No records found!', $player->login);
 			}
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No records found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No records found!', $player->login);
 		}
 	}
 

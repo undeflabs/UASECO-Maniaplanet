@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-05
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -309,7 +309,7 @@ class PluginStuntMessages extends Plugin {
 				$message .= ' and {#highlite}NO{#record} Penalty-Points!!';
 			}
 			$message .= '!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 

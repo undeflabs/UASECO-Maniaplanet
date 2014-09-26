@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-26
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -323,7 +323,7 @@ class PluginAccessControl extends Plugin {
 			'zone',
 			$access
 		);
-		$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+		$aseco->sendChatMessage($message);
 		$message = $aseco->formatText($this->access_control['messages']['dialog'],
 			$access
 		);
@@ -443,11 +443,11 @@ class PluginAccessControl extends Plugin {
 				$this->access_control = array();
 				$message = $this->access_control['messages']['xmlerr'];
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 		else {
 			$message = $this->access_control['messages']['missing'];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 }

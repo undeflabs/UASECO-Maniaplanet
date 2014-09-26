@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-29
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -105,7 +105,7 @@ class PluginMap extends Plugin {
 		}
 
 		// show chat message
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 
 	/*
@@ -119,7 +119,7 @@ class PluginMap extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -143,7 +143,7 @@ class PluginMap extends Plugin {
 			$env,
 			$aseco->stripColors($next)
 		);
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 
 	/*
@@ -176,7 +176,7 @@ class PluginMap extends Plugin {
 			);
 		}
 
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 
 	/*
@@ -191,7 +191,7 @@ class PluginMap extends Plugin {
 			date('H:i:s T'),
 			date('Y/M/d')
 		);
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 
 	/*
@@ -236,7 +236,7 @@ class PluginMap extends Plugin {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}
@@ -294,7 +294,7 @@ class PluginMap extends Plugin {
 			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			$aseco->sendChatMessage($message);
 		}
 
 		if ( isset($aseco->plugins['PluginRaspJukebox']) ) {

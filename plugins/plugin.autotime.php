@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-21
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -169,7 +169,7 @@ class PluginAutotime extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
 				}
 				else if ($this->config['DISPLAY'][0] > 0) {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 		}

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-06
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -218,7 +218,7 @@ class PluginWelcomeCenter extends Plugin {
 					send_window_message($aseco, $message, false);
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 		}
@@ -262,7 +262,7 @@ class PluginWelcomeCenter extends Plugin {
 					send_window_message($aseco, $message, false);
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 		}
@@ -274,7 +274,7 @@ class PluginWelcomeCenter extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	function onEndMap ($aseco, $data) {
+	public function onEndMap ($aseco, $data) {
 
 		// If not enabled, bail out immediately
 		if ($this->config['INFO_MESSAGES'][0]['ENABLED'][0] == false) {

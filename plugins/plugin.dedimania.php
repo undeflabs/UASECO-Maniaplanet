@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-21
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -419,7 +419,7 @@ class PluginDedimania extends Plugin {
 		}
 
 		if (!$total = count($dedi_recs)) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
 			return;
 		}
 		$maxrank = max($this->db['ServerMaxRank'], $player->dedirank);
@@ -529,13 +529,11 @@ class PluginDedimania extends Plugin {
 				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $score : $aseco->formatTime($score)),
 				$rank + 1
 			);
-			$message = $aseco->formatColors($message);
-			$aseco->client->query('ChatSendServerMessageToLogin', $message, $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			$message = $this->db['Messages']['PB_NONE'][0];
-			$message = $aseco->formatColors($message);
-			$aseco->client->query('ChatSendServerMessageToLogin', $message, $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -561,10 +559,10 @@ class PluginDedimania extends Plugin {
 			);
 
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
 		}
 	}
 
@@ -590,10 +588,10 @@ class PluginDedimania extends Plugin {
 			);
 
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
 		}
 	}
 
@@ -655,7 +653,7 @@ class PluginDedimania extends Plugin {
 					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 				);
 
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 			else {
 				// look for unranked time instead
@@ -714,16 +712,16 @@ class PluginDedimania extends Plugin {
 						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%s%d.%03d", $sign, $sec, $ths))
 					);
 
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 				else {
 					$message = '{#server}» {#error}You don\'t have Dedimania a record on this track yet... use {#highlite}$i/dedilast';
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $player->login);
 		}
 	}
 
@@ -782,15 +780,15 @@ class PluginDedimania extends Plugin {
 					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 				);
 
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 			else {
 				$message = '{#server}» {#error}You don\'t have a Dedimania record on this track yet... use {#highlite}$i/dedilast';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
 		}
 	}
 
@@ -837,10 +835,10 @@ class PluginDedimania extends Plugin {
 				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
 			);
 
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
 		}
 	}
 
@@ -880,7 +878,7 @@ class PluginDedimania extends Plugin {
 			$message = '{#server}» {#error}Dedimania checkpoints tracking permanently disabled by server';
 		}
 		// show chat message
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 
 	/*
@@ -932,7 +930,7 @@ class PluginDedimania extends Plugin {
 		$dedi_recs = $this->db['Map']['Records'];
 
 		if (!$total = count($dedi_recs)) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No Dedimania records found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $player->login);
 			return;
 		}
 		$maxrank = max($this->db['ServerMaxRank'], $player->dedirank);
@@ -1182,14 +1180,14 @@ class PluginDedimania extends Plugin {
 		if ($login) {
 			// strip 1 leading '>' to indicate a player message instead of system-wide
 			$message = str_replace('{#server}» ', '{#server}» ', $message);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			if ($window == 2) {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, ($mode == 3)));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}
@@ -1583,7 +1581,7 @@ class PluginDedimania extends Plugin {
 				$response = $this->db['XmlrpcDB']->sendRequests();
 				if (!$response) {
 					$message = '{#server}» '. $aseco->formatText($this->db['Timeout'], round($this->timeout/60));
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 					trigger_error('Dedimania has consecutive connection errors!', E_USER_WARNING);
 				}
 			}
@@ -1680,7 +1678,7 @@ class PluginDedimania extends Plugin {
 				$message = str_replace('{br}', LF, $message);  // split long message
 				// hyperlink Dedimania site
 				$message = str_replace('www.dedimania.com', '$l[http://www.dedimania.com/]www.dedimania.com$l', $message);
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 
 			// get player rank
@@ -1701,7 +1699,7 @@ class PluginDedimania extends Plugin {
 					$aseco->stripColors($player->nickname),
 					$login
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 
 				// log banned player
 				$aseco->console('[Dedimania] Player [{1}] is banned - finishes ignored!', $login);
@@ -2162,7 +2160,7 @@ class PluginDedimania extends Plugin {
 		// if banned login, notify player and bail out
 		if (in_array($login, $this->db['BannedLogins'])) {
 			$message = $aseco->formatText($this->db['Messages']['BANNED_FINISH'][0]);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -2267,12 +2265,12 @@ class PluginDedimania extends Plugin {
 									$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 								}
 								else {
-									$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+									$aseco->sendChatMessage($message);
 								}
 							}
 							else {
 								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+								$aseco->sendChatMessage($message, $login);
 							}
 						}
 					}
@@ -2305,12 +2303,12 @@ class PluginDedimania extends Plugin {
 									$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 								}
 								else {
-									$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+									$aseco->sendChatMessage($message);
 								}
 							}
 							else {
 								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+								$aseco->sendChatMessage($message, $login);
 							}
 						}
 					}
@@ -2345,12 +2343,12 @@ class PluginDedimania extends Plugin {
 								$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 							}
 							else {
-								$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+								$aseco->sendChatMessage($message);
 							}
 						}
 						else {
 							$message = str_replace('{#server}» ', '{#server}» ', $message);
-							$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+							$aseco->sendChatMessage($message, $login);
 						}
 					}
 				}

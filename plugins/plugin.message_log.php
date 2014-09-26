@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-07
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -174,7 +174,7 @@ class PluginMessageLog extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'NewMessage'), $msgs, array(1.53), 'OK');
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No system message history found!'), $login);
+			$aseco->sendChatMessage('{#server}» {#error}No system message history found!', $login);
 		}
 	}
 

@@ -4,7 +4,7 @@
 
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const	RoundsBaseVersion		"2014-09-16"
+#Const	RoundsBaseVersion		"2014-09-25"
 #Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
 
 // ---------------------------------- //
@@ -37,7 +37,7 @@ UiRounds = True;
 MB_UseSectionRound = True;
 MB_PointsRepartition = C_PointsRepartition;
 
-UI::LoadModules(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime"]);
+UI::LoadModules(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime", "SpeedAndDistance", "Countdown"]);
 UI::DisplayTimeDiff(S_DisplayTimeDiff);
 ***
 

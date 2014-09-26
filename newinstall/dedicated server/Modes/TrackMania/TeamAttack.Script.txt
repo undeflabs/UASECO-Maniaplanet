@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
 #Const	CompatibleMapTypes	"Race"
-#Const	Version		"2014-09-16"
+#Const	Version		"2014-09-25"
 #Const	ScriptName	"TeamAttack.Script.txt"
 
 #Include "TextLib" as TL
@@ -59,7 +59,7 @@ IndependantLaps = True;
 
 // ---------------------------------- //
 // Initialize UI
-UI::LoadModules(["TimeGap", "Chrono", "CheckpointTime", "PrevBestTime"]);
+UI::LoadModules(["TimeGap", "Chrono", "CheckpointTime", "PrevBestTime", "SpeedAndDistance", "Countdown"]);
 UI::SetTimeGapMode("BestRace");
 UI::SetIndependantLaps(IndependantLaps);
 Layers::Create("ClanSelection", UITeamModes::GetMLClanSelection());

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -161,7 +161,7 @@ class PluginPlayerInfos extends Plugin {
 		}
 		else {
 			// == 1
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No player(s) found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No player(s) found!', $player->login);
 		}
 	}
 
@@ -318,7 +318,7 @@ class PluginPlayerInfos extends Plugin {
 				$window->send($player, 0, false);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No clan(s) found!'), $player->login);
+				$aseco->sendChatMessage('{#server}» {#error}No clan(s) found!', $player->login);
 			}
 			$res->free_result();
 		}

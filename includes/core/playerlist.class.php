@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-24
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -201,7 +201,7 @@ class PlayerList {
 		if (is_numeric($param) && $param >= 0 && $param < 300) {
 			if (empty($player->playerlist)) {
 				$message = '{#server}» {#error}Use {#highlite}$i/players {#error}first (optionally {#highlite}$i/players <string>{#error})';
-				$aseco->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return false;
 			}
 			$pid = ltrim($param, '0');
@@ -218,7 +218,7 @@ class PlayerList {
 				$target = $this->getPlayer($param);
 				if (!$target) {
 					$message = '{#server}» {#error}Player_ID not found! Type {#highlite}$i/players {#error}to see all players.';
-					$aseco->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 					return false;
 				}
 			}
@@ -265,7 +265,7 @@ class PlayerList {
 		// Found anyone anywhere?
 		if (!$target) {
 			$message = '{#server}» {#highlite}'. $param .' {#error}is not a valid player! Use {#highlite}$i/players {#error}to find the correct login or Player_ID.';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 		return $target;
 	}

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-20
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -595,7 +595,7 @@ class PluginCheckpoint extends Plugin {
 				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} forced into spectator!',
 					str_ireplace('$w', '', $player->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 				break;
 
 			case 2:  // kick
@@ -606,7 +606,7 @@ class PluginCheckpoint extends Plugin {
 				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} kicked!',
 					str_ireplace('$w', '', $player->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 
 				// kick the cheater
 				$aseco->client->query('Kick', $login);
@@ -620,7 +620,7 @@ class PluginCheckpoint extends Plugin {
 				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} banned!',
 					str_ireplace('$w', '', $player->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 
 				// update banned IPs file
 				$aseco->banned_ips[] = $player->ip;
@@ -638,7 +638,7 @@ class PluginCheckpoint extends Plugin {
 				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} blacklisted!',
 					str_ireplace('$w', '', $player->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 
 				// blacklist the cheater and then kick him
 				$aseco->client->query('BlackList', $player->login);
@@ -660,7 +660,7 @@ class PluginCheckpoint extends Plugin {
 				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} blacklisted & banned!',
 					str_ireplace('$w', '', $player->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 
 				// update banned IPs file
 				$aseco->banned_ips[] = $player->ip;

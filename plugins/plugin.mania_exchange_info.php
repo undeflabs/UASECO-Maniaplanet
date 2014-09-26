@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -84,7 +84,7 @@ class PluginManiaExchangeInfo extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 			$aseco->releaseEvent('onManiaExchangeBestLoaded', ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->mxdata->recordlist[0]['stuntscore'] : $this->mxdata->recordlist[0]['replaytime']));
@@ -127,7 +127,7 @@ class PluginManiaExchangeInfo extends Plugin {
 			}
 			else {
 				$message = '{#server}» {#highlite}' . $command['params'][0] . '{#error} is not a valid Map/MX ID!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}
@@ -141,7 +141,7 @@ class PluginManiaExchangeInfo extends Plugin {
 		}
 		if (!$data || $data->error != '') {
 			$message = '{#server}» {#highlite}' . ($name != '' ? $aseco->stripColors($name) : $id) . '{#error} is not a known MX map, or MX is down!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -212,7 +212,7 @@ class PluginManiaExchangeInfo extends Plugin {
 			}
 			else {
 				$message = '{#server}» {#highlite}' . $tid . '{#error} is not a valid Map/MX ID!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}
@@ -226,13 +226,13 @@ class PluginManiaExchangeInfo extends Plugin {
 		}
 		if (!$data || $data->error != '') {
 			$message = '{#server}» {#highlite}' . ($name != '' ? $aseco->stripColors($name) : $id) . '{#error} is not a known MX map, or MX is down!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if (empty($data->recordlist)) {
 			$message = '{#server}» {#error}No MX records found for {#highlite}$i ' . $data->name;
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 

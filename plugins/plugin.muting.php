@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-07
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -107,7 +107,7 @@ class PluginMuting extends Plugin {
 							// spewed buffer to be buffered again
 							$buf .= LF .'$z$z$s'. $line;
 						}
-						$aseco->client->query('ChatSendServerMessageToLogin', $buf, $player->login);
+						$aseco->sendChatMessage($buf, $player->login);
 					}
 				}
 				else {
@@ -169,7 +169,7 @@ class PluginMuting extends Plugin {
 				$title,
 				$aseco->stripColors($target->nickname)
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -187,7 +187,7 @@ class PluginMuting extends Plugin {
 		}
 
 		// show chat message
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 	}
 
 	/*
@@ -220,7 +220,7 @@ class PluginMuting extends Plugin {
 		}
 
 		// show chat message
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+		$aseco->sendChatMessage($message, $player->login);
 	}
 
 	/*
@@ -235,7 +235,7 @@ class PluginMuting extends Plugin {
 
 		// check for muted players
 		if (empty($player->mutelist)) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No muted players found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No muted players found!', $player->login);
 			return;
 		}
 
@@ -279,7 +279,7 @@ class PluginMuting extends Plugin {
 		}
 		else {
 			// == 1
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No muted players found!'), $player->login);
+			$aseco->sendChatMessage('{#server}» {#error}No muted players found!', $player->login);
 		}
 	}
 
@@ -301,7 +301,7 @@ class PluginMuting extends Plugin {
 				// spewed buffer to be buffered again
 				$buf .= LF . '$z$z$s' . $line;
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $buf, $player->login);
+			$aseco->sendChatMessage($buf, $player->login);
 		}
 	}
 }

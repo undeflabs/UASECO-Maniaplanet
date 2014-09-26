@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-25
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -189,11 +189,11 @@ class PluginStyles extends Plugin {
 					$message = '{#server}» {#error}No valid style file, use {#highlite}$i /style list {#error}!';
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 		else {
 			$message = '{#server}» {#error}No style specified, use {#highlite}$i /style help {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 

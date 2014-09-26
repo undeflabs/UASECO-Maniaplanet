@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-20
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -130,7 +130,7 @@ class PluginLocalRecords extends Plugin {
 		}
 		else if (($this->settings['show_recs_before'] & 1) == 1) {
 			// Or show original record message
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 
 		// If there's a record on current map
@@ -294,7 +294,7 @@ class PluginLocalRecords extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 		}
@@ -372,7 +372,7 @@ class PluginLocalRecords extends Plugin {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, true));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}
@@ -476,12 +476,12 @@ class PluginLocalRecords extends Plugin {
 									$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 								}
 								else {
-									$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+									$aseco->sendChatMessage($message);
 								}
 							}
 							else {
 								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+								$aseco->sendChatMessage($message, $login);
 							}
 						}
 
@@ -516,12 +516,12 @@ class PluginLocalRecords extends Plugin {
 									$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 								}
 								else {
-									$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+									$aseco->sendChatMessage($message);
 								}
 							}
 							else {
 								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+								$aseco->sendChatMessage($message, $login);
 							}
 						}
 					}
@@ -547,12 +547,12 @@ class PluginLocalRecords extends Plugin {
 								$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 							}
 							else {
-								$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+								$aseco->sendChatMessage($message);
 							}
 						}
 						else {
 							$message = str_replace('{#server}» ', '{#server}» ', $message);
-							$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+							$aseco->sendChatMessage($message, $login);
 						}
 					}
 				}
@@ -1009,14 +1009,14 @@ class PluginLocalRecords extends Plugin {
 		if ($login) {
 			// strip 1 leading '>' to indicate a player message instead of system-wide
 			$message = str_replace('{#server}» ', '{#server}» ', $message);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			if (($window & 4) == 4) {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, ($mode == 3)));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}

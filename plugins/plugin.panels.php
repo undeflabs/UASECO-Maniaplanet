@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-06
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -119,7 +119,7 @@ class PluginPanels extends Plugin {
 		// check for donation plugin
 		if ( !isset($aseco->plugins['PluginDonate']) ) {
 			$message = '{#server}» {#error}Donations unavailable - include plugins.donate.php in [config/plugins.xml]';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -234,11 +234,11 @@ class PluginPanels extends Plugin {
 					$message = '{#server}» {#error}No valid donate panel file, use {#highlite}$i /donpanel list {#error}!';
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			$message = '{#server}» {#error}No donate panel specified, use {#highlite}$i /donpanel help {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -360,12 +360,12 @@ class PluginPanels extends Plugin {
 					$message = '{#server}» {#error}No valid records panel file, use {#highlite}$i /recpanel list {#error}!';
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 
 		else {
 			$message = '{#server}» {#error}No records panel specified, use {#highlite}$i /recpanel help {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -484,11 +484,11 @@ class PluginPanels extends Plugin {
 					$message = '{#server}» {#error}No valid vote panel file, use {#highlite}$i /votepanel list {#error}!';
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			$message = '{#server}» {#error}No vote panel specified, use {#highlite}$i /votepanel help {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -609,11 +609,11 @@ class PluginPanels extends Plugin {
 					$message = '{#server}» {#error}No valid panel background file, use {#highlite}$i /panelbg list {#error}!';
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			$message = '{#server}» {#error}No panel background specified, use {#highlite}$i /panelbg help {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -1200,11 +1200,11 @@ class PluginPanels extends Plugin {
 					$message = '{#server}» {#error}No valid admin panel file, use {#highlite}$i /admin panel list {#error}!';
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			$message = '{#server}» {#error}No admin panel specified, use {#highlite}$i /admin panel help {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 

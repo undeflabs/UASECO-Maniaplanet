@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-09
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -70,7 +70,7 @@ class PluginChatMe extends Plugin {
 		// Check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
 			$message = $aseco->formatText($aseco->getChatMessage('MUTED'), '/me');
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -81,7 +81,7 @@ class PluginChatMe extends Plugin {
 		);
 
 		// Show chat message
-		$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+		$aseco->sendChatMessage($message);
 	}
 }
 

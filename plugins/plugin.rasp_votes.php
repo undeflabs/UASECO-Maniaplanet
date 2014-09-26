@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-24
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -132,7 +132,7 @@ class PluginRaspVotes extends Plugin {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 			$this->chatvote = array();  // $this->mxadd is already reset in rasp_newmap()
 
@@ -189,13 +189,13 @@ class PluginRaspVotes extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 			else if ($this->global_explain == 1) {  // just to the new player
 				// strip 1 leading '>' to indicate a player message instead of system-wide
 				$message = str_replace('{#server}»> ', '{#server}» ', $message);
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}  // == 0, no explanation
 		}
 	}
@@ -221,7 +221,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 				$this->chatvote = array();
 
@@ -258,7 +258,7 @@ class PluginRaspVotes extends Plugin {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 			$this->chatvote = array();
 
@@ -289,7 +289,7 @@ class PluginRaspVotes extends Plugin {
 						$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+						$aseco->sendChatMessage($message);
 					}
 					$this->chatvote = array();
 
@@ -313,7 +313,7 @@ class PluginRaspVotes extends Plugin {
 						$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+						$aseco->sendChatMessage($message);
 					}
 					$this->mxadd = array();
 
@@ -337,7 +337,7 @@ class PluginRaspVotes extends Plugin {
 							$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 						}
 						else {
-							$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+							$aseco->sendChatMessage($message);
 						}
 					}
 					else {
@@ -351,7 +351,7 @@ class PluginRaspVotes extends Plugin {
 							$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 						}
 						else {
-							$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+							$aseco->sendChatMessage($message);
 						}
 					}
 				}
@@ -394,7 +394,7 @@ class PluginRaspVotes extends Plugin {
 						$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+						$aseco->sendChatMessage($message);
 					}
 					$this->chatvote = array();
 
@@ -418,7 +418,7 @@ class PluginRaspVotes extends Plugin {
 						$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+						$aseco->sendChatMessage($message);
 					}
 					$this->mxadd = array();
 
@@ -450,7 +450,7 @@ class PluginRaspVotes extends Plugin {
 								$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 							}
 							else {
-								$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+								$aseco->sendChatMessage($message);
 							}
 						}
 						else {
@@ -464,7 +464,7 @@ class PluginRaspVotes extends Plugin {
 								$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 							}
 							else {
-								$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+								$aseco->sendChatMessage($message);
 							}
 						}
 					}
@@ -484,7 +484,7 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -530,34 +530,34 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if ($this->disabled_scoreboard) {
 			$message = $this->messages['NO_SB_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether this player is spectator
 		if (!$this->allow_spec_startvote && $player->isspectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether available admin should be asked for endround
 		if ($this->disable_upon_admin && $this->admin_online()) {
 			$message = $this->messages['ASK_ADMIN'][0] . ' {#highlite}End this Round';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			$message = $this->messages['VOTE_ALREADY'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -566,7 +566,7 @@ class PluginRaspVotes extends Plugin {
 			$message = '{#server}» {#error}Running {#highlite}$i ' .
 			           $aseco->server->gameinfo->getGamemodeName() .
 			           '{#error} mode - end round disabled!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -592,7 +592,7 @@ class PluginRaspVotes extends Plugin {
 			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			$aseco->sendChatMessage($message);
 		}
 
 		// enable all vote panels
@@ -619,41 +619,41 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if ($this->disabled_scoreboard) {
 			$message = $this->messages['NO_SB_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether this player is spectator
 		if (!$this->allow_spec_startvote && $player->isspectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether available admin should be asked for ladder restart
 		if ($this->disable_upon_admin && $this->admin_online()) {
 			$message = $this->messages['ASK_ADMIN'][0] . ' {#highlite}Restart Map for Ladder';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			$message = $this->messages['VOTE_ALREADY'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether ladder votes are allowed
 		if ($this->max_laddervotes == 0) {
 			$message = '{#server}» {#error}Ladder restart votes not allowed!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -664,7 +664,7 @@ class PluginRaspVotes extends Plugin {
 				'/ladder',
 				($this->max_laddervotes == 1 ? '' : 's')
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -683,7 +683,7 @@ class PluginRaspVotes extends Plugin {
 				$message = '{#server}» {#error}First player already has {#highlite}$i ' .
 					$points .
 					'{#error} points - too late for ladder restart!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}
@@ -699,7 +699,7 @@ class PluginRaspVotes extends Plugin {
 				$message = '{#server}» {#error}Map is already playing for {#highlite}$i ' .
 					preg_replace('/^00:/', '', $aseco->formatTime($played * 1000, false)) .
 					'{#error} minutes - too late for ladder restart!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}  // no restrictions in other modes
@@ -729,7 +729,7 @@ class PluginRaspVotes extends Plugin {
 			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			$aseco->sendChatMessage($message);
 		}
 
 		// enable all vote panels
@@ -756,41 +756,41 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if ($this->disabled_scoreboard) {
 			$message = $this->messages['NO_SB_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether this player is spectator
 		if (!$this->allow_spec_startvote && $player->isspectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether available admin should be asked for replay
 		if ($this->disable_upon_admin && $this->admin_online()) {
 			$message = $this->messages['ASK_ADMIN'][0] . ' {#highlite}Replay Map after Finish';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			$message = $this->messages['VOTE_ALREADY'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether replay votes are allowed
 		if ($this->max_replayvotes == 0) {
 			$message = '{#server}» {#error}Replay votes not allowed!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -801,7 +801,7 @@ class PluginRaspVotes extends Plugin {
 				'/replay',
 				($this->max_replayvotes == 1 ? '' : 's')
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -811,14 +811,14 @@ class PluginRaspVotes extends Plugin {
 				$this->replays_limit,
 				($this->replays_limit == 1 ? '' : 's')
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check if map already in jukebox
 		if (!empty($this->jukebox) && array_key_exists($aseco->server->maps->current->uid, $this->jukebox)) {
 			$message = '{#server}» {#error}Map is already getting replayed!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -837,7 +837,7 @@ class PluginRaspVotes extends Plugin {
 				$message = '{#server}» {#error}First player has only {#highlite}$i ' .
 					$points .
 					'{#error} points - too early for replay!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}
@@ -853,7 +853,7 @@ class PluginRaspVotes extends Plugin {
 				$message = '{#server}» {#error}Map is only playing for {#highlite}$i ' .
 					preg_replace('/^00:/', '', $aseco->formatTime($played * 1000, false)) .
 					'{#error} minutes - too early for replay!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}  // no restrictions in other modes
@@ -883,7 +883,7 @@ class PluginRaspVotes extends Plugin {
 			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			$aseco->sendChatMessage($message);
 		}
 
 		// enable all vote panels
@@ -910,41 +910,41 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if ($this->disabled_scoreboard) {
 			$message = $this->messages['NO_SB_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether this player is spectator
 		if (!$this->allow_spec_startvote && $player->isspectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether available admin should be asked for skip
 		if ($this->disable_upon_admin && $this->admin_online()) {
 			$message = $this->messages['ASK_ADMIN'][0] . ' {#highlite}Skip this Map';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			$message = $this->messages['VOTE_ALREADY'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether skip votes are allowed
 		if ($this->max_skipvotes == 0) {
 			$message = '{#server}» {#error}Skip votes not allowed!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -955,7 +955,7 @@ class PluginRaspVotes extends Plugin {
 				'/skip',
 				($this->max_skipvotes == 1 ? '' : 's')
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -974,7 +974,7 @@ class PluginRaspVotes extends Plugin {
 				$message = '{#server}» {#error}First player already has {#highlite}$i ' .
 					$points .
 					'{#error} points - too late for skip!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}
@@ -990,7 +990,7 @@ class PluginRaspVotes extends Plugin {
 				$message = '{#server}» {#error}Map is already playing for {#highlite}$i ' .
 					preg_replace('/^00:/', '', $aseco->formatTime($played * 1000, false)) .
 					'{#error} minutes - too late for skip!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 				return;
 			}
 		}  // no restrictions in other modes
@@ -1020,7 +1020,7 @@ class PluginRaspVotes extends Plugin {
 			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 		}
 		else {
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			$aseco->sendChatMessage($message);
 		}
 
 		// enable all vote panels
@@ -1048,41 +1048,41 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if ($this->disabled_scoreboard) {
 			$message = $this->messages['NO_SB_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether this player is spectator
 		if (!$this->allow_spec_startvote && $player->isspectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether available admin should be asked for ignore
 		if ($this->disable_upon_admin && $this->admin_online()) {
 			$message = $this->messages['ASK_ADMIN'][0] . ' {#highlite}Ignore a Player';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			$message = $this->messages['VOTE_ALREADY'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for permission to ignore
 		if (!$this->allow_ignorevotes) {
 			$message = '{#server}» {#error}Ignore votes not allowed!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -1115,7 +1115,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 
 				// enable all vote panels
@@ -1134,7 +1134,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->stripColors($player->nickname),
 					$aseco->stripColors($target->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}
@@ -1152,41 +1152,41 @@ class PluginRaspVotes extends Plugin {
 		// check for active voting system
 		if (!$this->feature_votes) {
 			$message = $this->messages['NO_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		if ($this->disabled_scoreboard) {
 			$message = $this->messages['NO_SB_VOTE'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether this player is spectator
 		if (!$this->allow_spec_startvote && $player->isspectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check whether available admin should be asked for kick
 		if ($this->disable_upon_admin && $this->admin_online()) {
 			$message = $this->messages['ASK_ADMIN'][0] . ' {#highlite}Kick a Player';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			$message = $this->messages['VOTE_ALREADY'][0];
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for permission to kick
 		if (!$this->allow_kickvotes) {
 			$message = '{#server}» {#error}Kick votes not allowed!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -1219,7 +1219,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 
 				// enable all vote panels
@@ -1238,7 +1238,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->stripColors($player->nickname),
 					$aseco->stripColors($target->nickname)
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 		}
 	}
@@ -1270,7 +1270,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 				$this->chatvote = array();
 
@@ -1281,7 +1281,7 @@ class PluginRaspVotes extends Plugin {
 			}
 			else {
 				$message = '{#server}» {#error}You didn\'t start the current vote!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if (!empty($this->mxadd)) {
@@ -1300,7 +1300,7 @@ class PluginRaspVotes extends Plugin {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 				$this->mxadd = array();
 
@@ -1311,12 +1311,12 @@ class PluginRaspVotes extends Plugin {
 			}
 			else {
 				$message = '{#server}» {#error}You didn\'t start the current vote!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else {
 			$message = '{#server}» {#error}There is no vote in progress!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 

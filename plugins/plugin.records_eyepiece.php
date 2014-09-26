@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-09-21
+ * Date:		2014-09-26
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -1291,7 +1291,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Send the UI settings
-		$aseco->plugins['PluginModescriptHandler']->setupUserInterface($aseco);
+		$aseco->plugins['PluginModescriptHandler']->setupUserInterface();
 
 
 
@@ -1389,7 +1389,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$aseco->mysqli->query($query);
 
 			// Give feedback to the Player
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_DISABLED'][0]), $player->login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_DISABLED'][0], $player->login);
 
 		}
 		else if (strtoupper($chat_parameter) == 'SHOW') {
@@ -1423,7 +1423,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$aseco->mysqli->query($query);
 
 			// Give feedback to the Player
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_ENABLED'][0]), $player->login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_ENABLED'][0], $player->login);
 
 
 			// Send all widgets
@@ -1451,7 +1451,7 @@ class PluginRecordsEyepiece extends Plugin {
 				}
 
 				// Show message
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 
 		}
@@ -1473,7 +1473,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else {
 				// Show message that the display at score is impossible
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0]), $login);
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0], $login);
 			}
 		}
 	}
@@ -1566,7 +1566,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		else {
 			// Show message that the display at score is impossible
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0]), $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0], $login);
 		}
 	}
 
@@ -1598,10 +1598,10 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->onSync($aseco, true);
 
 				// Simulate the event 'onBeginMap'
-				$this->onBeginMap($aseco, $aseco->server->map->current);
+				$this->onBeginMap($aseco, $aseco->server->maps->current);
 
 				// Simulate the event 'onBeginMap1'
-				$this->onBeginMap1($aseco, $aseco->server->map->current);
+				$this->onBeginMap1($aseco, $aseco->server->maps->current);
 
 				// Display the PlacementWidgets at state 'always'
 				if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
@@ -1672,7 +1672,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Show message
 		if ($message != false) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -1850,7 +1850,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		else {
 			// Show message that the display at score is impossible
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0]), $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0], $login);
 		}
 	}
 
@@ -1880,7 +1880,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else {
 				// Show message that the display at score is impossible
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0]), $login);
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['DISALLOW_WINDOWS_AT_SCORE'][0], $login);
 			}
 		}
 	}
@@ -1899,7 +1899,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else {
 				// RecordWidgets are in NiceMode and can not be hidden so give feedback to the Player
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['TOGGLING_DISABLED'][0]), $login);
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['TOGGLING_DISABLED'][0], $login);
 			}
 		}
 	}
@@ -1929,7 +1929,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->closeRaceWidgets($player->login, false);
 
 					// Give feedback to the Player
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['WIDGETS_DISABLED'][0]), $player->login);
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_DISABLED'][0], $player->login);
 				}
 				else {
 					// Init
@@ -1958,7 +1958,7 @@ class PluginRecordsEyepiece extends Plugin {
 					}
 
 					// Give feedback to the Player
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['WIDGETS_ENABLED'][0]), $player->login);
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_ENABLED'][0], $player->login);
 
 
 					// Send all widgets
@@ -1970,7 +1970,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else {
 				// RecordWidgets are in NiceMode and can not be hidden so give feedback to the Player
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($this->config['MESSAGES'][0]['TOGGLING_DISABLED'][0]), $login);
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['TOGGLING_DISABLED'][0], $login);
 			}
 		}
 	}

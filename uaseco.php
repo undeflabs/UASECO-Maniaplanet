@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-09-21');
+	define('UASECO_BUILD',		'2014-09-26');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -450,7 +450,7 @@ class UASECO extends Helper {
 		);
 
 		// Show startup message
-		$this->client->query('ChatSendServerMessage', $this->formatColors($message));
+		$this->sendChatMessage($message);
 	}
 
 	/*
@@ -1739,7 +1739,7 @@ class UASECO extends Helper {
 							);
 
 							// Show chat message
-							$this->client->query('ChatSendServerMessage', $this->formatColors($message));
+							$this->sendChatMessage($message);
 						}
 						else {
 							// Replace parameters
@@ -1748,7 +1748,7 @@ class UASECO extends Helper {
 							);
 
 							// Show chat message
-							$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $player->login);
+							$this->sendChatMessage($message, $player->login);
 						}
 
 						// Throw 'player wins' event
@@ -1811,8 +1811,7 @@ class UASECO extends Helper {
 			// if no data fetched, notify & kick the player
 			if (!isset($data['Login']) || $data['Login'] == '') {
 				$message = str_replace('{br}', LF, $this->getChatMessage('CONNECT_ERROR'));
-				$message = $this->formatColors($message);
-				$this->client->query('ChatSendServerMessageToLogin', str_replace(LF.LF, LF, $message), $login);
+				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
 				sleep(5);  // allow time to connect and see the notice
 				$this->client->addCall('Kick', array($login, $this->formatColors($this->getChatMessage('CONNECT_DIALOG'))));
 				// log console message
@@ -1823,8 +1822,7 @@ class UASECO extends Helper {
 			else if (!empty($this->banned_ips) && in_array($ipaddr, $this->banned_ips)) {
 				// if player IP in ban list, notify & kick the player
 				$message = str_replace('{br}', LF, $this->getChatMessage('BANIP_ERROR'));
-				$message = $this->formatColors($message);
-				$this->client->query('ChatSendServerMessageToLogin', str_replace(LF.LF, LF, $message), $login);
+				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
 				sleep(5);  // allow time to connect and see the notice
 				$this->client->addCall('Ban', array($login, $this->formatColors($this->getChatMessage('BANIP_DIALOG'))));
 				$this->console('[Player] Player ['. $login .'] banned from '. $ipaddr .' -- notified & kicked');
@@ -1838,7 +1836,7 @@ class UASECO extends Helper {
 
 				// if invalid version, notify & kick the player
 				if ($this->settings['player_client'] != '' && strcmp($version, $this->settings['player_client']) < 0) {
-					$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $login);
+					$this->sendChatMessage($message, $login);
 					sleep(5);  // allow time to connect and see the notice
 					$this->client->addCall('Kick', array($login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG'))));
 					$this->console('[Player] Obsolete player client version '. $version .' for ['. $login .'] -- notified & kicked');
@@ -1847,7 +1845,7 @@ class UASECO extends Helper {
 
 				// if invalid version, notify & kick the admin
 				if ($this->settings['admin_client'] != '' && $this->isAnyAdminL($data['Login']) && strcmp($version, $this->settings['admin_client']) < 0) {
-					$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $login);
+					$this->sendChatMessage($message, $login);
 					sleep(5);  // allow time to connect and see the notice
 					$this->client->addCall('Kick', array($login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG'))));
 					$this->console('[Player] Obsolete admin client version '. $version .' for ['. $login .'] -- notified & kicked');
@@ -1912,7 +1910,7 @@ class UASECO extends Helper {
 				foreach ($message as &$line) {
 					$line = array($line);
 				}
-				$aseco->plugins['PluginManialinks']->display_manialink(
+				$this->plugins['PluginManialinks']->display_manialink(
 					$player->login,
 					'',
 					array('Icons64x64_1', 'Inbox'), $message,
@@ -1920,8 +1918,8 @@ class UASECO extends Helper {
 				);
 			}
 			else {
-				$message = str_replace('{br}', LF, $this->formatColors($message));
-				$this->client->query('ChatSendServerMessageToLogin', str_replace(LF.LF, LF, $message), $player->login);
+				$message = str_replace('{br}', LF, $message);
+				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $player->login);
 			}
 
 			// Throw main 'player connects' event

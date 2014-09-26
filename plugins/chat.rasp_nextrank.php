@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-21
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -72,7 +72,7 @@ class PluginChatRaspNextrank extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
@@ -134,18 +134,18 @@ class PluginChatRaspNextrank extends Plugin {
 						$diff = ($avg - $avg2) / 10000 * count($aseco->server->maps->map_list);
 						$message .= $aseco->formatText($aseco->plugins['PluginRasp']->messages['NEXTRANK_RP'][0], ceil($diff));
 					}
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 					$res3->free_result();
 				}
 				else {
 					$message = $aseco->plugins['PluginRasp']->messages['TOPRANK'][0];
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 				$res2->free_result();
 			}
 			else {
 				$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['RANK_NONE'][0], $aseco->plugins['PluginRasp']->minrank);
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 			$res->free_result();
 		}

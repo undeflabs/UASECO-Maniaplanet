@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -513,7 +513,7 @@ class PluginMusicServer extends Plugin {
 			}
 			else {
 				$message = '{#server}» {#error}No songs found, try again!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'current') {
@@ -548,7 +548,7 @@ class PluginMusicServer extends Plugin {
 			$message = $aseco->formatText($this->messages['CURRENT'][0],
 				$current
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 		else if ($command['params'][0] == 'reload') {
 
@@ -558,7 +558,7 @@ class PluginMusicServer extends Plugin {
 				if (!$settings = $aseco->parser->xmlToArray('config/musicserver.xml', true, true)) {
 					trigger_error('[MusicServer] Could not read/parse Music server config file config/musicserver.xml !', E_USER_WARNING);
 					$message = '{#server}» {#error}Could not read/parse Music server config file!';
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 					return;
 				}
 				$this->onSync($aseco);
@@ -574,14 +574,14 @@ class PluginMusicServer extends Plugin {
 					$chattitle,
 					$player->nickname
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 
 				// throw 'musicbox reloaded' event
 				$aseco->releaseEvent('onMusicboxReloaded', null);
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'next') {
@@ -614,12 +614,12 @@ class PluginMusicServer extends Plugin {
 						$player->nickname,
 						$song
 					);
-					$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+					$aseco->sendChatMessage($message);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'sort') {
@@ -638,11 +638,11 @@ class PluginMusicServer extends Plugin {
 					$chattitle,
 					$player->nickname
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'shuffle') {
@@ -661,11 +661,11 @@ class PluginMusicServer extends Plugin {
 					$chattitle,
 					$player->nickname
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'override' && $command['params'][1] != '') {
@@ -681,12 +681,12 @@ class PluginMusicServer extends Plugin {
 
 					// show chat message
 					$message = '{#server}» {#music}Music override set to ' . ($this->override ? 'Enabled' : 'Disabled');
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'autonext' && $command['params'][1] != '') {
@@ -702,12 +702,12 @@ class PluginMusicServer extends Plugin {
 
 					// show chat message
 					$message = '{#server}» {#music}Music autonext set to ' . ($this->autonext ? 'Enabled' : 'Disabled');
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'autoshuffle' && $command['params'][1] != '') {
@@ -723,12 +723,12 @@ class PluginMusicServer extends Plugin {
 
 					// show chat message
 					$message = '{#server}» {#music}Music autoshuffle set to ' . ($this->autoshuffle ? 'Enabled' : 'Disabled');
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'allowjb' && $command['params'][1] != '') {
@@ -744,12 +744,12 @@ class PluginMusicServer extends Plugin {
 
 					// show chat message
 					$message = '{#server}» {#music}Allow music jukebox set to ' . ($this->allowjb ? 'Enabled' : 'Disabled');
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'stripdirs' && $command['params'][1] != '') {
@@ -765,12 +765,12 @@ class PluginMusicServer extends Plugin {
 
 					// show chat message
 					$message = '{#server}» {#music}Strip subdirs set to ' . ($this->stripdirs ? 'Enabled' : 'Disabled');
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'stripexts' && $command['params'][1] != '') {
@@ -786,12 +786,12 @@ class PluginMusicServer extends Plugin {
 
 					// show chat message
 					$message = '{#server}» {#music}Strip extensions set to ' . ($this->stripexts ? 'Enabled' : 'Disabled');
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'off') {
@@ -814,11 +814,11 @@ class PluginMusicServer extends Plugin {
 					$chattitle,
 					$player->nickname
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 			else {
 				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'jukebox' || $command['params'][0] == 'jb') {
@@ -860,7 +860,7 @@ class PluginMusicServer extends Plugin {
 			}
 			else {
 				$message = $this->messages['JUKEBOX_EMPTY'][0];
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if ($command['params'][0] == 'drop') {
@@ -883,11 +883,11 @@ class PluginMusicServer extends Plugin {
 					$aseco->stripColors($player->nickname),
 					$song
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 			else {
 				$message = $this->messages['JUKEBOX_NODROP'][0];
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else if (is_numeric($command['params'][0])) {
@@ -916,31 +916,31 @@ class PluginMusicServer extends Plugin {
 								$aseco->stripColors($player->nickname),
 								$song
 							);
-							$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+							$aseco->sendChatMessage($message);
 						}
 						else {
 							$message = $this->messages['JUKEBOX_DUPL'][0];
-							$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+							$aseco->sendChatMessage($message, $player->login);
 						}
 					}
 					else {
 						$message = $this->messages['JUKEBOX_ALREADY'][0];
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+						$aseco->sendChatMessage($message, $player->login);
 					}
 				}
 				else {
 					$message = $this->messages['JUKEBOX_NOTFOUND'][0];
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 			else {
 				$message = $this->messages['NO_JUKEBOX'][0];
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else {
 			$message = '{#server}» {#error}Unknown music command or missing parameter: {#highlite}$i ' . $arglist;
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 

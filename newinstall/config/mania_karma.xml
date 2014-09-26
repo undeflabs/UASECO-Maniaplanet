@@ -204,37 +204,37 @@
 			<rounds>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>39.2</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</rounds>
 			<time_attack>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>39.2</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</time_attack>
 			<team>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>39.2</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</team>
 			<laps>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>39.2</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</laps>
 			<cup>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>39.2</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</cup>
 			<stunts>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>39.2</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</stunts>
 			<score>

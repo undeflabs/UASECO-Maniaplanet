@@ -12,7 +12,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-20
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -104,12 +104,12 @@ class PluginDonate extends Plugin {
 				$message = $aseco->formatText($aseco->getChatMessage('DONATE_MINIMUM'),
 					$this->mindonation
 				);
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else {
 			$message = $aseco->getChatMessage('DONATE_HELP');
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 
@@ -178,7 +178,7 @@ class PluginDonate extends Plugin {
 			}
 			else {
 				$message = '{#server}» {#error}No donator(s) found!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 
 			$res->free_result();
@@ -210,17 +210,17 @@ class PluginDonate extends Plugin {
 				}
 				else {
 					$message = $aseco->formatText($aseco->getChatMessage('PAY_INSUFF'), $planets);
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+					$aseco->sendChatMessage($message, $login);
 				}
 			}
 			else {
 				$message = $aseco->getChatMessage('PAY_SERVER');
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 		}
 		else {
 			$message = $aseco->getChatMessage('PAY_HELP');
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -276,7 +276,7 @@ class PluginDonate extends Plugin {
 			$message = $aseco->formatText($aseco->getChatMessage('PAY_CANCEL'),
 				$this->payments[$login][0]
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -377,13 +377,13 @@ class PluginDonate extends Plugin {
 								$planets,
 								$nickname
 							);
-							$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+							$aseco->sendChatMessage($message);
 						}
 						else {
 							$message = $aseco->formatText($aseco->getChatMessage('THANKS_YOU'),
 								$planets
 							);
-							$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+							$aseco->sendChatMessage($message, $login);
 						}
 						$aseco->console('[Donate] Player [{1}] donated {2} planets to this server (TxId {3})', $login, $planets, $txid);
 						$this->updateDonations($login, $planets);
@@ -401,7 +401,7 @@ class PluginDonate extends Plugin {
 							$nickname,
 							$newplanets
 						);
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+						$aseco->sendChatMessage($message, $login);
 						$aseco->console('Server paid {1} planets to login "{2}" (TxId {3})', abs($planets), $login, $txid);
 					}
 					unset($this->bills[$billid]);
@@ -409,7 +409,7 @@ class PluginDonate extends Plugin {
 
 				case 5:  // Refused
 					$message = '{#server}» {#error}Transaction refused!';
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+					$aseco->sendChatMessage($message, $login);
 					$aseco->console('Refused transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);
 					break;
@@ -417,10 +417,10 @@ class PluginDonate extends Plugin {
 				case 6:  // Error
 					$message = '{#server}» {#error}Transaction failed: {#highlite}$i ' . $bill[2];
 					if ($login != '') {
-						$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+						$aseco->sendChatMessage($message, $login);
 					}
 					else {
-						$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+						$aseco->sendChatMessage($message);
 					}
 					$aseco->console('Failed transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);

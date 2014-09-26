@@ -218,7 +218,7 @@
 
 		<race>
 			<pos_x>48.64</pos_x>
-			<pos_y>48</pos_y>
+			<pos_y>43.3</pos_y>
 			<scale>1.0</scale>
 		</race>
 		<score>
@@ -244,7 +244,7 @@
 		<width>15.76</width>
 
 		<pos_x>-64.54</pos_x>
-		<pos_y>41.6</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<icon_style>Icons128x128_1</icon_style>
@@ -281,7 +281,7 @@
 			<rounds>
 				<enabled>true</enabled>
 				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -290,7 +290,7 @@
 			<time_attack>
 				<enabled>true</enabled>
 				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 				<entries>20</entries>
 				<topcount>3</topcount>
@@ -308,7 +308,7 @@
 			<laps>
 				<enabled>true</enabled>
 				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
+				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -341,16 +341,16 @@
 			<rounds>
 				<enabled>true</enabled>
 				<pos_x>-64.54</pos_x>
-				<pos_y>2.5</pos_y>
+				<pos_y>4.2</pos_y>
 				<scale>1.0</scale>
-				<entries>14</entries>
+				<entries>15</entries>
 				<topcount>3</topcount>
 			</rounds>
 
 			<time_attack>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>28.2</pos_y>
+				<pos_y>23.5</pos_y>
 				<scale>1.0</scale>
 				<entries>16</entries>
 				<topcount>3</topcount>
@@ -368,9 +368,9 @@
 			<laps>
 				<enabled>true</enabled>
 				<pos_x>-64.54</pos_x>
-				<pos_y>2.5</pos_y>
+				<pos_y>4.2</pos_y>
 				<scale>1.0</scale>
-				<entries>13</entries>
+				<entries>15</entries>
 				<topcount>3</topcount>
 			</laps>
 
@@ -408,7 +408,7 @@
 				<display_type>scores</display_type>		<!-- Display 'score' or 'time' in the LiveRankings? -->
 				<format>{score} ({remaining})</format>		<!-- Placeholder '{score}', '{remaining}' and '{pointlimit}' are replaced with e.g. "25 (74)" -->
 				<pos_x>48.64</pos_x>
-				<pos_y>-0.3</pos_y>
+				<pos_y>-4.9</pos_y>
 				<scale>1.0</scale>
 				<entries>11</entries>
 				<topcount>3</topcount>
@@ -417,7 +417,7 @@
 			<time_attack>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>-4</pos_y>
+				<pos_y>-8.7</pos_y>
 				<scale>1.0</scale>
 				<entries>9</entries>
 				<topcount>3</topcount>
@@ -438,7 +438,7 @@
 				<pos_x>48.64</pos_x>
 				<pos_y>-5.06</pos_y>
 				<scale>1.0</scale>
-				<entries>8</entries>
+				<entries>11</entries>
 				<topcount>3</topcount>
 			</laps>
 
@@ -482,14 +482,14 @@
 				<enabled>true</enabled>
 				<race>
 					<pos_x>48.64</pos_x>
-					<pos_y>28.3</pos_y>
+					<pos_y>23.7</pos_y>
 					<scale>1.0</scale>
 					<entries>14</entries>
 					<topcount>3</topcount>
 				</race>
 				<warmup>
 					<pos_x>48.64</pos_x>
-					<pos_y>28.3</pos_y>
+					<pos_y>23.7</pos_y>
 					<scale>1.0</scale>
 					<entries>2</entries>			<!-- max. 2 -->
 					<topcount>2</topcount>			<!-- max. 2 -->
@@ -662,7 +662,7 @@
 		<roc_server>false</roc_server>
 
 		<pos_x>-63.85</pos_x>
-		<pos_y>39.8</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -676,7 +676,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>-59.05</pos_x>
-		<pos_y>39.8</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -690,7 +690,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>-54.25</pos_x>
-		<pos_y>39.8</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -704,7 +704,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>-49.45</pos_x>
-		<pos_y>39.8</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -718,7 +718,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>24.58</pos_x>
-		<pos_y>39.3</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -732,7 +732,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>29.38</pos_x>
-		<pos_y>39.3</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -746,7 +746,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>34.18</pos_x>
-		<pos_y>39.3</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -760,7 +760,7 @@
 		<text_color>FC0F</text_color>
 
 		<pos_x>38.98</pos_x>
-		<pos_y>39.3</pos_y>
+		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
 
 		<background_style>BgsPlayerCard</background_style>
@@ -775,7 +775,7 @@
 
 		<race>
 			<pos_x>43.78</pos_x>
-			<pos_y>39.3</pos_y>
+			<pos_y>100</pos_y>
 			<scale>1.0</scale>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
@@ -797,7 +797,7 @@
 
 		<race>
 			<pos_x>43.78</pos_x>
-			<pos_y>32.6</pos_y>
+			<pos_y>43.3</pos_y>
 			<scale>1.0</scale>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
@@ -845,7 +845,7 @@
 		<text_color>FC0F</text_color>
 
 		<race>
-			<enabled>true</enabled>
+			<enabled>false</enabled>
 			<pos_x>-62</pos_x>
 			<pos_y>47</pos_y>
 			<scale>1.0</scale>
@@ -1210,7 +1210,7 @@
 		<clock_icon>http://static.undef.name/ingame/records-eyepiece/clock-icon.png</clock_icon>
 		<worldmap>http://static.undef.name/ingame/records-eyepiece/worldmap-pure.png</worldmap>
 		<no_screenshot>http://static.undef.name/ingame/records-eyepiece/no-screenshot-tm2.jpg</no_screenshot>
-		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.bik</progress_indicator>
+		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.png</progress_indicator>
 
 		<environment>
 			<logos>

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-21
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -176,7 +176,7 @@ class PluginRounds extends Plugin {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessage', $message);
+				$aseco->sendChatMessage($message);
 			}
 
 			// Reset times

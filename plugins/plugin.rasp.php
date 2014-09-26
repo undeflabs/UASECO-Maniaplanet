@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-17
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -288,7 +288,7 @@ class PluginRasp extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 			return;
 		}
 
@@ -370,7 +370,7 @@ class PluginRasp extends Plugin {
 				$window->send($player, 0, false);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No ranked players found!'), $player->login);
+				$aseco->sendChatMessage('{#server}» {#error}No ranked players found!', $player->login);
 			}
 			$res->free_result();
 		}
@@ -435,7 +435,7 @@ class PluginRasp extends Plugin {
 				$window->send($player, 0, false);
 			}
 			else {
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors('{#server}» {#error}No ranked players found!'), $player->login);
+				$aseco->sendChatMessage('{#server}» {#error}No ranked players found!', $player->login);
 			}
 			$res->free_result();
 		}
@@ -942,13 +942,11 @@ class PluginRasp extends Plugin {
 				$ret['rank'],
 				$avg
 			);
-			$message = $aseco->formatColors($message);
-			$aseco->client->query('ChatSendServerMessageToLogin', $message, $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 		else {
 			$message = $this->messages['PB_NONE'][0];
-			$message = $aseco->formatColors($message);
-			$aseco->client->query('ChatSendServerMessageToLogin', $message, $player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 
@@ -987,13 +985,13 @@ class PluginRasp extends Plugin {
 						$res2->num_rows,
 						sprintf("%4.1F", $row['Avg'] / 10000)
 					);
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+					$aseco->sendChatMessage($message, $login);
 					$res2->free_result();
 				}
 			}
 			else {
 				$message = $aseco->formatText($this->messages['RANK_NONE'][0], $this->minrank);
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 			$res->free_result();
 		}

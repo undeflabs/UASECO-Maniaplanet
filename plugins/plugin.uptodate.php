@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-19
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -98,10 +98,10 @@ class PluginUptodate extends Plugin {
 
 	public function onSync ($aseco, $command) {
 
-		// check version but ignore error
+		// Check version but ignore error
 		if ($aseco->settings['uptodate_check'] && $message = $aseco->plugins['PluginUptodate']->checkUasecoUptodate($aseco)) {
-			// show chat message
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			// Show chat message
+			$aseco->sendChatMessage($message);
 		}
 	}
 
@@ -122,8 +122,8 @@ class PluginUptodate extends Plugin {
 					// strip 1 leading '>' to indicate a player message instead of system-wide
 					$message = str_replace('{#server}» ', '{#server}» ', $message);
 
-					// show chat message
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $player->login);
+					// Show chat message
+					$aseco->sendChatMessage($message, $player->login);
 				}
 			}
 
@@ -148,11 +148,11 @@ class PluginUptodate extends Plugin {
 			$message = str_replace('{#server}» ', '{#server}» ', $message);
 
 			// show chat message
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 		else {
 			$message = '{#server}» {#error}Error: can\'t access the last version!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -205,21 +205,21 @@ class PluginUptodate extends Plugin {
 						$new,
 						($new == 1 ? '' : 's')
 					);
-					$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+					$aseco->sendChatMessage($message, $login);
 				}
 			}
 			else {
 				$message = $aseco->formatText('{#server}» {#error}Error: can\'t parse {#highlite}$i{1}{#error}!',
 					$url
 				);
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 		}
 		else {
 			$message = $aseco->formatText('{#server}» {#error}Error: can\'t access {#highlite}$i{1}{#error}!',
 				$url
 			);
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 }

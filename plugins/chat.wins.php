@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-14
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -69,7 +69,7 @@ class PluginChatWins extends Plugin {
 			$player = $aseco->server->players->getPlayer($chat_parameter);
 			if (!$player) {
 				$message = '{#server}» {#error}Given player login {#highlite}'. $chat_parameter .'{#error} not found!';
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 				return;
 			}
 			$wins = $player->getWins();
@@ -94,7 +94,7 @@ class PluginChatWins extends Plugin {
 		}
 
 		// Show chat message
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 }
 

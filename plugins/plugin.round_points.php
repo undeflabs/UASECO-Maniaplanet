@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-12
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -310,7 +310,7 @@ class PluginRoundPoints extends Plugin {
 				);
 			}
 		}
-		$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+		$aseco->sendChatMessage($message, $login);
 	}
 
 	/*
@@ -415,7 +415,7 @@ class PluginRoundPoints extends Plugin {
 					);
 				}
 			}
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 
 		}
 		else if ($command[0] == 'off') {
@@ -430,7 +430,7 @@ class PluginRoundPoints extends Plugin {
 				$chattitle,
 				$admin->nickname
 			);
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+			$aseco->sendChatMessage($message);
 
 		}
 		else if (preg_match('/^\d+,[\d,]*\d+$/', $command[0])) {
@@ -439,7 +439,7 @@ class PluginRoundPoints extends Plugin {
 			$rtn = $aseco->client->query('SetRoundCustomPoints', $points, false);
 			if (!$rtn) {
 				$message = '{#server}» {#error}Invalid point distribution!  Error: {#highlite}$i ' . $aseco->client->getErrorMessage();
-				$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+				$aseco->sendChatMessage($message, $login);
 			}
 			else {
 				// log console message
@@ -451,7 +451,7 @@ class PluginRoundPoints extends Plugin {
 					$admin->nickname,
 					$command[0]
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 
 		}
@@ -472,13 +472,13 @@ class PluginRoundPoints extends Plugin {
 					$this->rounds_points[$system][0],
 					implode(',', $this->rounds_points[$system][1])
 				);
-				$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
+				$aseco->sendChatMessage($message);
 			}
 
 		}
 		else {
 			$message = '{#server}» {#error}Unknown points system {#highlite}$i ' . strtoupper($command[0]) . '$z$s {#error}!';
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 }

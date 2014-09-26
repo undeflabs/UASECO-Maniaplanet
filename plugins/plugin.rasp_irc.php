@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-19
+ * Date:	2014-09-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -165,7 +165,7 @@ class PluginRaspIrc extends Plugin {
 				if ($player != $this->irc->nick && strlen($player) > 0) {
 					$player = '$f00'.$player;
 					$msg = '$0f0-IRC-$fff['.$player.'$fff] '.$text;
-					$aseco->client->query('ChatSendServerMessage', $msg);
+					$aseco->sendChatMessage($msg);
 				}
 			}
 		}
