@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2014-07-23
+ * Date:		2014-09-26
  * Copyright:		2012 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -302,7 +302,7 @@ class PluginVoteManager extends Plugin {
 			if ($this->config['RunningVote']['Active'] == true) {
 				if ($this->config['RunningVote']['Mode'] == 'Restart') {
 					// Restart passed, send the info message
-					$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_SUCCESS'][0], false);
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_SUCCESS'][0]);
 
 					// Setup restart
 					$this->config['Cache']['Todo']['onEndMap'] = $this->config['RunningVote']['Mode'];
@@ -317,7 +317,7 @@ class PluginVoteManager extends Plugin {
 				}
 				else if ($this->config['RunningVote']['Mode'] == 'Skip') {
 					// Skip passed, send the info message
-					$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_SUCCESS'][0], false);
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_SUCCESS'][0]);
 
 					// Skip now
 					$this->handleTodo('Skip');
@@ -341,11 +341,11 @@ class PluginVoteManager extends Plugin {
 			if ($this->config['RunningVote']['Active'] == true) {
 				if ($this->config['RunningVote']['Mode'] == 'Restart') {
 					// Restart did not pass, send the info message
-					$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_FAILED'][0], false);
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_FAILED'][0]);
 				}
 				else if ($this->config['RunningVote']['Mode'] == 'Skip') {
 					// Skip did not pass, send the info message
-					$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0], false);
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0]);
 				}
 
 				// Cleanup ended vote
@@ -418,7 +418,7 @@ class PluginVoteManager extends Plugin {
 				if ( ($count_yes / $totalvotes * 100) >= ($this->config['VOTING'][0]['RATIO'][0] * 100) ) {
 					if ($this->config['RunningVote']['Mode'] == 'Restart') {
 						// Restart passed, send the info message
-						$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_SUCCESS'][0], false);
+						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_SUCCESS'][0]);
 
 						// Setup restart
 						$this->config['Cache']['Todo']['onEndMap'] = $this->config['RunningVote']['Mode'];
@@ -433,7 +433,7 @@ class PluginVoteManager extends Plugin {
 					}
 					else if ($this->config['RunningVote']['Mode'] == 'Skip') {
 						// Skip passed, send the info message
-						$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_SUCCESS'][0], false);
+						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_SUCCESS'][0]);
 
 						// Skip now
 						$this->handleTodo('Skip');
@@ -442,11 +442,11 @@ class PluginVoteManager extends Plugin {
 				else {
 					if ($this->config['RunningVote']['Mode'] == 'Restart') {
 						// Restart did not pass, send the info message
-						$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_FAILED'][0], false);
+						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_FAILED'][0]);
 					}
 					else if ($this->config['RunningVote']['Mode'] == 'Skip') {
 						// Skip did not pass, send the info message
-						$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0], false);
+						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0]);
 					}
 				}
 
@@ -492,7 +492,7 @@ class PluginVoteManager extends Plugin {
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Send info message "Callvote disabled"
-		$this->sendChatMessage($this->config['MESSAGES'][0]['CALLVOTE_DISABLED'][0], $player->login);
+		$aseco->sendChatMessage($this->config['MESSAGES'][0]['CALLVOTE_DISABLED'][0], $player->login);
 
 		// Preload the Thumbs-Images
 		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'04">';
@@ -607,7 +607,7 @@ class PluginVoteManager extends Plugin {
 			// Set to 'done'
 			$this->config['Cache']['Todo']['onEndMap'] = false;
 
-			$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_DONE'][0], false);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_DONE'][0]);
 		}
 	}
 
@@ -665,7 +665,7 @@ class PluginVoteManager extends Plugin {
 		global $aseco;
 
 		if ($this->config['Cache']['Todo']['onEndMap'] == 'Restart') {
-			$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_CANCEL'][0], $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_CANCEL'][0], $login);
 			return;
 		}
 
@@ -701,7 +701,7 @@ class PluginVoteManager extends Plugin {
 				$this->config['VOTING'][0]['MAX_VOTES'][0],
 				($this->config['VOTING'][0]['MAX_VOTES'][0] == 1) ? '' : 's'
 			);
-			$this->sendChatMessage($message, $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -922,6 +922,7 @@ EOL;
 	*/
 
 	public function buildHelpWindow ($login) {
+		global $aseco;
 
 		$xml = '<manialink id="'. $this->config['ManialinkId'] .'03">';
 		$xml .= '<frame posn="-40.8 30.55 18.50">';	// BEGIN: Window Frame
@@ -1012,32 +1013,13 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function sendChatMessage ($message, $logins = false) {
-		global $aseco;
-
-		if ($logins != false) {
-			// Send to given Players
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $logins);
-		}
-		else {
-			// Send to all connected Players
-			$aseco->client->query('ChatSendServerMessage', $aseco->formatColors($message));
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function handleVote ($login, $type) {
 		global $aseco;
 
 		if ( ($this->config['RunningVote']['Active'] == true) && ($this->config['RunningVote']['Countdown'] > 0) ) {
 			// Do not allow to change the own started vote
 			if ($this->config['RunningVote']['StartedFrom']['Login'] == $login) {
-				$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
 				return;
 			}
 
@@ -1124,7 +1106,7 @@ EOL;
 			// Login are on the <ignore_list>, skipping
 			$aseco->console('[VoteManager] Skipping vote attempt from "'. $login .'" because player is in the <ignore_list>.');
 			$message = $aseco->formatText($this->config['MESSAGES'][0]['VOTE_IGNORED'][0]);
-			$this->sendChatMessage($message, $login);
+			$aseco->sendChatMessage($message, $login);
 			return false;
 		}
 
@@ -1134,19 +1116,19 @@ EOL;
 				$this->config['VOTING'][0]['MAX_RESTARTS'][0],
 				(($this->config['VOTING'][0]['MAX_RESTARTS'][0] == 1) ? '' : 's')
 			);
-			$this->sendChatMessage($message, $login);
+			$aseco->sendChatMessage($message, $login);
 			return false;
 		}
 
 		if ( ($type == 'Skip') && ($this->config['Cache']['Todo']['onEndMap'] == 'Restart') ) {
 			// There was a successfully restart vote before, cancel this skip request
-			$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
 			return false;
 		}
 
 		if ($this->config['RunningVote']['Active'] == true) {
 			// There is already a running vote, cancel this request
-			$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_ALREADY_RUNNING'][0], $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_ALREADY_RUNNING'][0], $login);
 			return false;
 		}
 
@@ -1155,7 +1137,7 @@ EOL;
 				return true;
 			}
 			else {
-				$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_TOO_LATE'][0], $login);
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_TOO_LATE'][0], $login);
 				return false;
 			}
 		}
@@ -1186,7 +1168,7 @@ EOL;
 
 		// Show message
 		if ($message != false) {
-			$aseco->client->query('ChatSendServerMessageToLogin', $aseco->formatColors($message), $login);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -1244,7 +1226,7 @@ EOL;
 
 		if ($this->config['RunningVote']['Active'] == false) {
 			// Send info message
-			$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NONE_RUNNING'][0], $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NONE_RUNNING'][0], $login);
 		}
 		else {
 			$this->handleVote($login, 'Yes');
@@ -1261,7 +1243,7 @@ EOL;
 
 		if ($this->config['RunningVote']['Active'] == false) {
 			// Send info message
-			$this->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NONE_RUNNING'][0], $login);
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NONE_RUNNING'][0], $login);
 		}
 		else {
 			$this->handleVote($login, 'No');
