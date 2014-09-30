@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-09-30
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -75,17 +75,17 @@ class PluginCheckpoint extends Plugin {
 
 		$this->registerChatCommand('cps',		'chat_cps',	'Sets local/dedimania record checkpoints tracking',	Player::PLAYERS);
 
-		$this->manialinkid			= 'PluginCheckpointWidget';
-		$this->nbcheckpoints			= 0;
+		$this->manialinkid				= 'PluginCheckpointWidget';
+		$this->nbcheckpoints				= 0;
 
-		$this->textcolors['default_checkpoint']	= 'DDEF';	// RGBA
-		$this->textcolors['default_besttime']	= 'BBBF';	// RGBA
-		$this->textcolors['time_improved']	= '3B3';	// RGB
-		$this->textcolors['time_equal']		= '29F';	// RGB
-		$this->textcolors['time_worse']		= 'F00';	// RGB
+		$this->textcolors['default_checkpoint']		= 'DDEF';	// RGBA
+		$this->textcolors['default_besttime']		= 'BBBF';	// RGBA
+		$this->textcolors['time_improved']		= '3B3';	// RGB
+		$this->textcolors['time_equal']			= '29F';	// RGB
+		$this->textcolors['time_worse']			= 'F00';	// RGB
 
-		$this->panelbg['style']			= 'BgsPlayerCard';
-		$this->panelbg['substyle']		= 'BgCardSystem';
+		$this->panelbg['style']				= 'BgsPlayerCard';
+		$this->panelbg['substyle']			= 'BgCardSystem';
 	}
 
 	/*
@@ -107,24 +107,23 @@ class PluginCheckpoint extends Plugin {
 
 		if ($aseco->settings['display_checkpoints']) {
 			// Set local checkpoints tracking
-			$param = $command['params'];
-			if (strtolower($param) == 'off') {
+			if (strtolower($chat_parameter) == 'off') {
 				$aseco->checkpoints[$login]->tracking['local_records'] = -1;
 				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
 				$message = '{#server}> Checkpoints tracking: {#highlite}OFF';
 			}
-			else if ($param == '') {
+			else if ($chat_parameter == '') {
 				$aseco->checkpoints[$login]->tracking['local_records'] = 0;
 				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
 				$message = '{#server}> Checkpoints tracking: {#highlite}ON {#server}(your own or the last record)';
 			}
-			else if (is_numeric($param) && $param > 0 && $param <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) {
-				$aseco->checkpoints[$login]->tracking['local_records'] = intval($param);
+			else if (is_numeric($chat_parameter) && $chat_parameter > 0 && $chat_parameter <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) {
+				$aseco->checkpoints[$login]->tracking['local_records'] = intval($chat_parameter);
 				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
 				$message = '{#server}> Checkpoints tracking record: {#highlite}' . $aseco->checkpoints[$login]->tracking['local_records'];
 			}
 			else {
-				$message = '{#server}> {#error}No such local record {#highlite}$i ' . $param;
+				$message = '{#server}> {#error}No such local record {#highlite}$i ' . $chat_parameter;
 			}
 
 			// Handle checkpoints panel
@@ -141,12 +140,21 @@ class PluginCheckpoint extends Plugin {
 			}
 			else {
 				// Enable CP panel unless spectator, Stunts mode, or warm-up
-				if (!$player->isspectator && $aseco->server->gameinfo->mode != Gameinfo::STUNT && !$aseco->warmup_phase) {
+				if (!$player->isspectator && $aseco->server->gameinfo->mode != Gameinfo::STUNTS && !$aseco->warmup_phase) {
 //					if ($aseco->settings['enable_cpsspec'] && !empty($aseco->checkpoints[$login]->spectators)) {
 //						$this->checkUpdateCheckpointWidget($aseco, $login . ',' . implode(',', $aseco->checkpoints[$login]->spectators), 0, '$00f -.--');
 //					}
 //					else {
-						$this->checkUpdateCheckpointWidget($login, 1);
+						$cpid = 'START';
+						if (isset($aseco->checkpoints[$login]) && count($aseco->checkpoints[$login]->best['cps']) > 0) {
+							$diff = '0.000';
+							$best = $aseco->formatTime($aseco->checkpoints[$login]->best['finish']);
+						}
+						else {
+							$diff = '-.---';
+							$best = '-.---';
+						}
+						$this->buildCheckpointWidget($login, $cpid, $diff, $best);
 //					}
 				}
 			}
