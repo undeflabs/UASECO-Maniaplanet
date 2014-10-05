@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-07
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -59,19 +59,25 @@ class RankingList {
 	*/
 
 	public function addPlayer ($player) {
-		if ($player->login != '') {
+		global $aseco;
+
+		if ($player->id > 0) {
 			// Preset
-			$this->ranking_list[$player->login] = array(
-				'rank'		=> 0,
-				'login'		=> $player->login,
-				'nickname'	=> $player->nickname,
-				'time'		=> 0,
-				'score'		=> 0,
-				'cps'		=> array(),
-				'team'		=> $player->teamid,
-				'spectator'	=> $player->isspectator,
-				'away'		=> false,
-			);
+			$entry = new Ranking();
+			$entry->rank		= 0;
+			$entry->pid		= $player->pid;
+			$entry->login		= $player->login;
+			$entry->nickname	= $player->nickname;
+			$entry->time		= 0;
+			$entry->score		= 0;
+			$entry->cps		= array();
+			$entry->team		= $player->teamid;
+			$entry->spectator	= $player->isspectator;
+			$entry->away		= false;
+
+			// Insert
+			$this->ranking_list[$player->login] = $entry;
+
 			return true;
 		}
 		else {
@@ -89,50 +95,90 @@ class RankingList {
 		global $aseco;
 
 		// Update full player entry
-		$this->ranking_list[$item['login']] = $item;
+		$entry					= $this->ranking_list[$item['login']];
+		$entry->rank				= $item['rank'];
+		$entry->login				= $item['login'];
+		$entry->nickname			= $item['nickname'];
+		$entry->time				= $item['time'];
+		$entry->score				= $item['score'];
+		$entry->cps				= $item['cps'];
+		$entry->team				= $item['team'];
+		$entry->spectator			= $item['spectator'];
+		$entry->away				= $item['away'];
+		$this->ranking_list[$entry->login]	= $entry;
 
-		$new = $this->ranking_list;
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
 			$scores = array();
-			foreach ($new as $key => &$row) {
-				$scores[$key] = $row['score'];
+			$times = array();
+			$pids = array();
+			foreach ($this->ranking_list as $key => &$row) {
+				$scores[$key] = $row->score;
+				$times[$key] = $row->time;
+				$pids[$key] = $row->pid;
 			}
 			unset($key, $row);
 
-			// Now sort array by score DESC
-			array_multisort($scores, SORT_NUMERIC, SORT_DESC, $new);
-			unset($scores);
+			// Sort order: SCORE, PERSONAL_BEST and PID
+			array_multisort(
+				$scores, SORT_NUMERIC, SORT_DESC,
+				$times, SORT_NUMERIC, SORT_ASC,
+				$pids, SORT_NUMERIC, SORT_ASC,
+				$this->ranking_list
+			);
+			unset($scores, $times, $pids);
+
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			$cps = array();
+			$scores = array();
+			$pids = array();
+			foreach ($this->ranking_list as $key => &$row) {
+				$cps[$key]	= count($row->cps);
+				$scores[$key]	= $row->score;
+				$pids[$key]	= $row->pid;
+			}
+			unset($key, $row);
+
+			// Sort order: AMOUNT_CHECKPOINTS, SCORE and PID
+			array_multisort(
+				$cps, SORT_NUMERIC, SORT_DESC,
+				$scores, SORT_NUMERIC, SORT_ASC,
+				$pids, SORT_NUMERIC, SORT_ASC,
+				$this->ranking_list
+			);
+			unset($cps, $scores, $pids);
 		}
 		else {
 			$times = array();
 			foreach ($this->ranking_list as $key => &$row) {
-				if ($row['time'] <= 0) {
-					$row['time'] = PHP_INT_MAX;
+				if ($row->time <= 0) {
+					$row->time = PHP_INT_MAX;
 				}
-				$times[$key] = $row['time'];
+				$times[$key] = $row->time;
 			}
 			unset($key, $row);
 
-			// Now sort array by time ASC
-			array_multisort($times, SORT_NUMERIC, SORT_ASC, $new);
+			// Sort order: TIME
+			array_multisort(
+				$times, SORT_NUMERIC, SORT_ASC,
+				$this->ranking_list
+			);
 			unset($times);
 		}
 
 		$i = 1;
-		foreach ($new as $login => &$data) {
-			// Replace PHP_INT_MAX times with -1
-			if ($data['time'] == PHP_INT_MAX) {
-				$data['time'] = 0;
+		foreach ($this->ranking_list as $login => &$data) {
+			// Replace PHP_INT_MAX "times" to back "0"
+			if ($data->time == PHP_INT_MAX) {
+				$data->time = 0;
 			}
 
 			// Give each Player a Rank
-			$data['rank'] = $i;
+			$data->rank = $i;
 			$i += 1;
 		}
 		unset($login, $data);
-
-		// Update current RankingList with the new updated and sorted list
-		$this->ranking_list = $new;
 	}
 
 	/*
@@ -223,7 +269,7 @@ class RankingList {
 		$count = 1;
 		$top = array();
 		foreach ($this->ranking_list as $item) {
-			$top[$item['login']] = $item;
+			$top[$item->login] = $item;
 			if ($count == 3) {
 				break;
 			}
@@ -243,7 +289,7 @@ class RankingList {
 		$count = 1;
 		$top = array();
 		foreach ($this->ranking_list as $item) {
-			$top[$item['login']] = $item;
+			$top[$item->login] = $item;
 			if ($count == 10) {
 				break;
 			}
@@ -263,7 +309,7 @@ class RankingList {
 		$count = 1;
 		$top = array();
 		foreach ($this->ranking_list as $item) {
-			$top[$item['login']] = $item;
+			$top[$item->login] = $item;
 			if ($count == 50) {
 				break;
 			}

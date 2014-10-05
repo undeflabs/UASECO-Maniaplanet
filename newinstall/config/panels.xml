@@ -11,7 +11,6 @@
 	filename that should exists in "config/panels/<filename>.xml"
 	//-->
 	<admin_panel>AdminAboveCPListSmall2</admin_panel>
-	<donate_panel>DonateBelowChat</donate_panel>
 	<records_panel>RecordsRightCorner</records_panel>
 	<vote_panel>VoteBottomCenter</vote_panel>
 

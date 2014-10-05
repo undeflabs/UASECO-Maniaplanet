@@ -10,7 +10,7 @@
  *   with parts/ideas from MPAseco and ASECO/2.2.0c, for supporting the Trackmania²
  *   Modescript Gamemodes from the Maniaplanet/3+ update.
  *
- *   Visit the official site from this fork at http://www.uaseco.org/
+ *   Visit the official site from this fork at http://www.UASECO.org/
  *
  * » Original project:
  *   Authored & copyright Aug 2011 - May 2013 by Xymph <tm@gamers.org>
@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - Sep 2014 by undef.de
+ * Copyright:	May 2014 - October 2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-09-26');
+	define('UASECO_BUILD',		'2014-10-05');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -51,7 +51,10 @@
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.2.1');
 
-	define('CRLF', PHP_EOL);
+	// Setup misc.
+	define('USER_AGENT',		UASECO_NAME .'/'. UASECO_VERSION .' build '. UASECO_BUILD);	// used in includes/core/webaccess.class.php
+	define('CRLF',			PHP_EOL);
+
 	if (!defined('LF')) {
 		define('LF', "\n");
 	}
@@ -61,7 +64,7 @@
 
 	// Include required classes
 	require_once('includes/core/helper.class.php');			// Misc. functions for UASECO, e.g. $aseco->console()... based upon basic.inc.php
-	require_once('includes/core/GbxRemote.inc.php');		// IXR_ClientMulticall_Gbx(), required for dedicated server connections
+	require_once('includes/core/XmlRpc/GbxRemote.php');
 	require_once('includes/core/webaccess.class.php');
 	require_once('includes/core/xmlparser.class.php');		// Provides an XML parser
 	require_once('includes/core/gbxdatafetcher.class.php');		// Provides access to GBX data
@@ -73,14 +76,14 @@
 	require_once('includes/core/server.class.php');
 	require_once('includes/core/dependence.class.php');		// Required by includes/core/plugin.class.php
 	require_once('includes/core/plugin.class.php');
-	require_once('includes/core/window.class.php');			// Required includes/core/windowlist.class.php
+	require_once('includes/core/window.class.php');			// Required by includes/core/windowlist.class.php
 	require_once('includes/core/windowlist.class.php');
 	require_once('includes/core/player.class.php');
 	require_once('includes/core/playerlist.class.php');
 	require_once('includes/core/checkpoint.class.php');
 	require_once('includes/core/record.class.php');
 	require_once('includes/core/recordlist.class.php');
-//	require_once('includes/core/ranking.class.php');
+	require_once('includes/core/ranking.class.php');		// Required by includes/core/rankinglist.class.php
 	require_once('includes/core/rankinglist.class.php');
 	require_once('includes/core/map.class.php');			// Required by includes/core/maplist.class.php
 	require_once('includes/core/maplist.class.php');
@@ -118,14 +121,13 @@ class UASECO extends Helper {
 	public $banned_ips;
 	public $uptime;						// UASECO start-up time
 	public $startup_phase;					// UASECO start-up phase
+	public $shutdown_phase;					// UASECO shutdown phase
 	public $warmup_phase;					// warm-up phase
 	public $restarting;					// restarting map (true or false)
 	public $changing_to_gamemode;
 	public $checkpoints;
 
 	private $current_status;				// server status changes
-	private $rpc_calls;
-	private $rpc_responses;
 	private $next_second;
 	private $next_tenth;
 	private $next_quarter;
@@ -172,8 +174,7 @@ class UASECO extends Helper {
 		$this->uptime			= time();
 		$this->registered_events	= array();
 		$this->registered_chatcmds	= array();
-		$this->rpc_calls		= array();
-		$this->client			= new IXR_ClientMulticall_Gbx();	// includes/core/gbxremote.class.php
+		$this->client			= new GbxRemote();			// includes/core/XmlRpc/GbxRemote.php
 		$this->parser			= new XmlParser();
 		$this->webaccess		= new Webaccess();
 		$this->continent		= new Continent();
@@ -193,6 +194,7 @@ class UASECO extends Helper {
 		$this->operator_abilities	= array();
 		$this->banned_ips		= array();
 		$this->startup_phase		= true;
+		$this->shutdown_phase		= false;
 		$this->warmup_phase		= false;
 		$this->restarting		= false;
 		$this->changing_to_gamemode	= false;
@@ -277,8 +279,7 @@ class UASECO extends Helper {
 		$this->sendHeader();
 
 		// Get current players/servers on the server (hardlimited to 300)
-		$this->client->query('GetPlayerList', 300, 0, 2);
-		$playerlist = $this->client->getResponse();
+		$playerlist = $this->client->query('GetPlayerList', 300, 0, 2);
 
 		// Update players/relays lists
 		if (!empty($playerlist)) {
@@ -306,11 +307,14 @@ class UASECO extends Helper {
 		// Main loop
 		while (true) {
 			$starttime = microtime(true);
-			// Get callbacks from the server
-			$this->executeCallbacks();
 
-			// Sends calls to the server
-			$this->executeCalls();
+			if ($this->shutdown_phase == false) {
+				// Get callbacks from the server
+				$this->executeCallbacks();
+
+				// Sends calls to the server
+				$this->executeMulticall();
+			}
 
 			// Throw timing events
 			$this->releaseEvent('onMainLoop', null);
@@ -376,7 +380,7 @@ class UASECO extends Helper {
 		$this->client->query('SetApiVersion', API_VERSION);
 
 		// Trigger 'LibXmlRpc_PlayersRanking'
-		$this->client->queryIgnoreResult('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
+		$this->client->query('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
 
 		// Get basic server info, server id, login, nickname, zone, name, options, mode, limits...
 		$this->server->getServerSettings();
@@ -387,8 +391,7 @@ class UASECO extends Helper {
 		}
 
 		// Get status
-		$this->client->query('GetStatus');
-		$status = $this->client->getResponse();
+		$status = $this->client->query('GetStatus');
 		$this->current_status = $status['Code'];
 		unset($status);
 
@@ -424,7 +427,9 @@ class UASECO extends Helper {
 		$this->console_text('» Title:     {1}', $this->server->title);
 		$this->console_text('» Gamemode:  {1} with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
-		$this->console_text('»            Uptime: {1}, Send: {2} KB, Receive: {3} KB', $uptime_dedicated, $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
+		$this->console_text('»            Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
+		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
+		$this->console_text('»            Uptime: {1}', $uptime_dedicated);
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» UASECO:    Version {1} build {2}, running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
     		$this->console_text('»            based upon work of the authors and projects of:');
@@ -499,7 +504,9 @@ class UASECO extends Helper {
 		$this->console_text('» Title:         {1}', $this->server->title);
 		$this->console_text('» Gamemode:      {1} with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
 		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
-		$this->console_text('»                Uptime: {1}, Send: {2} KB, Receive: {3} KB', $uptime_dedicated, $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
+		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
+		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
+		$this->console_text('»                Uptime: {1}', $uptime_dedicated);
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), ini_get('safe_mode'), ini_get('memory_limit'), ini_get('max_execution_time'), ini_get('allow_url_fopen'));
@@ -1320,9 +1327,12 @@ class UASECO extends Helper {
 				($this->server->timeout !== null ? $this->server->timeout : 0)
 			);
 
-			// Connect to the server
-			if (!$this->client->InitWithIp($this->server->xmlrpc['ip'], $this->server->xmlrpc['port'], $this->server->timeout)) {
-				trigger_error('[Dedicated] ['. $this->client->getErrorCode() .'] InitWithIp - '. $this->client->getErrorMessage(), E_USER_WARNING);
+			try {
+				// Connect to the server
+				$this->client->connect($this->server->xmlrpc['ip'], $this->server->xmlrpc['port'], $this->server->timeout);
+			}
+			catch (Exception $exception) {
+				trigger_error('[Dedicated] ['. $exception->getCode() .'] connect - '. $exception->getMessage(), E_USER_WARNING);
 				return false;
 			}
 
@@ -1351,9 +1361,12 @@ class UASECO extends Helper {
 				);
 			}
 
-			// Log into the server
-			if (!$this->client->query('Authenticate', $this->server->xmlrpc['login'], $this->server->xmlrpc['pass'])) {
-				trigger_error('[Dedicated] ['. $this->client->getErrorCode() .'] Authenticate - '. $this->client->getErrorMessage(), E_USER_WARNING);
+			try {
+				// Log into the server
+				$this->client->query('Authenticate', $this->server->xmlrpc['login'], $this->server->xmlrpc['pass']);
+			}
+			catch (Exception $exception) {
+				trigger_error('[Dedicated] ['. $exception->getCode() .'] Authenticate - '. $exception->getMessage(), E_USER_WARNING);
 				return false;
 			}
 
@@ -1380,8 +1393,7 @@ class UASECO extends Helper {
 
 	// Waits for the server to be ready (status 4, 'Running - Play')
 	private function waitServerReady () {
-		$this->client->query('GetStatus');
-		$status = $this->client->getResponse();
+		$status = $this->client->query('GetStatus');
 		if ($status['Code'] != 4) {
 			$this->console("[Dedicated] » Waiting for dedicated server to reach status 'Running - Play'...");
 			$this->console('[Dedicated] » Status: ['. $status['Code'] .'] '. $status['Name']);
@@ -1389,8 +1401,7 @@ class UASECO extends Helper {
 			$laststatus = $status['Name'];
 			while ($status['Code'] != 4) {
 				sleep(1);
-				$this->client->query('GetStatus');
-				$status = $this->client->getResponse();
+				$status = $this->client->query('GetStatus');
 				if ($laststatus != $status['Name']) {
 					$this->console('[Dedicated] » Status: ['. $status['Code'] .'] '. $status['Name']);
 					$laststatus = $status['Name'];
@@ -1411,14 +1422,14 @@ class UASECO extends Helper {
 	// Gets callbacks from the TM Dedicated Server and reacts on them.
 	private function executeCallbacks () {
 
-		// receive callbacks with a timeout (default: 2 ms)
-		$this->client->resetError();
-		$this->client->readCB();
+		// Get the responses
+		$calls = array();
 
-		// now get the responses out of the 'buffer'
-		$calls = $this->client->getCBResponses();
-		if ($this->client->isError()) {
-			trigger_error('ExecCallbacks XMLRPC Error ['. $this->client->getErrorCode() .'] - '. $this->client->getErrorMessage(), E_USER_ERROR);
+		try {
+			$calls = $this->client->getCallbacks();
+		}
+		catch (Exception $exception) {
+			trigger_error('ExecuteCallbacks XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage(), E_USER_ERROR);
 		}
 
 		if (!empty($calls)) {
@@ -1524,74 +1535,15 @@ class UASECO extends Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Executes a multicall and gets responses. Saves responses in array with IDs as keys.
-	private function executeCalls () {
+	private function executeMulticall () {
 
-		// Clear responses
-		$this->rpc_responses = array();
-
-		// Stop if there are no rpc calls in query
-		if (empty($this->client->calls)) {
-			return true;
+		// Sends multiquery to the server
+		try {
+			$this->client->multiquery();
 		}
-
-		$this->client->resetError();
-		$tmpcalls = $this->client->calls;  // debugging code to find UTF-8 errors
-		// Sends multiquery to the server and gets the response
-		if ($this->client->multiquery()) {
-			if ($this->client->isError()) {
-				$this->dump($tmpcalls);
-				trigger_error('ExecCalls XMLRPC Error ['. $this->client->getErrorCode() .'] - '. $this->client->getErrorMessage(), E_USER_ERROR);
-			}
-
-			// Get new response from server
-			$responses = $this->client->getResponse();
-
-			// Handle server responses
-			foreach ($this->rpc_calls as $call) {
-				// Display error message if needed
-				$err = false;
-				if (isset($responses[$call->index]['faultString'])) {
-					$this->rpcErrorResponse($responses[$call->index]);
-					print_r($call->call);
-					$err = true;
-				}
-
-				// if an id was set, then save the response under the specified id
-				if ($call->id) {
-					$this->rpc_responses[$call->id] = $responses[$call->index][0];
-				}
-
-				// if a callback function has been set, then execute it
-				if ($call->callback && !$err) {
-					if (function_exists($call->callback)) {
-						// callback the function with the response as parameter
-						call_user_func($call->callback, $responses[$call->index][0]);
-					}
-
-					// if a function with the name of the callback wasn't found, then
-					// try to execute a method with its name
-					else if (method_exists($this, $call->callback)) {
-						// callback the method with the response as parameter
-						call_user_func(array($this, $call->callback), $responses[$call->index][0]);
-					}
-				}
-			}
+		catch (Exception $exception) {
+			trigger_error('ExecuteMulticall XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage(), E_USER_ERROR);
 		}
-
-		// Clear calls
-		$this->rpc_calls = array();
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Documents RPC Errors.
-	private function rpcErrorResponse ($response) {
-		$this->console_text('[RPC Error '. $response['faultCode'] .'] '. $response['faultString']);
 	}
 
 	/*
@@ -1630,7 +1582,7 @@ class UASECO extends Helper {
 
 		// Refresh the current round point system (only Rounds, Team and Cup)
 		if ($this->server->gameinfo->mode == Gameinfo::ROUNDS || $this->server->gameinfo->mode == Gameinfo::TEAM || $this->server->gameinfo->mode == Gameinfo::CUP) {
-			$this->client->queryIgnoreResult('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
+			$this->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
 		}
 
 		// Setup previous map
@@ -1719,9 +1671,9 @@ class UASECO extends Helper {
 					$rank = $data;
 					break;
 				}
-				if (($player = $this->server->players->getPlayer($rank['login'])) !== false) {
+				if (($player = $this->server->players->getPlayer($rank->login)) !== false) {
 					// Check for winner if there's more than one player
-					if ( ($this->server->gameinfo->mode == Gameinfo::STUNTS ? ($rank['score'] > 0) : ($rank['time'] > 0)) ) {
+					if ( ($this->server->gameinfo->mode == Gameinfo::STUNTS ? ($rank->score > 0) : ($rank->time > 0)) ) {
 						// Increase the player's wins
 						$player->newwins++;
 
@@ -1782,10 +1734,8 @@ class UASECO extends Helper {
 	public function playerConnect ($login, $is_spectator) {
 
 		// Request information about the new player
-		$this->client->query('GetDetailedPlayerInfo', $login);
-		$details = $this->client->getResponse();
-		$this->client->query('GetPlayerInfo', $login, 1);
-		$info = $this->client->getResponse();
+		$details = $this->client->query('GetDetailedPlayerInfo', $login);
+		$info = $this->client->query('GetPlayerInfo', $login, 1);
 		$data = array_merge($details, $info);
 		unset($details, $info);
 
@@ -1813,7 +1763,7 @@ class UASECO extends Helper {
 				$message = str_replace('{br}', LF, $this->getChatMessage('CONNECT_ERROR'));
 				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
 				sleep(5);  // allow time to connect and see the notice
-				$this->client->addCall('Kick', array($login, $this->formatColors($this->getChatMessage('CONNECT_DIALOG'))));
+				$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CONNECT_DIALOG')));
 				// log console message
 				$this->console('[Player] GetPlayerInfo failed for ['. $login .'] -- notified & kicked');
 				return;
@@ -1824,7 +1774,7 @@ class UASECO extends Helper {
 				$message = str_replace('{br}', LF, $this->getChatMessage('BANIP_ERROR'));
 				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
 				sleep(5);  // allow time to connect and see the notice
-				$this->client->addCall('Ban', array($login, $this->formatColors($this->getChatMessage('BANIP_DIALOG'))));
+				$this->client->addCall('Ban', $login, $this->formatColors($this->getChatMessage('BANIP_DIALOG')));
 				$this->console('[Player] Player ['. $login .'] banned from '. $ipaddr .' -- notified & kicked');
 				return;
 			}
@@ -1838,7 +1788,7 @@ class UASECO extends Helper {
 				if ($this->settings['player_client'] != '' && strcmp($version, $this->settings['player_client']) < 0) {
 					$this->sendChatMessage($message, $login);
 					sleep(5);  // allow time to connect and see the notice
-					$this->client->addCall('Kick', array($login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG'))));
+					$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG')));
 					$this->console('[Player] Obsolete player client version '. $version .' for ['. $login .'] -- notified & kicked');
 					return;
 				}
@@ -1847,7 +1797,7 @@ class UASECO extends Helper {
 				if ($this->settings['admin_client'] != '' && $this->isAnyAdminL($data['Login']) && strcmp($version, $this->settings['admin_client']) < 0) {
 					$this->sendChatMessage($message, $login);
 					sleep(5);  // allow time to connect and see the notice
-					$this->client->addCall('Kick', array($login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG'))));
+					$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG')));
 					$this->console('[Player] Obsolete admin client version '. $version .' for ['. $login .'] -- notified & kicked');
 					return;
 				}
@@ -1861,23 +1811,23 @@ class UASECO extends Helper {
 			if ($this->server->gameinfo->mode == Gameinfo::TEAM) {
 				// Do not $this->server->rankings->addPlayer(), because it is a "Team" mode!
 				// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
-				$this->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
+				$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
 			}
 			else {
 				// Add to ranking list
 				$this->server->rankings->addPlayer($player);
 
 				// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
-				$this->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $player->login);
+				$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $player->login);
 			}
 
-			// Adds a new player to the internal player list
+			// Adds a new player to the player list
 			$this->server->players->addPlayer($player);
 
 			// Log console message
 			$this->console('[Player] Connection from Player [{1}] from {2} [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 				$player->login,
-				$player->nation,
+				$this->country->iocToCountry($player->nation),
 				$this->stripColors($player->nickname),
 				$player->ip,
 				$player->ladderrank,

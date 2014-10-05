@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-21
+ * Date:	2014-10-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -54,11 +54,11 @@ class Gameinfo {
 
 	const ROUNDS		= 1;
 	const TIMEATTACK	= 2;
-	const TEAM		= 4;
-	const LAPS		= 8;
-	const CUP		= 16;
-	const TEAMATTACK	= 32;
-	const STUNTS		= 64;
+	const TEAM		= 3;
+	const LAPS		= 4;
+	const CUP		= 5;
+	const TEAMATTACK	= 6;
+	const STUNTS		= 7;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -68,8 +68,7 @@ class Gameinfo {
 
 	public function __construct ($aseco, $clone = false) {
 
-		$aseco->client->query('GetCurrentGameInfo', 1);
-		$gameinfo = $aseco->client->getResponse();
+		$gameinfo = $aseco->client->query('GetCurrentGameInfo', 1);
 
 		if ($gameinfo['GameMode'] !== 0) {
 			// Bail out if <playlist><gameinfos><game_mode> is not "0"
@@ -78,13 +77,11 @@ class Gameinfo {
 
 
 		// 2014-06-12: Name, CompatibleMapTypes, Description, Version, ParamDescs, CommandDescs
-		$aseco->client->query('GetModeScriptInfo');
-		$modescript['info'] = $aseco->client->getResponse();
+		$modescript['info'] = $aseco->client->query('GetModeScriptInfo');
 
-		$aseco->client->query('GetModeScriptSettings');
-		$modescript['settings'] = $aseco->client->getResponse();
+		$modescript['settings'] = $aseco->client->query('GetModeScriptSettings');
 
-//		$aseco->dump($gameinfo, $modescript['info'], $modescript['settings']);
+// $aseco->dump($gameinfo, $modescript['info'], $modescript['settings']);
 
 		$this->script['Name']			= $modescript['info']['Name'];
 		$this->script['Version']		= $modescript['info']['Version'];
@@ -120,7 +117,7 @@ class Gameinfo {
 				break;
 
 			default:
-				$aseco->console('[Gameinfo] Not supported Modescript "'. $this->script['Name'] .'" loaded, please report this at '. UASECO_WEBSITE);
+				$aseco->console('[Gameinfo] Unsupported Modescript "'. $this->script['Name'] .'" loaded, please report this at '. UASECO_WEBSITE);
 				break;
 		}
 
@@ -134,7 +131,7 @@ class Gameinfo {
 		$this->options['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
 
 
-		// http://maniaplanet.github.io/documentation/dedicated-server/settings-list.html
+		// http://doc.maniaplanet.com/dedicated-server/settings-list.html
 		if ($this->mode == self::ROUNDS) {
 			// Rounds (+RoundsBase)
 			if ( isset($clone->rounds['PointsRepartition']) ) {
@@ -234,9 +231,36 @@ class Gameinfo {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Returns current Gamemode Scriptname (e.g. "TimeAttack.Script.txt")
-	public function getGamemodeScriptname () {
-		return $this->script['Name'];
+	// Returns current or given Gamemode Scriptname (e.g. "TimeAttack.Script.txt")
+	public function getGamemodeScriptname ($id = false) {
+		if ($id === false) {
+			return $this->script['Name'];
+		}
+		switch ($id) {
+			case self::ROUNDS:
+				return 'Rounds.Script.txt';
+
+			case self::TIMEATTACK:
+				return 'TimeAttack.Script.txt';
+
+			case self::TEAM:
+				return 'Team.Script.txt';
+
+			case self::LAPS:
+				return 'Laps.Script.txt';
+
+			case self::CUP:
+				return 'Cup.Script.txt';
+
+			case self::TEAMATTACK:
+				return 'TeamAttack.Script.txt';
+
+			case self::STUNTS:
+				return 'Stunts.Script.txt';
+
+			default:
+				return false;
+		}
 	}
 
 	/*
@@ -246,12 +270,12 @@ class Gameinfo {
 	*/
 
 	// Returns current or given Gamemode as string
-	public function getGamemodeName ($mode = false) {
+	public function getGamemodeName ($id = false) {
 
-		if ($mode === false) {
-			$mode = $this->mode;
+		if ($id === false) {
+			$id = $this->mode;
 		}
-		switch ($mode) {
+		switch ($id) {
 			case self::ROUNDS:
 				return 'Rounds';
 

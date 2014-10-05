@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -244,7 +244,6 @@ class PluginChatStats extends Plugin {
 			if ($aseco->isAnyAdmin($target)) {
 				$settings[] = array('Admin Panel', '{#black}' . substr($panels['admin'], 5));
 			}
-			$settings[] = array('Donate Panel', '{#black}' . substr($panels['donate'], 6));
 			$settings[] = array('Records Panel', '{#black}' . substr($panels['records'], 7));
 			$settings[] = array('Vote Panel', '{#black}' . substr($panels['vote'], 4));
 		}

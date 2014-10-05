@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -69,6 +69,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->setDescription('Handle the Modescript Callbacks send by the dedicated server and related settings.');
 
 		$this->registerEvent('onSync',				'onSync');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndRound',			'onEndRound');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
@@ -187,8 +188,20 @@ class PluginModescriptHandler extends Plugin {
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
 			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
-			$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
+			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onLoadingMap ($aseco, $index) {
+
+		// Store the settings at the dedicated Server
+		$this->setupModescriptSettings();
 	}
 
 	/*
@@ -201,7 +214,7 @@ class PluginModescriptHandler extends Plugin {
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
 			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
-			$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
+			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
 		}
 
 		// On restart it is required to set the settings again,
@@ -251,7 +264,7 @@ class PluginModescriptHandler extends Plugin {
 					if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking',
 						// required to be up-to-date on each Checkpoint in Laps
-						$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
+						$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
 					}
 				}
 				else {
@@ -264,7 +277,7 @@ class PluginModescriptHandler extends Plugin {
 				}
 				if ($aseco->string2bool($params[4]) === true || $aseco->string2bool($params[7]) === true) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
-						if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+						if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
 							// Store time from Player (finished the Lap)
 							$this->player_finished[$params[0]] = (int)$params[5];
 						}
@@ -274,7 +287,7 @@ class PluginModescriptHandler extends Plugin {
 						}
 
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
-						$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
+						$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
 					}
 				}
 		    		break;
@@ -283,6 +296,8 @@ class PluginModescriptHandler extends Plugin {
 
 			// [0]=Login, [1]=WaypointBlockId, [2]=WaypointIndexRace, [3]=WaypointIndexLap, [4]=TotalRespawns
 			case 'LibXmlRpc_OnRespawn':
+// BUG: http://forum.maniaplanet.com/viewtopic.php?p=220566#p220566
+//$aseco->dump($params);
 				$aseco->releaseEvent('onPlayerRespawn', array($params[0], $params[1], (int)$params[2], (int)$params[3], (int)$params[4]));
 		    		break;
 
@@ -345,7 +360,7 @@ class PluginModescriptHandler extends Plugin {
 
 				// Refresh the current round point system (Rounds, Team and Cup)
 				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
-					$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
+					$aseco->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
 				}
 
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
@@ -388,7 +403,7 @@ class PluginModescriptHandler extends Plugin {
 
 			// [0]=IndexOfMap, [1]=Uid, [2]=RestartFlag
 			case 'LibXmlRpc_BeginMap':
-				$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'LibXmlRpc_GetWarmUp', '');
+				$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetWarmUp', '');
 				if ($aseco->string2bool($params[2]) === true) {
 					$aseco->restarting = true;			// Map was restarted
 				}
@@ -740,7 +755,7 @@ class PluginModescriptHandler extends Plugin {
 		$settings .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Z'][0]) .'" />';
 		$settings .= '</ui_properties>';
 
-		$aseco->client->queryIgnoreResult('TriggerModeScriptEvent', 'UI_SetProperties', $settings);
+		$aseco->client->query('TriggerModeScriptEvent', 'UI_SetProperties', $settings);
 	}
 
 	/*
@@ -749,7 +764,8 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setUserInterfaceVisibility ($field, $value) {
+	public function setUserInterfaceVisibility ($field, $value = true) {
+
 		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
 			$this->ui_properties[strtoupper($field)][0]['VISIBLE'][0] = $value;
 		}
@@ -761,7 +777,24 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function setUserInterfacePosition ($field, $values = array()) {
+		global $aseco;
+
+		if (array_key_exists(strtoupper($field), $this->ui_properties) && array_key_exists('POSITION', $this->ui_properties[strtoupper($field)][0]) && count($values) == 3) {
+			$this->ui_properties[strtoupper($field)][0]['POSITION'][0]['X'][0] = $aseco->formatFloat($values[0]);
+			$this->ui_properties[strtoupper($field)][0]['POSITION'][0]['Y'][0] = $aseco->formatFloat($values[1]);
+			$this->ui_properties[strtoupper($field)][0]['POSITION'][0]['Z'][0] = $aseco->formatFloat($values[2]);
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function getUserInterfaceField ($field) {
+
 		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
 			return $this->ui_properties[strtoupper($field)][0];
 		}
@@ -787,6 +820,7 @@ class PluginModescriptHandler extends Plugin {
 			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->options['ScoresTableStylePath'],
 		);
 
+		$modesetup = array();
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			// Rounds (+RoundsBase)
 			$modesetup = array(
@@ -878,9 +912,9 @@ class PluginModescriptHandler extends Plugin {
 		global $aseco;
 
 //		foreach (range(0,20) as $id) {
-//			$aseco->client->queryIgnoreResult('ConnectFakePlayer');
+//			$aseco->client->query('ConnectFakePlayer');
 //		}
-//		$aseco->client->queryIgnoreResult('DisconnectFakePlayer', '*');
+//		$aseco->client->query('DisconnectFakePlayer', '*');
 
 		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -935,7 +969,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$xml .= '</scorestable>';
 
-		$aseco->client->queryIgnoreResult('TriggerModeScriptEventArray', 'LibScoresTable2_SetStyleFromXml', array('TM', $xml));
+		$aseco->client->query('TriggerModeScriptEventArray', 'LibScoresTable2_SetStyleFromXml', array('TM', $xml));
 	}
 }
 

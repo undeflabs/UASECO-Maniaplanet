@@ -12,7 +12,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -96,8 +96,7 @@ class PluginDonate extends Plugin {
 					$aseco->server->name
 				);
 
-				$aseco->client->query('SendBill', $player->login, $planets, $aseco->formatColors($message), '');
-				$billid = $aseco->client->getResponse();
+				$billid = $aseco->client->query('SendBill', $player->login, $planets, $aseco->formatColors($message), '');
 				$this->bills[$billid] = array($player->login, $player->nickname, $planets);
 			}
 			else {
@@ -198,8 +197,7 @@ class PluginDonate extends Plugin {
 			// check for this server
 			if ($target != $aseco->server->login) {
 				// get current server planets
-				$aseco->client->query('GetServerPlanets');
-				$planets = $aseco->client->getResponse();
+				$planets = $aseco->client->query('GetServerPlanets');
 
 				// check for sufficient balance, including Nadeo tax (2 + 5%)
 				if ($amount <= $planets - 2 - floor($amount * 0.05)) {
@@ -266,8 +264,7 @@ class PluginDonate extends Plugin {
 		// check for confirmation
 		if ($answer) {
 			// send server planets to login
-			$aseco->client->query('Pay', $this->payments[$login][0], $this->payments[$login][1], $aseco->formatColors($this->payments[$login][2]));
-			$billid = $aseco->client->getResponse();
+			$billid = $aseco->client->query('Pay', $this->payments[$login][0], $this->payments[$login][1], $aseco->formatColors($this->payments[$login][2]));
 
 			// store negative bill
 			$this->bills[$billid] = array($login, $this->payments[$login][0], -$this->payments[$login][1]);
@@ -393,8 +390,7 @@ class PluginDonate extends Plugin {
 					}
 					else {
 						// $planets < 0, get new server planets
-						$aseco->client->query('GetServerPlanets');
-						$newplanets = $aseco->client->getResponse();
+						$newplanets = $aseco->client->query('GetServerPlanets');
 
 						$message = $aseco->formatText($aseco->getChatMessage('PAY_CONFIRM'),
 							abs($planets),

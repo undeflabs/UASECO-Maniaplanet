@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-20
+ * Date:	2014-09-30
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -573,6 +573,9 @@ Void WipeOut (Text ChildId) {
 		yield;
 	}
 	Container.Unload();
+
+//	// Reset
+//	EnableMenuNavigationInputs = False;
 }
 Void Minimize (Text ChildId) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
@@ -603,6 +606,8 @@ Void Maximize (Text ChildId) {
 	}
 }
 main () {
+//	EnableMenuNavigationInputs = True;  // to enable pressing escape-key + tab-key
+
 	declare CMlControl Container <=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
 	declare CMlQuad Quad;
 	declare Boolean MoveWindow = False;
@@ -617,31 +622,41 @@ main () {
 			Container.RelativePosition.Y = (MouseDistanceY + MouseY);
 		}
 		if (MouseLeftButton == True) {
-			foreach (Event in PendingEvents) {
-				if (Event.ControlId == "ClassWindowTitle") {
-					MouseDistanceX = (Container.RelativePosition.X - MouseX);
-					MouseDistanceY = (Container.RelativePosition.Y - MouseY);
-					MoveWindow = True;
+			if (PendingEvents.count > 0) {
+				foreach (Event in PendingEvents) {
+					if (Event.ControlId == "ClassWindowTitle") {
+						MouseDistanceX = (Container.RelativePosition.X - MouseX);
+						MouseDistanceY = (Container.RelativePosition.Y - MouseY);
+						MoveWindow = True;
+					}
 				}
 			}
 		}
 		else {
 			MoveWindow = False;
 		}
-		foreach (Event in PendingEvents) {
-			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
-					if (Event.ControlId == "ClassWindowClose") {
-						WipeOut("ClassWindow");
+		if (PendingEvents.count > 0) {
+			foreach (Event in PendingEvents) {
+				switch (Event.Type) {
+					case CMlEvent::Type::MouseClick : {
+						if (Event.ControlId == "ClassWindowClose") {
+							WipeOut("ClassWindow");
+						}
+						else if ( (Event.ControlId == "ClassWindowMinimize") && (IsMinimized == False) ) {
+							Minimize("ClassWindow");
+							IsMinimized = True;
+						}
+						else if ( (Event.ControlId == "ClassWindowBody") && (IsMinimized == True) ) {
+							Maximize("ClassWindow");
+							IsMinimized = False;
+						}
 					}
-					else if ( (Event.ControlId == "ClassWindowMinimize") && (IsMinimized == False) ) {
-						Minimize("ClassWindow");
-						IsMinimized = True;
-					}
-					else if ( (Event.ControlId == "ClassWindowBody") && (IsMinimized == True) ) {
-						Maximize("ClassWindow");
-						IsMinimized = False;
-					}
+//					case CMlEvent::Type::KeyPress : {
+//						if (Event.KeyCode == 35) {
+//							// ESC pressed
+//							WipeOut("ClassWindow");
+//						}
+//					}
 				}
 			}
 		}

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -671,11 +671,9 @@ class PluginRaspVotes extends Plugin {
 		// check for mode-specific restrictions
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $this->r_points_limits) {
 			// in Rounds mode, get points of first player & points limit
-			$aseco->client->query('GetCurrentRanking', 1, 0);
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetCurrentRanking', 1, 0);
 			$points = $info[0]['Score'];
-			$aseco->client->query('GetRoundPointsLimit');
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetRoundPointsLimit');
 			$limit = $info['CurrentValue'];
 
 			// check whether to disable /ladder
@@ -690,8 +688,7 @@ class PluginRaspVotes extends Plugin {
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
 			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
-			$aseco->client->query('GetTimeAttackLimit');
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetTimeAttackLimit');
 			$limit = $info['CurrentValue'] / 1000;  // convert to seconds
 
 			// check whether to disable /ladder
@@ -825,11 +822,9 @@ class PluginRaspVotes extends Plugin {
 		// check for mode-specific restrictions
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $this->r_points_limits) {
 			// in Rounds mode, get points of first player & points limit
-			$aseco->client->query('GetCurrentRanking', 1, 0);
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetCurrentRanking', 1, 0);
 			$points = $info[0]['Score'];
-			$aseco->client->query('GetRoundPointsLimit');
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetRoundPointsLimit');
 			$limit = $info['CurrentValue'];
 
 			// check whether to disable /replay
@@ -844,8 +839,7 @@ class PluginRaspVotes extends Plugin {
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
 			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
-			$aseco->client->query('GetTimeAttackLimit');
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetTimeAttackLimit');
 			$limit = $info['CurrentValue'] / 1000;  // convert to seconds
 
 			// check whether to disable /replay
@@ -962,11 +956,9 @@ class PluginRaspVotes extends Plugin {
 		// check for mode-specific restrictions
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $this->r_points_limits) {
 			// in Rounds mode, get points of first player & points limit
-			$aseco->client->query('GetCurrentRanking', 1, 0);
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetCurrentRanking', 1, 0);
 			$points = $info[0]['Score'];
-			$aseco->client->query('GetRoundPointsLimit');
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetRoundPointsLimit');
 			$limit = $info['CurrentValue'];
 
 			// check whether to disable /skip
@@ -981,8 +973,7 @@ class PluginRaspVotes extends Plugin {
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
 			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
-			$aseco->client->query('GetTimeAttackLimit');
-			$info = $aseco->client->getResponse();
+			$info = $aseco->client->query('GetTimeAttackLimit');
 			$limit = $info['CurrentValue'] / 1000;  // convert to seconds
 
 			// check whether to disable /skip

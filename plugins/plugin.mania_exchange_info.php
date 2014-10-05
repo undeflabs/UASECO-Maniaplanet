@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -356,7 +356,7 @@ class PluginManiaExchangeInfo extends Plugin {
 		$xml = str_replace('{#black}', $style['WINDOW'][0]['BLACKCOLOR'][0], $xml);
 
 		//$aseco->console_text($xml);
-		$aseco->client->addCall('SendDisplayManialinkPageToLogin', array($login, $aseco->formatColors($xml), 0, true));
+		$aseco->client->addCall('SendDisplayManialinkPageToLogin', $login, $aseco->formatColors($xml), 0, true);
 	}
 }
 

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -262,7 +262,7 @@ class PluginManialinks extends Plugin {
 		$xml = str_replace('{#black}', $style['WINDOW'][0]['BLACKCOLOR'][0], $xml);
 
 		//$aseco->console_text($xml);
-		$aseco->client->addCall('SendDisplayManialinkPageToLogin', array($login, $aseco->formatColors($xml), 0, true));
+		$aseco->client->addCall('SendDisplayManialinkPageToLogin', $login, $aseco->formatColors($xml), 0, true);
 	}
 
 	/*
@@ -651,7 +651,7 @@ class PluginManialinks extends Plugin {
 		$xml = str_replace('{#black}', $style['WINDOW'][0]['BLACKCOLOR'][0], $xml);
 
 		//$aseco->console_text($xml);
-		$aseco->client->addCall('SendDisplayManialinkPageToLogin', array($player->login, $aseco->formatColors($xml), 0, false));
+		$aseco->client->addCall('SendDisplayManialinkPageToLogin', $player->login, $aseco->formatColors($xml), 0, false);
 	}
 
 	/*

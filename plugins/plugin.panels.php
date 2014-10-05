@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -74,19 +74,14 @@ class PluginPanels extends Plugin {
 		$this->registerEvent('onEndMap1',		'onEndMap1');
 		$this->registerEvent('onEndMap',		'onEndMap');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
-		$this->registerEvent('onBeginMap1',		'onBeginMap1');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 
 
 		// handles action id's "-100"-"-49" for selecting from max. 50 record panel templates
 		// handles action id's "-48"-"-7" for selecting from max. 40 admin panel templates
 		// handles action id's "37"-"48" for selecting from max. 10 vote panel templates
-		// handles action id's "7201"-"7222" for selecting from max. 20 donate panel templates
 		// handles action id's "7231"-"7262" for selecting from max. 30 panel background templates
 		$this->registerEvent('onPlayerManialinkPageAnswer', 'onPlayerManialinkPageAnswer');
-
-// Move to "plugin.donate.php"
-		$this->registerChatCommand('donpanel',	'chat_donpanel',	'Selects donate panel (see: /donpanel help)',		Player::PLAYERS);
 
 // Maybe move to "plugin.rasp_jukebox.php"
 		$this->registerChatCommand('votepanel',	'chat_votepanel',	'Selects vote panel (see: /votepanel help)',		Player::PLAYERS);
@@ -104,142 +99,6 @@ class PluginPanels extends Plugin {
 			'dedi'	=> '-:--.---',
 			'mx'	=> '-:--.---',
 		);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_donpanel ($aseco, $login, $chat_command, $chat_parameter) {
-
-		$player = $aseco->server->players->getPlayer($login);
-
-		// check for donation plugin
-		if ( !isset($aseco->plugins['PluginDonate']) ) {
-			$message = '{#server}» {#error}Donations unavailable - include plugins.donate.php in [config/plugins.xml]';
-			$aseco->sendChatMessage($message, $login);
-			return;
-		}
-
-		if ($chat_parameter == 'help') {
-			$header = '{#black}/donpanel$g will change the donate panel:';
-			$help = array();
-			$help[] = array('...', '{#black}help',
-			                'Displays this help information');
-			$help[] = array('...', '{#black}list',
-			                'Displays available panels');
-			$help[] = array('...', '{#black}default',
-			                'Resets panel to server default');
-			$help[] = array('...', '{#black}off',
-			                'Disables donate panel');
-			$help[] = array('...', '{#black}xxx',
-			                'Selects donate panel xxx');
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(0.8, 0.05, 0.15, 0.6), 'OK');
-		}
-		else if ($chat_parameter == 'list') {
-			$player->maplist = array();
-
-			// read list of donate panel files
-			$paneldir = 'config/panels/';
-			$dir = opendir($paneldir);
-			$files = array();
-			while (($file = readdir($dir)) !== false) {
-				if (strtolower(substr($file, 0, 6)) == 'donate' &&
-				    strtolower(substr($file, -4)) == '.xml')
-					$files[] = substr($file, 6, strlen($file)-10);
-			}
-			closedir($dir);
-			sort($files, SORT_STRING);
-			if (count($files) > 20) {
-				$files = array_slice($files, 0, 20);  // maximum 20 templates
-				trigger_error('Too many donate panel templates - maximum 20!', E_USER_WARNING);
-			}
-			// sneak in standard entries
-			$files[] = 'default';
-			$files[] = 'off';
-
-			$head = 'Currently available donate panels:';
-			$list = array();
-			$pid = 1;
-			$lines = 0;
-			$player->msgs = array();
-			$player->msgs[0] = array(1, $head, array(0.8, 0.1, 0.7), array('Icons128x128_1', 'Custom'));
-			foreach ($files as $file) {
-				// store panel in player object for jukeboxing
-				$trkarr = array();
-				$trkarr['panel'] = $file;
-				$player->maplist[] = $trkarr;
-
-				$list[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) . '.',
-				                array('{#black}' . $file, $pid+7200));  // action id
-				$pid++;
-				if (++$lines > 14) {
-					$player->msgs[] = $list;
-					$lines = 0;
-					$list = array();
-				}
-			}
-			// add if last batch exists
-			if (!empty($list))
-				$player->msgs[] = $list;
-
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-		}
-		else if ($chat_parameter != '') {
-			$panel = $chat_parameter;
-			if (is_numeric($panel) && $panel > 0) {
-				$pid = ltrim($panel, '0');
-				$pid--;
-				if (array_key_exists($pid, $player->maplist) &&
-				    isset($player->maplist[$pid]['panel'])) {
-					$panel = $player->maplist[$pid]['panel'];
-				}
-			}
-			if ($panel == 'off') {
-				$player->panels['donate'] = '';
-				$this->donatepanel_off($aseco, $login);
-				$message = '{#server}» Donate panel disabled!';
-				$this->setPanel($login, 'donate', '');
-			}
-			else if ($panel == 'default') {
-				if ( isset($aseco->plugins['PluginDonate']) ) {
-					$player->panels['donate'] = $this->replacePanelBG($this->panels['donate'], $player->panelbg);
-					$this->display_donatepanel($aseco, $player, $aseco->plugins['PluginDonate']->donation_values);
-					$message = '{#server}» Donate panel reset to server default {#highlite}' . substr($this->settings['donate_panel'], 6) . '{#server} !';
-					$this->setPanel($login, 'donate', $this->settings['donate_panel']);
-				}
-			}
-			else {
-				// add file prefix
-				if (strtolower(substr($panel, 0, 6)) != 'donate') {
-					$panel = 'Donate' . $panel;
-				}
-				$panel_file = 'config/panels/' . $panel . '.xml';
-				// load new panel
-				if ($paneldata = @file_get_contents($panel_file)) {
-					if ( isset($aseco->plugins['PluginDonate']) ) {
-						$player->panels['donate'] = $this->replacePanelBG($paneldata, $player->panelbg);
-						$this->display_donatepanel($aseco, $player, $aseco->plugins['PluginDonate']->donation_values);
-						$message = '{#server}» Donate panel {#highlite}' . $chat_parameter . '{#server} selected!';
-						$this->setPanel($login, 'donate', $panel);
-					}
-				}
-				else {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read donate panel file ['. $panel_file .']!', E_USER_WARNING);
-					$message = '{#server}» {#error}No valid donate panel file, use {#highlite}$i /donpanel list {#error}!';
-				}
-			}
-			$aseco->sendChatMessage($message, $login);
-		}
-		else {
-			$message = '{#server}» {#error}No donate panel specified, use {#highlite}$i /donpanel help {#error}!';
-			$aseco->sendChatMessage($message, $login);
-		}
 	}
 
 	/*
@@ -583,7 +442,6 @@ class PluginPanels extends Plugin {
 				$this->setPanelBG($login, $this->settings['panel_bg']);
 
 				$this->init_playerpanels($aseco, $player);
-				$this->load_donpanel($aseco, $player);
 				$this->load_admpanel($aseco, $player);
 				$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
 			}
@@ -599,7 +457,6 @@ class PluginPanels extends Plugin {
 					$this->setPanelBG($login, $panelbg);
 
 					$this->init_playerpanels($aseco, $player);
-					$this->load_donpanel($aseco, $player);
 					$this->load_admpanel($aseco, $player);
 					$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
 				}
@@ -639,9 +496,6 @@ class PluginPanels extends Plugin {
 			// set admin panel (none = no panel)
 			$this->settings['admin_panel'] = $settings['ADMIN_PANEL'][0];
 
-			// set donate panel (none = no panel)
-			$this->settings['donate_panel'] = $settings['DONATE_PANEL'][0];
-
 			// set records panel (none = no panel)
 			$this->settings['records_panel'] = $settings['RECORDS_PANEL'][0];
 
@@ -671,7 +525,6 @@ class PluginPanels extends Plugin {
 
 			$this->panels = array();
 			$this->panels['admin'] = '';
-			$this->panels['donate'] = '';
 			$this->panels['records'] = '';
 			$this->panels['vote'] = '';
 
@@ -684,17 +537,6 @@ class PluginPanels extends Plugin {
 				if (!$this->panels['admin'] = @file_get_contents($panel_file)) {
 					// Could not read XML file
 					trigger_error('[Panel] Could not read admin panel file ['. $panel_file .']!', E_USER_ERROR);
-				}
-			}
-
-			// check for default donate panel
-			if ($this->settings['donate_panel'] != '') {
-				$panel_file = 'config/panels/' . $this->settings['donate_panel'] . '.xml';
-				$aseco->console('[Panel] Load default donate panel [{1}]', $panel_file);
-				// load default panel
-				if (!$this->panels['donate'] = @file_get_contents($panel_file)) {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read donate panel file ['. $panel_file .']!', E_USER_ERROR);
 				}
 			}
 
@@ -830,31 +672,10 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $data) {
-
-		// check for donation plugin
-		if ( isset($aseco->plugins['PluginDonate']) ) {
-			// display donate panel for all players that use a panel
-			foreach ($aseco->server->players->player_list as &$player) {
-				if ($player->panels['donate'] != '') {
-					$this->display_donatepanel($aseco, $player, $aseco->plugins['PluginDonate']->donation_values);
-				}
-			}
-			unset($player);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Set default window style, panels & background
 		$player->panels['admin'] = $this->replacePanelBG($this->panels['admin'], $this->panelbg);
-		$player->panels['donate'] = $this->replacePanelBG($this->panels['donate'], $this->panelbg);
 		$player->panels['records'] = $this->replacePanelBG($this->panels['records'], $this->panelbg);
 		$player->panels['vote'] = $this->replacePanelBG($this->panels['vote'], $this->panelbg);
 		$player->panelbg = $this->panelbg;
@@ -881,7 +702,7 @@ class PluginPanels extends Plugin {
 				// Update default Player data
 				$panels = implode('/', array(
 					$this->settings['admin_panel'],
-					$this->settings['donate_panel'],
+					'',
 					$this->settings['records_panel'],
 					$this->settings['vote_panel']
 				));
@@ -901,7 +722,6 @@ class PluginPanels extends Plugin {
 
 
 		$this->init_playerpanels($aseco, $player);
-		$this->load_donpanel($aseco, $player);
 		$this->load_admpanel($aseco, $player);
 	}
 
@@ -939,14 +759,6 @@ class PluginPanels extends Plugin {
 
 			// select new panel
 			$aseco->releaseChatCommand('/votepanel '. $panel, $player->login);
-		}
-		else if ($action >= 7201 && $action <= 7222) {
-			// get player & donate panel
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$panel = $player->maplist[abs($action)-7201]['panel'];
-
-			// select new panel
-			$aseco->releaseChatCommand('/donpanel '. $panel, $player->login);
 		}
 		else if ($action >= 7231 && $action <= 7262) {
 			// get player & panel background
@@ -990,18 +802,6 @@ class PluginPanels extends Plugin {
 				$player->panels['admin'] = '';
 			}
 
-			if ($panels['donate'] != '') {
-				$panel_file = 'config/panels/' . $panels['donate'] . '.xml';
-				if (!$player->panels['donate'] = @file_get_contents($panel_file)) {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read donate panel file ['. $panel_file .']!', E_USER_WARNING);
-				}
-				$player->panels['donate'] = $this->replacePanelBG($player->panels['donate'], $player->panelbg);
-			}
-			else {
-				$player->panels['donate'] = '';
-			}
-
 			if ($panels['records'] != '') {
 				$panel_file = 'config/panels/' . $panels['records'] . '.xml';
 				if (!$player->panels['records'] = @file_get_contents($panel_file)) {
@@ -1025,20 +825,6 @@ class PluginPanels extends Plugin {
 			else {
 				$player->panels['vote'] = '';
 			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function load_donpanel ($aseco, $player) {
-
-		// check for donation plugin
-		if (isset($aseco->plugins['PluginDonate']) && $player->panels['donate'] != '') {
-			$this->display_donatepanel($aseco, $player, $aseco->plugins['PluginDonate']->donation_values);
 		}
 	}
 
@@ -1234,7 +1020,6 @@ class PluginPanels extends Plugin {
 				$panel = explode('/', $dbextra->Panels);
 				$panels = array();
 				$panels['admin'] = $panel[0];
-				$panels['donate'] = $panel[1];
 				$panels['records'] = $panel[2];
 				$panels['vote'] = $panel[3];
 				return $panels;
@@ -1264,7 +1049,7 @@ class PluginPanels extends Plugin {
 
 		$query = "
 		UPDATE `players_extra` SET
-			`Panels` = ". $aseco->mysqli->quote($panels['admin'] .'/'. $panels['donate'] .'/'. $panels['records'] .'/'. $panels['vote']) ."
+			`Panels` = ". $aseco->mysqli->quote($panels['admin'] .'//'. $panels['records'] .'/'. $panels['vote']) ."
 		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
 		";
 
@@ -1370,46 +1155,6 @@ class PluginPanels extends Plugin {
 	public function adminpanel_off ($aseco, $login) {
 
 		$xml = '<manialink id="UASECO-3"></manialink>';
-		$aseco->addManialink($xml, $login, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Displays a Donate panel
-	 *
-	 * $player : player to send panel to
-	 * $planets: donation values
-	 */
-	public function display_donatepanel ($aseco, $player, $planets) {
-
-		// build manialink
-		$xml = $player->panels['donate'];
-		for ($i = 1; $i <= 7; $i++)
-			$xml = str_replace('%COP' . $i . '%', $planets[$i-1], $xml);
-
-		//$aseco->console_text($xml);
-		$aseco->addManialink($xml, $player->login, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Disables a Donate panel
-	 *
-	 * $login: player login to disable panel for
-	 */
-	public function donatepanel_off ($aseco, $login) {
-
-		$xml = '<manialink id="UASECO-6"></manialink>';
 		$aseco->addManialink($xml, $login, 0, false);
 	}
 

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-20
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -52,8 +52,8 @@ class Map {
 	public $author_continent;
 	public $author_nation;
 
-	public $authorscore;
-	public $authortime;
+	public $author_score;
+	public $author_time;
 	public $goldtime;
 	public $silvertime;
 	public $bronzetime;
@@ -116,7 +116,7 @@ class Map {
 			if  (empty($this->author_zone) && $this->author == 'Nadeo') {
 				$this->author_zone	= 'Europe|France|Île-de-France|Paris';
 				$this->author_continent	= 'Europe';
-				$this->author_nation	= 'France';
+				$this->author_nation	= 'FRA';
 			}
 			else {
 				$this->author_zone = substr($gbx->authorZone, 6);			// strip 'World|';
@@ -131,21 +131,21 @@ class Map {
 						case 'South America':
 						case 'Oceania':
 							$this->author_continent = $zones[0];
-							$this->author_nation = $zones[1];
+							$this->author_nation = $aseco->country->countryToIoc($zones[1]);
 							break;
 						default:
 							$this->author_continent = '';
-							$this->author_nation = $zones[0];
+							$this->author_nation = $aseco->country->countryToIoc($zones[0]);
 					}
 				}
 				else {
 					$this->author_continent = '';
-					$this->author_nation = 'Other';
+					$this->author_nation = 'OTH';
 				}
 			}
 
-			$this->authorscore	= $gbx->authorScore;
-			$this->authortime	= $gbx->authorTime;
+			$this->author_score	= $gbx->authorScore;
+			$this->author_time	= $gbx->authorTime;
 			$this->goldtime		= $gbx->goldTime;
 			$this->silvertime	= $gbx->silverTime;
 			$this->bronzetime	= $gbx->bronzeTime;
@@ -187,10 +187,10 @@ class Map {
 			$this->author_nickname	= 'Unknown';
 			$this->author_zone	= '';
 			$this->author_continent	= '';
-			$this->author_nation	= 'Other';
+			$this->author_nation	= 'OTH';
 
-			$this->authorscore	= 0;
-			$this->authortime	= 0;
+			$this->author_score	= 0;
+			$this->author_time	= 0;
 			$this->goldtime		= 0;
 			$this->silvertime	= 0;
 			$this->bronzetime	= 0;

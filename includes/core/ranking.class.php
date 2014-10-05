@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-13
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -39,15 +39,35 @@
 */
 
 class Ranking {
-	public $rank;
-	public $login;
-	public $nickname;
-	public $time;
-	public $score;
-	public $cps;
-	public $team;
-	public $spectator;
-	public $away;
+	public $rank;			// Current Rank
+	public $pid;			// PlayerId at the dedicated Server
+	public $login;			// PlayerLogin
+	public $nickname;		// PlayerNickname
+	public $time;			// Players best time
+	public $score;			// Players current score
+	public $cps;			// Array of Checkpoint times from the best time
+	public $team;			// TeamId of that Team the Player is member from, -1 = no Team
+	public $spectator;		// boolean indicator
+	public $away;			// boolean indicator
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function __construct () {
+		$this->rank		= 0;
+		$this->pid		= 0;
+		$this->login		= 'Unset';
+		$this->nickname		= 'Unset';
+		$this->time		= 0;
+		$this->score		= 0;
+		$this->cps		= array();
+		$this->team		= -1;
+		$this->spectator	= false;
+		$this->away		= false;
+	}
 }
 
 ?>

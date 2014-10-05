@@ -21,8 +21,6 @@ Version 1.0.0
    - Included Database support into controller and changed all MySQL statements from "MySQL Extension" to "MySQL Improved Extension"
    - Took some classes/ideas from MPAseco/0.83 and Aseco/2.2.0c
    - Splitted types.inc.php into single file classes
-   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIMEATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
-   - Added constant Gameinfo::TEAMATTACK
    - Extended class Player
    - Extended class PlayerList
    - Extended class Server
@@ -37,10 +35,12 @@ Version 1.0.0
    - Added class Plugin
    - Added class RankingList
    - Added class Window
+   - Added new RoundsPointSystem "High Score", based upon 'MotoGP' * 10
    - Rewritten all Plugins into a own class and documented all dependencies
    - Merged several Plugins into one Plugin
    - Renamed several Plugins
    - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
+   - Added new GbxRemote from 2014-08-01 from https://github.com/NewboO/dedicated-server-api/
 
  - Bugfix (in XAseco2):
    - includes/xmlparser.inc.php: Changed to make sure that '0' values from <tags> in XML files are not interpreted as 'false' and are stored too
@@ -52,7 +52,9 @@ Version 1.0.0
    - The folder "panels" has been moved into the "config" folder
    - The folder "styles" has been moved into the "config" folder
    - All "mysql_*()" does not work anymore, use "$aseco->mysqli->*" instead (e.g. "$res = "$aseco->mysqli->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php
-   - Renamed "config/config.xml" to  "config/UASECO.xml"
+   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIMEATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
+   - Added constant "Gameinfo::TEAMATTACK"
+   - Renamed "config/config.xml" to "config/UASECO.xml"
    - Removed "manialinks.inc.php", moved parts from it into the related Plugins and replaced the "Window" with the new class "window.class.php"
    - Removed Plugin "plugin.matchsave.php", and related files "matchsave.xml", "html.tpl" and "text.tpl"
    - Removed Jfreu-Plugins "jfreu.chat.php", "jfreu.lite.php" and "jfreu.plugin.php" with all related files ("plugin.welcome_center.php" replaces "jfreu.lite.php")
@@ -76,7 +78,6 @@ Version 1.0.0
    - Changed "stripColors()" to "$aseco->stripColors()"
    - Changed "stripSizes()" to "$aseco->stripSizes()"
    - Changed "stripNewlines()" to "$aseco->stripNewlines()"
-   - Changed "http_get_file()" to "$aseco->http_get_file()"
    - Changed "bool2text()" to "$aseco->bool2string()"
    - Changed "mapCountry()" to "$aseco->country->countryToIoc()"
    - Changed "continent2cid()" to "$aseco->continent->continentToId()"
@@ -94,4 +95,9 @@ Version 1.0.0
    - Event "onMaplistChanged" renamed to "onMapListChanged" (uppercase "L")
    - Event "onPlayerConnect2" renamed to "onPlayerConnect1"
    - Removed <custom_ui> handling (deprecated) and replaced by <ui_properties> from modescript_settings.xml (Details: http://forum.maniaplanet.com/viewtopic.php?p=228997#p228997)
+   - Removed chat command "/admin listdupes", because the Database column has unique key
+   - Remamed "$map->authorscore" to "$map->author_score" ($map = includes/core/map.class.php)
+   - Remamed "$map->authortime" to "$map->author_time" ($map = includes/core/map.class.php)
+   - Removed all donate panels ("Donate*.xml") from "config/panels"
+   - Removed "http_get_file()", use "$aseco->webaccess->request()" instead
    - PLEASE NOTE: I only hope that this list are all differences, but i'm not really sure about this. I was starting too late to write this list, sorry!

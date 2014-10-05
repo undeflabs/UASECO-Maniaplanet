@@ -6,10 +6,12 @@
  *   Dedimania world records and their relations on the current track.
  * » Based upon plugin.dedimania.php and chat.dedimania.php from XAseco2/1.03 written
  *   by Xymph, based on FAST
+ *   Protocol documentation: http://dedimania.net:8082/Dedimania
+ *   Connection status: http://dedimania.net:8082/stats
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -29,6 +31,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
+ *  - includes/dedimania/GbxRemote.inc.php
  *  - includes/dedimania/GbxRemote.response.php
  *  - includes/dedimania/xmlrpc_db.inc.php
  *  - includes/core/webaccess.class.php
@@ -37,6 +40,7 @@
  *
  */
 
+	require_once('includes/dedimania/GbxRemote.inc.php');
 	require_once('includes/dedimania/GbxRemote.response.php');
 	require_once('includes/dedimania/xmlrpc_db.inc.php');
 
@@ -1803,7 +1807,7 @@ class PluginDedimania extends Plugin {
 			// check for multilap map in Rounds/Team/Cup modes
 			$aseco->console('[Dedimania] RoundForcedLaps > 0: records ignored');
 		}
-		else if ($map->authortime < $this->min_author_time) {
+		else if ($map->author_time < $this->min_author_time) {
 			// check for minimum author time
 			$aseco->console('[Dedimania] Map\'s Author time < '. ($this->min_author_time / 1000) .'s: records ignored');
 		}
@@ -1966,13 +1970,13 @@ class PluginDedimania extends Plugin {
 						$aseco->console('[Dedimania] onEndMap - times'. CRLF . print_r($times, true));
 					}
 
-					// collect logins with all checkpoints
+					// Collect logins with all checkpoints
 					$rankings = array();
 					foreach ($aseco->server->rankings->ranking_list as $rank) {
-						$rankings[$rank['login']] = $rank['cps'];
+						$rankings[$rank->login] = $rank->cps;
 					}
 
-					// get replay(s) of best player, skip first if validation replay is not OK
+					// Get replay(s) of best player, skip first if validation replay is not OK
 					$first_time_ok = false;
 					while (!$first_time_ok && !empty($times)) {
 						$replays = array('VReplay' => '', 'VReplayChecks' => '', 'Top1GReplay' => '');
@@ -2412,16 +2416,9 @@ class PluginDedimania extends Plugin {
 
 		// check for non-LAN login
 		if (!$aseco->isLANLogin($player->login)) {
-			$aseco->client->resetError();
-
-			// get current player info
-			$aseco->client->query('GetDetailedPlayerInfo', $player->login);
-			$info = $aseco->client->getResponse();
-
-			if ($aseco->client->isError()) {
-				return false;
-			}
-			else {
+			try {
+				// Get current player info
+				$info = $aseco->client->query('GetDetailedPlayerInfo', $player->login);
 				if ($short) {
 					return array(
 						'Login'		=> $info['Login'],
@@ -2438,6 +2435,10 @@ class PluginDedimania extends Plugin {
 					);
 				}
 			}
+			catch (Exception $exception) {
+				$aseco->console('[Dedimania] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetDetailedPlayerInfo: Player ['. $player->login .']');
+				return false;
+			}
 		}
 		return false;
 	}
@@ -2450,11 +2451,11 @@ class PluginDedimania extends Plugin {
 
 	public function dedimania_serverinfo ($aseco) {
 
-		// compute number of players and spectators
+		// Compute number of players and spectators
 		$numplayers = 0;
 		$numspecs = 0;
-		foreach ($aseco->server->players->player_list as $pl) {
-			if ($pl->isspectator) {
+		foreach ($aseco->server->players->player_list as $player) {
+			if ($player->isspectator) {
 				$numspecs++;
 			}
 			else {
@@ -2462,18 +2463,14 @@ class PluginDedimania extends Plugin {
 			}
 		}
 
-		// get current server options
-		$aseco->client->query('GetServerOptions');
-		$options = $aseco->client->getResponse();
-
 		$serverinfo = array(
-			'SrvName'	=> $options['Name'],
-			'Comment'	=> $options['Comment'],
-			'Private'	=> ($options['Password'] != ''),
+			'SrvName'	=> $aseco->server->name,
+			'Comment'	=> $aseco->server->comment,
+			'Private'	=> ($aseco->server->options['Password'] != ''),
 			'NumPlayers'	=> $numplayers,
-			'MaxPlayers'	=> $options['CurrentMaxPlayers'],
+			'MaxPlayers'	=> $aseco->server->options['CurrentMaxPlayers'],
 			'NumSpecs'	=> $numspecs,
-			'MaxSpecs'	=> $options['CurrentMaxSpectators'],
+			'MaxSpecs'	=> $aseco->server->options['CurrentMaxSpectators'],
 		);
 		if ($this->debug > 1) {
 			$aseco->console('[Dedimania] dedimania_serverinfo() - serverinfo'. CRLF . print_r($serverinfo, true));
@@ -2487,84 +2484,87 @@ class PluginDedimania extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function get_vreplay ($aseco, $uid, $entry, $allcps) {
-
-		// get validation replay
-		if (!$aseco->client->query('GetValidationReplay', $entry['Login'])) {
-			$aseco->console('[Dedimania] Unable to get validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: Dedicated Server Error Message [' . $aseco->client->getErrorCode() . '] ' . $aseco->client->getErrorMessage());
-			return false;
-		}
-		$vreplay = $aseco->client->getResponse();
-
-		// parse validation replay and check UID
-		$parser = new GBXReplayFetcher(true);
+	private function get_vreplay ($aseco, $uid, $entry, $allcps) {
 		try {
-			$parser->processData($vreplay);
-		}
-		catch (Exception $e) {
-			$aseco->console('[Dedimania] Unable to parse validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
-			return false;
-		}
-
-		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] get_vreplay() - parsed validation replay:'. CRLF . print_r($parser->xml, true));
-		}
-		if ($parser->uid != $uid) {
-			$aseco->console('[Dedimania] Validation replay UID not matched for Player ['. $entry['Login'] .']: skipped all records');
-			return null;
-		}
-
-
-		// check finish/checkpoints consistency
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
-			if ($aseco->server->maps->current->multilap == true) {
-				$cpsrace = $aseco->server->maps->current->nbcheckpoints * $aseco->server->gameinfo->laps['ForceLapsNb'];
+			// Get validation replay
+			if (!$vreplay = $aseco->client->query('GetValidationReplay', $entry['Login'])) {
+				$aseco->console('[Dedimania] Unable to get validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']');
+				return false;
 			}
-			else {
+
+			// parse validation replay and check UID
+			$parser = new GBXReplayFetcher(true);
+			try {
+				$parser->processData($vreplay);
+			}
+			catch (Exception $e) {
+				$aseco->console('[Dedimania] Unable to parse validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
+				return false;
+			}
+
+			if ($this->debug > 1) {
+				$aseco->console('[Dedimania] get_vreplay() - parsed validation replay:'. CRLF . print_r($parser->xml, true));
+			}
+			if ($parser->uid != $uid) {
+				$aseco->console('[Dedimania] Validation replay UID not matched for Player ['. $entry['Login'] .']: skipped all records');
+				return null;
+			}
+
+
+			// check finish/checkpoints consistency
+			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+				// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
+				if ($aseco->server->maps->current->multilap == true) {
+					$cpsrace = $aseco->server->maps->current->nbcheckpoints * $aseco->server->gameinfo->laps['ForceLapsNb'];
+				}
+				else {
+					$cpsrace = $aseco->server->maps->current->nbcheckpoints;
+				}
+			}
+			else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
 				$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 			}
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
-			$cpsrace = $aseco->server->maps->current->nbcheckpoints;
-		}
-		else {
-			$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
-		}
+			else {
+				$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
+			}
 
-		$validation_success = true;
+			$validation_success = true;
 // 2014-09-20: Disabled because of the "onelap" Bug: http://forum.maniaplanet.com/viewtopic.php?p=217747#p217747
-//		if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
-//			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
-//			$validation_success = false;
-//		}
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
-			if ($cpsrace != count($allcps)) {
-				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+//			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
+//				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+//				$validation_success = false;
+//			}
+			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
+				if ($cpsrace != count($allcps)) {
+					$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+					$validation_success = false;
+				}
+			}
+			else {
+				if ($cpsrace != count(explode(',', $entry['Checks']))) {
+					$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count(explode(',', $entry['Checks'])) .']');
+					$validation_success = false;
+				}
+			}
+			if ($parser->cpsCur != count($allcps)) {
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
 				$validation_success = false;
 			}
-		}
-		else {
-			if ($cpsrace != count(explode(',', $entry['Checks']))) {
-				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count(explode(',', $entry['Checks'])) .']');
+			if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
 				$validation_success = false;
 			}
-		}
-		if ($parser->cpsCur != count($allcps)) {
-			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
-			$validation_success = false;
-		}
-		if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-			$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
-			$validation_success = false;
-		}
 
-		// Success?
-		if ($validation_success === true) {
-			return $vreplay;
+			// Success?
+			if ($validation_success === true) {
+				return $vreplay;
+			}
+			else {
+				return false;
+			}
 		}
-		else {
-			return false;
+		catch (Exception $exception) {
+			$aseco->console('[Dedimania] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetValidationReplay: Player ['. $entry['Login'] .']');
 		}
 	}
 
@@ -2574,93 +2574,97 @@ class PluginDedimania extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function get_greplay ($aseco, $uid, $entry, $allcps) {
-
-		// save ghost replay
-		$grfile = sprintf('/Ghost.%s.%d.%07d.%s.Replay.Gbx',
-			$aseco->server->maps->current->uid,
-			$aseco->server->gameinfo->mode,
-			$entry['Best'],
-			$entry['Login']
-		);
-		if (!$aseco->client->query('SaveBestGhostsReplay', $entry['Login'], $this->greplay_dir . $grfile)) {
-			$aseco->console('[Dedimania] Unable to save ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: Dedicated Server Error Message [' . $aseco->client->getErrorCode() . '] ' . $aseco->client->getErrorMessage());
-			return false;
-		}
-		if (!$greplay = file_get_contents($aseco->server->gamedir .'Replays/'. $this->greplay_dir . $grfile)) {
-			$aseco->console('[Dedimania] Unable to load ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']');
-			return false;
-		}
-
-		// parse ghost replay and check UID
-		$parser = new GBXReplayFetcher(true);
+	private function get_greplay ($aseco, $uid, $entry, $allcps) {
 		try {
-			$parser->processData($greplay);
-		}
-		catch (Exception $e) {
-			$aseco->console('[Dedimania] Unable to parse ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
-			return false;
-		}
-
-		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] get_greplay() - parsed ghost replay:'. CRLF . print_r($parser->xml, true));
-		}
-		if ($parser->uid != $uid) {
-			$aseco->console('[Dedimania] Ghost replay UID not matched for Player ['. $entry['Login'] .']: skipped all records');
-			return null;
-		}
-
-
-		// check finish/checkpoints consistency
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
-			if ($aseco->server->maps->current->multilap == true) {
-				$cpsrace = $aseco->server->maps->current->nbcheckpoints * $aseco->server->gameinfo->laps['ForceLapsNb'];
+			// save ghost replay
+			$grfile = sprintf('/Ghost.%s.%d.%07d.%s.Replay.Gbx',
+				$aseco->server->maps->current->uid,
+				$aseco->server->gameinfo->mode,
+				$entry['Best'],
+				$entry['Login']
+			);
+			if (!$aseco->client->query('SaveBestGhostsReplay', $entry['Login'], $this->greplay_dir . $grfile)) {
+				$aseco->console('[Dedimania] Unable to save ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']');
+				return false;
 			}
-			else {
+			if (!$greplay = file_get_contents($aseco->server->gamedir .'Replays/'. $this->greplay_dir . $grfile)) {
+				$aseco->console('[Dedimania] Unable to load ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']');
+				return false;
+			}
+
+			// parse ghost replay and check UID
+			$parser = new GBXReplayFetcher(true);
+			try {
+				$parser->processData($greplay);
+			}
+			catch (Exception $e) {
+				$aseco->console('[Dedimania] Unable to parse ghost replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
+				return false;
+			}
+
+			if ($this->debug > 1) {
+				$aseco->console('[Dedimania] get_greplay() - parsed ghost replay:'. CRLF . print_r($parser->xml, true));
+			}
+			if ($parser->uid != $uid) {
+				$aseco->console('[Dedimania] Ghost replay UID not matched for Player ['. $entry['Login'] .']: skipped all records');
+				return null;
+			}
+
+
+			// check finish/checkpoints consistency
+			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+				// In Laps.Script.txt not multilaps Maps are playable, add not 'NbLaps' in this case!
+				if ($aseco->server->maps->current->multilap == true) {
+					$cpsrace = $aseco->server->maps->current->nbcheckpoints * $aseco->server->gameinfo->laps['ForceLapsNb'];
+				}
+				else {
+					$cpsrace = $aseco->server->maps->current->nbcheckpoints;
+				}
+			}
+			else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
 				$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 			}
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
-			$cpsrace = $aseco->server->maps->current->nbcheckpoints;
-		}
-		else {
-			$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
-		}
+			else {
+				$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
+			}
 
-		$validation_success = true;
+			$validation_success = true;
 // 2014-09-20: Disabled because of the "onelap" Bug: http://forum.maniaplanet.com/viewtopic.php?p=217747#p217747
-//		if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
-//			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
-//			$validation_success = false;
-//		}
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
-			if ($cpsrace != count($allcps)) {
-				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+//			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
+//				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+//				$validation_success = false;
+//			}
+			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
+				if ($cpsrace != count($allcps)) {
+					$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+					$validation_success = false;
+				}
+			}
+			else {
+				if ($cpsrace != count(explode(',', $entry['Checks']))) {
+					$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count(explode(',', $entry['Checks'])) .']');
+					$validation_success = false;
+				}
+			}
+			if ($parser->cpsCur != count($allcps)) {
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
 				$validation_success = false;
 			}
-		}
-		else {
-			if ($cpsrace != count(explode(',', $entry['Checks']))) {
-				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count(explode(',', $entry['Checks'])) .']');
+			if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
 				$validation_success = false;
 			}
-		}
-		if ($parser->cpsCur != count($allcps)) {
-			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
-			$validation_success = false;
-		}
-		if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-			$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
-			$validation_success = false;
-		}
 
-		// Success?
-		if ($validation_success === true) {
-			return $greplay;
+			// Success?
+			if ($validation_success === true) {
+				return $greplay;
+			}
+			else {
+				return false;
+			}
 		}
-		else {
-			return false;
+		catch (Exception $exception) {
+			$aseco->console('[Dedimania] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveBestGhostsReplay: Player ['. $entry['Login'] .']');
 		}
 	}
 

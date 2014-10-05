@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-09-26
+ * Date:		2014-10-05
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -89,9 +89,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->addDependence('PluginRaspKarma', Dependence::DISALLOWED, '1.0.0', null);
 
-
 		$this->registerEvent('onSync',				'onSync');
-		$this->registerEvent('onEverySecond',			'onEverySecond');
 		$this->registerEvent('onPlayerChat',			'onPlayerChat');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
@@ -124,13 +122,8 @@ class PluginManiaKarma extends Plugin {
 		// Check for the right UASECO-Version
 		$uaseco_min_version = '1.0.0';
 		if ( defined('UASECO_VERSION') ) {
-			$version = str_replace(
-				array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'),
-				array('.1','.2','.3','.4','.5','.6','.7','.8','.9'),
-				UASECO_VERSION
-			);
-			if ( version_compare($version, $uaseco_min_version, '<') ) {
-				trigger_error('[ManiaKarma] Not supported USAECO version ('. $version .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
+			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
+				trigger_error('[ManiaKarma] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
 		}
 		else {
@@ -430,9 +423,6 @@ class PluginManiaKarma extends Plugin {
 		}
 
 
-		// create web access
-		$this->config['webaccess'] = new Webaccess();
-
 		// Set Url for API-Call Auth
 		$this->config['urls']['api_auth'] = (string)$xmlcfg->urls->api_auth;
 
@@ -484,7 +474,7 @@ class PluginManiaKarma extends Plugin {
 
 
 		// Start an async GET request
-		$response = $this->config['webaccess']->request($api_url, null, 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		$response = $aseco->webaccess->request($api_url, null, 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 		if ($response['Code'] == 200) {
 			// Read the response
 			if (!$xml = @simplexml_load_string($response['Message'], null, LIBXML_COMPACT) ) {
@@ -692,6 +682,7 @@ class PluginManiaKarma extends Plugin {
 		$this->config['widget']['race']['background_substyle']		= (string)$xmlcfg->widget_styles->race->background_substyle;
 		$this->config['widget']['race']['border_style']			= (string)$xmlcfg->widget_styles->race->border_style;
 		$this->config['widget']['race']['border_substyle']		= (string)$xmlcfg->widget_styles->race->border_substyle;
+		$this->config['widget']['race']['title_background']		= (string)$xmlcfg->widget_styles->race->title_background;
 		$this->config['widget']['race']['title_style']			= (string)$xmlcfg->widget_styles->race->title_style;
 		$this->config['widget']['race']['title_substyle']		= (string)$xmlcfg->widget_styles->race->title_substyle;
 		$this->config['widget']['score']['title']			= (string)$xmlcfg->widget_styles->score->title;
@@ -780,21 +771,6 @@ class PluginManiaKarma extends Plugin {
 
 		// Free mem.
 		unset($xmlcfg);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onEverySecond ($aseco) {
-
-		// trigger pending callbacks
-		$read = array();
-		$write = null;
-		$except = null;
-		$this->config['webaccess']->select($read, $write, $except, 0);
 	}
 
 	/*
@@ -1083,19 +1059,19 @@ class PluginManiaKarma extends Plugin {
 					);
 					$message = str_replace('{br}', "%0A", $message);  // split long message
 
-					$aseco->client->resetError();
-					$aseco->client->query('Pay', (string)$player->login, (int)$player->data['ManiaKarma']['LotteryPayout'], (string)$aseco->formatColors($message) );
-					$billid = $aseco->client->getResponse();
-
-					// Is there an error on pay?
-					if ( $aseco->client->isError() ) {
-						$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $player->data['ManiaKarma']['LotteryPayout'] .' planets to player "'. $player->login .'" failed: [' . $aseco->client->getErrorCode() . '] ' . $aseco->client->getErrorMessage());
+					$billid = false;
+					try {
+						$billid = $aseco->client->query('Pay', (string)$player->login, (int)$player->data['ManiaKarma']['LotteryPayout'], (string)$aseco->formatColors($message) );
 					}
-					else {
-						$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $player->data['ManiaKarma']['LotteryPayout'] .' planets to player "'. $player->login .'" done. (BillId #'. $billid .')');
+					catch (Exception $exception) {
+						$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $player->data['ManiaKarma']['LotteryPayout'] .' planets to player "'. $player->login .'" failed: [' . $exception->getCode() . '] ' . $exception->getMessage());
+						return false;
 					}
 
-					// Subtract payed amounts from total (on error too, because player leaved)
+					// Payment done
+					$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $player->data['ManiaKarma']['LotteryPayout'] .' planets to player "'. $player->login .'" done. (BillId #'. $billid .')');
+
+					// Subtract paid amounts from total
 					$this->config['karma_lottery']['total_payout'] -= (int)$player->data['ManiaKarma']['LotteryPayout'];
 				}
 			}
@@ -1269,7 +1245,7 @@ class PluginManiaKarma extends Plugin {
 					urlencode( $this->config['account']['authcode'] )
 				);
 
-				$this->config['webaccess']->request($api_url, array(array($this, 'handleWebaccess'), 'PING', $api_url), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+				$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'PING', $api_url), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 			}
 
 			// Get the local karma
@@ -1332,7 +1308,7 @@ class PluginManiaKarma extends Plugin {
 			}
 			else {
 				// Can all Player be paid with the new total? Add only Planets if Server is over minimum.
-				if (($this->getServerPlanets() - $this->config['karma_lottery']['minimum_server_planets']) > ($this->config['karma_lottery']['total_payout'] + $this->config['karma_lottery']['planets_win']) ) {
+				if (($aseco->server->amount_planets - $this->config['karma_lottery']['minimum_server_planets']) > ($this->config['karma_lottery']['total_payout'] + $this->config['karma_lottery']['planets_win']) ) {
 
 					// Init the lottery array
 					$lottery_attendant = array();
@@ -1610,10 +1586,15 @@ class PluginManiaKarma extends Plugin {
 
 		// Window title
 		if ($gamemode == 0) {
-			$xml .= '<quad posn="0.4 -0.3 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['score']['title_style'] .'" substyle="'. $this->config['widget']['score']['title_substyle'] .'"/>';
+			$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['score']['title_style'] .'" substyle="'. $this->config['widget']['score']['title_substyle'] .'"/>';
 		}
 		else {
-			$xml .= '<quad posn="0.4 -0.3 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['race']['title_style'] .'" substyle="'. $this->config['widget']['race']['title_substyle'] .'"/>';
+			if ($this->config['widget']['race']['title_background'] != '') {
+				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['race']['title_background'] .'"/>';
+			}
+			else {
+				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['race']['title_style'] .'" substyle="'. $this->config['widget']['race']['title_substyle'] .'"/>';
+			}
 		}
 
 		if ($gamemode == 0) {
@@ -3402,7 +3383,7 @@ EOL;
 				);
 
 				// Start an async VOTE request
-				$this->config['webaccess']->request($api_url, array(array($this, 'handleWebaccess'), 'VOTE', $api_url), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+				$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'VOTE', $api_url), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 			}
 
 
@@ -3607,7 +3588,7 @@ EOL;
 		);
 
 		// Start an async GET request
-		$this->config['webaccess']->request($api_url, array(array($this, 'handleWebaccess'), 'GET', $api_url, $target), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'GET', $api_url, $target), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 
 		// Return an empty set, get replaced with handleWebaccess()
 		return;
@@ -3905,8 +3886,7 @@ EOL;
 		// the Event 'onPlayerConnect' is fired too early.
 
 		// Name, UId, FileName, Author, Environnement, Mood, BronzeTime, SilverTime, GoldTime, AuthorTime, CopperPrice, LapRace, NbLaps, NbCheckpoints, MapType, MapStyle
-		$aseco->client->query('GetCurrentMapInfo');
-		$response = $aseco->client->getResponse();
+		$response = $aseco->client->query('GetCurrentMapInfo');
 		$uid		= $response['UId'];
 		$filename	= $response['FileName'];
 
@@ -4133,29 +4113,6 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Returns the current amount of server planets
-	public function getServerPlanets () {
-		global $aseco;
-
-		$aseco->client->resetError();
-		$aseco->client->query('GetServerPlanets');
-		$planets = $aseco->client->getResponse();
-
-		if ( $aseco->client->isError() ) {
-			$aseco->console('[ManiaKarma] Error getting the amount of server planets: [' . $aseco->client->getErrorCode() . '] ' . $aseco->client->getErrorMessage());
-			return 0;
-		}
-		else {
-			return $planets;
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function setEmptyKarma ($reset_locals = false) {
 		global $aseco;
 
@@ -4243,7 +4200,7 @@ EOL;
 
 		// Start an async UPTODATE request
 		$url = 'http://'. $this->config['urls']['website'] .'/api/plugin-releases.xml';
-		$this->config['webaccess']->request($url, array(array($this, 'handleWebaccess'), 'UPTODATE', $url, $player), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		$aseco->webaccess->request($url, array(array($this, 'handleWebaccess'), 'UPTODATE', $url, $player), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 	}
 
 	/*
@@ -4392,7 +4349,7 @@ EOL;
 		);
 
 		// Start an async EXPORT request
-		$this->config['webaccess']->request($api_url, array(array($this, 'handleWebaccess'), 'EXPORT', $api_url, $player), $csv, false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'EXPORT', $api_url, $player), $csv, false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 	}
 
 	/*
@@ -4429,7 +4386,7 @@ EOL;
 		);
 
 		// Start an async STOREIMAGE request
-		$this->config['webaccess']->request($api_url, array(array($this, 'handleWebaccess'), 'STOREIMAGE', $api_url), base64_encode($gbx->thumbnail), false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'STOREIMAGE', $api_url), base64_encode($gbx->thumbnail), false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
 	}
 
 	/*

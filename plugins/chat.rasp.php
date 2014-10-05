@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-25
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -226,10 +226,6 @@ class PluginChatRasp extends Plugin {
 						}
 					}
 				}
-				if (!$aseco->client->multiquery()) {
-					trigger_error('[' . $aseco->client->getErrorCode() . '] ChatSend PMA (multi) - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-				}
-
 			}
 			else {
 				$msg = '{#server}» {#error}No message!';
@@ -459,21 +455,33 @@ class PluginChatRasp extends Plugin {
 		// check for auto force spectator
 		if ($aseco->settings['afk_force_spec']) {
 			if (!$player->isspectator) {
-				// force player into spectator
-				$rtn = $aseco->client->query('ForceSpectator', $player->login, 1);
-				if (!$rtn) {
-					trigger_error('['. $aseco->client->getErrorCode() .'] ForceSpectator - '. $aseco->client->getErrorMessage(), E_USER_WARNING);
-				}
-				else {
+				try {
+					// force player into spectator
+					$aseco->client->query('ForceSpectator', $player->login, 1);
+
 					// allow spectator to switch back to player
 					$rtn = $aseco->client->query('ForceSpectator', $player->login, 0);
 				}
+				catch (Exception $exception) {
+					$aseco->console('[ChatRasp] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ForceSpectator');
+				}
 			}
 
-			// force free camera mode on spectator
-			$aseco->client->addCall('ForceSpectatorTarget', array($player->login, '', 2));
-			// free up player slot
-			$aseco->client->addCall('SpectatorReleasePlayerSlot', array($player->login));
+			try {
+				// force free camera mode on spectator
+				$aseco->client->addCall('ForceSpectatorTarget', $player->login, '', 2);
+			}
+			catch (Exception $exception) {
+				$aseco->console('[ChatRasp] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ForceSpectatorTarget');
+			}
+
+			try {
+				// free up player slot
+				$aseco->client->addCall('SpectatorReleasePlayerSlot', $player->login);
+			}
+			catch (Exception $exception) {
+				$aseco->console('[ChatRasp] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SpectatorReleasePlayerSlot');
+			}
 		}
 	}
 
@@ -604,13 +612,13 @@ class PluginChatRasp extends Plugin {
 		);
 		$aseco->sendChatMessage($msg);
 		if (isset($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] != '') {
-			$aseco->client->addCall('Kick', array(
+			$aseco->client->addCall('Kick',
 				$player->login,
-				$aseco->formatColors($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] .'$z'))
+				$aseco->formatColors($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] .'$z')
 			);
 		}
 		else {
-			$aseco->client->addCall('Kick', array($player->login));
+			$aseco->client->addCall('Kick', $player->login);
 		}
 	}
 }

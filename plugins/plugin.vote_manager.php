@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2014-09-26
+ * Date:		2014-10-03
  * Copyright:		2012 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -190,10 +190,8 @@ class PluginVoteManager extends Plugin {
 
 
 		// Store the original CallVoteRatios and CallVoteTimeOut for restoring at onShutdown
-		$aseco->client->query('GetCallVoteRatios');
-		$this->config['OriginalCallVoteRatios'] = $aseco->client->getResponse();
-		$aseco->client->query('GetCallVoteTimeOut');
-		$GetCallVoteTimeOut = $aseco->client->getResponse();
+		$this->config['OriginalCallVoteRatios'] = $aseco->client->query('GetCallVoteRatios');
+		$GetCallVoteTimeOut = $aseco->client->query('GetCallVoteTimeOut');
 		$this->config['OriginalCallVoteTimeOut'] = $GetCallVoteTimeOut['CurrentValue'];
 		unset($GetCallVoteTimeOut);
 

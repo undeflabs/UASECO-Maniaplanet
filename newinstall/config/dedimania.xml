@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dedimania>
+	<!-- Dedimania server registration, copy from dedicated_cfg.txt & -->
+	<!-- generate code on http://dedimania.net/tm2stats/?do=register  -->
+	<masterserver_account>
+		<login>YOUR_SERVER_LOGIN</login>
+		<dedimaniacode>YOUR_DEDIMANIA_CODE</dedimaniacode>
+	</masterserver_account>
+
 	<database>
 		<welcome>{#welcome}Welcome to the Dedimania world record system at www.dedimania.com - see {#highlite}/helpdedi</welcome>
 		<timeout>{#dedimsg}Dedimania system timed out - retrying in {#highlite}{1}{#dedimsg} minutes</timeout>
@@ -34,13 +41,6 @@
 		<!-- top-1 Ghost Replays in UserData/Replays/GReplays/    -->
 		<keep_best_vreplays>True</keep_best_vreplays>
 	</database>
-
-	<!-- Dedimania server registration, copy from dedicated_cfg.txt & -->
-	<!-- generate code on http://dedimania.net/tm2stats/?do=register  -->
-	<masterserver_account>
-		<login>YOUR_SERVER_LOGIN</login>
-		<dedimaniacode>YOUR_DEDIMANIA_CODE</dedimaniacode>
-	</masterserver_account>
 
 	<messages>
 		<!-- ranking messages -->

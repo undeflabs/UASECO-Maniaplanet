@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -297,8 +297,8 @@ class PluginRaspJukebox extends Plugin {
 			// look for current map in jukebox
 			if (array_key_exists($map->uid, $this->jukebox)) {
 				if ($aseco->debug) {
-					$message = '[RaspJukebox] Current Map ' .
-						$aseco->stripColors($this->jukebox[$map->uid]['Name'], false) . ' loaded - index: ' .
+					$message = '[RaspJukebox] Current Map '.
+						$aseco->stripColors($this->jukebox[$map->uid]['Name'], false) .' loaded - index: '.
 						array_search($map->uid, array_keys($this->jukebox)
 					);
 					$aseco->console($message);
@@ -323,7 +323,7 @@ class PluginRaspJukebox extends Plugin {
 				unset($this->jukebox[$map->uid]);
 
 				if ($aseco->debug) {
-					$aseco->console_text('onBeginMap step2a - $this->jukebox:' . CRLF .
+					$aseco->console_text('onBeginMap step2a - $this->jukebox:'. CRLF .
 						print_r($this->jukebox, true)
 					);
 				}
@@ -336,8 +336,8 @@ class PluginRaspJukebox extends Plugin {
 				if ($this->jukebox_check != '') {
 					if (array_key_exists($this->jukebox_check, $this->jukebox)) {
 						if ($aseco->debug) {
-							$message = '[RaspJukebox] Intended Map ' .
-								$aseco->stripColors($this->jukebox[$this->jukebox_check]['Name'], false) . ' dropped - index: ' .
+							$message = '[RaspJukebox] Intended Map '.
+								$aseco->stripColors($this->jukebox[$this->jukebox_check]['Name'], false) .' dropped - index: '.
 								array_search($this->jukebox_check, array_keys($this->jukebox)
 							);
 							$aseco->console($message);
@@ -348,7 +348,7 @@ class PluginRaspJukebox extends Plugin {
 						unset($this->jukebox[$this->jukebox_check]);
 
 						if ($aseco->debug) {
-							$aseco->console_text('onBeginMap step2b - $this->jukebox:' . CRLF .
+							$aseco->console_text('onBeginMap step2b - $this->jukebox:'. CRLF .
 								print_r($this->jukebox, true)
 							);
 						}
@@ -358,7 +358,7 @@ class PluginRaspJukebox extends Plugin {
 					}
 					else {
 						if ($aseco->debug) {
-							$message = '[RaspJukebox] Intended Map ' . $this->jukebox_check . ' not found!';
+							$message = '[RaspJukebox] Intended Map '. $this->jukebox_check .' not found!';
 							$aseco->console_text($message);
 						}
 					}
@@ -371,15 +371,16 @@ class PluginRaspJukebox extends Plugin {
 			// unless it is permanent
 			if (!$this->jukebox_permadd) {
 				if ($aseco->debug) {
-					$aseco->console_text('onBeginMap step3 - remove: ' . $this->mxplayed);
+					$aseco->console_text('onBeginMap step3 - remove: '. $this->mxplayed);
 				}
-				$rtn = $aseco->client->query('RemoveMap', $this->mxplayed);
-				if (!$rtn) {
-					trigger_error('[' . $aseco->client->getErrorCode() . '] RemoveMap - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-				}
-				else {
+				try {
+					$aseco->client->query('RemoveMap', $this->mxplayed);
+
 					// throw 'maplist changed' event
 					$aseco->releaseEvent('onMapListChanged', array('unjuke', $this->mxplayed));
+				}
+				catch (Exception $exception) {
+					$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - RemoveMap');
 				}
 			}
 			$this->mxplayed = false;
@@ -432,7 +433,7 @@ class PluginRaspJukebox extends Plugin {
 		// check for jukeboxed map(s)
 		if (!empty($this->jukebox)) {
 			if ($aseco->debug) {
-				$aseco->console_text('onEndMap step1 - $this->jukebox:' . CRLF .
+				$aseco->console_text('onEndMap step1 - $this->jukebox:'. CRLF .
 					print_r($this->jukebox, true)
 				);
 			}
@@ -452,7 +453,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 					}
 					// player offline, so report skip
-					$message = '[RaspJukebox] Skipping Next Map ' . $aseco->stripColors($next['Name'], false) . ' because requester ' . $aseco->stripColors($next['Nick'], false) . ' left';
+					$message = '[RaspJukebox] Skipping Next Map '. $aseco->stripColors($next['Name'], false) .' because requester '. $aseco->stripColors($next['Nick'], false) .' left';
 					$aseco->console($message);
 					$message = $aseco->formatText($this->messages['JUKEBOX_SKIPLEFT'][0],
 						$aseco->stripColors($next['Name']),
@@ -487,8 +488,8 @@ class PluginRaspJukebox extends Plugin {
 			$this->jukebox_check = $uid;
 
 			if ($aseco->debug) {
-				$aseco->console_text('onEndMap step2 - $this->jukebox_check: ' . $this->jukebox_check);
-				$aseco->console_text('onEndMap step2 - $this->jukebox:' . CRLF .
+				$aseco->console_text('onEndMap step2 - $this->jukebox_check: '. $this->jukebox_check);
+				$aseco->console_text('onEndMap step2 - $this->jukebox:'. CRLF .
 					print_r($this->jukebox, true)
 				);
 			}
@@ -496,26 +497,24 @@ class PluginRaspJukebox extends Plugin {
 			// if a MX map, add it to server
 			if ($next['mx']) {
 				if ($aseco->debug) {
-					$aseco->console_text('[RaspJukebox] ' . $next['source'] . ' map filename is ' . $next['FileName']);
+					$aseco->console_text('[RaspJukebox] '. $next['source'] .' map filename is '. $next['FileName']);
 				}
+				try {
+					$aseco->client->query('AddMap', $next['FileName']);
 
-				$rtn = $aseco->client->query('AddMap', $next['FileName']);
-				if (!$rtn) {
-					trigger_error('[' . $aseco->client->getErrorCode() . '] AddMap - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-					return;
-				}
-				else {
 					// throw 'maplist changed' event
 					$aseco->releaseEvent('onMapListChanged', array('juke', $next['FileName']));
 				}
+				catch (Exception $exception) {
+					$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - AddMap');
+					return;
+				}
 			}
 
-			// select jukebox/MX map as next map
-			$rtn = $aseco->client->query('ChooseNextMap', $next['FileName']);
-			if (!$rtn) {
-				trigger_error('[' . $aseco->client->getErrorCode() . '] ChooseNextMap - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-			}
-			else {
+			try {
+				// select jukebox/MX map as next map
+				$aseco->client->query('ChooseNextMap', $next['FileName']);
+
 				// report map change from MX or jukebox
 				if ($next['mx']) {
 					$logmsg = '[RaspJukebox] Setting next map to ['. $aseco->stripColors($next['Name'], false) .'], file downloaded from '. $next['source'];
@@ -538,6 +537,9 @@ class PluginRaspJukebox extends Plugin {
 					$aseco->sendChatMessage($message);
 				}
 			}
+			catch (Exception $exception) {
+				$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ChooseNextMap');
+			}
 		}
 		else {
 			// reset just in case current map was replayed
@@ -547,21 +549,19 @@ class PluginRaspJukebox extends Plugin {
 
 		// check for autosaving maplist
 		if ($this->autosave_matchsettings != '') {
-			$rtn = $aseco->client->query('SaveMatchSettings', 'MatchSettings/'. $this->autosave_matchsettings);
-			if (!$rtn) {
-				trigger_error('[' . $aseco->client->getErrorCode() . '] SaveMatchSettings - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-			}
-			else {
+			try {
+				$aseco->client->query('SaveMatchSettings', 'MatchSettings/'. $this->autosave_matchsettings);
+
 				// should a random filter be added?
 				if ($aseco->settings['writemaplist_random']) {
-					$mapsfile = $aseco->server->mapdir . 'MatchSettings/' . $this->autosave_matchsettings;
+					$mapsfile = $aseco->server->mapdir .'MatchSettings/'. $this->autosave_matchsettings;
 					// read the match settings file
 					if (!$list = @file_get_contents($mapsfile)) {
-						trigger_error('Could not read match settings file ' . $mapsfile . ' !', E_USER_WARNING);
+						$aseco->console('[RaspJukebox] Could not read match settings file ['. $mapsfile .']!');
 					}
 					else {
 						// insert random filter after <gameinfos> section
-						$list = preg_replace('/<\/gameinfos>/', '$0' . CRLF . CRLF .
+						$list = preg_replace('/<\/gameinfos>/', '$0'. CRLF . CRLF .
 							"\t<filter>" . CRLF .
 							"\t\t<random_map_order>1</random_map_order>" . CRLF .
 							"\t</filter>",
@@ -570,10 +570,13 @@ class PluginRaspJukebox extends Plugin {
 
 						// write out the match settings file
 						if (!@file_put_contents($mapsfile, $list)) {
-							trigger_error('Could not write match settings file ' . $mapsfile . ' !', E_USER_WARNING);
+							$aseco->console('[RaspJukebox] Could not write match settings file ['. $mapsfile .']!');
 						}
 					}
 				}
+			}
+			catch (Exception $exception) {
+				$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveMatchSettings');
 			}
 		}
 	}
@@ -611,7 +614,7 @@ class PluginRaspJukebox extends Plugin {
 			$help[] = array('...', '{#black}norank',
 			                'Shows maps you don\'t have a rank on');
 			$help[] = array('...', '{#black}nogold',
-			                'Shows maps you didn\'t beat gold ' .
+			                'Shows maps you didn\'t beat gold '.
 			                 ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'score on' : 'time on'));
 			$help[] = array('...', '{#black}noauthor',
 			                'Shows maps you didn\'t beat author '.
@@ -766,26 +769,22 @@ class PluginRaspJukebox extends Plugin {
 						return;
 					}
 					else if (in_array($uid, $this->jb_buffer)) {
-						// check if map was recently played
-						$message = $this->messages['JUKEBOX_REPEAT'][0];
-						$aseco->sendChatMessage($message, $login);
+
 						// if not an admin with this ability, bail out
 						if (!$aseco->allowAbility($player, 'chat_jb_recent')) {
+
+							// map was recently played
+							$message = $this->messages['JUKEBOX_REPEAT'][0];
+							$aseco->sendChatMessage($message, $login);
+
 							return;
 						}
 					}
 
-					// check map vs. server settings
-					$rtn = $aseco->client->query('CheckMapForCurrentServerParams', $player->maplist[$jid]['filename']);
-					if (!$rtn) {
-						trigger_error('[' . $aseco->client->getErrorCode() . '] CheckMapForCurrentServerParams - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-						$message = $aseco->formatText($this->messages['JUKEBOX_IGNORED'][0],
-							$aseco->stripColors($player->maplist[$jid]['name']),
-							$aseco->client->getErrorMessage()
-						);
-						$aseco->sendChatMessage($message, $login);
-					}
-					else {
+					try {
+						// check map vs. server settings
+						$aseco->client->query('CheckMapForCurrentServerParams', $player->maplist[$jid]['filename']);
+
 						// add map to jukebox
 						$this->jukebox[$uid]['FileName'] = $player->maplist[$jid]['filename'];
 						$this->jukebox[$uid]['Name'] = $player->maplist[$jid]['name'];
@@ -795,10 +794,12 @@ class PluginRaspJukebox extends Plugin {
 						$this->jukebox[$uid]['source'] = 'Jukebox';
 						$this->jukebox[$uid]['mx'] = false;
 						$this->jukebox[$uid]['uid'] = $uid;
+
 						$message = $aseco->formatText($this->messages['JUKEBOX'][0],
 							$aseco->stripColors($player->maplist[$jid]['name']),
 							$aseco->stripColors($player->nickname)
 						);
+
 						if ($this->jukebox_in_window) {
 							$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 						}
@@ -808,6 +809,15 @@ class PluginRaspJukebox extends Plugin {
 
 						// throw 'jukebox changed' event
 						$aseco->releaseEvent('onJukeboxChanged', array('add', $this->jukebox[$uid]));
+					}
+					catch (Exception $exception) {
+						$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - CheckMapForCurrentServerParams');
+
+						$message = $aseco->formatText($this->messages['JUKEBOX_IGNORED'][0],
+							$aseco->stripColors($player->maplist[$jid]['name']),
+							$exception->getMessage()
+						);
+						$aseco->sendChatMessage($message, $login);
 					}
 				}
 				else {
@@ -820,7 +830,7 @@ class PluginRaspJukebox extends Plugin {
 					$message = $this->messages['JUKEBOX_LIST'][0];
 					$i = 1;
 					foreach ($this->jukebox as $item) {
-						$message .= '{#highlite}' . $i . '{#emotic}.[{#highlite}' . $aseco->stripColors($item['Name']) . '{#emotic}], ';
+						$message .= '{#highlite}'. $i .'{#emotic}.[{#highlite}'. $aseco->stripColors($item['Name']) .'{#emotic}], ';
 						$i++;
 					}
 					$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
@@ -859,10 +869,10 @@ class PluginRaspJukebox extends Plugin {
 
 						// add clickable button if admin with 'dropjukebox' ability or map by this player
 						if ($aseco->settings['clickable_lists'] && $tid <= 100 && ($dropall || $item['Login'] == $login)) {
-							$mapname = array('{#black}' . $mapname, -2000-$tid);  // action id
+							$mapname = array('{#black}'. $mapname, -2000-$tid);  // action id
 						}
 						else {
-							$mapname = '{#black}' . $mapname;
+							$mapname = '{#black}'. $mapname;
 						}
 						$page[] = array(
 							str_pad($tid, 2, '0', STR_PAD_LEFT) .'.',
@@ -998,7 +1008,7 @@ class PluginRaspJukebox extends Plugin {
 			$help[] = array('...', '{#black}norank',
 			                'Selects maps you don\'t have a rank on');
 			$help[] = array('...', '{#black}nogold',
-			                'Selects maps you didn\'t beat gold ' .
+			                'Selects maps you didn\'t beat gold '.
 			                 ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'score on' : 'time on'));
 			$help[] = array('...', '{#black}noauthor',
 			                'Selects maps you didn\'t beat author '.
@@ -1079,7 +1089,7 @@ class PluginRaspJukebox extends Plugin {
 			$aseco->releaseChatCommand('/jukebox '. $ctr, $login);
 		}
 		else {
-			$message = '{#server}» {#highlite}' . $chat_parameter[0] . '{#error} maps currently unavailable, try again later!';
+			$message = '{#server}» {#highlite}'. $chat_parameter[0] .'{#error} maps currently unavailable, try again later!';
 			$aseco->sendChatMessage($message, $login);
 		}
 	}
@@ -1102,7 +1112,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 
 		// check whether jukebox & /add are enabled
-		if ($this->feature_jukebox && $aseco->plugins['PluginRasp']->feature_mxadd && isset($aseco->plugins['PluginRaspVotes'])) {
+		if ($this->feature_jukebox && $this->feature_mxadd && isset($aseco->plugins['PluginRaspVotes'])) {
 			// check whether this player is spectator
 			if (!$this->allow_spec_startvote && $player->isspectator) {
 				$message = $this->messages['NO_SPECTATORS'][0];
@@ -1134,16 +1144,14 @@ class PluginRaspJukebox extends Plugin {
 			if (is_numeric($chat_parameter[0]) && $chat_parameter[0] >= 0) {
 				$trkid = ltrim($chat_parameter[0], '0');
 				$source = 'MX';
-				// try to load the map from MX
-				$remotefile = 'http://tm.mania-exchange.com/tracks/download/' . $trkid;
 
-				$file = $aseco->http_get_file($remotefile);
-				if ($file === false || $file == -1) {
-					$message = '{#server}» {#error}Error downloading, or MX is down!';
-					$aseco->sendChatMessage($message, $login);
-				}
-				else {
+				// try to load the map from MX
+				$remotefile = 'http://tm.mania-exchange.com/tracks/download/'. $trkid;
+				$response = $aseco->webaccess->request($remotefile, null, 'none');
+				if ($response['Code'] == 200) {
+
 					// check for maximum online map size
+					$file = &$response['Message'];
 					if (strlen($file) >= $aseco->server->maps->size_limit) {
 						$message = $aseco->formatText($this->messages['MAP_TOO_LARGE'][0],
 							round(strlen($file) / $aseco->server->maps->size_limit),
@@ -1153,12 +1161,12 @@ class PluginRaspJukebox extends Plugin {
 						return;
 					}
 					$sepchar = substr($aseco->server->mapdir, -1, 1);
-					$partialdir = $this->mxtmpdir . $sepchar . $trkid . '.Map.gbx';
+					$partialdir = $this->mxtmpdir . $sepchar . $trkid .'.Map.gbx';
 					$localfile = $aseco->server->mapdir . $partialdir;
 					if ($aseco->debug) {
-						$aseco->console_text('/add - mxtmpdir=' . $this->mxtmpdir);
-						$aseco->console_text('/add - path + filename=' . $partialdir);
-						$aseco->console_text('/add - aseco->server->mapdir = ' . $aseco->server->mapdir);
+						$aseco->console_text('/add - mxtmpdir='. $this->mxtmpdir);
+						$aseco->console_text('/add - path + filename='. $partialdir);
+						$aseco->console_text('/add - aseco->server->mapdir = '. $aseco->server->mapdir);
 					}
 					if ($nocasepath = $aseco->file_exists_nocase($localfile)) {
 						if (!unlink($nocasepath)) {
@@ -1226,7 +1234,7 @@ class PluginRaspJukebox extends Plugin {
 							break;
 						}
 						else {
-							$partialdir = $this->mxtmpdir . $sepchar . $filename . '_' . $trkid . '-' . $i++ . '.Map.gbx';
+							$partialdir = $this->mxtmpdir . $sepchar . $filename .'_'. $trkid .'-'. $i++ .'.Map.gbx';
 						}
 					}
 					if ($dupl) {
@@ -1236,22 +1244,15 @@ class PluginRaspJukebox extends Plugin {
 						rename($localfile, $aseco->server->mapdir . $partialdir);
 					}
 
-					// check map vs. server settings
-					$rtn = $aseco->client->query('CheckMapForCurrentServerParams', $partialdir);
-					if (!$rtn) {
-						trigger_error('[' . $aseco->client->getErrorCode() . '] CheckMapForCurrentServerParams - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-						$message = $aseco->formatText($this->messages['JUKEBOX_IGNORED'][0],
-							$aseco->stripColors($gbx->name),
-							$aseco->client->getErrorMessage()
-						);
-						$aseco->sendChatMessage($message, $login);
-					}
-					else {
+					try {
+						// check map vs. server settings
+						$aseco->client->query('CheckMapForCurrentServerParams', $partialdir);
+
 						// start /add vote
 						$this->mxadd['filename'] = $partialdir;
 						$this->mxadd['votes'] = $aseco->plugins['PluginRaspVotes']->required_votes($this->mxvoteratio);
 						$this->mxadd['name'] = $gbx->name;
-						$this->mxadd['environment'] = $gbx->environment;
+						$this->mxadd['environment'] = $gbx->envir;
 						$this->mxadd['login'] = $player->login;
 						$this->mxadd['nick'] = $player->nickname;
 						$this->mxadd['source'] = $source;
@@ -1290,6 +1291,19 @@ class PluginRaspJukebox extends Plugin {
 							$aseco->releaseChatCommand('/y '. $chat_parameter, $login);
 						}
 					}
+					catch (Exception $exception) {
+						$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - CheckMapForCurrentServerParams');
+
+						$message = $aseco->formatText($this->messages['JUKEBOX_IGNORED'][0],
+							$aseco->stripColors($gbx->name),
+							$exception->getMessage()
+						);
+						$aseco->sendChatMessage($message, $login);
+					}
+				}
+				else {
+					$message = '{#server}» {#error}Error downloading, or MX is down!';
+					$aseco->sendChatMessage($message, $login);
 				}
 			}
 			else {
@@ -1477,7 +1491,7 @@ class PluginRaspJukebox extends Plugin {
 							$this->jukebox = array_reverse($this->jukebox, true);
 
 							if ($aseco->debug) {
-								$aseco->console_text('/ladder pass - $this->jukebox:' . CRLF .
+								$aseco->console_text('/ladder pass - $this->jukebox:'. CRLF .
 									print_r($this->jukebox, true)
 								);
 							}
@@ -1514,7 +1528,7 @@ class PluginRaspJukebox extends Plugin {
 						$this->jukebox = array_reverse($this->jukebox, true);
 
 						if ($aseco->debug) {
-							$aseco->console_text('/replay pass - $this->jukebox:' . CRLF .
+							$aseco->console_text('/replay pass - $this->jukebox:'. CRLF .
 								print_r($this->jukebox, true)
 							);
 						}
@@ -1542,24 +1556,21 @@ class PluginRaspJukebox extends Plugin {
 						break;
 
 					case 4:  // kick
-						$rtn = $aseco->client->query('Kick', $aseco->plugins['PluginRaspVotes']->chatvote['target']);
-						if (!$rtn) {
-							trigger_error('[' . $aseco->client->getErrorCode() . '] Kick - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-						}
-						else {
+						try {
+							$aseco->client->query('Kick', $aseco->plugins['PluginRaspVotes']->chatvote['target']);
 							$aseco->console('[RaspJukebox] Vote by {1} kicked player {2}!',
 								$aseco->plugins['PluginRaspVotes']->chatvote['login'],
 								$aseco->plugins['PluginRaspVotes']->chatvote['target']
 							);
 						}
+						catch (Exception $exception) {
+							$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Kick');
+						}
 						break;
 
 					case 6:  // ignore
-						$rtn = $aseco->client->query('Ignore', $aseco->plugins['PluginRaspVotes']->chatvote['target']);
-						if (!$rtn) {
-							trigger_error('[' . $aseco->client->getErrorCode() . '] Ignore - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-						}
-						else {
+						try {
+							$aseco->client->query('Ignore', $aseco->plugins['PluginRaspVotes']->chatvote['target']);
 							// check if in global mute/ignore list
 							if (!in_array($aseco->plugins['PluginRaspVotes']->chatvote['target'], $aseco->server->mutelist)) {
 								// add player to list
@@ -1569,6 +1580,9 @@ class PluginRaspJukebox extends Plugin {
 								$aseco->plugins['PluginRaspVotes']->chatvote['login'],
 								$aseco->plugins['PluginRaspVotes']->chatvote['target']
 							);
+						}
+						catch (Exception $exception) {
+							$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Ignore');
 						}
 						break;
 
@@ -1588,7 +1602,7 @@ class PluginRaspJukebox extends Plugin {
 		else {
 			// all quiet on the voting front :)
 			$message = '{#server}» {#error}There is no vote right now!';
-			if ($aseco->plugins['PluginRasp']->feature_mxadd) {
+			if ($this->feature_mxadd) {
 				if ($this->feature_votes) {
 					$message .= ' Use {#highlite}$i/add <ID>{#error} or see {#highlite}$i/helpvote{#error} to start one.';
 				}
@@ -1631,7 +1645,7 @@ class PluginRaspJukebox extends Plugin {
 			for ($i = 1, $j = count($this->jb_buffer)-1; $i <= 10 && $j >= 0; $i++, $j--) {
 				if ( isset($this->jb_buffer[$j]) ) {
 					$map = $aseco->server->maps->getMapByUid($this->jb_buffer[$j]);
-					$message .= '{#highlite}'. $i .'{#emotic}.[{#highlite}' . $aseco->stripColors($map->name) .'{#emotic}], ';
+					$message .= '{#highlite}'. $i .'{#emotic}.[{#highlite}'. $aseco->stripColors($map->name) .'{#emotic}], ';
 				}
 			}
 
@@ -1698,7 +1712,7 @@ class PluginRaspJukebox extends Plugin {
 					if ($name == '')
 						$name = $param;
 					else  // concatenate words in name
-						$name .= '%20' . $param;
+						$name .= '%20'. $param;
 				}
 			}
 
@@ -1744,8 +1758,8 @@ class PluginRaspJukebox extends Plugin {
 
 		// list all found maps
 		foreach ($maps as $row) {
-			$mxid = '{#black}' . $row->id;
-			$name = '{#black}' . $row->name;
+			$mxid = '{#black}'. $row->id;
+			$name = '{#black}'. $row->name;
 			$author = $row->author;
 
 			// add clickable buttons
@@ -1832,10 +1846,10 @@ class PluginRaspJukebox extends Plugin {
 		$td = $aseco->server->mapdir . $this->mxdir;
 		if (is_dir($td)) {
 			$dir = opendir($td);
-			$fp = fopen($td . '/mapref.txt', 'w');
+			$fp = fopen($td .'/mapref.txt', 'w');
 			while (($file = readdir($dir)) !== false) {
 				if (strtolower(substr($file, -4)) == '.gbx') {
-					$ci = $aseco->plugins['PluginRasp']->getMapData($td . '/' . $file, false);
+					$ci = $aseco->plugins['PluginRasp']->getMapData($td .'/'. $file, false);
 					$file = str_ireplace('.map.gbx', '', $file);
 					fwrite($fp, $file . "\t" . $ci['environment'] . "\t" . $ci['author'] . "\t" . $aseco->stripColors($ci['name']) . "\t" . $ci['cost'] . CRLF);
 				}
@@ -1847,10 +1861,10 @@ class PluginRaspJukebox extends Plugin {
 		$td = $aseco->server->mapdir . $this->mxtmpdir;
 		if (is_dir($td)) {
 			$dir = opendir($td);
-			$fp = fopen($td . '/mapref.txt', 'w');
+			$fp = fopen($td .'/mapref.txt', 'w');
 			while (($file = readdir($dir)) !== false) {
 				if (strtolower(substr($file, -4)) == '.gbx') {
-					$ci = $aseco->plugins['PluginRasp']->getMapData($td . '/' . $file, false);
+					$ci = $aseco->plugins['PluginRasp']->getMapData($td .'/'. $file, false);
 					$file = str_ireplace('.map.gbx', '', $file);
 					fwrite($fp, $file . "\t" . $ci['environment'] . "\t" . $ci['author'] . "\t" . $aseco->stripColors($ci['name']) . "\t" . $ci['cost'] . CRLF);
 				}
@@ -1975,7 +1989,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapkarma = array($mapkarma, -6000-$tid);
 						}
 
-						$msg[] = array(str_pad($tid, 3, '0', STR_PAD_LEFT) . '.', $mapkarma, $mapname, $mapauthor);
+						$msg[] = array(str_pad($tid, 3, '0', STR_PAD_LEFT) .'.', $mapkarma, $mapname, $mapauthor);
 						$tid++;
 						if (++$lines > 14) {
 							$player->msgs[] = $msg;
@@ -2076,7 +2090,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapname = '{#grey}'. $map->name_stripped;
 						}
 						else {
-							$mapname = '{#black}' . $mapname;
+							$mapname = '{#black}'. $mapname;
 							// add clickable button
 							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
 								$mapname = array($mapname, $tid+100);  // action id
@@ -2271,7 +2285,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				$msg[] = array(
-					str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 					$mapname,
 					$mapauthor
 				);
@@ -2516,7 +2530,7 @@ class PluginRaspJukebox extends Plugin {
 						$diff = $map->goldtime - $row->Score;
 
 						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 							$mapname,
 							$mapauthor,
 							$mapenv,
@@ -2599,7 +2613,7 @@ class PluginRaspJukebox extends Plugin {
 				$map = $aseco->server->maps->getMapByUid($row->Uid);
 				if ($row->Uid == $map->uid) {
 					// does best time beat map's Gold time?
-					if ($row->Score > $map->authortime) {
+					if ($row->Score > $map->author_time) {
 						// Store map in player object for jukeboxing
 						$trkarr = array();
 						$trkarr['uid']		= $map->uid;
@@ -2644,12 +2658,12 @@ class PluginRaspJukebox extends Plugin {
 						}
 
 						// Compute difference to Author time
-						$diff = $row->Score - $map->authortime;
+						$diff = $row->Score - $map->author_time;
 						$sec = floor($diff/1000);
 						$hun = ($diff - ($sec * 1000)) / 10;
 
 						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 							$mapname,
 							$mapauthor,
 							'+'. sprintf("%d.%02d", $sec, $hun)
@@ -2715,7 +2729,7 @@ class PluginRaspJukebox extends Plugin {
 				$map = $aseco->server->maps->getMapByUid($row->Uid);
 				if ($row->Uid == $map->uid) {
 					// does best time beat map's Gold time?
-					if ($row->Score < $map->authorscore) {
+					if ($row->Score < $map->author_score) {
 						// Store map in player object for jukeboxing
 						$trkarr = array();
 						$trkarr['uid']		= $map->uid;
@@ -2760,10 +2774,10 @@ class PluginRaspJukebox extends Plugin {
 						}
 
 						// Compute difference to Author score
-						$diff = $map->authorscore - $row->Score;
+						$diff = $map->author_score - $row->Score;
 
 						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 							$mapname,
 							$mapauthor,
 							$mapenv,
@@ -2896,7 +2910,7 @@ class PluginRaspJukebox extends Plugin {
 				$pos = ($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ? str_pad($pos, 2, '0', STR_PAD_LEFT) : '-- ';
 
 				$msg[] = array(
-					str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 					$pos .'.',
 					$mapname,
 					$mapauthor,
@@ -2941,14 +2955,14 @@ class PluginRaspJukebox extends Plugin {
 		// Build list of author times
 		$times = array();
 		foreach ($aseco->server->maps->map_list as $map) {
-			$times[$map->uid] = $map->authortime;
+			$times[$map->uid] = $map->author_time;
 		}
 
 		// Sort for shortest or longest author times
 		$order ? asort($times) : arsort($times);
 
 		$envids = array('Canyon' => 11, 'Stadium' => 12, 'Valley' => 13);
-		$head = ($order ? 'Shortest' : 'Longest') . ' Maps On This Server:';
+		$head = ($order ? 'Shortest' : 'Longest') .' Maps On This Server:';
 		$msg = array();
 		$msg[] = array('Id', 'Name', 'Author', 'AuthTime');
 
@@ -3005,7 +3019,7 @@ class PluginRaspJukebox extends Plugin {
 				$mapenv = array($mapenv, $envids[$mapenv]);  // action id
 
 				$msg[] = array(
-					str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 					$mapname,
 					$mapauthor,
 					$aseco->formatTime($time)
@@ -3115,7 +3129,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				$msg[] =  array(
-					str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 					$mapname,
 					$mapauthor
 				);
@@ -3240,7 +3254,7 @@ class PluginRaspJukebox extends Plugin {
 			$pos = ($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ? str_pad($pos, 2, '0', STR_PAD_LEFT) : '-- ';
 
 			$msg[] = array(
-				str_pad($tid, 3, '0', STR_PAD_LEFT) . '.',
+				str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 				$pos .'.',
 				$mapname,
 				$mapauthor

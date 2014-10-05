@@ -37,15 +37,16 @@
 			<icon_substyle>ToolLeague1</icon_substyle>
 
 			<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
-			<background_color>3342</background_color>
-			<background_focus>3335</background_focus>
+			<background_color>5565</background_color>
+			<background_focus>5568</background_focus>
 
 			<background_style>Bgs1</background_style>
 			<background_substyle>BgEmpty</background_substyle>
 
-			<border_style>Bgs1InRace</border_style>
-			<border_substyle>BgTitleShadow</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', 'BgList' or 'BgEmpty' are useful) -->
+			<border_style>Bgs1</border_style>
+			<border_substyle>BgEmpty</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', 'BgList' or 'BgEmpty' are useful) -->
 
+			<title_background>09FD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 		</race>
@@ -307,7 +308,7 @@
 		<cup_silver>http://static.undef.name/ingame/mania-karma/cup_silver.png</cup_silver>
 
 		<maniakarma_logo>http://static.undef.name/ingame/mania-karma/logo-tm-karma.png</maniakarma_logo>
-		<progress_indicator>http://static.undef.name/ingame/mania-karma/progress_bar_yellow_2D.bik</progress_indicator>
+		<progress_indicator>http://static.undef.name/ingame/mania-karma/progress_bar_yellow_2D.png</progress_indicator>
 	</images>
 
 	<!--

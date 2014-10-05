@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -279,10 +279,12 @@ class PlayerList {
 	private function checkDatabase ($player) {
 		global $aseco;
 
-		// Setup nation from Player
-		$nation = $aseco->country->countryToIoc($player->nation);
+		// Do not add Fakeplayers into the database
+		if (preg_match('#^\*fakeplayer\d+\*$#', $player->login) === 1) {
+			return;
+		}
 
-		// Get player stats
+		// Get Player stats
 		$query = "
 		SELECT
 			`Id`,
@@ -298,7 +300,7 @@ class PlayerList {
 				$dbplayer = $result->fetch_object();
 				$result->free_result();
 
-				// Update player stats
+				// Update Player stats
 				$player->id = $dbplayer->Id;
 				if ($player->teamname == '' && $dbplayer->TeamName != '') {
 					$player->teamname = $dbplayer->TeamName;
@@ -310,12 +312,12 @@ class PlayerList {
 					$player->timeplayed = $dbplayer->TimePlayed;
 				}
 
-				// Update player data
+				// Update Player data
 				$query = "
 				UPDATE `players` SET
 					`NickName` = ". $aseco->mysqli->quote($player->nickname) .",
 					`Continent` = ". $aseco->continent->continentToId($player->continent) .",
-					`Nation` = ". $aseco->mysqli->quote($nation) .",
+					`Nation` = ". $aseco->mysqli->quote($player->nation) .",
 					`TeamName` = ". $aseco->mysqli->quote($player->teamname) .",
 					`UpdatedAt` = NOW()
 				WHERE `Login`= ". $aseco->mysqli->quote($player->login) .";
@@ -347,7 +349,7 @@ class PlayerList {
 					". $aseco->mysqli->quote('MP') .",
 					". $aseco->mysqli->quote($player->nickname) .",
 					". $aseco->continent->continentToId($player->continent) .",
-					". $aseco->mysqli->quote($nation) .",
+					". $aseco->mysqli->quote($player->nation) .",
 					". $aseco->mysqli->quote($player->teamname) .",
 					NOW()
 				);

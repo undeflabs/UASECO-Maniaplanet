@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -110,8 +110,7 @@ class PluginAutotime extends Plugin {
 		}
 
 		// Get next game settings
-		$aseco->client->query('GetNextGameInfo');
-		$nextgame = $aseco->client->getResponse();
+		$nextgame = $aseco->client->query('GetNextGameInfo');
 
 		// Check for TimeAttack on next map
 		if ($nextgame['GameMode'] == Gameinfo::TIMEATTACK) {
@@ -121,12 +120,12 @@ class PluginAutotime extends Plugin {
 				if ( $this->checkForActivePlayer() ) {
 					// Get next map object
 					$map = $aseco->server->maps->getNextMap();
-					$newtime = intval($map->authortime);
+					$newtime = intval($map->author_time);
 				}
 				else {
 					// Server already switched so get current map name
 					$newtime = 0;  // force default
-					$newtime = intval($aseco->server->maps->current->authortime);
+					$newtime = intval($aseco->server->maps->current->author_time);
 				}
 
 				// Compute new timelimit
@@ -151,18 +150,18 @@ class PluginAutotime extends Plugin {
 				}
 
 				// Set and log timelimit (strip .00 sec)
-				$aseco->client->addcall('SetTimeAttackLimit', array($newtime));
+				$aseco->client->addcall('SetTimeAttackLimit', $newtime);
 				$aseco->console('[AutoTime] set {1} timelimit for [{2}]: {3} (Author time: {4})',
 					$tag, stripColors($map->name, false),
 					substr($aseco->formatTime($newtime), 0, -3),
-					$aseco->formatTime($map->authortime)
+					$aseco->formatTime($map->author_time)
 				);
 
 				// Display timelimit (strip .00 sec)
 				$message = $aseco->formatText($this->config['MESSAGE'][0], $tag,
 					stripColors($map->name),
 					substr($aseco->formatTime($newtime), 0, -3),
-					$aseco->formatTime($map->authortime)
+					$aseco->formatTime($map->author_time)
 				);
 
 				if ($this->config['DISPLAY'][0] == 2) {

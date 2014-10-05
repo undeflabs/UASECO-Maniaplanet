@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-20
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -139,8 +139,7 @@ class MapList {
 		}
 		else {
 			// Get next map using 'GetNextMapInfo' list method
-			$aseco->client->query('GetNextMapInfo');
-			$response = $aseco->client->getResponse();
+			$response = $aseco->client->query('GetNextMapInfo');
 			$uid = $response['UId'];
 			unset($response);
 		}
@@ -167,6 +166,9 @@ class MapList {
 	public function readMapList () {
 		global $aseco;
 
+		// Init
+		$this->map_list = array();
+
 		// Get the MapList from Server
 		$maplist = array();
 		$newlist = array();
@@ -174,32 +176,30 @@ class MapList {
 		$size = 50;
 		$i = 0;
 		while (!$done) {
-			// GetMapList response: Name, UId, FileName, Environnement, Author, GoldTime, CopperPrice, MapType, MapStyle.
-			$aseco->client->resetError();
-			$aseco->client->query('GetMapList', $size, $i);
-			$newlist = $aseco->client->getResponse();
+			try {
+				// GetMapList response: Name, UId, FileName, Environnement, Author, GoldTime, CopperPrice, MapType, MapStyle.
+				$newlist = $aseco->client->query('GetMapList', $size, $i);
+				if (!empty($newlist)) {
+					// Add the new Maps
+					$maplist = array_merge($maplist, $newlist);
 
-			if (!empty($newlist)) {
-				if ( $aseco->client->isError() ) {
-					trigger_error('[MapList] Error at the ListMethod "GetMapList": ['. $aseco->client->getErrorCode() .'] '. $aseco->client->getErrorMessage(), E_USER_WARNING);
-					$done = true;
-					break;
-				}
-
-				// Add the new Maps
-				$maplist = array_merge($maplist, $newlist);
-
-				if (count($newlist) < $size) {
-					// Got less than $size maps, might as well leave
-					$done = true;
+					if (count($newlist) < $size) {
+						// Got less than $size maps, might as well leave
+						$done = true;
+					}
+					else {
+						$i += $size;
+					}
+					unset($newlist);
 				}
 				else {
-					$i += $size;
+					$done = true;
 				}
-				unset($newlist);
 			}
-			else {
+			catch (Exception $exception) {
+				$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
 				$done = true;
+				break;
 			}
 		}
 
@@ -215,11 +215,12 @@ class MapList {
 		$karma = $this->calculateRaspKarma();
 
 
-		$add_database = array();
+		$database = array();
+		$database['insert'] = array();
+		$database['update'] = array();
 		foreach ($maplist as $mapinfo) {
-
 			// Setup from database, if not present, add this to the list for adding into database
-			if (isset($dbinfos[$mapinfo['UId']])) {
+			if (isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename'])) {
 				// Create and setup dummy Map with data from the database
 				$map			= new Map(null, null);
 				$map->id		= $dbinfos[$mapinfo['UId']]['id'];
@@ -233,8 +234,8 @@ class MapList {
 				$map->author_zone	= $dbinfos[$mapinfo['UId']]['author_zone'];
 				$map->author_continent	= $dbinfos[$mapinfo['UId']]['author_continent'];
 				$map->author_nation	= $dbinfos[$mapinfo['UId']]['author_nation'];
-				$map->authorscore	= $dbinfos[$mapinfo['UId']]['authorscore'];
-				$map->authortime	= $dbinfos[$mapinfo['UId']]['authortime'];
+				$map->author_score	= $dbinfos[$mapinfo['UId']]['author_score'];
+				$map->author_time	= $dbinfos[$mapinfo['UId']]['author_time'];
 				$map->goldtime		= $dbinfos[$mapinfo['UId']]['goldtime'];
 				$map->silvertime	= $dbinfos[$mapinfo['UId']]['silvertime'];
 				$map->bronzetime	= $dbinfos[$mapinfo['UId']]['bronzetime'];
@@ -262,8 +263,14 @@ class MapList {
 				// Create Map object
 				$map = new Map($gbx, $mapinfo['FileName']);
 
-				// Add this new Map to the database
-				$add_database[] = $map;
+				if (empty($dbinfos[$mapinfo['UId']]['filename'])) {
+					// Update this Map in the database
+					$database['update'][] = $map;
+				}
+				else {
+					// Add this new Map to the database
+					$database['insert'][] = $map;
+				}
 			}
 
 
@@ -287,17 +294,26 @@ class MapList {
 		unset($maplist, $dbinfos);
 
 
-
-		// Add maps that are not yet stored in the database
-		foreach ($add_database as $map) {
+		// Add Maps that are not yet stored in the database
+		foreach ($database['insert'] as $map) {
 			$new = $this->insertMapIntoDatabase($map);
 
-			// Update the Maplist (made here, because now there is a $map->id)
+			// Update the Maplist
 			if ($new->uid) {
 				$this->map_list[$new->uid] = $new;
 			}
 		}
-		unset($add_database);
+
+		// Update Maps that are not up-to-date in the database
+		foreach ($database['update'] as $map) {
+			$result = $this->updateMapInDatabase($map);
+
+			// Update the Maplist
+			if ($result) {
+				$this->map_list[$map->uid] = $map;
+			}
+		}
+		unset($database);
 
 
 		// Find the current running map
@@ -315,7 +331,7 @@ class MapList {
 
 		// `NbLaps` and `NbCheckpoints` only accessible with the ListMethod 'GetCurrentMapInfo'
 		// and when the Map is actual loaded, update where made at $this->getCurrentMapInfo().
-		// In Maps with chunk version 13 (0x03043002), these information are accessible too.
+		// But in Maps with chunk version 13 (0x03043002), these information are accessible (newer Maps).
 		$query = "
 		INSERT INTO `maps` (
 			`Uid`,
@@ -359,8 +375,8 @@ class MapList {
 			". $aseco->mysqli->quote($map->author_zone) .",
 			". $aseco->mysqli->quote($map->author_continent) .",
 			". $aseco->mysqli->quote($map->author_nation) .",
-			". $map->authorscore .",
-			". $map->authortime .",
+			". $map->author_score .",
+			". $map->author_time .",
 			". $map->goldtime .",
 			". $map->silvertime .",
 			". $map->bronzetime .",
@@ -414,8 +430,8 @@ class MapList {
 			`AuthorZone` = ". $aseco->mysqli->quote($map->author_zone) .",
 			`AuthorContinent` = ". $aseco->mysqli->quote($map->author_continent) .",
 			`AuthorNation` = ". $aseco->mysqli->quote($map->author_nation) .",
-			`AuthorScore` = ". $map->authorscore .",
-			`AuthorTime` = ". $map->authortime .",
+			`AuthorScore` = ". $map->author_score .",
+			`AuthorTime` = ". $map->author_time .",
 			`GoldTime` = ". $map->goldtime .",
 			`SilverTime` = ". $map->silvertime .",
 			`BronzeTime` = ". $map->bronzetime .",
@@ -513,8 +529,8 @@ class MapList {
 						'author_zone'		=> $row['AuthorZone'],
 						'author_continent'	=> $row['AuthorContinent'],
 						'author_nation'		=> $row['AuthorNation'],
-						'authorscore'		=> $row['AuthorScore'],
-						'authortime'		=> $row['AuthorTime'],
+						'author_score'		=> $row['AuthorScore'],
+						'author_time'		=> $row['AuthorTime'],
 						'goldtime'		=> $row['GoldTime'],
 						'silvertime'		=> $row['SilverTime'],
 						'bronzetime'		=> $row['BronzeTime'],
@@ -551,6 +567,10 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	// http://forum.maniaplanet.com/viewtopic.php?p=219824#p219824
+	// The_Big_Boo: Because Windows doesn't support UTF-8 filenames natively but the API used in the
+	// dedicated server has some workaround which needs the UTF-8 BOM to be prepended.
+	// = stripBOM() on filenames for PHP
 	public function parseMap ($file) {
 		global $aseco;
 
@@ -581,13 +601,13 @@ class MapList {
 	public function getCurrentMapInfo () {
 		global $aseco;
 
-		$aseco->client->query('GetCurrentMapInfo');
-		$response = $aseco->client->getResponse();
+		$response = $aseco->client->query('GetCurrentMapInfo');
 
 		// Get Map from map_list[]
 		$map = $this->getMapByUid($response['UId']);
 
-		// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response
+		// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response,
+		// this is required for old Maps (e.g. early Canyon beta or converted TMF Stadium)
 		$map->nblaps = $response['NbLaps'];
 		$map->nbcheckpoints = $response['NbCheckpoints'];
 

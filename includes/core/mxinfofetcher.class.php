@@ -1,7 +1,7 @@
 <?php
 /*
- * Class: MX Info Fetcher
- * ~~~~~~~~~~~~~~~~~~~~~~
+ * Class: MXInfoFetcher
+ * ~~~~~~~~~~~~~~~~~~~~
  * » Fetch info/records for TM2/SM/QM maps from ManiaExchange.
  * » Based upon mxinfofetcher.inc.php written by Xymph based on:
  *   http://api.mania-exchange.com/
@@ -24,7 +24,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-06-23
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *

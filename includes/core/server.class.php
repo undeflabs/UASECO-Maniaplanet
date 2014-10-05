@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-14
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -220,8 +220,7 @@ class Server {
 		global $aseco;
 
 		// Get server stats: uptime...
-		$aseco->client->query('GetNetworkStats');
-		$network = $aseco->client->getResponse();
+		$network = $aseco->client->query('GetNetworkStats');
 
 		$this->networkstats['Uptime']			= $network['Uptime'];
 		$this->networkstats['NbrConnection']		= $network['NbrConnection'];
@@ -243,11 +242,9 @@ class Server {
 	private function callMethodIsRelayServer () {
 		global $aseco;
 
-		$aseco->client->query('IsRelayServer');
-		$this->isrelay = ($aseco->client->getResponse() > 0);
+		$this->isrelay = ($aseco->client->query('IsRelayServer') > 0);
 		if ($this->isrelay) {
-			$aseco->client->query('GetMainServerPlayerInfo', 1);
-			$this->relaymaster = $aseco->client->getResponse();
+			$this->relaymaster = $aseco->client->query('GetMainServerPlayerInfo', 1);
 		}
 	}
 
@@ -261,8 +258,7 @@ class Server {
 		global $aseco;
 
 		// Get mapdir
-		$aseco->client->query('GetMapsDirectory');
-		$this->mapdir = $aseco->client->getResponse();
+		$this->mapdir = $aseco->client->query('GetMapsDirectory');
 	}
 
 	/*
@@ -275,8 +271,7 @@ class Server {
 		global $aseco;
 
 		// Get gamedir
-		$aseco->client->query('GameDataDirectory');
-		$this->gamedir = $aseco->client->getResponse();
+		$this->gamedir = $aseco->client->query('GameDataDirectory');
 	}
 
 	/*
@@ -289,8 +284,7 @@ class Server {
 		global $aseco;
 
 		// Get server ladder limits
-		$aseco->client->query('GetLadderServerLimits');
-		$ladder = $aseco->client->getResponse();
+		$ladder = $aseco->client->query('GetLadderServerLimits');
 		$this->ladder_limit_min		= $ladder['LadderServerLimitMin'];
 		$this->ladder_limit_max		= $ladder['LadderServerLimitMax'];
 		unset($ladder);
@@ -306,8 +300,7 @@ class Server {
 		global $aseco;
 
 		// Gets current server name and options
-		$aseco->client->query('GetServerPlanets');
-		$this->amount_planets = $aseco->client->getResponse();
+		$this->amount_planets = $aseco->client->query('GetServerPlanets');
 	}
 
 	/*
@@ -320,8 +313,7 @@ class Server {
 		global $aseco;
 
 		// Gets current server name and options
-		$aseco->client->query('GetServerOptions');
-		$options = $aseco->client->getResponse();
+		$options = $aseco->client->query('GetServerOptions');
 
 		$this->comment						= $options['Comment'];
 
@@ -363,8 +355,7 @@ class Server {
 		global $aseco;
 
 		// Get server id, login, name, zone
-		$aseco->client->query('GetSystemInfo');
-		$system = $aseco->client->getResponse();
+		$system = $aseco->client->query('GetSystemInfo');
 		$this->id			= $system['ServerPlayerId'];
 		$this->login			= $system['ServerLogin'];
 		$this->ip			= $system['PublishedIp'];
@@ -372,8 +363,7 @@ class Server {
 		$this->p2pport			= $system['P2PPort'];
 		unset($system);
 
-		$aseco->client->query('GetDetailedPlayerInfo', $this->login);
-		$info = $aseco->client->getResponse();
+		$info = $aseco->client->query('GetDetailedPlayerInfo', $this->login);
 		$this->name			= $info['NickName'];
 		$this->zone			= explode('|', substr($info['Path'], 6));  // Strip 'World|' and split into array()
 		unset($info);
@@ -389,8 +379,7 @@ class Server {
 		global $aseco;
 
 		// Get basic server info
-		$aseco->client->query('GetVersion');
-		$version = $aseco->client->getResponse();
+		$version = $aseco->client->query('GetVersion');
 
 		$this->game		= $version['Name'];
 		$this->version		= $version['Version'];

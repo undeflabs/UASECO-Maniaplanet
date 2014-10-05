@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-21
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -121,6 +121,7 @@ class Helper {
 		$xml .= ' <dedicated>'.LF;
 		$xml .= '  <version>'. $this->server->version .'</version>'.LF;
 		$xml .= '  <build>'. $this->server->build .'</build>'.LF;
+		$xml .= '  <uptime>'. $this->server->networkstats['Uptime'] .'</uptime>'.LF;
 		$xml .= ' </dedicated>'.LF;
 		$xml .= ' <server>'.LF;
 		$xml .= '  <login>'. $this->server->login .'</login>'.LF;
@@ -154,7 +155,7 @@ class Helper {
 		$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
 		$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
 		$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
-		$xml .= '   <authortime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->authorscore	: $this->server->maps->current->authortime) .'</authortime>'.LF;
+		$xml .= '   <authortime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->author_score	: $this->server->maps->current->author_time) .'</authortime>'.LF;
 		$xml .= '   <goldtime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->goldtime	: $this->server->maps->current->goldtime) .'</goldtime>'.LF;
 		$xml .= '   <silvertime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->silvertime	: $this->server->maps->current->silvertime) .'</silvertime>'.LF;
 		$xml .= '   <bronzetime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->bronzetime	: $this->server->maps->current->bronzetime) .'</bronzetime>'.LF;
@@ -310,63 +311,6 @@ class Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	/**
-	 * Simple HTTP Get function with timeout
-	 * ok: return string || error: return false || timeout: return -1
-	 * if $openonly == true, don't read data but return true upon connect
-	 */
-	public function http_get_file ($url, $openonly = false) {
-		global $aseco;
-
-		$url = parse_url($url);
-		$port = isset($url['port']) ? $url['port'] : 80;
-		$query = isset($url['query']) ? '?'. $url['query'] : '';
-
-		$fp = @fsockopen($url['host'], $port, $errno, $errstr, 4);
-		if (!$fp) {
-			return false;
-		}
-		if ($openonly) {
-			fclose($fp);
-			return true;
-		}
-
-		$uri = '';
-		foreach (explode('/', $url['path']) as $subpath) {
-			$uri .= rawurlencode($subpath) . '/';
-		}
-		$uri = substr($uri, 0, strlen($uri)-1); // strip trailing '/'
-
-		fwrite($fp, 'GET '. $uri . $query ." HTTP/1.0\r\n" .
-		            'Host: '. $url['host'] ."\r\n" .
-		            'User-Agent: '. UASECO_NAME .'/' . UASECO_VERSION .' (' . PHP_OS . '; '. $aseco->server->game . ")\r\n\r\n");
-		stream_set_timeout($fp, 2);
-
-		$res = '';
-		$info['timed_out'] = false;
-		while (!feof($fp) && !$info['timed_out']) {
-			$res .= fread($fp, 512);
-			$info = stream_get_meta_data($fp);
-		}
-		fclose($fp);
-
-		if ($info['timed_out']) {
-			return -1;
-		}
-		else {
-			if (substr($res, 9, 3) != '200')
-				return false;
-			$page = explode("\r\n\r\n", $res, 2);
-			return $page[1];
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	// Sends one or more Manialinks immediately to the given $logins, or all Players
 	public function sendManialink ($widgets, $logins = false, $timeout = 0, $hideclick = false) {
 
@@ -377,12 +321,22 @@ class Helper {
 			$xml .= '</manialinks>';
 
 			if ($logins !== false) {
-				// Send to given Players
-				$this->client->query('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
+				try {
+					// Send to given Players
+					$this->client->query('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendManialink(): SendDisplayManialinkPageToLogin: '. $logins);
+				}
 			}
 			else {
-				// Send to all connected Players
-				$this->client->query('SendDisplayManialinkPage', $xml, ($timeout * 1000), $hideclick);
+				try {
+					// Send to all connected Players
+					$this->client->query('SendDisplayManialinkPage', $xml, ($timeout * 1000), $hideclick);
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendManialink(): SendDisplayManialinkPage');
+				}
 			}
 		}
 	}
@@ -403,12 +357,22 @@ class Helper {
 			$xml .= '</manialinks>';
 
 			if ($logins !== false) {
-				// Send to given Players
-				$this->client->addCall('SendDisplayManialinkPageToLogin', array($logins, $xml, ($timeout * 1000), $hideclick));
+				try {
+					// Send to given Players
+					$this->client->addCall('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - addManialink(): SendDisplayManialinkPageToLogin: '. $logins);
+				}
 			}
 			else {
-				// Send to all connected Players
-				$this->client->addCall('SendDisplayManialinkPage', array($xml, ($timeout * 1000), $hideclick));
+				try {
+					// Send to all connected Players
+					$this->client->addCall('SendDisplayManialinkPage', $xml, ($timeout * 1000), $hideclick);
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - addManialink(): SendDisplayManialinkPage');
+				}
 			}
 		}
 	}

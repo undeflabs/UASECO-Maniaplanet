@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -175,15 +175,14 @@ class PluginRoundPoints extends Plugin {
 				}
 				unset($num);
 
-				// Set new custom points
-				$rtn = $aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
-				if (!$rtn) {
-					$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $system, $aseco->client->getErrorMessage());
-				}
-				else {
+				try {
+					// Set new custom points
+					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
 					$aseco->console('[RoundPoints] Setup default rounds points: {1}', $system);
 				}
-
+				catch (Exception $exception) {
+					$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $system, $exception->getMessage());
+				}
 			}
 			else if (array_key_exists($system, $this->rounds_points)) {
 
@@ -194,23 +193,25 @@ class PluginRoundPoints extends Plugin {
 				}
 				unset($num);
 
-				// Set new custom points
-				$rtn = $aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
-				if (!$rtn) {
-					$aseco->console('[RoundPoints] Invalid rounds points system: {1}, Error: {2}', $system, $aseco->client->getErrorMessage());
-				}
-				else {
+				try {
+					// Set new custom points
+					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
 					$aseco->console('[RoundPoints] Setup default rounds points: {1} - {2}',
 						$this->rounds_points[$system][0],
 						implode(',', $this->rounds_points[$system][1])
 					);
 				}
+				catch (Exception $exception) {
+					$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $system, $exception->getMessage());
+				}
 
 			}
 			else if ($system == '') {
-				$rtn = $aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
-				if (!$rtn) {
-					$aseco->console('[RoundPoints] Setting modescript default rounds points: {1}  Error: {2}', $points, $aseco->client->getErrorMessage());
+				try {
+					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[RoundPoints] Setting modescript default rounds points: {1} Error: {2}', $points, $exception->getMessage());
 				}
 			}
 			else {
@@ -347,7 +348,6 @@ class PluginRoundPoints extends Plugin {
 
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(1.05, 0.05, 0.2, 0.8), 'OK');
-
 		}
 		else if ($command[0] == 'list') {
 			$head = 'Currently available Rounds points systems:';
@@ -357,8 +357,8 @@ class PluginRoundPoints extends Plugin {
 			$admin->msgs = array();
 			$admin->msgs[0] = array(1, $head, array(1.3, 0.2, 0.4, 0.7), array('Icons128x32_1', 'RT_Rounds'));
 			foreach ($this->rounds_points as $tag => $points) {
-				$list[] = array('{#black}' . $tag, $points[0],
-				                implode(',', $points[1]) . ',...');
+				$list[] = array('{#black}'. $tag, $points[0],
+				                implode(',', $points[1]) .',...');
 				if (++$lines > 14) {
 					$admin->msgs[] = $list;
 					$lines = 0;
@@ -371,7 +371,6 @@ class PluginRoundPoints extends Plugin {
 			}
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
-
 		}
 		else if ($command[0] == 'show') {
 			// Get custom points
@@ -416,7 +415,6 @@ class PluginRoundPoints extends Plugin {
 				}
 			}
 			$aseco->sendChatMessage($message, $login);
-
 		}
 		else if ($command[0] == 'off') {
 			// disable custom points
@@ -431,17 +429,14 @@ class PluginRoundPoints extends Plugin {
 				$admin->nickname
 			);
 			$aseco->sendChatMessage($message);
-
 		}
 		else if (preg_match('/^\d+,[\d,]*\d+$/', $command[0])) {
 			// set new custom points as array of ints
 			$points = array_map('intval', explode(',', $command[0]));
-			$rtn = $aseco->client->query('SetRoundCustomPoints', $points, false);
-			if (!$rtn) {
-				$message = '{#server}» {#error}Invalid point distribution!  Error: {#highlite}$i ' . $aseco->client->getErrorMessage();
-				$aseco->sendChatMessage($message, $login);
-			}
-			else {
+
+			try {
+				$aseco->client->query('SetRoundCustomPoints', $points, false);
+
 				// log console message
 				$aseco->console('[RoundPoints] {1} [{2}] set new custom points: {3}', $logtitle, $login, $command[0]);
 
@@ -453,15 +448,15 @@ class PluginRoundPoints extends Plugin {
 				);
 				$aseco->sendChatMessage($message);
 			}
-
+			catch (Exception $exception) {
+				$message = '{#server}» {#error}Invalid point distribution! Error: {#highlite}$i '. $exception->getMessage();
+				$aseco->sendChatMessage($message, $login);
+			}
 		}
 		else if (array_key_exists($system, $this->rounds_points)) {
-			// set new custom points
-			$rtn = $aseco->client->query('SetRoundCustomPoints', $this->rounds_points[$system][1], false);
-			if (!$rtn) {
-				trigger_error('[RoundPoints] [' . $aseco->client->getErrorCode() . '] SetRoundCustomPoints - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-			}
-			else {
+			try {
+				// Set new custom points
+				$aseco->client->query('SetRoundCustomPoints', $this->rounds_points[$system][1], false);
 				// log console message
 				$aseco->console('[RoundPoints] {1} [{2}] set new custom points [{3}]', $logtitle, $login, strtoupper($command[0]));
 
@@ -474,10 +469,12 @@ class PluginRoundPoints extends Plugin {
 				);
 				$aseco->sendChatMessage($message);
 			}
-
+			catch (Exception $exception) {
+				$aseco->console('[RoundPoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SetRoundCustomPoints');
+			}
 		}
 		else {
-			$message = '{#server}» {#error}Unknown points system {#highlite}$i ' . strtoupper($command[0]) . '$z$s {#error}!';
+			$message = '{#server}» {#error}Unknown points system {#highlite}$i '. strtoupper($command[0]) .'$z$s {#error}!';
 			$aseco->sendChatMessage($message, $login);
 		}
 	}

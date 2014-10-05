@@ -93,25 +93,32 @@
 		<!-- Styles used for the Widgets at Race -->
 		<widget_race>
 			<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
-			<background_color>3332</background_color>
-			<background_focus>3335</background_focus>
+			<background_color>5565</background_color>
+			<background_focus>5568</background_focus>
 
 			<background_style>Bgs1</background_style>
 			<background_substyle>BgEmpty</background_substyle>
 
 			<border_style>Bgs1</border_style>
-			<border_substyle>BgTitleShadow</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', or 'BgList' are useful) -->
+			<border_substyle>BgEmpty</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', or 'BgList' are useful) -->
 
+			<!-- If <title_background> is not empty then the style/substyle are ignored -->
+			<title_background>09FD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 
-			<!-- Style for the top X players entries in the records Widgets -->
+			<!-- Style for the top X players entries in the records Widgets, if <top_background> is not empty then the style/substyle are ignored -->
+			<top_background>5579</top_background>
 			<top_style>BgsPlayerCard</top_style>
 			<top_substyle>BgCardSystem</top_substyle>
 
-			<!-- Style for the highlite entries in the records Widgets -->
+			<!-- Style for the highlite entries in the records Widgets, if <highlite_self_background> is not empty then the style/substyle are ignored -->
+			<highlite_self_background>6807</highlite_self_background>
 			<highlite_self_style>BgsPlayerCard</highlite_self_style>
 			<highlite_self_substyle>BgCardSystem</highlite_self_substyle>
+
+			<!-- Style for the highlite entries in the records Widgets, if <highlite_other_background> is not empty then the style/substyle are ignored -->
+			<highlite_other_background>8005</highlite_other_background>
 			<highlite_other_style>BgsPlayerCard</highlite_other_style>
 			<highlite_other_substyle>BgCardSystem</highlite_other_substyle>
 
@@ -128,9 +135,9 @@
 				<self>3F5F</self>
 
 				<!-- Highlite the Ranks, Score and Player, if unwished set to '0000' -->
-				<background_rank>AAA5</background_rank>
-				<background_score>AAA3</background_score>
-				<background_name>AAA1</background_name>
+				<background_rank>FFF0</background_rank>
+				<background_score>FFF0</background_score>
+				<background_name>FFF0</background_name>
 			</colors>
 		</widget_race>
 
@@ -292,7 +299,7 @@
 				<pos_x>-64.54</pos_x>
 				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
-				<entries>20</entries>
+				<entries>30</entries>
 				<topcount>3</topcount>
 			</time_attack>
 

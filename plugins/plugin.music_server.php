@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -75,11 +75,12 @@ class PluginMusicServer extends Plugin {
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
-		// handles action id's "-2101"-"-4000" for selecting from max. 1900 songs
-		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onShutdown',			'onShutdown');
 		$this->registerEvent('onEndMap',			'onEndMap');
+
+		// handles action id's "-2101"-"-4000" for selecting from max. 1900 songs
+		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 
 		$this->registerChatCommand('music', 'chat_music', 'Handles server music (see: /music help)', Player::PLAYERS);
 
@@ -207,12 +208,12 @@ class PluginMusicServer extends Plugin {
 
 			// check remote or local song access
 			$song = $this->server . $this->setNextSong($next);
-			if (!$aseco->http_get_file($song, true) && !file_exists($aseco->server->gamedir . $song)) {
-				trigger_error('[MusicServer] Could not access song ' . $song . ' !', E_USER_WARNING);
+			if (!$this->httpHead($song) && !file_exists($aseco->server->gamedir . $song)) {
+				trigger_error('[MusicServer] Could not access song ['. $song .']', E_USER_WARNING);
 			}
 			else {
 				// log console message
-				$aseco->console('[MusicServer] Setting next song to: ' . $song);
+				$aseco->console('[MusicServer] Setting next song to ['. $song .']');
 
 				// load next song
 				$aseco->client->query('SetForcedMusic', $this->override, $song);
@@ -224,12 +225,12 @@ class PluginMusicServer extends Plugin {
 		if ($this->autonext) {
 			// check remote or local song access
 			$song = $this->server . $this->getNextSong();
-			if (!$aseco->http_get_file($song, true) && !file_exists($aseco->server->gamedir . $song)) {
-				trigger_error('[MusicServer] Could not access song ' . $song . ' !', E_USER_WARNING);
+			if (!$this->httpHead($song) && !file_exists($aseco->server->gamedir . $song)) {
+				trigger_error('[MusicServer] Could not access song ['. $song .']', E_USER_WARNING);
 			}
 			else {
 				// log console message
-				$aseco->console('[MusicServer] Setting next song to: ' . $song);
+				$aseco->console('[MusicServer] Setting next song to ['. $song .']');
 
 				// load next song
 				$aseco->client->query('SetForcedMusic', $this->override, $song);
@@ -398,8 +399,7 @@ class PluginMusicServer extends Plugin {
 				$info[] = array('Server', $this->server);
 			}
 			// get current song and strip server path
-			$aseco->client->query('GetForcedMusic');
-			$current = $aseco->client->getResponse();
+			$current = $aseco->client->query('GetForcedMusic');
 			if ($current['Url'] != '' || $current['File'] != '') {
 				//$current = preg_replace('|^' . $this->server . '|', '',
 				$current = str_replace($this->server, '',
@@ -519,8 +519,7 @@ class PluginMusicServer extends Plugin {
 		else if ($command['params'][0] == 'current') {
 
 			// get current song and strip server path
-			$aseco->client->query('GetForcedMusic');
-			$current = $aseco->client->getResponse();
+			$current = $aseco->client->query('GetForcedMusic');
 			if ($current['Url'] != '' || $current['File'] != '') {
 				//$current = preg_replace('|^' . $this->server . '|', '',
 				$current = str_replace($this->server, '',
@@ -590,8 +589,8 @@ class PluginMusicServer extends Plugin {
 			if ($aseco->allowAbility($player, 'chat_musicadmin')) {
 				// check remote or local song access
 				$song = $this->server . $this->getNextSong();
-				if (!$aseco->http_get_file($song, true) && !file_exists($aseco->server->gamedir . $song)) {
-					trigger_error('[MusicServer] Could not access song ' . $song . ' !', E_USER_WARNING);
+				if (!$this->httpHead($song) && !file_exists($aseco->server->gamedir . $song)) {
+					trigger_error('[MusicServer] Could not access song ['. $song .']!', E_USER_WARNING);
 				}
 				else {
 					// load next song
@@ -600,7 +599,7 @@ class PluginMusicServer extends Plugin {
 					$song = $this->getCurrentSong();
 
 					// log console message
-					$aseco->console('[MusicServer] {1} [{2}] loaded next song {3} !', $logtitle, $player->login, $song);
+					$aseco->console('[MusicServer] {1} [{2}] loaded next song [{3}]', $logtitle, $player->login, $song);
 
 					// show chat message
 					if ($this->stripdirs) {
@@ -996,6 +995,37 @@ class PluginMusicServer extends Plugin {
 		}
 
 		return $this->songs[$this->current];
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function httpHead ($url) {
+		global $aseco;
+
+		$stream_context = stream_context_create(
+			array(
+				'http' => array(
+					'method' => 'HEAD'
+				)
+			)
+		);
+
+		$fh = @fopen($url, 'rb', false, $stream_context);
+		fclose($fh);
+
+		// http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+		$headers = get_headers($url);
+		$code = substr($headers[0], 9, 3);
+		if ($code == 200 || $code == 301 || $code == 302 || $code == 303 || $code == 304 || $code == 307 || $code == 308) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
 

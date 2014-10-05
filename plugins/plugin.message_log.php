@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -113,8 +113,7 @@ class PluginMessageLog extends Plugin {
 
 	public function onBeginMap ($aseco, $map) {
 
-		$aseco->client->query('GetChatTime');
-		$timeout = $aseco->client->getResponse();
+		$timeout = $aseco->client->query('GetChatTime');
 		$this->podium_chat_time = $timeout['CurrentValue'];
 	}
 

@@ -20,7 +20,7 @@
 		<chat>
 			<visible>true</visible>
 			<offset>
-				<x>0.0</x>
+				<x>-0.015</x>
 				<y>0.0</y>
 			</offset>
 			<linecount>7</linecount>
@@ -147,7 +147,7 @@
 		<!-- Settings for TimeAttack.Script.txt -->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
-			<time_limit>1200</time_limit>
+			<time_limit>300</time_limit>
 		</timeattack>
 
 

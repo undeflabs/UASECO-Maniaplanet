@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -85,7 +85,7 @@ class PluginMap extends Plugin {
 			$message = $aseco->formatText($aseco->getChatMessage('MAP'),
 				$name,
 				$aseco->server->maps->current->author,
-				$aseco->server->maps->current->authorscore,
+				$aseco->server->maps->current->author_score,
 				$aseco->server->maps->current->goldtime,
 				$aseco->server->maps->current->silvertime,
 				$aseco->server->maps->current->bronzetime,
@@ -96,7 +96,7 @@ class PluginMap extends Plugin {
 			$message = $aseco->formatText($aseco->getChatMessage('MAP'),
 				$name,
 				$aseco->server->maps->current->author,
-				$aseco->formatTime($aseco->server->maps->current->authortime),
+				$aseco->formatTime($aseco->server->maps->current->author_time),
 				$aseco->formatTime($aseco->server->maps->current->goldtime),
 				$aseco->formatTime($aseco->server->maps->current->silvertime),
 				$aseco->formatTime($aseco->server->maps->current->bronzetime),
@@ -228,7 +228,7 @@ class PluginMap extends Plugin {
 			$message = $aseco->formatText($aseco->getChatMessage('CURRENT_MAP'),
 				$name,
 				$map->author,
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $map->gbx->authorScore : $aseco->formatTime($map->authortime))
+				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $map->author_score : $aseco->formatTime($map->author_time))
 			);
 
 			// show chat message

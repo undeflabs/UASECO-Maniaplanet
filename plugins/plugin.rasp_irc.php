@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -186,25 +186,26 @@ class PluginRaspIrc extends Plugin {
 	public function irc_getMessages () {
 		global $aseco;
 
-		$rtn = $aseco->client->query('GetChatLines', 50, 0);
-		$lines = $aseco->client->getResponse();
-		if (!empty($lines)) {
-			if ($aseco->client->isError()) {
-				$aseco->console('[RaspIRC] Error ['. $aseco->client->getErrorCode() .'] GetChatLines - '. $aseco->client->getErrorMessage());
-			}
-			else {
-				foreach ($lines as $msg) {
-					if (!in_array($msg, $this->irc->linesbuffer)) {
-						if (!strstr($msg, '-IRC-')) {
-							$this->irc->ircmsgs[] = $msg;
-						}
-						if (count($this->irc->linesbuffer) >= 100) {
-							$drop = array_shift($this->irc->linesbuffer);
-							$this->irc->linesbuffer[] = $msg;
-						}
-						else {
-							$this->irc->linesbuffer[] = $msg;
-						}
+		$lines = array();
+		try {
+			$lines = $aseco->client->query('GetChatLines', 50, 0);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[RaspIRC] Error ['. $exception->getCode() .'] GetChatLines - '. $exception->getMessage());
+		}
+
+		if (count($lines) > 0) {
+			foreach ($lines as $msg) {
+				if (!in_array($msg, $this->irc->linesbuffer)) {
+					if (!strstr($msg, '-IRC-')) {
+						$this->irc->ircmsgs[] = $msg;
+					}
+					if (count($this->irc->linesbuffer) >= 100) {
+						$drop = array_shift($this->irc->linesbuffer);
+						$this->irc->linesbuffer[] = $msg;
+					}
+					else {
+						$this->irc->linesbuffer[] = $msg;
 					}
 				}
 			}

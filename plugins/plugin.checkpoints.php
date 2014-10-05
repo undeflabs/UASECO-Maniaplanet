@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-30
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -360,7 +360,7 @@ class PluginCheckpoint extends Plugin {
 
 		// Check for Laps mode
 		$login = $param[0];
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
 			$time = $param[4];
 
@@ -414,9 +414,9 @@ class PluginCheckpoint extends Plugin {
 		}
 
 
-		// Check for Laps mode
+		// Check for Laps mode or multilap Maps
 		$login = $param[0];
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
 			$time = $param[4];
 
@@ -583,27 +583,40 @@ class PluginCheckpoint extends Plugin {
 		switch ($aseco->settings['cheater_action']) {
 
 			case 1:  // set to spec
-				$rtn = $aseco->client->query('ForceSpectator', $login, 1);
-				if (!$rtn) {
-					trigger_error('['. $aseco->client->getErrorCode() .'] ForceSpectator - '. $aseco->client->getErrorMessage(), E_USER_WARNING);
-				}
-				else {
+				try {
+					$aseco->client->query('ForceSpectator', $login, 1);
+
 					// allow spectator to switch back to player
 					$rtn = $aseco->client->query('ForceSpectator', $login, 0);
 				}
-				// force free camera mode on spectator
-				$aseco->client->addCall('ForceSpectatorTarget', array($login, '', 2));
-				// free up player slot
-				$aseco->client->addCall('SpectatorReleasePlayerSlot', array($login));
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ForceSpectator');
+				}
 
-				// log console message
-				$aseco->console('Cheater [{1} : {2}] forced into free spectator!', $login, $aseco->stripColors($player->nickname, false));
+				try {
+					// force free camera mode on spectator
+					$aseco->client->query('ForceSpectatorTarget', $login, '', 2);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ForceSpectatorTarget');
+				}
 
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} forced into spectator!',
-					str_ireplace('$w', '', $player->nickname)
-				);
-				$aseco->sendChatMessage($message);
+				try {
+					// free up player slot
+					$aseco->client->query('SpectatorReleasePlayerSlot', $login);
+
+					// log console message
+					$aseco->console('Cheater [{1} : {2}] forced into free spectator!', $login, $aseco->stripColors($player->nickname, false));
+
+					// show chat message
+					$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} forced into spectator!',
+						str_ireplace('$w', '', $player->nickname)
+					);
+					$aseco->sendChatMessage($message);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SpectatorReleasePlayerSlot');
+				}
 				break;
 
 			case 2:  // kick
@@ -616,8 +629,13 @@ class PluginCheckpoint extends Plugin {
 				);
 				$aseco->sendChatMessage($message);
 
-				// kick the cheater
-				$aseco->client->query('Kick', $login);
+				try {
+					// kick the cheater
+					$aseco->client->query('Kick', $login);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Kick');
+				}
 				break;
 
 			case 3:  // ban (& kick)
@@ -634,8 +652,13 @@ class PluginCheckpoint extends Plugin {
 				$aseco->banned_ips[] = $player->ip;
 				$aseco->writeIPs();
 
-				// ban the cheater and also kick him
-				$aseco->client->query('Ban', $player->login);
+				try {
+					// ban the cheater and also kick him
+					$aseco->client->query('Ban', $player->login);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Ban');
+				}
 				break;
 
 			case 4:  // blacklist & kick
@@ -648,15 +671,29 @@ class PluginCheckpoint extends Plugin {
 				);
 				$aseco->sendChatMessage($message);
 
-				// blacklist the cheater and then kick him
-				$aseco->client->query('BlackList', $player->login);
-				$aseco->client->query('Kick', $player->login);
+				try {
+					// blacklist the cheater...
+					$aseco->client->query('BlackList', $player->login);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - BlackList');
+				}
 
-				// update blacklist file
-				$filename = $aseco->settings['blacklist_file'];
-				$rtn = $aseco->client->query('SaveBlackList', $filename);
-				if (!$rtn) {
-					trigger_error('['. $aseco->client->getErrorCode() .'] SaveBlackList (kick) - '. $aseco->client->getErrorMessage(), E_USER_WARNING);
+				try {
+					// ...and then kick him
+					$aseco->client->query('Kick', $player->login);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Kick');
+				}
+
+				try {
+					// update blacklist file
+					$filename = $aseco->settings['blacklist_file'];
+					$aseco->client->query('SaveBlackList', $filename);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveBlackList');
 				}
 				break;
 
@@ -674,15 +711,29 @@ class PluginCheckpoint extends Plugin {
 				$aseco->banned_ips[] = $player->ip;
 				$aseco->writeIPs();
 
-				// blacklist & ban the cheater
-				$aseco->client->query('BlackList', $player->login);
-				$aseco->client->query('Ban', $player->login);
+				try {
+					// blacklist cheater...
+					$aseco->client->query('BlackList', $player->login);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - BlackList');
+				}
 
-				// update blacklist file
-				$filename = $aseco->settings['blacklist_file'];
-				$rtn = $aseco->client->query('SaveBlackList', $filename);
-				if (!$rtn) {
-					trigger_error('['. $aseco->client->getErrorCode() .'] SaveBlackList (ban) - '. $aseco->client->getErrorMessage(), E_USER_WARNING);
+				try {
+					// and ban
+					$aseco->client->query('Ban', $player->login);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Ban');
+				}
+
+				try {
+					// update blacklist file
+					$filename = $aseco->settings['blacklist_file'];
+					$aseco->client->query('SaveBlackList', $filename);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Checkpoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveBlackList');
 				}
 				break;
 

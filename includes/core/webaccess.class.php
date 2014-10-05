@@ -10,6 +10,7 @@
 // Updated:   undef.de
 //            » 2014-07-14: Included file "urlsafebase64.php" into class WebaccessUrl
 //            » 2014-09-09: Bugfix for [PHP Notice] Undefined offset: 0 on line 1188 till 1194
+//            » 2014-10-04: Changed default UserAgent string
 //
 ////////////////////////////////////////////////////////////////
 
@@ -128,7 +129,7 @@ class Webaccess {
 	}
 
 
-	function request($url, $callback, $datas, $is_xmlrpc = false, $keepalive_min_timeout = 300, $opentimeout = 3, $waittimeout = 5, $agent = 'XMLaccess') {
+	function request($url, $callback, $datas, $is_xmlrpc = false, $keepalive_min_timeout = 300, $opentimeout = 3, $waittimeout = 5, $agent = USER_AGENT) {
 		global $aseco, $_web_access_keepalive, $_web_access_keepalive_timeout, $_web_access_keepalive_max;
 
 		list($host, $port, $path) = getHostPortPath($url);

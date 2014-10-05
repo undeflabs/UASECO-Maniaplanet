@@ -57,6 +57,23 @@
 	//-->
 	<global_blacklist_url>http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml</global_blacklist_url>
 
+	<!--
+	Maplist used by the dedicated server, typical located in
+	"UserData/Maps/MatchSettings/"
+	//-->
+	<default_maplist>TMCanyonA.txt</default_maplist>
+	<writemaplist_random>true</writemaplist_random>
+
+	<auto_admin_addip>false</auto_admin_addip>
+	<adminops_file>config/adminops.xml</adminops_file>
+	<bannedips_file>config/bannedips.xml</bannedips_file>
+
+	<!--
+	Will be stored into "UserData/Config" folder of the dedicated server.
+	-->
+	<blacklist_file>blacklist.txt</blacklist_file>
+	<guestlist_file>guestlist.txt</guestlist_file>
+
 
 	<welcome_msg_window>false</welcome_msg_window>
 	<lock_password></lock_password>
@@ -89,13 +106,6 @@
 	//-->
 	<show_curmap>0</show_curmap>
 
-	<!--
-	Maplist used by the dedicated server, typical located in
-	"UserData/Maps/MatchSettings/"
-	//-->
-	<default_maplist>TMCanyonA.txt</default_maplist>
-	<writemaplist_random>true</writemaplist_random>
-
 
 	<lists_colornicks>true</lists_colornicks>
 	<lists_colormaps>true</lists_colormaps>
@@ -106,17 +116,6 @@
 	<enable_cpsspec>false</enable_cpsspec>
 	<auto_enable_cps>true</auto_enable_cps>
 	<auto_enable_dedicps>false</auto_enable_dedicps>
-
-	<auto_admin_addip>false</auto_admin_addip>
-	<adminops_file>config/adminops.xml</adminops_file>
-	<bannedips_file>config/bannedips.xml</bannedips_file>
-
-	<!--
-	Will be stored into "UserData/Config" folder of the dedicated server.
-	-->
-	<blacklist_file>blacklist.txt</blacklist_file>
-	<guestlist_file>guestlist.txt</guestlist_file>
-
 
 	<admin_client_version></admin_client_version>
 	<player_client_version></player_client_version>

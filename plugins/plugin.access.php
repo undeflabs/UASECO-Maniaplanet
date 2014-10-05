@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -327,7 +327,7 @@ class PluginAccessControl extends Plugin {
 		$message = $aseco->formatText($this->access_control['messages']['dialog'],
 			$access
 		);
-		$aseco->client->addCall('Kick', array($player->login, $aseco->formatColors($message)));
+		$aseco->client->addCall('Kick', $player->login, $aseco->formatColors($message));
 	}
 
 	/*

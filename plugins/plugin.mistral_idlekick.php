@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -231,18 +231,24 @@ class PluginMistralIdlekick extends Plugin {
 							($this->kick_player_after == 1 ? '' : 's')
 						);
 
-						// Force player into spectator
-						$rtn = $aseco->client->query('ForceSpectator', $player->login, 1);
-						if (!$rtn) {
-							trigger_error('[' . $aseco->client->getErrorCode() . '] ForceSpectator - ' . $aseco->client->getErrorMessage(), E_USER_WARNING);
-						}
-						else {
-							// Allow spectator to switch back to player
-							$rtn = $aseco->client->query('ForceSpectator', $player->login, 0);
-						}
+						try {
+							// Force player into spectator
+							$aseco->client->query('ForceSpectator', $player->login, 1);
 
-						// Force free camera mode on spectator
-						$aseco->client->addCall('ForceSpectatorTarget', array($player->login, '', 2));
+							// Allow spectator to switch back to player
+							$aseco->client->query('ForceSpectator', $player->login, 0);
+
+							try {
+								// Force free camera mode on spectator
+								$aseco->client->addCall('ForceSpectatorTarget', $player->login, '', 2);
+							}
+							catch (Exception $exception) {
+								$aseco->console('[MistralIdlekick] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ForceSpectatorTarget');
+							}
+						}
+						catch (Exception $exception) {
+							$aseco->console('[MistralIdlekick] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ForceSpectator');
+						}
 					}
 					else {
 						$dokick = true;

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-27
+ * Date:	2014-10-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -155,23 +155,23 @@ class Player {
 					case 'South America':
 					case 'Oceania':
 						$this->continent = $zones[1];
-						$this->nation = $zones[2];
+						$this->nation = $aseco->country->countryToIoc($zones[2]);
 						break;
 					default:
 						$this->continent = '';
-						$this->nation = $zones[1];
+						$this->nation = $aseco->country->countryToIoc($zones[1]);
 				}
 			}
 			else {
 				$this->continent = '';
-				$this->nation = 'other';
+				$this->nation = 'OTH';
 			}
 		}
 		else {
 			// Set empty defaults
 			$this->id			= 0;
 			$this->pid			= 0;
-			$this->login			= 'Unknown'. microtime();
+			$this->login			= 'Unknown '. microtime();
 			$this->nickname			= 'Unknown';
 			$this->language			= '';
 			$this->avatar			= '';
@@ -201,7 +201,7 @@ class Player {
 
 			$this->zone			= '';
 			$this->continent		= '';
-			$this->nation			= 'other';
+			$this->nation			= 'OTH';
 		}
 		$this->wins				= 0;
 		$this->newwins				= 0;
