@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -355,7 +355,9 @@ class PluginAccessControl extends Plugin {
 
 	public function admin_access ($aseco, $login, $param) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if ($param == 'help') {
 			$header = '{#black}/admin access$g handles player access control:';

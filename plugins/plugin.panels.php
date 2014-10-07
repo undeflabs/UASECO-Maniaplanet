@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-04
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -109,7 +109,9 @@ class PluginPanels extends Plugin {
 
 	public function chat_recpanel ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if ($chat_parameter == 'help') {
 			$header = '{#black}/recpanel$g will change the records panel:';
@@ -236,7 +238,9 @@ class PluginPanels extends Plugin {
 
 	public function chat_votepanel ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if ($chat_parameter == 'help') {
 			$header = '{#black}/votepanel$g will change the vote panel:';
@@ -359,7 +363,9 @@ class PluginPanels extends Plugin {
 
 	public function chat_panelbg ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if ($chat_parameter == 'help') {
 			$header = '{#black}/panelbg$g will change the panel background:';
@@ -738,35 +744,39 @@ class PluginPanels extends Plugin {
 		$action = (int) $answer[2];
 		if ($action >= -100 && $action <= -49) {
 			// get player & records panel
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$panel = $player->maplist[abs($action)-49]['panel'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$panel = $player->maplist[abs($action)-49]['panel'];
 
-			// select new panel
-			$aseco->releaseChatCommand('/recpanel '. $panel, $player->login);
+				// select new panel
+				$aseco->releaseChatCommand('/recpanel '. $panel, $player->login);
+			}
 		}
 		else if ($action >= -48 && $action <= -7) {
 			// get player & admin panel
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$panel = $player->maplist[abs($action)-7]['panel'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$panel = $player->maplist[abs($action)-7]['panel'];
 
-			// select new panel
-			$aseco->releaseChatCommand('/admin panel '. $panel, $player->login);
+				// select new panel
+				$aseco->releaseChatCommand('/admin panel '. $panel, $player->login);
+			}
 		}
 		else if ($action >= 37 && $action <= 48) {
 			// get player & vote panel
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$panel = $player->maplist[$action-37]['panel'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$panel = $player->maplist[$action-37]['panel'];
 
-			// select new panel
-			$aseco->releaseChatCommand('/votepanel '. $panel, $player->login);
+				// select new panel
+				$aseco->releaseChatCommand('/votepanel '. $panel, $player->login);
+			}
 		}
 		else if ($action >= 7231 && $action <= 7262) {
 			// get player & panel background
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$panel = $player->maplist[abs($action)-7231]['panel'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$panel = $player->maplist[abs($action)-7231]['panel'];
 
-			// select new background
-			$aseco->releaseChatCommand('/panelbg '. $panel, $player->login);
+				// select new background
+				$aseco->releaseChatCommand('/panelbg '. $panel, $player->login);
+			}
 		}
 	}
 
@@ -876,7 +886,9 @@ class PluginPanels extends Plugin {
 
 	public function admin_panel ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if ($chat_parameter == 'help') {
 			$header = '{#black}/admin panel$g will change the admin panel:';

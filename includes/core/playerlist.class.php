@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-04
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -111,7 +111,7 @@ class PlayerList {
 			return $this->player_list[$login];
 		}
 		else {
-			return new Player(null);
+			return false;
 		}
 	}
 
@@ -207,7 +207,7 @@ class PlayerList {
 			$pid = ltrim($param, '0');
 			$pid--;
 
-			// find player by given #
+			// Find player by given #
 			if (array_key_exists($pid, $player->playerlist)) {
 				$param = $player->playerlist[$pid]['login'];
 				// check online players list
@@ -215,20 +215,19 @@ class PlayerList {
 			}
 			else {
 				// Try param as login string as yet
-				$target = $this->getPlayer($param);
-				if (!$target) {
-					$message = '{#server}» {#error}Player_ID not found! Type {#highlite}$i/players {#error}to see all players.';
+				if (!$target = $this->getPlayer($param)) {
+					$message = '{#server}» {#error}PlayerId not found! Type {#highlite}$i/players {#error}to see all players.';
 					$aseco->sendChatMessage($message, $player->login);
 					return false;
 				}
 			}
 		}
 		else {
-			// otherwise login string, check online players list
+			// Otherwise login string, check online players list
 			$target = $this->getPlayer($param);
 		}
 
-		// not found and offline allowed?
+		// Not found and offline allowed?
 		if (!$target && $offline) {
 			// Check offline players database
 			$query = "

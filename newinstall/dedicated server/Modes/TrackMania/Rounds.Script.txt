@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/RoundsBase.Script.txt"
 
 #Const  CompatibleMapTypes  "Race"
-#Const	Version		"2014-09-08"
+#Const	Version		"2014-10-07"
 #Const	ScriptName	"Rounds.Script.txt"
 
 #Include "TextLib" as TL
@@ -20,6 +20,12 @@
 // Constants
 // ---------------------------------- //
 #Const C_BotsNb 0
+#Const Description _("""$fffIn $f00Rounds$fff mode, the goal is to win a maximum number of $f00points.
+
+$fffThe rounds mode consists of $f00a series of races$fff.
+When you finish a race in a good $f00position$fff, you get $f00points$fff, added to your total.
+
+The $f00winner$fff is the first player whose total reaches the $f00point limit$fff (30 for example).""")
 
 // ---------------------------------- //
 // Extend

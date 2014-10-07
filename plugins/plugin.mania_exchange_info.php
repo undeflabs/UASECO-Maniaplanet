@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -102,7 +102,9 @@ class PluginManiaExchangeInfo extends Plugin {
 
 	public function chat_mxinfo ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$command['params'] = explode(' ', preg_replace('/ +/', ' ', $chat_parameter));
 
 		// check for optional Map/MX ID parameter
@@ -187,7 +189,9 @@ class PluginManiaExchangeInfo extends Plugin {
 
 	public function chat_mxrecs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$command['params'] = explode(' ', preg_replace('/ +/', ' ', $chat_parameter));
 
 		// check for optional Map/MX ID parameter
@@ -279,7 +283,9 @@ class PluginManiaExchangeInfo extends Plugin {
 	public function display_manialink_map ($login, $header, $icon, $links, $data, $widths, $button) {
 		global $aseco;
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$style = $player->style;
 		$square = $links[1];
 

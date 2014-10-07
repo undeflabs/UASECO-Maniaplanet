@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-10-05');
+	define('UASECO_BUILD',		'2014-10-07');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -978,13 +978,14 @@ class UASECO extends Helper {
 	// Release a chat command from a plugin
 	public function releaseChatCommand ($command, $login) {
 
-		$player = $this->server->players->getPlayer($login);
-		$chat = array(
-			$player->pid,
-			$player->login,
-			$command,
-		);
-		$this->playerChat($chat);
+		if ($player = $this->server->players->getPlayer($login)) {
+			$chat = array(
+				$player->pid,
+				$player->login,
+				$command,
+			);
+			$this->playerChat($chat);
+		}
 	}
 
 	/*
@@ -1435,8 +1436,13 @@ class UASECO extends Helper {
 		if (!empty($calls)) {
 			while ($call = array_shift($calls)) {
 				switch ($call[0]) {
+					case 'ManiaPlanet.ModeScriptCallbackArray':
+						// [0] = string Param1, [1] = string Params[]
+						$this->releaseEvent('onModeScriptCallbackArray', $call[1]);
+						break;
+
 					case 'ManiaPlanet.PlayerChat':
-						// [0]=PlayerUid, [1]=Login, [2]=Text, [3]=IsRegistredCmd
+						// [0] = int PlayerUid, [1] =  string Login, [2] = string Text, [3] = bool IsRegistredCmd
 						if ($call[1][0] === $this->server->id) {
 							$this->releaseEvent('onServerChat', $call[1]);
 						}
@@ -1446,76 +1452,69 @@ class UASECO extends Helper {
 						break;
 
 					case 'ManiaPlanet.PlayerConnect':
-						// [0]=Login, [1]=IsSpectator
+						// [0] = string Login, [1] = bool IsSpectator
 						$this->playerConnect($call[1][0], $call[1][1]);
 						break;
 
 					case 'ManiaPlanet.PlayerInfoChanged':
-						// [0]=PlayerInfo
+						// [0] = SPlayerInfo PlayerInfo
 						$this->playerInfoChanged($call[1][0]);
 						break;
 
 					case 'ManiaPlanet.StatusChanged':
-						// [0]=StatusCode, [1]=StatusName
-						// update status changes
-						$this->current_status = $call[1][0];
+						// [0] = int StatusCode, [1] = string StatusName
+						$this->current_status = $call[1][0];				// update status changes
 						$this->releaseEvent('onStatusChangeTo'. $this->current_status, $call[1]);
 						break;
 
 					case 'ManiaPlanet.PlayerManialinkPageAnswer':
-						// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
+						// [0] = int PlayerUid, [1] = string Login, [2] = string Answer, [3] = SEntryVal Entries[]
 						$this->releaseEvent('onPlayerManialinkPageAnswer', $call[1]);
 						break;
 
 					case 'ManiaPlanet.PlayerDisconnect':
-						// [0]=Login, [1]=DisconnectionReason
+						// [0] = string Login, [1] = string DisconnectionReason
 						$this->playerDisconnect($call[1]);
 						break;
 
 					case 'ManiaPlanet.MapListModified':
-						// [0]=CurMapIndex, [1]=NextMapIndex, [2]=IsListModified
+						// [0] = int CurMapIndex, [1] = int NextMapIndex, [2] = bool IsListModified
 						$this->releaseEvent('onMapListModified', $call[1]);
 						break;
 
 					case 'ManiaPlanet.BillUpdated':
-						// [0]=BillId, [1]=State, [2]=StateName, [3]=TransactionId
+						// [0] = int BillId, [1] = int State, [2] = string StateName, [3] = int TransactionId
 						$this->releaseEvent('onBillUpdated', $call[1]);
 						break;
 
 					case 'ManiaPlanet.PlayerAlliesChanged':
-						// [0]=Login
+						// [0] = string Login
 						$this->releaseEvent('onPlayerAlliesChanged', $call[1]);
 						break;
 
-
 					case 'ManiaPlanet.PlayerIncoherence':
-						// [0]=PlayerUid, [1]=Login
+						// [0] = int PlayerUid, [1] = string Login
 						$this->releaseEvent('onPlayerIncoherence', $call[1]);
 						break;
 
 					case 'ManiaPlanet.TunnelDataReceived':
-						// [0]=PlayerUid, [1]=Login, [2]=Data
+						// [0] = int PlayerUid, [1] = string Login, [2] = base64 Data
 						$this->releaseEvent('onTunnelDataReceived', $call[1]);
 						break;
 
 					case 'ManiaPlanet.Echo':
-						// [0]=Internal, [1]=Public
+						// [0] = string Internal, [1] = string Public
 						$this->releaseEvent('onEcho', $call[1]);
 						break;
 
 					case 'ManiaPlanet.VoteUpdated':
-						// [0]=StateName, [1]=Login, [2]=CmdName, [3]=CmdParam
+						// [0] = string StateName, [1] = string Login, [2] = string CmdName, [3] = string CmdParam
 						$this->releaseEvent('onVoteUpdated', $call[1]);
 						break;
 
 					case 'ManiaPlanet.ModeScriptCallback':
-						// [0]=Param1, [1]=Param2
+						// [0] = string Param1, [1] = string Param2
 						$this->releaseEvent('onModeScriptCallback', $call[1]);
-						break;
-
-					case 'ManiaPlanet.ModeScriptCallbackArray':
-						// [0]=Param1, [1]=Param2
-						$this->releaseEvent('onModeScriptCallbackArray', $call[1]);
 						break;
 
 					default:
@@ -1739,9 +1738,9 @@ class UASECO extends Helper {
 		$data = array_merge($details, $info);
 		unset($details, $info);
 
-		// Check for server
+		// Check for Server
 		if (isset($data['Flags']) && floor($data['Flags'] / 100000) % 10 != 0) {
-			// register relay server
+			// Register relay server
 			if (!$this->server->isrelay && $data['Login'] != $this->server->login) {
 				$this->server->relay_list[$data['Login']] = $data;
 
@@ -1751,8 +1750,9 @@ class UASECO extends Helper {
 					$this->stripColors($data['NickName'], false)
 				);
 			}
+			// else: DO NOTHING on master server connect
 		}
-		else if ($this->server->isrelay && floor($data['Flags'] / 10000) % 10 != 0) {
+		else if (isset($data['Flags']) && $this->server->isrelay && floor($data['Flags'] / 10000) % 10 != 0) {
 			// DO NOTHING on player from master server on relay
 		}
 		else {
@@ -1942,7 +1942,7 @@ class UASECO extends Helper {
 		}
 
 		// Check for valid player
-		if ((!$player = $this->server->players->getPlayer($login)) || $player->login == '') {
+		if (!$player = $this->server->players->getPlayer($login)) {
 			return;
 		}
 
@@ -2007,8 +2007,7 @@ class UASECO extends Helper {
 			$command = strtolower(trim($params[0]));
 
 			// Get & verify player object
-			$caller = $this->server->players->getPlayer($chat[1]);
-			if ($caller->login != '') {
+			if ($caller = $this->server->players->getPlayer($chat[1])) {
 				if (!empty($this->registered_chatcmds[$command])) {
 					$allowed = false;
 					if ($this->registered_chatcmds[$command]['rights'] & Player::PLAYERS) {

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -95,7 +95,9 @@ class PluginChatlog extends Plugin {
 
 	public function chat_chatlog ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if (!empty($this->chat_history_buffer)) {
 			$head = 'Recent chat history:';

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -525,7 +525,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_endround ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for active voting system
 		if (!$this->feature_votes) {
@@ -614,7 +616,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_ladder ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for active voting system
 		if (!$this->feature_votes) {
@@ -748,7 +752,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_replay ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for active voting system
 		if (!$this->feature_votes) {
@@ -899,7 +905,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_skip ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for active voting system
 		if (!$this->feature_votes) {
@@ -1034,7 +1042,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_ignore ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for active voting system
 		if (!$this->feature_votes) {
@@ -1138,7 +1148,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_kick ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for active voting system
 		if (!$this->feature_votes) {
@@ -1242,7 +1254,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_cancel ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote)) {

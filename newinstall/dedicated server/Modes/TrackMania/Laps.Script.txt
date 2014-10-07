@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
 #Const  CompatibleMapTypes  "Race"
-#Const	Version		"2014-09-25"
+#Const	Version		"2014-10-07"
 #Const	ScriptName	"Laps.Script.txt"
 
 #Include "TextLib" as TL
@@ -22,6 +22,11 @@
 // Constants
 // ---------------------------------- //
 #Const C_NbBots 0
+#Const Description _("""$fffIn $f00Laps$fff mode, the goal is to drive as far as possible by passing $f00checkpoints$fff.
+
+The laps mode takes place on multilap (cyclical) maps, and is played in one go for every map.
+
+When the time is up, the $f00winner$fff is the player who passed the most $f00checkpoints$fff. In case of draws, the winner is the player who passed the last checkpoint first.""")
 
 // ---------------------------------- //
 // Globales

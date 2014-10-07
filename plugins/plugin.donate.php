@@ -12,7 +12,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -82,7 +82,9 @@ class PluginDonate extends Plugin {
 
 	public function chat_donate ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$planets = $chat_parameter;
 
 		// check for valid amount
@@ -121,9 +123,11 @@ class PluginDonate extends Plugin {
 	public function chat_topdons ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
-		$top = 100;
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
+		$top = 100;
 		$query = "
 		SELECT
 			`p`.`NickName`,
@@ -287,7 +291,9 @@ class PluginDonate extends Plugin {
 	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
 
 		// Get Player
-		$player = $aseco->server->players->getPlayer($answer[1]);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$action = (int)$answer[2];
 

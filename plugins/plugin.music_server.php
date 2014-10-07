@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -160,14 +160,14 @@ class PluginMusicServer extends Plugin {
 	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
 	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
 
-		// leave actions outside -4000 - -2101 to other handlers
+		// Leave actions outside -4000 - -2101 to other handlers
 		$action = (int) $answer[2];
 		if ($action >= -4000 && $action <= -2101) {
-			// get player
-			$player = $aseco->server->players->getPlayer($answer[1]);
-
-			// jukebox selected song
-			$aseco->releaseChatCommand('/music '. (abs($action) - 2100), $player->login);
+			// Get Player
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				// Jukebox selected song
+				$aseco->releaseChatCommand('/music '. (abs($action) - 2100), $player->login);
+			}
 		}
 	}
 
@@ -315,7 +315,9 @@ class PluginMusicServer extends Plugin {
 
 	public function chat_music ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$arglist = $chat_parameter;
 		$command['params'] = explode(' ', preg_replace('/ +/', ' ', $chat_parameter));

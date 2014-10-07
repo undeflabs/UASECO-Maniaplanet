@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
 #Const	CompatibleMapTypes	"Race"
-#Const	Version		"2014-09-25"
+#Const	Version		"2014-10-07"
 #Const	ScriptName	"TeamAttack.Script.txt"
 
 #Include "TextLib" as TL
@@ -29,6 +29,11 @@
 // Constants
 // ---------------------------------- //
 #Const C_BotsNb 0
+#Const Description _("""$fffIn $f00Team Attack$fff mode, the goal is to set the $f00best time$fff with your team.
+
+You have as many tries as you want, and you can $ff0retry$fff when you want by pressing the $ff0'Backspace'$fff key.
+
+When the time is up, the $f00winner$fff is the team with the $f00best average time$fff.""")
 
 // ---------------------------------- //
 // Extend

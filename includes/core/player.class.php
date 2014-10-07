@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-04
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -171,7 +171,7 @@ class Player {
 			// Set empty defaults
 			$this->id			= 0;
 			$this->pid			= 0;
-			$this->login			= 'Unknown '. microtime();
+			$this->login			= false;
 			$this->nickname			= 'Unknown';
 			$this->language			= '';
 			$this->avatar			= '';

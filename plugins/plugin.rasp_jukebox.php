@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -161,84 +161,90 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= -2000 && $action <= -101) {
 			// get player
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$author = $player->maplist[abs($action) - 101]['author'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$author = $player->maplist[abs($action) - 101]['author'];
 
-			// close main window because /list can take a while
-			$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
+				// close main window because /list can take a while
+				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 
-			// search for maps by author
-			$aseco->releaseChatCommand('/list '. $author, $player->login);
+				// search for maps by author
+				$aseco->releaseChatCommand('/list '. $author, $player->login);
+			}
 		}
 		else if ($action >= -2100 && $action <= -2001) {
 			// get player
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$login = $player->login;
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$login = $player->login;
 
-			// determine admin ability to drop all jukeboxed maps
-			if ($aseco->allowAbility($player, 'dropjukebox')) {
+				// determine admin ability to drop all jukeboxed maps
+				if ($aseco->allowAbility($player, 'dropjukebox')) {
 
-				// drop any jukeboxed map by admin
-				$aseco->releaseChatCommand('/admin dropjukebox '. (abs($action) - 2000), $player->login);
+					// drop any jukeboxed map by admin
+					$aseco->releaseChatCommand('/admin dropjukebox '. (abs($action) - 2000), $player->login);
 
-				// check whether last map was dropped
-				if (empty($this->jukebox)) {
-					// close main window
-					$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $login);
+					// check whether last map was dropped
+					if (empty($this->jukebox)) {
+						// close main window
+						$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $login);
+					}
+					else {
+						// display updated list
+						$aseco->releaseChatCommand('/jukebox display', $player->login);
+					}
 				}
 				else {
-					// display updated list
-					$aseco->releaseChatCommand('/jukebox display', $player->login);
-				}
-			}
-			else {
-				// drop user's jukeboxed map
-				$aseco->releaseChatCommand('/jukebox drop', $player->login);
+					// drop user's jukeboxed map
+					$aseco->releaseChatCommand('/jukebox drop', $player->login);
 
-				// check whether last map was dropped
-				if (empty($this->jukebox)) {
-					// close main window
-					$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $login);
-				}
-				else {
-					// display updated list
-					$aseco->releaseChatCommand('/jukebox display', $player->login);
+					// check whether last map was dropped
+					if (empty($this->jukebox)) {
+						// close main window
+						$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $login);
+					}
+					else {
+						// display updated list
+						$aseco->releaseChatCommand('/jukebox display', $player->login);
+					}
 				}
 			}
 		}
 		else if ($action >= 5201 && $action <= 5700) {
 			// get player & map ID
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$mxid = $player->maplist[$action - 5201]['id'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$mxid = $player->maplist[$action - 5201]['id'];
 
-			// /mxinfo selected map
-			$aseco->releaseChatCommand('/mxinfo '. $mxid, $player->login);
+				// /mxinfo selected map
+				$aseco->releaseChatCommand('/mxinfo '. $mxid, $player->login);
+			}
 		}
 		else if ($action >= 5701 && $action <= 6200) {
 			// get player & map ID
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$mxid = $player->maplist[$action - 5701]['id'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$mxid = $player->maplist[$action - 5701]['id'];
 
-			// /add selected map
-			$aseco->releaseChatCommand('/add '. $mxid, $player->login);
+				// /add selected map
+				$aseco->releaseChatCommand('/add '. $mxid, $player->login);
+			}
 		}
 		else if ($action >= 6201 && $action <= 6700) {
 			// get player & map ID
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$mxid = $player->maplist[$action - 6201]['id'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$mxid = $player->maplist[$action - 6201]['id'];
 
-			// /admin add selected map
-			$aseco->releaseChatCommand('/admin add '. $mxid, $player->login);
+				// /admin add selected map
+				$aseco->releaseChatCommand('/admin add '. $mxid, $player->login);
+			}
 		}
 		else if ($action >= 6701 && $action <= 7200) {
 			// get player & map author
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$author = $player->maplist[$action - 6701]['author'];
-			// insure multi-word author is single parameter
-			$author = str_replace(' ', '%20', $author);
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$author = $player->maplist[$action - 6701]['author'];
+				// insure multi-word author is single parameter
+				$author = str_replace(' ', '%20', $author);
 
-			// /xlist auth: selected author
-			$aseco->releaseChatCommand('/xlist auth:'. $author, $player->login);
+				// /xlist auth: selected author
+				$aseco->releaseChatCommand('/xlist auth:'. $author, $player->login);
+			}
 		}
 	}
 
@@ -249,8 +255,6 @@ class PluginRaspJukebox extends Plugin {
 	*/
 
 	public function onBeginMap ($aseco, $map) {
-
-//$aseco->dump('RaspJukebox: onBeginMap()', $map);
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -589,7 +593,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_list ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$command['author'] = $player;
 
 		// check for relay server
@@ -728,7 +734,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_jukebox ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -985,7 +993,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_autojuke ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -1102,7 +1112,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_add ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -1325,7 +1337,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_y ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -1630,7 +1644,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_history ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -1668,7 +1684,9 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_xlist ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// split params into array
 		$chat_parameter = explode(' ', preg_replace('/ +/', ' ', $chat_parameter));

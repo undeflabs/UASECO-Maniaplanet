@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -198,7 +198,9 @@ class Helper {
 	// $width is the width of the first column in the ManiaLink window
 	public function showHelp ($aseco, $login, $chat_commands, $head, $showadmin = false, $dispall = false, $width = 0.3) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		if ($dispall) {
 			// display full help
 
@@ -301,7 +303,7 @@ class Helper {
 			}
 			// show chat message
 			$help = substr($help, 0, strlen($help) - 2);  // strip trailing ", "
-			$aseco->client->query('ChatSendToLogin', $help, $player->login);
+			$aseco->sendChatMessage($help, $player->login);
 		}
 	}
 
@@ -322,6 +324,9 @@ class Helper {
 
 			if ($logins !== false) {
 				try {
+					// Remove whitespace and empty entries from the list
+					$logins = $this->cleanupLoginList($logins);
+
 					// Send to given Players
 					$this->client->query('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
 				}
@@ -358,6 +363,9 @@ class Helper {
 
 			if ($logins !== false) {
 				try {
+					// Remove whitespace and empty entries from the list
+					$logins = $this->cleanupLoginList($logins);
+
 					// Send to given Players
 					$this->client->addCall('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
 				}
@@ -408,14 +416,45 @@ class Helper {
 			);
 
 			if ($logins !== false) {
-				// Send to given Players
-				$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $logins);
+				try {
+					// Remove whitespace and empty entries from the list
+					$logins = $this->cleanupLoginList($logins);
+
+					// Send to given Players
+					$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $logins);
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendChatMessage(): ChatSendServerMessageToLogin: '. $logins);
+				}
 			}
 			else {
-				// Send to all connected Players
-				$this->client->query('ChatSendServerMessage', $this->formatColors($message));
+				try {
+					// Send to all connected Players
+					$this->client->query('ChatSendServerMessage', $this->formatColors($message));
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendChatMessage(): ChatSendServerMessage ');
+				}
 			}
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Remove whitespace and empty entries from a csv string, e.g. 'login1, login2, , login3,' to 'login1,login2,login3'
+	public function cleanupLoginList ($csv) {
+		$newlist = array();
+		foreach (explode(',', $csv) as $item) {
+			$item = trim($item);
+			if ($item != false) {
+				$newlist[] = $item;
+			}
+		}
+		return implode(',', $newlist);
 	}
 
 	/*
@@ -1568,8 +1607,13 @@ class Helper {
 				// Throw 'shutting down' event
 				$this->releaseEvent('onShutdown', null);
 
-				// Clear all ManiaLinks
-				$this->client->query('SendHideManialinkPage');
+				try {
+					// Clear all ManiaLinks
+					$this->client->query('SendHideManialinkPage');
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): SendHideManialinkPage');
+				}
 
 				if (function_exists('xdebug_get_function_stack')) {
 					$this->logMessage(print_r(xdebug_get_function_stack()), true);

@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/RoundsBase.Script.txt"
 
 #Const  CompatibleMapTypes  "Race"
-#Const	Version		"2014-07-02"
+#Const	Version		"2014-10-07"
 #Const	ScriptName	"Team.Script.txt"
 
 #Include "TextLib" as TL
@@ -23,6 +23,15 @@
 // ---------------------------------- //
 #Const C_BlueBotsNb	0
 #Const C_RedBotsNb	0
+#Const Description _("""$fffIn $f00Team$fff mode, you have to choose a team : $f00Red$fff or $55fBlue$fff.
+(you can select a team in the in-game menu, 
+accessible via the 'Escape' key)
+
+The team mode mode consists of $f00a series of races$fff.
+The goal for your team is to win a maximum number of $f00points$fff.
+
+When you finish a race with a good $f00position$fff, you give $f00points$fff to your team.
+The $f00winning team$fff is the first team whose total reaches the $f00point limit$fff (5 for example).""")
 
 // ---------------------------------- //
 // Globales

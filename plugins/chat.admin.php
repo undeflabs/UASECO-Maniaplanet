@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -229,7 +229,9 @@ class PluginChatAdmin extends Plugin {
 
 	public function chat_admin ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$admin = $aseco->server->players->getPlayer($login);
+		if (!$admin = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$command['params'] = $chat_parameter;
 
 		// split params into arrays & insure optional parameters exist
@@ -2189,6 +2191,9 @@ class PluginChatAdmin extends Plugin {
 			try {
 				$aseco->client->query('RemoveMap', $filename);
 
+				// Remove Map from Maplist
+				$aseco->server->maps->removeMapByFilename($aseco->server->maps->current->filename);
+
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}removes current map: {#highlite}{3}',
 					$chattitle,
 					$admin->nickname,
@@ -2212,8 +2217,10 @@ class PluginChatAdmin extends Plugin {
 						);
 					}
 				}
+
 				// show chat message
 				$aseco->sendChatMessage($message);
+
 				// log console message
 				$aseco->console('[Admin] {1} [{2}] '. $command['params'][0] .'-ed map {3}', $logtitle, $login, $aseco->stripColors($name, false));
 
@@ -4255,7 +4262,9 @@ class PluginChatAdmin extends Plugin {
 			return;
 		}
 
-		$admin = $aseco->server->players->getPlayer($login);
+		if (!$admin = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// try all specified maps
 		for ($id = 1; $id < count($command['params']); $id++) {
@@ -4731,7 +4740,9 @@ class PluginChatAdmin extends Plugin {
 	private function admin_players ($login, $command, $arglist, $logtitle, $chattitle) {
 		global $aseco;
 
-		$admin = $aseco->server->players->getPlayer($login);
+		if (!$admin = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$admin->playerlist = array();
 		$admin->msgs = array();
@@ -5237,7 +5248,10 @@ class PluginChatAdmin extends Plugin {
 			return;
 
 		// get player & possible parameter
-		$player = $aseco->server->players->getPlayer($answer[1]);
+		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+			return;
+		}
+
 		if (isset($player->panels['plyparam']))
 			$param = $player->panels['plyparam'];
 

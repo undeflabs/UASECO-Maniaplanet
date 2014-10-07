@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -180,7 +180,9 @@ class PluginManialinks extends Plugin {
 	public function display_manialink ($login, $header, $icon, $data, $widths, $button) {
 		global $aseco;
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$style = $player->style;
 
 		$hsize = $style['HEADER'][0]['TEXTSIZE'][0];
@@ -318,8 +320,10 @@ class PluginManialinks extends Plugin {
 			return;
 		}
 
-		// get player
-		$player = $aseco->server->players->getPlayer($answer[1]);
+		// Get Player
+		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+			return;
+		}
 
 		// check player answer
 		switch ($action) {
@@ -330,52 +334,36 @@ class PluginManialinks extends Plugin {
 
 			// /stats fields
 			case -5:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/active "', $player->login);
 				// /stats field Time Played
 				$aseco->releaseChatCommand('/active', $player->login);
 				return;
 			case -6:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/top100 "', $player->login);
 				// /stats field Server Rank
 				$aseco->releaseChatCommand('/top100', $player->login);
 				return;
 			case  5:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/toprecs "', $player->login);
 				// /stats field Records
 				$aseco->releaseChatCommand('/toprecs', $player->login);
 				return;
 			case  6:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/topwins "', $player->login);
 				// /stats field Races Won
 				$aseco->releaseChatCommand('/topwins', $player->login);
 				return;
 
 			// Records panel fields
 			case  7:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/topsums "', $player->login);
 				// records panel PB field
 				$aseco->releaseChatCommand('/topsums', $player->login);
 				return;
 			case  8:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/recs "', $player->login);
 				// records panel Local field
 				$aseco->releaseChatCommand('/recs', $player->login);
 				return;
 			case  9:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/dedirecs "', $player->login);
 				// records panel Dedi field
 				$aseco->releaseChatCommand('/dedirecs', $player->login);
 				return;
 			case 10:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/mxrecs "', $player->login);
 				// records panel MX field
 				$aseco->releaseChatCommand('/mxrecs', $player->login);
 				return;
@@ -384,24 +372,18 @@ class PluginManialinks extends Plugin {
 			case 11:
 				// close main window because /list can take a while
 				$this->mainwindow_off($aseco, $player->login);
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/list env:Canyon"', $player->login);
 				// /list Env field Canyon
 				$aseco->releaseChatCommand('/list env:Canyon', $player->login);
 				return;
 			case 12:
 				// close main window because /list can take a while
 				$this->mainwindow_off($aseco, $player->login);
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/list env:Stadium"', $player->login);
 				// /list Env field Stadium
 				$aseco->releaseChatCommand('/list env:Stadium', $player->login);
 				return;
 			case 13:
 				// close main window because /list can take a while
 				$this->mainwindow_off($aseco, $player->login);
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/list env:Valley"', $player->login);
 				// /list Env field Valley
 				$aseco->releaseChatCommand('/list env:Valley', $player->login);
 				return;
@@ -414,20 +396,14 @@ class PluginManialinks extends Plugin {
 
 			// Vote panel buttons/keys
 			case 18:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/y "', $player->login);
 				// /y on chat-based vote
 				$aseco->releaseChatCommand('/y', $player->login);
 				return;
 			case 19:
-//				// log clicked command
-//				$aseco->console('Player [{1}] clicked command "/n " (ignored)', $player->login);
 				// /n on chat-based vote (ignored)
 				return;
 
 			case 20:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin clearjukebox"', $player->login);
 				// close main window
 				$this->mainwindow_off($aseco, $player->login);
 				// /jukebox display Clear Jukebox button
@@ -436,44 +412,30 @@ class PluginManialinks extends Plugin {
 
 			// Admin panel buttons
 			case 21:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin restartmap"', $player->login);
 				// admin panel ClipRewind button
 				$aseco->releaseChatCommand('/admin restartmap', $player->login);
 				return;
 			case 22:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin endround"', $player->login);
 				// admin panel ClipPause button
 				$aseco->releaseChatCommand('/admin endround', $player->login);
 				return;
 			case 23:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin nextmap"', $player->login);
 				// admin panel ClipPlay button
 				$aseco->releaseChatCommand('/admin nextmap', $player->login);
 				return;
 			case 24:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin replaymap"', $player->login);
 				// admin panel Refresh button
 				$aseco->releaseChatCommand('/admin replaymap', $player->login);
 				return;
 			case 25:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin pass"', $player->login);
 				// admin panel ArrowGreen button
 				$aseco->releaseChatCommand('/admin pass', $player->login);
 				return;
 			case 26:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin cancel"', $player->login);
 				// admin panel ArrowRed button
 				$aseco->releaseChatCommand('/admin cancel', $player->login);
 				return;
 			case 27:
-//				// log clicked command
-//				$aseco->console('[Player] Player [{1}] clicked command "/admin players live"', $player->login);
 				// admin panel Buddies button
 				$aseco->releaseChatCommand('/admin players live', $player->login);
 				return;
@@ -510,9 +472,11 @@ class PluginManialinks extends Plugin {
 		$hsize = $style['HEADER'][0]['TEXTSIZE'][0];
 		$bsize = $style['BODY'][0]['TEXTSIZE'][0];
 		$lines = count($player->msgs[$ptr]);
+
 		// fill up multipage windows
-		if ($tot > 1)
+		if ($tot > 1) {
 			$lines = max($lines, count($player->msgs[1]));
+		}
 
 		// build manialink header & window
 		$xml  = '<manialink id="UASECO-1"><frame pos="' . ($widths[0]/2) . ' 0.47 0">' .

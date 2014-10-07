@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -149,7 +149,9 @@ class PluginMuting extends Plugin {
 
 	public function chat_mute ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$target = $player;
 
 		// get player login or ID
@@ -198,7 +200,9 @@ class PluginMuting extends Plugin {
 
 	public function chat_unmute ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$target = $player;
 
 		// get player login or ID
@@ -231,7 +235,9 @@ class PluginMuting extends Plugin {
 
 	public function chat_mutelist ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for muted players
 		if (empty($player->mutelist)) {
@@ -291,7 +297,9 @@ class PluginMuting extends Plugin {
 
 	public function chat_refresh ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// spew buffer back to player
 		if (!empty($player->mutebuf)) {

@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -354,7 +354,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedirecs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
+
 		$dedi_recs = $this->db['Map']['Records'];
 
 		// split params into array
@@ -607,7 +610,9 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedinext ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$dedi_recs = $this->db['Map']['Records'];
 		if ($total = count($dedi_recs)) {
@@ -893,7 +898,9 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedistats ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// compile & display stats message
 		$header = 'Dedimania Stats: {#black}'. $aseco->stripColors($aseco->server->maps->current->name);
@@ -930,7 +937,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedisectms ($aseco, $login, $chat_command, $chat_parameter, $diff = true) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
+
 		$dedi_recs = $this->db['Map']['Records'];
 
 		if (!$total = count($dedi_recs)) {

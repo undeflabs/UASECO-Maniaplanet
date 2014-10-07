@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-10-05
+ * Date:		2014-10-07
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -1364,10 +1364,12 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function chat_eyepiece ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (strtoupper($chat_parameter) == 'HIDE') {
+		// Get Player object
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
-			// Get Player object
-			$player = $aseco->server->players->getPlayer($login);
+		if (strtoupper($chat_parameter) == 'HIDE') {
 
 			// Set display to hidden
 			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = false;
@@ -1388,9 +1390,6 @@ class PluginRecordsEyepiece extends Plugin {
 
 		}
 		else if (strtoupper($chat_parameter) == 'SHOW') {
-
-			// Get Player object
-			$player = $aseco->server->players->getPlayer($login);
 
 			// Init
 			$widgets = '';
@@ -1453,9 +1452,6 @@ class PluginRecordsEyepiece extends Plugin {
 		else {
 			if ($aseco->server->gamestate == Server::RACE) {
 
-				// Get Player object
-				$player = $aseco->server->players->getPlayer($login);
-
 				// Call the HelpWindow
 				$answer = array(
 					$player->pid,
@@ -1484,7 +1480,9 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($aseco->server->gamestate == Server::RACE) {
 
 			// Get Player object
-			$player = $aseco->server->players->getPlayer($login);
+			if (!$player = $aseco->server->players->getPlayer($login)) {
+				return;
+			}
 
 			// Get current Gamemode
 			$gamemode = $aseco->server->gameinfo->mode;
@@ -1684,7 +1682,9 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($aseco->server->gamestate == Server::RACE) {
 
 			// Get Player object
-			$player = $aseco->server->players->getPlayer($login);
+			if (!$player = $aseco->server->players->getPlayer($login)) {
+				return;
+			}
 
 			if (count($player->data['RecordsEyepiece']['Maplist']['Records']) == 0) {
 				if ( (count($this->cache['MapList']) > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0]) && ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] != 0) ) {
@@ -1862,16 +1862,17 @@ class PluginRecordsEyepiece extends Plugin {
 			// Do not display at score
 			if ($aseco->server->gamestate == Server::RACE) {
 				// Get Player object
-				$player = $aseco->server->players->getPlayer($login);
+				if ($player = $aseco->server->players->getPlayer($login)) {
 
-				// $answer = [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-				$answer = array(
-					$player->pid,
-					$player->login,
-					'showMusiclistWindow',
-					array(),
-				);
-				$this->onPlayerManialinkPageAnswer($aseco, $answer);
+					// $answer = [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
+					$answer = array(
+						$player->pid,
+						$player->login,
+						'showMusiclistWindow',
+						array(),
+					);
+					$this->onPlayerManialinkPageAnswer($aseco, $answer);
+				}
 			}
 			else {
 				// Show message that the display at score is impossible
@@ -1908,12 +1909,13 @@ class PluginRecordsEyepiece extends Plugin {
 	public function toggleWidgets ($login) {
 		global $aseco;
 
-
 		if ($aseco->server->gamestate == Server::RACE) {
 			if ($this->config['States']['NiceMode'] == false) {
 
 				// Get Player object
-				$player = $aseco->server->players->getPlayer($login);
+				if (!$player = $aseco->server->players->getPlayer($login)) {
+					return;
+				}
 
 				if ($player->data['RecordsEyepiece']['Prefs']['WidgetState'] == true) {
 
@@ -2562,10 +2564,10 @@ class PluginRecordsEyepiece extends Plugin {
 			if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
 
 				// Get Player
-				$player = $aseco->server->players->getPlayer($changes['Login']);
-
-				// Store the (possible changed) TeamId
-				$player->data['RecordsEyepiece']['Prefs']['TeamId'] = $changes['TeamId'];
+				if ($player = $aseco->server->players->getPlayer($changes['Login'])) {
+					// Store the (possible changed) TeamId
+					$player->data['RecordsEyepiece']['Prefs']['TeamId'] = $changes['TeamId'];
+				}
 			}
 
 		}
@@ -3656,7 +3658,6 @@ class PluginRecordsEyepiece extends Plugin {
 	// $donation = [0]=login, [1]=planets
 	public function onDonation ($aseco, $donation) {
 
-
 		// Increase donations for this Player if in TOP
 		$found = false;
 		foreach ($this->scores['TopDonators'] as &$item) {
@@ -3672,15 +3673,15 @@ class PluginRecordsEyepiece extends Plugin {
 		unset($item);
 		if ($found == false) {
 			// Get Player object
-			$player = $aseco->server->players->getPlayer($donation[0]);
-
-			// Add the Player to the TopDonators
-			$this->scores['TopDonators'][] = array(
-				'login'		=> $player->login,
-				'nickname'	=> $this->handleSpecialChars($player->nickname),
-				'score'		=> $this->formatNumber((int)$donation[1], 0) .' P',
-				'scoplain'	=> (int)$donation[1]
-			);
+			if ($player = $aseco->server->players->getPlayer($donation[0])) {
+				// Add the Player to the TopDonators
+				$this->scores['TopDonators'][] = array(
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $this->formatNumber((int)$donation[1], 0) .' P',
+					'scoplain'	=> (int)$donation[1]
+				);
+			}
 		}
 
 		// Now resort the TopDonators by score
@@ -4645,8 +4646,7 @@ class PluginRecordsEyepiece extends Plugin {
 			else {
 				// All other Gamemodes
 				foreach ($aseco->server->rankings->ranking_list as $unsed => $data) {
-					$player = $aseco->server->players->getPlayer($data['login']);
-					if ($player != false) {
+					if ($player = $aseco->server->players->getPlayer($data['login'])) {
 
 						$rank = 0;
 						if ( ((isset($data['time'])) && ($data['time'] > 0)) || ((isset($data['score'])) && ($data['score'] > 0)) ) {
@@ -6037,7 +6037,9 @@ class PluginRecordsEyepiece extends Plugin {
 				if ( ($item->time > 0) || ($item->score > 0) ) {
 
 					// Get Player object
-					$player = $aseco->server->players->getPlayer($item->login);
+					if (!$player = $aseco->server->players->getPlayer($item->login)) {
+						continue;
+					}
 
 					// Check ignore list
 					$ignore = false;

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -66,8 +66,7 @@ class PluginChatWins extends Plugin {
 	public function chat_wins ($aseco, $login, $chat_command, $chat_parameter) {
 
 		if ($chat_parameter != '') {
-			$player = $aseco->server->players->getPlayer($chat_parameter);
-			if (!$player) {
+			if (!$player = $aseco->server->players->getPlayer($chat_parameter)) {
 				$message = '{#server}» {#error}Given player login {#highlite}'. $chat_parameter .'{#error} not found!';
 				$aseco->sendChatMessage($message, $login);
 				return;
@@ -82,15 +81,15 @@ class PluginChatWins extends Plugin {
 			);
 		}
 		else {
-			$player = $aseco->server->players->getPlayer($login);
-			$wins = $player->getWins();
+			if (!$player = $aseco->server->players->getPlayer($login)) {
+				$wins = $player->getWins();
 
-			// use plural unless 1, and add ! for 2 or more
-			$message = $aseco->formatText($aseco->getChatMessage('WINS'),
-				$wins,
-				($wins == 1 ? '.' : ($wins > 1 ? 's!' : 's.'))
-			);
-
+				// use plural unless 1, and add ! for 2 or more
+				$message = $aseco->formatText($aseco->getChatMessage('WINS'),
+					$wins,
+					($wins == 1 ? '.' : ($wins > 1 ? 's!' : 's.'))
+				);
+			}
 		}
 
 		// Show chat message

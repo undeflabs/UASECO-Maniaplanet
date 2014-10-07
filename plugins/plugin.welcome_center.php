@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-06
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -175,9 +175,9 @@ class PluginWelcomeCenter extends Plugin {
 			// Define Admin/Player title
 			$title = 'New Player';
 			if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] == true) {
-				$title = $aseco->isMasterAdmin($player) ? '{#logina}'.$aseco->titles['MASTERADMIN'][0] :
-					($aseco->isAdmin($player) ? '{#logina}'.$aseco->titles['ADMIN'][0] :
-					($aseco->isOperator($player) ? '{#logina}'.$aseco->titles['OPERATOR'][0] :
+				$title = $aseco->isMasterAdmin($player) ? '{#logina}'. $aseco->titles['MASTERADMIN'][0] :
+					($aseco->isAdmin($player) ? '{#logina}'. $aseco->titles['ADMIN'][0] :
+					($aseco->isOperator($player) ? '{#logina}'. $aseco->titles['OPERATOR'][0] :
 					'New Player')
 				);
 			}
@@ -205,7 +205,7 @@ class PluginWelcomeCenter extends Plugin {
 					$title,
 					$aseco->stripColors($player->nickname),
 					$player->continent,
-					$player->nation,
+					$aseco->country->iocToCountry($player->nation),
 					implode(', ', $zone),
 					$visits,
 					$ladderrank,
@@ -251,7 +251,7 @@ class PluginWelcomeCenter extends Plugin {
 				array(
 					$aseco->stripColors($player->nickname),
 					$player->continent,
-					$player->nation,
+					$aseco->country->iocToCountry($player->nation),
 					implode(', ', $zone),
 					$aseco->formatTime($player->getTimeOnline() * 1000, false),
 				),

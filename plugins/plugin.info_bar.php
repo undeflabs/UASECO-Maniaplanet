@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-06
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -149,6 +149,13 @@ class PluginInfoBar extends Plugin {
 		$this->config['records']['mania_exchange']['modulatecolor']	= 'DDD';
 		$this->config['records']['mania_exchange']['action']		= 'showManiaExchangeMapInfoWindow';
 
+		$this->config['best_last_time']['best']['label']		= 'BEST RACE TIME';
+		$this->config['best_last_time']['best']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-best-race-time.png';
+		$this->config['best_last_time']['best']['modulatecolor']	= 'DDD';
+
+		$this->config['best_last_time']['last']['label']		= 'LAST RACE TIME';
+		$this->config['best_last_time']['last']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-last-race-time.png';
+		$this->config['best_last_time']['last']['modulatecolor']	= 'DDD';
 
 		$this->config['clock']['label']					= 'LOCAL TIME';
 		$this->config['clock']['icon']					= 'http://static.undef.name/ingame/info-bar/icon-clock.png';
@@ -454,6 +461,7 @@ class PluginInfoBar extends Plugin {
 		$xml .= $this->buildPlayerSpectatorCount($show);
 		$xml .= $this->buildDonation($show);
 		$xml .= $this->buildCurrentRanking($show);
+		$xml .= $this->buildBestLastTime($show);
 		$xml .= $this->buildGamemode($show);
 		$xml .= $this->buildLadderLimits($show);
 		$xml .= $this->buildClock($show);
@@ -1004,7 +1012,6 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 #Include "TextLib" as TextLib
-#Include "MathLib" as MathLib
 Text FormatTime (Integer _Time) {
 	declare Text Time = "0:00.000";
 
@@ -1134,7 +1141,7 @@ main() {
 				if (Player.Login == CurrentServerLogin) {
 					continue;
 				}
-				if (Player.Score != Null && Player.RaceState == CTmMlPlayer::ERaceState::Finished && Player.Score.BestRace.Time > 0) {
+				if (Player.Score != Null && Player.Score.BestRace.Time > 0) {
 					// Check for improved PersonalBest of InputPlayer
 					if ((Player.Login == InputPlayer.Login) && (Player.Score.BestRace.Time < TextLib::ToInteger(RecordScores[0]["Score"]) || TextLib::ToInteger(RecordScores[0]["Score"]) == 0)) {
 						RecordScores[0]["Score"] = TextLib::ToText(Player.Score.BestRace.Time);
@@ -1222,7 +1229,6 @@ EOL;
 			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 97) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<label posn="0 0 0.02" sizen="28 7" focusareacolor1="'. $this->config['box']['background_color_default'] .'" focusareacolor2="'. $this->config['box']['background_color_focus'] .'" text=" " id="ButtonRecords" ScriptEvents="1"/>';
 			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="28 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
 			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['records']['personal_best']['modulatecolor'] .'" id="QuadIcon"/>';
 			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text=" " id="LabelTime"/>';
 			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text=" " id="LabelText"/>';
@@ -1268,6 +1274,103 @@ EOL;
 			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['records']['mania_exchange']['label'] .'"/>';
 			$xml .= '</frame>';
 
+			$xml .= '</frame>';
+			$xml .= $maniascript;
+		}
+		$xml .= '</manialink>';
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function buildBestLastTime ($show = true) {
+		global $aseco;
+
+$maniascript = <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Function:	PlayerBestLastTime
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
+#Include "TextLib" as TextLib
+Text FormatTime (Integer _Time) {
+	declare Text Time = "0:00.000";
+
+	if (_Time > 0) {
+		declare Text _TimeText = TextLib::ToText(_Time);
+		declare Hundredth = TextLib::ToInteger(TextLib::SubString(_TimeText, TextLib::Length(_TimeText)-3, 3));
+		declare Seconds = (_Time / 1000) % 60;
+		declare Minutes = (_Time / 60000) % 60;
+		declare Hours = (_Time / 3600000);
+
+		if (Hours > 0) {
+			Time = Hours ^":"^ TextLib::FormatInteger(Minutes, 2) ^":"^ TextLib::FormatInteger(Seconds, 2) ^"."^ TextLib::FormatInteger(Hundredth, 3);
+		}
+		else {
+			Time = Minutes ^":"^ TextLib::FormatInteger(Seconds, 2) ^"."^ TextLib::FormatInteger(Hundredth, 3);
+		}
+	}
+	return Time;
+}
+main() {
+	declare CMlLabel LabelBestTime <=> (Page.GetFirstChild("{$this->config['manialinkid']}LabelBestTime") as CMlLabel);
+	declare CMlLabel LabelLastTime <=> (Page.GetFirstChild("{$this->config['manialinkid']}LabelLastTime") as CMlLabel);
+
+	declare Integer NextUpdate = CurrentTime;
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Throttling to work only on every half-second
+		if (NextUpdate <= CurrentTime) {
+			NextUpdate = CurrentTime + 500;
+
+			foreach (Player in Players) {
+				if (Player.Login == InputPlayer.Login) {
+					if (Player.Score != Null) {
+						if (Player.Score.BestRace.Time > 0) {
+							LabelBestTime.SetText(FormatTime(Player.Score.BestRace.Time));
+						}
+						if (Player.Score.PrevRace.Time > 0) {
+							LabelLastTime.SetText(FormatTime(Player.Score.PrevRace.Time));
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+--></script>
+EOL;
+
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'PlayerBestLastTime" name="'. $this->config['manialinkid'] .'PlayerBestLastTime" version="1">';
+		if ($show == true) {
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 125) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<label posn="0 0 0.02" sizen="28 7" focusareacolor1="'. $this->config['box']['background_color_default'] .'" focusareacolor2="'. $this->config['box']['background_color_focus'] .'" text=" " id="ButtonBestTime" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['best_last_time']['best']['modulatecolor'] .'" image="'. $this->config['best_last_time']['best']['icon'] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelBestTime"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['best_last_time']['best']['label'] .'"/>';
+			$xml .= '</frame>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 153) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<label posn="0 0 0.02" sizen="28 7" focusareacolor1="'. $this->config['box']['background_color_default'] .'" focusareacolor2="'. $this->config['box']['background_color_focus'] .'" text=" " id="ButtonLastTime" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
+		$xml .= '<quad posn="28 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['best_last_time']['last']['modulatecolor'] .'" image="'. $this->config['best_last_time']['last']['icon'] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelLastTime"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['best_last_time']['last']['label'] .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}

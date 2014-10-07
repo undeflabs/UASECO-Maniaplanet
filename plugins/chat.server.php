@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-02
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -74,7 +74,9 @@ class PluginChatServer extends Plugin {
 
 	public function chat_server ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// collect players/nations stats
 		$query = "
@@ -197,7 +199,9 @@ class PluginChatServer extends Plugin {
 
 	public function chat_uaseco ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$uptime = time() - $aseco->uptime;
 		$updays = floor($uptime / (24 * 3600));
@@ -261,7 +265,9 @@ class PluginChatServer extends Plugin {
 
 	public function chat_plugins ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$head = 'Currently active plugins:';
 		$list = array();
@@ -305,7 +311,9 @@ class PluginChatServer extends Plugin {
 
 	public function chat_nations ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$top = 10;
 		$query = "

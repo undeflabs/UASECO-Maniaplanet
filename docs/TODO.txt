@@ -1,5 +1,7 @@
 UASECO
 ~~~~~~
+ - Remove table `players_extra` and create a `Settings` in `players` table
+ - Donation: $mindonation, $publicappr and $donation_values in xml
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
  - Lift dependecies from plugin.styles.php and remove it
@@ -7,4 +9,8 @@ UASECO
 
 Records-Eyepiece
 ~~~~~~~~~~~~~~~~
+ - Move FinishWinnersWidget at Score to left down
+ - Change F7 for toggle widgets
+ - At TopCount and foreign Players have no red background in LocalRecords
+ - Do not send <quad...> when "BgEmpty" is used
  - BUG: After juke a song, the next/prev page buttons does not work

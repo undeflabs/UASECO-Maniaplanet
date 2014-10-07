@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -66,7 +66,9 @@ class PluginChatMapMods extends Plugin {
 
 	public function chat_song ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// Check for map's song
 		if ($aseco->server->maps->current->songfile) {
@@ -100,7 +102,9 @@ class PluginChatMapMods extends Plugin {
 
 	public function chat_mod ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// Check for map's mod
 		if ($aseco->server->maps->current->modname) {

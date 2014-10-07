@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-10
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -66,7 +66,9 @@ class PluginLastWindow extends Plugin {
 	public function chat_lastwin ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
 		$answer = array(

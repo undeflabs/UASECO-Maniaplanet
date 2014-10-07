@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-06
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -89,6 +89,38 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function removeMapByUid ($uid) {
+		if (isset($this->map_list[$uid])) {
+			unset($this->map_list[$uid]);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getMapById ($id) {
+		foreach ($this->map_list as $map) {
+			if ($map['id'] == $id) {
+				return $map;
+			}
+		}
+//		trigger_error('[MapList] getMapByFilename(): Can not find map with ID "'. $id .'" in map_list[]', E_USER_WARNING);
+		return new Map(null, null);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function getMapByFilename ($filename) {
 		foreach ($this->map_list as $map) {
 			if ($map['filename'] == $filename) {
@@ -97,6 +129,22 @@ class MapList {
 		}
 //		trigger_error('[MapList] getMapByFilename(): Can not find map with filename "'. $filename .'" in map_list[]', E_USER_WARNING);
 		return new Map(null, null);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function removeMapByFilename ($filename) {
+		foreach ($this->map_list as $map) {
+			if ($map['filename'] == $filename) {
+				unset($this->map_list[$map['uid']]);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/*

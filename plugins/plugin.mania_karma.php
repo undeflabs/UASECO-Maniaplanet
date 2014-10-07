@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-10-05
+ * Date:		2014-10-07
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -793,12 +793,12 @@ class PluginManiaKarma extends Plugin {
 
 	public function onPlayerChat ($aseco, $chat) {
 
+		if (!$player = $aseco->server->players->getPlayer($chat[1])) {
+			return;
+		}
+
 		// Check if public vote is enabled
 		if ($this->config['allow_public_vote'] == true) {
-
-			// Get Player-Object
-			$player = $aseco->server->players->getPlayer($chat[1]);
-
 			// check for possible public karma vote
 			if ($chat[2] == '+++') {
 				$this->handlePlayerVote($player, 3);
@@ -820,10 +820,6 @@ class PluginManiaKarma extends Plugin {
 			}
 		}
 		else if ( ($chat[2] == '+++') || ($chat[2] == '++') || ($chat[2] == '+') || ($chat[2] == '-') || ($chat[2] == '--') || ($chat[2] == '---') ) {
-
-			// Get Player-Object
-			$player = $aseco->server->players->getPlayer($chat[1]);
-
 			$message = $aseco->formatText($this->config['messages']['karma_no_public'], '/'. $chat[2]);
 			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, ($player->login ? $player : false));
@@ -842,10 +838,12 @@ class PluginManiaKarma extends Plugin {
 
 	public function chat_karma ($aseco, $login, $chat_command, $chat_parameter) {
 
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
+
 		// Init
 		$message = false;
-
-		$player = $aseco->server->players->getPlayer($login);
 
 		// Check optional parameter
 		if ( (strtoupper($chat_parameter) == 'HELP') || (strtoupper($chat_parameter) == 'ABOUT') ) {
@@ -911,24 +909,25 @@ class PluginManiaKarma extends Plugin {
 
 	public function chat_votes ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
-		if ($chat_parameter == '+++') {
-			$this->handlePlayerVote($player, 3);
-		}
-		else if ($chat_parameter == '++') {
-			$this->handlePlayerVote($player, 2);
-		}
-		else if ($chat_parameter == '+') {
-			$this->handlePlayerVote($player, 1);
-		}
-		else if ($chat_parameter == '-') {
-			$this->handlePlayerVote($player, -1);
-		}
-		else if ($chat_parameter == '--') {
-			$this->handlePlayerVote($player, -2);
-		}
-		else if ($chat_parameter == '---') {
-			$this->handlePlayerVote($player, -3);
+		if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($chat_parameter == '+++') {
+				$this->handlePlayerVote($player, 3);
+			}
+			else if ($chat_parameter == '++') {
+				$this->handlePlayerVote($player, 2);
+			}
+			else if ($chat_parameter == '+') {
+				$this->handlePlayerVote($player, 1);
+			}
+			else if ($chat_parameter == '-') {
+				$this->handlePlayerVote($player, -1);
+			}
+			else if ($chat_parameter == '--') {
+				$this->handlePlayerVote($player, -2);
+			}
+			else if ($chat_parameter == '---') {
+				$this->handlePlayerVote($player, -3);
+			}
 		}
 	}
 
@@ -1138,43 +1137,44 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		// Get Player
-		$command['author'] = $aseco->server->players->getPlayer($answer[1]);
-
+		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+			return;
+		}
 
 		if ($answer[2] == $this->config['manialink_id'] .'01') {			// Open HelpWindow
-			$this->sendHelpAboutWindow($command['author']->login, $this->config['messages']['karma_help']);
+			$this->sendHelpAboutWindow($player->login, $this->config['messages']['karma_help']);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'02') {		// Open KarmaDetailWindow
-			$window = $this->buildKarmaDetailWindow($command['author']->login);
-			$this->sendWindow($command['author']->login, $window);
+			$window = $this->buildKarmaDetailWindow($player->login);
+			$this->sendWindow($player->login, $window);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'03') {		// Open WhoKarmaWindow
-			$window = $this->buildWhoKarmaWindow($command['author']->login);
-			$this->sendWindow($command['author']->login, $window);
+			$window = $this->buildWhoKarmaWindow($player->login);
+			$this->sendWindow($player->login, $window);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'12') {		// Vote +++
-			$this->handlePlayerVote($command['author'], 3);
+			$this->handlePlayerVote($player, 3);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'11') {		// Vote ++
-			$this->handlePlayerVote($command['author'], 2);
+			$this->handlePlayerVote($player, 2);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'10') {		// Vote +
-			$this->handlePlayerVote($command['author'], 1);
+			$this->handlePlayerVote($player, 1);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'13') {		// Vote undecided
 			$this->showUndecidedMessage($command);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'14') {		// Vote -
-			$this->handlePlayerVote($command['author'], -1);
+			$this->handlePlayerVote($player, -1);
 	}
 		else if ($answer[2] == $this->config['manialink_id'] .'15') {		// Vote --
-			$this->handlePlayerVote($command['author'], -2);
+			$this->handlePlayerVote($player, -2);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'16') {		// Vote ---
-			$this->handlePlayerVote($command['author'], -3);
+			$this->handlePlayerVote($player, -3);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'17') {		// Vote disabled on <require_finish> >= 1
-			$this->handlePlayerVote($command['author'], 0);
+			$this->handlePlayerVote($player, 0);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'18') {		// No action, just ignore
 			// do nothing
@@ -1326,8 +1326,7 @@ class PluginManiaKarma extends Plugin {
 						$winner = array_rand($lottery_attendant, 1);
 
 						// If the Player is not already gone, go ahead
-						$player = $aseco->server->players->getPlayer($lottery_attendant[$winner]);
-						if ($player != false) {
+						if ($player = $aseco->server->players->getPlayer($lottery_attendant[$winner])) {
 							// Add to Players total
 							$player->data['ManiaKarma']['LotteryPayout'] += $this->config['karma_lottery']['planets_win'];
 
@@ -2964,8 +2963,9 @@ EOL;
 		if ($message != false) {
 			if ($login) {
 				if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
-					$player = $aseco->server->players->getPlayer($login);
-					send_window_message($aseco, $message, $player);
+					if ($player = $aseco->server->players->getPlayer($login)) {
+						send_window_message($aseco, $message, $player);
+					}
 				}
 				else {
 					$aseco->sendChatMessage($message, $login);

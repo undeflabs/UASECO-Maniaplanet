@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-04
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -525,31 +525,32 @@ class PluginModescriptHandler extends Plugin {
 			// [0]=Rank, [1]=Login, [2]=NickName, [3]=TeamId, [4]=IsSpectator, [5]=IsAway, [6]=BestTime, [7]=Zone, [8]=RoundScore, [9]=BestCheckpoints, [10]=TotalScore
 			case 'LibXmlRpc_PlayerRanking':
 				if ( isset($params[1]) ) {
-					// Explode string and convert to integer
-					$cps = array_map('intval', explode(',', $params[9]));
-					if (count($cps) == 1 && $cps[0] === -1) {
-						$cps = array();
-					}
+					if ($player = $aseco->server->players->getPlayer($params[1])) {
+						// Explode string and convert to integer
+						$cps = array_map('intval', explode(',', $params[9]));
+						if (count($cps) == 1 && $cps[0] === -1) {
+							$cps = array();
+						}
 
-					$player = $aseco->server->players->getPlayer($params[1]);
-					$update = array(
-						'rank'		=> (int)$params[0],
-						'login'		=> $player->login,
-						'nickname'	=> $player->nickname,
-						'time'		=> (int)$params[6],
-						'score'		=> (int)$params[10],
-						'cps'		=> $cps,
- 						'team'		=> (int)$params[3],
-						'spectator'	=> $aseco->string2bool($params[4]),
-						'away'		=> $aseco->string2bool($params[5]),
-					);
+						$update = array(
+							'rank'		=> (int)$params[0],
+							'login'		=> $player->login,
+							'nickname'	=> $player->nickname,
+							'time'		=> (int)$params[6],
+							'score'		=> (int)$params[10],
+							'cps'		=> $cps,
+	 						'team'		=> (int)$params[3],
+							'spectator'	=> $aseco->string2bool($params[4]),
+							'away'		=> $aseco->string2bool($params[5]),
+						);
 
-					// Update current ranking cache
-					$aseco->server->rankings->update($update);
-					if ($aseco->settings['developer']['log_events']['common'] == true) {
-						$aseco->console('[Event] Player Ranking Updated (Player)');
+						// Update current ranking cache
+						$aseco->server->rankings->update($update);
+						if ($aseco->settings['developer']['log_events']['common'] == true) {
+							$aseco->console('[Event] Player Ranking Updated (Player)');
+						}
+						$aseco->releaseEvent('onPlayerRankingUpdated', null);
 					}
-					$aseco->releaseEvent('onPlayerRankingUpdated', null);
 				}
 				if (isset($params[1]) && isset($this->player_finished[$params[1]])) {
 					// Player finished the Map or the Lap
@@ -567,28 +568,28 @@ class PluginModescriptHandler extends Plugin {
 				if (count($params) > 0) {
 					foreach ($params as $item) {
 						$rank = explode(':', $item);
+						if ($player = $aseco->server->players->getPlayer($rank[0])) {
+							// Explode string and convert to integer
+							$cps = array_map('intval', explode(',', $rank[2]));
+							if (count($cps) == 1 && $cps[0] === -1) {
+								$cps = array();
+							}
 
-						// Explode string and convert to integer
-						$cps = array_map('intval', explode(',', $rank[2]));
-						if (count($cps) == 1 && $cps[0] === -1) {
-							$cps = array();
+							$update = array(
+								'rank'		=> (int)$rank[1],
+								'login'		=> $player->login,
+								'nickname'	=> $player->nickname,
+								'time'		=> (int)$rank[6],
+								'score'		=> (int)$rank[9],
+								'cps'		=> $cps,
+		 						'team'		=> (int)$rank[3],
+								'spectator'	=> $aseco->string2bool($rank[4]),
+								'away'		=> $aseco->string2bool($rank[5]),
+							);
+
+							// Update current ranking cache
+							$aseco->server->rankings->update($update);
 						}
-
-						$player = $aseco->server->players->getPlayer($rank[0]);
-						$update = array(
-							'rank'		=> (int)$rank[1],
-							'login'		=> $player->login,
-							'nickname'	=> $player->nickname,
-							'time'		=> (int)$rank[6],
-							'score'		=> (int)$rank[9],
-							'cps'		=> $cps,
-	 						'team'		=> (int)$rank[3],
-							'spectator'	=> $aseco->string2bool($rank[4]),
-							'away'		=> $aseco->string2bool($rank[5]),
-						);
-
-						// Update current ranking cache
-						$aseco->server->rankings->update($update);
 					}
 
 					if ($aseco->settings['developer']['log_events']['common'] == true) {

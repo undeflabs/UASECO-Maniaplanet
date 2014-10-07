@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -96,7 +96,9 @@ class PluginCheckpoint extends Plugin {
 
 	public function chat_cps ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// Check for relay server
 		if ($aseco->server->isrelay) {
@@ -576,7 +578,7 @@ class PluginCheckpoint extends Plugin {
 
 		// check for valid player
 		if (!$player = $aseco->server->players->getPlayer($login)) {
-			trigger_error('[Player] Player object for ['. $login .'] not found!', E_USER_WARNING);
+			$aseco->console('[Player] Player object for ['. $login .'] not found!');
 			return;
 		}
 

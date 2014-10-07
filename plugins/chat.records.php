@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -80,7 +80,9 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_recs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// split params into array
 		$arglist = explode(' ', strtolower(preg_replace('/ +/', ' ', $chat_parameter)));
@@ -267,11 +269,12 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// display player records, best first
-		$player = $aseco->server->players->getPlayer($login);
-		$command = array();
-		$command['author'] = $player;
-		$command['params'] = $chat_parameter;
-		$this->displayRecords($aseco, $command, true);
+		if ($player = $aseco->server->players->getPlayer($login)) {
+			$command = array();
+			$command['author'] = $player;
+			$command['params'] = $chat_parameter;
+			$this->displayRecords($aseco, $command, true);
+		}
 	}
 
 	/*
@@ -290,11 +293,12 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// display player records, worst first
-		$player = $aseco->server->players->getPlayer($login);
-		$command = array();
-		$command['author'] = $player;
-		$command['params'] = $chat_parameter;
-		$this->displayRecords($aseco, $command, false);
+		if ($player = $aseco->server->players->getPlayer($login)) {
+			$command = array();
+			$command['author'] = $player;
+			$command['params'] = $chat_parameter;
+			$this->displayRecords($aseco, $command, false);
+		}
 	}
 
 	/*
@@ -305,7 +309,9 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_summary ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$target = $aseco->server->players->getPlayer($login);
+		if (!$target = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -416,7 +422,9 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_topsums ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -534,7 +542,9 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_toprecs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {

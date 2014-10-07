@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-19
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -67,7 +67,9 @@ class PluginChatHelp extends Plugin {
 	public function chat_help ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// Check for higher rights of Player
 		$showadmin = false;

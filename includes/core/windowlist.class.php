@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-10
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -64,9 +64,10 @@ class WindowList {
 			return;
 		}
 
-
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($answer[1]);
+		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+			return;
+		}
 
 		// Restore stored data from Player object
 		if ( $this->existsPlayerData($player, 'ClassWindow') ) {

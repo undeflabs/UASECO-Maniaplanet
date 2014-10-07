@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -77,7 +77,6 @@ class PluginRasp extends Plugin {
 
 		$this->registerChatCommand('pb',	'chat_pb',	'Shows your personal best on current map',	Player::PLAYERS);
 		$this->registerChatCommand('rank',	'chat_rank',	'Shows your current server rank',		Player::PLAYERS);
-		$this->registerChatCommand('top10',	'chat_top10',	'Displays top 10 best ranked players',		Player::PLAYERS);
 		$this->registerChatCommand('top100',	'chat_top100',	'Displays top 100 best ranked players',		Player::PLAYERS);
 		$this->registerChatCommand('topwins',	'chat_topwins',	'Displays top 100 victorious players',		Player::PLAYERS);
 		$this->registerChatCommand('active',	'chat_active',	'Displays top 100 most active players',		Player::PLAYERS);
@@ -293,8 +292,9 @@ class PluginRasp extends Plugin {
 		}
 
 		if ($this->feature_stats) {
-			$player = $aseco->server->players->getPlayer($login);
-			$this->showPb($player, $aseco->server->maps->current->id, true);
+			if ($player = $aseco->server->players->getPlayer($login)) {
+				$this->showPb($player, $aseco->server->maps->current->id, true);
+			}
 		}
 	}
 
@@ -317,75 +317,12 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function chat_top10 ($aseco, $login, $chat_command, $chat_parameter) {
-
-		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
-		$top = 10;
-
-		$query = "
-		SELECT
-			`p`.`NickName`,
-			`r`.`Avg`
-		FROM `players` AS `p`
-		LEFT JOIN `rs_rank` AS `r` ON `p`.`Id` = `r`.`PlayerId`
-		WHERE `r`.`Avg` != 0
-		ORDER BY `r`.`Avg` ASC
-		LIMIT ". $top .";
-		";
-
-		$res = $aseco->mysqli->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				$i = 1;
-				$recs = array();
-				while ($row = $res->fetch_object()) {
-					$nickname = $row->NickName;
-					if (!$aseco->settings['lists_colornicks']) {
-						$nickname = $aseco->stripColors($nickname);
-					}
-					$recs[] = array(
-						$i .'.',
-						sprintf("%4.1F", $row->Avg / 10000),
-						$nickname,
-					);
-					$i++;
-				}
-
-
-				// Setup settings for Window
-				$settings_title = array(
-					'icon'	=> 'BgRaceScore2,LadderRank',
-				);
-				$settings_columns = array(
-					'columns'	=> 4,
-					'widths'	=> array(11, 19, 70),
-					'halign'	=> array('right', 'right', 'left'),
-					'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
-				);
-				$window = new Window();
-				$window->setLayoutTitle($settings_title);
-				$window->setColumns($settings_columns);
-				$window->setContent('Current TOP 10 Players', $recs);
-				$window->send($player, 0, false);
-			}
-			else {
-				$aseco->sendChatMessage('{#server}» {#error}No ranked players found!', $player->login);
-			}
-			$res->free_result();
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function chat_top100 ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$top = 100;
 		$query = "
@@ -450,9 +387,11 @@ class PluginRasp extends Plugin {
 	public function chat_topwins ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
-		$top = 100;
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
+		$top = 100;
 		$query = "
 		SELECT
 			`NickName`,
@@ -510,7 +449,9 @@ class PluginRasp extends Plugin {
 	public function chat_active ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		$top = 100;
 		$query = "

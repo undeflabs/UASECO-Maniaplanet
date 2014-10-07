@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -82,14 +82,15 @@ class PluginPlayerInfos extends Plugin {
 		$action = (int)$answer[2];
 		if ($action >= 2001 && $action <= 2200) {
 			// get player
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$target = $player->playerlist[$action-2001]['login'];
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$target = $player->playerlist[$action-2001]['login'];
 
-			// close main window because /stats can take a while
-			$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
+				// close main window because /stats can take a while
+				$aseco->plugins['PluginManialinks']->mainwindow_off($aseco, $player->login);
 
-			// /stats selected player
-			$aseco->releaseChatCommand('/stats '. $target, $player->login);
+				// /stats selected player
+				$aseco->releaseChatCommand('/stats '. $target, $player->login);
+			}
 		}
 	}
 
@@ -103,7 +104,9 @@ class PluginPlayerInfos extends Plugin {
 
 		// use only first parameter
 		$command['params'] = explode(' ', $chat_parameter, 2);
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$player->playerlist = array();
 
 		$head = 'Players On This Server:';
@@ -173,7 +176,9 @@ class PluginPlayerInfos extends Plugin {
 
 	public function chat_ranks ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$ranks = array();
 
 		// sort players by rank, insuring rankless are last by sorting on INT_MAX
@@ -190,10 +195,11 @@ class PluginPlayerInfos extends Plugin {
 		$player->msgs = array();
 		$player->msgs[0] = array(1, $head, array(0.8, 0.15, 0.65), array('Icons128x128_1', 'Buddies'));
 		foreach ($ranks as $pl => $rk) {
-			$play = $aseco->server->players->getPlayer($pl);
-			$msg[] = array('{#login}'. ($rk != PHP_INT_MAX ? $rk : '{#grey}<none>'),
-				'{#black}'. $play->nickname
-			);
+			if ($play = $aseco->server->players->getPlayer($pl)) {
+				$msg[] = array('{#login}'. ($rk != PHP_INT_MAX ? $rk : '{#grey}<none>'),
+					'{#black}'. $play->nickname
+				);
+			}
 			if (++$lines > 14) {
 				$player->msgs[] = $msg;
 				$lines = 0;
@@ -218,7 +224,9 @@ class PluginPlayerInfos extends Plugin {
 
 	public function chat_clans ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$clans = array();
 
 		// sort players by clan, insuring clanless are last by sorting on chr(255)
@@ -229,11 +237,12 @@ class PluginPlayerInfos extends Plugin {
 
 		// Compile the message
 		foreach ($clans as $pl => $tm) {
-			$play = $aseco->server->players->getPlayer($pl);
-			$msg[] = array(
-				($tm != chr(255) ? $tm : 'none'),
-				$play->nickname
-			);
+			if ($play = $aseco->server->players->getPlayer($pl)) {
+				$msg[] = array(
+					($tm != chr(255) ? $tm : 'none'),
+					$play->nickname
+				);
+			}
 		}
 
 		// Setup settings for Window
@@ -262,9 +271,11 @@ class PluginPlayerInfos extends Plugin {
 	public function chat_topclans ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
-		$top = 10;
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
+		$top = 100;
 		// Find best ranked
 		$query = "
 		SELECT
@@ -314,7 +325,7 @@ class PluginPlayerInfos extends Plugin {
 				$window = new Window();
 				$window->setLayoutTitle($settings_title);
 				$window->setColumns($settings_columns);
-				$window->setContent('Current TOP 10 Clans (min. '. $aseco->settings['topclans_minplayers'] .' Players)', $msg);
+				$window->setContent('Current TOP 100 Clans (min. '. $aseco->settings['topclans_minplayers'] .' Players)', $msg);
 				$window->send($player, 0, false);
 			}
 			else {

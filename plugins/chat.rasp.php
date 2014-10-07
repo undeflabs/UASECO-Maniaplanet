@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -96,7 +96,9 @@ class PluginChatRasp extends Plugin {
 
 		$command['params'] = explode(' ', $chat_parameter, 2);
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$target = $player;
 
 		// get player login or ID
@@ -164,7 +166,9 @@ class PluginChatRasp extends Plugin {
 
 		$command['params'] = explode(' ', $chat_parameter, 2);
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$target = $player;
 
 		// check for admin ability
@@ -252,7 +256,9 @@ class PluginChatRasp extends Plugin {
 			$lnlen = $aseco->plugins['PluginChatAdmin']->lnlen;
 		}
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 		$target = $player;
 
 		if (!empty($player->pmbuf)) {
@@ -299,7 +305,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_hi ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -325,7 +333,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_bye ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -351,7 +361,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_thx ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -377,7 +389,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_lol ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -398,7 +412,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_lool ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -419,7 +435,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_brb ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -440,7 +458,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_afk ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -493,7 +513,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_gg ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -519,7 +541,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_gr ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -545,7 +569,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_n1 ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -571,7 +597,9 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_bgm ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
@@ -604,21 +632,29 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_bootme ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		// show departure message and kick player
 		$msg = $aseco->formatText($aseco->plugins['PluginRasp']->messages['BOOTME'][0],
 			$player->nickname
 		);
 		$aseco->sendChatMessage($msg);
-		if (isset($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] != '') {
-			$aseco->client->addCall('Kick',
-				$player->login,
-				$aseco->formatColors($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] .'$z')
-			);
+
+		try {
+			if (isset($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] != '') {
+				$aseco->client->addCall('Kick',
+					$player->login,
+					$aseco->formatColors($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] .'$z')
+				);
+			}
+			else {
+				$aseco->client->addCall('Kick', $player->login);
+			}
 		}
-		else {
-			$aseco->client->addCall('Kick', $player->login);
+		catch (Exception $exception) {
+			$aseco->console('[ChatRasp] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Kick: ['. $player->login .']');
 		}
 	}
 }

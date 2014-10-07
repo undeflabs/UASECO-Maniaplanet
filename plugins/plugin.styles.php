@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -92,7 +92,9 @@ class PluginStyles extends Plugin {
 
 	public function chat_style ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
 
 		if ($chat_parameter == 'help') {
 			$header = '{#black}/style$g will change the window style:';
@@ -210,24 +212,16 @@ class PluginStyles extends Plugin {
 		// leave actions outside 49 - 100 to other handlers
 		$action = (int) $answer[2];
 		if ($action >= 49 && $action <= 100) {
-			// get player & style
-			$player = $aseco->server->players->getPlayer($answer[1]);
-			$style = $player->maplist[$action-49]['style'];
+			// Get player & style
+			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+				$style = $player->maplist[$action-49]['style'];
 
-//			// log clicked command
-//			$aseco->console('[Styles] Player [{1}] clicked command "/style {2}"',
-//				$player->login,
-//				$style
-//			);
+				// select new style & refresh list
+				$this->chat_style($aseco, $player->login, 'style', $style);
 
-			// select new style & refresh list
-			$this->chat_style($aseco, $player->login, 'style', $style);
-
-//			// log clicked command
-//			$aseco->console('[Styles] Player [{1}] clicked command "/style list"', $player->login);
-
-			// display restyled list
-			$this->chat_style($aseco, $player->login, 'style', 'list');
+				// display restyled list
+				$this->chat_style($aseco, $player->login, 'style', 'list');
+			}
 		}
 	}
 

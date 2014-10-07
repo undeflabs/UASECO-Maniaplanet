@@ -100,4 +100,5 @@ Version 1.0.0
    - Remamed "$map->authortime" to "$map->author_time" ($map = includes/core/map.class.php)
    - Removed all donate panels ("Donate*.xml") from "config/panels"
    - Removed "http_get_file()", use "$aseco->webaccess->request()" instead
+   - Removed chat command "/top10" from plugin.rasp.php, use "/top100" instead
    - PLEASE NOTE: I only hope that this list are all differences, but i'm not really sure about this. I was starting too late to write this list, sorry!

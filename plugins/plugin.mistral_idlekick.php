@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-05
+ * Date:	2014-10-07
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -127,10 +127,11 @@ class PluginMistralIdlekick extends Plugin {
 			return;
 		}
 
-		$player = $aseco->server->players->getPlayer($chat[1]);
-		$this->storePlayerData($player, 'idleCount', 0);
-		if ($this->debug) {
-			$aseco->console('[MistralIdlekick] {1} reset on chat', $player->login);
+		if ($player = $aseco->server->players->getPlayer($chat[1])) {
+			$this->storePlayerData($player, 'idleCount', 0);
+			if ($this->debug) {
+				$aseco->console('[MistralIdlekick] Player [{1}] reset on chat ', $player->login);
+			}
 		}
 	}
 
@@ -148,10 +149,11 @@ class PluginMistralIdlekick extends Plugin {
 			return;
 		}
 
-		$player = $aseco->server->players->getPlayer($checkpt[0]);
-		$this->storePlayerData($player, 'idleCount', 0);
-		if ($this->debug) {
-			$aseco->console('[MistralIdlekick] {1} reset on checkpoint', $player->login);
+		if ($player = $aseco->server->players->getPlayer($checkpt[0])) {
+			$this->storePlayerData($player, 'idleCount', 0);
+			if ($this->debug) {
+				$aseco->console('[MistralIdlekick] Player [{1}] reset on checkpoint', $player->login);
+			}
 		}
 	}
 
@@ -171,7 +173,7 @@ class PluginMistralIdlekick extends Plugin {
 		$player = $finish_item->player;
 		$this->storePlayerData($player, 'idleCount', 0);
 		if ($this->debug) {
-			$aseco->console('[MistralIdlekick] {1} reset on finish', $player->login);
+			$aseco->console('[MistralIdlekick] Player [{1}] reset on finish', $player->login);
 		}
 	}
 
