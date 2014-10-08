@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-08
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -296,8 +296,6 @@ class PluginModescriptHandler extends Plugin {
 
 			// [0]=Login, [1]=WaypointBlockId, [2]=WaypointIndexRace, [3]=WaypointIndexLap, [4]=TotalRespawns
 			case 'LibXmlRpc_OnRespawn':
-// BUG: http://forum.maniaplanet.com/viewtopic.php?p=220566#p220566
-//$aseco->dump($params);
 				$aseco->releaseEvent('onPlayerRespawn', array($params[0], $params[1], (int)$params[2], (int)$params[3], (int)$params[4]));
 		    		break;
 
@@ -526,38 +524,47 @@ class PluginModescriptHandler extends Plugin {
 			case 'LibXmlRpc_PlayerRanking':
 				if ( isset($params[1]) ) {
 					if ($player = $aseco->server->players->getPlayer($params[1])) {
-						// Explode string and convert to integer
-						$cps = array_map('intval', explode(',', $params[9]));
-						if (count($cps) == 1 && $cps[0] === -1) {
-							$cps = array();
-						}
+						// Get current Ranking object from Player
+						if ($rank = $aseco->server->rankings->getRankByLogin($player->login)) {
 
-						$update = array(
-							'rank'		=> (int)$params[0],
-							'login'		=> $player->login,
-							'nickname'	=> $player->nickname,
-							'time'		=> (int)$params[6],
-							'score'		=> (int)$params[10],
-							'cps'		=> $cps,
-	 						'team'		=> (int)$params[3],
-							'spectator'	=> $aseco->string2bool($params[4]),
-							'away'		=> $aseco->string2bool($params[5]),
-						);
+							// Explode string and convert to integer
+							$cps = array_map('intval', explode(',', $params[9]));
+							if (count($cps) == 1 && $cps[0] === -1) {
+								$cps = array();
+							}
 
-						// Update current ranking cache
-						$aseco->server->rankings->update($update);
-						if ($aseco->settings['developer']['log_events']['common'] == true) {
-							$aseco->console('[Event] Player Ranking Updated (Player)');
+							// Check for improved time/score
+							if ($rank->time == 0 || $rank->time > (int)$params[6] || (int)$params[10] > 0) {
+								$update = array(
+									'rank'		=> (int)$params[0],
+									'login'		=> $player->login,
+									'nickname'	=> $player->nickname,
+									'time'		=> (int)$params[6],
+									'score'		=> (int)$params[10],
+									'cps'		=> $cps,
+			 						'team'		=> (int)$params[3],
+									'spectator'	=> $aseco->string2bool($params[4]),
+									'away'		=> $aseco->string2bool($params[5]),
+								);
+
+								// Update current ranking cache
+								$aseco->server->rankings->update($update);
+								if ($aseco->settings['developer']['log_events']['common'] == true) {
+									$aseco->console('[Event] Player Ranking Updated (Player)');
+								}
+								$aseco->releaseEvent('onPlayerRankingUpdated', null);
+
+								// Finished Map?
+								if (isset($this->player_finished[$params[1]])) {
+									// Player finished the Map or the Lap
+									$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
+
+									// Remove finish status
+									unset($this->player_finished[$params[1]]);
+								}
+							}
 						}
-						$aseco->releaseEvent('onPlayerRankingUpdated', null);
 					}
-				}
-				if (isset($params[1]) && isset($this->player_finished[$params[1]])) {
-					// Player finished the Map or the Lap
-					$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
-
-					// Remove finish status
-					unset($this->player_finished[$params[1]]);
 				}
 		    		break;
 

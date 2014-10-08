@@ -291,7 +291,7 @@ class PluginDonate extends Plugin {
 	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
 
 		// Get Player
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
 			return;
 		}
 

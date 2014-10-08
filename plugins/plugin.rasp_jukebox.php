@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-08
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -35,10 +35,10 @@
  *  - plugins/plugin.rasp.php
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.local_records.php
+ *  - plugins/plugin.dedimania.php
  *  - plugins/chat.records.php
  *  - plugins/plugin.map.php
  *  - plugins/plugin.rasp_votes.php
- *  - plugins/plugin.autotime.php
  *  - plugins/plugin.panels.php
  *
  */
@@ -77,8 +77,8 @@ class PluginRaspJukebox extends Plugin {
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginChatRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginMap',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginDedimania',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginAutotime',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
 
 		// handles action id's "101"-"2000" for jukeboxing max. 1900 maps
@@ -1478,10 +1478,11 @@ class PluginRaspJukebox extends Plugin {
 					case 1:  // ladder
 						if ($this->ladder_fast_restart) {
 
-							// perform quick restart
-							if ( isset($aseco->plugins['PluginAutotime']) ) {
-								$aseco->plugins['PluginAutotime']->restart = true;
+							// Simulate a onEndMap for Dedimania, otherwise new driven records are lost!
+							if ( isset($aseco->plugins['PluginDedimania']) ) {
+								$aseco->plugins['PluginDedimania']->onEndMap($aseco, $aseco->server->maps->current);
 							}
+
 							if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
 								// don't clear scores if in Cup mode
 								$aseco->client->query('RestartMap', true);

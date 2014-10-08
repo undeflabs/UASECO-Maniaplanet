@@ -11,6 +11,6 @@ Records-Eyepiece
 ~~~~~~~~~~~~~~~~
  - Move FinishWinnersWidget at Score to left down
  - Change F7 for toggle widgets
- - At TopCount and foreign Players have no red background in LocalRecords
+ - At TopCount and foreign online Players have no red background in LocalRecords
  - Do not send <quad...> when "BgEmpty" is used
  - BUG: After juke a song, the next/prev page buttons does not work

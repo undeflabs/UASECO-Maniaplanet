@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2014-10-07
+ * Date:		2014-10-08
  * Copyright:		2012 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -30,9 +30,9 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - plugins/plugin.jfreu_max.php
  *  - plugins/plugin.rasp_votes.php
  *  - plugins/plugin.rasp_jukebox.php
+ *  - plugins/plugin.dedimania.php
  *
  */
 
@@ -80,8 +80,8 @@ class PluginVoteManager extends Plugin {
 		$this->setDescription('Provides a Widget and handles Skip/Restart votings.');
 
 		$this->addDependence('PluginRaspVotes',			Dependence::DISALLOWED,	null, null);
-		$this->addDependence('PluginJfreuMax',			Dependence::DISALLOWED,	null, null);
 		$this->addDependence('PluginRaspJukebox',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginDedimania',			Dependence::WANTED,	null, null);
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
@@ -619,6 +619,12 @@ class PluginVoteManager extends Plugin {
 		global $aseco;
 
 		if ($mode == 'Restart') {
+
+			// Simulate a onEndMap for Dedimania, otherwise new driven records are lost!
+			if ( isset($aseco->plugins['PluginDedimania']) ) {
+				$aseco->plugins['PluginDedimania']->onEndMap($aseco, $aseco->server->maps->current);
+			}
+
 			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
 				// Don't clear scores if in Cup mode
 				$aseco->client->query('RestartMap', true);

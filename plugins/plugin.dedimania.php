@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-08
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1948,7 +1948,7 @@ class PluginDedimania extends Plugin {
 		}
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] onEndMap - data'. CRLF . print_r($data, true));
+			$aseco->console('[Dedimania] onEndMap - data'. CRLF . print_r($map, true));
 		}
 
 		// check for valid map
@@ -2505,7 +2505,7 @@ class PluginDedimania extends Plugin {
 			// parse validation replay and check UID
 			$parser = new GBXReplayFetcher(true);
 			try {
-				$parser->processData($vreplay);
+				$parser->processData($vreplay->scalar);
 			}
 			catch (Exception $e) {
 				$aseco->console('[Dedimania] Unable to parse validation replay for Player ['. $entry['Login'] .']: skipped ['. $aseco->formatTime($entry['Best']) .']: '. $e->getMessage());
@@ -2567,7 +2567,7 @@ class PluginDedimania extends Plugin {
 
 			// Success?
 			if ($validation_success === true) {
-				return $vreplay;
+				return $vreplay->scalar;
 			}
 			else {
 				return false;

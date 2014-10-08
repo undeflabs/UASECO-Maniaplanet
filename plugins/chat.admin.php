@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-08
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -32,6 +32,7 @@
  *  - plugins/plugin.autotime.php
  *  - plugins/plugin.donate.php
  *  - plugins/plugin.local_records.php
+ *  - plugins/plugin.dedimania.php
  *  - plugins/plugin.panels.php
  *  - plugins/plugin.rasp.php
  *  - plugins/plugin.rasp_jukebox.php
@@ -75,6 +76,7 @@ class PluginChatAdmin extends Plugin {
 		$this->addDependence('PluginAutotime',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginDonate',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginDedimania',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
@@ -783,13 +785,12 @@ class PluginChatAdmin extends Plugin {
 			 * Restarts the currently running map.
 			 */
 
-			// Restart the map
-			if ( isset($aseco->plugins['PluginAutotime']) ) {
-				// from plugin.autotime.php
-				$aseco->plugins['PluginAutotime']->restart = true;
+			// Simulate a onEndMap for Dedimania, otherwise new driven records are lost!
+			if ( isset($aseco->plugins['PluginDedimania']) ) {
+				$aseco->plugins['PluginDedimania']->onEndMap($aseco, $aseco->server->maps->current);
 			}
 
-			// don't clear scores if in Cup mode
+			// Do not clear scores if in Cup mode
 			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
 				$aseco->client->query('RestartMap', true);
 			}
@@ -2222,7 +2223,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message);
 
 				// log console message
-				$aseco->console('[Admin] {1} [{2}] '. $command['params'][0] .'-ed map {3}', $logtitle, $login, $aseco->stripColors($name, false));
+				$aseco->console('[Admin] {1} [{2}] '. $command['params'][0] .'-ed map [{3}]', $logtitle, $login, $aseco->stripColors($name, false));
 
 				// throw 'maplist changed' event
 				$aseco->releaseEvent('onMapListChanged', array('remove', $filename));

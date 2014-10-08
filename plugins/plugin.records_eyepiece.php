@@ -2587,6 +2587,11 @@ class PluginRecordsEyepiece extends Plugin {
 			return;
 		}
 
+		// Get Player
+		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+			return;
+		}
+
 		// Init
 		$widgets = '';
 		$require_action = false;
@@ -2644,9 +2649,6 @@ class PluginRecordsEyepiece extends Plugin {
 		foreach (range(1,80) as $id) {
 			$authorname_answer_index[] = 'showMaplistWindowFilterAuthor'. sprintf("%02d", $id);
 		}
-
-		// Get the Player object
-		$player = $aseco->server->players->player_list[$answer[1]];
 
 		if ($answer[2] == 382009003) {
 
@@ -5743,18 +5745,13 @@ class PluginRecordsEyepiece extends Plugin {
 	public function sendManialink ($widgets, $login = false, $timeout = 0) {
 		global $aseco;
 
-		$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
-		$xml .= '<manialinks>';
-		$xml .= $widgets;
-		$xml .= '</manialinks>';
-
 		if ($login != false) {
 			// Send to given Player
-			$aseco->client->query('SendDisplayManialinkPageToLogin', $login, $xml, ($timeout * 1000), false);
+			$aseco->sendManialink($widgets, $login, ($timeout * 1000), false);
 		}
 		else {
 			// Send to all connected Players
-			$aseco->client->query('SendDisplayManialinkPage', $xml, ($timeout * 1000), false);
+			$aseco->sendManialink($widgets, false, ($timeout * 1000), false);
 		}
 	}
 

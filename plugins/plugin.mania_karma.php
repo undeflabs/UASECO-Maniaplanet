@@ -1493,8 +1493,7 @@ class PluginManiaKarma extends Plugin {
 			return;
 		}
 
-		$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
-		$xml .= '<manialinks>';
+		$xml  = '';
 
 		// Possible parameters: 'skeleton_race', 'skeleton_score', 'cups_values', 'player_marker', 'hide_window' and 'hide_all'
 		foreach ($widgets as $widget) {
@@ -1533,14 +1532,11 @@ class PluginManiaKarma extends Plugin {
 			}
 		}
 
-		$xml .= '</manialinks>';
-
-
 		if ($player != false) {
-			$aseco->client->query('SendDisplayManialinkPageToLogin', $player->login, $xml, 0, false);
+			$aseco->sendManialink($xml, $player->login, 0, false);
 		}
 		else {
-			$aseco->client->query('SendDisplayManialinkPage', $xml, 0, false);
+			$aseco->sendManialink($xml, false, 0, false);
 		}
 	}
 
@@ -1831,12 +1827,7 @@ EOL;
 	public function sendWindow ($login, $window) {
 		global $aseco;
 
-		$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
-		$xml .= '<manialinks>';
-		$xml .= $window;
-		$xml .= '</manialinks>';
-
-		$aseco->client->query('SendDisplayManialinkPageToLogin', $login, $xml, 0, false);
+		$aseco->sendManialink($window, $login, 0, false);
 	}
 
 	/*
@@ -2554,8 +2545,7 @@ EOL;
 			$xml .= $maniascript;
 		}
 		$xml .= '</manialink>';
-
-		$aseco->client->query('SendDisplayManialinkPage', $xml, 0, false);
+		$aseco->sendManialink($xml, false, 0, false);
 	}
 
 
@@ -2612,8 +2602,7 @@ EOL;
 			$xml .= $maniascript;
 		}
 		$xml .= '</manialink>';
-
-		$aseco->client->query('SendDisplayManialinkPage', $xml, 0, false);
+		$aseco->sendManialink($xml, false, 0, false);
 	}
 
 	/*
@@ -3100,9 +3089,7 @@ EOL;
 			$gamestate = 'score';
 		}
 
-		$content =  '<?xml version="1.0" encoding="UTF-8"?>';
-		$content .= '<manialinks>';
-		$content .= '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow">';
+		$content = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow">';
 		$content .= '<frame posn="'. $this->config['reminder_window'][$gamestate]['pos_x'] .' '. $this->config['reminder_window'][$gamestate]['pos_y'] .' 2">';
 		$content .= '<quad posn="0 1 0" sizen="81.8 6.3" style="Bgs1InRace" substyle="BgTitle2"/>';
 		$content .= '<label posn="16.5 -0.8 1" sizen="18 1.8" textsize="2" scale="0.8" halign="right" text="$000'. $this->config['messages']['karma_reminder_at_score'] .'"/>';
@@ -3152,9 +3139,8 @@ EOL;
 
 		$content .= '</frame>';
 		$content .= '</manialink>';
-		$content .= '</manialinks>';
 
-		$aseco->client->query('SendDisplayManialinkPageToLogin', $players, $content, 0, true);
+		$aseco->sendManialink($content, $players, 0, true);
 	}
 
 	/*
@@ -3205,9 +3191,7 @@ EOL;
 			$gamestate = 'score';
 		}
 
-		$content =  '<?xml version="1.0" encoding="UTF-8"?>';
-		$content .= '<manialinks>';
-		$content .= '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow">';
+		$content = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow">';
 		$content .= '<frame posn="'. $this->config['reminder_window'][$gamestate]['pos_x'] .' '. $this->config['reminder_window'][$gamestate]['pos_y'] .' 2">';
 		$content .= '<quad posn="0 1 0" sizen="81.8 6.3" style="Bgs1InRace" substyle="BgTitle2"/>';
 		$content .= '<label posn="16.5 -0.8 1" sizen="18 1.8" textsize="2" scale="0.8" halign="right" text="$000'. $this->config['messages']['karma_you_have_voted'] .'"/>';
@@ -3235,9 +3219,8 @@ EOL;
 
 		$content .= '</frame>';
 		$content .= '</manialink>';
-		$content .= '</manialinks>';
 
-		$aseco->client->query('SendDisplayManialinkPageToLogin', $player->login, $content, 0, false);
+		$aseco->sendManialink($content, $player->login, 0, false);
 		$player->data['ManiaKarma']['ReminderWindow'] = true;
 	}
 
@@ -3257,14 +3240,11 @@ EOL;
 		}
 
 		// Build the Manialink
-		$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
-		$xml .= '<manialinks>';
-		$xml .= '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow"></manialink>';
-		$xml .= '</manialinks>';
+		$xml = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow"></manialink>';
 
 		if ($player != false) {
 			if ($player->data['ManiaKarma']['ReminderWindow'] == true) {
-				$aseco->client->query('SendDisplayManialinkPageToLogin', $player->login, $xml, 0, false);
+				$aseco->sendManialink($xml, $player->login, 0, false);
 				$player->data['ManiaKarma']['ReminderWindow'] = false;
 			}
 		}
@@ -3277,7 +3257,7 @@ EOL;
 			}
 
 			// Send manialink to all Player
-			$aseco->client->query('SendDisplayManialinkPage', $xml, 0, false);
+			$aseco->sendManialink($xml, false, 0, false);
 		}
 	}
 
@@ -3289,9 +3269,6 @@ EOL;
 
 	public function sendHelpAboutWindow ($login, $message) {
 		global $aseco;
-
-		$xml =  '<?xml version="1.0" encoding="UTF-8"?>';
-		$xml .= '<manialinks>';
 
 		$buttons = '';
 		$xml .= str_replace(
@@ -3306,7 +3283,7 @@ EOL;
 			$this->config['Templates']['WINDOW']['HEADER']
 		);
 
-		$xml .= '<frame posn="3 -6 0">';
+		$xml = '<frame posn="3 -6 0">';
 		$xml .= '<quad posn="54 4 0.05" sizen="23 23" image="'. $this->config['images']['maniakarma_logo'] .'" url="http://www.mania-karma.com"/>';
 		$xml .= '<label posn="0 0 0.05" sizen="57 0" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
 		$xml .= '</frame>';
@@ -3317,9 +3294,7 @@ EOL;
 		$xml .= '</frame>';
 
 		$xml .= $this->config['Templates']['WINDOW']['FOOTER'];
-		$xml .= '</manialinks>';
-
-		$aseco->client->query('SendDisplayManialinkPageToLogin', $login, $xml, 0, false);
+		$aseco->sendManialink($xml, $login, 0, false);
 	}
 
 	/*

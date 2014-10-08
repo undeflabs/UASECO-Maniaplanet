@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-04
+ * Date:	2014-10-08
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -43,7 +43,6 @@
 class PluginAutotime extends Plugin {
 	public $config;
 	public $active;
-	public $restart;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -71,7 +70,6 @@ class PluginAutotime extends Plugin {
 
 		// Initialize flags
 		$this->active = false;
-		$this->restart = false;
 
 		// Load config file
 		$config_file = 'config/autotime.xml';
@@ -100,12 +98,6 @@ class PluginAutotime extends Plugin {
 
 		// If not active, bail out immediately
 		if (!$this->active) {
-			return;
-		}
-
-		// If restarting, bail out immediately
-		if ($this->restart) {
-			$this->restart = false;
 			return;
 		}
 

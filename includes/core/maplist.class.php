@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-06
+ * Date:	2014-10-08
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -107,7 +107,7 @@ class MapList {
 
 	public function getMapById ($id) {
 		foreach ($this->map_list as $map) {
-			if ($map['id'] == $id) {
+			if ($map->id == $id) {
 				return $map;
 			}
 		}
@@ -123,7 +123,7 @@ class MapList {
 
 	public function getMapByFilename ($filename) {
 		foreach ($this->map_list as $map) {
-			if ($map['filename'] == $filename) {
+			if ($map->filename == $filename) {
 				return $map;
 			}
 		}
@@ -139,8 +139,8 @@ class MapList {
 
 	public function removeMapByFilename ($filename) {
 		foreach ($this->map_list as $map) {
-			if ($map['filename'] == $filename) {
-				unset($this->map_list[$map['uid']]);
+			if ($map->filename == $filename) {
+				unset($this->map_list[$map->uid]);
 				return true;
 			}
 		}
