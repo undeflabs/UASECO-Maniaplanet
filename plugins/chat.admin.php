@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-08
+ * Date:	2014-10-09
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -4459,6 +4459,7 @@ class PluginChatAdmin extends Plugin {
 	*/
 
 	private function admin_addthis ($login, $command, $arglist, $logtitle, $chattitle) {
+		global $aseco;
 
 		if ( isset($aseco->plugins['PluginRaspJukebox']) ) {
 			// Check for MX /add-ed map
@@ -4533,6 +4534,7 @@ class PluginChatAdmin extends Plugin {
 	*/
 
 	private function admin_addlocal ($login, $command, $arglist, $logtitle, $chattitle) {
+		global $aseco;
 
 		// check for local map file
 		if ($arglist[1] != '') {
@@ -4652,7 +4654,7 @@ class PluginChatAdmin extends Plugin {
 		if (file_exists($aseco->server->mapdir .'MatchSettings/'. $filename)) {
 			try {
 				// Get map count
-				$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettingsx/'. $filename);
+				$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettings/'. $filename);
 
 				// Log console message
 				$aseco->console('[Admin] {1} [{2}] read map list: {3} ({4} maps)!', $logtitle, $login, $filename, $cnt);
