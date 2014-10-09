@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-08
+ * Date:	2014-10-09
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -238,7 +238,7 @@ class MapList {
 					else {
 						$i += $size;
 					}
-					unset($newlist);
+					$newlist = array();
 				}
 				else {
 					$done = true;
@@ -250,6 +250,7 @@ class MapList {
 				break;
 			}
 		}
+		unset($newlist);
 
 		// Load map infos from Database for all maps
 		$uids = array();
@@ -257,7 +258,6 @@ class MapList {
 			$uids[] = $aseco->mysqli->quote($map['UId']);
 		}
 		$dbinfos = $this->getDatabaseMapInfos($uids);
-
 
 		// Calculate karma for each map in database
 		$karma = $this->calculateRaspKarma();
@@ -311,7 +311,7 @@ class MapList {
 				// Create Map object
 				$map = new Map($gbx, $mapinfo['FileName']);
 
-				if (empty($dbinfos[$mapinfo['UId']]['filename'])) {
+				if (!empty($dbinfos[$mapinfo['UId']])) {
 					// Update this Map in the database
 					$database['update'][] = $map;
 				}
@@ -502,6 +502,7 @@ class MapList {
 		WHERE `Uid` = ". $aseco->mysqli->quote($map->uid) ."
 		LIMIT 1;
 		";
+
 		$aseco->mysqli->query($query);
 		if ($aseco->mysqli->affected_rows === -1) {
 			trigger_error('[MapList] Could not update map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
