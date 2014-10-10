@@ -6,9 +6,12 @@
  * » Based upon GbxRemote.php from 'https://github.com/NewboO/dedicated-server-api/',
  *   changed to UASECO requirements.
  *
+ *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
+ *   2014-10-03: Renamed query() into singlequery(), changed parameter for addCall() and query()
+ *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
+ * Date:	2014-10-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -34,8 +37,9 @@
 */
 
 class GbxRemote {
-	const MAX_REQUEST_SIZE	= 0x200000;				// 2MB
-	const MAX_RESPONSE_SIZE	= 0x400000;				// 4MB
+//	const MAX_REQUEST_SIZE	= 0x200000;				// 2,097,152 bytes
+	const MAX_REQUEST_SIZE	= 0x080000;				//   524,288 bytes
+	const MAX_RESPONSE_SIZE	= 0x400000;				// 4,194,304 bytes
 
 	public static $received;
 	public static $sent;

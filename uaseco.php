@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-10-08');
+	define('UASECO_BUILD',		'2014-10-10');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -903,7 +903,7 @@ class UASECO extends Helper {
 
 			if ( ($this->settings['developer']['log_events']['registered_types'] == true) && ($this->settings['developer']['log_events']['all_types'] == false) ) {
 				if ($event_type != 'onEverySecond' && $event_type != 'onMainLoop' && $event_type != 'onModeScriptCallbackArray' && $event_type != 'onModeScriptCallback') {
-					$this->console('[EventType] Releasing "'. $event_type .'"');
+					$this->console('[Event] Releasing "'. $event_type .'"');
 				}
 			}
 
@@ -1931,8 +1931,8 @@ class UASECO extends Helper {
 	// Player reaches finish.
 	public function playerFinish ($login, $score) {
 
-		// If no map info bail out immediately
-		if ($this->server->maps->current->name == '') {
+		// If no Map info bail out immediately
+		if ($this->server->maps->current->id === 0) {
 			return;
 		}
 

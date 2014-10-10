@@ -46,6 +46,7 @@
 			<border_style>Bgs1</border_style>
 			<border_substyle>BgEmpty</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', 'BgList' or 'BgEmpty' are useful) -->
 
+			<!-- If <title_background> is not empty then the style/substyle are ignored -->
 			<title_background>09FD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
@@ -57,9 +58,13 @@
 			<icon_style>Icons64x64_1</icon_style>
 			<icon_substyle>ToolLeague1</icon_substyle>
 
+			<!-- If <background_color> is not empty then the style/substyle are ignored -->
+			<background_color>223B</background_color>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 
+			<!-- If <title_background> is not empty then the style/substyle are ignored -->
+			<title_background>09FD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 		</score>

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-06
+ * Date:	2014-10-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -134,12 +134,12 @@ class PluginInfoBar extends Plugin {
 		$this->config['records']['personal_best']['modulatecolor']	= 'DDD';
 		$this->config['records']['personal_best']['action']		= '';
 
-		$this->config['records']['local']['label']			= 'LOCAL RECORD';
+		$this->config['records']['local']['label']			= '1. LOCAL RECORD';
 		$this->config['records']['local']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-local-record.png';
 		$this->config['records']['local']['modulatecolor']		= 'DDD';
 		$this->config['records']['local']['action']			= 'showLocalRecordsWindow';
 
-		$this->config['records']['dedimania']['label']			= 'DEDIMANIA';
+		$this->config['records']['dedimania']['label']			= '1. DEDIMANIA';
 		$this->config['records']['dedimania']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-dedimania-record.png';
 		$this->config['records']['dedimania']['modulatecolor']		= 'DDD';
 		$this->config['records']['dedimania']['action']			= 'showDedimaniaRecordsWindow';

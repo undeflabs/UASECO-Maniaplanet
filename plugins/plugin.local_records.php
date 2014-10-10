@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
+ * Date:	2014-10-11
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -623,7 +623,7 @@ class PluginLocalRecords extends Plugin {
 			`Checkpoints`
 		)
 		VALUES (
-			". $aseco->server->maps->current->id .",
+			". $record->map->id .",
 			". $record->player->id .",
 			". $record->score .",
 			NOW(),
@@ -647,13 +647,13 @@ class PluginLocalRecords extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function removeRecord ($aseco, $cid, $pid, $recno) {
+	public function removeRecord ($aseco, $mapid, $playerid, $recno) {
 
 		// remove record
 		$query = "
 		DELETE FROM `records`
-		WHERE `MapId` = ". $cid ."
-		AND `PlayerId` = ". $pid .";
+		WHERE `MapId` = ". $mapid ."
+		AND `PlayerId` = ". $playerid .";
 		";
 
 		$result = $aseco->mysqli->query($query);
@@ -672,12 +672,12 @@ class PluginLocalRecords extends Plugin {
 				`PlayerId`,
 				`Score`
 			FROM `rs_times` AS `t1`
-			WHERE `MapId` = ". $cid ."
+			WHERE `MapId` = ". $mapid ."
 			AND `Score` = (
 				SELECT
 					MIN(`t2`.`Score`)
 				FROM `rs_times` AS `t2`
-				WHERE `MapId` = ". $cid ."
+				WHERE `MapId` = ". $mapid ."
 				AND `t1`.`PlayerId` = `t2`.`PlayerId`
 			)
 			ORDER BY `Score`, `Date`
@@ -695,7 +695,7 @@ class PluginLocalRecords extends Plugin {
 						`Date`,
 						`Checkpoints`
 					FROM `rs_times`
-					WHERE `MapId` = ". $cid ."
+					WHERE `MapId` = ". $mapid ."
 					AND `PlayerId` = ". $timerow->PlayerId ."
 					ORDER BY `Score`, `Date`
 					LIMIT 1;
@@ -716,7 +716,7 @@ class PluginLocalRecords extends Plugin {
 						`Checkpoints`
 					)
 					VALUES (
-						". $cid . ",
+						". $mapid . ",
 						". $timerow->PlayerId .",
 						". $timerow->Score .",
 						". $aseco->mysqli->quote($datetime) .",

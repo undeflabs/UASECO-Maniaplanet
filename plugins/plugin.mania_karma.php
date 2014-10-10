@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-10-07
+ * Date:		2014-10-10
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -688,8 +688,10 @@ class PluginManiaKarma extends Plugin {
 		$this->config['widget']['score']['title']			= (string)$xmlcfg->widget_styles->score->title;
 		$this->config['widget']['score']['icon_style']			= (string)$xmlcfg->widget_styles->score->icon_style;
 		$this->config['widget']['score']['icon_substyle']		= (string)$xmlcfg->widget_styles->score->icon_substyle;
+		$this->config['widget']['score']['background_color']		= (string)$xmlcfg->widget_styles->score->background_color;
 		$this->config['widget']['score']['background_style']		= (string)$xmlcfg->widget_styles->score->background_style;
 		$this->config['widget']['score']['background_substyle']		= (string)$xmlcfg->widget_styles->score->background_substyle;
+		$this->config['widget']['score']['title_background']		= (string)$xmlcfg->widget_styles->score->title_background;
 		$this->config['widget']['score']['title_style']			= (string)$xmlcfg->widget_styles->score->title_style;
 		$this->config['widget']['score']['title_substyle']		= (string)$xmlcfg->widget_styles->score->title_substyle;
 
@@ -722,18 +724,15 @@ class PluginManiaKarma extends Plugin {
 		// Load the templates
 		$this->config['Templates']		= $this->loadTemplates();
 
-		// Get required data of Map
-		$this->config['CurrentMap']		= $this->getCurrentMapInfo();
-
 		// Init
 		if ($aseco->startup_phase == true) {
 			$this->karma			= $this->setEmptyKarma(true);
-			$this->karma['data']['uid']	= $this->config['CurrentMap']['uid'];
-			$this->karma['data']['id']	= $this->config['CurrentMap']['id'];
-			$this->karma['data']['name']	= $this->config['CurrentMap']['name'];
-			$this->karma['data']['author']	= $this->config['CurrentMap']['author'];
-			$this->karma['data']['env']	= $this->config['CurrentMap']['environment'];
-			$this->karma['data']['tmx']	= (isset($this->config['CurrentMap']['mx']['id']) ? $this->config['CurrentMap']['mx']['id'] : '');
+			$this->karma['data']['uid']	= $aseco->server->maps->current->uid;
+			$this->karma['data']['id']	= $aseco->server->maps->current->id;
+			$this->karma['data']['name']	= $aseco->server->maps->current->name;
+			$this->karma['data']['author']	= $aseco->server->maps->current->author;
+			$this->karma['data']['env']	= $aseco->server->maps->current->environment;
+			$this->karma['data']['tmx']	= (isset($aseco->server->maps->current->mx->id) ? $aseco->server->maps->current->mx->id : '');
 			$this->karma['new']['players']	= array();
 		}
 
@@ -771,18 +770,6 @@ class PluginManiaKarma extends Plugin {
 
 		// Free mem.
 		unset($xmlcfg);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onShutdown ($aseco) {
-
-		// Save all Votes into the global and local (if enabled) Database
-		$this->storeKarmaVotes();
 	}
 
 	/*
@@ -937,6 +924,18 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function onShutdown ($aseco) {
+
+		// Save all Votes into the global and local (if enabled) Database
+		$this->storeKarmaVotes();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function onKarmaChange ($aseco, $unused) {
 
 		// Update the KarmaWidget for all Players
@@ -992,15 +991,10 @@ class PluginManiaKarma extends Plugin {
 		// Init
 		$player->data['ManiaKarma']['FinishedMapCount'] = 0;
 
-		// Get required data for Map
-		if ($this->config['CurrentMap']['id'] === false) {
-			$this->config['CurrentMap'] = $this->getCurrentMapInfo();
-		}
-
 		// Check if finishes are required
 		if ($this->config['require_finish'] > 0) {
 			// Find the amount of finish for this Player
-			$this->findPlayersLocalRecords($this->config['CurrentMap']['id'], array($player));
+			$this->findPlayersLocalRecords($aseco->server->maps->current->id, array($player));
 		}
 
 		// Do nothing at Startup!!
@@ -1016,11 +1010,11 @@ class PluginManiaKarma extends Plugin {
 
 				if ( !isset($this->karma['local']['players'][$player->login]) ) {
 					// Get the local votes for this Player
-					$this->getLocalVotes($this->config['CurrentMap']['id'], $player->login);
+					$this->getLocalVotes($aseco->server->maps->current->id, $player->login);
 				}
 
 				// Get the Karma from remote for this Player
-				$this->handleGetApiCall($this->config['CurrentMap'], $player);
+				$this->handleGetApiCall($aseco->server->maps->current, $player);
 
 				// Check to see if it is required to sync global to local votes?
 				if ($this->config['sync_global_karma_local'] == true) {
@@ -1219,19 +1213,15 @@ class PluginManiaKarma extends Plugin {
 
 	public function onBeginMap ($aseco, $map) {
 
-		// Store current map infos
-		$this->config['CurrentMap'] 	= $this->getCurrentMapInfo();
-
-
 		// Reset and Setup data for MultiVotes
 		$this->karma = $this->setEmptyKarma(true);
 		$this->karma['data']['uid']		= $map->uid;
 		$this->karma['data']['id']		= $map->id;
 		$this->karma['data']['name']		= $map->name;
-		$this->karma['data']['author']	= $map->author;
+		$this->karma['data']['author']		= $map->author;
 		$this->karma['data']['env']		= $map->environment;
 		$this->karma['data']['tmx']		= (isset($map->mx->id) ? $map->mx->id : '');
-		$this->karma['new']['players']	= array();
+		$this->karma['new']['players']		= array();
 
 		// If there no players, bail out
 		if (count($aseco->server->players->player_list) == 0) {
@@ -1249,25 +1239,27 @@ class PluginManiaKarma extends Plugin {
 			}
 
 			// Get the local karma
-			$this->getLocalKarma($this->config['CurrentMap']['id']);
+			$this->getLocalKarma($aseco->server->maps->current->id);
 
 			return;
 		}
 
 		// Get the local karma
-		$this->getLocalKarma($this->config['CurrentMap']['id']);
+		$this->getLocalKarma($aseco->server->maps->current->id);
 
 		// Get the local votes for all Players
-		$this->getLocalVotes($this->config['CurrentMap']['id'], false);
+		$this->getLocalVotes($aseco->server->maps->current->id, false);
 
 		// If <require_finish> is enabled
 		if ($this->config['require_finish'] > 0) {
 			// Find the amount of finish for all Players
-			$this->findPlayersLocalRecords($this->config['CurrentMap']['id'], $aseco->server->players->player_list);
+			$this->findPlayersLocalRecords($aseco->server->maps->current->id, $aseco->server->players->player_list);
 		}
 
+		$this->sendLoadingIndicator(true, $this->config['widget']['current_state']);
+
 		// Replace $this->karma from last Map with $this->karma of the current Map
-		$this->handleGetApiCall($this->config['CurrentMap'], false);
+		$this->handleGetApiCall($aseco->server->maps->current, false);
 
 		// Check to see if it is required to sync global to local votes?
 		if ($this->config['sync_global_karma_local'] == true) {
@@ -1277,8 +1269,6 @@ class PluginManiaKarma extends Plugin {
 		// Rebuild the Widget, it is an new Map (and possible Gamemode)
 		$this->config['widget']['skeleton']['race']	= $this->buildKarmaWidget($aseco->server->gameinfo->mode);
 		$this->config['widget']['skeleton']['score']	= $this->buildKarmaWidget(0);
-
-		$this->sendLoadingIndicator(true, $this->config['widget']['current_state']);
 
 		// Update KarmaWidget for all connected Players
 		$this->sendWidgetCombination(array('skeleton_race', 'cups_values'), false);
@@ -1549,11 +1539,6 @@ class PluginManiaKarma extends Plugin {
 	public function buildKarmaWidget ($gamemode) {
 		global $aseco;
 
-		// Bail out if map id was not found
-		if ($this->config['CurrentMap']['id'] === false) {
-			return;
-		}
-
 		// No Placeholder here!
 		$xml = '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget">';
 
@@ -1561,7 +1546,12 @@ class PluginManiaKarma extends Plugin {
 		$xml .= '<frame posn="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .' 10" id="'. $this->config['manialink_id'] .'03MainFrame">';
 		if ($gamemode == 0) {
 			// No action to open the full widget at 'Score'
-			$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" style="'. $this->config['widget']['score']['background_style'] .'" substyle="'. $this->config['widget']['score']['background_substyle'] .'"/>';
+			if ($this->config['widget']['score']['background_color'] != '') {
+				$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" bgcolor="'. $this->config['widget']['score']['background_color'] .'"/>';
+			}
+			else {
+				$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" style="'. $this->config['widget']['score']['background_style'] .'" substyle="'. $this->config['widget']['score']['background_substyle'] .'"/>';
+			}
 		}
 		else {
 			$xml .= '<label posn="0.1 -0.1 0" sizen="15.56 10.55" action="'. $this->config['manialink_id'] .'02" text=" " focusareacolor1="'. $this->config['widget']['race']['background_color'] .'" focusareacolor2="'. $this->config['widget']['race']['background_focus'] .'"/>';
@@ -1581,14 +1571,19 @@ class PluginManiaKarma extends Plugin {
 
 		// Window title
 		if ($gamemode == 0) {
-			$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['score']['title_style'] .'" substyle="'. $this->config['widget']['score']['title_substyle'] .'"/>';
+			if ($this->config['widget']['score']['title_background'] != '') {
+				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['score']['title_background'] .'"/>';
+			}
+			else {
+				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['score']['title_style'] .'" substyle="'. $this->config['widget']['score']['title_substyle'] .'"/>';
+			}
 		}
 		else {
 			if ($this->config['widget']['race']['title_background'] != '') {
-				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['race']['title_background'] .'"/>';
+				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['race']['title_background'] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->config['CurrentMap']['uid'] .'&amp;env='. $this->config['CurrentMap']['environment'] .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['race']['title_style'] .'" substyle="'. $this->config['widget']['race']['title_substyle'] .'"/>';
+				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['race']['title_style'] .'" substyle="'. $this->config['widget']['race']['title_substyle'] .'"/>';
 			}
 		}
 
@@ -2986,7 +2981,7 @@ EOL;
 		// Show default Karma message
 		if ( ($this->config['show_karma'] == true) || ($force_display == true) ) {
 			$message = $aseco->formatText($this->config['messages']['karma_message'],
-				$aseco->stripColors($this->config['CurrentMap']['name']),
+				$aseco->server->maps->current->name_stripped,
 				$this->karma['global']['votes']['karma']
 			);
 		}
@@ -3335,10 +3330,10 @@ EOL;
 				$authortime = 0;
 				$authorscore = 0;
 				if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-					$authorscore = $this->config['CurrentMap']['authorscore'];
+					$authorscore = $aseco->server->maps->current->author_score;
 				}
 				else {
-					$authortime = $this->config['CurrentMap']['authortime'];
+					$authortime = $aseco->server->maps->current->author_time;
 				}
 				$api_url = sprintf("%s?Action=Vote&login=%s&authcode=%s&uid=%s&map=%s&author=%s&atime=%s&ascore=%s&nblaps=%s&nbchecks=%s&mood=%s&env=%s&votes=%s&tmx=%s",
 					$this->config['urls']['api'],
@@ -3349,9 +3344,9 @@ EOL;
 					urlencode( $this->karma['data']['author'] ),
 					$authortime,
 					$authorscore,
-					urlencode( $this->config['CurrentMap']['nblaps'] ),
-					urlencode( $this->config['CurrentMap']['nbchecks'] ),
-					urlencode( $this->config['CurrentMap']['mood'] ),
+					urlencode( $aseco->server->maps->current->nblaps ),
+					urlencode( $aseco->server->maps->current->nbcheckpoints ),
+					urlencode( $aseco->server->maps->current->mood ),
 					urlencode( $this->karma['data']['env'] ),
 					implode('|', $pairs),
 					$this->karma['data']['tmx']
@@ -3512,11 +3507,15 @@ EOL;
 
 		// If there no players, bail out immediately
 		if (count($aseco->server->players->player_list) == 0) {
+			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
+			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 			return;
 		}
 
 		// Bail out if map id was not found
-		if ($map['id'] === false) {
+		if ($map->id === 0) {
+			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
+			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 			return;
 		}
 
@@ -3532,8 +3531,8 @@ EOL;
 		}
 
 		// Check for all required parameters for an remote API Call
-		if ( (empty($map['uid'])) || (empty($map['name'])) || (empty($map['author'])) || (empty($map['environment'])) ) {
-			$aseco->console('[ManiaKarma] Could not do a remote API Call "Get", one of the required parameter missed! uid:'. $map['uid'] .' name:'. $map['name'] .' author:'. $map['author'] .' env:'. $map['environment']);
+		if ( (empty($map->uid)) || (empty($map->name)) || (empty($map->author)) || (empty($map->environment)) ) {
+			$aseco->console('[ManiaKarma] Could not do a remote API Call "Get", one of the required parameter missed! uid:'. $map->uid .' name:'. $map->name .' author:'. $map->author .' env:'. $map->environment);
 			return;
 		}
 
@@ -3555,10 +3554,10 @@ EOL;
 			$this->config['urls']['api'],
 			urlencode( $this->config['account']['login'] ),
 			urlencode( $this->config['account']['authcode'] ),
-			urlencode( $map['uid'] ),
-			base64_encode( $map['name'] ),
-			urlencode( $map['author'] ),
-			urlencode( $map['environment'] ),
+			urlencode( $map->uid ),
+			base64_encode( $map->name ),
+			urlencode( $map->author ),
+			urlencode( $map->environment ),
 			implode('|', $players)					// Already Url-Encoded
 		);
 
@@ -3830,93 +3829,6 @@ EOL;
 			}
 			$res->free_result();
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getCurrentMapInfo () {
-		global $aseco;
-
-		// Init
-		$map['id']		= false;
-		$map['uid']		= false;
-		$map['name']		= false;
-		$map['author']		= false;
-		$map['authortime']	= 0;
-		$map['authorscore']	= 0;
-		$map['nblaps']		= 0;
-		$map['nbchecks']	= 0;
-		$map['mood']		= false;
-		$map['environment']	= false;
-		$map['filename']	= false;
-		$map['mx']['id']	= false;
-
-
-		// Within StartUp of UASECO and on Event 'onPlayerConnect'
-		// is '$aseco->server->maps->current->uid' always not set,
-		// the Event 'onPlayerConnect' is fired too early.
-
-		// Name, UId, FileName, Author, Environnement, Mood, BronzeTime, SilverTime, GoldTime, AuthorTime, CopperPrice, LapRace, NbLaps, NbCheckpoints, MapType, MapStyle
-		$response = $aseco->client->query('GetCurrentMapInfo');
-		$uid		= $response['UId'];
-		$filename	= $response['FileName'];
-
-
-		// Parse the GBX Mapfile
-		$gbx = new GBXChallMapFetcher(true, false, false);
-		try {
-			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-				$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $aseco->stripBOM($filename)));
-			}
-			else {
-				$gbx->processFile($aseco->server->mapdir . $aseco->stripBOM($filename));
-			}
-		}
-		catch (Exception $e) {
-			trigger_error('[ManiaKarma] Could not read Map ['. $aseco->server->mapdir . $aseco->stripBOM($filename) .'] at getCurrentMapInfo(): '. $e->getMessage(), E_USER_WARNING);
-
-			return $map;
-		}
-
-		$map['id']		= false;
-		$map['uid']		= $gbx->uid;
-		$map['name']		= $gbx->name;
-		$map['author']		= $gbx->author;
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			$map['authortime']	= 0;
-			$map['authorscore']	= $gbx->authorScore;
-		}
-		else {
-			$map['authortime']	= $gbx->authorTime;
-			$map['authorscore']	= 0;
-		}
-		$map['nblaps']		= $gbx->nbLaps;
-		$map['nbchecks']	= (($gbx->nbChecks == $response['NbCheckpoints']) ? $gbx->nbChecks : $response['NbCheckpoints']);
-		$map['mood']		= $gbx->mood;
-		$map['environment']	= $gbx->envir;
-		$map['filename']	= $filename;
-
-		$query = "
-		SELECT
-			`Id`
-		FROM `maps`
-		WHERE `Uid`=". $aseco->mysqli->quote($map['uid']) ."
-		LIMIT 1;
-		";
-		$res = $aseco->mysqli->query($query);
-		if ($res) {
-			if ($res->num_rows == 1) {
-				$row = $res->fetch_object();
-				$map['id'] = $row->Id;
-			}
-			$res->free_result();
-		}
-
-		return $map;
 	}
 
 	/*
@@ -4339,14 +4251,14 @@ EOL;
 		$gbx = new GBXChallMapFetcher(true, true, false);
 		try {
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-				$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $aseco->stripBOM($this->config['CurrentMap']['filename'])));
+				$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $aseco->stripBOM($aseco->server->maps->current->filename)));
 			}
 			else {
-				$gbx->processFile($aseco->server->mapdir . $aseco->stripBOM($this->config['CurrentMap']['filename']));
+				$gbx->processFile($aseco->server->mapdir . $aseco->stripBOM($aseco->server->maps->current->filename));
 			}
 		}
 		catch (Exception $e) {
-			trigger_error('[ManiaKarma] Could not read Map ['. $aseco->server->mapdir . $aseco->stripBOM($this->config['CurrentMap']['filename']) .'] at transmitMapImage(): '. $e->getMessage(), E_USER_WARNING);
+			trigger_error('[ManiaKarma] Could not read Map ['. $aseco->server->mapdir . $aseco->stripBOM($aseco->server->maps->current->filename) .'] at transmitMapImage(): '. $e->getMessage(), E_USER_WARNING);
 			return;
 		}
 
@@ -4355,8 +4267,8 @@ EOL;
 			$this->config['urls']['api'],
 			urlencode( $this->config['account']['login'] ),
 			urlencode( $this->config['account']['authcode'] ),
-			urlencode( $this->config['CurrentMap']['uid'] ),
-			urlencode( $this->config['CurrentMap']['environment'] ),
+			urlencode( $aseco->server->maps->current->uid ),
+			urlencode( $aseco->server->maps->current->environment ),
 			urlencode( $aseco->server->game )
 		);
 

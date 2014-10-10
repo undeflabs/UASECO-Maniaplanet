@@ -7,9 +7,15 @@ UASECO
  - Lift dependecies from plugin.styles.php and remove it
 
 
+ManiaKarma
+~~~~~~~~~~
+ - Include Debug logging
+
+
 Records-Eyepiece
 ~~~~~~~~~~~~~~~~
- - Move FinishWinnersWidget at Score to left down
+ - Add possibilities for <background_color> at <checkpointcount_widget>, <donation_widget>
+ - Remove <ladderlimit_widget>, <gamemode_widget>, <player_spectator_widget>, <current_ranking_widget>
  - Change F7 for toggle widgets
  - At TopCount and foreign online Players have no red background in LocalRecords
  - Do not send <quad...> when "BgEmpty" is used

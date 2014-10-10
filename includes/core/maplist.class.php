@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-09
+ * Date:	2014-10-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -252,6 +252,14 @@ class MapList {
 		}
 		unset($newlist);
 
+
+		// Get also current Map, because maybe not in current selection
+		// of the dedicated server after deleting them, e.g. "/admin erasethis"
+		// and a UASECO restart.
+		$response = $aseco->client->query('GetCurrentMapInfo');
+		$maplist[] = $response;
+
+
 		// Load map infos from Database for all maps
 		$uids = array();
 		foreach ($maplist as $map) {
@@ -377,6 +385,11 @@ class MapList {
 	public function insertMapIntoDatabase ($map) {
 		global $aseco;
 
+		// Bail out on Maps without an UniqueId
+		if (!$map->uid) {
+			return new Map(null, null);
+		}
+
 		// `NbLaps` and `NbCheckpoints` only accessible with the ListMethod 'GetCurrentMapInfo'
 		// and when the Map is actual loaded, update where made at $this->getCurrentMapInfo().
 		// But in Maps with chunk version 13 (0x03043002), these information are accessible (newer Maps).
@@ -466,6 +479,11 @@ class MapList {
 
 	private function updateMapInDatabase ($map) {
 		global $aseco;
+
+		// Bail out on Maps without an UniqueId
+		if (!$map->uid) {
+			return false;
+		}
 
 		$query = "
 		UPDATE `maps`
@@ -653,17 +671,18 @@ class MapList {
 		$response = $aseco->client->query('GetCurrentMapInfo');
 
 		// Get Map from map_list[]
-		$map = $this->getMapByUid($response['UId']);
+		if ($map = $this->getMapByUid($response['UId'])) {
 
-		// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response,
-		// this is required for old Maps (e.g. early Canyon beta or converted TMF Stadium)
-		$map->nblaps = $response['NbLaps'];
-		$map->nbcheckpoints = $response['NbCheckpoints'];
+			// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response,
+			// this is required for old Maps (e.g. early Canyon beta or converted TMF Stadium)
+			$map->nblaps = $response['NbLaps'];
+			$map->nbcheckpoints = $response['NbCheckpoints'];
 
-		// Store updated 'NbLaps' and 'NbCheckpoints' into database
-		$this->updateMapInDatabase($map);
+			// Store updated 'NbLaps' and 'NbCheckpoints' into database
+			$this->updateMapInDatabase($map);
 
-		return $map;
+			return $map;
+		}
 	}
 
 	/*

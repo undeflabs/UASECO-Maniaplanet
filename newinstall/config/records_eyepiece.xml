@@ -122,6 +122,11 @@
 			<highlite_other_style>BgsPlayerCard</highlite_other_style>
 			<highlite_other_substyle>BgCardSystem</highlite_other_substyle>
 
+			<!-- Style for the entries at Rounds (+25) or Laps (time) in the records Widgets, if <highlite_common_background> is not empty then the style/substyle are ignored -->
+			<highlite_common_background>2238</highlite_common_background>
+			<highlite_common_style>BgsPlayerCard</highlite_common_style>
+			<highlite_common_substyle>ProgressBar</highlite_common_substyle>
+
 			<!-- Here you can set all possible Formating-Codes of TM, but do not enter colors here! -->
 			<formatting_codes></formatting_codes>
 
@@ -144,9 +149,13 @@
 
 		<!-- Styles used for the Widgets at Scoretable -->
 		<widget_score>
+			<!-- If <background_color> is not empty then the style/substyle are ignored -->
+			<background_color>223B</background_color>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 
+			<!-- If <title_background> is not empty then the style/substyle are ignored -->
+			<title_background>09FD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 
@@ -577,7 +586,7 @@
 		<minimum_server_planets>250</minimum_server_planets>	<!-- If Server gets lower this limit, then payout is disabled -->
 
 		<players>
-			<minimum_amount>1</minimum_amount>		<!-- Min. amount of Players to enable winning payout. If less Players online, payout at Score are disabled (hardlimit min. 3 Players) -->
+			<minimum_amount>5</minimum_amount>		<!-- Min. amount of Players to enable winning payout. If less Players online, payout at Score are disabled (hardlimit min. 3 Players) -->
 			<rank_limit>500</rank_limit>			<!-- Every Player below this limit can not win Planets, set to '0' to disable -->
 
 			<maximum_planets>300</maximum_planets>		<!-- Limit of Planets a Player can win for each Session, set to '0' to disable -->
@@ -599,13 +608,17 @@
 
 		<widget>
 			<title>Finish Winners</title>
-			<pos_x>37.8</pos_x>
-			<pos_y>-32</pos_y>
+			<pos_x>25.8</pos_x>
+			<pos_y>-38.3</pos_y>
 			<scale>1.0</scale>
 
+			<!-- If <background_color> is not empty then the style/substyle are ignored -->
+			<background_color>223B</background_color>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 
+			<!-- If <title_background> is not empty then the style/substyle are ignored -->
+			<title_background>09FD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 

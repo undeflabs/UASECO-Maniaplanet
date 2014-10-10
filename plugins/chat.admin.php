@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-09
+ * Date:	2014-10-11
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -523,72 +523,87 @@ class PluginChatAdmin extends Plugin {
 			 * timeattack, rounds, team, laps, stunts, teamattack
 			 */
 
-			// check mode parameter
-			$mode = false;
-			$id = 0;
-			switch (strtolower($command['params'][1])) {
-				case 'rounds':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::ROUNDS);
-					break;
+			$aseco->console('[Admin] Command currently unsupported, due a bug of the dedicated server!');
+			$message = '{#server}» Command currently unsupported, due a bug of the dedicated server!';
+			$aseco->sendChatMessage($message, $login);
+			return;
 
-				case 'timeattack':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TIMEATTACK);
-					break;
-
-				case 'team':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TEAM);
-					break;
-
-				case 'laps':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::LAPS);
-					break;
-
-				case 'cup':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::CUP);
-					break;
-
-				case 'teamattack':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TEAMATTACK);
-					break;
-
-				case 'stunts':
-					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::STUNTS);
-					break;
-
-				default:
-					$mode = false;
-			}
-
-			if ($mode !== false) {
-				if ($aseco->changing_to_gamemode !== false || $mode !== $aseco->server->gameinfo->mode) {
-
-					// Store the next Gamemode
-					$aseco->changing_to_gamemode = $mode;
-
-					// tell server to set new game mode
-					$aseco->client->query('SetScriptName', $mode .'.Script.txt');
-
-					// log console message
-					$aseco->console('[Admin] {1} [{2}] set new game mode [{3}]', $logtitle, $login, $mode);
-
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets next game mode to {#highlite}{3}{#admin} !',
-						$chattitle,
-						$admin->nickname,
-						$mode
-					);
-					$aseco->sendChatMessage($message);
-				}
-				else {
-					$aseco->changing_to_gamemode = false;
-					$message = '{#server}» Same game mode {#highlite}'. strtoupper($command['params'][1]);
-					$aseco->sendChatMessage($message, $login);
-				}
-			}
-			else {
-				$message = '{#server}» {#error}Invalid game mode {#highlite}$i '. strtoupper($command['params'][1]) .'$z$s {#error}!';
-				$aseco->sendChatMessage($message, $login);
-			}
+//			// check mode parameter
+//			$mode = false;
+//			$script = false;
+//			switch (strtolower($command['params'][1])) {
+//				case 'rounds':
+//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::ROUNDS);
+//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::ROUNDS);
+//					break;
+//
+//				case 'timeattack':
+//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::TIMEATTACK);
+//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TIMEATTACK);
+//					break;
+//
+//				case 'team':
+//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::TEAM);
+//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TEAM);
+//					break;
+//
+//				case 'laps':
+//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::LAPS);
+//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::LAPS);
+//					break;
+//
+//				case 'cup':
+//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::CUP);
+//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::CUP);
+//					break;
+//
+//				case 'teamattack':
+//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::TEAMATTACK);
+//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TEAMATTACK);
+//					break;
+//
+////				case 'stunts':
+////					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::STUNTS);
+////					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::STUNTS);
+////					break;
+//
+//				default:
+//					$mode = false;
+//			}
+//
+//			if ($mode !== false) {
+//				if ($aseco->changing_to_gamemode !== false || $mode !== $aseco->server->gameinfo->mode) {
+//
+//					// Store the next Gamemode
+//					$aseco->changing_to_gamemode = $mode;
+//
+//					// Tell server to set new game mode
+//					$aseco->client->query('SetScriptName', $script);
+//
+//					// Refresh server game info
+//					$aseco->server->getCurrentGameInfo();
+//
+//					// log console message
+//					$aseco->console('[Admin] {1} [{2}] set new game mode [{3}]', $logtitle, $login, $mode);
+//
+//					// show chat message
+//					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets next game mode to {#highlite}{3}{#admin} !',
+//						$chattitle,
+//						$admin->nickname,
+//						$mode
+//					);
+//					$aseco->sendChatMessage($message);
+//				}
+//				else {
+//					$aseco->changing_to_gamemode = false;
+//					$message = '{#server}» Same game mode {#highlite}'. strtoupper($command['params'][1]);
+//					$aseco->sendChatMessage($message, $login);
+//				}
+//			}
+//			else {
+//				$message = '{#server}» {#error}Invalid game mode {#highlite}$i '. strtoupper($command['params'][1]) .'$z$s {#error}!';
+//				$aseco->sendChatMessage($message, $login);
+//			}
 		}
 		else if ($command['params'][0] == 'setrefmode') {
 			/**
@@ -632,24 +647,32 @@ class PluginChatAdmin extends Plugin {
 			 * Forces the server to load next map.
 			 */
 
-			// load the next map
-			// don't clear scores if in Cup mode
-			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
-				$aseco->client->query('NextMap', true);
+			try {
+				// Load the next map
+				// don't clear scores if in Cup mode
+				if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+					$aseco->client->query('NextMap', true);
+				}
+				else {
+					$aseco->client->query('NextMap');
+				}
+
+				// log console message
+				$aseco->console('[Admin] {1} [{2}] skips map!', $logtitle, $login);
+
+				// show chat message
+				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} skips map!',
+					$chattitle,
+					$admin->nickname
+				);
+				$aseco->sendChatMessage($message);
 			}
-			else {
-				$aseco->client->query('NextMap');
+			catch (Exception $exception) {
+				$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - NextMap');
+				$message = '{#server}» {#error}Error skip to next map!';
+				$aseco->sendChatMessage($message, $login);
 			}
 
-			// log console message
-			$aseco->console('[Admin] {1} [{2}] skips map!', $logtitle, $login);
-
-			// show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} skips map!',
-				$chattitle,
-				$admin->nickname
-			);
-			$aseco->sendChatMessage($message);
 		}
 		else if ($command['params'][0] == 'previous' || $command['params'][0] == 'prev') {
 			if (isset($aseco->plugins['PluginRaspJukebox'])) {
@@ -2192,9 +2215,6 @@ class PluginChatAdmin extends Plugin {
 			try {
 				$aseco->client->query('RemoveMap', $filename);
 
-				// Remove Map from Maplist
-				$aseco->server->maps->removeMapByFilename($aseco->server->maps->current->filename);
-
 				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}removes current map: {#highlite}{3}',
 					$chattitle,
 					$admin->nickname,
@@ -2224,6 +2244,25 @@ class PluginChatAdmin extends Plugin {
 
 				// log console message
 				$aseco->console('[Admin] {1} [{2}] '. $command['params'][0] .'-ed map [{3}]', $logtitle, $login, $aseco->stripColors($name, false));
+
+				try {
+					// Force to load the next map,
+					// don't clear scores if in Cup mode
+					if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+						$aseco->client->query('NextMap', true);
+					}
+					else {
+						$aseco->client->query('NextMap');
+					}
+				}
+				catch (Exception $exception) {
+					$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - NextMap');
+					$message = '{#server}» {#error}Error skip to next map!';
+					$aseco->sendChatMessage($message, $login);
+				}
+
+				// Remove Map from Maplist
+				$aseco->server->maps->removeMapByFilename($aseco->server->maps->current->filename);
 
 				// throw 'maplist changed' event
 				$aseco->releaseEvent('onMapListChanged', array('remove', $filename));
@@ -2984,7 +3023,7 @@ class PluginChatAdmin extends Plugin {
 					$param++;
 
 					// log console message
-					$aseco->console('[Admin] {1} [{2}] removed record {3} by {4} !', $logtitle, $login, $param, $record->player->login);
+					$aseco->console('[Admin] {1} [{2}] removed record {3} by [{4}]!', $logtitle, $login, $param, $record->player->login);
 
 					// show chat message
 					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}removes record {#highlite}{3}{#admin} by {#highlite}{4}',
