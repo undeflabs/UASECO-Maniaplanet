@@ -4141,7 +4141,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->config['PlacementPlaceholders']['MAP_MX_ID']		= false;
 			$this->config['PlacementPlaceholders']['MAP_MX_PAGEURL']	= false;
 		}
-		$this->config['PlacementPlaceholders']['MAP_NAME']			= $this->cache['Map']['Current']['name'];
+		$this->config['PlacementPlaceholders']['MAP_NAME']			= $aseco->server->maps->current->name;
 		$this->config['PlacementPlaceholders']['MAP_UID']			= $aseco->server->maps->current->uid;
 
 
@@ -4396,15 +4396,6 @@ class PluginRecordsEyepiece extends Plugin {
 		// Bail out if there are no Players
 		if (count($aseco->server->players->player_list) == 0) {
 			return;
-		}
-
-		// Test for "Restart Map (with ChatTime)"
-		if ($aseco->restarting == 2) {
-			// Current Map = Next Map
-			$this->cache['Map']['Next'] = $this->cache['Map']['Current'];
-
-			// Rebuild the Widget at Score (if enabled)
-			$this->cache['MapWidget']['Score'] = $this->buildMapWidget('score');
 		}
 
 		// Get current Gamemode
@@ -7915,10 +7906,10 @@ class PluginRecordsEyepiece extends Plugin {
 		// Add Background for top X Players
 		if ($topcount > 0) {
 			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
-				$build['header'] .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
+				$build['header'] .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
-				$build['header'] .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
+				$build['header'] .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
 			}
 		}
 
@@ -8057,10 +8048,10 @@ EOL;
 		// Add Background for top X Players
 		if ($topcount > 0) {
 			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
-				$build['header'] .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
+				$build['header'] .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
-				$build['header'] .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
+				$build['header'] .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
 			}
 		}
 
@@ -8199,10 +8190,10 @@ EOL;
 		// Add Background for top X Players
 		if ($topcount > 0) {
 			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
-				$xml .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
+				$xml .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
+				$xml .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
 			}
 		}
 
@@ -8854,10 +8845,10 @@ EOL;
 		// Add Background for top X Players
 		if ($topcount > 0) {
 			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
-				$build['header'] .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
+				$build['header'] .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
-				$build['header'] .= '<quad posn="0.4 -2.6 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. (($topcount * $this->config['LineHeight']) + 0.3) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
+				$build['header'] .= '<quad posn="0.4 -2.7 0.004" sizen="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 0.8) .' '. ($topcount * $this->config['LineHeight']) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
 			}
 		}
 
@@ -9339,14 +9330,6 @@ EOL;
 		$count = 0;
 		for ($i=0; $i<count($result); $i++) {
 			if ($result[$i] != null){
-				if ( ( isset($result[$i]['self']) ) && ($result[$i]['self'] == 0) ) {
-					if ($count >= $topCount) {
-						$result[$i]['highlitefull'] = true;
-					}
-					else {
-						$result[$i]['highlitefull'] = false;
-					}
-				}
 				$resultNew[] = $result[$i];
 				$count ++;
 			}
@@ -9439,27 +9422,25 @@ EOL;
 			else {
 				$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SELF'][0];
 
-				if ((isset($item['highlitefull']) && $item['highlitefull'] == true) || $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
-					// Add only a Background for this Player with an record here, if it is in $topcount
-					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
-						$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.9" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
-					}
-					else {
-						$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.9" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
-					}
+				// Add a background for this Player with an record here
+				if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
+					$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
+				}
+				else {
+					$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
 				}
 				if ($item['rank'] != false) {
 					// $item['rank'] is set 'false' in Team to skip the highlite here in $this->buildLiveRankingsWidget()
 					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
-						$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.004" sizen="2 1.9" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
-						$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.004" sizen="2 1.9" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
+						$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="2 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
+						$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.004" sizen="2 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 					}
 					else {
-						$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.004" sizen="2 1.9" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
-						$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.004" sizen="2 1.9" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
+						$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="2 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
+						$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.004" sizen="2 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
 					}
-					$xml .= '<quad posn="-1.8 -'. ($this->config['LineHeight'] * $line + $offset - 0.1) .' 0.005" sizen="1.6 1.6" style="Icons64x64_1" substyle="ShowRight2"/>';
-					$xml .= '<quad posn="'. ($widgetwidth + 0.2) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.1) .' 0.005" sizen="1.6 1.6" style="Icons64x64_1" substyle="ShowLeft2"/>';
+					$xml .= '<quad posn="-1.8 -'. ($this->config['LineHeight'] * $line + $offset - 0.2) .' 0.006" sizen="1.6 1.6" style="Icons64x64_1" substyle="ShowRight2"/>';
+					$xml .= '<quad posn="'. ($widgetwidth + 0.2) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.2) .' 0.006" sizen="1.6 1.6" style="Icons64x64_1" substyle="ShowLeft2"/>';
 				}
 			}
 		}
@@ -9496,24 +9477,23 @@ EOL;
 		// Is the given Player currently online? If true, mark her/his Record at other Players.
 		if ( isset($aseco->server->players->player_list[$login]) ) {
 			$xml = '';
-			if (($line+1) > $topcount || $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
-				// Add only a Background for this Player with an record here, if it is higher then $topcount
-				if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
-					$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + 2.6) .' 0.004" sizen="'. ($widgetwidth - 0.8) .' 1.9" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
-				}
-				else {
-					$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + 2.6) .' 0.004" sizen="'. ($widgetwidth - 0.8) .' 1.9" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
-				}
-			}
 
-			// Add a marker for Player with an record here
+			// Add a background for this Player with an record here
 			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
-				$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + 2.6) .' 0.004" sizen="2 1.9" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
-				$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + 2.6) .' 0.004" sizen="2 1.9" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
+				$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + 2.7) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + 2.6) .' 0.004" sizen="2 1.9" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
-				$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + 2.6) .' 0.004" sizen="2 1.9" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
+				$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + 2.7) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
+			}
+
+			// Add a marker for Player with an record here (left and right from the Widget)
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
+				$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + 2.7) .' 0.005" sizen="2 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
+				$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + 2.7) .' 0.005" sizen="2 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
+			}
+			else {
+				$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + 2.7) .' 0.005" sizen="2 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
+				$xml .= '<quad posn="'. $widgetwidth .' -'. ($this->config['LineHeight'] * $line + 2.7) .' 0.005" sizen="2 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
 			}
 			if ($behind_rank == true) {
 				$marker = array('style' => 'Icons64x64_1', 'substyle' => 'NotBuddy');
@@ -9521,8 +9501,8 @@ EOL;
 			else {
 				$marker = array('style' => 'Icons64x64_1', 'substyle' => 'Buddy');
 			}
-			$xml .= '<quad posn="-1.7 -'. ($this->config['LineHeight'] * $line + 2.9) .' 0.005" sizen="1.4 1.4" style="'. $marker['style'] .'" substyle="'. $marker['substyle'] .'"/>';
-			$xml .= '<quad posn="'. ($widgetwidth + 0.3) .' -'. ($this->config['LineHeight'] * $line + 2.9) .' 0.005" sizen="1.4 1.4" style="'. $marker['style'] .'" substyle="'. $marker['substyle'] .'"/>';
+			$xml .= '<quad posn="-1.7 -'. ($this->config['LineHeight'] * $line + 2.9) .' 0.006" sizen="1.4 1.4" style="'. $marker['style'] .'" substyle="'. $marker['substyle'] .'"/>';
+			$xml .= '<quad posn="'. ($widgetwidth + 0.3) .' -'. ($this->config['LineHeight'] * $line + 2.9) .' 0.006" sizen="1.4 1.4" style="'. $marker['style'] .'" substyle="'. $marker['substyle'] .'"/>';
 
 			return $xml;
 		}
@@ -10139,7 +10119,7 @@ EOL;
 		$xml .= '<label posn="12.1 -11 0.04" sizen="20 2" halign="center" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="1.5 -3.7 0.50" sizen="21.25 16.09" image="'. $this->cache['Map']['Last']['imageurl'] .'"/>';
 		$xml .= '<label posn="1.4 -21 0.02" sizen="21 3" textsize="2" text="$S'. $this->cache['Map']['Last']['name'] .'"/>';
-		$xml .= '<quad posn="1.5 -23 0.04" sizen="2 2" image="file://Skins/Avatars/Flags/'. $this->cache['Map']['Last']['author_nation'] .'.dds"/>';
+		$xml .= '<quad posn="1.5 -23 0.04" sizen="2 2" image="file://Skins/Avatars/Flags/'. (strtoupper($this->cache['Map']['Last']['author_nation']) == 'OTH' ? 'other' : $this->cache['Map']['Last']['author_nation']) .'.dds"/>';
 		$xml .= '<label posn="4 -23.3 0.02" sizen="18.4 3" textsize="1" text="by '. $this->cache['Map']['Last']['author'] .'"/>';
 		$xml .= '<frame posn="3.2 -33 0">';	// BEGIN: Times frame
 		$xml .= '<format textsize="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
@@ -10208,7 +10188,7 @@ EOL;
 		$xml .= '<label posn="12.1 -11 0.04" sizen="20 2" halign="center" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="1.5 -3.7 0.50" sizen="21.25 16.09" image="'. $this->cache['Map']['Current']['imageurl'] .'"/>';
 		$xml .= '<label posn="1.4 -21 0.02" sizen="21 3" textsize="2" text="$S'. $this->cache['Map']['Current']['name'] .'"/>';
-		$xml .= '<quad posn="1.5 -23 0.04" sizen="2 2" image="file://Skins/Avatars/Flags/'. $this->cache['Map']['Current']['author_nation'] .'.dds"/>';
+		$xml .= '<quad posn="1.5 -23 0.04" sizen="2 2" image="file://Skins/Avatars/Flags/'. (strtoupper($this->cache['Map']['Current']['author_nation']) == 'OTH' ? 'other' : $this->cache['Map']['Current']['author_nation']) .'.dds"/>';
 		$xml .= '<label posn="4 -23.3 0.02" sizen="18.4 3" textsize="1" text="by '. $this->cache['Map']['Current']['author'] .'"/>';
 		$xml .= '<frame posn="3.2 -33 0">';	// BEGIN: Times frame
 		$xml .= '<format textsize="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
@@ -10277,7 +10257,7 @@ EOL;
 		$xml .= '<label posn="12.1 -11 0.04" sizen="20 2" halign="center" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="1.5 -3.7 0.50" sizen="21.25 16.09" image="'. $this->cache['Map']['Next']['imageurl'] .'"/>';
 		$xml .= '<label posn="1.4 -21 0.02" sizen="21 3" textsize="2" text="$S'. $this->cache['Map']['Next']['name'] .'"/>';
-		$xml .= '<quad posn="1.5 -23 0.04" sizen="2 2" image="file://Skins/Avatars/Flags/'. $this->cache['Map']['Next']['author_nation'] .'.dds"/>';
+		$xml .= '<quad posn="1.5 -23 0.04" sizen="2 2" image="file://Skins/Avatars/Flags/'. (strtoupper($this->cache['Map']['Next']['author_nation']) == 'OTH' ? 'other' : $this->cache['Map']['Next']['author_nation']) .'.dds"/>';
 		$xml .= '<label posn="4 -23.3 0.02" sizen="18.4 3" textsize="1" text="by '. $this->cache['Map']['Next']['author'] .'"/>';
 		$xml .= '<frame posn="3.2 -33 0">';	// BEGIN: Times frame
 		$xml .= '<format textsize="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
@@ -12053,7 +12033,7 @@ EOL;
 		$xml .= '<label posn="7.5 -16.5 0.04" sizen="25 2" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="2.6 -5.8 0.50" sizen="32 24" image="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->imageurl .'?.jpg') .'"/>';
 		$xml .= '<label posn="2.9 -31 0.04" sizen="32 3" textsize="3" text="$S'. $this->cache['Map']['Current']['name'] .'"/>';
-		$xml .= '<quad posn="2.9 -33.5 0.04" sizen="2.2 2.2" image="file://Skins/Avatars/Flags/'. $this->cache['Map']['Current']['author_nation'] .'.dds"/>';
+		$xml .= '<quad posn="2.9 -33.5 0.04" sizen="2.2 2.2" image="file://Skins/Avatars/Flags/'. (strtoupper($this->cache['Map']['Current']['author_nation']) == 'OTH' ? 'other' : $this->cache['Map']['Current']['author_nation']) .'.dds"/>';
 		$xml .= '<label posn="5.8 -33.8 0.04" sizen="32 2" textsize="2" scale="0.9" text="by '. $this->cache['Map']['Current']['author'] .'"/>';
 
 		$date_time = $aseco->server->maps->current->mx->uploaded;
@@ -12446,7 +12426,7 @@ EOL;
 						$this->cache['Map']['Current']['name'],
 						$this->cache['Map']['Current']['authortime'],
 						$this->cache['Map']['Current']['author'],
-						$this->cache['Map']['Current']['author_nation']
+						(strtoupper($this->cache['Map']['Current']['author_nation']) == 'OTH' ? 'other' : $this->cache['Map']['Current']['author_nation'])
 					),
 					$this->templates['MAP_WIDGET']['RACE']['HEADER']
 				);
@@ -12587,7 +12567,7 @@ main() {
 	declare LabelCheckpointLine2			<=> (Page.GetFirstChild("RecordsEyepieceCheckpointLine2") as CMlLabel);
 	declare LabelCheckpointLine2Blink		<=> (Page.GetFirstChild("RecordsEyepieceCheckpointLine2Blink") as CMlLabel);
 
-	declare Integer TotalCheckpoints		= {$totalcps};
+	declare Integer TotalCheckpoints		= {$totalcps};		// Incl. Finish
 	declare Boolean MultilapMap			= {$multilapmap};
 	declare Boolean TimeAttack			= {$timeattack};
 	declare Integer CurrentLap			= 0;			// Using own CurrentLap instead of Player.CurrentNbLaps
@@ -12634,7 +12614,7 @@ main() {
 					CheckpointCountWidget_LastCheckpointCount = Player.CurRace.Checkpoints.count;
 
 					if (MultilapMap == True) {
-						if ( (CurrentCheckpoint > (TotalCheckpoints-1)) ) {
+						if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
 							CurrentLap += 1;
 						}
 						CurrentCheckpoint = CheckpointCountWidget_LastCheckpointCount - (CurrentLap * TotalCheckpoints);
@@ -12642,10 +12622,16 @@ main() {
 					else {
 						CurrentCheckpoint = CheckpointCountWidget_LastCheckpointCount;
 					}
+
+					// Check for respawn and reset count of current Checkpoint and Laps
+					if (CurrentCheckpoint < 0 && Player.CurRace.Checkpoints.count == 0) {
+						CurrentCheckpoint = 0;
+						CurrentLap = 0;
+					}
 //					log("CPC: Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ CurrentLap ^", CP-Times: "^ Player.CurRace.Checkpoints);
 
-					if ( ((CurrentCheckpoint+1) == (TotalCheckpoints)) ) {
-						if ((TotalCheckpoints-1) == 0) {
+					if ((CurrentCheckpoint + 1) == TotalCheckpoints) {
+						if ((TotalCheckpoints - 1) == 0) {
 							LabelCheckpointLine1.SetText(MessageWithoutCheckpoints);
 						}
 						else {
@@ -12655,7 +12641,7 @@ main() {
 						LabelCheckpointLine2Blink.Visible = True;
 						LabelCheckpointLine2Blink.SetText(MessageFinishNow);
 					}
-					else if ( (CurrentCheckpoint > (TotalCheckpoints-1)) ) {
+					else if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
 						LabelCheckpointLine1.SetText(MessageMapSuccessfully);
 						if ( (MultilapMap == True) && (TimeAttack == True) ) {
 							LabelCheckpointLine2.Visible = False;
@@ -12672,7 +12658,7 @@ main() {
 						LabelCheckpointLine2.Visible = True;
 						LabelCheckpointLine2Blink.Visible = False;
 						LabelCheckpointLine1.SetText(MessageCheckpoint);
-						LabelCheckpointLine2.SetText("\$O" ^ CurrentCheckpoint ^ " \$Zof\$O " ^ (TotalCheckpoints-1));
+						LabelCheckpointLine2.SetText("\$O" ^ CurrentCheckpoint ^ " \$Zof\$O " ^ (TotalCheckpoints - 1));
 					}
 				}
 			}
@@ -12749,18 +12735,18 @@ EOL;
 					if (isset($item['login'])) {
 						if ($item['login'] == $target) {
 							if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
-								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.83" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
+								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 							}
 							else {
-								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.83" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
+								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
 							}
 						}
 						else if (in_array($item['login'], $logins)) {
 							if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
-								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.83" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
+								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
 							}
 							else {
-								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.83" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
+								$xml .= '<quad posn="0.4 '. (((1.75 * $line - 0.2) > 0) ? -(1.75 * $line - 0.2) : 0.2) .' 0.01" sizen="16.95 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
 							}
 						}
 					}
@@ -15013,7 +14999,7 @@ EOL;
 				$map['name']		= $this->handleSpecialChars($mapob->name);
 				$map['name_stripped']	= $this->handleSpecialChars($mapob->name_stripped);
 				$map['author']		= $mapob->author;
-				$map['author_nation']	= $this->getMapAuthorNation($mapob->author_zone, $mapob->author);
+				$map['author_nation']	= $mapob->author_nation;
 				$map['mood']		= $mapob->mood;					// Sunrise, Day, Sunset, Night
 				$map['multilap']	= $mapob->multilap;				// true, false
 				$map['filename']	= $mapob->filename;
@@ -15110,168 +15096,6 @@ EOL;
 				$this->cache['MapAuthors'] = array_values($this->cache['MapAuthors']);
 			}
 //		}
-	}
-
-//	/*
-//	#///////////////////////////////////////////////////////////////////////#
-//	#									#
-//	#///////////////////////////////////////////////////////////////////////#
-//	*/
-//
-//	public function readMapInfoGBX ($filename) {
-//		global $aseco;
-//
-//		// Parse the GBX Mapfile
-//		if ($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] == true) {
-//			$gbx = new GBXChallMapFetcher(true, true, false);
-//		}
-//		else {
-//			$gbx = new GBXChallMapFetcher(true, false, false);
-//		}
-//		try {
-//			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-//				$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $aseco->stripBOM($filename)));
-//			}
-//			else {
-//				$gbx->processFile($aseco->server->mapdir . $aseco->stripBOM($filename));
-//			}
-//		}
-//		catch (Exception $e) {
-//			trigger_error('[RecordsEyepiece] Could not read Map ['. $aseco->server->mapdir . $aseco->stripBOM($filename) .'] at $this->readMapInfoGBX(): '. $e->getMessage(), E_USER_WARNING);
-//
-//			// Ignore if Map could not be parsed
-//			return $this->getEmptyMapInfo();
-//		}
-//
-//		$map = array();
-//		$gbx->name		= trim($gbx->name);
-//
-//		$map['name']		= $this->handleSpecialChars($aseco->stripBOM($gbx->name));
-//		$map['name_stripped']	= $aseco->stripColors($aseco->stripBOM($gbx->name), true);	// $aseco->stripColors() from basic.inc.php
-//		$map['author']		= $aseco->stripBOM(trim($gbx->author));
-//		$map['author_nation']	= $this->getMapAuthorNation($gbx->authorZone, $map['author']);
-//		$map['uid']		= $gbx->uid;
-//		$map['mood']		= $gbx->mood;					// Sunrise, Day, Sunset, Night
-//		$map['multilap']	= $gbx->multiLap;				// true, false
-//		$map['karma']		= 0;						// Preset, Karma are calculated later
-//		$map['filename']	= $filename;
-//		$map['environment']	= $gbx->envir;
-//		$map['exever']		= $gbx->exeVer;
-//
-//		$map['imageurl'] = false;
-//		if ($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] == true) {
-//
-//			$path = $this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['STORING_PATH'][0];
-//			$filename = $gbx->uid .'.jpg';
-//			if ($fh = fopen($path.$filename, "wb")) {
-//				fwrite($fh, $gbx->thumbnail);
-//				fclose($fh);
-//
-//				$map['imageurl'] = $this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ACCESS_URL'][0] . $filename;
-//			}
-//		}
-//
-//
-//		// Setup the Cache for the AuthorNation
-//		if ( ( isset($map['author_nation']) ) && ($map['author_nation'] != 'other') ) {
-//			$this->cache['MapAuthorNation'][$map['author']] = $map['author_nation'];
-//		}
-//
-//		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-//			$map['authortime']		= $this->formatNumber($gbx->author_score, 0);
-//			$map['goldtime']		= $this->formatNumber($gbx->goldTime, 0);
-//			$map['silvertime']		= $this->formatNumber($gbx->silverTime, 0);
-//			$map['bronzetime']		= $this->formatNumber($gbx->bronzeTime, 0);
-//
-//			// Unformated for Maplist-Filter
-//			$map['authortime_filter']	= $gbx->author_score;
-//			$map['goldtime_filter']		= $gbx->goldTime;
-//			$map['silvertime_filter']	= $gbx->silverTime;
-//			$map['bronzetime_filter']	= $gbx->bronzeTime;
-//		}
-//		else {
-//			// All other GameModes
-//			$map['authortime']		= $aseco->formatTime($gbx->author_time);
-//			$map['goldtime']		= $aseco->formatTime($gbx->goldTime);
-//			$map['silvertime']		= $aseco->formatTime($gbx->silverTime);
-//			$map['bronzetime']		= $aseco->formatTime($gbx->bronzeTime);
-//
-//			// Unformated for Maplist-Filter
-//			$map['authortime_filter']	= $gbx->author_time;
-//			$map['goldtime_filter']		= $gbx->goldTime;
-//			$map['silvertime_filter']	= $gbx->silverTime;
-//			$map['bronzetime_filter']	= $gbx->bronzeTime;
-//		}
-//
-//		return $map;
-//	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getMapAuthorNation ($authorzone, $author) {
-		global $aseco;
-
-		// First look into our Cache
-		if ( ( isset($this->cache['MapAuthorNation'][$author]) ) && ($this->cache['MapAuthorNation'][$author] != 'other') ) {
-			return $this->cache['MapAuthorNation'][$author];
-		}
-
-
-		// Remove BOM-header from AuthorZone
-		$authorzone = $aseco->stripBOM($authorzone);
-
-		if ( (strpos($authorzone, '|') === false) && (isset($author)) && ($author == 'Nadeo') ) {
-			// Nadeo Maps did not have a zone
-			return 'FRA';
-		}
-		else if (strpos($authorzone, '|') === false) {
-			// Work-a-round TM2Stadium: http://forum.maniaplanet.com/viewtopic.php?f=470&t=17626
-			return 'other';
-		}
-		else {
-			$continents = array(
-				'Europe',
-				'Africa',
-				'Asia',
-				'Middle East',
-				'North America',
-				'South America',
-				'Oceania',
-			);
-
-			$nation = false;
-			$zones = explode('|', str_ireplace('World|', '', $authorzone));
-			if ( isset($zones[0]) ) {
-				if ( in_array($zones[0], $continents) ) {
-					$nation = $zones[1];
-				}
-				else {
-					$nation = $zones[0];
-				}
-			}
-
-			if ( ($nation !== false) && (!preg_match('/^Other Countries.*/i', $nation)) ) {
-				$zone = $aseco->country->countryToIoc($nation);
-				if ($zone == 'SCG') {
-					$zone = 'SRB';						// Flag fix: Change 'SCG' to 'SRB'
-				}
-				else if ($zone == 'ROM') {
-					$zone = 'ROU';						// Flag fix: Change 'ROM' to 'ROU'
-				}
-				else if ($zone == 'CAR'){
-					$zone = 'CMR';						// Flag fix: Change 'CAR' to 'CMR'
-				}
-				else if ( ($zone == 'OTH') || ($zone == '') ) {			// If nation is 'OTH' rename to 'other' to get the right flag (other.dds)
-					$zone = 'other';
-				}
-				return $zone;
-			}
-			return 'other';
-		}
 	}
 
 	/*
