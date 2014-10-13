@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-10
+ * Date:	2014-10-13
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -47,7 +47,7 @@ class MapList {
 	public $max_age_mxinfo	= 86400;				// Age max. 86400 = 1 day
 	public $size_limit	= 2097152;				// 2048 kB: Changed map size limit to 2MB: http://forum.maniaplanet.com/viewtopic.php?p=212999#p212999
 
-	private $moods		= array(
+	public $moods		= array(
 		'Sunrise',
 		'Day',
 		'Sunset',
@@ -462,7 +462,7 @@ class MapList {
 
 		$aseco->mysqli->query($query);
 		if ($aseco->mysqli->affected_rows === -1) {
-			trigger_error('[MapList] Could not insert map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+//			trigger_error('[MapList] Could not insert map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
 			return new Map(null, null);
 		}
 		else {
@@ -477,7 +477,7 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function updateMapInDatabase ($map) {
+	public function updateMapInDatabase ($map) {
 		global $aseco;
 
 		// Bail out on Maps without an UniqueId
@@ -523,7 +523,7 @@ class MapList {
 
 		$aseco->mysqli->query($query);
 		if ($aseco->mysqli->affected_rows === -1) {
-			trigger_error('[MapList] Could not update map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+//			trigger_error('[MapList] Could not update map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
 			return false;
 		}
 		else {
@@ -691,7 +691,7 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function calculateRaspKarma () {
+	public function calculateRaspKarma () {
 		global $aseco;
 
 		// Calculate the local Karma like RASP/Karma
