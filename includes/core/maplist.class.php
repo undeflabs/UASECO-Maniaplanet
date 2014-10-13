@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-13
+ * Date:	2014-10-10
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -47,7 +47,7 @@ class MapList {
 	public $max_age_mxinfo	= 86400;				// Age max. 86400 = 1 day
 	public $size_limit	= 2097152;				// 2048 kB: Changed map size limit to 2MB: http://forum.maniaplanet.com/viewtopic.php?p=212999#p212999
 
-	public $moods		= array(
+	private $moods		= array(
 		'Sunrise',
 		'Day',
 		'Sunset',
@@ -477,7 +477,7 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function updateMapInDatabase ($map) {
+	private function updateMapInDatabase ($map) {
 		global $aseco;
 
 		// Bail out on Maps without an UniqueId
@@ -691,7 +691,7 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function calculateRaspKarma () {
+	private function calculateRaspKarma () {
 		global $aseco;
 
 		// Calculate the local Karma like RASP/Karma
