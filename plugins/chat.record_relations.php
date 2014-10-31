@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -212,14 +212,14 @@ class PluginRecordRelations extends Plugin {
 				$query = "
 				SELECT
 					`score`
-				FROM `rs_times`
+				FROM `%prefix%times`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id ."
 				ORDER BY `Score` ". $order ."
 				LIMIT 1;
 				";
 
-				$result = $aseco->mysqli->query($query);
+				$result = $aseco->db->query($query);
 				if ($result) {
 					if ($result->num_rows > 0) {
 						$unranked = $result->fetch_object();

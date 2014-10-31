@@ -27,9 +27,3 @@ Aseco::registerChatCommand(
 	Player::PLAYERS,					// Access rights
 	array()							// Chat command available parameters and descriptions (only for display in /helpall)
 );
-
-
-
-For converting `Visits` from Records-Eyepiece to UASECO:
-UPDATE `players` AS `p` SET `p`.`Visits`=(SELECT `pe`.`Visits` FROM `players_extra` AS `pe` WHERE `p`.`Id` = `pe`.`PlayerId`);
-ALTER TABLE `players_extra` DROP `Visits`;

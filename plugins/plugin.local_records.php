@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-11
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -109,9 +109,6 @@ class PluginLocalRecords extends Plugin {
 		// Show records range?
 		$this->settings['show_recs_range'] = $aseco->string2bool($settings['SHOW_RECS_RANGE'][0]);
 
-		// Check database
-		$this->checkDatabaseStructure($aseco);
-
 		// Initiate records list
 		$this->records = new RecordList($this->settings['max_records']);
 	}
@@ -167,15 +164,15 @@ class PluginLocalRecords extends Plugin {
 
 		// Update player
 		$query = "
-		UPDATE `players` SET
-			`UpdatedAt` = NOW(),
+		UPDATE `%prefix%players` SET
+			`LastVisit` = NOW(),
 			`TimePlayed` = `TimePlayed` + ". $player->getTimeOnline() ."
-		WHERE `Login` = ". $aseco->mysqli->quote($player->login) .";
+		WHERE `Login` = ". $aseco->db->quote($player->login) .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if (!$result) {
-			trigger_error('[LocalRecords] Could not update disconnecting player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[LocalRecords] Could not update disconnecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 	}
 
@@ -199,27 +196,27 @@ class PluginLocalRecords extends Plugin {
 		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 		$query = "
 		SELECT
-			`m`.`Id`,
+			`m`.`MapId`,
 			`r`.`Score`,
-			`p`.`NickName`,
+			`p`.`Nickname`,
 			`p`.`Login`,
 			`r`.`Date`,
 			`r`.`Checkpoints`
-		FROM `maps` AS `m`
-		LEFT JOIN `records` AS `r` ON `r`.`MapId` = `m`.`Id`
-		LEFT JOIN `players` AS `p` ON `r`.`PlayerId` = `p`.`Id`
-		WHERE `m`.`Uid` = ". $aseco->mysqli->quote($map->uid) ."
-		GROUP BY `r`.`Id`
+		FROM `%prefix%maps` AS `m`
+		LEFT JOIN `%prefix%records` AS `r` ON `r`.`MapId` = `m`.`MapId`
+		LEFT JOIN `%prefix%players` AS `p` ON `r`.`PlayerId` = `p`.`PlayerId`
+		WHERE `m`.`Uid` = ". $aseco->db->quote($map->uid) ."
+		GROUP BY `r`.`MapId`
 		ORDER BY `r`.`Score` ". $order .", `r`.`Date` ASC
 		LIMIT ". ($this->records->getMaxRecords() ? $this->records->getMaxRecords() : 50) .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if ($result) {
 			// map found?
 			if ($result->num_rows > 0) {
 				// Get each record
-				while ($record = $result->fetch_array()) {
+				while ($record = $result->fetch_array(MYSQLI_ASSOC)) {
 
 					// create record object
 					$record_item = new Record();
@@ -229,7 +226,7 @@ class PluginLocalRecords extends Plugin {
 
 					// create a player object to put it into the record object
 					$player_item = new Player();
-					$player_item->nickname = $record['NickName'];
+					$player_item->nickname = $record['Nickname'];
 					$player_item->login = $record['Login'];
 					$record_item->player = $player_item;
 
@@ -247,7 +244,7 @@ class PluginLocalRecords extends Plugin {
 			$result->free_result();
 		}
 		else {
-			trigger_error('[LocalRecords] Could not get map info! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[LocalRecords] Could not get map info! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 
 
@@ -591,14 +588,14 @@ class PluginLocalRecords extends Plugin {
 	public function onPlayerWins ($aseco, $player) {
 
 		$query = "
-		UPDATE `players` SET
+		UPDATE `%prefix%players` SET
 			`Wins` = ". $player->getWins() ."
-		WHERE `Login` = ". $aseco->mysqli->quote($player->login) .";
+		WHERE `Login` = ". $aseco->db->quote($player->login) .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if (!$result) {
-			trigger_error('[LocalRecords] Could not update winning player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[LocalRecords] Could not update winning player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 	}
 
@@ -615,29 +612,29 @@ class PluginLocalRecords extends Plugin {
 
 		// Insert new record or update existing
 		$query = "
-		INSERT INTO `records` (
+		INSERT INTO `%prefix%records` (
 			`MapId`,
 			`PlayerId`,
-			`Score`,
 			`Date`,
+			`Score`,
 			`Checkpoints`
 		)
 		VALUES (
 			". $record->map->id .",
 			". $record->player->id .",
+			". $aseco->db->quote(date('Y-m-d H:i:s', time())) .",
 			". $record->score .",
-			NOW(),
-			". $aseco->mysqli->quote($cps) ."
+			". $aseco->db->quote($cps) ."
 		)
 		ON DUPLICATE KEY UPDATE
-			`Score` = VALUES(`Score`),
 			`Date` = VALUES(`Date`),
+			`Score` = VALUES(`Score`),
 			`Checkpoints` = VALUES(`Checkpoints`);
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if (!$result) {
-			trigger_error('[LocalRecords] Could not insert/update record! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[LocalRecords] Could not insert/update record! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 	}
 
@@ -651,14 +648,14 @@ class PluginLocalRecords extends Plugin {
 
 		// remove record
 		$query = "
-		DELETE FROM `records`
+		DELETE FROM `%prefix%records`
 		WHERE `MapId` = ". $mapid ."
 		AND `PlayerId` = ". $playerid .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if (!$result) {
-			trigger_error('[LocalRecords] Could not remove record! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[LocalRecords] Could not remove record! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 
 		// remove record from specified position
@@ -671,12 +668,12 @@ class PluginLocalRecords extends Plugin {
 			SELECT DISTINCT
 				`PlayerId`,
 				`Score`
-			FROM `rs_times` AS `t1`
+			FROM `%prefix%times` AS `t1`
 			WHERE `MapId` = ". $mapid ."
 			AND `Score` = (
 				SELECT
 					MIN(`t2`.`Score`)
-				FROM `rs_times` AS `t2`
+				FROM `%prefix%times` AS `t2`
 				WHERE `MapId` = ". $mapid ."
 				AND `t1`.`PlayerId` = `t2`.`PlayerId`
 			)
@@ -684,7 +681,7 @@ class PluginLocalRecords extends Plugin {
 			LIMIT ". ($this->records->getMaxRecords() - 1) .",1;
 			";
 
-			$result = $aseco->mysqli->query($query);
+			$result = $aseco->db->query($query);
 			if ($result) {
 	 			if ($result->num_rows == 1) {
 					$timerow = $result->fetch_object();
@@ -694,54 +691,53 @@ class PluginLocalRecords extends Plugin {
 					SELECT
 						`Date`,
 						`Checkpoints`
-					FROM `rs_times`
+					FROM `%prefix%times`
 					WHERE `MapId` = ". $mapid ."
 					AND `PlayerId` = ". $timerow->PlayerId ."
 					ORDER BY `Score`, `Date`
 					LIMIT 1;
 					";
 
-					$result2 = $aseco->mysqli->query($query2);
+					$result2 = $aseco->db->query($query2);
 					$timerow2 = $result2->fetch_object();
-					$datetime = date('Y-m-d H:i:s', $timerow2->Date);
 					$result2->free_result();
 
 					// insert/update new max'th record
 					$query2 = "
-					INSERT INTO `records` (
+					INSERT INTO `%prefix%records` (
 						`MapId`,
 						`PlayerId`,
-						`Score`,
 						`Date`,
+						`Score`,
 						`Checkpoints`
 					)
 					VALUES (
 						". $mapid . ",
 						". $timerow->PlayerId .",
+						". $aseco->db->quote($timerow2->Date) .",
 						". $timerow->Score .",
-						". $aseco->mysqli->quote($datetime) .",
-						". $aseco->mysqli->quote($timerow2->Checkpoints) ."
+						". $aseco->db->quote($timerow2->Checkpoints) ."
 					)
 					ON DUPLICATE KEY UPDATE
-						`Score` = VALUES(`Score`),
 						`Date` = VALUES(`Date`),
+						`Score` = VALUES(`Score`),
 						`Checkpoints` = VALUES(`Checkpoints`);
 					";
 
-					$result2 = $aseco->mysqli->query($query2);
+					$result2 = $aseco->db->query($query2);
 					if (!$result2) {
-						trigger_error('[LocalRecords] Could not insert/update record! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+						trigger_error('[LocalRecords] Could not insert/update record! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 					}
 
 					// get player info
 					$query2 = "
 					SELECT
 						*
-					FROM `players`
-					WHERE `Id` = ". $timerow->PlayerId .";
+					FROM `%prefix%players`
+					WHERE `PlayerId` = ". $timerow->PlayerId .";
 					";
-					$result2 = $aseco->mysqli->query($query2);
-					$playrow = $result2->fetch_array();
+					$result2 = $aseco->db->query($query2);
+					$playrow = $result2->fetch_array(MYSQLI_ASSOC);
 					$result2->free_result();
 
 					// create record object
@@ -752,7 +748,7 @@ class PluginLocalRecords extends Plugin {
 
 					// create a player object to put it into the record object
 					$player_item = new Player();
-					$player_item->nickname = $playrow['NickName'];
+					$player_item->nickname = $playrow['Nickname'];
 					$player_item->login = $playrow['Login'];
 					$record_item->player = $player_item;
 
@@ -802,14 +798,14 @@ class PluginLocalRecords extends Plugin {
 			$query = "
 			SELECT
 				`Score`
-			FROM `rs_times`
+			FROM `%prefix%times`
 			WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) ."
 			AND `MapId` = ". $mapid ."
 			ORDER BY `Score` ". $order ."
 			LIMIT 1;
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					$row = $res->fetch_object();
@@ -1019,53 +1015,6 @@ class PluginLocalRecords extends Plugin {
 				$aseco->sendChatMessage($message);
 			}
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	private function checkDatabaseStructure ($aseco) {
-
-		// Create main tables
-		$aseco->console('[LocalRecords] Checking database structure:');
-		$aseco->console('[LocalRecords] » Checking table `records`.');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `records` (
-			`Id` int(11) NOT NULL AUTO_INCREMENT,
-			`MapId` mediumint(9) NOT NULL DEFAULT '0',
-			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
-			`Score` int(11) NOT NULL DEFAULT '0',
-			`Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`Checkpoints` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			PRIMARY KEY (`Id`),
-			UNIQUE KEY `PlayerId` (`PlayerId`,`MapId`),
-			KEY `MapId` (`MapId`),
-			KEY `Score` (`Score`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
-		";
-		$aseco->mysqli->query($query);
-
-
-		// Check for main tables
-		$tables = array();
-		$res = $aseco->mysqli->query('SHOW TABLES;');
-		if ($res) {
-			while ($row = $res->fetch_row()) {
-				$tables[] = $row[0];
-			}
-			$res->free_result();
-		}
-
-		$check = array();
-		$check[1] = in_array('records', $tables);
-		if ( !$check[1] ) {
-			trigger_error('[LocalRecords] ERROR: Table structure incorrect, use [newinstall/database/uaseco.sql] to correct this!', E_USER_ERROR);
-		}
-
-		$aseco->console('[LocalRecords] ...successfully done!');
 	}
 }
 

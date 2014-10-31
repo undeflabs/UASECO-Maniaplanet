@@ -1,6 +1,5 @@
 UASECO
 ~~~~~~
- - Remove table `players_extra` and create a `Settings` in `players` table
  - Donation: $mindonation, $publicappr and $donation_values in xml
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it

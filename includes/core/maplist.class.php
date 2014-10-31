@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-13
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -263,7 +263,7 @@ class MapList {
 		// Load map infos from Database for all maps
 		$uids = array();
 		foreach ($maplist as $map) {
-			$uids[] = $aseco->mysqli->quote($map['UId']);
+			$uids[] = $aseco->db->quote($map['UId']);
 		}
 		$dbinfos = $this->getDatabaseMapInfos($uids);
 
@@ -279,7 +279,7 @@ class MapList {
 			if (isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename'])) {
 				// Create and setup dummy Map with data from the database
 				$map			= new Map(null, null);
-				$map->id		= $dbinfos[$mapinfo['UId']]['id'];
+				$map->id		= $dbinfos[$mapinfo['UId']]['mapid'];
 				$map->uid		= $dbinfos[$mapinfo['UId']]['uid'];
 				$map->filename		= $dbinfos[$mapinfo['UId']]['filename'];
 				$map->name		= $dbinfos[$mapinfo['UId']]['name'];
@@ -382,6 +382,73 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function checkMapAuthor ($map) {
+		global $aseco;
+
+		$query = "
+		SELECT
+			`AuthorId`
+		FROM `%prefix%authors`
+		WHERE `Login` = ". $aseco->db->quote($map->author) ."
+		LIMIT 1;
+		";
+		$result = $aseco->db->select_one($query);
+		if (!isset($result['AuthorId'])) {
+			$query = "
+			INSERT INTO `%prefix%authors` (
+				`Login`,
+				`Nickname`,
+				`Zone`,
+				`Continent`,
+				`Nation`
+			)
+			VALUES (
+				". $aseco->db->quote($map->author) .",
+				". $aseco->db->quote($map->author_nickname) .",
+				". $aseco->db->quote(implode('|', $map->author_zone)) .",
+				". $aseco->db->quote($map->author_continent) .",
+				". $aseco->db->quote($map->author_nation) ."
+			);
+			";
+
+			$result = $aseco->db->query($query);
+			if ($result) {
+				return (int)$aseco->db->lastid();
+			}
+			else {
+				return 0;
+			}
+		}
+		else {
+			$authorid = $result['AuthorId'];
+
+			$query = "
+			UPDATE `%prefix%authors`
+			SET
+				`Nickname` = ". $aseco->db->quote($map->author_nickname) .",
+				`Zone` = ". $aseco->db->quote(implode('|', $map->author_zone)) .",
+				`Continent` = ". $aseco->db->quote($map->author_continent) .",
+				`Nation` = ". $aseco->db->quote($map->author_nation) ."
+			WHERE `AuthorId` = ". $authorid ."
+			LIMIT 1;
+			";
+
+			$result = $aseco->db->query($query);
+			if ($result) {
+				return $authorid;
+			}
+			else {
+				return 0;
+			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function insertMapIntoDatabase ($map) {
 		global $aseco;
 
@@ -390,20 +457,19 @@ class MapList {
 			return new Map(null, null);
 		}
 
+		// Insert or Update the Map Author
+		$authorid = $this->checkMapAuthor($map);
+
 		// `NbLaps` and `NbCheckpoints` only accessible with the ListMethod 'GetCurrentMapInfo'
 		// and when the Map is actual loaded, update where made at $this->getCurrentMapInfo().
 		// But in Maps with chunk version 13 (0x03043002), these information are accessible (newer Maps).
 		$query = "
-		INSERT INTO `maps` (
+		INSERT INTO `%prefix%maps` (
 			`Uid`,
 			`Filename`,
 			`Name`,
 			`Comment`,
-			`Author`,
-			`AuthorNickname`,
-			`AuthorZone`,
-			`AuthorContinent`,
-			`AuthorNation`,
+			`AuthorId`,
 			`AuthorScore`,
 			`AuthorTime`,
 			`GoldTime`,
@@ -427,46 +493,42 @@ class MapList {
 			`SongUrl`
 		)
 		VALUES (
-			". $aseco->mysqli->quote($map->uid) .",
-			". $aseco->mysqli->quote($map->filename) .",
-			". $aseco->mysqli->quote($map->name) .",
-			". $aseco->mysqli->quote($map->comment) .",
-			". $aseco->mysqli->quote($map->author) .",
-			". $aseco->mysqli->quote($map->author_nickname) .",
-			". $aseco->mysqli->quote($map->author_zone) .",
-			". $aseco->mysqli->quote($map->author_continent) .",
-			". $aseco->mysqli->quote($map->author_nation) .",
+			". $aseco->db->quote($map->uid) .",
+			". $aseco->db->quote($map->filename) .",
+			". $aseco->db->quote($map->name) .",
+			". $aseco->db->quote($map->comment) .",
+			". $authorid .",
 			". $map->author_score .",
 			". $map->author_time .",
 			". $map->goldtime .",
 			". $map->silvertime .",
 			". $map->bronzetime .",
-			". $aseco->mysqli->quote($map->environment) .",
-			". $aseco->mysqli->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'unknown') ) .",
+			". $aseco->db->quote($map->environment) .",
+			". $aseco->db->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'unknown') ) .",
 			". $map->cost .",
-			". $aseco->mysqli->quote($map->type) .",
-			". $aseco->mysqli->quote($map->style) .",
-			". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
+			". $aseco->db->quote($map->type) .",
+			". $aseco->db->quote($map->style) .",
+			". $aseco->db->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
 			". (($map->nblaps > 1) ? $map->nblaps : 0) .",
 			". $map->nbcheckpoints .",
-			". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
-			". $aseco->mysqli->quote($map->exeversion) .",
-			". $aseco->mysqli->quote($map->exebuild) .",
-			". $aseco->mysqli->quote($map->modname) .",
-			". $aseco->mysqli->quote($map->modfile) .",
-			". $aseco->mysqli->quote($map->modurl) .",
-			". $aseco->mysqli->quote($map->songfile) .",
-			". $aseco->mysqli->quote($map->songurl) ."
+			". $aseco->db->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
+			". $aseco->db->quote($map->exeversion) .",
+			". $aseco->db->quote($map->exebuild) .",
+			". $aseco->db->quote($map->modname) .",
+			". $aseco->db->quote($map->modfile) .",
+			". $aseco->db->quote($map->modurl) .",
+			". $aseco->db->quote($map->songfile) .",
+			". $aseco->db->quote($map->songurl) ."
 		);
 		";
 
-		$aseco->mysqli->query($query);
-		if ($aseco->mysqli->affected_rows === -1) {
-//			trigger_error('[MapList] Could not insert map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+		$aseco->db->query($query);
+		if ($aseco->db->affected_rows === -1) {
+//			trigger_error('[MapList] Could not insert map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
 			return new Map(null, null);
 		}
 		else {
-			$map->id = (int)$aseco->mysqli->lastid();
+			$map->id = (int)$aseco->db->lastid();
 			return $map;
 		}
 	}
@@ -485,45 +547,44 @@ class MapList {
 			return false;
 		}
 
+		// Insert or Update the Map Author
+		$authorid = $this->checkMapAuthor($map);
+
 		$query = "
-		UPDATE `maps`
+		UPDATE `%prefix%maps`
 		SET
-			`Filename` = ". $aseco->mysqli->quote($map->filename) .",
-			`Name` = ". $aseco->mysqli->quote($map->name) .",
-			`Comment` = ". $aseco->mysqli->quote($map->comment) .",
-			`Author` = ". $aseco->mysqli->quote($map->author) .",
-			`AuthorNickname` = ". $aseco->mysqli->quote($map->author_nickname) .",
-			`AuthorZone` = ". $aseco->mysqli->quote($map->author_zone) .",
-			`AuthorContinent` = ". $aseco->mysqli->quote($map->author_continent) .",
-			`AuthorNation` = ". $aseco->mysqli->quote($map->author_nation) .",
+			`Filename` = ". $aseco->db->quote($map->filename) .",
+			`Name` = ". $aseco->db->quote($map->name) .",
+			`Comment` = ". $aseco->db->quote($map->comment) .",
+			`AuthorId` = ". $authorid .",
 			`AuthorScore` = ". $map->author_score .",
 			`AuthorTime` = ". $map->author_time .",
 			`GoldTime` = ". $map->goldtime .",
 			`SilverTime` = ". $map->silvertime .",
 			`BronzeTime` = ". $map->bronzetime .",
-			`Environment` = ". $aseco->mysqli->quote($map->environment) .",
-			`Mood` = ". $aseco->mysqli->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'unknown') ) .",
+			`Environment` = ". $aseco->db->quote($map->environment) .",
+			`Mood` = ". $aseco->db->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'unknown') ) .",
 			`Cost` = ". $map->cost .",
-			`Type` = ". $aseco->mysqli->quote($map->type) .",
-			`Style` = ". $aseco->mysqli->quote($map->style) .",
-			`MultiLap` = ". $aseco->mysqli->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
+			`Type` = ". $aseco->db->quote($map->type) .",
+			`Style` = ". $aseco->db->quote($map->style) .",
+			`MultiLap` = ". $aseco->db->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
 			`NbLaps` = ". (($map->nblaps > 1) ? $map->nblaps : 0) .",
 			`NbCheckpoints` = ". $map->nbcheckpoints .",
-			`Validated` = ". $aseco->mysqli->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
-			`ExeVersion` = ". $aseco->mysqli->quote($map->exeversion) .",
-			`ExeBuild` = ". $aseco->mysqli->quote($map->exebuild) .",
-			`ModName` = ". $aseco->mysqli->quote($map->modname) .",
-			`ModFile` = ". $aseco->mysqli->quote($map->modfile) .",
-			`ModUrl` = ". $aseco->mysqli->quote($map->modurl) .",
-			`SongFile` = ". $aseco->mysqli->quote($map->songfile) .",
-			`SongUrl` = ". $aseco->mysqli->quote($map->songurl) ."
-		WHERE `Uid` = ". $aseco->mysqli->quote($map->uid) ."
+			`Validated` = ". $aseco->db->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
+			`ExeVersion` = ". $aseco->db->quote($map->exeversion) .",
+			`ExeBuild` = ". $aseco->db->quote($map->exebuild) .",
+			`ModName` = ". $aseco->db->quote($map->modname) .",
+			`ModFile` = ". $aseco->db->quote($map->modfile) .",
+			`ModUrl` = ". $aseco->db->quote($map->modurl) .",
+			`SongFile` = ". $aseco->db->quote($map->songfile) .",
+			`SongUrl` = ". $aseco->db->quote($map->songurl) ."
+		WHERE `Uid` = ". $aseco->db->quote($map->uid) ."
 		LIMIT 1;
 		";
 
-		$aseco->mysqli->query($query);
-		if ($aseco->mysqli->affected_rows === -1) {
-//			trigger_error('[MapList] Could not update map in database: ('. $aseco->mysqli->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+		$aseco->db->query($query);
+		if ($aseco->db->affected_rows === -1) {
+//			trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
 			return false;
 		}
 		else {
@@ -545,16 +606,16 @@ class MapList {
 		// Read Map infos
 		$query = "
 		SELECT
-			`Id`,
+			`MapId`,
 			`Uid`,
 			`Filename`,
 			`Name`,
 			`Comment`,
-			`Author`,
-			`AuthorNickname`,
-			`AuthorZone`,
-			`AuthorContinent`,
-			`AuthorNation`,
+			`a`.`Login`,
+			`a`.`Nickname`,
+			`a`.`Zone`,
+			`a`.`Continent`,
+			`a`.`Nation`,
 			`AuthorScore`,
 			`AuthorTime`,
 			`GoldTime`,
@@ -576,26 +637,27 @@ class MapList {
 			`ModUrl`,
 			`SongFile`,
 			`SongUrl`
-		FROM `maps`
+		FROM `%prefix%maps` AS `m`
+		LEFT JOIN `%prefix%authors` AS `a` ON `a`.`AuthorId` = `m`.`AuthorId`
 		WHERE `Uid` IN (". implode(',', $uids) .");
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
-				while ($row = $res->fetch_array()) {
+				while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
 					$data[$row['Uid']] = array(
-						'id'			=> (int)$row['Id'],
+						'mapid'			=> (int)$row['MapId'],
 						'uid'			=> $row['Uid'],
 						'filename'		=> $row['Filename'],
 						'name'			=> $row['Name'],
 						'name_stripped'		=> $aseco->stripColors($row['Name'], true),
 						'comment'		=> $row['Comment'],
-						'author'		=> $row['Author'],
-						'author_nickname'	=> $row['AuthorNickname'],
-						'author_zone'		=> $row['AuthorZone'],
-						'author_continent'	=> $row['AuthorContinent'],
-						'author_nation'		=> $row['AuthorNation'],
+						'author'		=> $row['Login'],
+						'author_nickname'	=> $row['Nickname'],
+						'author_zone'		=> explode('|', $row['Zone']),
+						'author_continent'	=> $row['Continent'],
+						'author_nation'		=> $row['Nation'],
 						'author_score'		=> $row['AuthorScore'],
 						'author_time'		=> $row['AuthorTime'],
 						'goldtime'		=> $row['GoldTime'],
@@ -623,7 +685,7 @@ class MapList {
 			$res->free_result();
 		}
 		else {
-			trigger_error('[MapList] Could not query map datas: ('. $aseco->mysqli->errmsg() .')'. CRLF .' for statement ['. $query .']', E_USER_WARNING);
+			trigger_error('[MapList] Could not query map datas: ('. $aseco->db->errmsg() .')'. CRLF .' for statement ['. $query .']', E_USER_WARNING);
 		}
 		return $data;
 	}
@@ -701,12 +763,12 @@ class MapList {
 			`m`.`Uid`,
 			SUM(`k`.`Score`) AS `Karma`,
 			COUNT(`k`.`Score`) AS `Count`
-		FROM `rs_karma` AS `k`
-		LEFT JOIN `maps` AS `m` ON `m`.`Id` = `k`.`MapId`
+		FROM `%prefix%karmas` AS `k`
+		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId` = `k`.`MapId`
 		GROUP BY `k`.`MapId`;
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				while ($row = $res->fetch_object()) {

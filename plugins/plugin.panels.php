@@ -2,12 +2,12 @@
 /*
  * Plugin: Panels
  * ~~~~~~~~~~~~~~
- * » Selects ManiaLink panel templates.
+ * » DEPRECATED: Selects ManiaLink panel templates.
  * » Based upon plugin.panels.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -49,8 +49,6 @@ class PluginPanels extends Plugin {
 	public $panels;
 	public $panelbg;
 	public $statspanel;
-	public $placeholder;
-	public $record_defaults;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -62,19 +60,18 @@ class PluginPanels extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Selects ManiaLink panel templates.');
+		$this->setDescription('DEPRECATED: Selects ManiaLink panel templates.');
 
-		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginDonate',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginManialinks',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginRasp',			Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginDonate',			Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginRaspVotes',			Dependence::WANTED,	'1.0.0', null);
 
-		$this->registerEvent('onStartup',		'onStartup');
-		$this->registerEvent('onSync',			'onSync');
-		$this->registerEvent('onEndMap1',		'onEndMap1');
-		$this->registerEvent('onEndMap',		'onEndMap');
-		$this->registerEvent('onBeginMap',		'onBeginMap');
-		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
+		$this->registerEvent('onSync',				'onSync');
+		$this->registerEvent('onEndMap',			'onEndMap');
+		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
+		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
 
 
 		// handles action id's "-100"-"-49" for selecting from max. 50 record panel templates
@@ -83,151 +80,10 @@ class PluginPanels extends Plugin {
 		// handles action id's "7231"-"7262" for selecting from max. 30 panel background templates
 		$this->registerEvent('onPlayerManialinkPageAnswer', 'onPlayerManialinkPageAnswer');
 
-// Maybe move to "plugin.rasp_jukebox.php"
+// Maybe move to "plugin.rasp_jukebox.php"?
 		$this->registerChatCommand('votepanel',	'chat_votepanel',	'Selects vote panel (see: /votepanel help)',		Player::PLAYERS);
 
 		$this->registerChatCommand('panelbg',	'chat_panelbg',		'Selects panel background (see: /panelbg help)',	Player::PLAYERS);
-
-		$this->placeholder = array(
-			'score'	=> '---',
-			'time'	=> '-:--.---',
-		);
-
-		$this->record_defaults = array(
-			'pb'	=> '-:--.---',
-			'local'	=> '-:--.---',
-			'dedi'	=> '-:--.---',
-			'mx'	=> '-:--.---',
-		);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_recpanel ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			return;
-		}
-
-		if ($chat_parameter == 'help') {
-			$header = '{#black}/recpanel$g will change the records panel:';
-			$help = array();
-			$help[] = array('...', '{#black}help',
-			                'Displays this help information');
-			$help[] = array('...', '{#black}list',
-			                'Displays available panels');
-			$help[] = array('...', '{#black}default',
-			                'Resets panel to server default');
-			$help[] = array('...', '{#black}off',
-			                'Disables records panel');
-			$help[] = array('...', '{#black}xxx',
-			                'Selects records panel xxx');
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(0.8, 0.05, 0.15, 0.6), 'OK');
-		}
-		else if ($chat_parameter == 'list') {
-			$player->maplist = array();
-
-			// read list of records panel files
-			$paneldir = 'config/panels/';
-			$dir = opendir($paneldir);
-			$files = array();
-			while (($file = readdir($dir)) !== false) {
-				if (strtolower(substr($file, 0, 7)) == 'records' &&
-				    strtolower(substr($file, -4)) == '.xml')
-					$files[] = substr($file, 7, strlen($file)-11);
-			}
-			closedir($dir);
-			sort($files, SORT_STRING);
-			if (count($files) > 50) {
-				$files = array_slice($files, 0, 50);  // maximum 50 templates
-				trigger_error('Too many records panel templates - maximum 50!', E_USER_WARNING);
-			}
-			// sneak in standard entries
-			$files[] = 'default';
-			$files[] = 'off';
-
-			$head = 'Currently available records panels:';
-			$list = array();
-			$pid = 1;
-			$lines = 0;
-			$player->msgs = array();
-			$player->msgs[0] = array(1, $head, array(0.8, 0.1, 0.7), array('Icons128x128_1', 'Custom'));
-			foreach ($files as $file) {
-				// store panel in player object for jukeboxing
-				$trkarr = array();
-				$trkarr['panel'] = $file;
-				$player->maplist[] = $trkarr;
-
-				$list[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) . '.',
-				                array('{#black}' . $file, -48-$pid));  // action id
-				$pid++;
-				if (++$lines > 14) {
-					$player->msgs[] = $list;
-					$lines = 0;
-					$list = array();
-				}
-			}
-
-			// add if last batch exists
-			if (!empty($list)) {
-				$player->msgs[] = $list;
-			}
-
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-		}
-		else if ($chat_parameter != '') {
-			$panel = $chat_parameter;
-			if (is_numeric($panel) && $panel > 0) {
-				$pid = ltrim($panel, '0');
-				$pid--;
-				if (array_key_exists($pid, $player->maplist) &&
-				    isset($player->maplist[$pid]['panel'])) {
-					$panel = $player->maplist[$pid]['panel'];
-				}
-			}
-			if ($panel == 'off') {
-				$player->panels['records'] = '';
-				$this->recpanel_off($aseco, $login);
-				$message = '{#server}» Records panel disabled!';
-				$this->setPanel($login, 'records', '');
-			}
-			else if ($panel == 'default') {
-				$player->panels['records'] = $this->replacePanelBG($this->panels['records'], $player->panelbg);
-				$this->updateRecordsPanel($aseco, $player, $player->panels['pb']);
-				$message = '{#server}» Records panel reset to server default {#highlite}' . substr($this->settings['records_panel'], 7) . '{#server} !';
-				$this->setPanel($login, 'records', $this->settings['records_panel']);
-			}
-			else {
-				// add file prefix
-				if (strtolower(substr($panel, 0, 7)) != 'records')
-					$panel = 'Records' . $panel;
-				$panel_file = 'config/panels/' . $panel . '.xml';
-				// load new panel
-				if ($paneldata = @file_get_contents($panel_file)) {
-					$player->panels['records'] = $this->replacePanelBG($paneldata, $player->panelbg);
-					$this->updateRecordsPanel($aseco, $player, $player->panels['pb']);
-					$message = '{#server}» Records panel {#highlite}' . $chat_parameter . '{#server} selected!';
-					$this->setPanel($login, 'records', $panel);
-				}
-				else {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read records panel file ['. $panel_file .']!', E_USER_WARNING);
-					$message = '{#server}» {#error}No valid records panel file, use {#highlite}$i /recpanel list {#error}!';
-				}
-			}
-			$aseco->sendChatMessage($message, $login);
-		}
-
-		else {
-			$message = '{#server}» {#error}No records panel specified, use {#highlite}$i /recpanel help {#error}!';
-			$aseco->sendChatMessage($message, $login);
-		}
 	}
 
 	/*
@@ -486,24 +342,15 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onStartup ($aseco) {
+	public function onSync ($aseco) {
 
 		$config_file = 'config/panels.xml';
 		if ($settings = $aseco->parser->xmlToArray($config_file, true, true)) {
 			// read the XML structure into an array
 			$settings = $settings['SETTINGS'];
 
-//			// set windows style (none = Card)
-//			$this->settings['window_style'] = $settings['WINDOW_STYLE'][0];
-//			if ($this->settings['window_style'] == '') {
-//				$this->settings['window_style'] = 'Card';
-//			}
-
 			// set admin panel (none = no panel)
 			$this->settings['admin_panel'] = $settings['ADMIN_PANEL'][0];
-
-			// set records panel (none = no panel)
-			$this->settings['records_panel'] = $settings['RECORDS_PANEL'][0];
 
 			// set vote panel (none = no panel)
 			$this->settings['vote_panel'] = $settings['VOTE_PANEL'][0];
@@ -531,7 +378,6 @@ class PluginPanels extends Plugin {
 
 			$this->panels = array();
 			$this->panels['admin'] = '';
-			$this->panels['records'] = '';
 			$this->panels['vote'] = '';
 
 
@@ -543,17 +389,6 @@ class PluginPanels extends Plugin {
 				if (!$this->panels['admin'] = @file_get_contents($panel_file)) {
 					// Could not read XML file
 					trigger_error('[Panel] Could not read admin panel file ['. $panel_file .']!', E_USER_ERROR);
-				}
-			}
-
-			// check for default records panel
-			if ($this->settings['records_panel'] != '') {
-				$panel_file = 'config/panels/' . $this->settings['records_panel'] . '.xml';
-				$aseco->console('[Panel] Load default records panel [{1}]', $panel_file);
-				// load default panel
-				if (!$this->panels['records'] = @file_get_contents($panel_file)) {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read records panel file ['. $panel_file .']!', E_USER_ERROR);
 				}
 			}
 
@@ -572,15 +407,8 @@ class PluginPanels extends Plugin {
 			// could not parse XML file
 			trigger_error('Could not read/parse config file ['. $config_file .']!', E_USER_ERROR);
 		}
-	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
 
-	public function onSync ($aseco) {
 		if ($this->settings['sb_stats_panels']) {
 			$panel_file = 'config/panels/Stats2.xml';
 			$aseco->console('[Panel] Load stats panel [{1}]', $panel_file);
@@ -611,14 +439,14 @@ class PluginPanels extends Plugin {
 			$query = "
 			SELECT
 				`p`.`Login`,
-				COUNT(`p`.`Id`) AS `Count`
-			FROM `players` AS `p`, `records` AS `r`
-			WHERE `p`.`Id` = `r`.`PlayerId`
-			AND `p`.`Id` IN (". implode(',', $onlinelist) .")
-			GROUP BY `p`.`Id`;
+				COUNT(`p`.`PlayerId`) AS `Count`
+			FROM `%prefix%players` AS `p`, `%prefix%records` AS `r`
+			WHERE `p`.`PlayerId` = `r`.`PlayerId`
+			AND `p`.`PlayerId` IN (". implode(',', $onlinelist) .")
+			GROUP BY `p`.`PlayerId`;
 			";
 
-			$result = $aseco->mysqli->query($query);
+			$result = $aseco->db->query($query);
 			if ($result) {
 				if ($result->num_rows > 0) {
 					while ($row = $result->fetch_object()) {
@@ -651,22 +479,6 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $data) {
-
-		$this->record_defaults = array(
-			'pd'	=> ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']),
-			'local'	=> ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']),
-			'dedi'	=> ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']),
-			'mx'	=> ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $this->placeholder['score'] : $this->placeholder['time']),
-		);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onBeginMap ($aseco, $data) {
 
 		$this->statspanels_off($aseco);
@@ -682,53 +494,25 @@ class PluginPanels extends Plugin {
 
 		// Set default window style, panels & background
 		$player->panels['admin'] = $this->replacePanelBG($this->panels['admin'], $this->panelbg);
-		$player->panels['records'] = $this->replacePanelBG($this->panels['records'], $this->panelbg);
 		$player->panels['vote'] = $this->replacePanelBG($this->panels['vote'], $this->panelbg);
 		$player->panelbg = $this->panelbg;
 
-
-		// Check for player's extra data
-		$query = "
-		SELECT
-			`PlayerId`
-		FROM `players_extra`
-		WHERE `PlayerId` = ". $player->id .";
-		";
-
-		$result = $aseco->mysqli->query($query);
-		if ($result) {
-			// Was retrieved
-			if ($result->num_rows > 0) {
-				$result->free_result();
-			}
-			else {
-				// Could not be retrieved
-				$result->free_result();
-
-				// Update default Player data
-				$panels = implode('/', array(
-					$this->settings['admin_panel'],
-					'',
-					$this->settings['records_panel'],
-					$this->settings['vote_panel']
-				));
-				$query = "
-				UPDATE `players_extra`
-				SET
-					`Panels` = ". $aseco->mysqli->quote($panels) .",
-					`PanelBG` = ". $aseco->mysqli->quote($this->settings['panel_bg']) ."
-				WHERE `PlayerId`= ". $aseco->mysqli->quote($player->id) .";
-				";
-				$result = $aseco->mysqli->query($query);
-				if (!$result) {
-					trigger_error('[Panels] Could not update connecting player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-				}
-			}
-		}
-
-
 		$this->init_playerpanels($aseco, $player);
 		$this->load_admpanel($aseco, $player);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerDisconnectPrepare ($aseco, $player) {
+
+		$panels = $this->getPanels($player->login);
+		$settings = $player->getSettings($this);
+		$settings['Panels'] = $panels['admin'] .'///'. $panels['vote'];
+		$player->setSettings($this, $settings);
 	}
 
 	/*
@@ -810,18 +594,6 @@ class PluginPanels extends Plugin {
 			}
 			else {
 				$player->panels['admin'] = '';
-			}
-
-			if ($panels['records'] != '') {
-				$panel_file = 'config/panels/' . $panels['records'] . '.xml';
-				if (!$player->panels['records'] = @file_get_contents($panel_file)) {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read records panel file ['. $panel_file .']!', E_USER_WARNING);
-				}
-				$player->panels['records'] = $this->replacePanelBG($player->panels['records'], $player->panelbg);
-			}
-			else {
-				$player->panels['records'] = '';
 			}
 
 			if ($panels['vote'] != '') {
@@ -1016,33 +788,25 @@ class PluginPanels extends Plugin {
 		global $aseco;
 
 		// Get panels from player
-		$query = "
-		SELECT
-			`Panels`
-		FROM `players_extra`
-		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
-		";
-
-		$result = $aseco->mysqli->query($query);
-		if ($result) {
-			$dbextra = $result->fetch_object();
-			$result->free_result();
-
-			if ($dbextra->Panels != '') {
-				$panel = explode('/', $dbextra->Panels);
-				$panels = array();
-				$panels['admin'] = $panel[0];
-				$panels['records'] = $panel[2];
-				$panels['vote'] = $panel[3];
-				return $panels;
-			}
-			else {
-				return false;
-			}
+		$player = $aseco->server->players->getPlayer($login);
+		$settings = $player->getSettings($this);
+		if (isset($settings['Panels'])) {
+			$panel = explode('/', $settings['Panels']);
+			$panels = array();
+			$panels['admin'] = $panel[0];
+			$panels['vote'] = $panel[3];
+			return $panels;
 		}
 		else {
-			trigger_error('[LocalRecords] Could not get player\'s panels! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-			return false;
+			// Setup defaults
+			$panels = array();
+			$panels['admin'] = $this->settings['admin_panel'];
+			$panels['vote'] = $this->settings['vote_panel'];
+
+			$this->setPanel($login, 'admin', $panels['admin']);
+			$this->setPanel($login, 'vote', $panels['vote']);
+
+			return $panels;
 		}
 	}
 
@@ -1055,19 +819,17 @@ class PluginPanels extends Plugin {
 	public function setPanel ($login, $type, $panel) {
 		global $aseco;
 
-		// Update player's panels
+		// Update Player's panels
 		$panels = $this->getPanels($login);
 		$panels[$type] = $panel;
 
-		$query = "
-		UPDATE `players_extra` SET
-			`Panels` = ". $aseco->mysqli->quote($panels['admin'] .'//'. $panels['records'] .'/'. $panels['vote']) ."
-		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
-		";
+		$player = $aseco->server->players->getPlayer($login);
+		$settings = $player->getSettings($this);
+		$settings['Panels'] = $panels['admin'] .'///'. $panels['vote'];
 
-		$result = $aseco->mysqli->query($query);
+		$result = $player->setSettings($this, $settings);
 		if (!$result) {
-			trigger_error('[LocalRecords] Could not update player\'s panels! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[Panels] Could not update player\'s panels!', E_USER_WARNING);
 		}
 	}
 
@@ -1080,23 +842,15 @@ class PluginPanels extends Plugin {
 	public function getPanelBG ($login) {
 		global $aseco;
 
-		// Get player's panel background
-		$query = "
-		SELECT
-			`PanelBG`
-		FROM `players_extra`
-		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
-		";
-
-		$result = $aseco->mysqli->query($query);
-		if ($result) {
-			$dbextra = $result->fetch_object();
-			$result->free_result();
-			return $dbextra->PanelBG;
+		$player = $aseco->server->players->getPlayer($login);
+		$settings = $player->getSettings($this);
+		if (isset($settings['PanelBG'])) {
+			return $settings['PanelBG'];
 		}
 		else {
-			trigger_error('[LocalRecords] Could not get player\'s panel background! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-			return false;
+			// Setup defaults
+			$this->setPanelBG($login, 'PanelBGCard');
+			return 'PanelBGCard';
 		}
 	}
 
@@ -1110,15 +864,13 @@ class PluginPanels extends Plugin {
 		global $aseco;
 
 		// update player's panel background
-		$query = "
-		UPDATE `players_extra` SET
-			`PanelBG` = ". $aseco->mysqli->quote($panelbg) ."
-		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
-		";
+		$player = $aseco->server->players->getPlayer($login);
+		$settings = $player->getSettings($this);
+		$settings['PanelBG'] = $panelbg;
 
-		$result = $aseco->mysqli->query($query);
+		$result = $player->setSettings($this, $settings);
 		if (!$result) {
-			trigger_error('[LocalRecords] Could not update panel background for Player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[Panels] Could not update panel background for Player!', E_USER_WARNING);
 		}
 	}
 
@@ -1167,23 +919,6 @@ class PluginPanels extends Plugin {
 	public function adminpanel_off ($aseco, $login) {
 
 		$xml = '<manialink id="UASECO-3"></manialink>';
-		$aseco->addManialink($xml, $login, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Disables a Records panel
-	 *
-	 * $login: player login to disable panel for
-	 */
-	public function recpanel_off ($aseco, $login) {
-
-		$xml = '<manialink id="UASECO-4"></manialink>';
 		$aseco->addManialink($xml, $login, 0, false);
 	}
 

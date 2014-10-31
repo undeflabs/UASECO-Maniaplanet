@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-11
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -2220,8 +2220,15 @@ class PluginChatAdmin extends Plugin {
 					$admin->nickname,
 					$name
 				);
-				if ($command['params'][0] == 'erasethis' && is_file($filename)) {
-					if (unlink($filename)) {
+				if ($command['params'][0] == 'erasethis') {
+					if (is_file($filename) && unlink($filename)) {
+						$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}erases current map: {#highlite}{3}',
+							$chattitle,
+							$admin->nickname,
+							$name
+						);
+					}
+					else if (is_file($aseco->stripBOM($filename)) && unlink($aseco->stripBOM($filename))) {
 						$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}erases current map: {#highlite}{3}',
 							$chattitle,
 							$admin->nickname,
@@ -3068,10 +3075,10 @@ class PluginChatAdmin extends Plugin {
 
 					if ($map->id > 0) {
 						// delete the records and rs_times
-						$query = 'DELETE FROM `records` WHERE `MapId` = '. $map->id .';';
-						$aseco->mysqli->query($query);
-						$query = 'DELETE FROM `rs_times` WHERE `MapId` = '. $map->id .';';
-						$aseco->mysqli->query($query);
+						$query = 'DELETE FROM `%prefix%records` WHERE `MapId` = '. $map->id .';';
+						$aseco->db->query($query);
+						$query = 'DELETE FROM `%prefix%times` WHERE `MapId` = '. $map->id .';';
+						$aseco->db->query($query);
 
 						// log console message
 						$aseco->console('[Admin] {1} [{2}] pruned records/times for map {3} !', $logtitle, $login, $aseco->stripColors($name, false));
@@ -4809,9 +4816,9 @@ class PluginChatAdmin extends Plugin {
 				// on relay, check for player from master server
 				if (!$aseco->server->isrelay || floor($pl['Flags'] / 10000) % 10 == 0) {
 					$onlinelist[$pl['Login']] = array(
-						'login' => $pl['Login'],
-						'nick' => $pl['NickName'],
-						'spec' => $pl['SpectatorStatus']
+						'login'	=> $pl['Login'],
+						'nick'	=> $pl['NickName'],
+						'spec'	=> $pl['SpectatorStatus']
 					);
 				}
 			}
@@ -4826,13 +4833,13 @@ class PluginChatAdmin extends Plugin {
 				$query = "
 				SELECT
 					`Login`,
-					`NickName`
-				FROM `players`
-				WHERE `Login` LIKE ". $aseco->mysqli->quote('%'. $arglist[1] .'%') ."
-				OR `NickName` LIKE ". $aseco->mysqli->quote('%'. $arglist[1] .'%') ."
+					`Nickname`
+				FROM `%prefix%players`
+				WHERE `Login` LIKE ". $aseco->db->quote('%'. $arglist[1] .'%') ."
+				OR `Nickname` LIKE ". $aseco->db->quote('%'. $arglist[1] .'%') ."
 				LIMIT 5000;
 				";
-				$result = $aseco->mysqli->query($query);
+				$result = $aseco->db->query($query);
 				if ($result) {
 					if ($result->num_rows > 0) {
 						while ($row = $result->fetch_row()) {

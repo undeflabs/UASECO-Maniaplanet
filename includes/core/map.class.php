@@ -114,15 +114,14 @@ class Map {
 
 			$this->author_nickname	= trim($gbx->authorNick);
 			if  (empty($this->author_zone) && $this->author == 'Nadeo') {
-				$this->author_zone	= 'Europe|France|Île-de-France|Paris';
+				$this->author_zone	= array('Europe', 'France', 'Île-de-France', 'Paris');
 				$this->author_continent	= 'Europe';
 				$this->author_nation	= 'FRA';
 			}
 			else {
-				$this->author_zone = substr($gbx->authorZone, 6);			// strip 'World|';
-				$zones = explode('|', $this->author_zone);
-				if (isset($zones[0])) {
-					switch ($zones[0]) {
+				$this->author_zone = explode('|', substr($gbx->authorZone, 6));		// strip 'World|' and split into array()
+				if (isset($this->author_zone[0])) {
+					switch ($this->author_zone[0]) {
 						case 'Europe':
 						case 'Africa':
 						case 'Asia':
@@ -130,12 +129,12 @@ class Map {
 						case 'North America':
 						case 'South America':
 						case 'Oceania':
-							$this->author_continent = $zones[0];
-							$this->author_nation = $aseco->country->countryToIoc($zones[1]);
+							$this->author_continent = $this->author_zone[0];
+							$this->author_nation = $aseco->country->countryToIoc($this->author_zone[1]);
 							break;
 						default:
 							$this->author_continent = '';
-							$this->author_nation = $aseco->country->countryToIoc($zones[0]);
+							$this->author_nation = $aseco->country->countryToIoc($this->author_zone[0]);
 					}
 				}
 				else {
@@ -185,7 +184,7 @@ class Map {
 
 			$this->author		= 'Unknown';
 			$this->author_nickname	= 'Unknown';
-			$this->author_zone	= '';
+			$this->author_zone	= array();
 			$this->author_continent	= '';
 			$this->author_nation	= 'OTH';
 

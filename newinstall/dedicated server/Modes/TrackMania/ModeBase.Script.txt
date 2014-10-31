@@ -4,7 +4,7 @@
 
 #RequireContext CTmMode
 
-#Const	ModeBaseVersion		"2014-09-16"
+#Const	ModeBaseVersion		"2014-10-16"
 #Const	ModeBaseScriptName	"ModeBase.Script.txt"
 
 #Include "Libs/Nadeo/Mode.Script.txt" as Mode
@@ -472,6 +472,8 @@ Void MB_Ladder_CancelMatch() {
 // Main // Server start
 // ---------------------------------- //
 main() {
+	XmlRpc::Load();
+	
 	MB_CurrentSection = "StartServer";
 	
 	// Display the version of each script used in the game mode
@@ -505,8 +507,9 @@ main() {
 	WarmUp::Load();
 	ST2::Load();
 	+++InitServer+++
+	XmlRpc::BeginServer();
 	+++StartServer+++
-	XmlRpc::Load();
+	XmlRpc::BeginServerStop();
 	Clublink::Load(MB_UsePlayerClublinks);
 	
 // ---------------------------------- //
@@ -533,6 +536,7 @@ main() {
 		XmlRpc::BeginMatch(MB_SectionMatchNb, MB_MapRestarted);
 		
 		+++StartMatch+++
+		XmlRpc::BeginMatchStop(MB_SectionMatchNb, MB_MapRestarted);
 		Clublink::Update();
 		
 // ---------------------------------- //
@@ -578,6 +582,7 @@ main() {
 			MB_Synchro_DoBarrier();
 			
 			+++StartMap+++
+			XmlRpc::BeginMapStop(MB_SectionMapNb, MB_MapRestarted);
 			Clublink::Update();
 			MB_MapRestarted = True;
 			
@@ -604,6 +609,7 @@ main() {
 					
 					XmlRpc::BeginSubmatch(MB_SectionSubmatchNb);
 					+++StartSubmatch+++
+					XmlRpc::BeginSubmatchStop(MB_SectionSubmatchNb);
 				}
 				MB_SectionRoundNb = 0;
 				Clublink::Update();
@@ -632,6 +638,7 @@ main() {
 						
 						XmlRpc::BeginRound(MB_SectionRoundNb);
 						+++StartRound+++
+						XmlRpc::BeginRoundStop(MB_SectionRoundNb);
 						Clublink::Update();
 					}
 					MB_SectionTurnNb = 0;
@@ -661,6 +668,7 @@ main() {
 							
 							XmlRpc::BeginTurn(MB_SectionTurnNb);
 							+++StartTurn+++
+							XmlRpc::BeginTurnStop(MB_SectionTurnNb);
 							Clublink::Update();
 						}
 						
@@ -714,6 +722,7 @@ main() {
 							
 							XmlRpc::EndTurn(MB_SectionTurnNb);
 							+++EndTurn+++
+							XmlRpc::EndTurnStop(MB_SectionTurnNb);
 						}
 					}
 // ---------------------------------- //
@@ -729,6 +738,7 @@ main() {
 						
 						XmlRpc::EndRound(MB_SectionRoundNb);
 						+++EndRound+++
+						XmlRpc::EndRoundStop(MB_SectionRoundNb);
 					}
 				}
 // ---------------------------------- //
@@ -743,6 +753,7 @@ main() {
 					
 					XmlRpc::EndSubmatch(MB_SectionSubmatchNb);
 					+++EndSubmatch+++
+					XmlRpc::EndSubmatchStop(MB_SectionSubmatchNb);
 				}
 			}
 // ---------------------------------- //
@@ -769,6 +780,7 @@ main() {
 			MB_UnloadMap();
 			
 			+++AfterUnloadMap+++
+			XmlRpc::EndMapStop(MB_SectionMapNb);
 		}
 // ---------------------------------- //
 // Match end
@@ -781,6 +793,7 @@ main() {
 		XmlRpc::EndMatch(MB_SectionMatchNb);
 		+++EndMatch+++
 		MB_MapRestarted = False;
+		XmlRpc::EndMatchStop(MB_SectionMatchNb);
 	}
 // ---------------------------------- //
 // Server end
@@ -791,10 +804,12 @@ main() {
 	if (MB_UseLogging) MB_Log("EndServer");
 	
 	Clublink::Unload();
-	XmlRpc::Unload();
+	XmlRpc::EndServer();
 	+++EndServer+++
 	ST2::Unload();
 	TM2::Unload();
 	WarmUp::Unload();
 	UI::Unload();
+	XmlRpc::EndServerStop();
+	XmlRpc::Unload();
 }

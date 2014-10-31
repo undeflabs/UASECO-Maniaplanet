@@ -30,7 +30,7 @@
 		<checkpoint_list>
 			<visible>true</visible>
 			<position>
-				<x>30.0</x>
+				<x>23.0</x>
 				<y>-90.0</y>
 				<z>5.0</z>
 			</position>
@@ -50,8 +50,8 @@
 		<countdown>
 			<visible>true</visible>
 			<position>
-				<x>154.0</x>
-				<y>-62.0</y>
+				<x>105.0</x>
+				<y>-76.5</y>
 				<z>5.0</z>
 			</position>
 		</countdown>
@@ -65,8 +65,8 @@
 		<chrono>
 			<visible>true</visible>
 			<position>
-				<x>0.0</x>
-				<y>-80.0</y>
+				<x>97.3</x>
+				<y>-80.5</y>
 				<z>5.0</z>
 			</position>
 		</chrono>
@@ -147,7 +147,7 @@
 		<!-- Settings for TimeAttack.Script.txt -->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
-			<time_limit>300</time_limit>
+			<time_limit>1200</time_limit>
 		</timeattack>
 
 

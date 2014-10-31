@@ -92,9 +92,9 @@
 	<style>
 		<!-- Styles used for the Widgets at Race -->
 		<widget_race>
-			<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
-			<background_color>5565</background_color>
-			<background_focus>5568</background_focus>
+			<!-- Background-Color, Format: RRGGBBAA (A = Alphachanal, Opacity) -->
+			<background_default>55556655</background_default>
+			<background_focus>55556688</background_focus>
 
 			<background_style>Bgs1</background_style>
 			<background_substyle>BgEmpty</background_substyle>
@@ -103,46 +103,46 @@
 			<border_substyle>BgEmpty</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', or 'BgList' are useful) -->
 
 			<!-- If <title_background> is not empty then the style/substyle are ignored -->
-			<title_background>09FD</title_background>
+			<title_background>0099FFDD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 
 			<!-- Style for the top X players entries in the records Widgets, if <top_background> is not empty then the style/substyle are ignored -->
-			<top_background>5579</top_background>
+			<top_background>55557799</top_background>
 			<top_style>BgsPlayerCard</top_style>
 			<top_substyle>BgCardSystem</top_substyle>
 
 			<!-- Style for the highlite entries in the records Widgets, if <highlite_self_background> is not empty then the style/substyle are ignored -->
-			<highlite_self_background>6807</highlite_self_background>
+			<highlite_self_background>66880077</highlite_self_background>
 			<highlite_self_style>BgsPlayerCard</highlite_self_style>
 			<highlite_self_substyle>BgCardSystem</highlite_self_substyle>
 
 			<!-- Style for the highlite entries in the records Widgets, if <highlite_other_background> is not empty then the style/substyle are ignored -->
-			<highlite_other_background>8005</highlite_other_background>
+			<highlite_other_background>88000055</highlite_other_background>
 			<highlite_other_style>BgsPlayerCard</highlite_other_style>
 			<highlite_other_substyle>BgCardSystem</highlite_other_substyle>
 
 			<!-- Style for the entries at Rounds (+25) or Laps (time) in the records Widgets, if <highlite_common_background> is not empty then the style/substyle are ignored -->
-			<highlite_common_background>2238</highlite_common_background>
+			<highlite_common_background>22223388</highlite_common_background>
 			<highlite_common_style>BgsPlayerCard</highlite_common_style>
 			<highlite_common_substyle>ProgressBar</highlite_common_substyle>
 
 			<!-- Here you can set all possible Formating-Codes of TM, but do not enter colors here! -->
 			<formatting_codes></formatting_codes>
 
-			<!-- Textcolor (NO formating Codes!); Format: RGBA (A = Alphachanal, Opacity) -->
+			<!-- Textcolor (NO formating Codes!); Format: RRGGBBAA (A = Alphachanal, Opacity) -->
 			<colors>
-				<default>FFFF</default>
-				<scores>DDDF</scores>
-				<top>FF0F</top>
-				<better>F00F</better>
-				<worse>CCCF</worse>
-				<self>3F5F</self>
+				<default>FFFFFFFF</default>
+				<scores>DDDDDDFF</scores>
+				<top>FFFF00FF</top>
+				<better>FF0000FF</better>
+				<worse>CCCCCCFF</worse>
+				<self>33FF55FF</self>
 
-				<!-- Highlite the Ranks, Score and Player, if unwished set to '0000' -->
-				<background_rank>FFF0</background_rank>
-				<background_score>FFF0</background_score>
-				<background_name>FFF0</background_name>
+				<!-- Highlite the Ranks, Score and Player, if unwished set to '00000000' -->
+				<background_rank>00000000</background_rank>
+				<background_score>00000000</background_score>
+				<background_name>00000000</background_name>
 			</colors>
 		</widget_race>
 
@@ -150,35 +150,35 @@
 		<!-- Styles used for the Widgets at Scoretable -->
 		<widget_score>
 			<!-- If <background_color> is not empty then the style/substyle are ignored -->
-			<background_color>223B</background_color>
+			<background_color>222233BB</background_color>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 
 			<!-- If <title_background> is not empty then the style/substyle are ignored -->
-			<title_background>09FD</title_background>
+			<title_background>0099FFDD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 
 			<!-- Here you can set all possible Formating-Codes of TM, but do not enter colors here! -->
 			<formatting_codes></formatting_codes>
 
-			<!-- Textcolor (NO formating Codes!); Format: RGBA (A = Alphachanal, Opacity) -->
+			<!-- Textcolor (NO formating Codes!); Format: RRGGBBAA (A = Alphachanal, Opacity) -->
 			<colors>
-				<default>FFFF</default>
-				<scores>DDDF</scores>
+				<default>FFFFFFFF</default>
+				<scores>DDDDDDFF</scores>
 			</colors>
 		</widget_score>
 
 
-		<!-- Here you can adjust the colors of all the Windows; Format: RGBA (A = Alphachanal, Opacity) -->
+		<!-- Here you can adjust the colors of all the Windows; Format: RRGGBBAA (A = Alphachanal, Opacity) -->
 		<window>
-			<headline_textcolor>09FF</headline_textcolor>
+			<headline_textcolor>0099FFFF</headline_textcolor>
 
 			<background_style>Bgs1InRace</background_style>
 			<background_substyle>BgTitle2</background_substyle>
 
-			<!-- Background-Color for the Content inside the Window; Format: RGBA (A = Alphachanal, Opacity) -->
-			<content_bgcolor>0018</content_bgcolor>
+			<!-- Background-Color for the Content inside the Window; Format: RRGGBBAA (A = Alphachanal, Opacity) -->
+			<content_bgcolor>00001188</content_bgcolor>
 
 			<title_style>Bgs1InRace</title_style>
 			<title_substyle>BgTitle3_3</title_substyle>
@@ -186,7 +186,7 @@
 			<!-- This obscure all other displays -->
 			<lightbox>
 				<enabled>false</enabled>
-				<bgcolor>0008</bgcolor>
+				<bgcolor>00000088</bgcolor>
 			</lightbox>
 		</window>
 	</style>
@@ -271,12 +271,13 @@
 	<!-- Displays the current Checkpoint count, useful for RPG-Server. -->
 	<checkpointcount_widget>
 		<enabled>true</enabled>
-		<text_color>DDEF</text_color>
+		<text_color>DDDDEEFF</text_color>
 
-		<pos_x>-7.9</pos_x>
-		<pos_y>-34.1</pos_y>
+		<pos_x>-8.5</pos_x>
+		<pos_y>-39.7</pos_y>
 		<scale>1.0</scale>
 
+		<background_color>55556699</background_color>
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>BgCardSystem</background_substyle>
 	</checkpointcount_widget>
@@ -608,17 +609,17 @@
 
 		<widget>
 			<title>Finish Winners</title>
-			<pos_x>25.8</pos_x>
+			<pos_x>9.5</pos_x>
 			<pos_y>-38.3</pos_y>
 			<scale>1.0</scale>
 
 			<!-- If <background_color> is not empty then the style/substyle are ignored -->
-			<background_color>223B</background_color>
+			<background_color>222233BB</background_color>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 
 			<!-- If <title_background> is not empty then the style/substyle are ignored -->
-			<title_background>09FD</title_background>
+			<title_background>0099FFDD</title_background>
 			<title_style>BgsPlayerCard</title_style>
 			<title_substyle>BgRacePlayerName</title_substyle>
 
@@ -626,12 +627,12 @@
 			<icon_substyle>Fame</icon_substyle>
 		</widget>
 
-		<!-- Format: RGBA (A = Alphachanal, Opacity) -->
+		<!-- Format: RRGGBBAA (A = Alphachanal, Opacity) -->
 		<colors>
-			<won>5F0F</won>
-			<planets>FF9F</planets>
-			<rank_limit>F00F</rank_limit>
-			<disconnected>F00F</disconnected>
+			<won>55FF00FF</won>
+			<planets>FFFF99FF</planets>
+			<rank_limit>FF0000FF</rank_limit>
+			<disconnected>FF0000FF</disconnected>
 		</colors>
 	</winning_payout>
 
@@ -639,7 +640,7 @@
 	<!-- Displays the DonationWidget at Score (only) -->
 	<donation_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<!-- Adjust here the wished amounts of Planets the Players can donate (min. 7 and max. 10 values, seperated by ",")
 		     NOTE: Only the first 7 values are setup to the original Donation-Widget!
@@ -663,8 +664,8 @@
 			<button_style>UIConstructionSimple_Buttons</button_style>
 			<button_substyle>Item</button_substyle>
 
-			<!-- Format: RGBA (A = Alphachanal, Opacity) -->
-			<button_color>000F</button_color>
+			<!-- Format: RRGGBBAA (A = Alphachanal, Opacity) -->
+			<button_color>000000FF</button_color>
 		</widget>
 	</donation_widget>
 
@@ -672,7 +673,7 @@
 	<!-- Displays the current LadderLimits like "40-80k" -->
 	<ladderlimit_widget>
 		<enabled>false</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<!--
                      If your Server is an RoC-Ladder (Races of Champions), then you have to set this to 'true',
@@ -693,7 +694,7 @@
 	<!-- Displays the current Gamemode -->
 	<gamemode_widget>
 		<enabled>false</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>-59.05</pos_x>
 		<pos_y>43.3</pos_y>
@@ -707,7 +708,7 @@
 	<!-- Displays the current Player- and Spectator-Count and also the max. values of them -->
 	<player_spectator_widget>
 		<enabled>false</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>-54.25</pos_x>
 		<pos_y>43.3</pos_y>
@@ -721,7 +722,7 @@
 	<!-- Displays the current Rankings -->
 	<current_ranking_widget>
 		<enabled>false</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>-49.45</pos_x>
 		<pos_y>43.3</pos_y>
@@ -735,11 +736,14 @@
 	<!-- Displays a button for ManiaExchange -->
 	<maniaexchange_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>24.58</pos_x>
 		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+		<background_focus>004B7D99</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -749,11 +753,14 @@
 	<!-- Displays a button for the Toplists at score into the Race with the 'MORE RANKING'-Button -->
 	<toplist_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>29.38</pos_x>
 		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+		<background_focus>004B7D99</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -763,11 +770,14 @@
 	<!-- Displays the current Mapcount -->
 	<mapcount_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>34.18</pos_x>
 		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+		<background_focus>004B7D99</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -777,11 +787,14 @@
 	<!-- Displays the Player-Visits -->
 	<visitors_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>38.98</pos_x>
 		<pos_y>43.3</pos_y>
 		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+		<background_focus>004B7D99</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -791,7 +804,7 @@
 	<!-- Just a clock where the Player can adjust her/his own timezone to display the localtime -->
 	<clock_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<race>
 			<pos_x>43.78</pos_x>
@@ -813,12 +826,14 @@
 	<!-- Displays the Add-To-Favorite -->
 	<favorite_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<race>
 			<pos_x>43.78</pos_x>
 			<pos_y>43.3</pos_y>
 			<scale>1.0</scale>
+			<background_default>55556699</background_default>
+			<background_focus>004B7D99</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</race>
@@ -826,6 +841,8 @@
 			<pos_x>-47.74</pos_x>
 			<pos_y>33.2</pos_y>
 			<scale>1.0</scale>
+			<background_default>222233BB</background_default>
+			<background_focus>004B7D99</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</score>
@@ -835,7 +852,7 @@
 	<!-- Displays the NEXT Environment at Score -->
 	<next_environment_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>-63.7</pos_x>
 		<pos_y>33.2</pos_y>
@@ -849,7 +866,7 @@
 	<!-- Displays the NEXT Gamemode at Score -->
 	<next_gamemode_widget>
 		<enabled>true</enabled>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<pos_x>-52.5</pos_x>
 		<pos_y>33.2</pos_y>
@@ -862,7 +879,7 @@
 
 	<!-- Displays the Eyepiece-Logo -->
 	<eyepiece_widget>
-		<text_color>FC0F</text_color>
+		<text_color>FFCC00FF</text_color>
 
 		<race>
 			<enabled>false</enabled>
@@ -1132,8 +1149,8 @@
 			<image>[empty|url]</image>
 			<imagefocus>[empty|url]</imagefocus>
 			<opacity>[unsigned float]</opacity>				working only in combination with <image> and <text>
-			<colorize>[RGB]</colorize>					working only in combination with <image>
-			<modulatecolor>[RGBA]</modulatecolor>				working only in combination with <image>
+			<colorize>[RRGGBB]</colorize>					working only in combination with <image>
+			<modulatecolor>[RRGGBBAA]</modulatecolor>			working only in combination with <image>
 			<url>[empty|url]</url>
 			<manialink>[empty|manialink]</manialink>
 			<action_id>[signed/unsigned int]</action_id>			enter here an action id from other Plugins

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -170,13 +170,13 @@ class PluginRaspKarma extends Plugin {
 		if ($this->karma_require_finish > 0) {
 			$query = "
 			SELECT
-				`Id`
-			FROM `rs_times`
+				`MapId`
+			FROM `%prefix%times`
 			WHERE `PlayerId` = ". $caller->id ."
 			AND `MapId` = ". $aseco->server->maps->current->id .";
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				// check whether player finished required number of times
 				if ($res->num_rows < $this->karma_require_finish) {
@@ -197,14 +197,14 @@ class PluginRaspKarma extends Plugin {
 		$chat_parameter = '';  // clear sneaky params before chat_karma()
 		$query = "
 		SELECT
-			`Id`,
+			`MapId`,
 			`Score`
-		FROM `rs_karma`
+		FROM `%prefix%karmas`
 		WHERE `PlayerId` = ". $caller->id ."
 		AND `MapId` = ". $aseco->server->maps->current->id .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res->num_rows > 0) {
 			$row = $res->fetch_object();
 			if ($row->Score == $vote) {
@@ -213,12 +213,13 @@ class PluginRaspKarma extends Plugin {
 			}
 			else {
 				$query2 = "
-				UPDATE `rs_karma` SET
+				UPDATE `%prefix%karmas` SET
 					`Score` = ". $vote ."
-				WHERE `Id` = ". $row->Id .";
+				WHERE `MapId` = ". $row->MapId ."
+				AND `PlayerId` = ". $caller->id .";
 				";
-				$aseco->mysqli->query($query2);
-				if ($aseco->mysqli->affected_rows === -1) {
+				$aseco->db->query($query2);
+				if ($aseco->db->affected_rows === -1) {
 					$message = $this->messages['KARMA_FAIL'][0];
 					$aseco->sendChatMessage($message, $caller->login);
 				}
@@ -232,7 +233,7 @@ class PluginRaspKarma extends Plugin {
 		}
 		else {
 			$query2 = "
-			INSERT INTO `rs_karma` (
+			INSERT INTO `%prefix%karmas` (
 				`Score`,
 				`PlayerId`,
 				`MapId`
@@ -243,8 +244,8 @@ class PluginRaspKarma extends Plugin {
 				". $aseco->server->maps->current->id ."
 			);
 			";
-			$aseco->mysqli->query($query2);
-			if ($aseco->mysqli->affected_rows === -1) {
+			$aseco->db->query($query2);
+			if ($aseco->db->affected_rows === -1) {
 				$message = $this->messages['KARMA_FAIL'][0];
 				$aseco->sendChatMessage($message, $caller->login);
 			}
@@ -327,14 +328,14 @@ class PluginRaspKarma extends Plugin {
 		// check whether player already voted
 		$query = "
 		SELECT
-			`Id`,
+			`MapId`,
 			`Score`
-		FROM `rs_karma`
+		FROM `%prefix%karmas`
 		WHERE `PlayerId` = ". $finish_item->player->id ."
 		AND `MapId` = ". $aseco->server->maps->current->id .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res->num_rows == 0) {
 			// show reminder message
 			$message = $this->messages['KARMA_REMIND'][0];
@@ -363,14 +364,14 @@ class PluginRaspKarma extends Plugin {
 				// check whether player already voted
 				$query = "
 				SELECT
-					`Id`,
+					`MapId`,
 					`Score`
-				FROM `rs_karma`
+				FROM `%prefix%karmas`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id .";
 				";
 
-				$res = $aseco->mysqli->query($query);
+				$res = $aseco->db->query($query);
 				if ($res->num_rows == 0) {
 					// show reminder message
 					$message = $this->messages['KARMA_REMIND'][0];
@@ -395,11 +396,11 @@ class PluginRaspKarma extends Plugin {
 		SELECT
 			SUM(`Score`) AS `Karma`,
 			COUNT(`Score`) AS `Total`
-		FROM `rs_karma`
+		FROM `%prefix%karmas`
 		WHERE `MapId` = ". $mapid .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res->num_rows == 1) {
 			$row = $res->fetch_object();
 			$karma = $row->Karma;
@@ -413,23 +414,23 @@ class PluginRaspKarma extends Plugin {
 				(
 					SELECT
 						COUNT(*)
-					FROM `rs_karma`
+					FROM `%prefix%karmas`
 					WHERE `Score` > 0
 					AND `MapId` = `karma`.`MapId`
 				) AS `Plus`,
 				(
 					SELECT
 						COUNT(*)
-					FROM `rs_karma`
+					FROM `%prefix%karmas`
 					WHERE `Score` < 0
 					AND `MapId` = `karma`.`MapId`
 				) AS `Minus`
-				FROM `rs_karma` AS `karma`
+				FROM `%prefix%karmas` AS `karma`
 				WHERE `MapId` =". $mapid ."
 				GROUP BY `MapId`;
 				";
 
-				$res2 = $aseco->mysqli->query($query2);
+				$res2 = $aseco->db->query($query2);
 				if ($res2->num_rows == 1) {
 					$row2 = $res2->fetch_object();
 					$plus = $row2->Plus;
@@ -507,12 +508,12 @@ class PluginRaspKarma extends Plugin {
 				$query3 = "
 				SELECT
 					`Score`
-				FROM `rs_karma`
+				FROM `%prefix%karmas`
 				WHERE `PlayerId` = ". $playerid ."
 				AND `MapId` =". $mapid .";
 				";
 
-				$res3 = $aseco->mysqli->query($query3);
+				$res3 = $aseco->db->query($query3);
 				if ($res3->num_rows > 0) {
 					$row3 = $res3->fetch_object();
 					if ($row3->Score == 1) {

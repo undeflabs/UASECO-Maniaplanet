@@ -4,7 +4,7 @@
 
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const	RoundsBaseVersion		"2014-09-25"
+#Const	RoundsBaseVersion		"2014-10-15"
 #Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
 
 // ---------------------------------- //
@@ -39,6 +39,12 @@ MB_PointsRepartition = C_PointsRepartition;
 
 UI::LoadModules(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime", "SpeedAndDistance", "Countdown"]);
 UI::DisplayTimeDiff(S_DisplayTimeDiff);
+
+XmlRpc::RegisterCallback("Rounds_PointsRepartition", """
+* Data : An array of text containing the current points repartition.
+* Example : ["10", "6", "4", "3", "2", "1"]
+* Note : This callback is sent when you use the Rounds_GetPointsRepartition method
+""");
 ***
 
 ***InitMap***
@@ -135,7 +141,7 @@ foreach (Event in XmlRpc.PendingEvents) {
 		foreach (Point in MB_PointsRepartition) {
 			PointsRepartition.add(TL::ToText(Point));
 		}
-		XmlRpc.SendCallbackArray("Rounds_PointsRepartition", PointsRepartition);
+		if (XmlRpc::CallbackIsAllowed("Rounds_PointsRepartition")) XmlRpc::SendCallbackArray("Rounds_PointsRepartition", PointsRepartition);
 	}
 }
 ***
@@ -162,6 +168,11 @@ if (Players.count > 0 && PlayersRacing.count <= 0) MB_StopRound = True;
 if (CutOffTimeLimit > 0 && Now >= CutOffTimeLimit) MB_StopRound = True;
 // If forced end round
 if (ForceEndRound) MB_StopRound = True;
+***
+
+***EndServer***
+***
+XmlRpc::UnregisterCallback("Rounds_PointsRepartition");
 ***
 
 // ---------------------------------- //

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-08-18
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -39,7 +39,11 @@
 */
 
 class Database extends mysqli {
+	public $debug		= false;
+	public $table_prefix	= 'uaseco_';
 
+	// $placeholder will be replaced with $this->table_prefix at each query
+	private $placeholder	= '%prefix%';
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -69,7 +73,9 @@ class Database extends mysqli {
 		if ( !$this->query('SET collation_connection = "'. $setup['collate'] .'";') ) {
 			trigger_error('[MySQL] Could not "SET collation_connection \''. $setup['collate'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
 		}
+
 		$this->debug = $setup['debug'];
+		$this->table_prefix = $setup['table_prefix'];
 	}
 
 	/*
@@ -88,7 +94,63 @@ class Database extends mysqli {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function query ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
+		return parent::query($sql);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function multi_query ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
+		return parent::multi_query($sql);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function real_query ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
+		return parent::real_query($sql);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function send_query ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
+		return parent::send_query($sql);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function prepare ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
+		return parent::prepare($sql);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function select_one ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
 		if ($res = $this->query($sql)) {
 			if ($res->num_rows > 0) {
 				$row = $res->fetch_array(MYSQLI_ASSOC);
@@ -115,6 +177,7 @@ class Database extends mysqli {
 	*/
 
 	public function select_all ($sql) {
+		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
 		if ($res = $this->query($sql)) {
 			if ($res->num_rows > 0) {
 				$data = array();
@@ -164,6 +227,7 @@ class Database extends mysqli {
 	*/
 
 	public function list_table_columns ($table) {
+		$table = str_replace($this->placeholder, $this->table_prefix, $table);
 		$fieldnames = array();
 		if ($result = $this->query("SHOW COLUMNS FROM `". $this->real_escape_string($table) ."`;")) {
 			if ($result->num_rows > 0) {
@@ -206,6 +270,37 @@ class Database extends mysqli {
 		if (get_class($this) == 'Database' && $this->stat() !== false) {
 			$this->close();
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function column_schema ($table) {
+
+		$table = str_replace($this->placeholder, $this->table_prefix, $table);
+		$schema = array();
+		$query = "
+		SELECT
+			`column_name`,
+			`data_type`,
+			`character_maximum_length`
+		FROM `information_schema`.`columns`
+		WHERE `table_name` = '". $this->real_escape_string($table) ."';
+		";
+
+		if ($result = $this->query($query)) {
+			if ($result->num_rows > 0) {
+				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+					$schema[$row['column_name']]['type']	= $row['data_type'];
+					$schema[$row['column_name']]['length']	= $row['character_maximum_length'];
+				}
+			}
+			$result->free_result();
+		}
+		return $schema;
 	}
 
 	/*

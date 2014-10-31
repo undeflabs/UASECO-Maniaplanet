@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -58,7 +58,6 @@ class Player {
 	public $isofficial;
 	public $isreferee;
 
-	public $teamname;
 	public $teamid;
 	public $allies;
 
@@ -77,16 +76,21 @@ class Player {
 	public $continent;
 	public $nation;
 
+	public $visits;
 	public $wins;
 	public $newwins;
+	public $donations;
 	public $timeplayed;
+	public $settings;
+
+	public $style;
+	public $panels;
+	public $panelbg;
+
 	public $unlocked;
 	public $pmbuf;
 	public $mutelist;
 	public $mutebuf;
-	public $style;
-	public $panels;
-	public $panelbg;
 	public $speclogin;
 	public $dedirank;
 
@@ -128,7 +132,6 @@ class Player {
 			$this->isofficial		= $data['IsInOfficialMode'];
 			$this->isreferee		= $data['IsReferee'];
 
-			$this->teamname			= $data['LadderStats']['TeamName'];
 			$this->teamid			= $data['TeamId'];
 			$this->allies			= $data['Allies'];
 
@@ -143,10 +146,9 @@ class Player {
 			$this->created			= time();
 
 			$this->zone_inscription		= $data['HoursSinceZoneInscription'];
-			$this->zone = explode('|', substr($data['Path'], 6));  // Strip 'World|' and split into array()
-			$zones = explode('|', $data['Path']);
-			if (isset($zones[1])) {
-				switch ($zones[1]) {
+			$this->zone			= explode('|', substr($data['Path'], 6));  // Strip 'World|' and split into array()
+			if (isset($this->zone[0])) {
+				switch ($this->zone[0]) {
 					case 'Europe':
 					case 'Africa':
 					case 'Asia':
@@ -154,12 +156,12 @@ class Player {
 					case 'North America':
 					case 'South America':
 					case 'Oceania':
-						$this->continent = $zones[1];
-						$this->nation = $aseco->country->countryToIoc($zones[2]);
+						$this->continent = $this->zone[0];
+						$this->nation = $aseco->country->countryToIoc($this->zone[1]);
 						break;
 					default:
 						$this->continent = '';
-						$this->nation = $aseco->country->countryToIoc($zones[1]);
+						$this->nation = $aseco->country->countryToIoc($this->zone[0]);
 				}
 			}
 			else {
@@ -186,7 +188,6 @@ class Player {
 			$this->isofficial		= false;
 			$this->isreferee		= false;
 
-			$this->teamname			= '';
 			$this->teamid			= -1;
 			$this->allies			= array();
 
@@ -199,13 +200,15 @@ class Player {
 			$this->client			= '';
 			$this->created			= 0;
 
-			$this->zone			= '';
+			$this->zone			= array();
 			$this->continent		= '';
 			$this->nation			= 'OTH';
 		}
 		$this->wins				= 0;
 		$this->newwins				= 0;
 		$this->timeplayed			= 0;
+		$this->donations			= 0;
+		$this->settings				= $this->getDatabasePlayerSettings();
 		$this->unlocked				= false;
 		$this->pmbuf				= array();
 		$this->mutelist				= array();
@@ -219,6 +222,98 @@ class Player {
 		$this->maplist				= array();
 		$this->playerlist			= array();
 		$this->msgs				= array();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setSettings ($caller, $settings) {
+		global $aseco;
+
+		if (isset($caller)) {
+			$classname = get_class($caller);
+			if ($classname) {
+				$this->settings[$classname] = $settings;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getSettings ($caller) {
+
+		if (isset($caller)) {
+			$classname = get_class($caller);
+			if ($classname && isset($this->settings[$classname])) {
+				return $this->settings[$classname];
+			}
+			else {
+				return false;
+			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getDatabasePlayerSettings () {
+		global $aseco;
+
+		$query = "
+		SELECT
+			`Settings`
+		FROM `%prefix%players`
+		WHERE `PlayerId` = ". $aseco->db->quote($this->id) ."
+		LIMIT 1;
+		";
+
+		$result = $aseco->db->select_one($query);
+		if ($result) {
+			return unserialize($result['Settings']);
+		}
+		else {
+			return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function storeDatabasePlayerSettings () {
+		global $aseco;
+
+		$query = "
+		UPDATE `%prefix%players`
+		SET
+			`Settings` = ". $aseco->db->quote(serialize($this->settings)) ."
+		WHERE `PlayerId` = ". $aseco->db->quote($this->id) ."
+		LIMIT 1;
+		";
+
+		$result = $aseco->db->query($query);
+		if ($result) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/*
@@ -270,13 +365,13 @@ class Player {
 		SELECT
 			`Uid`,
 			`PlayerId`
-		FROM `records` AS `r`
-		LEFT JOIN `maps` AS `m` ON `r`.`MapId` = `m`.`Id`
+		FROM `%prefix%records` AS `r`
+		LEFT JOIN `%prefix%maps` AS `m` ON `r`.`MapId` = `m`.`MapId`
 		WHERE `Uid` IS NOT NULL
 		ORDER BY `MapId` ASC, `Score` ". $order .", `Date` ASC;
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if ($result) {
 			if ($result->num_rows > 0) {
 				while ($row = $result->fetch_object()) {
@@ -301,66 +396,6 @@ class Player {
 		}
 		return $list;
 	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getCheckpointSettings () {
-		global $aseco;
-
-		// Setup defaults
-		$settings = array('cps' => -1, 'dedicps' => -1);
-
-		// Get CPs settings from player
-		$query = "
-		SELECT
-			`Cps`,
-			`DediCps`
-		FROM `players_extra`
-		WHERE `PlayerId` = ". $this->id .";
-		";
-
-		$res = $aseco->mysqli->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				$players_extra = $res->fetch_object();
-				$settings = array('localcps' => (int)$players_extra->Cps, 'dedicps' => (int)$players_extra->DediCps);
-			}
-			else {
-				trigger_error('[Player] Could not get checkpoint tracking settings for Player ['. $this->login .']! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-			}
-			$res->free_result();
-		}
-		return $settings;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function setCheckpointSettings ($localcps, $dedicps) {
-		global $aseco;
-
-		$query = "
-		UPDATE `players_extra` SET
-			`Cps` = ". $localcps .",
-			`DediCps` = ". $dedicps ."
-		WHERE `PlayerId` = ". $this->id .";
-		";
-
-		$result = $aseco->mysqli->query($query);
-		if (!$result) {
-			trigger_error('[Player] Could not set checkpoint tracking settings for Player ['. $this->login .']! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-			return false;
-		}
-		return true;
-	}
-
 }
 
 ?>

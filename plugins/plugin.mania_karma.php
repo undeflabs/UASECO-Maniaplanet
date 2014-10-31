@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-10-10
+ * Date:		2014-10-26
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -3367,22 +3367,23 @@ EOL;
 
 				$query = "
 				SELECT
-					`p`.`Login` AS `Login`,
-					`k`.`Id` AS `VoteId`
-				FROM `rs_karma` AS `k`
-				LEFT JOIN `players` AS `p` ON `p`.`Id`=`k`.`PlayerId`
+					`p`.`Login`,
+					`k`.`PlayerId`,
+					`k`.`MapId`
+				FROM `%prefix%karmas` AS `k`
+				LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`k`.`PlayerId`
 				WHERE `p`.`Login` IN (". implode(',', $logins) .")
 				AND `k`.`MapId`='". $this->karma['data']['id'] ."';
 				";
 
 				$updated = array();
-				$res = $aseco->mysqli->query($query);
+				$res = $aseco->db->query($query);
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
-							if ($row->VoteId > 0) {
-								$query2 = "UPDATE `rs_karma`SET `Score`='". $this->karma['new']['players'][$row->Login] ."' WHERE `Id`='". $row->VoteId ."';";
-								$result = $aseco->mysqli->query($query2);
+							if ($row->MapId > 0) {
+								$query2 = "UPDATE `%prefix%karmas`SET `Score`='". $this->karma['new']['players'][$row->Login] ."' WHERE `MapId`='". $row->MapId ."' AND `PlayerId`='". $row->PlayerId ."';";
+								$result = $aseco->db->query($query2);
 								if (!$result) {
 									$aseco->console('[ManiaKarma] Could not UPDATE karma vote for "'. $row->Login .'" [for statement "'. $query2 .'"]!');
 								}
@@ -3396,7 +3397,7 @@ EOL;
 				}
 
 				// INSERT all other Player they did not vote before
-				$query2 = "INSERT INTO `rs_karma` (`Score`, `PlayerId`, `MapId`) VALUES ";
+				$query2 = "INSERT INTO `%prefix%karmas` (`Score`, `PlayerId`, `MapId`) VALUES ";
 				$values = array();
 				foreach ($this->karma['new']['players'] as $login => $vote) {
 					if ( !isset($updated[$login]) ) {
@@ -3409,7 +3410,7 @@ EOL;
 				}
 
 				if (count($values) > 0) {
-					$result = $aseco->mysqli->query($query2 . implode(',', $values));
+					$result = $aseco->db->query($query2 . implode(',', $values));
 					if (!$result) {
 						$aseco->console('[ManiaKarma] Could not INSERT karma votes... [for statement "'. $query2 . implode(',', $values) .'"]!');
 					}
@@ -3808,14 +3809,14 @@ EOL;
 		$query = "
 		SELECT
 			`p`.`Login` AS `login`,
-			COUNT(`t`.`Id`) AS `count`
-		FROM `rs_times` AS `t`
-		LEFT JOIN `players` AS `p` ON `p`.`Id`=`t`.`PlayerId`
+			COUNT(`t`.`MapId`) AS `count`
+		FROM `%prefix%times` AS `t`
+		LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`t`.`PlayerId`
 		WHERE `t`.`PlayerId` IN (". implode(',', $player_ids) .")
 		AND `t`.`MapId`='". $map_id ."'
 		GROUP BY `p`.`Login`;
 		";
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 
 		if ($res) {
 			if ($res->num_rows > 0) {
@@ -3863,43 +3864,43 @@ EOL;
 			SELECT
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `rs_karma`
+			  FROM `%prefix%karmas`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='3'
 			) AS `FantasticCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `rs_karma`
+			  FROM `%prefix%karmas`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='2'
 			) AS `BeautifulCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `rs_karma`
+			  FROM `%prefix%karmas`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='1'
 			) AS `GoodCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `rs_karma`
+			  FROM `%prefix%karmas`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='-1'
 			) AS `BadCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `rs_karma`
+			  FROM `%prefix%karmas`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='-2'
 			) AS `PoorCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `rs_karma`
+			  FROM `%prefix%karmas`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='-3'
 			) AS `WasteCount`;
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$row = $res->fetch_object();
@@ -3952,13 +3953,13 @@ EOL;
 		SELECT
 			`p`.`Login`,
 			`k`.`Score`
-		FROM `rs_karma` AS `k`
-		LEFT JOIN `players` AS `p` ON `p`.`Id`=`k`.`PlayerId`
-		WHERE `k`.`MapId`='$MapId'
+		FROM `%prefix%karmas` AS `k`
+		LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`k`.`PlayerId`
+		WHERE `k`.`MapId`='". $MapId ."'
 		AND `p`.`Login` IN (". implode(',', $logins) .");
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				while ($row = $res->fetch_object()) {
@@ -4173,18 +4174,18 @@ EOL;
 		$csv = false;
 		$query = "
 		SELECT
-			`c`.`Uid`,
-			`c`.`Name`,
-			`c`.`Author`,
-			`c`.`Environment`,
+			`m`.`Uid`,
+			`m`.`Name`,
+			`m`.`Author`,
+			`m`.`Environment`,
 			`p`.`Login`,
 			`rs`.`Score`
-		FROM `rs_karma` AS `rs`
-		LEFT JOIN `maps` AS `c` ON `c`.`Id`=`rs`.`MapId`
-		LEFT JOIN `players` AS `p` ON `p`.`Id`=`rs`.`PlayerId`
-		ORDER BY `c`.`Uid`;
+		FROM `%prefix%karmas` AS `rs`
+		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId`=`rs`.`MapId`
+		LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`rs`.`PlayerId`
+		ORDER BY `m`.`Uid`;
 		";
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$count = 1;

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -82,51 +82,51 @@ class PluginChatRaspNextrank extends Plugin {
 			// find current player's avg
 			$query = "
 			SELECT
-				`Avg`
-			FROM `rs_rank`
+				`Average`
+			FROM `%prefix%ranks`
 			WHERE `PlayerId` = ". $player->id .";
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res->num_rows > 0) {
-				$row = $res->fetch_array();
-				$avg = $row['Avg'];
+				$row = $res->fetch_array(MYSQLI_ASSOC);
+				$avg = $row['Average'];
 
 				// find players with better avgs
 				$query = "
 				SELECT
 					`PlayerId`,
-					`Avg`
-				FROM `rs_rank`
-				WHERE `Avg` <". $avg ."
-				ORDER BY `Avg`;
+					`Average`
+				FROM `%prefix%ranks`
+				WHERE `Average` <". $avg ."
+				ORDER BY `Average`;
 				";
 
-				$res2 = $aseco->mysqli->query($query);
+				$res2 = $aseco->db->query($query);
 				if ($res2->num_rows > 0) {
 					// find last player before current one
-					while ($row2 = $res2->fetch_array()) {
+					while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
 						$pid = $row2['PlayerId'];
-						$avg2 = $row2['Avg'];
+						$avg2 = $row2['Average'];
 					}
 
 					// obtain next player's info
 					$query = "
 					SELECT
 						`Login`,
-						`NickName`
-					FROM `players`
-					WHERE `Id` = ". $pid .";
+						`Nickname`
+					FROM `%prefix%players`
+					WHERE `PlayerId` = ". $pid .";
 					";
-					$res3 = $aseco->mysqli->query($query);
-					$row3 = $res3->fetch_array();
+					$res3 = $aseco->db->query($query);
+					$row3 = $res3->fetch_array(MYSQLI_ASSOC);
 
 					$rank = $aseco->plugins['PluginRasp']->getRank($row3['Login']);
 					$rank = preg_replace('|^(\d+)/|', '{#rank}$1{#record}/{#highlite}', $rank);
 
 					// show chat message
 					$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['NEXTRANK'][0],
-						$aseco->stripColors($row3['NickName']),
+						$aseco->stripColors($row3['Nickname']),
 						$rank
 					);
 

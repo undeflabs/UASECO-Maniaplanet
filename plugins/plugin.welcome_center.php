@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-06
+ * Date:	2014-10-30
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -89,16 +89,6 @@ class PluginWelcomeCenter extends Plugin {
 		$this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]		= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]) == 'TRUE')		? true : false);
 		$this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]			= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]) == 'TRUE')			? true : false);
 		$this->config['INFO_MESSAGES'][0]['ENABLED'][0]				= ((strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-
-
-		$fields = array();
-		$result = $aseco->mysqli->query('SHOW COLUMNS FROM `players_extra`;');
-		if ($result) {
-			while ($row = $result->fetch_row()) {
-				$fields[] = $row[0];
-			}
-			$result->free_result();
-		}
 	}
 
 	/*
@@ -128,8 +118,8 @@ class PluginWelcomeCenter extends Plugin {
 		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] == true) {
 			$skip = false;
 			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == true) {
-				$query = "SELECT `Avg` FROM `rs_rank` WHERE `PlayerId` = '". $player->id ."';";
-				$res = $aseco->mysqli->query($query);
+				$query = "SELECT `Average` FROM `%prefix%ranks` WHERE `PlayerId` = '". $player->id ."';";
+				$res = $aseco->db->query($query);
 				if ($res) {
 					if ($res->num_rows > 0) {
 						$skip = true;
@@ -158,11 +148,11 @@ class PluginWelcomeCenter extends Plugin {
 			$query = "
 			SELECT
 				`Visits`
-			FROM `players`
-			WHERE `Id` = '". $player->id ."'
+			FROM `%prefix%players`
+			WHERE `PlayerId` = '". $player->id ."'
 			LIMIT 1;
 			";
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					while ($row = $res->fetch_object()) {

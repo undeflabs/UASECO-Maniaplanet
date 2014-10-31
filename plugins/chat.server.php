@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -81,13 +81,13 @@ class PluginChatServer extends Plugin {
 		// collect players/nations stats
 		$query = "
 		SELECT
-			COUNT(`Id`),
+			COUNT(`PlayerId`),
 			COUNT(DISTINCT `Nation`),
 			SUM(`TimePlayed`)
-		FROM `players`;
+		FROM `%prefix%players`;
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$row = $res->fetch_row();
@@ -320,12 +320,12 @@ class PluginChatServer extends Plugin {
 		SELECT
 			`Nation`,
 			COUNT(`Nation`) AS `Count`
-		FROM `players`
+		FROM `%prefix%players`
 		GROUP BY `Nation`
 		ORDER BY `Count` DESC
 		LIMIT ". $top .";
 		";
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			// collect and sort nations
 			if ($res->num_rows > 0) {

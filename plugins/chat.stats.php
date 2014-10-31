@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -111,12 +111,12 @@ class PluginChatStats extends Plugin {
 		// obtain last online timestamp
 		$query = "
 		SELECT
-			`UpdatedAt`
-		FROM `players`
-		WHERE `Login` = ". $aseco->mysqli->quote($target->login) .";
+			`LastVisit`
+		FROM `%prefix%players`
+		WHERE `Login` = ". $aseco->db->quote($target->login) .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		$laston = $result->fetch_row();
 		$result->free_result();
 
@@ -176,7 +176,6 @@ class PluginChatStats extends Plugin {
 		$stats[] = array('Losses', '{#black}' . $flosses);
 		$stats[] = array('Zone', '{#black}' . implode(', ', $target->zone));
 		$stats[] = array('Inscribed', '{#black}' . $inscrdays . ' day' . ($inscrdays == 1 ? ' ' : 's ') . $inscrhours . ' hours');
-		$stats[] = array('Clan', '{#black}' . ($target->teamname ? $target->teamname . '$z' : '<none>'));
 		$stats[] = array('Client', '{#black}' . $target->client);
 		if ($aseco->allowAbility($player, 'chat_statsip')) {
 			$stats[] = array('IP', '{#black}' . $target->ipport);
@@ -232,14 +231,6 @@ class PluginChatStats extends Plugin {
 
 		$header = 'Settings for: ' . $target->nickname . '$z / {#login}' . $target->login;
 		$settings = array();
-
-		// collect available settings
-		if ($cps = $player->getCheckpointSettings()) {
-			$settings[] = array('Local CPS', '{#black}' . $cps['localcps']);
-			$settings[] = array('Dedimania CPS', '{#black}' . $cps['dedicps']);
-			$settings[] = array();
-		}
-
 		$settings[] = array('Window Style', '{#black}' . $style);
 		$settings[] = array('Panel Background', '{#black}' . $panelbg);
 

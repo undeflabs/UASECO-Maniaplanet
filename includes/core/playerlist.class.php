@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -92,12 +92,12 @@ class PlayerList {
 	*/
 
 	public function removePlayer ($login) {
-		$player = false;
 		if (isset($this->player_list[$login])) {
-			$player = $this->player_list[$login];
+			$this->player_list[$login];
 			unset($this->player_list[$login]);
+			return true;
 		}
-		return $player;
+		return false;
 	}
 
 	/*
@@ -132,12 +132,12 @@ class PlayerList {
 			$id = 0;
 			$query = "
 			SELECT
-				`Id`
-			FROM `players`
-			WHERE `Login` = ". $aseco->mysqli->quote($login) .";
+				`PlayerId`
+			FROM `%prefix%players`
+			WHERE `Login` = ". $aseco->db->quote($login) .";
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					$row = $res->fetch_row();
@@ -166,12 +166,12 @@ class PlayerList {
 			$nickname = 'Unknown';
 			$query = "
 			SELECT
-				`NickName`
-			FROM `players`
-			WHERE `Login` = ". $aseco->mysqli->quote($login) .";
+				`Nickname`
+			FROM `%prefix%players`
+			WHERE `Login` = ". $aseco->db->quote($login) .";
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					$row = $res->fetch_row();
@@ -232,18 +232,17 @@ class PlayerList {
 			// Check offline players database
 			$query = "
 			SELECT
-				`Id`,
+				`PlayerId`,
 				`Login`,
-				`NickName`,
+				`Nickname`,
 				`Nation`,
-				`TeamName`,
 				`Wins`,
 				`TimePlayed`
-			FROM `players`
-			WHERE `Login` = ". $aseco->mysqli->quote($param) .";
+			FROM `%prefix%players`
+			WHERE `Login` = ". $aseco->db->quote($param) .";
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					$row = $res->fetch_object();
@@ -251,9 +250,8 @@ class PlayerList {
 					$target = new Player();
 					$target->id		= $row->Id;
 					$target->login		= $row->Login;
-					$target->nickname	= $row->NickName;
+					$target->nickname	= $row->Nickname;
 					$target->nation		= $row->Nation;
-					$target->teamname	= $row->TeamName;
 					$target->wins		= $row->Wins;
 					$target->timeplayed	= $row->TimePlayed;
 				}
@@ -286,26 +284,30 @@ class PlayerList {
 		// Get Player stats
 		$query = "
 		SELECT
-			`Id`,
+			`PlayerId`,
+			`Visits`,
 			`Wins`,
-			`TimePlayed`,
-			`TeamName`
-		FROM `players`
-		WHERE `Login`= ". $aseco->mysqli->quote($player->login) .";
+			`Donations`,
+			`TimePlayed`
+		FROM `%prefix%players`
+		WHERE `Login`= ". $aseco->db->quote($player->login) .";
 		";
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if ($result) {
 			if ($result->num_rows > 0) {
 				$dbplayer = $result->fetch_object();
 				$result->free_result();
 
 				// Update Player stats
-				$player->id = $dbplayer->Id;
-				if ($player->teamname == '' && $dbplayer->TeamName != '') {
-					$player->teamname = $dbplayer->TeamName;
+				$player->id = $dbplayer->PlayerId;
+				if ($player->visits < $dbplayer->Visits) {
+					$player->visits = $dbplayer->Visits;
 				}
 				if ($player->wins < $dbplayer->Wins) {
 					$player->wins = $dbplayer->Wins;
+				}
+				if ($player->donations < $dbplayer->Donations) {
+					$player->donations = $dbplayer->Donations;
 				}
 				if ($player->timeplayed < $dbplayer->TimePlayed) {
 					$player->timeplayed = $dbplayer->TimePlayed;
@@ -313,17 +315,17 @@ class PlayerList {
 
 				// Update Player data
 				$query = "
-				UPDATE `players` SET
-					`NickName` = ". $aseco->mysqli->quote($player->nickname) .",
-					`Continent` = ". $aseco->continent->continentToId($player->continent) .",
-					`Nation` = ". $aseco->mysqli->quote($player->nation) .",
-					`TeamName` = ". $aseco->mysqli->quote($player->teamname) .",
-					`UpdatedAt` = NOW()
-				WHERE `Login`= ". $aseco->mysqli->quote($player->login) .";
+				UPDATE `%prefix%players` SET
+					`Nickname` = ". $aseco->db->quote($player->nickname) .",
+					`Zone` = ". $aseco->db->quote(implode('|', $player->zone)) .",
+					`Continent` = ". $aseco->db->quote($aseco->continent->continentToAbbr($player->continent)) .",
+					`Nation` = ". $aseco->db->quote($player->nation) .",
+					`LastVisit` = NOW()
+				WHERE `Login`= ". $aseco->db->quote($player->login) .";
 				";
-				$result = $aseco->mysqli->query($query);
+				$result = $aseco->db->query($query);
 				if (!$result) {
-					trigger_error('[Database] Could not update connecting player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+					trigger_error('[Database] Could not update connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 					return;
 				}
 			}
@@ -334,85 +336,44 @@ class PlayerList {
 
 				// Insert player
 				$query = "
-				INSERT INTO `players` (
+				INSERT INTO `%prefix%players` (
 					`Login`,
-					`Game`,
-					`NickName`,
+					`Nickname`,
+					`Zone`,
 					`Continent`,
 					`Nation`,
-					`TeamName`,
-					`UpdatedAt`
+					`LastVisit`,
+					`Visits`,
+					`Wins`,
+					`Donations`,
+					`TimePlayed`
 				)
 				VALUES (
-					". $aseco->mysqli->quote($player->login) .",
-					". $aseco->mysqli->quote('MP') .",
-					". $aseco->mysqli->quote($player->nickname) .",
-					". $aseco->continent->continentToId($player->continent) .",
-					". $aseco->mysqli->quote($player->nation) .",
-					". $aseco->mysqli->quote($player->teamname) .",
-					NOW()
+					". $aseco->db->quote($player->login) .",
+					". $aseco->db->quote($player->nickname) .",
+					". $aseco->db->quote(implode('|', $player->zone)) .",
+					". $aseco->db->quote($aseco->continent->continentToAbbr($player->continent)) .",
+					". $aseco->db->quote($player->nation) .",
+					NOW(),
+					1,
+					0,
+					0,
+					0
 				);
 				";
 
-				$result = $aseco->mysqli->query($query);
+				$result = $aseco->db->query($query);
 				if ($result) {
-					$player->id = $aseco->mysqli->lastid();
+					$player->id = $aseco->db->lastid();
 				}
 				else {
-					trigger_error('[Database] Could not insert connecting player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+					trigger_error('[Database] Could not insert connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 					return;
 				}
 			}
 		}
 		else {
-			trigger_error('[Database] Could not get stats of connecting player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-			return;
-		}
-
-		// Check for player's extra data
-		$query = "
-		SELECT
-			`PlayerId`
-		FROM `players_extra`
-		WHERE `PlayerId` = ". $player->id .";
-		";
-
-		$result = $aseco->mysqli->query($query);
-		if ($result) {
-			// Was retrieved
-			if ($result->num_rows > 0) {
-				$result->free_result();
-			}
-			else {
-				// Could not be retrieved
-				$result->free_result();
-
-				$query = "
-				INSERT INTO `players_extra` (
-					`PlayerId`,
-					`Cps`,
-					`DediCps`,
-					`Donations`,
-					`Style`
-				)
-				VALUES (
-					". $player->id .",
-					". ($aseco->settings['auto_enable_cps'] ? 0 : -1) .",
-					". ($aseco->settings['auto_enable_dedicps'] ? 0 : -1) .",
-					0,
-					'Card'
-				);
-				";
-
-				$result = $aseco->mysqli->query($query);
-				if (!$result) {
-					trigger_error('[Database] Could not insert player\'s extra data! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-				}
-			}
-
-		}
-		else {
-			trigger_error('[Database] Could not get player\'s extra data! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[Database] Could not get stats of connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 			return;
 		}
 	}

@@ -29,6 +29,9 @@
 		<login>LOGIN</login>
 		<password>PASSWORD</password>
 		<database>DATABASE</database>
+
+		<!-- The ServerLogin is a good prefix to identify, but you should write it lower case and remove all underscore (max. 64 chars, incl. the default names like "records") -->
+		<table_prefix>uaseco_</table_prefix>
 	</mysql>
 
 	<!--
@@ -53,7 +56,7 @@
 
 	<!--
 	Set to global blacklist in XML format, same as <blacklist_url> in dedicated_cfg.txt,
-	e.g. http://www.uaseco.org/uptodate/blacklist_trackmania_dedimania.xml
+	e.g. http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml
 	//-->
 	<global_blacklist_url>http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml</global_blacklist_url>
 
@@ -73,6 +76,7 @@
 	-->
 	<blacklist_file>blacklist.txt</blacklist_file>
 	<guestlist_file>guestlist.txt</guestlist_file>
+
 
 
 	<welcome_msg_window>false</welcome_msg_window>
@@ -106,14 +110,14 @@
 	//-->
 	<show_curmap>0</show_curmap>
 
-
 	<lists_colornicks>true</lists_colornicks>
 	<lists_colormaps>true</lists_colormaps>
-	<topclans_minplayers>2</topclans_minplayers>
 	<global_win_multiple>50</global_win_multiple>
 
 	<display_checkpoints>true</display_checkpoints>
 	<enable_cpsspec>false</enable_cpsspec>
+
+	<!-- Checkpoint tracking for local or dedimania records -->
 	<auto_enable_cps>true</auto_enable_cps>
 	<auto_enable_dedicps>false</auto_enable_dedicps>
 

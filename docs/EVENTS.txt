@@ -1,3 +1,23 @@
+onPlayerDisconnectPrepare
+Data:		Player object
+Example:	[]
+Note:		This callback is sent when a Player disconnects and before the event onPlayerDisconnect to let Plugins store the Player settings with $player->setSettings()
+
+
+onBeginScriptInitialisation
+Original:	LibXmlRpc_BeginServer
+Data:		Nothing
+Example:	[]
+Note:		This callback is sent before the beginning of the script execution
+
+
+onEndScriptInitialisation
+Original:	LibXmlRpc_BeginServerStop
+Data:		Nothing
+Example:	[]
+Note:		This callback is sent after the beginning of the script execution
+
+
 onDedimaniaRecordsLoaded
 XAseco2:	onDediRecsLoaded
 Data:		xxx

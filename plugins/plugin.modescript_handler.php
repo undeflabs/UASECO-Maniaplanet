@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-08
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -71,7 +71,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndRound',			'onEndRound');
-		$this->registerEvent('onRestartMap',			'onRestartMap');
+		$this->registerEvent('onBeginScriptInitialisation',	'onBeginScriptInitialisation');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
 		$this->registerEvent('onModeScriptCallback',		'onModeScriptCallback');
 	}
@@ -176,6 +176,9 @@ class PluginModescriptHandler extends Plugin {
 
 		// Send the UI settings
 		$this->setupUserInterface();
+
+		// Block some callbacks we did not want to use
+		$this->setupBlockCallbacks();
 	}
 
 	/*
@@ -210,16 +213,19 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onRestartMap ($aseco, $uid) {
+	public function onBeginScriptInitialisation ($aseco) {
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
 			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
 			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
 		}
 
-		// On restart it is required to set the settings again,
+		// On restarting the script/map it is required to set the settings again,
 		// because a restart resets the most settings in a Modescript.
 		// Details: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
+
+		// Block some callbacks we did not want to use
+		$this->setupBlockCallbacks();
 
 		// Store the settings at the dedicated Server
 		$this->setupModescriptSettings();
@@ -311,6 +317,18 @@ class PluginModescriptHandler extends Plugin {
 			// [0]=Login, [1]=StuntPoints, [2]=Combo, [3]=TotalStuntsScore, [4]=StuntFactor, [5]=StuntName, [6]=StuntAngle, [7]=IsStraightStunt, [8]=IsStuntReversed, [9]=IsMasterJump
 			case 'LibXmlRpc_OnStunt':
 				$aseco->releaseEvent('onPlayerStunt', $params);
+		    		break;
+
+
+
+			case 'LibXmlRpc_BeginServer':
+				$aseco->releaseEvent('onBeginScriptInitialisation', null);
+		    		break;
+
+
+
+			case 'LibXmlRpc_BeginServerStop':
+				$aseco->releaseEvent('onEndScriptInitialisation', null);
 		    		break;
 
 
@@ -692,11 +710,9 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			case 'LibXmlRpc_PlayersTimes':
-			case 'LibXmlRpc_PlayersScores':
-			case 'LibXmlRpc_TeamsMode':			// Maybe used later
-				// Ignore this, not required yet.
-		    		break;
+			case 'LibXmlRpc_BeginMatchStop':
+				// Ignore: http://forum.maniaplanet.com/viewtopic.php?p=232113#p232113
+				break;
 
 
 
@@ -805,6 +821,37 @@ class PluginModescriptHandler extends Plugin {
 
 		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
 			return $this->ui_properties[strtoupper($field)][0];
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setupBlockCallbacks () {
+		global $aseco;
+
+		// Block some callbacks we did not want to use
+		$blocklist = array(
+			'LibXmlRpc_BeginMatchStop',
+			'LibXmlRpc_BeginMapStop',
+			'LibXmlRpc_BeginSubmatchStop',
+			'LibXmlRpc_BeginRoundStop',
+			'LibXmlRpc_BeginTurnStop',
+			'LibXmlRpc_EndTurnStop',
+			'LibXmlRpc_EndRoundStop',
+			'LibXmlRpc_EndSubmatchStop',
+			'LibXmlRpc_EndMapStop',
+			'LibXmlRpc_EndMatchStop',
+			'LibXmlRpc_EndServerStop',
+			'LibXmlRpc_PlayersTimes',
+			'LibXmlRpc_PlayersScores',
+			'LibXmlRpc_TeamsMode',					// Maybe used later?
+		);
+		foreach ($blocklist as $cb) {
+			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_BlockCallback', $cb);
 		}
 	}
 

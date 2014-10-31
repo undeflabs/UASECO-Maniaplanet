@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -65,8 +65,6 @@ class PluginPlayerInfos extends Plugin {
 
 		$this->registerChatCommand('players',	'chat_players',		'Displays current list of nicks/logins',	Player::PLAYERS);
 		$this->registerChatCommand('ranks',	'chat_ranks',		'Displays list of online ranks/nicks',		Player::PLAYERS);
-		$this->registerChatCommand('clans',	'chat_clans',		'Displays list of online clans/nicks',		Player::PLAYERS);
-		$this->registerChatCommand('topclans',	'chat_topclans',	'Displays top 10 best ranked clans',		Player::PLAYERS);
 	}
 
 	/*
@@ -214,125 +212,6 @@ class PluginPlayerInfos extends Plugin {
 
 		// display ManiaLink message
 		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_clans ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			return;
-		}
-		$clans = array();
-
-		// sort players by clan, insuring clanless are last by sorting on chr(255)
-		foreach ($aseco->server->players->player_list as $pl) {
-			$clans[$pl->login] = $pl->teamname ? $pl->teamname : chr(255);
-		}
-		asort($clans);
-
-		// Compile the message
-		foreach ($clans as $pl => $tm) {
-			if ($play = $aseco->server->players->getPlayer($pl)) {
-				$msg[] = array(
-					($tm != chr(255) ? $tm : 'none'),
-					$play->nickname
-				);
-			}
-		}
-
-		// Setup settings for Window
-		$settings_title = array(
-			'icon'	=> 'Icons128x128_1,Buddies',
-		);
-		$settings_columns = array(
-			'columns'	=> 4,
-			'widths'	=> array(50, 50),
-			'halign'	=> array('left', 'left'),
-			'textcolors'	=> array('FFFF', 'FFFF'),
-		);
-		$window = new Window();
-		$window->setLayoutTitle($settings_title);
-		$window->setColumns($settings_columns);
-		$window->setContent('Online Clans', $msg);
-		$window->send($player, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_topclans ($aseco, $login, $chat_command, $chat_parameter) {
-
-		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			return;
-		}
-
-		$top = 100;
-		// Find best ranked
-		$query = "
-		SELECT
-			`TeamName`,
-			`Count`,
-			`TeamRank`
-		FROM (
-			SELECT
-				`TeamName`,
-				COUNT(`avg`) AS `Count`,
-				SUM(`Avg`) / COUNT(`Avg`) AS `TeamRank`
-			FROM `players`, `rs_rank`
-			WHERE `players`.`Id` = `rs_rank`.`PlayerId`
-			GROUP BY `TeamName`
-		) AS `Sub`
-		WHERE `Sub`.`Count` >= ". $aseco->settings['topclans_minplayers'] ."
-		ORDER BY `Sub`.`TeamRank`
-		LIMIT ". $top .";
-		";
-
-		$res = $aseco->mysqli->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				// compile the message with sorted clans
-				$i = 1;
-				$msg = array();
-				while ($row = $res->fetch_object()) {
-					$msg[] = array(
-						$i .'.',
-						sprintf("%4.1F", $row->TeamRank / 10000),
-						$row->TeamName .'$z $n('. $row->Count .')$m',
-					);
-					$i++;
-				}
-
-
-				// Setup settings for Window
-				$settings_title = array(
-					'icon'	=> 'BgRaceScore2,Podium',
-				);
-				$settings_columns = array(
-					'columns'	=> 4,
-					'widths'	=> array(11, 19, 70),
-					'halign'	=> array('right', 'right', 'left'),
-					'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
-				);
-				$window = new Window();
-				$window->setLayoutTitle($settings_title);
-				$window->setColumns($settings_columns);
-				$window->setContent('Current TOP 100 Clans (min. '. $aseco->settings['topclans_minplayers'] .' Players)', $msg);
-				$window->send($player, 0, false);
-			}
-			else {
-				$aseco->sendChatMessage('{#server}» {#error}No clan(s) found!', $player->login);
-			}
-			$res->free_result();
-		}
 	}
 }
 

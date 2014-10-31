@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-08
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1914,18 +1914,18 @@ class PluginRaspJukebox extends Plugin {
 			(SELECT
 				`Uid`,
 				SUM(`Score`) AS `Karma`
-			FROM `maps` AS `m`, `rs_karma` AS `k`
-			WHERE `m`.`Id` = `k`.`MapId`
+			FROM `%prefix%maps` AS `m`, `%prefix%karmas` AS `k`
+			WHERE `m`.`MapId` = `k`.`MapId`
 			GROUP BY `Uid` HAVING `Karma` = 0)
 			UNION (
 				SELECT
 					`Uid`,
 					0
-				FROM `maps`
-				WHERE `Id` NOT IN (
+				FROM `%prefix%maps`
+				WHERE `MapId` NOT IN (
 					SELECT DISTINCT
 						`MapId`
-					FROM `rs_karma`
+					FROM `%prefix%karmas`
 				)
 			)
 			ORDER BY `Karma` ". $order .";
@@ -1936,14 +1936,14 @@ class PluginRaspJukebox extends Plugin {
 			SELECT
 				`Uid`,
 				SUM(`Score`) AS `Karma`
-			FROM `maps` AS `m`, `rs_karma` AS `k`
-			WHERE `m`.`Id` = `k`.`MapId`
+			FROM `%prefix%maps` AS `m`, `%prefix%karmas` AS `k`
+			WHERE `m`.`MapId` = `k`.`MapId`
 			GROUP BY `Uid`
 			HAVING `Karma` ". ($karmaval < 0 ? '<= $karmaval' : '>= $karmaval') ."
 			ORDER BY `Karma` ". $order .";
 			";
 		}
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows > 0) {
 
@@ -2043,11 +2043,11 @@ class PluginRaspJukebox extends Plugin {
 		$sql = "
 		SELECT DISTINCT
 			`MapId`
-		FROM `rs_times`
+		FROM `%prefix%times`
 		WHERE `PlayerId` = ". $player->id ."
 		ORDER BY `MapId`;
 		";
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			$finished = array();
 			if ($result->num_rows > 0) {
@@ -2062,12 +2062,12 @@ class PluginRaspJukebox extends Plugin {
 		$sql = "
 		SELECT
 			`Uid`
-		FROM `maps`
+		FROM `%prefix%maps`
 		";
 		if (!empty($finished)) {
-			$sql .= " WHERE `id` NOT IN (". implode(',', $finished) .");";
+			$sql .= " WHERE `MapId` NOT IN (". implode(',', $finished) .");";
 		}
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows > 0) {
 
@@ -2172,14 +2172,14 @@ class PluginRaspJukebox extends Plugin {
 		$sql = "
 		SELECT DISTINCT
 			`MapId`
-		FROM `rs_times`
+		FROM `%prefix%times`
 		WHERE `PlayerId` = ". $player->id ."
 		ORDER BY `MapId`;
 		";
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows > 0) {
-				while ($dbrow = $result->fetch_array()) {
+				while ($dbrow = $result->fetch_array(MYSQLI_NUM)) {
 					$finished[] = $dbrow[0];
 				}
 			}
@@ -2190,17 +2190,17 @@ class PluginRaspJukebox extends Plugin {
 		// Get list of finished maps
 		$sql = "
 		SELECT
-			`Id`,
+			`MapId`,
 			`Uid`
-		FROM `maps`
-		WHERE `Id` ";
+		FROM `%prefix%maps`
+		WHERE `MapId` ";
 		if (!empty($finished)) {
 			$sql .= 'IN ('. implode(',', $finished) .')';
 		}
 		else {
 			$sql .= '= 0';  // empty list
 		}
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows == 0) {
 				$result->free_result();
@@ -2212,20 +2212,20 @@ class PluginRaspJukebox extends Plugin {
 		$unranked = array();
 		$i = 0;
 		// Check if player not in top $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() on each map
-		while ($dbrow = $result->fetch_array()) {
+		while ($dbrow = $result->fetch_array(MYSQLI_NUM)) {
 			$found = false;
 			$sql2 = "
 			SELECT
-				`playerid`
-			FROM `records`
+				`PlayerId`
+			FROM `%prefix%records`
 			WHERE `MapId` = ". $dbrow[0] ."
 			ORDER by `Score` ". $order .", `Date` ASC
 			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";
-			$result2 = $aseco->mysqli->query($sql2);
+			$result2 = $aseco->db->query($sql2);
 			if ($result2) {
 				if ($result2->num_rows > 0) {
-					while ($plrow = $result2->fetch_array()) {
+					while ($plrow = $result2->fetch_array(MYSQLI_NUM)) {
 						if ($player->id == $plrow[0]) {
 							$found = true;
 							break;
@@ -2345,18 +2345,18 @@ class PluginRaspJukebox extends Plugin {
 			SELECT DISTINCT
 				`m`.`Uid`,
 				`t1`.`Score`
-			FROM `rs_times` AS `t1`, `maps` AS `m`
+			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
 			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`Id`
+			AND `t1`.`MapId` = `m`.`MapId`
 			AND `Score` = (
 				SELECT
 					MIN(`t2`.`Score`)
-				FROM `rs_times` AS `t2`
+				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
-			$result = $aseco->mysqli->query($sql);
+			$result = $aseco->db->query($sql);
 			if ($result) {
 				if ($result->num_rows == 0) {
 					$result->free_result();
@@ -2465,18 +2465,18 @@ class PluginRaspJukebox extends Plugin {
 			SELECT DISTINCT
 				`m`.`Uid`,
 				`t1`.`Score`
-			FROM `rs_times` AS `t1`, `maps` AS `m`
+			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
 			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`Id`
+			AND `t1`.`MapId` = `m`.`MapId`
 			AND `Score` = (
 				SELECT
 					MAX(`t2`.`Score`)
-				FROM `rs_times` AS `t2`
+				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
-			$result = $aseco->mysqli->query($sql);
+			$result = $aseco->db->query($sql);
 			if ($result) {
 				if ($result->num_rows == 0) {
 					$result->free_result();
@@ -2596,18 +2596,18 @@ class PluginRaspJukebox extends Plugin {
 			SELECT DISTINCT
 				`m`.`Uid`,
 				`t1`.`Score`
-			FROM `rs_times` AS `t1`, `maps` AS `m`
+			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
 			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`Id`
+			AND `t1`.`MapId` = `m`.`MapId`
 			AND `Score` = (
 				SELECT
 					MIN(`t2`.`Score`)
-				FROM `rs_times` AS `t2`
+				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
-			$result = $aseco->mysqli->query($sql);
+			$result = $aseco->db->query($sql);
 			if ($result) {
 				if ($result->num_rows == 0) {
 					$result->free_result();
@@ -2714,18 +2714,18 @@ class PluginRaspJukebox extends Plugin {
 			SELECT DISTINCT
 				`m`.`Uid`,
 				`t1`.`Score`
-			FROM `rs_times` AS `t1`, `maps` AS `m`
+			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
 			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`Id`
+			AND `t1`.`MapId` = `m`.`MapId`
 			AND `Score` = (
 				SELECT
 					MAX(`t2`.`Score`)
-				FROM `rs_times` AS `t2`
+				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
-			$result = $aseco->mysqli->query($sql);
+			$result = $aseco->db->query($sql);
 			if ($result) {
 				if ($result->num_rows == 0) {
 					$result->free_result();
@@ -2840,20 +2840,20 @@ class PluginRaspJukebox extends Plugin {
 		SELECT DISTINCT
 			`m`.`Uid`,
 			`t1`.`Date`
-		FROM `rs_times` AS `t1`, `maps` AS `m`
+		FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
 		WHERE (`PlayerId` = ". $player->id ."
-		AND `t1`.`MapId` = `m`.`Id`
+		AND `t1`.`MapId` = `m`.`MapId`
 		AND `Date` = (
 			SELECT
 				MAX(`t2`.`Date`)
-			FROM `rs_times` AS `t2`
+			FROM `%prefix%times` AS `t2`
 			WHERE `PlayerId` = ". $player->id ."
 			AND `t1`.`MapId` = `t2`.`MapId`
 		))
 		ORDER BY `t1`.`date`;
 		";
 
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows == 0) {
 				$result->free_result();
@@ -3075,10 +3075,10 @@ class PluginRaspJukebox extends Plugin {
 		$sql = "
 		SELECT
 			`Uid`
-		FROM `maps`
-		ORDER BY `Id` ". ($order ? 'DESC' : 'ASC') .";
+		FROM `%prefix%maps`
+		ORDER BY `MapId` ". ($order ? 'DESC' : 'ASC') .";
 		";
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows == 0) {
 				$result->free_result();
@@ -3198,14 +3198,14 @@ class PluginRaspJukebox extends Plugin {
 		$sql = "
 		SELECT
 			`Uid`
-		FROM `maps` AS `m`, `rs_karma` AS `k`
-		WHERE `m`.`Id` = `k`.`MapId`
+		FROM `%prefix%maps` AS `m`, `%prefix%karmas` AS `k`
+		WHERE `m`.`MapId` = `k`.`MapId`
 		AND `k`.`PlayerId` = ". $player->id .";
 		";
-		$result = $aseco->mysqli->query($sql);
+		$result = $aseco->db->query($sql);
 		if ($result) {
 			if ($result->num_rows > 0) {
-				while ($dbrow = $result->fetch_array()) {
+				while ($dbrow = $result->fetch_array(MYSQLI_NUM)) {
 					unset($newlist[$dbrow[0]]);
 				}
 			}

@@ -1,24 +1,31 @@
 Version 1.0.0
 ~~~~~~~~~~~~~
- - Notes:
-   - Third-party Plugins for XAseco2 are NOT compatible without changes (see "Differences between XAseco2 and UASECO" below)
-   - A database from XAseco2/1.03 is fully compatible with UASECO (indexes and columns has been added), you can switch easily to UASECO (and back to XAseco2)
+   Notes
+   ~~~~~
+   - Third-party Plugins for XAseco2 are NOT compatible without changes (see "Differences between XAseco2 and UASECO" below)!
+   - A database from XAseco2/1.03 is NOT compatible with UASECO, convert a XAseco2 database with newinstall/database/convert-xaseco2-to-uaseco.php!
    - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed before first stable release!
      Use Class Window instead: http://www.uaseco.org/Development/Classes/Window.php
    - Plugin "plugin.styles.php" and related files in the folder "config/styles" are deprecated and get removed before first stable release!
    - Plugin "plugin.panels.php" and related files in the folder "config/panels" are deprecated and get removed before first stable release!
 
- - Requirements:
+
+   Requirements
+   ~~~~~~~~~~~~
    - Requires PHP/5.2.1 or higher
    - Requires MySQL/5.x or higher
-   - Requires a Maniaplanet dedicated Server build 2014-09-10_14_00 or higher
+   - Requires a Maniaplanet dedicated Server build 2014-10-16_14_00 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
 
- - Changes:
+
+   Changes
+   ~~~~~~~
    - Changed "memory_limit" to 192MB
    - Included support for Modescript Gamemodes from the Maniaplanet 3 update, e.g. "TimeAttack.Script.txt", "Rounds.Script.txt"...
    - Added many new callback events like "onPlayerStartCountdown", "onPlayerStartLine", "onPlayerFinishLine", "onPlayerRespawn", "onBeginPodium"..., see documentation for details
    - Included Database support into controller and changed all MySQL statements from "MySQL Extension" to "MySQL Improved Extension"
+   - The database default storing engine has been changed from MyISAM to InnoDB with foreign key constraints
+   - The database tablenames can now have a prefix, to have the possibility to use only one database for multiple UASECO installations
    - Took some classes/ideas from MPAseco/0.83 and Aseco/2.2.0c
    - Splitted types.inc.php into single file classes
    - Extended class Player
@@ -33,6 +40,7 @@ Version 1.0.0
    - Added class MapList
    - Added class Database (mysqli)
    - Added class Plugin
+   - Added class Ranking
    - Added class RankingList
    - Added class Window
    - Added new RoundsPointSystem "High Score", based upon 'MotoGP' * 10
@@ -42,16 +50,20 @@ Version 1.0.0
    - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
    - Added new GbxRemote from 2014-08-01 from https://github.com/NewboO/dedicated-server-api/
 
- - Bugfix (in XAseco2):
+
+   Bugfix (in XAseco2)
+   ~~~~~~~~~~~~~~~~~~~
    - includes/xmlparser.inc.php: Changed to make sure that '0' values from <tags> in XML files are not interpreted as 'false' and are stored too
    - includes/web_access.inc.php: [PHP Notice] Undefined offset: 0 on line 1184 till 1190
    - plugins/chat.server.php: Changed forgotten changes for Gameinfo::* constants
 
- - Differences between XAseco2 and UASECO
+
+   Differences between XAseco2 and UASECO
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    - All XML configuration files has to be located into the "config" folder
    - The folder "panels" has been moved into the "config" folder
    - The folder "styles" has been moved into the "config" folder
-   - All "mysql_*()" does not work anymore, use "$aseco->mysqli->*" instead (e.g. "$res = "$aseco->mysqli->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php
+   - All "mysql_*()" does not work anymore, use "$aseco->db->*" instead (e.g. "$res = "$aseco->db->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php
    - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIMEATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
    - Added constant "Gameinfo::TEAMATTACK"
    - Renamed "config/config.xml" to "config/UASECO.xml"
@@ -71,7 +83,7 @@ Version 1.0.0
    - Moved "$aseco->getPlayerParam()" to "$aseco->server->players->getPlayerParam()"
    - Renamed "$aseco->ip_match()" to "$aseco->matchIP()"
    - Renamed "$aseco->server->serverlogin" to "$aseco->server->login"
-   - Changed "quotedString()" to "$aseco->mysqli->quote()"
+   - Changed "quotedString()" to "$aseco->db->quote()"
    - Changed "validateUTF8String()" to "$aseco->validateUTF8String()"
    - Changed "stripNewlines()" to "$aseco->stripNewlines()"
    - Changed "formatText()" to "$aseco->formatText()"
@@ -80,8 +92,8 @@ Version 1.0.0
    - Changed "stripNewlines()" to "$aseco->stripNewlines()"
    - Changed "bool2text()" to "$aseco->bool2string()"
    - Changed "mapCountry()" to "$aseco->country->countryToIoc()"
-   - Changed "continent2cid()" to "$aseco->continent->continentToId()"
-   - Changed "cid2continent()" to "$aseco->continent->idToContinent()"
+   - Changed "continent2cid()" to "$aseco->continent->continentToAbbr()"
+   - Changed "cid2continent()" to "$aseco->continent->abbrToContinent()"
    - Merged "formatTime()" and "formatTimeH()" to only "$aseco->formatTime()"
    - Removed "$aseco->server->getGame()", because in Maniaplanet it was useless
    - Removed "$aseco->isSpectator($player)", use "$player->isspectator" instead
@@ -99,6 +111,38 @@ Version 1.0.0
    - Remamed "$map->authorscore" to "$map->author_score" ($map = includes/core/map.class.php)
    - Remamed "$map->authortime" to "$map->author_time" ($map = includes/core/map.class.php)
    - Removed all donate panels ("Donate*.xml") from "config/panels"
+   - Removed all records panels ("Records*.xml") from "config/panels"
    - Removed "http_get_file()", use "$aseco->webaccess->request()" instead
    - Removed chat command "/top10" from plugin.rasp.php, use "/top100" instead
+   - Removed chat command "/clans" and "/topclans" from chat.player_info.php
    - PLEASE NOTE: I only hope that this list are all differences, but i'm not really sure about this. I was starting too late to write this list, sorry!
+
+
+   Differences between the database from XAseco2 and UASECO
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   - PLUGIN AUTHORS NOTE:
+     - For each SQL-Query you have to add %prefix% before all tablenames, e.g. to access `players` you have to write `%prefix%players`
+     - The connection has enabled autocommit, if you need to insert a bulk of data you can disable autocommit, see http://dev.mysql.com/doc/refman/5.7/en/commit.html for details.
+   - Table `maps`:
+     - Renamed `Id` to `MapId`
+   - Table `players`:
+     - Renamed `Id` to `PlayerId`
+     - Renamed `NickName` to `Nickname`
+     - Renamed `UpdatedAt` to `LastVisit`
+     - Removed `Game`
+     - Removed `TeamName`
+   - Table `players_extra` has been removed:
+     - Moved `Cps` to `players` table and get stored into serialized `Settings`
+     - Moved `DediCps` to `players` table and get stored into serialized `Settings`
+     - Moved `Donations` to `players` table
+     - Moved `Style` to `players` table and get stored into serialized `Settings`
+     - Moved `Panels` to `players` table and get stored into serialized `Settings`
+     - Moved `PanelBG` to `players` table and get stored into serialized `Settings`
+   - Table `records`:
+     - Removed `Id`
+   - Table `karma` renamed to `karmas`
+     - Removed `Id`
+   - Table `rs_rank` renamed to `ranks`
+     - Renamed `Avg` to `Average`
+   - Table `rs_times` renamed to `times`
+     - Removed `Id`

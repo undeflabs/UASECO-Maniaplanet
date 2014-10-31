@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-23
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -332,6 +332,7 @@ class Helper {
 				}
 				catch (Exception $exception) {
 					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendManialink(): SendDisplayManialinkPageToLogin: '. $logins);
+					$this->console('[DUMP] '. $widgets);
 				}
 			}
 			else {
@@ -341,6 +342,7 @@ class Helper {
 				}
 				catch (Exception $exception) {
 					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendManialink(): SendDisplayManialinkPage');
+					$this->console('[DUMP] '. $widgets);
 				}
 			}
 		}

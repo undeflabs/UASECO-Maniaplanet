@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -45,8 +45,9 @@
 class PluginCheckpoint extends Plugin {
 	private $manialinkid;
 	private $nbcheckpoints;
+	private $position;
 	private $textcolors;
-	private $panelbg;
+	private $layout;
 
 
 	/*
@@ -61,31 +62,38 @@ class PluginCheckpoint extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
-		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginLocalRecords', Dependence::REQUIRED, '1.0.0', null);
 
 		// Register functions for events
-		$this->registerEvent('onBeginMap',		'onBeginMap');
-		$this->registerEvent('onEndMap',		'onEndMap');
-		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
-		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
-		$this->registerEvent('onPlayerStartCountdown',	'onPlayerStartCountdown');
-		$this->registerEvent('onPlayerCheckpoint',	'onPlayerCheckpoint');
-		$this->registerEvent('onPlayerFinishLine',	'onPlayerFinishHandling');
-		$this->registerEvent('onPlayerFinishLap',	'onPlayerFinishHandling');
+		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onEndMap',			'onEndMap');
+		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
+		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
+		$this->registerEvent('onPlayerStartCountdown',		'onPlayerStartCountdown');
+		$this->registerEvent('onPlayerCheckpoint',		'onPlayerCheckpoint');
+		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishHandling');
+		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishHandling');
 
-		$this->registerChatCommand('cps',		'chat_cps',	'Sets local/dedimania record checkpoints tracking',	Player::PLAYERS);
+		$this->registerChatCommand('cps', 'chat_cps', 'Sets local/dedimania record checkpoints tracking', Player::PLAYERS);
 
-		$this->manialinkid				= 'PluginCheckpointWidget';
-		$this->nbcheckpoints				= 0;
+		$this->manialinkid					= 'PluginCheckpointWidget';
+		$this->nbcheckpoints					= 0;
 
-		$this->textcolors['default_checkpoint']		= 'DDEF';	// RGBA
-		$this->textcolors['default_besttime']		= 'BBBF';	// RGBA
-		$this->textcolors['time_improved']		= '3B3';	// RGB
-		$this->textcolors['time_equal']			= '29F';	// RGB
-		$this->textcolors['time_worse']			= 'F00';	// RGB
+		$this->position						= array(
+			'x'						=> -8.5,
+			'y'						=> -43.9,
+			'z'						=> 0,
+		);
 
-		$this->panelbg['style']				= 'BgsPlayerCard';
-		$this->panelbg['substyle']			= 'BgCardSystem';
+		$this->textcolors['default_checkpoint']			= 'DDDDEEFF';	// RRGGBBAA
+		$this->textcolors['default_besttime']			= 'BBBBBBFF';	// RRGGBBAA
+		$this->textcolors['time_improved']			= '3B3';	// RGB
+		$this->textcolors['time_equal']				= '29F';	// RGB
+		$this->textcolors['time_worse']				= 'F00';	// RGB
+
+		$this->layout['background_color']			= '55556699';	// RRGGBBAA
+		$this->layout['style']					= 'BgsPlayerCard';
+		$this->layout['substyle']				= 'BgCardSystem';
 	}
 
 	/*
@@ -271,9 +279,9 @@ class PluginCheckpoint extends Plugin {
 		}
 		if ($aseco->settings['display_checkpoints']) {
 			// Set personal or default CPs
-			if ($setup = $player->getCheckpointSettings()) {
-				$aseco->checkpoints[$player->login]->tracking['local_records'] = $setup['localcps'];
-				$aseco->checkpoints[$player->login]->tracking['dedimania_records'] = $setup['dedicps'];
+			if ($setup = $this->getCheckpointSettings($player)) {
+				$aseco->checkpoints[$player->login]->tracking['local_records'] = $setup['LocalCheckpointTracking'];
+				$aseco->checkpoints[$player->login]->tracking['dedimania_records'] = $setup['DedimaniaCheckpointTracking'];
 			}
 			else {
 				if ($aseco->settings['auto_enable_cps']) {
@@ -303,10 +311,11 @@ class PluginCheckpoint extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerDisconnect ($aseco, $player) {
+	public function onPlayerDisconnectPrepare ($aseco, $player) {
 
 		// Store current settings from Player
-		$player->setCheckpointSettings(
+		$this->setCheckpointSettings(
+			$player,
 			$aseco->checkpoints[$player->login]->tracking['local_records'],
 			$aseco->checkpoints[$player->login]->tracking['dedimania_records']
 		);
@@ -540,15 +549,63 @@ class PluginCheckpoint extends Plugin {
 	public function buildCheckpointWidget ($logins, $cp, $diff, $besttime) {
 		global $aseco;
 
-		// Build manialink
-		$xml = '<manialink id="'. $this->manialinkid .'">';
-		$xml .= '<frame posn="-7.9 -38.1 0">';
-		$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->panelbg['style'] .'" substyle="'. $this->panelbg['substyle'] .'"/>';
+		// Build Manialink
+		$xml = '<manialink id="'. $this->manialinkid .'" name="CheckpointWidget">';
+		$xml .= '<frame posn="'. $this->position['x'] .' '. $this->position['y'] .' '. $this->position['z'] .'">';
+		if ($this->layout['background_color'] != '') {
+			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->layout['background_color'] .'"/>';
+		}
+		else {
+			$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->layout['style'] .'" substyle="'. $this->layout['substyle'] .'"/>';
+		}
 		$xml .= '<label posn="8 -0.65 0.02" sizen="16 2.2" textsize="2" scale="0.8" halign="center" textcolor="'. $this->textcolors['default_checkpoint'] .'" text="$O'. $cp .': '. $diff .'"/>';
 		$xml .= '<label posn="8 -2.5 0.02" sizen="16 2.2" textsize="1" scale="0.8" halign="center" textcolor="'. $this->textcolors['default_besttime'] .'" text="BEST '. $besttime .'"/>';
 		$xml .= '</frame>';
 		$xml .= '</manialink>';
 		$aseco->sendManialink($xml, $logins, 0);
+	}
+
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getCheckpointSettings ($player) {
+		global $aseco;
+
+		$settings = $player->getSettings($this);
+		if ($settings) {
+			return $settings;
+		}
+		else {
+			// Setup defaults
+			$settings = array(
+				'LocalCheckpointTracking'	=> ($aseco->settings['auto_enable_cps'] ? 0 : -1),
+				'DedimaniaCheckpointTracking'	=> ($aseco->settings['auto_enable_dedicps'] ? 0 : -1)
+			);
+			return $settings;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setCheckpointSettings ($player, $localcps, $dedicps) {
+
+		$settings = $player->getSettings($this);
+		$settings['LocalCheckpointTracking'] = $localcps;
+		$settings['DedimaniaCheckpointTracking'] = $dedicps;
+
+		$result = $player->setSettings($this, $settings);
+		if (!$result) {
+			return false;
+		}
+		return true;
 	}
 
 	/*

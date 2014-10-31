@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - October 2014 by undef.de
+ * Copyright:	May 2014 - November 2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -43,16 +43,16 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-10-10');
+	define('UASECO_BUILD',		'2014-11-01');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2014-09-10_14_00');
+	define('MANIAPLANET_BUILD',	'2014-10-23_16_00');
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.2.1');
 
 	// Setup misc.
-	define('USER_AGENT',		UASECO_NAME .'/'. UASECO_VERSION .' build '. UASECO_BUILD);	// used in includes/core/webaccess.class.php
+	define('USER_AGENT',		UASECO_NAME .'/'. UASECO_VERSION .' build '. UASECO_BUILD);	// Used by includes/core/webaccess.class.php
 	define('CRLF',			PHP_EOL);
 
 	if (!defined('LF')) {
@@ -66,7 +66,7 @@
 	require_once('includes/core/helper.class.php');			// Misc. functions for UASECO, e.g. $aseco->console()... based upon basic.inc.php
 	require_once('includes/core/XmlRpc/GbxRemote.php');
 	require_once('includes/core/webaccess.class.php');
-	require_once('includes/core/xmlparser.class.php');		// Provides an XML parser
+	require_once('includes/core/xmlparser.class.php');
 	require_once('includes/core/gbxdatafetcher.class.php');		// Provides access to GBX data
 	require_once('includes/core/mxinfofetcher.class.php');		// Provides access to ManiaExchange info
 	require_once('includes/core/continent.class.php');
@@ -101,7 +101,7 @@ class UASECO extends Helper {
 	public $client;
 	public $parser;
 	public $webaccess;
-	public $mysqli;
+	public $db;
 	public $continent;
 	public $country;
 	public $windows;
@@ -230,24 +230,26 @@ class UASECO extends Helper {
 		// Connect to the database
 		$this->displayLoadStatus('Connecting to database...', 0.0);
 		if ($this->settings['mask_password'] == true) {
-			$this->console("[Database] Try to connect to MySQL server on '{1}' with database '{2}' and password '{3}' (masked password)",
+			$this->console("[Database] Try to connect to MySQL server on '{1}' with database '{2}', login '{3}' and password '{4}' (masked password)",
 				$this->settings['mysql']['host'],
 				$this->settings['mysql']['database'],
+				$this->settings['mysql']['login'],
 				preg_replace('#.#', '*', $this->settings['mysql']['password'])
 			);
 		}
 		else {
-			$this->console("[Database] Try to connect to MySQL server on '{1}' with database '{2}' and password '{3}'",
+			$this->console("[Database] Try to connect to MySQL server on '{1}' with database '{2}', login '{3}' and password '{4}'",
 				$this->settings['mysql']['host'],
 				$this->settings['mysql']['database'],
+				$this->settings['mysql']['login'],
 				$this->settings['mysql']['password']
 			);
 		}
 		$this->connectDatabase();
-		$this->displayLoadStatus('Connection established successfully!', 0.5);
+		$this->displayLoadStatus('Connection established successfully!', 0.1);
 
 		// Check database structure
-		$this->displayLoadStatus('Checking database structure...', 0.6);
+		$this->displayLoadStatus('Checking database structure...', 0.15);
 		$this->checkDatabaseStructure();
 		$this->displayLoadStatus('Structure successfully checked!', 1.0);
 
@@ -332,7 +334,7 @@ class UASECO extends Helper {
 
 			if (time() >= $this->next_tenth) {
 				// Check for Database connection and reconnect on lost connection
-				if ($this->mysqli->ping() === false) {
+				if ($this->db->ping() === false) {
 					$this->console('[Database] Lost connection, try to reconnect...');
 					$this->connectDatabase();
 				}
@@ -441,10 +443,10 @@ class UASECO extends Helper {
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:        {1}', php_uname());
 		$this->console_text('» PHP:       PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), ini_get('safe_mode'), ini_get('memory_limit'), ini_get('max_execution_time'), ini_get('allow_url_fopen'));
-		$this->console_text('» MySQL:     Server:  {1}', $this->mysqli->server_version());
-		$this->console_text('»            Client:  {1}', $this->mysqli->client_version());
-		$this->console_text('»            Connect: {1}', $this->mysqli->connection_info());
-		$this->console_text('»            Status:  {1}', $this->mysqli->host_status());
+		$this->console_text('» MySQL:     Server:  {1}', $this->db->server_version());
+		$this->console_text('»            Client:  {1}', $this->db->client_version());
+		$this->console_text('»            Connect: {1}', $this->db->connection_info());
+		$this->console_text('»            Status:  {1}', $this->db->host_status());
 		$this->console_text('#####################################################################################');
 
 		// Format the text of the message
@@ -510,10 +512,10 @@ class UASECO extends Helper {
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), ini_get('safe_mode'), ini_get('memory_limit'), ini_get('max_execution_time'), ini_get('allow_url_fopen'));
-		$this->console_text('» MySQL:         Server:  {1}', $this->mysqli->server_version());
-		$this->console_text('»                Client:  {1}', $this->mysqli->client_version());
-		$this->console_text('»                Connect: {1}', $this->mysqli->connection_info());
-		$this->console_text('»                Status:  {1}', $this->mysqli->host_status());
+		$this->console_text('» MySQL:         Server:  {1}', $this->db->server_version());
+		$this->console_text('»                Client:  {1}', $this->db->client_version());
+		$this->console_text('»                Connect: {1}', $this->db->connection_info());
+		$this->console_text('»                Status:  {1}', $this->db->host_status());
 		$this->console_text('#####################################################################################');
 	}
 
@@ -597,9 +599,6 @@ class UASECO extends Helper {
 
 			// add random filter to /admin writemaplist output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
-
-			// set minimum number of ranked players in a clan to be included in /topclans
-			$this->settings['topclans_minplayers'] = $settings['TOPCLANS_MINPLAYERS'][0];
 
 			// set multiple of win count to show global congrats message
 			$this->settings['global_win_multiple'] = ($settings['GLOBAL_WIN_MULTIPLE'][0] > 0 ? $settings['GLOBAL_WIN_MULTIPLE'][0] : 1);
@@ -688,6 +687,7 @@ class UASECO extends Helper {
 			$this->settings['mysql']['login'] = $settings['MYSQL'][0]['LOGIN'][0];
 			$this->settings['mysql']['password'] = $settings['MYSQL'][0]['PASSWORD'][0];
 			$this->settings['mysql']['database'] = $settings['MYSQL'][0]['DATABASE'][0];
+			$this->settings['mysql']['table_prefix'] = $settings['MYSQL'][0]['TABLE_PREFIX'][0];
 
 			// Read <dedicated_server> settings and apply them
 			$this->server->xmlrpc['login'] = $settings['DEDICATED_SERVER'][0]['LOGIN'][0];
@@ -1017,6 +1017,7 @@ class UASECO extends Helper {
 	                'login'			=> $this->settings['mysql']['login'],
 	                'password'		=> $this->settings['mysql']['password'],
 			'database'		=> $this->settings['mysql']['database'],
+			'table_prefix'		=> $this->settings['mysql']['table_prefix'],
 			'autocommit'		=> 1,
 			'charset'		=> 'utf8',
 			'collate'		=> 'utf8_bin',
@@ -1024,7 +1025,7 @@ class UASECO extends Helper {
 		);
 
 		// Connect
-		$this->mysqli = new Database($settings);
+		$this->db = new Database($settings);
 		$this->console('[Database] ...connection established successfully!');
 	}
 
@@ -1036,277 +1037,307 @@ class UASECO extends Helper {
 
 	private function checkDatabaseStructure () {
 
-		// Create main tables
 		$this->console('[Database] Checking database structure:');
-		$this->console('[Database] » Checking table `maps`');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `maps` (
-			`Id` mediumint(9) NOT NULL AUTO_INCREMENT,
-			`Uid` varchar(27) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Filename` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Comment` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Author` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`AuthorNickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`AuthorZone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`AuthorContinent` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`AuthorNation` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`AuthorScore` int(4) UNSIGNED NOT NULL,
-			`AuthorTime` int(4) UNSIGNED NOT NULL,
-			`GoldTime` int(4) UNSIGNED NOT NULL,
-			`SilverTime` int(4) UNSIGNED NOT NULL,
-			`BronzeTime` int(4) UNSIGNED NOT NULL,
-			`Environment` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Mood` enum('unknown', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			`Cost` mediumint(3) unsigned NOT NULL,
-			`Type` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Style` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			`NbLaps` tinyint(1) UNSIGNED NOT NULL,
-			`NbCheckpoints` tinyint(1) UNSIGNED NOT NULL,
-			`Validated` enum('null','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			`ExeVersion` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`ExeBuild` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`ModName` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`ModFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`ModUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`SongFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`SongUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			PRIMARY KEY (`Id`),
-			UNIQUE KEY `Uid` (`Uid`),
-			Key `Author` (`Author`),
-			Key `AuthorScore` (`AuthorScore`),
-			Key `AuthorTime` (`AuthorTime`),
-			Key `GoldTime` (`GoldTime`),
-			Key `SilverTime` (`SilverTime`),
-			Key `BronzeTime` (`BronzeTime`),
-			Key `Environment` (`Environment`),
-			Key `Mood` (`Mood`),
-			Key `MultiLap` (`MultiLap`),
-			Key `NbLaps` (`NbLaps`),
-			Key `NbCheckpoints` (`NbCheckpoints`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
-		";
-		$this->mysqli->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.65);
+
+		// Check for tables
+		$tables = array();
+		$result = $this->db->query('SHOW TABLES;');
+		if ($result) {
+			while ($row = $result->fetch_row()) {
+				$tables[] = $row[0];
+			}
+			$result->free_result();
+		}
 
 
-		$this->console('[Database] » Checking table `players`');
+		$check = array();
+		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
+		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'karmas', $tables);
+		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
+		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		if ($check[1]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'authors`');
+		}
+		if ($check[2]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'karmas`');
+		}
+		if ($check[3]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		}
+		if ($check[4]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'players`');
+		}
+		if ($check[5]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		}
+		if ($check[6]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		}
+		if ($check[7]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		}
+		if ($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7]) {
+			$this->console('[Database] ...successfully done!');
+			return;
+		}
+
+
+		// Create tables
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		$query = "
-		CREATE TABLE IF NOT EXISTS `players` (
-			`Id` mediumint(9) NOT NULL AUTO_INCREMENT,
-			`Login` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Game` varchar(3) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`NickName` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Continent` tinyint(3) NOT NULL DEFAULT '0',
-			`Nation` varchar(3) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`UpdatedAt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`Wins` mediumint(9) NOT NULL DEFAULT '0',
-			`Visits` mediumint(9) UNSIGNED NOT NULL DEFAULT '0',
-			`TimePlayed` int(10) UNSIGNED NOT NULL DEFAULT '0',
-			`TeamName` char(60) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			PRIMARY KEY (`Id`),
-			UNIQUE KEY `Login` (`Login`),
-			KEY `Game` (`Game`),
-			KEY `Continent` (`Continent`),
-			KEY `Nation` (`Nation`),
-			KEY `UpdatedAt` (`UpdatedAt`),
-			KEY `Wins` (`Wins`),
-			KEY `Visits` (`Visits`),
-			KEY `TimePlayed` (`TimePlayed`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
+		CREATE TABLE IF NOT EXISTS `%prefix%authors` (
+		  `AuthorId` mediumint(3) unsigned NOT NULL AUTO_INCREMENT,
+		  `Login` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Nickname` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Zone` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Continent` varchar(2) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Nation` varchar(3) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  PRIMARY KEY (`AuthorId`),
+		  UNIQUE KEY `Login` (`Login`),
+		  KEY `Continent` (`Continent`),
+		  KEY `Nation` (`Nation`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 		";
-		$this->mysqli->query($query);
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.2);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'karmas`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%karmas` (
+		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Score` tinyint(1) unsigned NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`MapId`,`PlayerId`),
+		  KEY `MapId` (`MapId`),
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Date` (`Date`),
+		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.3);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%maps` (
+		  `MapId` mediumint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+		  `Uid` varchar(27) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Filename` text COLLATE utf8_bin NOT NULL,
+		  `Name` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Comment` text COLLATE utf8_bin NOT NULL,
+		  `AuthorId` mediumint(3) unsigned NOT NULL,
+		  `AuthorScore` int(4) unsigned NOT NULL,
+		  `AuthorTime` int(4) unsigned NOT NULL,
+		  `GoldTime` int(4) unsigned NOT NULL,
+		  `SilverTime` int(4) unsigned NOT NULL,
+		  `BronzeTime` int(4) unsigned NOT NULL,
+		  `Environment` varchar(10) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE utf8_bin NOT NULL,
+		  `Cost` mediumint(3) unsigned NOT NULL,
+		  `Type` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Style` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `MultiLap` enum('false','true') COLLATE utf8_bin NOT NULL,
+		  `NbLaps` tinyint(1) unsigned NOT NULL,
+		  `NbCheckpoints` tinyint(1) unsigned NOT NULL,
+		  `Validated` enum('null','false','true') COLLATE utf8_bin NOT NULL,
+		  `ExeVersion` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `ExeBuild` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `ModName` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `ModFile` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `ModUrl` text COLLATE utf8_bin NOT NULL,
+		  `SongFile` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `SongUrl` text COLLATE utf8_bin NOT NULL,
+		  PRIMARY KEY (`MapId`),
+		  UNIQUE KEY `Uid` (`Uid`),
+		  KEY `AuthorId` (`AuthorId`),
+		  KEY `AuthorScore` (`AuthorScore`),
+		  KEY `AuthorTime` (`AuthorTime`),
+		  KEY `GoldTime` (`GoldTime`),
+		  KEY `SilverTime` (`SilverTime`),
+		  KEY `BronzeTime` (`BronzeTime`),
+		  KEY `Environment` (`Environment`),
+		  KEY `Mood` (`Mood`),
+		  KEY `MultiLap` (`MultiLap`),
+		  KEY `NbLaps` (`NbLaps`),
+		  KEY `NbCheckpoints` (`NbCheckpoints`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+		";
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.4);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%players` (
+		  `PlayerId` mediumint(3) unsigned NOT NULL AUTO_INCREMENT,
+		  `Login` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Nickname` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Zone` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Continent` varchar(2) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Nation` varchar(3) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `LastVisit` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Visits` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Wins` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Donations` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `TimePlayed` int(4) unsigned NOT NULL DEFAULT '0',
+		  `Settings` text COLLATE utf8_bin NOT NULL,
+		  PRIMARY KEY (`PlayerId`),
+		  UNIQUE KEY `Login` (`Login`),
+		  KEY `Continent` (`Continent`),
+		  KEY `Nation` (`Nation`),
+		  KEY `LastVisit` (`LastVisit`),
+		  KEY `Visits` (`Visits`),
+		  KEY `Wins` (`Wins`),
+		  KEY `Donations` (`Donations`),
+		  KEY `TimePlayed` (`TimePlayed`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+		";
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.5);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%ranks` (
+		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Average` int(4) unsigned NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`PlayerId`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.6);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%records` (
+		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Score` int(4) unsigned NOT NULL DEFAULT '0',
+		  `Checkpoints` text COLLATE utf8_bin NOT NULL,
+		  PRIMARY KEY (`MapId`,`PlayerId`),
+		  KEY `MapId` (`MapId`),
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Date` (`Date`),
+		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
 		$this->displayLoadStatus('Checking database structure...', 0.7);
 
 
-		$this->console('[Database] » Checking table `players_extra`');
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		$query = "
-		CREATE TABLE IF NOT EXISTS `players_extra` (
-			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
-			`Cps` smallint(3) NOT NULL DEFAULT '-1',
-			`DediCps` smallint(3) NOT NULL DEFAULT '-1',
-			`Donations` mediumint(9) NOT NULL DEFAULT '0',
-			`Style` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`Panels` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			`PanelBG` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-			PRIMARY KEY (`PlayerId`),
-			KEY `Donations` (`Donations`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
+		CREATE TABLE IF NOT EXISTS `%prefix%times` (
+		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Score` int(4) unsigned NOT NULL DEFAULT '0',
+		  `Checkpoints` text COLLATE utf8_bin NOT NULL,
+		  PRIMARY KEY (`MapId`,`PlayerId`,`Score`),
+		  KEY `MapId` (`MapId`),
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Date` (`Date`),
+		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
-		$this->mysqli->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.75);
-
-
-		// Check for main tables
-		$tables = array();
-		$res = $this->mysqli->query('SHOW TABLES;');
-		if ($res) {
-			while ($row = $res->fetch_row()) {
-				$tables[] = $row[0];
-			}
-			$res->free_result();
-		}
-
-		$check = array();
-		$check[1] = in_array('maps', $tables);
-		$check[2] = in_array('players', $tables);
-		$check[3] = in_array('players_extra', $tables);
-		if (!($check[1] && $check[2] && $check[3])) {
-			trigger_error('[Database] ERROR: Table structure incorrect, use [newinstall/database/uaseco.sql] to correct this!', E_USER_ERROR);
-		}
+		$this->db->query($query);
 		$this->displayLoadStatus('Checking database structure...', 0.8);
 
 
-		// Add players `Continent` and `Visits` column
-		$fields = array();
-		$res = $this->mysqli->query('SHOW COLUMNS FROM `players`;');
-		if ($res) {
-			while ($row = $res->fetch_row()) {
-				$fields[] = $row[0];
+		// Check for tables
+		$tables = array();
+		$result = $this->db->query('SHOW TABLES;');
+		if ($result) {
+			while ($row = $result->fetch_row()) {
+				$tables[] = $row[0];
 			}
-			$res->free_result();
+			$result->free_result();
 		}
-		if (!in_array('Continent', $fields)) {
-			$this->console("[Database] » Add `players` column `Continent`...");
-			$this->mysqli->query("ALTER TABLE `players` ADD `Continent` tinyint(3) NOT NULL DEFAULT 0 AFTER `NickName`;");
+
+		$check = array();
+		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
+		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'karmas', $tables);
+		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
+		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7])) {
+			trigger_error('[Database] Table structure incorrect, can not setup all tables: '. $this->db->errmsg(), E_USER_ERROR);
 		}
-		if (!in_array('Visits', $fields)) {
-			$this->mysqli->query('ALTER TABLE `players` ADD `Visits` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" AFTER `Wins`, ADD INDEX (`Visits`);');
-		}
-		$this->displayLoadStatus('Checking database structure...', 0.85);
 
 
-		// Add `players_extra` `PanelBG` column
-		$fields = array();
-		$res = $this->mysqli->query('SHOW COLUMNS FROM `players_extra`;');
-		if ($res) {
-			while ($row = $res->fetch_row()) {
-				$fields[] = $row[0];
-			}
-			$res->free_result();
-		}
-		if (!in_array('PanelBG', $fields)) {
-			$this->console("[Database] » Add `players_extra` column `PanelBG`...");
-			$this->mysqli->query("ALTER TABLE `players_extra` ADD `PanelBG` varchar(30) NOT NULL DEFAULT '';");
-		}
 		$this->displayLoadStatus('Checking database structure...', 0.9);
 
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		$query = "
+		ALTER TABLE `%prefix%maps`
+		  ADD CONSTRAINT `%prefix%maps_ibfk_1` FOREIGN KEY (`AuthorId`) REFERENCES `%prefix%authors` (`AuthorId`);
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps` '. $this->db->errmsg(), E_USER_ERROR);
+		}
 
-		// Add at `maps` the new columns
-		$fields = array();
-		$res = $this->mysqli->query('SHOW COLUMNS FROM `maps`;');
-		if ($res) {
-			while ($row = $res->fetch_row()) {
-				$fields[] = $row[0];
-			}
-			$res->free_result();
+
+
+		$this->displayLoadStatus('Checking database structure...', 0.92);
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		$query = "
+		ALTER TABLE `%prefix%ranks`
+		  ADD CONSTRAINT `%prefix%ranks_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks` '. $this->db->errmsg(), E_USER_ERROR);
 		}
-		if (!in_array('Filename', $fields)) {
-			$this->console("[Database] » Add `maps` column `Filename`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Filename` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Uid`;");
+
+
+
+		$this->displayLoadStatus('Checking database structure...', 0.94);
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		$query = "
+		ALTER TABLE `%prefix%records`
+		  ADD CONSTRAINT `%prefix%records_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+		  ADD CONSTRAINT `%prefix%records_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
 		}
-		if (!in_array('Comment', $fields)) {
-			$this->console("[Database] » Add `maps` column `Comment`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Comment` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Name`;");
+
+
+
+		$this->displayLoadStatus('Checking database structure...', 0.96);
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		$query = "
+		ALTER TABLE `%prefix%times`
+		  ADD CONSTRAINT `%prefix%times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+		  ADD CONSTRAINT `%prefix%times_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times` '. $this->db->errmsg(), E_USER_ERROR);
 		}
-		if (!in_array('AuthorNickname', $fields)) {
-			$this->console("[Database] » Add `maps` column `AuthorNickname`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorNickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Author`;");
+
+
+
+		$this->displayLoadStatus('Checking database structure...', 0.98);
+		$query = "
+		SET FOREIGN_KEY_CHECKS=1;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to enable foreign key checks: '. $this->db->errmsg(), E_USER_ERROR);
 		}
-		if (!in_array('AuthorZone', $fields)) {
-			$this->console("[Database] » Add `maps` column `AuthorZone`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorZone` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `AuthorNickname`;");
-		}
-		if (!in_array('AuthorContinent', $fields)) {
-			$this->console("[Database] » Add `maps` column `AuthorContinent`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorContinent` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `AuthorZone`;");
-		}
-		if (!in_array('AuthorNation', $fields)) {
-			$this->console("[Database] » Add `maps` column `AuthorNation`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorNation` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `AuthorContinent`;");
-		}
-		if (!in_array('AuthorScore', $fields)) {
-			$this->console("[Database] » Add `maps` column `AuthorScore`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorScore` int(4) UNSIGNED NOT NULL AFTER `AuthorNation`, ADD INDEX (`AuthorScore`);");
-		}
-		if (!in_array('AuthorTime', $fields)) {
-			$this->console("[Database] » Add `maps` column `AuthorTime`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `AuthorTime` int(4) UNSIGNED NOT NULL AFTER `AuthorScore`, ADD INDEX (`AuthorTime`);");
-		}
-		if (!in_array('GoldTime', $fields)) {
-			$this->console("[Database] » Add `maps` column `GoldTime`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `GoldTime` int(4) UNSIGNED NOT NULL AFTER `AuthorTime`, ADD INDEX (`GoldTime`);");
-		}
-		if (!in_array('SilverTime', $fields)) {
-			$this->console("[Database] » Add `maps` column `SilverTime`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `SilverTime` int(4) UNSIGNED NOT NULL AFTER `GoldTime`, ADD INDEX (`SilverTime`);");
-		}
-		if (!in_array('BronzeTime', $fields)) {
-			$this->console("[Database] » Add `maps` column `BronzeTime`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `BronzeTime` int(4) UNSIGNED NOT NULL AFTER `SilverTime`, ADD INDEX (`BronzeTime`);");
-		}
-		if (!in_array('Mood', $fields)) {
-			$this->console("[Database] » Add `maps` column `Mood`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Mood` enum('unknown', 'Sunrise', 'Day', 'Sunset', 'Night') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Environment`, ADD INDEX (`Mood`);");
-		}
-		if (!in_array('Cost', $fields)) {
-			$this->console("[Database] » Add `maps` column `Cost`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Cost` mediumint(3) unsigned NOT NULL AFTER `Mood`;");
-		}
-		if (!in_array('Type', $fields)) {
-			$this->console("[Database] » Add `maps` column `Type`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Type` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Cost`;");
-		}
-		if (!in_array('Style', $fields)) {
-			$this->console("[Database] » Add `maps` column `Style`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Style` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Type`;");
-		}
-		if (!in_array('MultiLap', $fields)) {
-			$this->console("[Database] » Add `maps` column `MultiLap`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `MultiLap` enum('false', 'true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `Style`, ADD INDEX (`MultiLap`);");
-		}
-		if (!in_array('NbLaps', $fields)) {
-			$this->console("[Database] » Add `maps` column `NbLaps`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `NbLaps` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `MultiLap`;");
-		}
-		if (!in_array('NbCheckpoints', $fields)) {
-			$this->console("[Database] » Add `maps` column `NbCheckpoints`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `NbCheckpoints` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `NbLaps`;");
-		}
-		if (!in_array('Validated', $fields)) {
-			$this->console("[Database] » Add `maps` column `Validated`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `Validated` enum('null','false','true') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL AFTER `NbCheckpoints`;");
-		}
-		if (!in_array('ExeVersion', $fields)) {
-			$this->console("[Database] » Add `maps` column `ExeVersion`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `ExeVersion` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `Validated`;");
-		}
-		if (!in_array('ExeBuild', $fields)) {
-			$this->console("[Database] » Add `maps` column `ExeBuild`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `ExeBuild` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ExeVersion`;");
-		}
-		if (!in_array('ModName', $fields)) {
-			$this->console("[Database] » Add `maps` column `ModName`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `ModName` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ExeBuild`;");
-		}
-		if (!in_array('ModFile', $fields)) {
-			$this->console("[Database] » Add `maps` column `ModFile`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `ModFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ModName`;");
-		}
-		if (!in_array('ModUrl', $fields)) {
-			$this->console("[Database] » Add `maps` column `ModUrl`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `ModUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ModFile`;");
-		}
-		if (!in_array('SongFile', $fields)) {
-			$this->console("[Database] » Add `maps` column `SongFile`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `SongFile` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `ModUrl`;");
-		}
-		if (!in_array('SongUrl', $fields)) {
-			$this->console("[Database] » Add `maps` column `SongUrl`...");
-			$this->mysqli->query("ALTER TABLE `maps` ADD `SongUrl` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '' AFTER `SongFile`;");
-		}
-		$this->displayLoadStatus('Checking database structure...', 0.95);
 
 		$this->console('[Database] ...successfully done!');
 	}
@@ -1474,7 +1505,7 @@ class UASECO extends Helper {
 
 					case 'ManiaPlanet.PlayerDisconnect':
 						// [0] = string Login, [1] = string DisconnectionReason
-						$this->playerDisconnect($call[1]);
+						$this->playerDisconnect($call[1][0], $call[1][0]);
 						break;
 
 					case 'ManiaPlanet.MapListModified':
@@ -1803,7 +1834,7 @@ class UASECO extends Helper {
 				}
 			}
 
-			// Create player object
+			// Create Player object
 			$player = new Player($data);
 
 			// Get the current ranking for this player, required to have the rankings up-to-date on a running race,
@@ -1821,7 +1852,7 @@ class UASECO extends Helper {
 				$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $player->login);
 			}
 
-			// Adds a new player to the player list
+			// Adds a new Player to the Player list
 			$this->server->players->addPlayer($player);
 
 			// Log console message
@@ -1836,10 +1867,10 @@ class UASECO extends Helper {
 
 			// Update the Visits, but only when Player connects and not when UASECO restarts
 			if ($this->startup_phase == false && $this->restarting == false) {
-				$query = "UPDATE `players` SET `Visits` = `Visits` + 1 WHERE `Id` = ". $player->id ." LIMIT 1;";
-				$result = $this->mysqli->query($query);
+				$query = "UPDATE `%prefix%players` SET `Visits` = `Visits` + 1 WHERE `PlayerId` = ". $player->id ." LIMIT 1;";
+				$result = $this->db->query($query);
 				if (!$result) {
-					$this->console('[Player] UPDATE `Visits` at `players` failed. [for statement "'. $query .'"]!');
+					$this->console('[Player] UPDATE `Visits` at `%prefix%players` failed. [for statement "'. $query .'"]!');
 				}
 			}
 
@@ -1886,40 +1917,49 @@ class UASECO extends Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Handles disconnections of players.
-	public function playerDisconnect ($player) {
+	// Handles disconnections of Players.
+	public function playerDisconnect ($login, $reason) {
 
 		// Check for relay server
-		if (!$this->server->isrelay && array_key_exists($player[0], $this->server->relay_list)) {
+		if (!$this->server->isrelay && array_key_exists($login, $this->server->relay_list)) {
 			// log console message
 			$this->console('[Relay] Disconnect of relay server {1} ({2})',
-				$player[0],
-				$this->stripColors($this->server->relay_list[$player[0]]['NickName'], false)
+				$login,
+				$this->stripColors($this->server->relay_list[$login]['NickName'], false)
 			);
 
-			unset($this->server->relay_list[$player[0]]);
+			unset($this->server->relay_list[$login]);
 			return;
 		}
 
-		// Delete player and put him into the player item
-		// ignore event if disconnect fluke after player already left,
-		// or on relay if player from master server (which wasn't added)
-		if (!$player_item = $this->server->players->removePlayer($player[0])) {
+		// Get Player object, if available. Otherwise bail out.
+		if (!$player = $this->server->players->getPlayer($login)) {
+			return;
+		}
+
+		// Throw 'prepare player disconnect' event
+		$this->releaseEvent('onPlayerDisconnectPrepare', $player);
+
+		// Store eventually changed Plugin settings to the database
+		$player->storeDatabasePlayerSettings();
+
+		// Delete Player, skip the rest on relay if Player from master server (which was not added)
+		if (!$result = $this->server->players->removePlayer($login)) {
 			return;
 		}
 
 		// Log console message
 		$this->console('[Player] Disconnection from Player [{1}] after {2} playtime [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
-			$player_item->login,
-			$this->formatTime($player_item->getTimeOnline() * 1000, false),
-			$this->stripColors($player_item->nickname, false),
-			$player_item->ip,
-			$player_item->ladderrank,
-			$player_item->id
+			$player->login,
+			$this->formatTime($player->getTimeOnline() * 1000, false),
+			$this->stripColors($player->nickname, false),
+			$player->ip,
+			$player->ladderrank,
+			$player->id
 		);
 
 		// Throw 'player disconnects' event
-		$this->releaseEvent('onPlayerDisconnect', $player_item);
+		$this->releaseEvent('onPlayerDisconnect', $player);
 	}
 
 	/*

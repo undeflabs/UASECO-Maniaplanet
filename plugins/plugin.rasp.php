@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -96,28 +96,22 @@ class PluginRasp extends Plugin {
 		// Get settings
 		$this->readSettings();
 
-		$aseco->console('[Rasp] Checking database structure...');
-		if (!$this->checkTables($aseco)) {
-			trigger_error('[Rasp] ERROR: Table structure incorrect, use [newinstall/database/uaseco.sql] to correct this!', E_USER_ERROR);
-		}
-		$aseco->console('[Rasp] ...successfully done!');
-
 		$aseco->console('[Rasp] Cleaning up unused data...');
 		$this->cleanData($aseco);
 
 		// prune records and rs_times entries for maps deleted from server
 		if ($this->prune_records_times) {
-			$aseco->console('[Rasp] Pruning `records` and `rs_times` for deleted maps:');
+			$aseco->console('[Rasp] Pruning `%prefix%records` and `%prefix%times` for deleted maps:');
 			$maps = $aseco->server->maps->map_list;
 
 			// Get list of maps IDs with records in the database
 			$query = "
 			SELECT DISTINCT
 				`MapId`
-			FROM `records`;
+			FROM `%prefix%records`;
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					$removed = array();
@@ -126,11 +120,11 @@ class PluginRasp extends Plugin {
 						// delete records & rs_times if it's not in server's maps list
 						if (!in_array($map, $maps)) {
 							$removed[] = $map;
-							$query = 'DELETE FROM `records` WHERE `MapId` = '. $map .';';
-							$aseco->mysqli->query($query);
+							$query = 'DELETE FROM `%prefix%records` WHERE `MapId` = '. $map .';';
+							$aseco->db->query($query);
 
-							$query = 'DELETE FROM `rs_times` WHERE `MapId` = '. $map .';';
-							$aseco->mysqli->query($query);
+							$query = 'DELETE FROM `%prefix%times` WHERE `MapId` = '. $map .';';
+							$aseco->db->query($query);
 						}
 					}
 					$res->free_result();
@@ -327,28 +321,28 @@ class PluginRasp extends Plugin {
 		$top = 100;
 		$query = "
 		SELECT
-			`p`.`NickName`,
-			`r`.`Avg`
-		FROM `players` AS `p`
-		LEFT JOIN `rs_rank` AS `r` ON `p`.`Id` = `r`.`PlayerId`
-		WHERE `r`.`Avg` != 0
-		ORDER BY `r`.`Avg` ASC
+			`p`.`Nickname`,
+			`r`.`Average`
+		FROM `%prefix%players` AS `p`
+		LEFT JOIN `%prefix%ranks` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
+		WHERE `r`.`Average` != 0
+		ORDER BY `r`.`Average` ASC
 		LIMIT ". $top .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$i = 1;
 				$recs = array();
 				while ($row = $res->fetch_object()) {
-					$nickname = $row->NickName;
+					$nickname = $row->Nickname;
 					if (!$aseco->settings['lists_colornicks']) {
 						$nickname = $aseco->stripColors($nickname);
 					}
 					$recs[] = array(
 						$i .'.',
-						sprintf("%4.1F", $row->Avg / 10000),
+						sprintf("%4.1F", $row->Average / 10000),
 						$nickname,
 					);
 					$i++;
@@ -394,20 +388,20 @@ class PluginRasp extends Plugin {
 		$top = 100;
 		$query = "
 		SELECT
-			`NickName`,
+			`Nickname`,
 			`Wins`
-		FROM `players`
+		FROM `%prefix%players`
 		ORDER BY `Wins` DESC
 		LIMIT ". $top .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$i = 1;
 				$wins = array();
 				while ($row = $res->fetch_object()) {
-					$nickname = $row->NickName;
+					$nickname = $row->Nickname;
 					if (!$aseco->settings['lists_colornicks']) {
 						$nickname = $aseco->stripColors($nickname);
 					}
@@ -456,19 +450,19 @@ class PluginRasp extends Plugin {
 		$top = 100;
 		$query = "
 		SELECT
-			`NickName`,
+			`Nickname`,
 			`TimePlayed`
-		FROM `players`
+		FROM `%prefix%players`
 		ORDER BY `TimePlayed` DESC
 		LIMIT ". $top .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			$i = 1;
 			$active = array();
 			while ($row = $res->fetch_object()) {
-				$nickname = $row->NickName;
+				$nickname = $row->Nickname;
 				if (!$aseco->settings['lists_colornicks']) {
 					$nickname = $aseco->stripColors($nickname);
 				}
@@ -506,88 +500,15 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function checkTables ($aseco) {
-
-		$aseco->console('[Rasp] » Checking table `rs_rank`.');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `rs_rank` (
-			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
-			`Avg` float NOT NULL DEFAULT '0',
-			KEY `PlayerId` (`PlayerId`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE 'utf8_bin';
-		";
-		$aseco->mysqli->query($query);
-
-
-		$aseco->console('[Rasp] » Checking table `rs_times`.');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `rs_times` (
-			`Id` int(11) NOT NULL AUTO_INCREMENT,
-			`MapId` mediumint(9) NOT NULL DEFAULT '0',
-			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
-			`Score` int(11) NOT NULL DEFAULT '0',
-			`Date` int(10) unsigned NOT NULL default 0,
-			`Checkpoints` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-			PRIMARY KEY (`Id`),
-			KEY `PlayerMapId` (`PlayerId`,`MapId`),
-			KEY `MapId` (`MapId`),
-			KEY `Score` (`Score`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
-		";
-		$aseco->mysqli->query($query);
-
-
-		$aseco->console('[Rasp] » Checking table `rs_karma`.');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `rs_karma` (
-			`Id` int(11) NOT NULL AUTO_INCREMENT,
-			`MapId` mediumint(9) NOT NULL DEFAULT '0',
-			`PlayerId` mediumint(9) NOT NULL DEFAULT '0',
-			`Score` tinyint(3) NOT NULL DEFAULT '0',
-			PRIMARY KEY (`Id`),
-			UNIQUE KEY `PlayerMapId` (`PlayerId`,`MapId`),
-			KEY `MapId` (`MapId`),
-			KEY `Score` (`Score`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE 'utf8_bin' AUTO_INCREMENT=1;
-		";
-		$aseco->mysqli->query($query);
-
-
-		// check for rs_* tables
-		$tables = array();
-		$res = $aseco->mysqli->query('SHOW TABLES');
-		if ($res) {
-			if ($res->num_rows > 0) {
-				while ($row = $res->fetch_row()) {
-					$tables[] = $row[0];
-				}
-			}
-			$res->free_result();
-		}
-
-		$check = array();
-		$check[1] = in_array('rs_rank', $tables);
-		$check[2] = in_array('rs_times', $tables);
-		$check[3] = in_array('rs_karma', $tables);
-
-		return ($check[1] && $check[2] && $check[3]);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function cleanData ($aseco) {
 
-		$aseco->console('[Rasp] » Cleaning up `maps`.');
-		$sql = "DELETE FROM `maps` WHERE `Uid` = '';";
-		$aseco->mysqli->query($sql);
+		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['mysql']['table_prefix'] .'maps`.');
+		$sql = "DELETE FROM `%prefix%maps` WHERE `Uid` = '';";
+		$aseco->db->query($sql);
 
-		$aseco->console('[Rasp] » Cleaning up `players`.');
-		$sql = "DELETE FROM `players` WHERE `Login` = '';";
-		$aseco->mysqli->query($sql);
+		$aseco->console('[Rasp] » Cleaning up '. $aseco->settings['mysql']['table_prefix'] .'players`.');
+		$sql = "DELETE FROM `%prefix%players` WHERE `Login` = '';";
+		$aseco->db->query($sql);
 
 
 		if (!$this->prune_records_times) {
@@ -600,12 +521,12 @@ class PluginRasp extends Plugin {
 		$sql = "
 		SELECT DISTINCT
 			`r`.`MapId`,
-			`m`.`Id`
-		FROM `records` AS `r`
-		LEFT JOIN `maps` AS `m` ON `r`.`MapId` = `m`.`Id`
-		WHERE `m`.`Id` IS NULL;
+			`m`.`MapId`
+		FROM `%prefix%records` AS `r`
+		LEFT JOIN `%prefix%maps` AS `m` ON `r`.`MapId` = `m`.`MapId`
+		WHERE `m`.`MapId` IS NULL;
 		";
-		$res = $aseco->mysqli->query($sql);
+		$res = $aseco->db->query($sql);
 		if ($res->num_rows > 0) {
 			while ($row = $res->fetch_row()) {
 				$deletelist[] = $row[0];
@@ -614,10 +535,10 @@ class PluginRasp extends Plugin {
 
 			$aseco->console('[Rasp] » Deleting records for deleted maps: '. implode(', ', $deletelist));
 			$sql = "
-			DELETE FROM `records`
+			DELETE FROM `%prefix%records`
 			WHERE `MapId` IN (". implode(', ', $deletelist) .");
 			";
-			$aseco->mysqli->query($sql);
+			$aseco->db->query($sql);
 		}
 
 
@@ -626,12 +547,12 @@ class PluginRasp extends Plugin {
 		$sql = "
 		SELECT DISTINCT
 			`r`.`PlayerId`,
-			`p`.`Id`
-		FROM `records` AS `r`
-		LEFT JOIN `players` AS `p` ON `r`.`PlayerId` = `p`.`Id`
-		WHERE `p`.`Id` IS NULL;
+			`p`.`PlayerId`
+		FROM `%prefix%records` AS `r`
+		LEFT JOIN `%prefix%players` AS `p` ON `r`.`PlayerId` = `p`.`PlayerId`
+		WHERE `p`.`PlayerId` IS NULL;
 		";
-		$res = $aseco->mysqli->query($sql);
+		$res = $aseco->db->query($sql);
 		if ($res->num_rows > 0) {
 			while ($row = $res->fetch_row()) {
 				$deletelist[] = $row[0];
@@ -640,24 +561,24 @@ class PluginRasp extends Plugin {
 
 			$aseco->console('[Rasp] » Deleting records for deleted players: '. implode(', ', $deletelist));
 			$sql = "
-			DELETE FROM `records`
+			DELETE FROM `%prefix%records`
 			WHERE `PlayerId` IN (". implode(', ', $deletelist) .");
 			";
-			$aseco->mysqli->query($sql);
+			$aseco->db->query($sql);
 		}
 
 
-		// Delete from `rs_times` for deleted maps
+		// Delete from `%prefix%times` for deleted maps
 		$deletelist = array();
 		$sql = "
 		SELECT DISTINCT
 			`r`.`MapId`,
-			`m`.`Id`
-		FROM `rs_times` AS `r`
-		LEFT JOIN `maps` AS `m` ON `r`.`MapId` = `m`.`Id`
-		WHERE `m`.`Id` IS NULL;
+			`m`.`MapId`
+		FROM `%prefix%times` AS `r`
+		LEFT JOIN `%prefix%maps` AS `m` ON `r`.`MapId` = `m`.`MapId`
+		WHERE `m`.`MapId` IS NULL;
 		";
-		$res = $aseco->mysqli->query($sql);
+		$res = $aseco->db->query($sql);
 		if ($res->num_rows > 0) {
 			while ($row = $res->fetch_row()) {
 				$deletelist[] = $row[0];
@@ -666,24 +587,24 @@ class PluginRasp extends Plugin {
 
 			$aseco->console('[Rasp] » Deleting rs_times for deleted maps: '. implode(', ', $deletelist));
 			$sql = "
-			DELETE FROM `rs_times`
+			DELETE FROM `%prefix%times`
 			WHERE `MapId` IN (". implode(', ', $deletelist) .");
 			";
-			$aseco->mysqli->query($sql);
+			$aseco->db->query($sql);
 		}
 
 
-		// Delete from `rs_times` for deleted players
+		// Delete from `%prefix%times` for deleted players
 		$deletelist = array();
 		$sql = "
 		SELECT DISTINCT
 			`r`.`PlayerId`,
-			`p`.`Id`
-		FROM `rs_times` AS `r`
-		LEFT JOIN `players` AS `p` ON `r`.`PlayerId` = `p`.`Id`
-		WHERE `p`.`Id` IS NULL;
+			`p`.`PlayerId`
+		FROM `%prefix%times` AS `r`
+		LEFT JOIN `%prefix%players` AS `p` ON `r`.`PlayerId` = `p`.`PlayerId`
+		WHERE `p`.`PlayerId` IS NULL;
 		";
-		$res = $aseco->mysqli->query($sql);
+		$res = $aseco->db->query($sql);
 		if ($res->num_rows > 0) {
 			while ($row = $res->fetch_row()) {
 				$deletelist[] = $row[0];
@@ -692,10 +613,10 @@ class PluginRasp extends Plugin {
 
 			$aseco->console('[Rasp] » Deleting rs_times for deleted players: '. implode(', ', $deletelist));
 			$sql = "
-			DELETE FROM `rs_times`
+			DELETE FROM `%prefix%times`
 			WHERE `PlayerId` IN (". implode(', ', $deletelist) .");
 			";
-			$aseco->mysqli->query($sql);
+			$aseco->db->query($sql);
 		}
 
 		$aseco->console('[Rasp] ...successfully done!');
@@ -715,19 +636,19 @@ class PluginRasp extends Plugin {
 		$total = count($maps);
 
 		// Erase old average data
-		$aseco->mysqli->query('TRUNCATE TABLE `rs_rank`;');
+		$aseco->db->query('TRUNCATE TABLE `%prefix%ranks`;');
 
 		// get list of players with at least $minrecs records (possibly unranked)
 		$query = "
 		SELECT
 			`PlayerId`,
 			COUNT(*) AS `Cnt`
-		FROM `records`
+		FROM `%prefix%records`
 		GROUP BY `PlayerId`
 		HAVING `Cnt` >= ". $this->minrank .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			while ($row = $res->fetch_object()) {
 				$players[$row->PlayerId] = array(0, 0);  // sum, count
@@ -741,13 +662,13 @@ class PluginRasp extends Plugin {
 					$query = "
 					SELECT
 						`PlayerId`
-					FROM `records`
+					FROM `%prefix%records`
 					WHERE `MapId` = ". $map->id ."
 					ORDER BY `Score` ". $order .", `Date` ASC
 					LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 					";
 
-					$res = $aseco->mysqli->query($query);
+					$res = $aseco->db->query($query);
 					if ($res) {
 						if ($res->num_rows > 0) {
 							$i = 1;
@@ -766,7 +687,7 @@ class PluginRasp extends Plugin {
 
 				// one-shot insert for queries up to 1 MB (default max_allowed_packet),
 				// or about 75K rows at 14 bytes/row (avg)
-				$query = 'INSERT INTO `rs_rank` VALUES ';
+				$query = 'INSERT INTO `%prefix%ranks` VALUES ';
 				// compute each player's new average score
 				foreach ($players as $player => $ranked) {
 					// ranked maps sum + $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() rank for all remaining maps
@@ -774,12 +695,12 @@ class PluginRasp extends Plugin {
 					$query .= '('. $player .','. round($avg * 10000) .'),';
 				}
 				$query = substr($query, 0, strlen($query)-1);  // strip trailing ','
-				$aseco->mysqli->query($query);
-				if ($aseco->mysqli->affected_rows === -1) {
-					trigger_error('[Rasp] ERROR: Could not insert any player averages! ('. $aseco->mysqli->errmsg() .')', E_USER_WARNING);
+				$aseco->db->query($query);
+				if ($aseco->db->affected_rows === -1) {
+					trigger_error('[Rasp] ERROR: Could not insert any player averages! ('. $aseco->db->errmsg() .')', E_USER_WARNING);
 				}
-				else if ($aseco->mysqli->affected_rows != count($players)) {
-					trigger_error('[Rasp] ERROR: Could not insert all '. count($players) .' player averages! ('. $aseco->mysqli->errmsg() .')', E_USER_WARNING);
+				else if ($aseco->db->affected_rows != count($players)) {
+					trigger_error('[Rasp] ERROR: Could not insert all '. count($players) .' player averages! ('. $aseco->db->errmsg() .')', E_USER_WARNING);
 					// increase MySQL's max_allowed_packet setting
 				}
 			}
@@ -829,13 +750,13 @@ class PluginRasp extends Plugin {
 			$query2 = "
 			SELECT
 				`Score`
-			FROM `rs_times`
+			FROM `%prefix%times`
 			WHERE `PlayerId` = ". $player->id ."
 			AND `MapId` = ". $map ."
 			ORDER BY `Score` ". $order ."
 			LIMIT 1;
 			";
-			$res2 = $aseco->mysqli->query($query2);
+			$res2 = $aseco->db->query($query2);
 			if ($res2) {
 				if ($res2->num_rows > 0) {
 					$row = $res2->fetch_object();
@@ -851,14 +772,14 @@ class PluginRasp extends Plugin {
 		$query = "
 		SELECT
 			`Score`
-		FROM `rs_times`
+		FROM `%prefix%times`
 		WHERE `PlayerId` = ". $player->id ."
 		AND `MapId` = ". $map ."
 		ORDER BY `Date` DESC
 		LIMIT ". $this->maxavg .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			$size = $res->num_rows;
 			if ($size > 0) {
@@ -903,19 +824,19 @@ class PluginRasp extends Plugin {
 		$pid = $aseco->server->players->getPlayerId($login);
 		$query = "
 		SELECT
-			`Avg`
-		FROM `rs_rank`
+			`Average`
+		FROM `%prefix%ranks`
 		WHERE `PlayerId` = ". $pid .";
 		";
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
-				$row = $res->fetch_array();
-				$query2 = 'SELECT `PlayerId` FROM `rs_rank` ORDER BY `Avg` ASC;';
-				$res2 = $aseco->mysqli->query($query2);
+				$row = $res->fetch_array(MYSQLI_ASSOC);
+				$query2 = 'SELECT `PlayerId` FROM `%prefix%ranks` ORDER BY `Average` ASC;';
+				$res2 = $aseco->db->query($query2);
 				if ($res2) {
 					$rank = 1;
-					while ($row2 = $res2->fetch_array()) {
+					while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
 						if ($row2['PlayerId'] == $pid) {
 							break;
 						}
@@ -924,7 +845,7 @@ class PluginRasp extends Plugin {
 					$message = $aseco->formatText($this->messages['RANK'][0],
 						$rank,
 						$res2->num_rows,
-						sprintf("%4.1F", $row['Avg'] / 10000)
+						sprintf("%4.1F", $row['Average'] / 10000)
 					);
 					$aseco->sendChatMessage($message, $login);
 					$res2->free_result();
@@ -950,33 +871,33 @@ class PluginRasp extends Plugin {
 		$pid = $aseco->server->players->getPlayerId($login);
 		$query = "
 		SELECT
-			`Avg`
-		FROM `rs_rank`
+			`Average`
+		FROM `%prefix%ranks`
 		WHERE `PlayerId` = ". $pid .";
 		";
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
-				$row = $res->fetch_array();
+				$row = $res->fetch_array(MYSQLI_ASSOC);
 				$query2 = "
 				SELECT
 					`PlayerId`
-				FROM `rs_rank`
-				ORDER BY `Avg` ASC;
+				FROM `%prefix%ranks`
+				ORDER BY `Average` ASC;
 				";
-				$res2 = $aseco->mysqli->query($query2);
+				$res2 = $aseco->db->query($query2);
 				if ($res2) {
 					$rank = 1;
-					while ($row2 = $res2->fetch_array()) {
+					while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
 						if ($row2['PlayerId'] == $pid) {
 							break;
 						}
 						$rank++;
 					}
-					$message = $aseco->formatText('{1}/{2} Avg: {3}',
+					$message = $aseco->formatText('{1}/{2} Average: {3}',
 						$rank,
 						$res2->num_rows,
-						sprintf("%4.1F", $row['Avg'] / 10000)
+						sprintf("%4.1F", $row['Average'] / 10000)
 					);
 					$res2->free_result();
 				}
@@ -1001,7 +922,7 @@ class PluginRasp extends Plugin {
 		$pid = $time->player->id;
 		if ($pid != 0) {
 			$query = "
-			INSERT INTO `rs_times` (
+			INSERT INTO `%prefix%times` (
 				`MapId`,
 				`PlayerId`,
 				`Score`,
@@ -1013,12 +934,12 @@ class PluginRasp extends Plugin {
 				". $pid .",
 				". $time->score .",
 				UNIX_TIMESTAMP(),
-				". $aseco->mysqli->quote($cps) ."
+				". $aseco->db->quote($cps) ."
 			);
 			";
-			$aseco->mysqli->query($query);
-			if ($aseco->mysqli->affected_rows === -1) {
-				trigger_error('[Rasp] ERROR: Could not insert time! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			$aseco->db->query($query);
+			if ($aseco->db->affected_rows === -1) {
+				trigger_error('[Rasp] ERROR: Could not insert time! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 			}
 		}
 		else {
@@ -1036,13 +957,13 @@ class PluginRasp extends Plugin {
 		global $aseco;
 
 		$query = "
-		DELETE FROM `rs_times`
+		DELETE FROM `%prefix%times`
 		WHERE `MapId` = ". $cid ."
 		AND `PlayerId` = ". $pid .";
 		";
-		$aseco->mysqli->query($query);
-		if ($aseco->mysqli->affected_rows === -1) {
-			trigger_error('[Rasp] ERROR: Could not remove time(s)! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+		$aseco->db->query($query);
+		if ($aseco->db->affected_rows === -1) {
+			trigger_error('[Rasp] ERROR: Could not remove time(s)! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 	}
 

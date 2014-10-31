@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-08
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -671,14 +671,14 @@ class PluginDedimania extends Plugin {
 				$query = "
 				SELECT
 					`Score`
-				FROM `rs_times`
+				FROM `%prefix%times`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id ."
 				ORDER BY `Score` ". $order ."
 				LIMIT 1;
 				";
 
-				$result = $aseco->mysqli->query($query);
+				$result = $aseco->db->query($query);
 				if ($result) {
 					if ($result->num_rows > 0) {
 						$unranked = $result->fetch_object();

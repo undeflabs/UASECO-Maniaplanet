@@ -1,0 +1,477 @@
+<?php
+/*
+ * Plugin: Tachometer
+ * ~~~~~~~~~~~~~~~~~~
+ * » Displays a smart tachometer on the HUD.
+ *
+ * ----------------------------------------------------------------------------------
+ * Authors:	undef.de, reaby
+ * Date:	2014-10-24
+ * Copyright:	2014 by undef.de
+ * ----------------------------------------------------------------------------------
+ *
+ * LICENSE: This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ----------------------------------------------------------------------------------
+ *
+ * Dependencies:
+ *  - plugins/plugin.modescript_handler.php
+ *
+ */
+
+	// Start the plugin
+	$_PLUGIN = new PluginTachometer();
+
+/*
+#///////////////////////////////////////////////////////////////////////#
+#									#
+#///////////////////////////////////////////////////////////////////////#
+*/
+
+class PluginTachometer extends Plugin {
+	private $config = array();
+
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function __construct () {
+
+		$this->setVersion('1.0.0');
+		$this->setAuthor('undef.de');
+		$this->setDescription('Displays a smart tachometer on the HUD.');
+
+		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
+
+		$this->registerEvent('onSync',				'onSync');
+		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
+		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onEndMap',			'onEndMap');
+		$this->registerEvent('onRestartMap',			'onRestartMap');
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+
+//		// Read Configuration
+//		if (!$this->config = $aseco->parser->xmlToArray('config/tachometer.xml', true, true)) {
+//			trigger_error('[WelcomeCenter] Could not read/parse config file "config/tachometer.xml"!', E_USER_ERROR);
+//		}
+//		$this->config = $this->config['INFO_BAR'];
+//
+//		// Transform 'TRUE' or 'FALSE' from string to boolean
+//		$this->config['xxx'][0]['ENABLED'][0]			= ((strtoupper($this->config['xxx'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
+
+		$this->config['manialinkid']				= 'Tachometer';
+
+		// Modulate colors
+		// ACC720 = Green
+		// 5E8ADB = Blue
+		// FFF700 = Yellow
+		// F7AC1E = Orange
+		// E74F3C = Red
+		// F74BD3 = Pink (for the Girls)
+		$this->config['tachometer'] = array(
+			'position' => array(
+				'x'					=> 136.0,
+				'y'					=> -77.0,
+				'z'					=> -60.0,
+			),
+			'sizes'	=> array(
+				'scale'					=> $aseco->formatFloat(1.0),
+				'background' => array(
+					'x'				=> 47.75,
+					'y'				=> 47.75,
+				),
+				'needle' => array(
+					'x'				=> 43.8125,
+					'y'				=> 43.8125,
+				),
+			),
+			'images' => array(
+				'background' 				=> 'http://static.undef.name/ingame/tachometer/tachometer-background3.png',
+				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-light.png',
+//				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-dark.png',
+//				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-test.png',
+				'scale' => array(
+					'complete'			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale.png',
+					'tiles' => array(
+						1			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-01.png',
+						2			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-02.png',
+						3			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-03.png',
+						4			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-04.png',
+						5			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-05.png',
+						6			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-06.png',
+						7			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-07.png',
+						8			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-08.png',
+						9			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-09.png',
+						10			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-10.png',
+						11			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-11.png',
+						12			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-12.png',
+					),
+				),
+			),
+			'modulation' => array(
+				'complete'				=> 'E74F3C',
+				'needle'				=> 'FBBE08',
+				'tiles' => array(
+					1				=> 'FFF700',
+					2				=> 'FFF700',
+					3				=> 'FFF700',
+					4				=> 'FFF700',
+					5				=> 'FFF700',
+					6				=> 'FFF700',
+					7				=> 'FFF700',
+					8				=> 'FFF700',
+					9				=> 'FFF700',
+					10				=> 'FFF700',
+					11				=> 'FFF700',
+					12				=> 'FFF700',
+				),
+			),
+			'sounds' => array(
+				'drivebackward'				=> 'http://static.undef.name/ingame/tachometer/biep-biep-biep.ogg',
+			),
+		);
+
+		// Disable parts of the UI
+		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('position', false);
+		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('speed_and_distance', false);
+		$aseco->plugins['PluginModescriptHandler']->setUserInterfacePosition('countdown', array(105.0, -76.5, 5.0));
+
+		// Send the UI settings
+		$aseco->plugins['PluginModescriptHandler']->setupUserInterface();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerConnect ($aseco, $player) {
+
+		$xml = $this->buildTachometer(true);
+		$aseco->sendManiaLink($xml, $player->login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onBeginMap ($aseco, $map) {
+
+		$xml = $this->buildTachometer(true);
+		$aseco->sendManiaLink($xml, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onEndMap ($aseco, $map) {
+
+		$xml = $this->buildTachometer(false);
+		$aseco->sendManiaLink($xml, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onRestartMap ($aseco, $map) {
+
+		$xml = $this->buildTachometer(true);
+		$aseco->sendManiaLink($xml, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildTachometer ($show = true) {
+
+$maniascript = <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Function:	Tachometer
+ * Authors:	undef.de, reaby
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
+#Include "TextLib" as TextLib
+#Include "MathLib" as MathLib
+#Include "AnimLib" as AnimLib
+Text AdjustLength (Text _String, Integer _MaxLength) {
+	declare Text String = _String;
+	while (TextLib::Length(String) < _MaxLength) {
+		String = "0"^ String;
+	}
+	if (TextLib::Length(String) > _MaxLength) {
+		String = TextLib::SubString(String, (TextLib::Length(String) - _MaxLength), _MaxLength);
+	}
+	return String;
+}
+main() {
+	// Declarations
+	declare CMlFrame FrameTachometer	<=> (Page.GetFirstChild("FrameTachometer") as CMlFrame);
+
+	declare CMlQuad QuadTachometer		<=> (Page.GetFirstChild("QuadTachometer") as CMlQuad);
+	declare CMlQuad QuadTachoneedle		<=> (Page.GetFirstChild("QuadTachoneedle") as CMlQuad);
+
+	declare CMlQuad QuadTachoscale		<=> (Page.GetFirstChild("QuadTachoscale") as CMlQuad);
+	declare CMlQuad QuadTachoscale01	<=> (Page.GetFirstChild("QuadTachoscale01") as CMlQuad);
+	declare CMlQuad QuadTachoscale02	<=> (Page.GetFirstChild("QuadTachoscale02") as CMlQuad);
+	declare CMlQuad QuadTachoscale03	<=> (Page.GetFirstChild("QuadTachoscale03") as CMlQuad);
+	declare CMlQuad QuadTachoscale04	<=> (Page.GetFirstChild("QuadTachoscale04") as CMlQuad);
+	declare CMlQuad QuadTachoscale05	<=> (Page.GetFirstChild("QuadTachoscale05") as CMlQuad);
+	declare CMlQuad QuadTachoscale06	<=> (Page.GetFirstChild("QuadTachoscale06") as CMlQuad);
+	declare CMlQuad QuadTachoscale07	<=> (Page.GetFirstChild("QuadTachoscale07") as CMlQuad);
+	declare CMlQuad QuadTachoscale08	<=> (Page.GetFirstChild("QuadTachoscale08") as CMlQuad);
+	declare CMlQuad QuadTachoscale09	<=> (Page.GetFirstChild("QuadTachoscale09") as CMlQuad);
+	declare CMlQuad QuadTachoscale10	<=> (Page.GetFirstChild("QuadTachoscale10") as CMlQuad);
+	declare CMlQuad QuadTachoscale11	<=> (Page.GetFirstChild("QuadTachoscale11") as CMlQuad);
+	declare CMlQuad QuadTachoscale12	<=> (Page.GetFirstChild("QuadTachoscale12") as CMlQuad);
+
+	declare CMlLabel LabelSpeed		<=> (Page.GetFirstChild("LabelSpeed") as CMlLabel);
+
+	declare CMlLabel LabelDistance1		<=> (Page.GetFirstChild("LabelDistance1") as CMlLabel);
+	declare CMlLabel LabelDistance2		<=> (Page.GetFirstChild("LabelDistance2") as CMlLabel);
+	declare CMlLabel LabelDistance3		<=> (Page.GetFirstChild("LabelDistance3") as CMlLabel);
+	declare CMlLabel LabelDistance4		<=> (Page.GetFirstChild("LabelDistance4") as CMlLabel);
+	declare CMlLabel LabelDistance5		<=> (Page.GetFirstChild("LabelDistance5") as CMlLabel);
+	declare CMlLabel LabelDistance6		<=> (Page.GetFirstChild("LabelDistance6") as CMlLabel);
+
+	declare CMlLabel LabelGearParking	<=> (Page.GetFirstChild("LabelGearParking") as CMlLabel);
+	declare CMlLabel LabelGearReverse	<=> (Page.GetFirstChild("LabelGearReverse") as CMlLabel);
+	declare CMlLabel LabelGearNeutral	<=> (Page.GetFirstChild("LabelGearNeutral") as CMlLabel);
+	declare CMlLabel LabelGearDriving	<=> (Page.GetFirstChild("LabelGearDriving") as CMlLabel);
+
+	declare SoundDriveBackward		= Audio.CreateSound("{$this->config['tachometer']['sounds']['drivebackward']}", 0.8, False, True, False);
+	declare Text LastGear			= "P";
+
+	// Settings
+	FrameTachometer.RelativeScale		= {$this->config['tachometer']['sizes']['scale']};
+
+	QuadTachoscale01.Opacity		= 0.0;
+	QuadTachoscale02.Opacity		= 0.0;
+	QuadTachoscale03.Opacity		= 0.0;
+	QuadTachoscale04.Opacity		= 0.0;
+	QuadTachoscale05.Opacity		= 0.0;
+	QuadTachoscale06.Opacity		= 0.0;
+	QuadTachoscale07.Opacity		= 0.0;
+	QuadTachoscale08.Opacity		= 0.0;
+	QuadTachoscale09.Opacity		= 0.0;
+	QuadTachoscale10.Opacity		= 0.0;
+	QuadTachoscale11.Opacity		= 0.0;
+	QuadTachoscale12.Opacity		= 0.0;
+
+	declare Text[] QuadTachoscaleIds = [
+		"QuadTachoscale01",
+		"QuadTachoscale02",
+		"QuadTachoscale03",
+		"QuadTachoscale04",
+		"QuadTachoscale05",
+		"QuadTachoscale06",
+		"QuadTachoscale07",
+		"QuadTachoscale08",
+		"QuadTachoscale09",
+		"QuadTachoscale10",
+		"QuadTachoscale11",
+		"QuadTachoscale12"
+	];
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Update Speed display
+		LabelSpeed.SetText(""^ InputPlayer.DisplaySpeed);
+
+		// Calculate the rotation for the Needle
+		declare Real NeedleRotation = ((InputPlayer.DisplaySpeed / 1200.0) * 239.6) + 59.6;
+		if (InputPlayer.DisplaySpeed >= 1200.0) {
+			NeedleRotation = 299.2;
+		}
+
+		// Let the needle tremble a little bit depending on speed
+		QuadTachoneedle.RelativeRotation = NeedleRotation + MathLib::Rand(0.0, MathLib::Abs((((InputPlayer.Speed * 3.6) / 1000.0) * 4)));
+
+		// Update Speed Indicators
+		declare Real CurrentSpeed = MathLib::Abs(InputPlayer.Speed * 3.6);
+		declare Integer ActiveId = MathLib::FloorInteger(CurrentSpeed / 100.0) % 100;
+		declare Integer Index = 0;
+		for (Index, 0, ActiveId - 1) {
+			declare CMlQuad QuadActive <=> (Page.GetFirstChild(QuadTachoscaleIds[Index]) as CMlQuad);
+			QuadActive.Opacity = 1.0;
+		}
+		declare CMlQuad ActiveQuad <=> (Page.GetFirstChild(QuadTachoscaleIds[ActiveId]) as CMlQuad);
+		ActiveQuad.Opacity = 0.01 * (CurrentSpeed - (ActiveId * 100));
+		for (Index, ActiveId + 1, 11) {
+			declare CMlQuad QuadActive <=> (Page.GetFirstChild(QuadTachoscaleIds[Index]) as CMlQuad);
+			QuadActive.Opacity = 0.0;
+		}
+
+		// Update Distance
+		declare CurrentDistance = AdjustLength( TextLib::ToText( MathLib::NearestInteger(InputPlayer.Distance) ), 6);
+		LabelDistance1.SetText( TextLib::SubString(CurrentDistance, 0, 1) );
+		LabelDistance2.SetText( TextLib::SubString(CurrentDistance, 1, 1) );
+		LabelDistance3.SetText( TextLib::SubString(CurrentDistance, 2, 1) );
+		LabelDistance4.SetText( TextLib::SubString(CurrentDistance, 3, 1) );
+		LabelDistance5.SetText( TextLib::SubString(CurrentDistance, 4, 1) );
+		LabelDistance6.SetText( TextLib::SubString(CurrentDistance, 5, 1) );
+
+//		// There is currently nothing to figure out it the Player pressing gas or throttling
+//		if (InputPlayer.NOTHING > 0.0) {
+			if (InputPlayer.DisplaySpeed == 0) {
+				if (LastGear != "P") {
+					LastGear = "P";
+					SoundDriveBackward.Stop();
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+				}
+				LabelGearParking.Opacity = 1.0;
+				LabelGearReverse.Opacity = 0.5;
+				LabelGearNeutral.Opacity = 0.5;
+				LabelGearDriving.Opacity = 0.5;
+			}
+			else if ((InputPlayer.Speed * 3.6) > 0.0) {
+				if (LastGear != "D") {
+					LastGear = "D";
+					SoundDriveBackward.Stop();
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+				}
+				LabelGearParking.Opacity = 0.5;
+				LabelGearReverse.Opacity = 0.5;
+				LabelGearNeutral.Opacity = 0.5;
+				LabelGearDriving.Opacity = 1.0;
+			}
+			else if ((InputPlayer.Speed * 3.6) < -10.0) {
+				if (LastGear != "R") {
+					LastGear = "R";
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+					SoundDriveBackward.Play();
+				}
+				LabelGearParking.Opacity = 0.5;
+				LabelGearReverse.Opacity = 1.0;
+				LabelGearNeutral.Opacity = 0.5;
+				LabelGearDriving.Opacity = 0.5;
+			}
+//		}
+//		else {
+//			if (LastGear != "N") {
+//				LastGear = "N";
+//				SoundDriveBackward.Stop();
+//				Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+//			}
+//			LabelGearParking.Opacity = 0.5;
+//			LabelGearReverse.Opacity = 0.5;
+//			LabelGearNeutral.Opacity = 1.0;
+//			LabelGearDriving.Opacity = 0.5;
+//		}
+
+
+//		// Check for MouseEvents
+//		foreach (Event in PendingEvents) {
+//			switch (Event.Type) {
+//				case CMlEvent::Type::MouseClick : {
+//					if (Event.ControlId == "QuadTachometer") {
+//						QuadTachometer.Size = <QuadTachometer.Size.Y, QuadTachometer.Size.Y>;
+//						QuadTachoscale.Size = <QuadTachoscale.Size.Y, QuadTachoscale.Size.Y>;
+//						QuadTachoscale01.Size = <QuadTachoscale01.Size.Y, QuadTachoscale01.Size.Y>;
+//						QuadTachoscale02.Size = <QuadTachoscale02.Size.Y, QuadTachoscale02.Size.Y>;
+//						QuadTachoscale03.Size = <QuadTachoscale03.Size.Y, QuadTachoscale03.Size.Y>;
+//						QuadTachoscale04.Size = <QuadTachoscale04.Size.Y, QuadTachoscale04.Size.Y>;
+//						QuadTachoscale05.Size = <QuadTachoscale05.Size.Y, QuadTachoscale05.Size.Y>;
+//						QuadTachoscale06.Size = <QuadTachoscale06.Size.Y, QuadTachoscale06.Size.Y>;
+//						QuadTachoscale07.Size = <QuadTachoscale07.Size.Y, QuadTachoscale07.Size.Y>;
+//						QuadTachoscale08.Size = <QuadTachoscale08.Size.Y, QuadTachoscale08.Size.Y>;
+//						QuadTachoscale09.Size = <QuadTachoscale09.Size.Y, QuadTachoscale09.Size.Y>;
+//						QuadTachoscale10.Size = <QuadTachoscale10.Size.Y, QuadTachoscale10.Size.Y>;
+//						QuadTachoscale11.Size = <QuadTachoscale11.Size.Y, QuadTachoscale11.Size.Y>;
+//						QuadTachoscale12.Size = <QuadTachoscale12.Size.Y, QuadTachoscale12.Size.Y>;
+//					}
+//				}
+//			}
+//		}
+
+	}
+}
+--></script>
+EOL;
+
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'" name="'. $this->config['manialinkid'] .'" version="1">';
+		if ($show == true) {
+			$xml .= '<frame posn="'. $this->config['tachometer']['position']['x'] .' '. $this->config['tachometer']['position']['y'] .' '. $this->config['tachometer']['position']['z'] .'" id="FrameTachometer">';
+			$xml .= '<quad posn="0 0 0.01" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" image="'. $this->config['tachometer']['images']['background'] .'" id="QuadTachometer"/>';
+			$xml .= '<quad posn="0 -1.1 0.05" sizen="'. $this->config['tachometer']['sizes']['needle']['x'] .' '. $this->config['tachometer']['sizes']['needle']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['needle'] .'" image="'. $this->config['tachometer']['images']['needle'] .'" id="QuadTachoneedle"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['complete'] .'" image="'. $this->config['tachometer']['images']['scale']['complete'] .'" id="QuadTachoscale"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][1] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][1] .'" id="QuadTachoscale01"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][2] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][2] .'" id="QuadTachoscale02"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][3] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][3] .'" id="QuadTachoscale03"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][4] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][4] .'" id="QuadTachoscale04"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][5] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][5] .'" id="QuadTachoscale05"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][6] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][6] .'" id="QuadTachoscale06"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][7] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][7] .'" id="QuadTachoscale07"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][8] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][8] .'" id="QuadTachoscale08"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][9] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][9] .'" id="QuadTachoscale09"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][10] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][10] .'" id="QuadTachoscale10"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][11] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][11] .'" id="QuadTachoscale11"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][12] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][12] .'" id="QuadTachoscale12"/>';
+			$xml .= '<label posn="0 4.1 0.04" sizen="40 10" halign="center" valign="center2" style="TextButtonBig" textsize="4.7" text="0" id="LabelSpeed"/>';
+
+			$xml .= '<frame posn="-5.55 -1 0.04">';
+			$xml .= '<label posn="0 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance1"/>';
+			$xml .= '<label posn="2.25 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance2"/>';
+			$xml .= '<label posn="4.5 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance3"/>';
+			$xml .= '<label posn="6.75 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance4"/>';
+			$xml .= '<label posn="9 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance5"/>';
+			$xml .= '<label posn="11.25 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance6"/>';
+			$xml .= '</frame>';
+
+			$xml .= '<frame posn="-6 -5.4 0.04">';
+			$xml .= '<label posn="0 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="P" id="LabelGearParking"/>';
+			$xml .= '<label posn="4 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="R" id="LabelGearReverse"/>';
+			$xml .= '<label posn="8 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="N" id="LabelGearNeutral"/>';
+			$xml .= '<label posn="12 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="D" id="LabelGearDriving"/>';
+			$xml .= '</frame>';
+
+			$xml .= '</frame>';
+			$xml .= $maniascript;
+		}
+		$xml .= '</manialink>';
+
+		return $xml;
+	}
+}
+
+?>

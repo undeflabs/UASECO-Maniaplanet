@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-10-11
+ * Date:		2014-10-31
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -229,11 +229,11 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 		$this->registerEvent('onDedimaniaRecord',		'onDedimaniaRecord');
 		$this->registerEvent('onLocalRecord',			'onLocalRecord');
-		$this->registerEvent('onStatusChangeTo3',		'onStatusChangeTo3');
-		$this->registerEvent('onStatusChangeTo6',		'onStatusChangeTo6');
+		$this->registerEvent('onWarmUpStatusChanged',		'onWarmUpStatusChanged');
+//		$this->registerEvent('onLoadingMap',			'onLoadingMap');
+		$this->registerEvent('onUnloadingMap',			'onUnloadingMap');
 		$this->registerEvent('onBeginRound',			'onBeginRound');
 		$this->registerEvent('onEndRound',			'onEndRound');
-		$this->registerEvent('onUnloadingMap',			'onUnloadingMap');
 		$this->registerEvent('onBeginMap',			'onBeginMap');
 		$this->registerEvent('onBeginMap1',			'onBeginMap1');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
@@ -508,8 +508,8 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Check for Background-Colors
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_COLOR'][0] == '') {
-			$this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_COLOR'][0] = '0000';
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] == '') {
+			$this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] = '0000';
 		}
 		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] == '') {
 			$this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] = '0000';
@@ -680,26 +680,26 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Initialise States
 		$this->config['States']['DedimaniaRecords']['NeedUpdate']		= true;			// Interact with onDedimaniaRecord and onDediRecsLoaded
-		$this->config['States']['DedimaniaRecords']['UpdateDisplay']	= true;
-		$this->config['States']['LocalRecords']['NeedUpdate']		= true;			// Interact with onLocalRecord
+		$this->config['States']['DedimaniaRecords']['UpdateDisplay']		= true;
+		$this->config['States']['LocalRecords']['NeedUpdate']			= true;			// Interact with onLocalRecord
 		$this->config['States']['LocalRecords']['UpdateDisplay']		= true;
 		$this->config['States']['LocalRecords']['NoRecordsFound']		= false;
 		$this->config['States']['LocalRecords']['ChkSum']			= false;
-		$this->config['States']['LiveRankings']['NeedUpdate']		= true;			// Interact with onPlayerFinish
+		$this->config['States']['LiveRankings']['NeedUpdate']			= true;			// Interact with onPlayerFinish
 		$this->config['States']['LiveRankings']['UpdateDisplay']		= true;
 		$this->config['States']['LiveRankings']['NoRecordsFound']		= false;
-		$this->config['States']['RoundScore']['WarmUpPhase']		= false;
+		$this->config['States']['RoundScore']['WarmUpPhase']			= false;
 		$this->config['States']['TopMaps']['NeedUpdate']			= true;			// Interact with onKarmaChange
 		$this->config['States']['TopVoters']['NeedUpdate']			= true;			// Interact with onKarmaChange
-		$this->config['States']['MusicServerPlaylist']['NeedUpdate']	= false;
-		$this->config['States']['NiceMode']				= false;
+		$this->config['States']['MusicServerPlaylist']['NeedUpdate']		= false;
+		$this->config['States']['NiceMode']					= false;
 		$this->config['States']['RefreshTimestampRecordWidgets']		= -1000;		// Update now :D
 		$this->config['States']['RefreshTimestampPreload']			= time();
-		$this->config['States']['MaplistRefreshProgressed']		= false;
+		$this->config['States']['MaplistRefreshProgressed']			= false;
 
 		// Preset the Placeholder which can be used in <placement>, filled later when info loaded by XAseco
-		$this->config['PlacementPlaceholders']['MAP_MX_PREFIX']		= false;
-		$this->config['PlacementPlaceholders']['MAP_MX_ID']		= false;
+		$this->config['PlacementPlaceholders']['MAP_MX_PREFIX']			= false;
+		$this->config['PlacementPlaceholders']['MAP_MX_ID']			= false;
 		$this->config['PlacementPlaceholders']['MAP_MX_PAGEURL']		= false;
 		$this->config['PlacementPlaceholders']['MAP_NAME']			= false;
 		$this->config['PlacementPlaceholders']['MAP_UID']			= false;
@@ -897,10 +897,9 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($reload === null) {
 			$aseco->console('[RecordsEyepiece] » Checking Database for required extensions...');
 
-			// Check the Database-Table for existing `Timezone`, `DisplayWidgets` and `MostFinished` column
-			// required to store the player-preference for the Clock-Widget and display preferences
+			// Check the Database-Table for required extensions
 			$fields = array();
-			$result = $aseco->mysqli->query('SHOW COLUMNS FROM `players_extra`;');
+			$result = $aseco->db->query('SHOW COLUMNS FROM `%prefix%players`;');
 			if ($result) {
 				while ($row = $result->fetch_row()) {
 					$fields[] = $row[0];
@@ -908,194 +907,79 @@ class PluginRecordsEyepiece extends Plugin {
 				$result->free_result();
 			}
 
-			// Remove `Timezone` column if not yet done
-			if ( in_array('Timezone', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Removing column `Timezone` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` DROP `Timezone`;');
-			}
-
-			// Add `DisplayWidgets` column if not yet done
-			if ( !in_array('DisplayWidgets', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Adding column `DisplayWidgets` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` ADD `DisplayWidgets` ENUM("true", "false") CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT "true" COMMENT "Added by plugin.records_eyepiece.php" AFTER `PanelBG`;');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found column `DisplayWidgets` at table `players_extra`.');
-			}
-
 			// Add `MostFinished` column if not yet done
 			if ( !in_array('MostFinished', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Adding column `MostFinished` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` ADD `MostFinished` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php" AFTER `DisplayWidgets`, ADD INDEX (`MostFinished`);');
+				$aseco->console('[RecordsEyepiece] » Adding column `MostFinished`.');
+				$aseco->db->query('ALTER TABLE `%prefix%players` ADD `MostFinished` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`MostFinished`);');
 			}
 			else {
-				// Fix the unset DEFAULT VALUE
-				$aseco->mysqli->query('ALTER TABLE `players_extra` CHANGE `MostFinished` `MostFinished` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php";');
-				$aseco->console('[RecordsEyepiece] » Found column `MostFinished` at table `players_extra`.');
+				$aseco->console('[RecordsEyepiece] » Found column `MostFinished`');
 			}
 
 			// Add `MostRecords` column if not yet done
 			if ( !in_array('MostRecords', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Adding column `MostRecords` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` ADD `MostRecords` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php" AFTER `MostFinished`, ADD INDEX (`MostRecords`);');
+				$aseco->console('[RecordsEyepiece] » Adding column `MostRecords`.');
+				$aseco->db->query('ALTER TABLE `%prefix%players` ADD `MostRecords` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`MostRecords`);');
 			}
 			else {
-				$aseco->console('[RecordsEyepiece] » Found column `MostRecords` at table `players_extra`.');
+				$aseco->console('[RecordsEyepiece] » Found column `MostRecords`.');
 			}
 
 			// Add `RoundPoints` column if not yet done
 			if ( !in_array('RoundPoints', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Adding column `RoundPoints` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` ADD `RoundPoints` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php" AFTER `MostRecords`, ADD INDEX (`RoundPoints`);');
+				$aseco->console('[RecordsEyepiece] » Adding column `RoundPoints`.');
+				$aseco->db->query('ALTER TABLE `%prefix%players` ADD `RoundPoints` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`RoundPoints`);');
 			}
 			else {
-				$aseco->console('[RecordsEyepiece] » Found column `RoundPoints` at table `players_extra`.');
+				$aseco->console('[RecordsEyepiece] » Found column `RoundPoints`.');
 			}
 
 			// Add `TeamPoints` column if not yet done
 			if ( !in_array('TeamPoints', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Adding column `TeamPoints` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` ADD `TeamPoints` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php" AFTER `RoundPoints`, ADD INDEX (`TeamPoints`);');
+				$aseco->console('[RecordsEyepiece] » Adding column `TeamPoints`.');
+				$aseco->db->query('ALTER TABLE `%prefix%players` ADD `TeamPoints` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`TeamPoints`);');
 			}
 			else {
-				$aseco->console('[RecordsEyepiece] » Found column `TeamPoints` at table `players_extra`.');
+				$aseco->console('[RecordsEyepiece] » Found column `TeamPoints`.');
 			}
 
 			// Add `WinningPayout` column if not yet done
 			if ( !in_array('WinningPayout', $fields) ) {
-				$aseco->console('[RecordsEyepiece] » Adding column `WinningPayout` at table `players_extra`.');
-				$aseco->mysqli->query('ALTER TABLE `players_extra` ADD `WinningPayout` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`WinningPayout`);');
+				$aseco->console('[RecordsEyepiece] » Adding column `WinningPayout`.');
+				$aseco->db->query('ALTER TABLE `%prefix%players` ADD `WinningPayout` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`WinningPayout`);');
 			}
 			else {
-				$aseco->console('[RecordsEyepiece] » Found column `WinningPayout` at table `players_extra`.');
+				$aseco->console('[RecordsEyepiece] » Found column `WinningPayout`.');
 			}
 
-
-			// Check the table `players` for required INDEX
-			$fields = array('Continent' => 0, 'Nation' => 0, 'Wins' => 0, 'UpdatedAt' => 0);
-			$result = $aseco->mysqli->query('SHOW INDEX FROM `players`;');
-			if ($result) {
-				while ( $row = $result->fetch_row() ) {
-					if ( isset($fields[$row[2]]) ) {
-						$fields[$row[2]]++;
-					}
-				}
-				$result->free_result();
-			}
-			if ($fields['Continent'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `Continent` at table `players`.');
-				$aseco->mysqli->query('ALTER TABLE `players` ADD INDEX `Continent` (`Continent`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `Continent` at table `players`.');
-			}
-			if ($fields['Nation'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `Nation` at table `players`.');
-				$aseco->mysqli->query('ALTER TABLE `players` ADD INDEX `Nation` (`Nation`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `Nation` at table `players`.');
-			}
-			if ($fields['Wins'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `Wins` at table `players`.');
-				$aseco->mysqli->query('ALTER TABLE `players` ADD INDEX `Wins` (`Wins`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `Wins` at table `players`.');
-			}
-			if ($fields['UpdatedAt'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `UpdatedAt` at table `players`.');
-				$aseco->mysqli->query('ALTER TABLE `players` ADD INDEX `UpdatedAt` (`UpdatedAt`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `UpdatedAt` at table `players`.');
-			}
-
-
-			// Check the table `records` for required INDEX
-			$fields = array('Score' => 0);
-			$result = $aseco->mysqli->query('SHOW INDEX FROM `records`;');
-			if ($result) {
-				while ( $row = $result->fetch_row() ) {
-					if ( isset($fields[$row[2]]) ) {
-						$fields[$row[2]]++;
-					}
-				}
-				$result->free_result();
-			}
-			if ($fields['Score'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `Score` at table `records`.');
-				$aseco->mysqli->query('ALTER TABLE `records` ADD INDEX `Score` (`Score`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `Score` at table `records`.');
-			}
-
-
-			// Check the table `rs_karma` for required INDEX
-			$fields = array('Score' => 0);
-			$result = $aseco->mysqli->query('SHOW INDEX FROM `rs_karma`;');
-			if ($result) {
-				while ( $row = $result->fetch_row() ) {
-					if ( isset($fields[$row[2]]) ) {
-						$fields[$row[2]]++;
-					}
-				}
-				$result->free_result();
-			}
-			if ($fields['Score'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `Score` at table `rs_karma`.');
-				$aseco->mysqli->query('ALTER TABLE `rs_karma` ADD INDEX `Score` (`Score`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `Score` at table `rs_karma`.');
-			}
-
-
-			// Check the table `rs_times` for required INDEX
-			$fields = array('Score' => 0);
-			$result = $aseco->mysqli->query('SHOW INDEX FROM `rs_times`;');
-			if ($result) {
-				while ( $row = $result->fetch_row() ) {
-					if ( isset($fields[$row[2]]) ) {
-						$fields[$row[2]]++;
-					}
-				}
-				$result->free_result();
-			}
-			if ($fields['Score'] == 0) {
-				$aseco->console('[RecordsEyepiece] » Adding index `Score` at table `rs_times`.');
-				$aseco->mysqli->query('ALTER TABLE `rs_times` ADD INDEX `Score` (`Score`);');
-			}
-			else {
-				$aseco->console('[RecordsEyepiece] » Found index `Score` at table `rs_times`.');
-			}
 
 			if ($this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0]['ENABLED'][0] == true) {
-				// Update own `MostFinished` at `players_extra`
+				// Update own `MostFinished`
 				$aseco->console('[RecordsEyepiece] Updating `MostFinished` counts for all Players...');
 				$mostfinished = array();
 				$query = "
 				SELECT
 					`PlayerId`,
 					COUNT(`Score`) AS `Count`
-				FROM `rs_times`
+				FROM `%prefix%times`
 				GROUP BY `PlayerId`;
 				";
-				$res = $aseco->mysqli->query($query);
+				$res = $aseco->db->query($query);
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
 							$mostfinished[$row->PlayerId] = $row->Count;
 						}
+						$aseco->db->query('START TRANSACTION;');
 						foreach ($mostfinished as $id => $count) {
-							$res1 = $aseco->mysqli->query("
-								UPDATE `players_extra`
+							$res1 = $aseco->db->query("
+								UPDATE `%prefix%players`
 								SET `MostFinished` = ". $count ."
 								WHERE `PlayerId` = ". $id ."
 								LIMIT 1;
 							");
 						}
+						$aseco->db->query('COMMIT;');
 						unset($mostfinished);
 					}
 					$res->free_result();
@@ -1106,30 +990,32 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			if ($this->config['SCORETABLE_LISTS'][0]['MOST_RECORDS'][0]['ENABLED'][0] == true) {
-				// Update own `MostRecords` at `players_extra`
+				// Update own `MostRecords`
 				$aseco->console('[RecordsEyepiece] Updating `MostRecords` counts for all Players...');
 				$mostrecords = array();
 				$query = "
 				SELECT
 					`PlayerId`,
 					COUNT(`Score`) AS `Count`
-				FROM `records`
+				FROM `%prefix%records`
 				GROUP BY `PlayerId`;
 				";
-				$res = $aseco->mysqli->query($query);
+				$res = $aseco->db->query($query);
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
 							$mostrecords[$row->PlayerId] = $row->Count;
 						}
+						$aseco->db->query('START TRANSACTION;');
 						foreach ($mostrecords as $id => $count) {
-							$res1 = $aseco->mysqli->query("
-								UPDATE `players_extra`
+							$res1 = $aseco->db->query("
+								UPDATE `%prefix%players`
 								SET `MostRecords` = ". $count ."
 								WHERE `PlayerId` = ". $id ."
 								LIMIT 1;
 							");
 						}
+						$aseco->db->query('COMMIT;');
 						unset($mostfinished);
 					}
 					$res->free_result();
@@ -1378,12 +1264,9 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->closeRaceWidgets($player->login, false);
 
 			// Store the preferences
-			$query = "
-			UPDATE `players_extra` SET
-				`DisplayWidgets`='false'
-			WHERE `PlayerId`='". $player->id ."';
-			";
-			$aseco->mysqli->query($query);
+			$settings = $player->getSettings($this);
+			$settings['DisplayWidgets'] = false;
+			$player->setSettings($this, $settings);
 
 			// Give feedback to the Player
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_DISABLED'][0], $player->login);
@@ -1409,12 +1292,9 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			// Store the preferences
-			$query = "
-			UPDATE `players_extra` SET
-				`DisplayWidgets`='true'
-			WHERE `PlayerId`='". $player->id ."';
-			";
-			$aseco->mysqli->query($query);
+			$settings = $player->getSettings($this);
+			$settings['DisplayWidgets'] = true;
+			$player->setSettings($this, $settings);
 
 			// Give feedback to the Player
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_ENABLED'][0], $player->login);
@@ -2233,8 +2113,18 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		// Load the Player preferences (Clock, Widgets)
-		$this->loadPlayerPreferences($player);
+		// Load the Player preferences
+		$settings = $player->getSettings($this);
+		if ($settings) {
+			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = $settings['DisplayWidgets'];
+		}
+		else {
+			// Setup defaults
+			$settings['DisplayWidgets'] = true;
+			$player->setSettings($this, $settings);
+			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = $settings['DisplayWidgets'];
+		}
+
 
 		if ($this->config['CLOCK_WIDGET'][0]['ENABLED'][0] == true) {
 			$widgets .= $this->buildClockWidget();
@@ -2458,10 +2348,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Increase finish count for this Player, required for MostFinished List at Score and in the TopLists
-		$query = "UPDATE `players_extra` SET `MostFinished` = `MostFinished` + 1 WHERE `PlayerId` = '". $player->id ."';";
-		$result = $aseco->mysqli->query($query);
+		$query = "UPDATE `%prefix%players` SET `MostFinished` = `MostFinished` + 1 WHERE `PlayerId` = '". $player->id ."';";
+		$result = $aseco->db->query($query);
 		if (!$result) {
-			$aseco->console('[RecordsEyepiece] UPDATE `MostFinished` at `players_extra` failed. [for statement "'. $query .'"]!');
+			$aseco->console('[RecordsEyepiece] UPDATE `MostFinished` failed. [for statement "'. $query .'"]!');
 		}
 
 
@@ -3377,10 +3267,10 @@ class PluginRecordsEyepiece extends Plugin {
 			$player = $aseco->server->players->player_list[$finish_item->player->login];
 
 			// Increase Record count for this Player
-			$query = "UPDATE `players_extra` SET `MostRecords` = `MostRecords` + 1 WHERE `PlayerId` = '". $player->id ."';";
-			$result = $aseco->mysqli->query($query);
+			$query = "UPDATE `%prefix%players` SET `MostRecords` = `MostRecords` + 1 WHERE `PlayerId` = '". $player->id ."';";
+			$result = $aseco->db->query($query);
 			if (!$result) {
-				$aseco->console('[RecordsEyepiece] UPDATE `MostRecords` at `players_extra` failed. [for statement "'. $query .'"]!');
+				$aseco->console('[RecordsEyepiece] UPDATE `MostRecords` failed. [for statement "'. $query .'"]!');
 			}
 
 			foreach ($this->scores['MostRecords'] as &$item) {
@@ -3707,7 +3597,6 @@ class PluginRecordsEyepiece extends Plugin {
 	// Event from plugin.tm-karma-dot-com.php or plugin.rasp_karma.php
 	public function onKarmaChange ($aseco, $karma) {
 
-
 		// Notice that the Karma need a refresh
 		$this->config['States']['TopMaps']['NeedUpdate'] = true;
 		$this->config['States']['TopVoters']['NeedUpdate'] = true;
@@ -3719,19 +3608,26 @@ class PluginRecordsEyepiece extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onStatusChangeTo3 ($aseco, $call) {
-
-		// Get status of WarmUp
-		$this->config['States']['RoundScore']['WarmUpPhase'] = $aseco->warmup_phase;
-
-		// Get current Gamemode
-	//	$gamemode = $aseco->server->gameinfo->mode;
-	//
-	//	// At $gamemode 'Rounds', 'Team' and 'Cup' need to emulate 'onBeginMap'
-	//	if ( ($gamemode == Gameinfo::ROUNDS) || ($gamemode == Gameinfo::TEAM) || ($gamemode == Gameinfo::CUP) ) {
-	//		$this->onBeginMap($aseco, false);
-	//	}
+	public function onWarmUpStatusChanged ($aseco, $status) {
+		$this->config['States']['RoundScore']['WarmUpPhase'] = $status;
 	}
+
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function onLoadingMap ($aseco, $id) {
+//
+//		// Get current Gamemode
+//		$gamemode = $aseco->server->gameinfo->mode;
+//
+//		// At $gamemode 'Rounds', 'Team' and 'Cup' need to emulate 'onBeginMap'
+//		if ( ($gamemode == Gameinfo::ROUNDS) || ($gamemode == Gameinfo::TEAM) || ($gamemode == Gameinfo::CUP) ) {
+//			$this->onBeginMap($aseco, false);
+//		}
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -3739,10 +3635,14 @@ class PluginRecordsEyepiece extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onStatusChangeTo6 ($aseco, $call) {
+	public function onUnloadingMap ($aseco, $id) {
 
-		// Get status of WarmUp
-		$this->config['States']['RoundScore']['WarmUpPhase'] = $aseco->warmup_phase;
+		// Close the Scoretable-Lists at all Players
+		$widgets = $this->closeScoretableLists();
+		$this->sendManialink($widgets, false, 0);
+
+		// Check if it is time to switch from "normal" to NiceMode or back
+		$this->checkServerLoad();
 
 		// Refresh Scoretable lists
 		$this->refreshScorelists();
@@ -3812,22 +3712,6 @@ class PluginRecordsEyepiece extends Plugin {
 			// Force the refresh
 			$this->config['States']['RefreshTimestampRecordWidgets'] = 0;
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onUnloadingMap ($aseco, $id) {
-
-		// Close the Scoretable-Lists at all Players
-		$widgets = $this->closeScoretableLists();
-		$this->sendManialink($widgets, false, 0);
-
-		// Check if it is time to switch from "normal" to NiceMode or back
-		$this->checkServerLoad();
 	}
 
 	/*
@@ -4151,10 +4035,6 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Build an empty RoundScoreWidget
 		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
-
-			// Get status of WarmUp
-			$this->config['States']['RoundScore']['WarmUpPhase'] = $aseco->warmup_phase;
-
 			// Display an empty Widget
 			$widgets .= $this->buildRoundScoreWidget($gamemode, false);
 		}
@@ -4481,7 +4361,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$widgets .= (($this->cache['TopActivePlayers'] != false) ? $this->cache['TopActivePlayers'] : '');
 		}
 		if ( ($gamemode == Gameinfo::ROUNDS) || ($gamemode == Gameinfo::CUP) ) {
-			// Store the won RoundScore to the Database-Table `players_extra`
+			// Store the won RoundScore to the Database-Table
 			$this->storePlayersRoundscore();
 
 			// Refresh the TopRoundscore Array
@@ -4552,23 +4432,42 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function buildAddToFavoriteWidget ($mode = 'RACE') {
 
-		$xml = str_replace(
-			array(
-				'%posx%',
-				'%posy%',
-				'%widgetscale%',
-				'%background_style%',
-				'%background_substyle%'
-			),
-			array(
-				$this->config['FAVORITE_WIDGET'][0][$mode][0]['POS_X'][0],
-				$this->config['FAVORITE_WIDGET'][0][$mode][0]['POS_Y'][0],
-				$this->config['FAVORITE_WIDGET'][0][$mode][0]['SCALE'][0],
-				$this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_STYLE'][0],
-				$this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_SUBSTYLE'][0]
-			),
-			$this->templates['FAVORITE_WIDGET']['CONTENT']
-		);
+		if ($this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_DEFAULT'][0] != '') {
+			$bg = '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonAddToFavoriteWidget"/>';
+			$xml = str_replace(
+				array(
+					'%posx%',
+					'%posy%',
+					'%widgetscale%',
+					'%background%',
+				),
+				array(
+					$this->config['FAVORITE_WIDGET'][0][$mode][0]['POS_X'][0],
+					$this->config['FAVORITE_WIDGET'][0][$mode][0]['POS_Y'][0],
+					$this->config['FAVORITE_WIDGET'][0][$mode][0]['SCALE'][0],
+					$bg,
+				),
+				$this->templates['FAVORITE_WIDGET']['CONTENT']
+			);
+		}
+		else {
+			$bg = '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_SUBSTYLE'][0] .'" scriptevents="1" id="ButtonAddToFavoriteWidget"/>';
+			$xml = str_replace(
+				array(
+					'%posx%',
+					'%posy%',
+					'%widgetscale%',
+					'%background%',
+				),
+				array(
+					$this->config['FAVORITE_WIDGET'][0][$mode][0]['POS_X'][0],
+					$this->config['FAVORITE_WIDGET'][0][$mode][0]['POS_Y'][0],
+					$this->config['FAVORITE_WIDGET'][0][$mode][0]['SCALE'][0],
+					$bg,
+				),
+				$this->templates['FAVORITE_WIDGET']['CONTENT']
+			);
+		}
 
 		return $xml;
 	}
@@ -5045,7 +4944,12 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Build the ManiaExchangeWidget with ActionId
 			$xml = $this->templates['MANIA_EXCHANGE']['HEADER'];
-			$xml .= '<quad posn="0 0 0.001" sizen="4.6 6.5" action="showManiaExchangeMapInfoWindow" style="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+			if ($this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+				$xml .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonManiaExchangeWidget"/>';
+			}
+			else {
+				$xml .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'" scriptevents="1" id="ButtonManiaExchangeWidget"/>';
+			}
 			$xml .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
 			$xml .= str_replace(
 				array(
@@ -5062,7 +4966,12 @@ class PluginRecordsEyepiece extends Plugin {
 		else {
 			// Build the ManiaExchangeWidget WITHOUT ActionId
 			$xml = $this->templates['MANIA_EXCHANGE']['HEADER'];
-			$xml .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+			if ($this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+				$xml .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'"/>';
+			}
+			else {
+				$xml .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+			}
 			$xml .= str_replace(
 				array(
 					'%offline_record%',
@@ -6190,9 +6099,9 @@ class PluginRecordsEyepiece extends Plugin {
 				unset($eventdata);
 
 
-				// Update the table `players_extra` at `WinningPayout`...
+				// Update `WinningPayout`...
 				$query = "
-				UPDATE `players_extra`
+				UPDATE `%prefix%players`
 				SET `WinningPayout` = CASE `PlayerId`
 				";
 
@@ -6212,9 +6121,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 				// ...only if one Player has a Score
 				if (count($playerids) > 0) {
-					$result = $aseco->mysqli->query($query);
+					$result = $aseco->db->query($query);
 					if (!$result) {
-						$aseco->console('[RecordsEyepiece] UPDATE `players_extra` row `WinningPayout` failed: [for statement "'. str_replace("\t", '', $query) .'"]');
+						$aseco->console('[RecordsEyepiece] UPDATE `WinningPayout` failed: [for statement "'. str_replace("\t", '', $query) .'"]');
 					}
 				}
 				unset($playerids);
@@ -6292,10 +6201,10 @@ class PluginRecordsEyepiece extends Plugin {
 			for ($i = 0; $i < count($aseco->plugins['PluginDedimania']->db['Map']['Records']); $i ++) {
 				if ( ($this->config['DEDIMANIA_RECORDS'][0]['DISPLAY_MAX_RECORDS'][0] === 0) || ($this->config['DEDIMANIA_RECORDS'][0]['DISPLAY_MAX_RECORDS'][0] > $i) ) {
 					if ($aseco->plugins['PluginDedimania']->db['Map']['Records'][$i]['Best'] > 0) {
-						$this->scores['DedimaniaRecords'][$i]['rank']	= ($i+1);
-						$this->scores['DedimaniaRecords'][$i]['login']	= $aseco->plugins['PluginDedimania']->db['Map']['Records'][$i]['Login'];
+						$this->scores['DedimaniaRecords'][$i]['rank']		= ($i+1);
+						$this->scores['DedimaniaRecords'][$i]['login']		= $aseco->plugins['PluginDedimania']->db['Map']['Records'][$i]['Login'];
 						$this->scores['DedimaniaRecords'][$i]['nickname']	= $this->handleSpecialChars($aseco->plugins['PluginDedimania']->db['Map']['Records'][$i]['NickName']);
-						$this->scores['DedimaniaRecords'][$i]['score']	= $aseco->formatTime($aseco->plugins['PluginDedimania']->db['Map']['Records'][$i]['Best']);
+						$this->scores['DedimaniaRecords'][$i]['score']		= $aseco->formatTime($aseco->plugins['PluginDedimania']->db['Map']['Records'][$i]['Best']);
 					}
 				}
 			}
@@ -6469,11 +6378,11 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$query = "
 		SELECT
-			MAX(`Id`) AS `PlayerCount`
-		FROM `players`;
+			MAX(`PlayerId`) AS `PlayerCount`
+		FROM `%prefix%players`;
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6504,16 +6413,16 @@ class PluginRecordsEyepiece extends Plugin {
 		$query = "
 		SELECT
 			`p`.`Login`,
-			`p`.`NickName`,
-			(ROUND(`r`.`avg` / 1000) / 10) AS `avg`
-		FROM `players` AS `p`
-		LEFT JOIN `rs_rank` AS `r` ON `p`.`Id` = `r`.`PlayerId`
-		WHERE `r`.`avg` != 0
-		ORDER BY `r`.`avg` ASC
+			`p`.`Nickname`,
+			(ROUND(`r`.`Average` / 1000) / 10) AS `Average`
+		FROM `%prefix%players` AS `p`
+		LEFT JOIN `%prefix%ranks` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
+		WHERE `r`.`Average` != 0
+		ORDER BY `r`.`Average` ASC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6521,10 +6430,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopRankings'][$i]['rank']		= ($i+1);
-					$this->scores['TopRankings'][$i]['login']		= $row->Login;
-					$this->scores['TopRankings'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['TopRankings'][$i]['score']		= sprintf("%.1f", $row->avg);
+					$this->scores['TopRankings'][$i]['rank']	= ($i+1);
+					$this->scores['TopRankings'][$i]['login']	= $row->Login;
+					$this->scores['TopRankings'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
+					$this->scores['TopRankings'][$i]['score']	= sprintf("%.1f", $row->Average);
 
 					$i++;
 				}
@@ -6550,15 +6459,15 @@ class PluginRecordsEyepiece extends Plugin {
 		$query = "
 		SELECT
 			`p`.`Login`,
-			`p`.`NickName`,
+			`p`.`Nickname`,
 			`p`.`Wins`
-		FROM `players` AS `p`
+		FROM `%prefix%players` AS `p`
 		WHERE `p`.`Wins` > 0
 		ORDER BY `p`.`Wins` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6567,9 +6476,9 @@ class PluginRecordsEyepiece extends Plugin {
 				$i = 0;
 				while ($row = $res->fetch_object()) {
 					$this->scores['TopWinners'][$i]['rank']		= ($i+1);
-					$this->scores['TopWinners'][$i]['login']		= $row->Login;
-					$this->scores['TopWinners'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['TopWinners'][$i]['score']		= $this->formatNumber((int)$row->Wins, 0);
+					$this->scores['TopWinners'][$i]['login']	= $row->Login;
+					$this->scores['TopWinners'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
+					$this->scores['TopWinners'][$i]['score']	= $this->formatNumber((int)$row->Wins, 0);
 
 					$i++;
 				}
@@ -6594,17 +6503,16 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$query = "
 		SELECT
-			`p`.`Login`,
-			`p`.`NickName`,
-			`pe`.`MostRecords`
-		FROM `players_extra` AS `pe`
-		LEFT JOIN `players` AS `p` ON `p`.`Id` = `pe`.`PlayerId`
-		WHERE `pe`.`MostRecords` > 0
-		ORDER BY `pe`.`MostRecords` DESC
+			`Login`,
+			`Nickname`,
+			`MostRecords`
+		FROM `%prefix%players`
+		WHERE `MostRecords` > 0
+		ORDER BY `MostRecords` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6614,7 +6522,7 @@ class PluginRecordsEyepiece extends Plugin {
 				while ($row = $res->fetch_object()) {
 					$this->scores['MostRecords'][$i]['rank']	= ($i+1);
 					$this->scores['MostRecords'][$i]['login']	= $row->Login;
-					$this->scores['MostRecords'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
+					$this->scores['MostRecords'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
 					$this->scores['MostRecords'][$i]['score']	= $this->formatNumber((int)$row->MostRecords, 0);
 					$this->scores['MostRecords'][$i]['scoplain']	= (int)$row->MostRecords;
 
@@ -6641,16 +6549,15 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$query = "
 		SELECT
-			`p`.`Login`,
-			`p`.`NickName`,
-			`pe`.`MostFinished`
-		FROM `players_extra` AS `pe`
-		LEFT JOIN `players` AS `p` ON `p`.`Id` = `pe`.`PlayerId`
-		ORDER BY `pe`.`MostFinished` DESC
+			`Login`,
+			`Nickname`,
+			`MostFinished`
+		FROM `%prefix%players`
+		ORDER BY `MostFinished` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6658,10 +6565,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['MostFinished'][$i]['rank']		= ($i+1);
-					$this->scores['MostFinished'][$i]['login']		= $row->Login;
-					$this->scores['MostFinished'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['MostFinished'][$i]['score']		= $this->formatNumber((int)$row->MostFinished, 0);
+					$this->scores['MostFinished'][$i]['rank']	= ($i+1);
+					$this->scores['MostFinished'][$i]['login']	= $row->Login;
+					$this->scores['MostFinished'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
+					$this->scores['MostFinished'][$i]['score']	= $this->formatNumber((int)$row->MostFinished, 0);
 
 					$i++;
 				}
@@ -6687,15 +6594,15 @@ class PluginRecordsEyepiece extends Plugin {
 		$query = "
 		SELECT
 			`p`.`Login`,
-			`p`.`NickName`,
+			`p`.`Nickname`,
 			`p`.`TimePlayed`
-		FROM `players` AS `p`
+		FROM `%prefix%players` AS `p`
 		WHERE `p`.`TimePlayed` > 3600
 		ORDER BY `p`.`TimePlayed` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6703,10 +6610,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopPlaytime'][$i]['rank']		= ($i+1);
-					$this->scores['TopPlaytime'][$i]['login']		= $row->Login;
-					$this->scores['TopPlaytime'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['TopPlaytime'][$i]['score']		= $this->formatNumber(round($row->TimePlayed / 3600), 0) . ' h';
+					$this->scores['TopPlaytime'][$i]['rank']	= ($i+1);
+					$this->scores['TopPlaytime'][$i]['login']	= $row->Login;
+					$this->scores['TopPlaytime'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
+					$this->scores['TopPlaytime'][$i]['score']	= $this->formatNumber(round($row->TimePlayed / 3600), 0) . ' h';
 
 					$i++;
 				}
@@ -6731,17 +6638,16 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$query = "
 		SELECT
-			`p`.`Login`,
-			`p`.`NickName`,
-			`pe`.`donations`
-		FROM `players` AS `p`
-		LEFT JOIN `players_extra` AS `pe` ON `p`.`Id` = `pe`.`PlayerId`
-		WHERE `pe`.`donations` != 0
-		ORDER BY `pe`.`donations` DESC
+			`Login`,
+			`Nickname`,
+			`Donations`
+		FROM `%prefix%players`
+		WHERE `Donations` != 0
+		ORDER BY `Donations` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6749,11 +6655,11 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopDonators'][$i]['rank']		= ($i+1);
-					$this->scores['TopDonators'][$i]['login']		= $row->Login;
-					$this->scores['TopDonators'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['TopDonators'][$i]['score']		= $this->formatNumber((int)$row->donations, 0) .' P';
-					$this->scores['TopDonators'][$i]['scoplain']	= (int)$row->donations;
+					$this->scores['TopDonators'][$i]['rank']	= ($i+1);
+					$this->scores['TopDonators'][$i]['login']	= $row->Login;
+					$this->scores['TopDonators'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
+					$this->scores['TopDonators'][$i]['score']	= $this->formatNumber((int)$row->Donations, 0) .' P';
+					$this->scores['TopDonators'][$i]['scoplain']	= (int)$row->Donations;
 
 					$i++;
 				}
@@ -6780,7 +6686,7 @@ class PluginRecordsEyepiece extends Plugin {
 		SELECT
 			COUNT(`Nation`) AS `Count`,
 			`Nation`
-		FROM `players`
+		FROM `%prefix%players`
 		GROUP BY `Nation`
 		ORDER BY `Count` DESC
 		". $appendix .";
@@ -6792,7 +6698,7 @@ class PluginRecordsEyepiece extends Plugin {
 			'CAR'	=> 'CMR'
 		);
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6878,15 +6784,15 @@ class PluginRecordsEyepiece extends Plugin {
 		SELECT
 			COUNT(`r`.`Score`) AS `vote_count`,
 			`p`.`Login` AS `login`,
-			`p`.`NickName` AS `nickname`
-		FROM `rs_karma` AS `r`, `players` AS `p`
-		WHERE `r`.`PlayerId` = `p`.`Id`
+			`p`.`Nickname` AS `nickname`
+		FROM `%prefix%karmas` AS `r`, `%prefix%players` AS `p`
+		WHERE `r`.`PlayerId` = `p`.`PlayerId`
 		GROUP BY `r`.`PlayerId`
 		ORDER BY `vote_count` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6927,12 +6833,12 @@ class PluginRecordsEyepiece extends Plugin {
 			$query = "
 			SELECT
 				`p`.`Login`,
-				`p`.`NickName`,
+				`p`.`Nickname`,
 				((`b`.`wins` / `b`.`stake`) * `b`.`countwins`) AS `won`
 			FROM `betting` AS `b`
-			LEFT JOIN `players` AS `p` ON `p`.`Login` = `b`.`login`
+			LEFT JOIN `%prefix%players` AS `p` ON `p`.`Login` = `b`.`login`
 			WHERE `b`.`wins` > 0
-			AND `p`.`NickName` IS NOT NULL
+			AND `p`.`Nickname` IS NOT NULL
 			ORDER BY `won` DESC
 			". $appendix .";
 			";
@@ -6942,18 +6848,18 @@ class PluginRecordsEyepiece extends Plugin {
 			$query = "
 			SELECT
 				`p`.`Login`,
-				`p`.`NickName`,
+				`p`.`Nickname`,
 				`b`.`wins` AS `won`
 			FROM `betting` AS `b`
-			LEFT JOIN `players` AS `p` ON `p`.`Login` = `b`.`login`
+			LEFT JOIN `%prefix%players` AS `p` ON `p`.`Login` = `b`.`login`
 			WHERE `b`.`wins` > 0
-			AND `p`.`NickName` IS NOT NULL
+			AND `p`.`Nickname` IS NOT NULL
 			ORDER BY `won` DESC
 			". $appendix .";
 			";
 		}
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -6964,8 +6870,8 @@ class PluginRecordsEyepiece extends Plugin {
 					// Wanna have the average
 					while ($row = $res->fetch_object()) {
 						$this->scores['TopBetwins'][$i]['rank']		= ($i+1);
-						$this->scores['TopBetwins'][$i]['login']		= $row->Login;
-						$this->scores['TopBetwins'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
+						$this->scores['TopBetwins'][$i]['login']	= $row->Login;
+						$this->scores['TopBetwins'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
 						$this->scores['TopBetwins'][$i]['won']		= sprintf("%.2f", $row->won);
 
 						$i++;
@@ -6975,8 +6881,8 @@ class PluginRecordsEyepiece extends Plugin {
 					// Wanna have the Planets
 					while ($row = $res->fetch_object()) {
 						$this->scores['TopBetwins'][$i]['rank']		= ($i+1);
-						$this->scores['TopBetwins'][$i]['login']		= $row->Login;
-						$this->scores['TopBetwins'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
+						$this->scores['TopBetwins'][$i]['login']	= $row->Login;
+						$this->scores['TopBetwins'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
 						$this->scores['TopBetwins'][$i]['won']		= $this->formatNumber((int)$row->won, 0) .' P';
 
 						$i++;
@@ -7004,18 +6910,17 @@ class PluginRecordsEyepiece extends Plugin {
 		// Get the Planets
 		$query = "
 		SELECT
-			`p`.`Login`,
-			`p`.`NickName`,
-			`pe`.`WinningPayout` AS `won`
-		FROM `players_extra` AS `pe`
-		LEFT JOIN `players` AS `p` ON `p`.`Id` = `pe`.`PlayerId`
-		WHERE `pe`.`WinningPayout` > 0
-		AND `p`.`NickName` IS NOT NULL
+			`Login`,
+			`Nickname`,
+			`WinningPayout` AS `won`
+		FROM `%prefix%players`
+		WHERE `WinningPayout` > 0
+		AND `Nickname` IS NOT NULL
 		ORDER BY `won` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -7024,10 +6929,10 @@ class PluginRecordsEyepiece extends Plugin {
 				// Wanna have the Planets
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopWinningPayouts'][$i]['rank']	= ($i+1);
-					$this->scores['TopWinningPayouts'][$i]['login']	= $row->Login;
-					$this->scores['TopWinningPayouts'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
-					$this->scores['TopWinningPayouts'][$i]['won']	= $this->formatNumber((int)$row->won, 0) .' P';
+					$this->scores['TopWinningPayouts'][$i]['rank']		= ($i+1);
+					$this->scores['TopWinningPayouts'][$i]['login']		= $row->Login;
+					$this->scores['TopWinningPayouts'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
+					$this->scores['TopWinningPayouts'][$i]['won']		= $this->formatNumber((int)$row->won, 0) .' P';
 
 					$i++;
 				}
@@ -7052,17 +6957,16 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$query = "
 		SELECT
-			`pe`.`RoundPoints`,
-			`p`.`Login`,
-			`p`.`NickName`
-		FROM `players_extra` AS `pe`
-		LEFT JOIN `players` AS `p` ON `pe`.`PlayerId` = `p`.`Id`
+			`RoundPoints`,
+			`Login`,
+			`Nickname`
+		FROM `%prefix%players`
 		WHERE `RoundPoints` > 0
 		ORDER BY `RoundPoints` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -7070,10 +6974,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopRoundscore'][$i]['rank']			= ($i+1);
-					$this->scores['TopRoundscore'][$i]['score']		= $this->formatNumber((int)$row->RoundPoints, 0);
-					$this->scores['TopRoundscore'][$i]['login']		= $row->Login;
-					$this->scores['TopRoundscore'][$i]['nickname']		= $this->handleSpecialChars($row->NickName);
+					$this->scores['TopRoundscore'][$i]['rank']	= ($i+1);
+					$this->scores['TopRoundscore'][$i]['score']	= $this->formatNumber((int)$row->RoundPoints, 0);
+					$this->scores['TopRoundscore'][$i]['login']	= $row->Login;
+					$this->scores['TopRoundscore'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
 
 					$i++;
 				}
@@ -7100,15 +7004,15 @@ class PluginRecordsEyepiece extends Plugin {
 		SELECT
 			`Visits`,
 			`Login`,
-			`NickName`
-		FROM `players`
+			`Nickname`
+		FROM `%prefix%players`
 		WHERE `Visits` > 0
 		ORDER BY `Visits` DESC
 		". $appendix .";
 		";
 
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -7116,10 +7020,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopVisitors'][$i]['rank']		= ($i+1);
-					$this->scores['TopVisitors'][$i]['score']		= $this->formatNumber((int)$row->Visits, 0);
-					$this->scores['TopVisitors'][$i]['login']		= $row->Login;
-					$this->scores['TopVisitors'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
+					$this->scores['TopVisitors'][$i]['rank']	= ($i+1);
+					$this->scores['TopVisitors'][$i]['score']	= $this->formatNumber((int)$row->Visits, 0);
+					$this->scores['TopVisitors'][$i]['login']	= $row->Login;
+					$this->scores['TopVisitors'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
 
 					$i++;
 				}
@@ -7145,14 +7049,14 @@ class PluginRecordsEyepiece extends Plugin {
 		$query = "
 		SELECT
 			`Login`,
-			`NickName`,
-			DATEDIFF('". date('Y-m-d H:i:s') ."', `UpdatedAt`) AS `Days`
-		FROM `players`
-		ORDER BY `UpdatedAt` DESC
+			`Nickname`,
+			DATEDIFF('". date('Y-m-d H:i:s') ."', `LastVisit`) AS `Days`
+		FROM `%prefix%players`
+		ORDER BY `LastVisit` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -7162,7 +7066,7 @@ class PluginRecordsEyepiece extends Plugin {
 				while ($row = $res->fetch_object()) {
 					$this->scores['TopActivePlayers'][$i]['rank']		= ($i+1);
 					$this->scores['TopActivePlayers'][$i]['login']		= $row->Login;
-					$this->scores['TopActivePlayers'][$i]['nickname']	= $this->handleSpecialChars($row->NickName);
+					$this->scores['TopActivePlayers'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
 					$this->scores['TopActivePlayers'][$i]['score']		= (($row->Days == 0) ? 'Today' : $this->formatNumber(-$row->Days, 0) .' d');
 					$this->scores['TopActivePlayers'][$i]['scoplain']	= (int)$row->Days;
 
@@ -7191,14 +7095,14 @@ class PluginRecordsEyepiece extends Plugin {
 		SELECT
 			`p`.`Continent`,
 			COUNT(`p`.`Continent`) AS `ContinentCount`
-		FROM `players` AS `p`
+		FROM `%prefix%players` AS `p`
 		WHERE `p`.`Continent` > 0
 		GROUP BY `p`.`Continent`
 		ORDER BY `ContinentCount` DESC
 		". $appendix .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				// Clean before filling
@@ -7207,7 +7111,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$i = 0;
 				while ($row = $res->fetch_object()) {
 					$this->scores['TopContinents'][$i]['count']	= $this->formatNumber((int)$row->ContinentCount, 0);
-					$this->scores['TopContinents'][$i]['continent']	= $aseco->continent->idToContinent($row->Continent);
+					$this->scores['TopContinents'][$i]['continent']	= $aseco->continent->abbrToContinent($row->Continent);
 
 					$i++;
 				}
@@ -7393,12 +7297,12 @@ class PluginRecordsEyepiece extends Plugin {
 			`r`.`Score`,
 			`m`.`Uid`,
 			`r`.`MapId`
-		FROM `records` AS `r`
-		LEFT JOIN `maps` AS `m` ON `m`.`Id` = `r`.`MapId`
+		FROM `%prefix%records` AS `r`
+		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId` = `r`.`MapId`
 		WHERE `r`.`Score` != ''
 		ORDER BY `r`.`MapId` ASC, `Score` ". ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC') .",`Date` ASC;
 		";
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 
 		if ($result) {
 			$last = false;
@@ -7446,12 +7350,12 @@ class PluginRecordsEyepiece extends Plugin {
 		$query = "
 		SELECT
 			`MapId`
-		FROM `rs_times`
+		FROM `%prefix%times`
 		WHERE `PlayerId` = '". $pid ."'
 		GROUP BY `MapId`
 		ORDER BY `MapId`;
 		";
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 
 		if ($result) {
 			$finished = array();
@@ -7466,10 +7370,10 @@ class PluginRecordsEyepiece extends Plugin {
 				$query = "
 				SELECT
 					`Uid`
-				FROM `maps`
-				WHERE `Id` NOT IN (". implode(',', $finished) .");
+				FROM `%prefix%maps`
+				WHERE `MapId` NOT IN (". implode(',', $finished) .");
 				";
-				$result = $aseco->mysqli->query($query);
+				$result = $aseco->db->query($query);
 
 				if ($result) {
 					$unfinished = array();
@@ -7926,9 +7830,10 @@ $maniascript = <<<EOL
  */
 main() {
 	declare persistent Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
-	declare DedimaniaRecordsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
-	DedimaniaRecordsWidget.RelativeScale	= {$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
+	declare DedimaniaRecordsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare Vec3 OrigPosition		= DedimaniaRecordsWidget.RelativePosition;
 
+	DedimaniaRecordsWidget.RelativeScale	= {$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
 	DedimaniaRecordsWidget.Visible = RecordsEyepieceDedimaniaRecordsVisible;
 	while (True) {
 		yield;
@@ -8068,7 +7973,7 @@ $maniascript = <<<EOL
  */
 main() {
 	declare persistent Boolean RecordsEyepieceLocalRecordsVisible = True;
-	declare LocalRecordsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare LocalRecordsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	LocalRecordsWidget.RelativeScale	= {$this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
 
 	LocalRecordsWidget.Visible = RecordsEyepieceLocalRecordsVisible;
@@ -8295,7 +8200,7 @@ main() {
 //	];
 //log(RecordsEyepiece);
 
-	declare LiveRankingsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare LiveRankingsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	declare LiveRankingsMarker		<=> (Page.GetFirstChild("RecordsEyepieceLiveRankingsMarker") as CMlFrame);
 	declare LiveRankingsMarkerBG		<=> (Page.GetFirstChild("RecordsEyepieceLiveRankingsBackgroundMarker") as CMlQuad);
 
@@ -8865,7 +8770,7 @@ $maniascript = <<<EOL
  */
 main() {
 	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
-	declare LiveRankingsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare LiveRankingsWidget		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	LiveRankingsWidget.RelativeScale	= {$this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
 
 	LiveRankingsWidget.Visible = RecordsEyepieceLiveRankingsVisible;
@@ -12560,7 +12465,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main() {
-	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale				= {$this->config['CHECKPOINTCOUNT_WIDGET'][0]['SCALE'][0]};
 
 	declare LabelCheckpointLine1			<=> (Page.GetFirstChild("RecordsEyepieceCheckpointLine1") as CMlLabel);
@@ -13255,7 +13160,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %widgetheight%
 		$header  = '<manialink id="DonationWidgetAtScore" name="DonationWidgetAtScore">';
-		$header .= '<frame posn="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_Y'][0] .' 0" id="DonationWidgetAtScoreMainFrame">';
+		$header .= '<frame posn="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_Y'][0] .' 0" id="DonationWidgetAtScore">';
 		$header .= '<format textsize="1"/>';
 		$header .= '<quad posn="0 0 0.001" sizen="4.6 %widgetheight%" style="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0.7 -0.3 0.002" sizen="3.2 2.7" style="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
@@ -13274,7 +13179,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13299,8 +13204,13 @@ EOL;
 		// BEGIN: Widget for CheckpointCounter				//
 		//--------------------------------------------------------------//
 		$header  = '<manialink id="CheckpointCountWidget" name="CheckpointCountWidget">';
-		$header .= '<frame posn="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointCountWidgetMainFrame">';
-		$header .= '<quad posn="0 0 0.001" sizen="16 4" style="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		$header .= '<frame posn="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointCountWidget">';
+		if ($this->config['CHECKPOINTCOUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+			$header .= '<quad posn="0 0 0.001" sizen="16 4" bgcolor="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
+		}
+		else {
+			$header .= '<quad posn="0 0 0.001" sizen="16 4" style="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['CHECKPOINTCOUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		}
 
 		$footer  = '</frame>';
 		$footer .= '</manialink>';
@@ -13320,7 +13230,7 @@ EOL;
 		// BEGIN: Widget for WinningPayout				//
 		//--------------------------------------------------------------//
 		$header  = '<manialink id="WinningPayoutWidgetAtScore" name="WinningPayoutWidgetAtScore">';
-		$header .= '<frame posn="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_Y'][0] .' 0" id="WinningPayoutWidgetAtScoreMainFrame">';
+		$header .= '<frame posn="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_Y'][0] .' 0" id="WinningPayoutWidgetAtScore">';
 		if ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
 			$header .= '<quad posn="0 0 0.001" sizen="25.5 '. ($this->config['LineHeight'] * 3 + 3.4) .'" bgcolor="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -13351,7 +13261,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13381,7 +13291,7 @@ EOL;
 		// %icon_style%, %icon_substyle%
 		// %title%
 		$header  = '<manialink id="%manialinkid%" name="%manialinkid%">';
-		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%MainFrame">';
+		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%">';
 		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] != '') {
 			$header .= '<quad posn="0 0 0.001" sizen="15.76 %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -13412,7 +13322,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= %widgetscale%;
 }
 --></script>
@@ -13442,10 +13352,10 @@ EOL;
 		// %image_open_pos_x%, %image_open_pos_y%, %image_open%
 		// %mapname%, %authortime%, %author%, %author_nation%
 		$header  = '<manialink id="%manialinkid%" name="%manialinkid%">';
-		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%MainFrame">';
+		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%">';
 
 		$header .= '<format textsize="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
-		$header .= '<label posn="0.1 -0.1 0" sizen="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 0.2) .' 8.35" action="%actionid%" text=" " focusareacolor1="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_COLOR'][0] .'" focusareacolor2="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
+		$header .= '<label posn="0.1 -0.1 0" sizen="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 0.2) .' 8.35" action="%actionid%" text=" " focusareacolor1="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" focusareacolor2="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 		$header .= '<quad posn="-0.2 0.3 0.001" sizen="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] + 0.4) .' 9.15" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0 0 0.02" sizen="'. $this->config['MAP_WIDGET'][0]['WIDTH'][0] .' 8.55" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="%image_open_pos_x% %image_open_pos_y% 0.03" sizen="3.5 3.5" image="%image_open%"/>';
@@ -13479,7 +13389,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['MAP_WIDGET'][0]['RACE'][0]['SCALE'][0]};
 }
 --></script>
@@ -13507,7 +13417,7 @@ EOL;
 		// %posx%, %posy%, %icon_style%, %icon_substyle%, %title%
 		// %nextmapname%, %nextauthor%, %nextauthor_nation%, %nextenv%, %nextmood%, %nextauthortime%, %nextgoldtime%, %nextsilvertime%, %nextbronzetime%
 		$header  = '<manialink id="%manialinkid%" name="%manialinkid%">';
-		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%MainFrame">';
+		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%">';
 
 		$header .= '<format textsize="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] != '') {
@@ -13564,7 +13474,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0]};
 }
 --></script>
@@ -13591,7 +13501,7 @@ EOL;
 		// %posx%, %posy%, %widgetscale%
 		// %background_style%, %background_substyle%
 		$content  = '<manialink id="ClockWidget" name="ClockWidget">';
-		$content .= '<frame posn="%posx% %posy% 0" id="ClockWidgetMainFrame">';
+		$content .= '<frame posn="%posx% %posy% 0" id="ClockWidget">';
 		$content .= '<format textsize="1"/>';
 
 		// Content
@@ -13613,7 +13523,7 @@ $maniascript = <<<EOL
  */
 #Include "TextLib" as TextLib
 main() {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= %widgetscale%;
 
 	declare LabelLocalTime		<=> (Page.GetFirstChild("RecordsEyepieceLabelLocalTime") as CMlLabel);
@@ -13656,7 +13566,7 @@ EOL;
 		// %max_players%
 		// %max_spectators%
 		$content  = '<manialink id="PlayerSpectatorWidget" name="PlayerSpectatorWidget">';
-		$content .= '<frame posn="'. $this->config['PLAYER_SPECTATOR_WIDGET'][0]['POS_X'][0] .' '. $this->config['PLAYER_SPECTATOR_WIDGET'][0]['POS_Y'][0] .' 0" id="PlayerSpectatorWidgetMainFrame">';
+		$content .= '<frame posn="'. $this->config['PLAYER_SPECTATOR_WIDGET'][0]['POS_X'][0] .' '. $this->config['PLAYER_SPECTATOR_WIDGET'][0]['POS_Y'][0] .' 0" id="PlayerSpectatorWidget">';
 		$content .= '<format textsize="1"/>';
 		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['PLAYER_SPECTATOR_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['PLAYER_SPECTATOR_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$content .= '<label posn="2.3 -0.6 0.1" sizen="3.65 2" halign="center" text="" id="RecordsEyepiecePlayerSpectatorWidgetAmountPlayers"/>';
@@ -13675,7 +13585,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale				= {$this->config['PLAYER_SPECTATOR_WIDGET'][0]['SCALE'][0]};
 
 	declare CMlLabel LabelAmountPlayers		<=> (Page.GetFirstChild("RecordsEyepiecePlayerSpectatorWidgetAmountPlayers") as CMlLabel);
@@ -13747,7 +13657,7 @@ EOL;
 		// %ranks%
 		// %info%
 		$content  = '<manialink id="CurrentRankingWidget" name="CurrentRankingWidget">';
-		$content .= '<frame posn="'. $this->config['CURRENT_RANKING_WIDGET'][0]['POS_X'][0] .' '. $this->config['CURRENT_RANKING_WIDGET'][0]['POS_Y'][0] .' 0" id="CurrentRankingWidgetMainFrame">';
+		$content .= '<frame posn="'. $this->config['CURRENT_RANKING_WIDGET'][0]['POS_X'][0] .' '. $this->config['CURRENT_RANKING_WIDGET'][0]['POS_Y'][0] .' 0" id="CurrentRankingWidget">';
 		$content .= '<format textsize="1"/>';
 		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" action="showLiveRankingsWindow" style="'. $this->config['CURRENT_RANKING_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['CURRENT_RANKING_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$content .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
@@ -13767,7 +13677,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['CURRENT_RANKING_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13789,7 +13699,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %ladder_minimum%, %ladder_maximum%
 		$content  = '<manialink id="LadderLimitWidget" name="LadderLimitWidget">';
-		$content .= '<frame posn="'. $this->config['LADDERLIMIT_WIDGET'][0]['POS_X'][0] .' '. $this->config['LADDERLIMIT_WIDGET'][0]['POS_Y'][0] .' 0" id="LadderLimitWidgetMainFrame">';
+		$content .= '<frame posn="'. $this->config['LADDERLIMIT_WIDGET'][0]['POS_X'][0] .' '. $this->config['LADDERLIMIT_WIDGET'][0]['POS_Y'][0] .' 0" id="LadderLimitWidget">';
 		$content .= '<format textsize="1"/>';
 		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['LADDERLIMIT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['LADDERLIMIT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$content .= '<quad posn="0.7 -0.3 0.002" sizen="3.35 3" style="Icons128x128_1" substyle="LadderPoints"/>';
@@ -13808,7 +13718,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['LADDERLIMIT_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13829,9 +13739,14 @@ EOL;
 		// BEGIN: Widget for TopList					//
 		//--------------------------------------------------------------//
 		$content  = '<manialink id="ToplistWidget" name="ToplistWidget">';
-		$content .= '<frame posn="'. $this->config['TOPLIST_WIDGET'][0]['POS_X'][0] .' '. $this->config['TOPLIST_WIDGET'][0]['POS_Y'][0] .' 0" id="ToplistWidgetMainFrame">';
+		$content .= '<frame posn="'. $this->config['TOPLIST_WIDGET'][0]['POS_X'][0] .' '. $this->config['TOPLIST_WIDGET'][0]['POS_Y'][0] .' 0" id="ToplistWidget">';
 		$content .= '<format textsize="1"/>';
-		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" action="showToplistWindow" style="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		if ($this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonToplistWidget"/>';
+		}
+		else {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'" scriptevents="1" id="ButtonToplistWidget"/>';
+		}
 		$content .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
 		$content .= '<quad posn="0.7 -0.3 0.002" sizen="3.35 3" style="BgRaceScore2" substyle="LadderRank"/>';
 		$content .= '<label posn="2.3 -3.4 0.1" sizen="4 1.4" halign="center" scale="0.9" text="MORE"/>';
@@ -13849,8 +13764,28 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['TOPLIST_WIDGET'][0]['SCALE'][0]};
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					TriggerPageAction("showToplistWindow");
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
 }
 --></script>
 EOL;
@@ -13873,7 +13808,7 @@ EOL;
 		// %limits%
 		// %gamemode%
 		$header  = '<manialink id="GamemodeWidget" name="GamemodeWidget">';
-		$header .= '<frame posn="'. $this->config['GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['GAMEMODE_WIDGET'][0]['POS_Y'][0] .' 0" id="GamemodeWidgetMainFrame">';
+		$header .= '<frame posn="'. $this->config['GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['GAMEMODE_WIDGET'][0]['POS_Y'][0] .' 0" id="GamemodeWidget">';
 		$header .= '<format textsize="1"/>';
 		$header .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['GAMEMODE_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['GAMEMODE_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0.85 -0.3 0.002" sizen="2.9 2.9" style="%icon_style%" substyle="%icon_substyle%"/>';
@@ -13896,7 +13831,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['GAMEMODE_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13922,7 +13857,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %icon%
 		$content  = '<manialink id="NextEnvironmentWidgetAtScore" name="NextEnvironmentWidgetAtScore">';
-		$content .= '<frame posn="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_Y'][0] .' 0" id="NextEnvironmentWidgetAtScoreMainFrame">';
+		$content .= '<frame posn="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_Y'][0] .' 0" id="NextEnvironmentWidgetAtScore">';
 		$content .= '<format textsize="1"/>';
 		$content .= '<quad posn="0 0 0.001" sizen="11.1 6.5" style="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$content .= '%icon%';
@@ -13940,7 +13875,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13962,7 +13897,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %icon_style%, %icon_substyle%
 		$content  = '<manialink id="NextGamemodeWidgetAtScore" name="NextGamemodeWidgetAtScore">';
-		$content .= '<frame posn="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_Y'][0] .' 0" id="NextGamemodeWidgetAtScoreMainFrame">';
+		$content .= '<frame posn="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_Y'][0] .' 0" id="NextGamemodeWidgetAtScore">';
 		$content .= '<format textsize="1"/>';
 		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$content .= '<quad posn="0.7 -0.5 0.002" sizen="3.2 3.2" style="%icon_style%" substyle="%icon_substyle%"/>';
@@ -13981,7 +13916,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -14003,9 +13938,14 @@ EOL;
 		//--------------------------------------------------------------//
 		// %visitorcount%
 		$content  = '<manialink id="VisitorsWidget" name="VisitorsWidget">';
-		$content .= '<frame posn="'. $this->config['VISITORS_WIDGET'][0]['POS_X'][0] .' '. $this->config['VISITORS_WIDGET'][0]['POS_Y'][0] .' 0" id="VisitorsWidgetMainFrame">';
+		$content .= '<frame posn="'. $this->config['VISITORS_WIDGET'][0]['POS_X'][0] .' '. $this->config['VISITORS_WIDGET'][0]['POS_Y'][0] .' 0" id="VisitorsWidget">';
 		$content .= '<format textsize="1"/>';
-		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" action="showTopNationsWindow" style="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		if ($this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonVisitorsWidget"/>';
+		}
+		else {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'" scriptevents="1" id="ButtonVisitorsWidget"/>';
+		}
 		$content .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
 		$content .= '<quad posn="0.7 -0.3 0.002" sizen="3.2 3.2" style="Icons128x128_1" substyle="Buddies"/>';
 		$content .= '<label posn="2.3 -3.4 0.1" sizen="4 1.4" halign="center" scale="0.9" text="%visitorcount%"/>';
@@ -14023,8 +13963,28 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['VISITORS_WIDGET'][0]['SCALE'][0]};
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					TriggerPageAction("showTopNationsWindow");
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
 }
 --></script>
 EOL;
@@ -14045,7 +14005,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %offline_record%, %text%
 		$header  = '<manialink id="ManiaExchangeWidget" name="ManiaExchangeWidget">';
-		$header .= '<frame posn="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_X'][0] .' '. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_Y'][0] .' 0" id="ManiaExchangeWidgetMainFrame">';
+		$header .= '<frame posn="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_X'][0] .' '. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_Y'][0] .' 0" id="ManiaExchangeWidget">';
 		$header .= '<format textsize="1"/>';
 
 		$footer = '<quad posn="0.7 -0.1 0.002" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['MX_LOGO_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MX_LOGO_FOCUS'][0] .'"/>';
@@ -14064,8 +14024,28 @@ $footer .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0]};
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					TriggerPageAction("showManiaExchangeMapInfoWindow");
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
 }
 --></script>
 EOL;
@@ -14087,9 +14067,14 @@ EOL;
 		//--------------------------------------------------------------//
 		// %mapcount%
 		$content  = '<manialink id="MapCountWidget" name="MapCountWidget">';
-		$content .= '<frame posn="'. $this->config['MAPCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['MAPCOUNT_WIDGET'][0]['POS_Y'][0] .' 0" id="MapCountWidgetMainFrame">';
+		$content .= '<frame posn="'. $this->config['MAPCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['MAPCOUNT_WIDGET'][0]['POS_Y'][0] .' 0" id="MapCountWidget">';
 		$content .= '<format textsize="1"/>';
-		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" action="showMaplistWindow" style="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		if ($this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonMapCountWidget"/>';
+		}
+		else {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'" scriptevents="1" id="ButtonMapCountWidget"/>';
+		}
 		$content .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
 		$content .= '<quad posn="0.2 0 0.002" sizen="3.8 3.8" style="Icons128x128_1" substyle="Browse"/>';
 		$content .= '<label posn="2.3 -3.4 0.1" sizen="4 1.4" halign="center" scale="0.9" text="%mapcount%"/>';
@@ -14107,8 +14092,28 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0]};
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					TriggerPageAction("showMaplistWindow");
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
 }
 --></script>
 EOL;
@@ -14128,16 +14133,19 @@ EOL;
 		// BEGIN: Widget for Favorite					//
 		//--------------------------------------------------------------//
 		// %posx%, %posy%, %widgetscale%
-		// %background_style%, %background_substyle%
+		// %background%
 		$content  = '<manialink id="AddToFavoriteWidget" name="AddToFavoriteWidget">';
-		$content .= '<frame posn="%posx% %posy% 0" id="AddToFavoriteWidgetMainFrame">';
+		$content .= '<frame posn="%posx% %posy% 0" id="AddToFavoriteWidget">';
 		$content .= '<format textsize="1"/>';
-		$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" manialink="addfavorite?action=add&amp;game=ManiaPlanet&amp;server='. rawurlencode($aseco->server->login) .'&amp;name='. rawurlencode($aseco->server->name) .'&amp;zone='. rawurlencode(implode('|', $aseco->server->zone)) .'" addplayerid="1" style="%background_style%" substyle="%background_substyle%"/>';
+		$content .= '%background%';
 		$content .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
 		$content .= '<quad posn="0.9 -0.2 0.002" sizen="3.2 3.2" style="Icons128x128_Blink" substyle="ServersFavorites"/>';
 		$content .= '<label posn="2.3 -3.4 0.1" sizen="4 1.4" halign="center" scale="0.9" text="ADD"/>';
 		$content .= '<label posn="2.3 -4.9 0.1" sizen="6.35 0.5" halign="center" textcolor="'. $this->config['FAVORITE_WIDGET'][0]['TEXT_COLOR'][0] .'" scale="0.6" text="FAVORITE"/>';
 		$content .= '</frame>';
+
+		$url = 'addfavorite?action=add&game=ManiaPlanet&server='. rawurlencode($aseco->server->login) .'&name='. rawurlencode($aseco->server->name) .'&zone='. rawurlencode(implode('|', $aseco->server->zone)) .'&player=';
+
 $content .= <<<EOL
 <script><!--
  /*
@@ -14149,9 +14157,30 @@ $content .= <<<EOL
  * License:	GPLv3
  * ----------------------------------
  */
+#Include "TextLib" as TextLib
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= %widgetscale%;
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					OpenLink("$url" ^ InputPlayer.Login ^"&nickname="^ TextLib::StripFormatting(InputPlayer.Name), CMlScript::LinkType::ManialinkBrowser);
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
 }
 --></script>
 EOL;
@@ -14182,8 +14211,8 @@ EOL;
 		// %posx_title%, %posy_title%
 		// %halign%, %title%
 		$header  = '<manialink id="%manialinkid%" name="%manialinkid%">';
-		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%MainFrame">';
-		$header .= '<label posn="0.1 -0.1 0" sizen="%backgroundwidth% 8.35" action="%actionid%" text=" " focusareacolor1="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_COLOR'][0] .'" focusareacolor2="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
+		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%">';
+		$header .= '<label posn="0.1 -0.1 0" sizen="%backgroundwidth% 8.35" action="%actionid%" text=" " focusareacolor1="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" focusareacolor2="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 		$header .= '<quad posn="-0.2 0.3 0.001" sizen="%borderwidth% 9.15" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0 0 0.002" sizen="%widgetwidth% 8.55" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="%image_open_pos_x% %image_open_pos_y% 0.05" sizen="3.5 3.5" image="%image_open%"/>';
@@ -14211,7 +14240,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['MUSIC_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -14248,8 +14277,8 @@ EOL;
 		// %posx_title%, %posy_title%
 		// %halign%, %title%
 		$header  = '<manialink id="%manialinkid%" name="%manialinkid%">';
-		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%MainFrame">';
-		$header .= '<label posn="0.1 -0.1 0" sizen="%backgroundwidth% %backgroundheight%" action="%actionid%" text=" " focusareacolor1="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_COLOR'][0] .'" focusareacolor2="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
+		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%">';
+		$header .= '<label posn="0.1 -0.1 0" sizen="%backgroundwidth% %backgroundheight%" action="%actionid%" text=" " focusareacolor1="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" focusareacolor2="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 		$header .= '<quad posn="-0.2 0.3 0.001" sizen="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0 0 0.002" sizen="%widgetwidth% %widgetheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0.4 -2.6 0.003" sizen="2 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_RANK'][0] .'"/>';
@@ -14296,9 +14325,9 @@ EOL;
 		// %posx_title%, %posy_title%
 		// %halign%, %title%
 		$header  = '<manialink id="%manialinkid%" name="%manialinkid%">';
-		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%MainFrame">';
+		$header .= '<frame posn="%posx% %posy% 0" id="%manialinkid%">';
 
-		$header .= '<quad posn="0.1 -0.1 0" sizen="%widgetwidth% %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_COLOR'][0] .'"/>';
+		$header .= '<quad posn="0.1 -0.1 0" sizen="%widgetwidth% %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		$header .= '<quad posn="-0.2 0.3 0.001" sizen="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0 0 0.002" sizen="%widgetwidth% %widgetheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad posn="0.4 -2.6 0.003" sizen="2 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_RANK'][0] .'"/>';
@@ -14328,7 +14357,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= %widgetscale%;
 }
 --></script>
@@ -14599,7 +14628,7 @@ EOL;
 		// BEGIN: Records-Eyepiece Advertising at Race/Score		//
 		//--------------------------------------------------------------//
 		$race  = '<manialink id="RecordsEyepieceAdvertiserWidget" name="RecordsEyepieceAdvertiserWidget">';
-		$race .= '<frame posn="'. $this->config['EYEPIECE_WIDGET'][0]['RACE'][0]['POS_X'][0] .' '. $this->config['EYEPIECE_WIDGET'][0]['RACE'][0]['POS_Y'][0] .' 0" id="RecordsEyepieceAdvertiserWidgetMainFrame">';
+		$race .= '<frame posn="'. $this->config['EYEPIECE_WIDGET'][0]['RACE'][0]['POS_X'][0] .' '. $this->config['EYEPIECE_WIDGET'][0]['RACE'][0]['POS_Y'][0] .' 0" id="RecordsEyepieceAdvertiserWidget">';
 		$race .= '<quad posn="0 0 0" sizen="6.19 6.45" url="http://www.undef.name/UASECO/Records-Eyepiece.php" image="http://static.undef.name/ingame/records-eyepiece/logo-records-eyepiece-opacity.png" imagefocus="http://static.undef.name/ingame/records-eyepiece/logo-records-eyepiece-focus.png"/>';
 		$race .= '</frame>';
 $race .= <<<EOL
@@ -14614,7 +14643,7 @@ $race .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['EYEPIECE_WIDGET'][0]['RACE'][0]['SCALE'][0]};
 }
 --></script>
@@ -14622,7 +14651,7 @@ EOL;
 		$race .= '</manialink>';
 
 		$score  = '<manialink id="RecordsEyepieceAdvertiserWidget" name="RecordsEyepieceAdvertiserWidget">';
-		$score .= '<frame posn="'. $this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['POS_X'][0] .' '. $this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['POS_Y'][0] .' 0" id="RecordsEyepieceAdvertiserWidgetMainFrame">';
+		$score .= '<frame posn="'. $this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['POS_X'][0] .' '. $this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['POS_Y'][0] .' 0" id="RecordsEyepieceAdvertiserWidget">';
 		$score .= '<format textsize="1"/>';
 		$score .= '<quad posn="0 0 0.001" sizen="4.6 6.5" url="http://www.undef.name/UASECO/Records-Eyepiece.php" style="'. $this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$score .= '<quad posn="-0.18 -4.6 0.002" sizen="2.1 2.1" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
@@ -14642,7 +14671,7 @@ $score .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlControl Container	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale		= {$this->config['EYEPIECE_WIDGET'][0]['SCORE'][0]['SCALE'][0]};
 }
 --></script>
@@ -14693,40 +14722,6 @@ EOL;
 				// Restore default refresh interval
 				$this->config['FEATURES'][0]['REFRESH_INTERVAL'][0] = $this->config['REFRESH_INTERVAL_DEFAULT'][0];
 			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function loadPlayerPreferences ($player = false) {
-		global $aseco;
-
-		// Bail out if there are no Players
-		if (count($aseco->server->players->player_list) == 0) {
-			return;
-		}
-
-		// Get Player preferences for Clock-Widget
-		$displaywidgets = false;
-		$query = "SELECT `DisplayWidgets` FROM `players_extra` WHERE `PlayerId` = '". $player->id ."';";
-		$res = $aseco->mysqli->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				$row = $res->fetch_object();
-				$displaywidgets	= $row->DisplayWidgets;
-			}
-			$res->free_result();
-		}
-
-		if ($displaywidgets != false) {
-			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = ((strtoupper($displaywidgets) == 'TRUE') ? true : false);
-		}
-		else {
-			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = false;
 		}
 	}
 
@@ -15123,15 +15118,15 @@ EOL;
 			foreach ($values as $name => $vote) {
 				$query = "
 				SELECT
-					`m`.`Id` as `MapId`,
+					`m`.`MapId`,
 					COUNT(`Score`) AS `Count`
-				FROM `maps` AS `m`
-				LEFT JOIN `rs_karma` AS `k` ON `m`.`Id` = `k`.`MapId`
+				FROM `%prefix%maps` AS `m`
+				LEFT JOIN `%prefix%karmas` AS `k` ON `m`.`MapId` = `k`.`MapId`
 				WHERE `k`.`Score` = ". $vote ."
-				GROUP BY `m`.`Id`;
+				GROUP BY `m`.`MapId`;
 				";
 
-				$res = $aseco->mysqli->query($query);
+				$res = $aseco->db->query($query);
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
@@ -15196,11 +15191,11 @@ EOL;
 				`MapId`,
 				SUM(`Score`) AS `Karma`,
 				COUNT(`Score`) AS `Count`
-			FROM `rs_karma`
+			FROM `%prefix%karmas`
 			GROUP BY `MapId`;
 			";
 
-			$res = $aseco->mysqli->query($query);
+			$res = $aseco->db->query($query);
 			if ($res) {
 				if ($res->num_rows > 0) {
 					while ($row = $res->fetch_object()) {
@@ -15235,10 +15230,10 @@ EOL;
 		SELECT
 			`Login`,
 			`Nation`
-		FROM `players`;
+		FROM `%prefix%players`;
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				while ($row = $res->fetch_object()) {
@@ -15325,7 +15320,7 @@ EOL;
 
 		if ($aseco->server->rankings->count() > 0) {
 			$query = "
-			UPDATE `players_extra`
+			UPDATE `%prefix%players`
 			SET `RoundPoints` = CASE `PlayerId`
 			";
 
@@ -15364,9 +15359,9 @@ EOL;
 
 				// Update only if one Player has a Score
 				if (count($playerids) > 0) {
-					$result = $aseco->mysqli->query($query);
+					$result = $aseco->db->query($query);
 					if (!$result) {
-						$aseco->console('[RecordsEyepiece] UPDATE `players_extra` row `RoundPoints` failed: [for statement "'. str_replace("\t", '', $query) .'"]');
+						$aseco->console('[RecordsEyepiece] UPDATE `RoundPoints` failed: [for statement "'. str_replace("\t", '', $query) .'"]');
 					}
 				}
 			}

@@ -6,11 +6,12 @@
  *	- SmallScoresTable -> display the player ranking at the end of the round
  *	- Chrono -> display a chrono at the bottom of the screen
  */
-#Const	Version		"2014-09-26"
+#Const	Version		"2014-10-15"
 #Const	ScriptName	"UI.Script.txt"
 
 #Include "TextLib" as TL
 #Include "Libs/Nadeo/TrackMania/WarmUp.Script.txt" as WarmUp
+#Include "Libs/Nadeo/TrackMania/XmlRpc.Script.txt" as XmlRpc
 
 // ---------------------------------- //
 // Constants
@@ -1084,7 +1085,7 @@ Text Private_CreateMLCountdown() {
 	return """
 <manialink version="1" name="Lib_UI:Countdown">
 <frame posn="{{{C_LibUI_CountdownPos.X}}} {{{C_LibUI_CountdownPos.Y}}} {{{C_LibUI_CountdownPos.Z}}}" id="Frame_Global">
-	<quad sizen="6 6" valign="center" style="BgRaceScore2" substyle="SandTimer" />
+	<quad posn="0 0.5" sizen="6 6" valign="center" style="BgRaceScore2" substyle="SandTimer" />
 	<label sizen="40 6" halign="right" valign="center2" textsize="5" style="TextRaceChrono" id="Label_Countdown" />
 </frame>
 <script><!--
@@ -1445,12 +1446,21 @@ Void Unload() {
 	G_LibUI_ModuleVisibility.clear();
 	G_LibUI_ModulePosition.clear();
 	G_LibUI_PrevCutOffTimeLimit = -1;
+	
+	XmlRpc::UnregisterCallback("UI_Properties");
 }
 
 // ---------------------------------- //
 /// Load the library
 Void Load() {
 	Unload();
+	
+XmlRpc::RegisterCallback("UI_Properties", """
+* Data : An xml string with the Trackmania ui properties. Check the GitHub documentation for more information.
+* Example : ["<ui_properties></ui_properties>"]
+* Note : This callback is sent when the script receives the `UI_GetProperties` trigger.
+* Version : available since UI.Script.txt_v2014-09-16
+""");
 }
 
 // ---------------------------------- //
@@ -1588,7 +1598,7 @@ Void XmlRpcLoop() {
 					Private_SetProperties(Event.Param2);
 				}
 				case "UI_GetProperties": {
-					XmlRpc.SendCallbackArray("UI_Properties", [Private_GetProperties()]);
+					if (XmlRpc::CallbackIsAllowed("UI_Properties")) XmlRpc::SendCallbackArray("UI_Properties", [Private_GetProperties()]);
 				}
 			}
 		}

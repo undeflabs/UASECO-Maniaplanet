@@ -12,7 +12,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -130,22 +130,21 @@ class PluginDonate extends Plugin {
 		$top = 100;
 		$query = "
 		SELECT
-			`p`.`NickName`,
-			`x`.`Donations`
-		FROM `players` AS `p`
-		LEFT JOIN `players_extra` AS `x` ON `p`.`Id` = `x`.`PlayerId`
-		WHERE `x`.`Donations` != 0
-		ORDER BY `x`.`Donations` DESC
+			`Nickname`,
+			`Donations`
+		FROM `%prefix%players`
+		WHERE `Donations` != 0
+		ORDER BY `Donations` DESC
 		LIMIT ". $top .";
 		";
 
-		$res = $aseco->mysqli->query($query);
+		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$dons = array();
 				$i = 1;
 				while ($row = $res->fetch_object()) {
-					$nickname = $row->NickName;
+					$nickname = $row->Nickname;
 					if (!$aseco->settings['lists_colornicks']) {
 						$nickname = $aseco->stripColors($nickname);
 					}
@@ -450,18 +449,18 @@ class PluginDonate extends Plugin {
 		$query = "
 		SELECT
 			`Donations`
-		FROM `players_extra`
+		FROM `%prefix%players`
 		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if ($result) {
 			$dbextra = $result->fetch_object();
 			$result->free_result();
 			return $dbextra->Donations;
 		}
 		else {
-			trigger_error('[Donate] Could not get player\'s donations! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[Donate] Could not get player\'s donations! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 			return false;
 		}
 	}
@@ -477,14 +476,14 @@ class PluginDonate extends Plugin {
 
 		// Update player's donations
 		$query = "
-		UPDATE `players_extra` SET
+		UPDATE `%prefix%players` SET
 			`Donations` = `Donations` + ". $donation ."
 		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if (!$result) {
-			trigger_error('[Donate] Could not update player\'s donations! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[Donate] Could not update player\'s donations! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 	}
 }

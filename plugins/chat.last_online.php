@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-26
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -80,13 +80,13 @@ class PluginLastOnline extends Plugin {
 		// Obtain last online timestamp
 		$query = "
 		SELECT
-			DATE_FORMAT(`UpdatedAt`, '%W, %D %M %Y at %H:%i o\'clock')
-		FROM `players`
-		WHERE `Login` = ". $aseco->mysqli->quote($target->login) ."
+			DATE_FORMAT(`LastVisit`, '%W, %D %M %Y at %H:%i o\'clock')
+		FROM `%prefix%players`
+		WHERE `Login` = ". $aseco->db->quote($target->login) ."
 		LIMIT 1;
 		";
 
-		$result = $aseco->mysqli->query($query);
+		$result = $aseco->db->query($query);
 		if ($result) {
 			$laston = $result->fetch_row();
 			$result->free_result();
@@ -95,7 +95,7 @@ class PluginLastOnline extends Plugin {
 			$message = '{#server}» Player {#highlite}'. $target->nickname .'$z$s{#server} was last online on: {#highlite}'. $laston;
 		}
 		else {
-			trigger_error('Could not query last online for player! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('Could not query last online for player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 
 		// Show chat message

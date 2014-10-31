@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -173,9 +173,9 @@ class PluginStyles extends Plugin {
 				}
 			}
 			if ($style == 'default') {
-				$player->style = $aseco->style;
-				$message = '{#server}» Style reset to server default {#highlite}' . $aseco->settings['window_style'] . '{#server} !';
-				$this->setStyle($player->login, $aseco->settings['window_style']);
+				$player->style = 'Card';
+				$message = '{#server}» Style reset to server default {#highlite}Card{#server} !';
+				$this->setStyle($player->login, 'Card');
 			}
 			else {
 				$style_file = 'config/styles/' . $style . '.xml';
@@ -234,30 +234,14 @@ class PluginStyles extends Plugin {
 	public function getStyle ($login) {
 		global $aseco;
 
-		$id = $aseco->server->players->getPlayerId($login);
-		if ($id) {
-			// Get player's style
-			$query = "
-			SELECT
-				`Style`
-			FROM `players_extra`
-			WHERE `PlayerId` = ". $id .";
-			";
-
-			$result = $aseco->mysqli->query($query);
-			if ($result) {
-				$dbextra = $result->fetch_object();
-				$result->free_result();
-				return $dbextra->Style;
-			}
-			else {
-				trigger_error('[Style] Could not get player\'s style! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-				return false;
-			}
+		$player = $aseco->server->players->getPlayer($login);
+		$settings = $player->getSettings($this);
+		if ($settings) {
+			return $settings['Style'];
 		}
 		else {
-			trigger_error('[Style] Could not found player!', E_USER_WARNING);
-			return false;
+			// Setup default
+			return 'Card';
 		}
 	}
 
@@ -270,21 +254,13 @@ class PluginStyles extends Plugin {
 	public function setStyle ($login, $style) {
 		global $aseco;
 
-		$id = $aseco->server->players->getPlayerId($login);
-		if ($id) {
-			$query = "
-			UPDATE `players_extra` SET
-				`Style` = ". $aseco->mysqli->quote($style) ."
-			WHERE `PlayerId` = ". $id .";
-			";
+		$player = $aseco->server->players->getPlayer($login);
+		$settings = $player->getSettings($this);
+		$settings['Style'] = $style;
 
-			$result = $aseco->mysqli->query($query);
-			if (!$result) {
-				trigger_error('[Style] Could not update player\'s style! ('. $aseco->mysqli->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
-			}
-		}
-		else {
-			trigger_error('[Style] Could not found player!', E_USER_WARNING);
+		$result = $player->setSettings($this, $settings);
+		if (!$result) {
+			trigger_error('[Style] Could not update player\'s style!', E_USER_WARNING);
 		}
 	}
 }

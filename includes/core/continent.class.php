@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-20
+ * Date:	2014-10-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -41,13 +41,14 @@
 class Continent {
 
 	// Continent constants
-	const EUROPE		= 1;
-	const AFRICA		= 2;
-	const ASIA		= 3;
-	const MIDDLE_EAST	= 4;
-	const NORTH_AMERICA	= 5;
-	const SOUTH_AMERICA	= 6;
-	const OCEANIA		= 7;
+	const EUROPE		= 'EU';
+	const AFRICA		= 'AF';
+	const ASIA		= 'AS';
+	const MIDDLE_EAST	= 'ME';
+	const NORTH_AMERICA	= 'NA';
+	const SOUTH_AMERICA	= 'SA';
+	const OCEANIA		= 'OC';
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -55,8 +56,8 @@ class Continent {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Convert continent to CId
-	public function continentToId ($continent) {
+	// Convert continent to abbreviation
+	public function continentToAbbr ($continent) {
 
 		switch ($continent) {
 			case 'Europe':
@@ -81,7 +82,7 @@ class Continent {
 				return self::OCEANIA;
 
 			default:
-				return 0;
+				return '';
 		}
 	}
 
@@ -91,10 +92,10 @@ class Continent {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Convert CId to continent
-	public function idToContinent ($cid) {
+	// Convert abbreviation to continent
+	public function abbrToContinent ($abbreviation) {
 
-		switch ($cid) {
+		switch ($abbreviation) {
 			case self::EUROPE:
 				return 'Europe';
 

@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-10-31
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -441,30 +441,30 @@ class PluginChatRecords extends Plugin {
 			$query = "
 			SELECT
 				`Login`
-			FROM `players`, `records`
-			WHERE `players`.`Id` = `records`.`Playerid`
+			FROM `%prefix%players`, `%prefix%records`
+			WHERE `%prefix%players`.`PlayerId` = `%prefix%records`.`Playerid`
 			AND `MapId` = ". $map->id ."
 			ORDER BY `Score` ". $order .", `Date` ASC
 			LIMIT 3;
 			";
-			$result = $aseco->mysqli->query($query);
+			$result = $aseco->db->query($query);
 			if ($result) {
 				// tally top-3 record totals by login
-				if ($row = $result->fetch_array()) {
+				if ($row = $result->fetch_array(MYSQLI_NUM)) {
 					if (isset($recs[$row[0]])) {
 						$recs[$row[0]][0]++;
 					}
 					else {
 						$recs[$row[0]] = array(1,0,0);
 					}
-					if ($row = $result->fetch_array()) {
+					if ($row = $result->fetch_array(MYSQLI_NUM)) {
 						if (isset($recs[$row[0]])) {
 							$recs[$row[0]][1]++;
 						}
 						else {
 							$recs[$row[0]] = array(0,1,0);
 						}
-						if ($row = $result->fetch_array()) {
+						if ($row = $result->fetch_array(MYSQLI_NUM)) {
 							if (isset($recs[$row[0]])) {
 								$recs[$row[0]][2]++;
 							}
@@ -561,17 +561,17 @@ class PluginChatRecords extends Plugin {
 			$query = "
 			SELECT
 				`Login`
-			FROM `players`, `records`
-			WHERE `players`.`Id` = `records`.`Playerid`
+			FROM `%prefix%players`, `%prefix%records`
+			WHERE `%prefix%players`.`PlayerId` = `%prefix%records`.`Playerid`
 			AND `MapId` = ". $map->id ."
 			ORDER BY `Score` ". $order .", `Date` ASC
 			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";
-			$result = $aseco->mysqli->query($query);
+			$result = $aseco->db->query($query);
 			if ($result) {
 				if ($result->num_rows > 0) {
 					// update record totals by login
-					while ($row = $result->fetch_array()) {
+					while ($row = $result->fetch_array(MYSQLI_NUM)) {
 						if (isset($recs[$row[0]])) {
 							$recs[$row[0]]++;
 						}
