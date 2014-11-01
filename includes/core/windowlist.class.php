@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -47,8 +47,21 @@ class WindowList {
 
 	public function __construct ($aseco) {
 
-		// Register callback for this new Window
+		// Register callbacks for this new Window
 		$aseco->registerEvent('onPlayerManialinkPageAnswer', array($this, 'onPlayerManialinkPageAnswer'));
+		$aseco->registerEvent('onPlayerDisconnectPrepare', array($this, 'onPlayerDisconnectPrepare'));
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerDisconnectPrepare ($aseco, $player) {
+
+		// Remove temporary Player data, do not need to be stored into the database.
+		$this->removePlayerData($player, 'ClassWindow');
 	}
 
 	/*

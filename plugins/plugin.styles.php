@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -235,12 +235,13 @@ class PluginStyles extends Plugin {
 		global $aseco;
 
 		$player = $aseco->server->players->getPlayer($login);
-		$settings = $player->getSettings($this);
-		if ($settings) {
-			return $settings['Style'];
+		$style = $this->getPlayerData($player, 'Style');
+		if ($style) {
+			return $style;
 		}
 		else {
 			// Setup default
+			$this->setStyle($login, 'Card');
 			return 'Card';
 		}
 	}
@@ -255,13 +256,7 @@ class PluginStyles extends Plugin {
 		global $aseco;
 
 		$player = $aseco->server->players->getPlayer($login);
-		$settings = $player->getSettings($this);
-		$settings['Style'] = $style;
-
-		$result = $player->setSettings($this, $settings);
-		if (!$result) {
-			trigger_error('[Style] Could not update player\'s style!', E_USER_WARNING);
-		}
+		$this->storePlayerData($player, 'Style', $style);
 	}
 }
 

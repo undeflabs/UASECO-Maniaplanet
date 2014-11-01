@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -351,6 +351,7 @@ class MapList {
 
 
 		// Add Maps that are not yet stored in the database
+		$aseco->db->query('START TRANSACTION;');
 		foreach ($database['insert'] as $map) {
 			$new = $this->insertMapIntoDatabase($map);
 
@@ -369,6 +370,7 @@ class MapList {
 				$this->map_list[$map->uid] = $map;
 			}
 		}
+		$aseco->db->query('COMMIT;');
 		unset($database);
 
 
@@ -763,7 +765,7 @@ class MapList {
 			`m`.`Uid`,
 			SUM(`k`.`Score`) AS `Karma`,
 			COUNT(`k`.`Score`) AS `Count`
-		FROM `%prefix%karmas` AS `k`
+		FROM `%prefix%ratings` AS `k`
 		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId` = `k`.`MapId`
 		GROUP BY `k`.`MapId`;
 		";

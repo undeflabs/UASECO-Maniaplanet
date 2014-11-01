@@ -1052,34 +1052,38 @@ class UASECO extends Helper {
 
 		$check = array();
 		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
-		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'karmas', $tables);
-		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
 		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
-		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
+		$check[8] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
 		if ($check[1]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		}
 		if ($check[2]) {
-			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'karmas`');
-		}
-		if ($check[3]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		}
-		if ($check[4]) {
+		if ($check[3]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'players`');
 		}
-		if ($check[5]) {
+		if ($check[4]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		}
+		if ($check[5]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		}
 		if ($check[6]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		}
 		if ($check[7]) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		}
+		if ($check[8]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		}
-		if ($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7]) {
+		if ($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8]) {
 			$this->console('[Database] ...successfully done!');
 			return;
 		}
@@ -1103,24 +1107,6 @@ class UASECO extends Helper {
 		";
 		$this->db->query($query);
 		$this->displayLoadStatus('Checking database structure...', 0.2);
-
-
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'karmas`');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `%prefix%karmas` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Score` tinyint(1) unsigned NOT NULL DEFAULT '0',
-		  PRIMARY KEY (`MapId`,`PlayerId`),
-		  KEY `MapId` (`MapId`),
-		  KEY `PlayerId` (`PlayerId`),
-		  KEY `Date` (`Date`),
-		  KEY `Score` (`Score`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-		";
-		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.3);
 
 
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
@@ -1169,7 +1155,7 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.4);
+		$this->displayLoadStatus('Checking database structure...', 0.3);
 
 
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
@@ -1186,7 +1172,6 @@ class UASECO extends Helper {
 		  `Wins` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `Donations` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `TimePlayed` int(4) unsigned NOT NULL DEFAULT '0',
-		  `Settings` text COLLATE utf8_bin NOT NULL,
 		  PRIMARY KEY (`PlayerId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
@@ -1199,7 +1184,7 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.5);
+		$this->displayLoadStatus('Checking database structure...', 0.35);
 
 
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
@@ -1211,7 +1196,25 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.6);
+		$this->displayLoadStatus('Checking database structure...', 0.4);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
+		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`MapId`,`PlayerId`),
+		  KEY `MapId` (`MapId`),
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Date` (`Date`),
+		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.5);
 
 
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
@@ -1227,6 +1230,21 @@ class UASECO extends Helper {
 		  KEY `PlayerId` (`PlayerId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+		$this->displayLoadStatus('Checking database structure...', 0.6);
+
+
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%settings` (
+		  `Plugin` varchar(64) COLLATE utf8_bin NOT NULL,
+		  `PlayerId` mediumint(3) unsigned NOT NULL,
+		  `Key` varchar(64) COLLATE utf8_bin NOT NULL,
+		  `Value` text COLLATE utf8_bin NOT NULL,
+		  PRIMARY KEY (`Plugin`,`PlayerId`,`Key`),
+		  KEY `PlayerId` (`PlayerId`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
@@ -1264,13 +1282,14 @@ class UASECO extends Helper {
 
 		$check = array();
 		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
-		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'karmas', $tables);
-		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
 		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
-		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
-		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7])) {
+		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
+		$check[8] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8])) {
 			trigger_error('[Database] Table structure incorrect, can not setup all tables: '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
@@ -1289,7 +1308,7 @@ class UASECO extends Helper {
 
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.92);
+		$this->displayLoadStatus('Checking database structure...', 0.91);
 		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
 		$query = "
 		ALTER TABLE `%prefix%ranks`
@@ -1302,7 +1321,7 @@ class UASECO extends Helper {
 
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.94);
+		$this->displayLoadStatus('Checking database structure...', 0.93);
 		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		$query = "
 		ALTER TABLE `%prefix%records`
@@ -1312,6 +1331,19 @@ class UASECO extends Helper {
 		$result = $this->db->query($query);
 		if (!$result) {
 			trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+		}
+
+
+
+		$this->displayLoadStatus('Checking database structure...', 0.94);
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$query = "
+		ALTER TABLE `%prefix%settings`
+		  ADD CONSTRAINT `%prefix%settings_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
@@ -2222,8 +2254,8 @@ setlocale(LC_NUMERIC, 'C');
 mb_internal_encoding('UTF-8');
 
 $limit = shorthand2bytes(ini_get('memory_limit'));
-if ( ($limit != -1) && ($limit < 192 * 1048576) ) {
-	ini_set('memory_limit', '192M');
+if ( ($limit != -1) && ($limit < 256 * 1048576) ) {
+	ini_set('memory_limit', '256M');
 }
 
 // Create an instance of UASECO and run it

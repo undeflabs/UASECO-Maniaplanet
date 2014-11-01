@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-10-26
+ * Date:		2014-11-01
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -92,6 +92,7 @@ class PluginManiaKarma extends Plugin {
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerChat',			'onPlayerChat');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
+		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerFinish',			'onPlayerFinish');
 		$this->registerEvent('onBeginMap',			'onBeginMap');
@@ -869,7 +870,7 @@ class PluginManiaKarma extends Plugin {
 		else if ( (strtoupper($chat_parameter) == 'LOTTERY') && ($this->config['karma_lottery']['enabled'] == true) ) {
 			if  ( (isset($player->rights)) && ($player->rights) ) {
 				$message = $aseco->formatText($this->config['messages']['lottery_total_player_win'],
-					$player->data['ManiaKarma']['LotteryPayout']
+					$this->getPlayerData($player, 'LotteryPayout')
 				);
 			}
 		}
@@ -981,15 +982,16 @@ class PluginManiaKarma extends Plugin {
 		// If karma lottery is enabled, then initialize (if player has related rights)
 		if ($this->config['karma_lottery']['enabled'] == true) {
 			if ( (isset($player->rights)) && ($player->rights) ) {
-				$player->data['ManiaKarma']['LotteryPayout'] = 0;
+				$this->storePlayerData($player, 'LotteryPayout', 0);
 			}
 		}
 
 		// Init the 'KarmaWidgetStatus' and 'KarmaReminderWindow' to the defaults
-		$player->data['ManiaKarma']['ReminderWindow'] = false;
+		$this->storePlayerData($player, 'ReminderWindow', false);
 
 		// Init
-		$player->data['ManiaKarma']['FinishedMapCount'] = 0;
+		$this->storePlayerData($player, 'FinishedMapCount', 0);
+
 
 		// Check if finishes are required
 		if ($this->config['require_finish'] > 0) {
@@ -1038,34 +1040,48 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function onPlayerDisconnectPrepare ($aseco, $player) {
+
+		// Remove temporary Player data, do not need to be stored into the database.
+		$this->removePlayerData($player, 'LotteryPayout');
+		$this->removePlayerData($player, 'FinishedMapCount');
+		$this->removePlayerData($player, 'ReminderWindow');
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function onPlayerDisconnect ($aseco, $player) {
 
 		// Need to pay planets for lottery wins to this player?
 		if ($this->config['karma_lottery']['enabled'] == true) {
 			if ( (isset($player->rights)) && ($player->rights) ) {
-				if ($player->data['ManiaKarma']['LotteryPayout'] > 0) {
+				if ($this->getPlayerData($player, 'LotteryPayout') > 0) {
 					// Pay planets to player
 					$message = $aseco->formatText($this->config['messages']['lottery_mail_body'],
 						$aseco->server->name,
-						(int)$player->data['ManiaKarma']['LotteryPayout'],
+						$this->getPlayerData($player, 'LotteryPayout'),
 						$this->config['account']['login']
 					);
 					$message = str_replace('{br}', "%0A", $message);  // split long message
 
 					$billid = false;
 					try {
-						$billid = $aseco->client->query('Pay', (string)$player->login, (int)$player->data['ManiaKarma']['LotteryPayout'], (string)$aseco->formatColors($message) );
+						$billid = $aseco->client->query('Pay', (string)$player->login, $this->getPlayerData($player, 'LotteryPayout'), (string)$aseco->formatColors($message) );
 					}
 					catch (Exception $exception) {
-						$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $player->data['ManiaKarma']['LotteryPayout'] .' planets to player "'. $player->login .'" failed: [' . $exception->getCode() . '] ' . $exception->getMessage());
+						$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $this->getPlayerData($player, 'LotteryPayout') .' planets to player "'. $player->login .'" failed: [' . $exception->getCode() . '] ' . $exception->getMessage());
 						return false;
 					}
 
 					// Payment done
-					$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $player->data['ManiaKarma']['LotteryPayout'] .' planets to player "'. $player->login .'" done. (BillId #'. $billid .')');
+					$aseco->console('[ManiaKarma] (ManiaKarma lottery) Pay '. $this->getPlayerData($player, 'LotteryPayout') .' planets to player "'. $player->login .'" done. (BillId #'. $billid .')');
 
 					// Subtract paid amounts from total
-					$this->config['karma_lottery']['total_payout'] -= (int)$player->data['ManiaKarma']['LotteryPayout'];
+					$this->config['karma_lottery']['total_payout'] -= (int)$this->getPlayerData($player, 'LotteryPayout');
 				}
 			}
 		}
@@ -1087,21 +1103,21 @@ class PluginManiaKarma extends Plugin {
 		// Check if finishes are required
 		if ($this->config['require_finish'] > 0) {
 			// Save that the player finished this map
-			$finish_item->player->data['ManiaKarma']['FinishedMapCount'] += 1;
+			$this->storePlayerData($finish_item->player, 'FinishedMapCount', ($this->getPlayerData($finish_item->player, 'FinishedMapCount') + 1));
 
 			// Enable the vote possibilities for this player
 			$this->sendWidgetCombination(array('player_marker'), $finish_item->player);
 		}
 
-		// If no finish reminders, bail out too (does not need to check $player->data['ManiaKarma']['FinishedMapCount'], because actually finished ;)
+		// If no finish reminders, bail out too (does not need to check $this->getPlayerData($player, 'FinishedMapCount'), because actually finished ;)
 		if ( ($this->config['remind_to_vote'] == 'FINISHED') || ($this->config['remind_to_vote'] == 'ALWAYS') ) {
 
 			// Check whether player already voted
-			if ( ($this->karma['global']['players'][$finish_item->player->login]['vote'] == 0) && ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] <= $finish_item->player->data['ManiaKarma']['FinishedMapCount']) ) ) {
+			if ( ($this->karma['global']['players'][$finish_item->player->login]['vote'] == 0) && ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] <= $this->getPlayerData($finish_item->player, 'FinishedMapCount')) ) ) {
 				if ( ($this->config['reminder_window']['display'] == 'FINISHED') || ($this->config['reminder_window']['display'] == 'ALWAYS') ) {
 					// Show reminder window
 					$this->showReminderWindow($finish_item->player->login);
-					$finish_item->data['ManiaKarma']['ReminderWindow'] = true;
+					$this->storePlayerData($finish_item->player, 'ReminderWindow', true);
 				}
 				else {
 					// Show reminder message
@@ -1198,9 +1214,9 @@ class PluginManiaKarma extends Plugin {
 		if ($this->config['require_finish'] > 0) {
 			// Remove the state that the player has finished this map (it is an new map now)
 			// MUST placed here _BEFORE_ $this->handleGetApiCall() call, this sets
-			// $player->data['ManiaKarma']['FinishedMapCount'] to true if the player has voted this map
+			// $this->getPlayerData($player, 'FinishedMapCount') to true if the player has voted this map
 			foreach ($aseco->server->players->player_list as $player) {
-				$player->data['ManiaKarma']['FinishedMapCount'] = 0;
+				$this->storePlayerData($player, 'FinishedMapCount', 0);
 			}
 		}
 	}
@@ -1318,7 +1334,7 @@ class PluginManiaKarma extends Plugin {
 						// If the Player is not already gone, go ahead
 						if ($player = $aseco->server->players->getPlayer($lottery_attendant[$winner])) {
 							// Add to Players total
-							$player->data['ManiaKarma']['LotteryPayout'] += $this->config['karma_lottery']['planets_win'];
+							$this->storePlayerData($player, 'LotteryPayout', ($this->getPlayerData($player, 'LotteryPayout') + $this->config['karma_lottery']['planets_win']));
 
 							// Add to total payout
 							$this->config['karma_lottery']['total_payout'] += $this->config['karma_lottery']['planets_win'];
@@ -1422,14 +1438,14 @@ class PluginManiaKarma extends Plugin {
 			foreach ($aseco->server->players->player_list as $player) {
 
 				// Skip if Player did not finished the map but it is required to vote
-				if ( ($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish']) ) {
+				if ( ($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish']) ) {
 					continue;
 				}
 
 				// Check whether Player already voted
 				if ($this->karma['global']['players'][$player->login]['vote'] == 0) {
 					$players_reminder[] = $player->login;
-					$player->data['ManiaKarma']['ReminderWindow'] = true;
+					$this->storePlayerData($player, 'ReminderWindow', true);
 				}
 				else if ($this->config['score_mx_window'] == true) {
 					// Show the MX-Link-Window
@@ -2351,7 +2367,7 @@ EOL;
 			$preset['fantastic']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['fantastic']['action'] = 18;
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['fantastic']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2360,7 +2376,7 @@ EOL;
 			$preset['beautiful']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['beautiful']['action'] = 18;
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['beautiful']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2369,7 +2385,7 @@ EOL;
 			$preset['good']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['good']['action'] = 18;
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['good']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2379,7 +2395,7 @@ EOL;
 			$preset['bad']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['bad']['action'] = 18;
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['bad']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2388,7 +2404,7 @@ EOL;
 			$preset['poor']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['poor']['action'] = 18;
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['poor']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2397,7 +2413,7 @@ EOL;
 			$preset['waste']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['waste']['action'] = 18;
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($player->data['ManiaKarma']['FinishedMapCount'] < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['waste']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2627,7 +2643,7 @@ EOL;
 
 
 		// Check if finishes are required
-		if ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] > $player->data['ManiaKarma']['FinishedMapCount']) ) {
+		if ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] > $this->getPlayerData($player, 'FinishedMapCount')) ) {
 
 			// Show chat message
 			$message = $aseco->formatText($this->config['messages']['karma_require_finish'],
@@ -2863,7 +2879,7 @@ EOL;
 				}
 
 				// Don't ask/tell Players they did not reached the <require_finish> limit
-				if ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] > $pl->data['ManiaKarma']['FinishedMapCount']) ) {
+				if ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] > $this->getPlayerData($pl, 'FinishedMapCount')) ) {
 					continue;
 				}
 
@@ -3064,7 +3080,7 @@ EOL;
 		}
 
 		// Close reminder-window if there is one for this Player
-		if ($command['author']->data['ManiaKarma']['ReminderWindow'] == true) {
+		if ($this->getPlayerData($command['author'], 'ReminderWindow') == true) {
 			$this->closeReminderWindow($command['author']);
 		}
 	}
@@ -3216,7 +3232,7 @@ EOL;
 		$content .= '</manialink>';
 
 		$aseco->sendManialink($content, $player->login, 0, false);
-		$player->data['ManiaKarma']['ReminderWindow'] = true;
+		$this->storePlayerData($player, 'ReminderWindow', true);
 	}
 
 	/*
@@ -3238,16 +3254,16 @@ EOL;
 		$xml = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow"></manialink>';
 
 		if ($player != false) {
-			if ($player->data['ManiaKarma']['ReminderWindow'] == true) {
+			if ($this->getPlayerData($player, 'ReminderWindow') == true) {
 				$aseco->sendManialink($xml, $player->login, 0, false);
-				$player->data['ManiaKarma']['ReminderWindow'] = false;
+				$this->storePlayerData($player, 'ReminderWindow', false);
 			}
 		}
 		else {
 			// Reset state at all Players
 			foreach ($aseco->server->players->player_list as $player) {
-				if ($player->data['ManiaKarma']['ReminderWindow'] == true) {
-					$player->data['ManiaKarma']['ReminderWindow'] = false;
+				if ($this->getPlayerData($player, 'ReminderWindow') == true) {
+					$this->storePlayerData($player, 'ReminderWindow', false);
 				}
 			}
 
@@ -3370,7 +3386,7 @@ EOL;
 					`p`.`Login`,
 					`k`.`PlayerId`,
 					`k`.`MapId`
-				FROM `%prefix%karmas` AS `k`
+				FROM `%prefix%ratings` AS `k`
 				LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`k`.`PlayerId`
 				WHERE `p`.`Login` IN (". implode(',', $logins) .")
 				AND `k`.`MapId`='". $this->karma['data']['id'] ."';
@@ -3382,7 +3398,7 @@ EOL;
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
 							if ($row->MapId > 0) {
-								$query2 = "UPDATE `%prefix%karmas`SET `Score`='". $this->karma['new']['players'][$row->Login] ."' WHERE `MapId`='". $row->MapId ."' AND `PlayerId`='". $row->PlayerId ."';";
+								$query2 = "UPDATE `%prefix%ratings`SET `Score`='". $this->karma['new']['players'][$row->Login] ."' WHERE `MapId`='". $row->MapId ."' AND `PlayerId`='". $row->PlayerId ."';";
 								$result = $aseco->db->query($query2);
 								if (!$result) {
 									$aseco->console('[ManiaKarma] Could not UPDATE karma vote for "'. $row->Login .'" [for statement "'. $query2 .'"]!');
@@ -3397,7 +3413,7 @@ EOL;
 				}
 
 				// INSERT all other Player they did not vote before
-				$query2 = "INSERT INTO `%prefix%karmas` (`Score`, `PlayerId`, `MapId`) VALUES ";
+				$query2 = "INSERT INTO `%prefix%ratings` (`Score`, `PlayerId`, `MapId`) VALUES ";
 				$values = array();
 				foreach ($this->karma['new']['players'] as $login => $vote) {
 					if ( !isset($updated[$login]) ) {
@@ -3626,8 +3642,8 @@ EOL;
 									foreach ($xml->players->player as $pl) {
 										if ( ($player->login == $pl['login']) && ((int)$pl['vote'] != 0) ) {
 											// Set the state of finishing this map, if not already has a setup of a != 0 value
-											if ($player->data['ManiaKarma']['FinishedMapCount'] == 0) {
-												$player->data['ManiaKarma']['FinishedMapCount'] = 9999;
+											if ($this->getPlayerData($player, 'FinishedMapCount') == 0) {
+												$this->storePlayerData($player, 'FinishedMapCount', 9999);
 											}
 										}
 									}
@@ -3823,7 +3839,7 @@ EOL;
 				while ($row = $res->fetch_object()) {
 					foreach ($aseco->server->players->player_list as $player) {
 						if ($player->login == $row->login) {
-							$player->data['ManiaKarma']['FinishedMapCount'] = (int)$row->count;
+							$this->storePlayerData($player, 'FinishedMapCount', (int)$row->count);
 						}
 					}
 				}
@@ -3864,37 +3880,37 @@ EOL;
 			SELECT
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `%prefix%karmas`
+			  FROM `%prefix%ratings`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='3'
 			) AS `FantasticCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `%prefix%karmas`
+			  FROM `%prefix%ratings`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='2'
 			) AS `BeautifulCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `%prefix%karmas`
+			  FROM `%prefix%ratings`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='1'
 			) AS `GoodCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `%prefix%karmas`
+			  FROM `%prefix%ratings`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='-1'
 			) AS `BadCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `%prefix%karmas`
+			  FROM `%prefix%ratings`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='-2'
 			) AS `PoorCount`,
 			(
 			  SELECT COUNT(`Score`)
-			  FROM `%prefix%karmas`
+			  FROM `%prefix%ratings`
 			  WHERE `MapId`='$MapId'
 			  AND `Score`='-3'
 			) AS `WasteCount`;
@@ -3953,7 +3969,7 @@ EOL;
 		SELECT
 			`p`.`Login`,
 			`k`.`Score`
-		FROM `%prefix%karmas` AS `k`
+		FROM `%prefix%ratings` AS `k`
 		LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`k`.`PlayerId`
 		WHERE `k`.`MapId`='". $MapId ."'
 		AND `p`.`Login` IN (". implode(',', $logins) .");
@@ -3987,8 +4003,8 @@ EOL;
 			foreach ($aseco->server->players->player_list as $player) {
 				if ($this->karma['local']['players'][$player->login]['vote'] != 0) {
 					// Set the state of finishing this map, if not already has a setup of a != 0 value
-					if ($player->data['ManiaKarma']['FinishedMapCount'] == 0) {
-						$player->data['ManiaKarma']['FinishedMapCount'] = 9999;
+					if ($this->getPlayerData($player, 'FinishedMapCount') == 0) {
+						$this->storePlayerData($player, 'FinishedMapCount', 9999);
 					}
 				}
 			}
@@ -4180,7 +4196,7 @@ EOL;
 			`m`.`Environment`,
 			`p`.`Login`,
 			`rs`.`Score`
-		FROM `%prefix%karmas` AS `rs`
+		FROM `%prefix%ratings` AS `rs`
 		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId`=`rs`.`MapId`
 		LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`rs`.`PlayerId`
 		ORDER BY `m`.`Uid`;

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -199,7 +199,7 @@ class PluginRaspKarma extends Plugin {
 		SELECT
 			`MapId`,
 			`Score`
-		FROM `%prefix%karmas`
+		FROM `%prefix%ratings`
 		WHERE `PlayerId` = ". $caller->id ."
 		AND `MapId` = ". $aseco->server->maps->current->id .";
 		";
@@ -213,7 +213,7 @@ class PluginRaspKarma extends Plugin {
 			}
 			else {
 				$query2 = "
-				UPDATE `%prefix%karmas` SET
+				UPDATE `%prefix%ratings` SET
 					`Score` = ". $vote ."
 				WHERE `MapId` = ". $row->MapId ."
 				AND `PlayerId` = ". $caller->id .";
@@ -233,7 +233,7 @@ class PluginRaspKarma extends Plugin {
 		}
 		else {
 			$query2 = "
-			INSERT INTO `%prefix%karmas` (
+			INSERT INTO `%prefix%ratings` (
 				`Score`,
 				`PlayerId`,
 				`MapId`
@@ -330,7 +330,7 @@ class PluginRaspKarma extends Plugin {
 		SELECT
 			`MapId`,
 			`Score`
-		FROM `%prefix%karmas`
+		FROM `%prefix%ratings`
 		WHERE `PlayerId` = ". $finish_item->player->id ."
 		AND `MapId` = ". $aseco->server->maps->current->id .";
 		";
@@ -366,7 +366,7 @@ class PluginRaspKarma extends Plugin {
 				SELECT
 					`MapId`,
 					`Score`
-				FROM `%prefix%karmas`
+				FROM `%prefix%ratings`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id .";
 				";
@@ -396,7 +396,7 @@ class PluginRaspKarma extends Plugin {
 		SELECT
 			SUM(`Score`) AS `Karma`,
 			COUNT(`Score`) AS `Total`
-		FROM `%prefix%karmas`
+		FROM `%prefix%ratings`
 		WHERE `MapId` = ". $mapid .";
 		";
 
@@ -414,18 +414,18 @@ class PluginRaspKarma extends Plugin {
 				(
 					SELECT
 						COUNT(*)
-					FROM `%prefix%karmas`
+					FROM `%prefix%ratings`
 					WHERE `Score` > 0
 					AND `MapId` = `karma`.`MapId`
 				) AS `Plus`,
 				(
 					SELECT
 						COUNT(*)
-					FROM `%prefix%karmas`
+					FROM `%prefix%ratings`
 					WHERE `Score` < 0
 					AND `MapId` = `karma`.`MapId`
 				) AS `Minus`
-				FROM `%prefix%karmas` AS `karma`
+				FROM `%prefix%ratings` AS `karma`
 				WHERE `MapId` =". $mapid ."
 				GROUP BY `MapId`;
 				";
@@ -508,7 +508,7 @@ class PluginRaspKarma extends Plugin {
 				$query3 = "
 				SELECT
 					`Score`
-				FROM `%prefix%karmas`
+				FROM `%prefix%ratings`
 				WHERE `PlayerId` = ". $playerid ."
 				AND `MapId` =". $mapid .";
 				";

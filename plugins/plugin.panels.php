@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -71,7 +71,6 @@ class PluginPanels extends Plugin {
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onBeginMap',			'onBeginMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
-		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
 
 
 		// handles action id's "-100"-"-49" for selecting from max. 50 record panel templates
@@ -507,20 +506,6 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerDisconnectPrepare ($aseco, $player) {
-
-		$panels = $this->getPanels($player->login);
-		$settings = $player->getSettings($this);
-		$settings['Panels'] = $panels['admin'] .'///'. $panels['vote'];
-		$player->setSettings($this, $settings);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
 	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
 
@@ -789,9 +774,10 @@ class PluginPanels extends Plugin {
 
 		// Get panels from player
 		$player = $aseco->server->players->getPlayer($login);
-		$settings = $player->getSettings($this);
-		if (isset($settings['Panels'])) {
-			$panel = explode('/', $settings['Panels']);
+		$panels = $this->getPlayerData($player, 'Panels');
+
+		if (isset($panels)) {
+			$panel = explode('/', $panels);
 			$panels = array();
 			$panels['admin'] = $panel[0];
 			$panels['vote'] = $panel[3];
@@ -803,8 +789,8 @@ class PluginPanels extends Plugin {
 			$panels['admin'] = $this->settings['admin_panel'];
 			$panels['vote'] = $this->settings['vote_panel'];
 
-			$this->setPanel($login, 'admin', $panels['admin']);
-			$this->setPanel($login, 'vote', $panels['vote']);
+			$settings = $panels['admin'] .'///'. $panels['vote'];
+			$this->storePlayerData($player, 'Panels', $settings);
 
 			return $panels;
 		}
@@ -823,14 +809,10 @@ class PluginPanels extends Plugin {
 		$panels = $this->getPanels($login);
 		$panels[$type] = $panel;
 
-		$player = $aseco->server->players->getPlayer($login);
-		$settings = $player->getSettings($this);
-		$settings['Panels'] = $panels['admin'] .'///'. $panels['vote'];
+		$settings = $panels['admin'] .'///'. $panels['vote'];
 
-		$result = $player->setSettings($this, $settings);
-		if (!$result) {
-			trigger_error('[Panels] Could not update player\'s panels!', E_USER_WARNING);
-		}
+		$player = $aseco->server->players->getPlayer($login);
+		$this->storePlayerData($player, 'Panels', $settings);
 	}
 
 	/*
@@ -843,9 +825,10 @@ class PluginPanels extends Plugin {
 		global $aseco;
 
 		$player = $aseco->server->players->getPlayer($login);
-		$settings = $player->getSettings($this);
-		if (isset($settings['PanelBG'])) {
-			return $settings['PanelBG'];
+		$panelbg = $this->getPlayerData($player, 'PanelBG');
+
+		if (isset($panelbg)) {
+			return $panelbg;
 		}
 		else {
 			// Setup defaults
@@ -863,15 +846,9 @@ class PluginPanels extends Plugin {
 	public function setPanelBG ($login, $panelbg) {
 		global $aseco;
 
-		// update player's panel background
+		// Update Player's panel background
 		$player = $aseco->server->players->getPlayer($login);
-		$settings = $player->getSettings($this);
-		$settings['PanelBG'] = $panelbg;
-
-		$result = $player->setSettings($this, $settings);
-		if (!$result) {
-			trigger_error('[Panels] Could not update panel background for Player!', E_USER_WARNING);
-		}
+		$this->storePlayerData($player, 'PanelBG', $panelbg);
 	}
 
 	/*

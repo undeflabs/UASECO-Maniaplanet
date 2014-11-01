@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -147,6 +147,7 @@ class Converter {
 			$result->free_result();
 
 			// Insert the Players into the new table `%prefix%players`
+			$this->console(' > Working on table `players`...');
 			$count['added'] = 0;
 			$count['skipped'] = 0;
 			foreach ($players as $row) {
@@ -176,8 +177,7 @@ class Converter {
 					`LastVisit`,
 					`Wins`,
 					`Donations`,
-					`TimePlayed`,
-					`Settings`
+					`TimePlayed`
 				)
 				VALUES (
 					". $this->db->quote($row['PlayerId']) .",
@@ -188,8 +188,7 @@ class Converter {
 					". $this->db->quote($row['UpdatedAt']) .",
 					". $this->db->quote($row['Wins']) .",
 					". $this->db->quote($row['Donations']) .",
-					". $this->db->quote($row['TimePlayed']) .",
-					". $this->db->quote(serialize($settings)) ."
+					". $this->db->quote($row['TimePlayed']) ."
 				);
 				";
 				$result = $this->db->query($query);
@@ -202,7 +201,61 @@ class Converter {
 				}
 			}
 			$this->db->query('COMMIT;');
-			$this->console('...added '. $count['added'] .', skipped: '. $count['skipped'] .' Players.');
+			$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Players.');
+
+
+			$this->console(' > Working on table `players_extra`...');
+			$count['added'] = 0;
+			$count['skipped'] = 0;
+			foreach ($players as $row) {
+
+				// Setup the stored settings for each plugin
+				$settings = array(
+					'PluginCheckpoint' => array(
+						'LocalCheckpointTracking'	=> $row['Cps'],
+						'DedimaniaCheckpointTracking'	=> $row['DediCps'],
+					),
+					'PluginStyles' => array(
+						'Style'				=> $row['Style'],
+					),
+					'PluginPanels' => array(
+						'Panels'			=> $row['Panels'],
+						'PanelBG'			=> $row['PanelBG'],
+					),
+				);
+
+				foreach ($settings as $plugin => $entries) {
+					foreach ($entries as $key => $value) {
+						$query = "
+						INSERT INTO `%prefix%settings` (
+							`Plugin`,
+							`PlayerId`,
+							`Key`,
+							`Value`
+						)
+						VALUES (
+							". $this->db->quote($plugin) .",
+							". $this->db->quote($row['PlayerId']) .",
+							". $this->db->quote($key) .",
+							". $this->db->quote(serialize($value)) ."
+						)
+						ON DUPLICATE KEY UPDATE
+							`Value` = VALUES(`Value`);
+						";
+						$result = $this->db->query($query);
+						if (!$result) {
+//							$this->console('Could not insert setting for Player "'. $row['Login'] .'": '. $this->db->errmsg() );
+							$count['skipped'] += 1;
+						}
+						else {
+							$count['added'] += 1;
+						}
+					}
+				}
+			}
+			$this->db->query('COMMIT;');
+			$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' settings.');
+
 		}
 		else {
 			$this->console('ERROR: No entries found in `players` and `players_extra`!');
@@ -346,7 +399,7 @@ class Converter {
 				}
 			}
 			$this->db->query('COMMIT;');
-			$this->console('...added '. $count['added'] .', skipped: '. $count['skipped'] .' Maps.');
+			$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Maps.');
 		}
 		else {
 			$this->console('ERROR: No entries found in `maps`!');
@@ -405,7 +458,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console('...added '. $count['added'] .', skipped: '. $count['skipped'] .' Records'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Records'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -437,9 +490,9 @@ class Converter {
 				$count['skipped'] = 0;
 				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 
-					// Insert the karma into the new table `%prefix%karmas`
+					// Insert the karma into the new table `%prefix%ratings`
 					$insert = "
-					INSERT INTO `%prefix%karmas` (
+					INSERT INTO `%prefix%ratings` (
 						`MapId`,
 						`PlayerId`,
 						`Date`,
@@ -462,7 +515,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console('...added '. $count['added'] .', skipped: '. $count['skipped'] .' Karma votes'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Karma votes'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -514,7 +567,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console('...added '. $count['added'] .', skipped: '. $count['skipped'] .' Player ranks'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Player ranks'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -532,7 +585,7 @@ class Converter {
 	public function convertRsTimes () {
 
 		$this->console('Converting table `rs_times`...');
-		$this->console('NOTE: Converting only times, if the Map is also in the database!');
+		$this->console('NOTE: Adding only times into new table, from Maps they are also in the database!');
 		$query = "
 		SELECT
 			`MapId`,
@@ -576,7 +629,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console('...added '. $count['added'] .', skipped: '. $count['skipped'] .' Times'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Times'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -636,23 +689,6 @@ class Converter {
 		  KEY `Continent` (`Continent`),
 		  KEY `Nation` (`Nation`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
-		";
-		$this->db->query($query);
-
-
-		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'karmas`');
-		$query = "
-		CREATE TABLE IF NOT EXISTS `%prefix%karmas` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Score` tinyint(1) unsigned NOT NULL DEFAULT '0',
-		  PRIMARY KEY (`MapId`,`PlayerId`),
-		  KEY `MapId` (`MapId`),
-		  KEY `PlayerId` (`PlayerId`),
-		  KEY `Date` (`Date`),
-		  KEY `Score` (`Score`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
 
@@ -719,7 +755,6 @@ class Converter {
 		  `Wins` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `Donations` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `TimePlayed` int(4) unsigned NOT NULL DEFAULT '0',
-		  `Settings` text COLLATE utf8_bin NOT NULL,
 		  PRIMARY KEY (`PlayerId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
@@ -745,6 +780,23 @@ class Converter {
 		$this->db->query($query);
 
 
+		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
+		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
+		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
+		  PRIMARY KEY (`MapId`,`PlayerId`),
+		  KEY `MapId` (`MapId`),
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Date` (`Date`),
+		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+
+
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
@@ -758,6 +810,20 @@ class Converter {
 		  KEY `PlayerId` (`PlayerId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+
+
+		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%settings` (
+		  `Plugin` varchar(64) COLLATE utf8_bin NOT NULL,
+		  `PlayerId` mediumint(3) unsigned NOT NULL,
+		  `Key` varchar(64) COLLATE utf8_bin NOT NULL,
+		  `Value` text COLLATE utf8_bin NOT NULL,
+		  PRIMARY KEY (`Plugin`,`PlayerId`,`Key`),
+		  KEY `PlayerId` (`PlayerId`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
@@ -793,13 +859,14 @@ class Converter {
 
 		$check = array();
 		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
-		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'karmas', $tables);
-		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
 		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
-		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
-		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7])) {
+		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
+		$check[8] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8])) {
 			trigger_error('Can not setup all tables, can not finish convert: '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
@@ -837,6 +904,18 @@ class Converter {
 		$result = $this->db->query($query);
 		if (!$result) {
 			trigger_error('Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+		}
+
+
+
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$query = "
+		ALTER TABLE `%prefix%settings`
+		  ADD CONSTRAINT `%prefix%settings_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 

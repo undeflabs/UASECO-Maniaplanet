@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -81,7 +81,8 @@ class Player {
 	public $newwins;
 	public $donations;
 	public $timeplayed;
-	public $settings;
+
+	public $data;
 
 	public $style;
 	public $panels;
@@ -208,7 +209,9 @@ class Player {
 		$this->newwins				= 0;
 		$this->timeplayed			= 0;
 		$this->donations			= 0;
-		$this->settings				= $this->getDatabasePlayerSettings();
+
+		$this->data				= $this->getDatabasePlayerSettings();
+
 		$this->unlocked				= false;
 		$this->pmbuf				= array();
 		$this->mutelist				= array();
@@ -230,64 +233,30 @@ class Player {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setSettings ($caller, $settings) {
-		global $aseco;
-
-		if (isset($caller)) {
-			$classname = get_class($caller);
-			if ($classname) {
-				$this->settings[$classname] = $settings;
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getSettings ($caller) {
-
-		if (isset($caller)) {
-			$classname = get_class($caller);
-			if ($classname && isset($this->settings[$classname])) {
-				return $this->settings[$classname];
-			}
-			else {
-				return false;
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function getDatabasePlayerSettings () {
 		global $aseco;
 
+		$settings = array();
+
 		$query = "
 		SELECT
-			`Settings`
-		FROM `%prefix%players`
-		WHERE `PlayerId` = ". $aseco->db->quote($this->id) ."
-		LIMIT 1;
+			`Plugin`,
+			`Key`,
+			`Value`
+		FROM `%prefix%settings`
+		WHERE `PlayerId` = ". $aseco->db->quote($this->id) .";
 		";
 
-		$result = $aseco->db->select_one($query);
+		$result = $aseco->db->query($query);
 		if ($result) {
-			return unserialize($result['Settings']);
+			if ($result->num_rows > 0) {
+				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+					$settings[$row['Plugin']][$row['Key']] = unserialize($row['Value']);
+				}
+			}
+			$result->free_result();
 		}
-		else {
-			return false;
-		}
+		return $settings;
 	}
 
 	/*
@@ -299,21 +268,32 @@ class Player {
 	public function storeDatabasePlayerSettings () {
 		global $aseco;
 
-		$query = "
-		UPDATE `%prefix%players`
-		SET
-			`Settings` = ". $aseco->db->quote(serialize($this->settings)) ."
-		WHERE `PlayerId` = ". $aseco->db->quote($this->id) ."
-		LIMIT 1;
-		";
-
-		$result = $aseco->db->query($query);
-		if ($result) {
-			return true;
+		$aseco->db->query('START TRANSACTION;');
+		foreach ($this->data as $plugin => $entries) {
+			foreach ($entries as $key => $value) {
+				$query = "
+				INSERT INTO `%prefix%settings` (
+					`Plugin`,
+					`PlayerId`,
+					`Key`,
+					`Value`
+				)
+				VALUES (
+					". $aseco->db->quote($plugin) .",
+					". $aseco->db->quote($this->id) .",
+					". $aseco->db->quote($key) .",
+					". $aseco->db->quote(serialize($value)) ."
+				)
+				ON DUPLICATE KEY UPDATE
+					`Value` = VALUES(`Value`);
+				";
+				$result = $aseco->db->query($query);
+				if (!$result) {
+					trigger_error('Saving Player settings failed for statement ['. $query .']', E_USER_WARNING);
+				}
+			}
 		}
-		else {
-			return false;
-		}
+		$aseco->db->query('COMMIT;');
 	}
 
 	/*

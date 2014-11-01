@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -575,9 +575,14 @@ class PluginCheckpoint extends Plugin {
 	public function getCheckpointSettings ($player) {
 		global $aseco;
 
-		$settings = $player->getSettings($this);
-		if ($settings) {
-			return $settings;
+		$lcp = $this->getPlayerData($player, 'LocalCheckpointTracking');
+		$dcp = $this->getPlayerData($player, 'DedimaniaCheckpointTracking');
+		if (isset($lcp) && isset($dcp)) {
+			// Setup defaults
+			$settings = array(
+				'LocalCheckpointTracking'	=> $lcp,
+				'DedimaniaCheckpointTracking'	=> $dcp
+			);
 		}
 		else {
 			// Setup defaults
@@ -596,16 +601,8 @@ class PluginCheckpoint extends Plugin {
 	*/
 
 	public function setCheckpointSettings ($player, $localcps, $dedicps) {
-
-		$settings = $player->getSettings($this);
-		$settings['LocalCheckpointTracking'] = $localcps;
-		$settings['DedimaniaCheckpointTracking'] = $dedicps;
-
-		$result = $player->setSettings($this, $settings);
-		if (!$result) {
-			return false;
-		}
-		return true;
+		$this->storePlayerData($player, 'LocalCheckpointTracking', $localcps);
+		$this->storePlayerData($player, 'DedimaniaCheckpointTracking', $dedicps);
 	}
 
 	/*

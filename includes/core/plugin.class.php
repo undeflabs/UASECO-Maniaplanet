@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-30
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -210,10 +210,12 @@ abstract class Plugin {
 	*/
 
 	public function storePlayerData ($player, $key, $data) {
-		if (!isset($player)) {
+		if (isset($player) && get_class($player) != 'Player') {
 			return;
 		}
-		$player->data[$this->getClassname()][$key] = $data;
+		if (!empty($key) && !empty($data)) {
+			$player->data[$this->getClassname()][$key] = $data;
+		}
 	}
 
 	/*
@@ -223,10 +225,12 @@ abstract class Plugin {
 	*/
 
 	public function getPlayerData ($player, $key) {
-		if (!isset($player)) {
+		if (isset($player) && get_class($player) != 'Player') {
 			return;
 		}
-		return $player->data[$this->getClassname()][$key];
+		if (!empty($key) && isset($player->data[$this->getClassname()][$key])) {
+			return $player->data[$this->getClassname()][$key];
+		}
 	}
 
 	/*
@@ -236,10 +240,10 @@ abstract class Plugin {
 	*/
 
 	public function removePlayerData ($player, $key) {
-		if (!isset($player)) {
+		if (isset($player) && get_class($player) != 'Player') {
 			return;
 		}
-		if ( (isset($key)) && (isset($player->data[$this->getClassname()][$key])) ) {
+		if (!empty($key) && isset($player->data[$this->getClassname()][$key])) {
 			unset($player->data[$this->getClassname()][$key]);
 		}
 	}
@@ -251,7 +255,7 @@ abstract class Plugin {
 	*/
 
 	public function existsPlayerData ($player, $key) {
-		if ( (isset($key)) && (isset($player->data[$this->getClassname()][$key])) ) {
+		if (!empty($key) && isset($player->data[$this->getClassname()][$key])) {
 			return true;
 		}
 		return false;

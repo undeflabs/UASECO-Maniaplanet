@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-10-31
+ * Date:		2014-11-01
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -34,16 +34,15 @@
  *  - plugins/plugin.modescript_handler.php	Required
  *  - plugins/plugin.local_records.php		Required, for Datasbase access and LocalRecordsWidget
  *  - plugins/plugin.welcome_center.php		Required, for TopVisitors
- *  - plugins/plugin.mxinfo.php			Required, for MapWidget, MXMapInfoWindow and <placement>-Placeholder
+ *  - plugins/plugin.mania_exchange_info.php	Required, for MapWidget, MXMapInfoWindow and <placement>-Placeholder
  *  - plugins/plugin.rasp_jukebox.php		Required, for MaplistWindow
  *  - plugins/plugin.rasp.php			Required, only if you enable the TopRankingsWidget (enabled by default)
  *  - plugins/plugin.dedimania.php		Required, only if you enable the DedimaniaWidget (enabled by default)
  *  - plugins/plugin.donate.php			Optional, only if you want the TopDonators or the DonationWidget at Score
- *  - plugins/plugin.musicserver.php		Optional, only if you want the MusicWidget
- *  - plugins/plugin.nouse.betting.php		Optional, only if you want the Betwins-Widget at Score. Get it here: http://www.tm-forum.com/viewtopic.php?f=127&t=29414
- *  - plugins/plugin.rpoints.php		Recommended, useful if you want to setup own point limits in the RoundScoreWidget
- *  - plugins/plugin.tm-karma-dot-com.php	Recommended, useful if you want to have the Karma-Widget. Get it here: http://www.tm-forum.com/viewtopic.php?f=127&t=22876
- *  - plugins/plugin.alternate_scoretable.php	Recommended, useful for Live-Rankings. Get it here: http://www.tm-forum.com/viewtopic.php?f=127&t=26138
+ *  - plugins/plugin.music_server.php		Optional, only if you want the MusicWidget
+ *  - plugins/plugin.nouse_betting.php		Optional, only if you want the Betwins-Widget at Score.
+ *  - plugins/plugin.round_points.php		Recommended, useful if you want to setup own point limits in the RoundScoreWidget
+ *  - plugins/plugin.mania_karma.php		Recommended, useful if you want to have the Karma-Widget.
  */
 
 /* The following manialink id's are used in this plugin (the 918 part of id can be changed on trouble):
@@ -216,10 +215,10 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->addDependence('PluginNouseBetting',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRoundPoints',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginManiaKarma',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginAlternateScoretable',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
+		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerInfoChanged',		'onPlayerInfoChanged');
 		$this->registerEvent('onPlayerRankingUpdated',		'onPlayerRankingUpdated');
@@ -1258,15 +1257,13 @@ class PluginRecordsEyepiece extends Plugin {
 		if (strtoupper($chat_parameter) == 'HIDE') {
 
 			// Set display to hidden
-			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = false;
+			$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = false;
 
 			// Hide the RecordWidgets
 			$this->closeRaceWidgets($player->login, false);
 
 			// Store the preferences
-			$settings = $player->getSettings($this);
-			$settings['DisplayWidgets'] = false;
-			$player->setSettings($this, $settings);
+			$this->storePlayerData($player, 'DisplayWidgets', false);
 
 			// Give feedback to the Player
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_DISABLED'][0], $player->login);
@@ -1278,7 +1275,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$widgets = '';
 
 			// Set display to displaying
-			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = true;
+			$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = true;
 
 			// Build the RecordWidgets and in normal mode send it to each or given Player (if refresh is required)
 			$this->cache['PlayerStates'][$player->login]['DedimaniaRecords'] = -1;
@@ -1292,9 +1289,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			// Store the preferences
-			$settings = $player->getSettings($this);
-			$settings['DisplayWidgets'] = true;
-			$player->setSettings($this, $settings);
+			$this->storePlayerData($player, 'DisplayWidgets', true);
 
 			// Give feedback to the Player
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['WIDGETS_PREFERENCE_ENABLED'][0], $player->login);
@@ -1566,16 +1561,16 @@ class PluginRecordsEyepiece extends Plugin {
 				return;
 			}
 
-			if (count($player->data['RecordsEyepiece']['Maplist']['Records']) == 0) {
+			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) == 0) {
 				if ( (count($this->cache['MapList']) > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0]) && ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] != 0) ) {
 					$this->sendProgressIndicator($player->login);
 				}
 
 				// Load all local Records from calling Player
-				$player->data['RecordsEyepiece']['Maplist']['Records'] = $this->getPlayerLocalRecords($player->id);
+				$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = $this->getPlayerLocalRecords($player->id);
 
 				// Load all Maps that the calling Player did not finished yet
-				$player->data['RecordsEyepiece']['Maplist']['Unfinished'] = $this->getPlayerUnfinishedMaps($player->id);
+				$player->data['PluginRecordsEyepiece']['Maplist']['Unfinished'] = $this->getPlayerUnfinishedMaps($player->id);
 			}
 
 			$id = false;
@@ -1697,8 +1692,8 @@ class PluginRecordsEyepiece extends Plugin {
 			else {
 				if (strlen($chat_parameter) > 0) {
 					// Show the MaplistWindow (Search for Keyword at Mapname/Author/Filename)
-					$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('key' => $chat_parameter);
-					$player->data['RecordsEyepiece']['Window']['Page'] = 0;
+					$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('key' => $chat_parameter);
+					$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 
 					// Show the MaplistWindow (filtered by given keyword)
 					$id = 'showMaplistWindowFilterByKeyword';
@@ -1797,10 +1792,10 @@ class PluginRecordsEyepiece extends Plugin {
 					return;
 				}
 
-				if ($player->data['RecordsEyepiece']['Prefs']['WidgetState'] == true) {
+				if ($player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] == true) {
 
 					// Set display to hidden
-					$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = false;
+					$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = false;
 
 					// Hide the RecordWidgets
 					$this->closeRaceWidgets($player->login, false);
@@ -1816,7 +1811,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$gamemode = $aseco->server->gameinfo->mode;
 
 					// Set display to displaying
-					$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = true;
+					$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = true;
 
 					// Build the RecordWidgets and in normal mode send it to each or given Player (if refresh is required)
 					$this->cache['PlayerStates'][$player->login]['DedimaniaRecords'] = -1;
@@ -1920,9 +1915,9 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->config['States']['RefreshTimestampPreload'] = (time() + 5);
 
 			foreach ($aseco->server->players->player_list as $player) {
-				if ( (time() >= $player->data['RecordsEyepiece']['Preload']['Timestamp']) && ($player->data['RecordsEyepiece']['Preload']['LoadedPart'] != 5) ) {
-					$player->data['RecordsEyepiece']['Preload']['LoadedPart'] += 1;
-					$widgets = $this->buildImagePreload($player->data['RecordsEyepiece']['Preload']['LoadedPart']);
+				if ( (time() >= $player->data['PluginRecordsEyepiece']['Preload']['Timestamp']) && ($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] != 5) ) {
+					$player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] += 1;
+					$widgets = $this->buildImagePreload($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart']);
 
 					if ($widgets != '') {
 						// Send Manialink
@@ -2038,15 +2033,15 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->checkServerLoad();
 
 		// Get the detailed Players TeamId (refreshed onPlayerInfoChanged)
-		$player->data['RecordsEyepiece']['Prefs']['TeamId'] = $player->teamid;
+		$player->data['PluginRecordsEyepiece']['Prefs']['TeamId'] = $player->teamid;
 
 		// Init Player-Storages
-		$player->data['RecordsEyepiece']['Window']['Action'] = false;
-		$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-		$player->data['RecordsEyepiece']['Window']['MaxPage'] = 0;
-		$player->data['RecordsEyepiece']['Maplist']['Filter'] = false;
-		$player->data['RecordsEyepiece']['Maplist']['Records'] = array();
-		$player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'] = array();
+		$player->data['PluginRecordsEyepiece']['Window']['Action'] = false;
+		$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+		$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = 0;
+		$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = false;
+		$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = array();
+		$player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'] = array();
 
 		// Get current Gamemode
 		$gamemode = $aseco->server->gameinfo->mode;
@@ -2055,7 +2050,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets = '';
 
 		// Set Widget to displayed default (need for F7 or /togglewidgets)
-		$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = true;
+		$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = true;
 
 		// Preset an empty RecordEntry for the RecordWidgets, required
 		// for an empty entry for this Player if he/she did not has a Record yet
@@ -2064,7 +2059,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$item['nickname'] = $this->handleSpecialChars($player->nickname);
 		$item['self'] = 0;
 		$item['rank'] = '--';
-		$player->data['RecordsEyepiece']['Prefs']['WidgetEmptyEntry'] = $item;
+		$player->data['PluginRecordsEyepiece']['Prefs']['WidgetEmptyEntry'] = $item;
 
 
 		// Add this Player to the Hash-Compare-Process
@@ -2114,15 +2109,14 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Load the Player preferences
-		$settings = $player->getSettings($this);
-		if ($settings) {
-			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = $settings['DisplayWidgets'];
+		$display_widgets = $this->getPlayerData($player, 'DisplayWidgets');
+		if ($display_widgets) {
+			$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = $display_widgets;
 		}
 		else {
 			// Setup defaults
-			$settings['DisplayWidgets'] = true;
-			$player->setSettings($this, $settings);
-			$player->data['RecordsEyepiece']['Prefs']['WidgetState'] = $settings['DisplayWidgets'];
+			$this->storePlayerData($player, 'DisplayWidgets', true);
+			$player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] = true;
 		}
 
 
@@ -2200,8 +2194,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets .= (($this->cache['MapWidget']['Race'] != false) ? $this->cache['MapWidget']['Race'] : '');
 
 		// Mark this Player for need to preload Images
-		$player->data['RecordsEyepiece']['Preload']['Timestamp'] = (time() + 15);
-		$player->data['RecordsEyepiece']['Preload']['LoadedPart'] = 0;
+		$player->data['PluginRecordsEyepiece']['Preload']['Timestamp'] = (time() + 15);
+		$player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] = 0;
 
 
 		// Display the RoundScoreWidget
@@ -2237,6 +2231,21 @@ class PluginRecordsEyepiece extends Plugin {
 			// Send Manialink
 			$this->sendManialink($widgets, $player->login, 0);
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerDisconnectPrepare ($aseco, $player) {
+
+		// Remove temporary Player data, do not need to be stored into the database.
+		$this->removePlayerData($player, 'Maplist');
+		$this->removePlayerData($player, 'Prefs');
+		$this->removePlayerData($player, 'Preload');
+		$this->removePlayerData($player, 'Window');
 	}
 
 	/*
@@ -2372,7 +2381,7 @@ class PluginRecordsEyepiece extends Plugin {
 			else {
 				// Add the Score
 				$this->scores['RoundScore'][$finish_item->score][] = array(
-					'team'		=> $player->data['RecordsEyepiece']['Prefs']['TeamId'],
+					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
 					'playerid'	=> $player->pid,
 					'login'		=> $player->login,
 					'nickname'	=> $this->handleSpecialChars($player->nickname),
@@ -2456,7 +2465,7 @@ class PluginRecordsEyepiece extends Plugin {
 				// Get Player
 				if ($player = $aseco->server->players->getPlayer($changes['Login'])) {
 					// Store the (possible changed) TeamId
-					$player->data['RecordsEyepiece']['Prefs']['TeamId'] = $changes['TeamId'];
+					$player->data['PluginRecordsEyepiece']['Prefs']['TeamId'] = $changes['TeamId'];
 				}
 			}
 
@@ -2584,7 +2593,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$widgets .= $this->closeAllSubWindows();
 
 			// Rebuild the Maplist
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$require_action = true;
 
 		}
@@ -2599,268 +2608,268 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		else if ($answer[2] == 'showMaplistWindow') {
 
-			if (count($player->data['RecordsEyepiece']['Maplist']['Records']) == 0) {
+			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) == 0) {
 				if ( (count($this->cache['MapList']) > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0]) && ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] != 0) ) {
 					$this->sendProgressIndicator($player->login);
 				}
 
 				// Load all local records from calling Player
-				$player->data['RecordsEyepiece']['Maplist']['Records'] = $this->getPlayerLocalRecords($player->id);
+				$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = $this->getPlayerLocalRecords($player->id);
 
 				// Load all Maps that the calling Player did not finished yet
-				$player->data['RecordsEyepiece']['Maplist']['Unfinished'] = $this->getPlayerUnfinishedMaps($player->id);
+				$player->data['PluginRecordsEyepiece']['Maplist']['Unfinished'] = $this->getPlayerUnfinishedMaps($player->id);
 			}
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = false;
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = false;
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyCanyonMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('environment' => 'CANYON');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('environment' => 'CANYON');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyStadiumMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('environment' => 'STADIUM');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('environment' => 'STADIUM');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyValleyMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('environment' => 'VALLEY');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('environment' => 'VALLEY');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterJukeboxedMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'JUKEBOX');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'JUKEBOX');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterNoRecentMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NORECENT');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NORECENT');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyRecentMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'ONLYRECENT');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'ONLYRECENT');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsWithoutRank') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NORANK');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NORANK');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsWithRank') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'ONLYRANK');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'ONLYRANK');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsNoGoldTime') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOGOLD');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOGOLD');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsNoAuthorTime') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOAUTHOR');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOAUTHOR');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterMapsWithMoodSunrise') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'SUNRISE');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'SUNRISE');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterMapsWithMoodDay') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'DAY');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'DAY');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterMapsWithMoodSunset') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'SUNSET');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'SUNSET');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterMapsWithMoodNight') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'NIGHT');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('mood' => 'NIGHT');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMultilapMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'ONLYMULTILAP');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'ONLYMULTILAP');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterNoMultilapMaps') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOMULTILAP');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOMULTILAP');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsNoSilverTime') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOSILVER');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOSILVER');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsNoBronzeTime') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOBRONZE');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOBRONZE');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterOnlyMapsNotFinished') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOFINISH');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('cmd' => 'NOFINISH');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingBestPlayerRank') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'BEST');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'BEST');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingWorstPlayerRank') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'WORST');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'WORST');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingShortestAuthorTime') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'SHORTEST');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'SHORTEST');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingLongestAuthorTime') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'LONGEST');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'LONGEST');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingNewestMapsFirst') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'NEWEST');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'NEWEST');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingOldestMapsFirst') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'OLDEST');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'OLDEST');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingByMapname') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'MAPNAME');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'MAPNAME');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingByAuthorname') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'AUTHORNAME');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'AUTHORNAME');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingByKarmaBestMapsFirst') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'BESTMAPS');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'BESTMAPS');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingByKarmaWorstMapsFirst') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'WORSTMAPS');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'WORSTMAPS');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowSortingByAuthorNation') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'AUTHORNATION');
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('sort' => 'AUTHORNATION');
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'showMaplistWindowFilterByKeyword') {
 
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-	//		$player->data['RecordsEyepiece']['Window']['Page'] = 0;						// already setup in chat_elist()!
-	//		$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('key' => $command['params']);	// already setup in chat_elist()!
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+	//		$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;						// already setup in chat_elist()!
+	//		$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('key' => $command['params']);	// already setup in chat_elist()!
 			$require_action = true;
 
 		}
@@ -2911,11 +2920,11 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Store wished Map in Player object for jukeboxing with plugin.rasp_jukebox.php
 			$item = array();
-			$item['name']		= $player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['name'];
-			$item['author']		= $player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['author'];
-			$item['environment']	= $player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['environment'];
-			$item['filename']	= $player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['filename'];
-			$item['uid']		= $player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['uid'];
+			$item['name']		= $player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['name'];
+			$item['author']		= $player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['author'];
+			$item['environment']	= $player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['environment'];
+			$item['filename']	= $player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['filename'];
+			$item['uid']		= $player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'][$id]['uid'];
 			$player->maplist = array();
 			$player->maplist[] = $item;
 
@@ -2923,20 +2932,20 @@ class PluginRecordsEyepiece extends Plugin {
 			$aseco->releaseChatCommand('/jukebox 1', $player->login);
 
 			// Refresh on juke'd map
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$require_action = true;
 
 		}
 		else if ( in_array($answer[2], $authorname_answer_index) ) {
 
 			// Find the selected MapAuthor
-			$current_page = ((($player->data['RecordsEyepiece']['Window']['Page'] + 1) * 80) - 80);
+			$current_page = ((($player->data['PluginRecordsEyepiece']['Window']['Page'] + 1) * 80) - 80);
 			$id = abs( ($current_page + intval( str_replace('showMaplistWindowFilterAuthor', '', $answer[2]) ) ) ) - 1;
 
 			// Show the MaplistWindow (but only Maps from the selected MapAuthor)
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = array('author' => $this->cache['MapAuthors'][$id]);
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = array('author' => $this->cache['MapAuthors'][$id]);
 			$require_action = true;
 
 		}
@@ -2945,7 +2954,7 @@ class PluginRecordsEyepiece extends Plugin {
 			if ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] == true) {
 				// Refresh on drop map from jukebox (action from plugin.rasp_jukebox.php)
 
-				$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+				$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 				$require_action = true;
 			}
 
@@ -2957,7 +2966,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			if ($this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0] == true) {
 				// Refresh on juke'd song (action from plugin.musicserver.php)
-				$player->data['RecordsEyepiece']['Window']['Action'] = 'MusiclistWindow';
+				$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'MusiclistWindow';
 				$require_action = true;
 			}
 
@@ -2965,65 +2974,65 @@ class PluginRecordsEyepiece extends Plugin {
 		else if ( ($answer[2] == 20) && ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] == true) ) {
 
 			// Refresh on drop complete jukebox (action from plugin.rasp_jukebox.php)
-			$player->data['RecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$require_action = true;
 
 		}
 		else if ( in_array($answer[2], $answer_index) ) {
 
 			// Set the Window action
-			if ($player->data['RecordsEyepiece']['Window']['Action'] != $answer[2]) {
-				$player->data['RecordsEyepiece']['Window']['Page'] = 0;
+			if ($player->data['PluginRecordsEyepiece']['Window']['Action'] != $answer[2]) {
+				$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 			}
-			$player->data['RecordsEyepiece']['Window']['Action'] = $answer[2];
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = $answer[2];
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'WindowPagePrev') {
 
-			$player->data['RecordsEyepiece']['Window']['Page'] -= 1;
-			if ($player->data['RecordsEyepiece']['Window']['Page'] < 0) {
-				$player->data['RecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] -= 1;
+			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] < 0) {
+				$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 			}
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'WindowPagePrevTwo') {
 
-			$player->data['RecordsEyepiece']['Window']['Page'] -= 2;
-			if ($player->data['RecordsEyepiece']['Window']['Page'] < 0) {
-				$player->data['RecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] -= 2;
+			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] < 0) {
+				$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 			}
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'WindowPageFirst') {
 
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'WindowPageNext') {
 
-			$player->data['RecordsEyepiece']['Window']['Page'] += 1;
-			if ($player->data['RecordsEyepiece']['Window']['Page'] > $player->data['RecordsEyepiece']['Window']['MaxPage']) {
-				$player->data['RecordsEyepiece']['Window']['Page'] = $player->data['RecordsEyepiece']['Window']['MaxPage'];
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] += 1;
+			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] > $player->data['PluginRecordsEyepiece']['Window']['MaxPage']) {
+				$player->data['PluginRecordsEyepiece']['Window']['Page'] = $player->data['PluginRecordsEyepiece']['Window']['MaxPage'];
 			}
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'WindowPageNextTwo') {
 
-			$player->data['RecordsEyepiece']['Window']['Page'] += 2;
-			if ($player->data['RecordsEyepiece']['Window']['Page'] > $player->data['RecordsEyepiece']['Window']['MaxPage']) {
-				$player->data['RecordsEyepiece']['Window']['Page'] = $player->data['RecordsEyepiece']['Window']['MaxPage'];
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] += 2;
+			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] > $player->data['PluginRecordsEyepiece']['Window']['MaxPage']) {
+				$player->data['PluginRecordsEyepiece']['Window']['Page'] = $player->data['PluginRecordsEyepiece']['Window']['MaxPage'];
 			}
 			$require_action = true;
 
 		}
 		else if ($answer[2] == 'WindowPageLast') {
 
-			$player->data['RecordsEyepiece']['Window']['Page'] = $player->data['RecordsEyepiece']['Window']['MaxPage'];
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = $player->data['PluginRecordsEyepiece']['Window']['MaxPage'];
 			$require_action = true;
 
 		}
@@ -3031,174 +3040,174 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Nothing above matched, so the Player want to see the prev/next page in the current open Window
 		if ($require_action == true) {
-			if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showDedimaniaRecordsWindow') {
+			if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showDedimaniaRecordsWindow') {
 
 				$widgets .= $this->buildDedimaniaRecordsWindow($player->login);
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showLocalRecordsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showLocalRecordsWindow') {
 
-				$result = $this->buildLocalRecordsWindow($player->data['RecordsEyepiece']['Window']['Page'], $player->login);
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildLocalRecordsWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showLiveRankingsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showLiveRankingsWindow') {
 
 				if ( function_exists('ast_showScoretable') ) {
 					$widgets .= $this->closeAllWindows();
 					ast_showScoretable($aseco, $player->login, 0, true, 0);		// $aseco, $caller, $timeout, $display_close, $page
 				}
 				else {
-					$result = $this->buildLiveRankingsWindow($player->data['RecordsEyepiece']['Window']['Page'], $player->login);
-					$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+					$result = $this->buildLiveRankingsWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login);
+					$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 					$widgets .= $result['xml'];
 				}
 
 			}
-			else if ( ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMusiclistWindow') || ($player->data['RecordsEyepiece']['Window']['Action'] == 'dropCurrentJukedSong') ) {
+			else if ( ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMusiclistWindow') || ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'dropCurrentJukedSong') ) {
 
-				$result = $this->buildMusiclistWindow($player->data['RecordsEyepiece']['Window']['Page'], $player->login);
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildMusiclistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMaplistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMaplistWindow') {
 
-				$result = $this->buildMaplistWindow($player->data['RecordsEyepiece']['Window']['Page'], $player);
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildMaplistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMapAuthorlistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMapAuthorlistWindow') {
 
-				$result = $this->buildMapAuthorlistWindow($player->data['RecordsEyepiece']['Window']['Page'], $player);
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildMapAuthorlistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showHelpWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showHelpWindow') {
 
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = 2;
-				$widgets .= $this->buildHelpWindow($player->data['RecordsEyepiece']['Window']['Page']);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = 2;
+				$widgets .= $this->buildHelpWindow($player->data['PluginRecordsEyepiece']['Window']['Page']);
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showToplistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showToplistWindow') {
 
-				$result = $this->buildToplistWindow($player->data['RecordsEyepiece']['Window']['Page'], $player->login);
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildToplistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopRankingsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopRankingsWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_RANKINGS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_RANKINGS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopWinnersWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopWinnersWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_WINNERS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_WINNERS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMostRecordsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMostRecordsWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'MOST_RECORDS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'MOST_RECORDS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMostFinishedWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMostFinishedWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'MOST_FINISHED', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'MOST_FINISHED', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopPlaytimeWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopPlaytimeWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_PLAYTIME', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_PLAYTIME', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopDonatorsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopDonatorsWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_DONATORS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_DONATORS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopMapsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopMapsWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_MAPS', array('karma', 'map'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_MAPS', array('karma', 'map'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopVotersWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopVotersWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_VOTERS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_VOTERS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopActivePlayersWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopActivePlayersWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_ACTIVE_PLAYERS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_ACTIVE_PLAYERS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopWinningPayoutWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopWinningPayoutWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_WINNING_PAYOUTS', array('won', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_WINNING_PAYOUTS', array('won', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopBetwinsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopBetwinsWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_BETWINS', array('won', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_BETWINS', array('won', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopRoundscoreWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopRoundscoreWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_ROUNDSCORE', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_ROUNDSCORE', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopVisitorsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopVisitorsWindow') {
 
-				$result = $this->buildScorelistWindowEntry($player->data['RecordsEyepiece']['Window']['Page'], $player->login, 'TOP_VISITORS', array('score', 'nickname'));
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildScorelistWindowEntry($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login, 'TOP_VISITORS', array('score', 'nickname'));
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopNationsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopNationsWindow') {
 
-				$result = $this->buildTopNationsWindow($player->data['RecordsEyepiece']['Window']['Page']);
-				$player->data['RecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
+				$result = $this->buildTopNationsWindow($player->data['PluginRecordsEyepiece']['Window']['Page']);
+				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showTopContinentsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopContinentsWindow') {
 
 				$widgets .= $this->buildTopContinentsWindow();
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMaplistFilterWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMaplistFilterWindow') {
 
 				$widgets .= $this->buildMaplistFilterWindow();
 
 			}
-			else if ($player->data['RecordsEyepiece']['Window']['Action'] == 'showMaplistSortingWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMaplistSortingWindow') {
 
 				$widgets .= $this->buildMaplistSortingWindow();
 
@@ -3441,7 +3450,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Clean the local records cache from MaplistWindow at every Player
 		if ( ($command[0] == 'read') || ($command[0] == 'remove') ) {
 			foreach ($aseco->server->players->player_list as $player) {
-				$player->data['RecordsEyepiece']['Maplist']['Records'] = array();
+				$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = array();
 			}
 			unset($player);
 		}
@@ -3793,12 +3802,12 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->cache['PlayerStates'][$player->login]['FinishScore']	= -1;
 
 			// Clean the local recs cache from MaplistWindow and reset WindowAction to default
-			$player->data['RecordsEyepiece']['Window']['Action'] = false;
-			$player->data['RecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['RecordsEyepiece']['Window']['MaxPage'] = 0;
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = false;
-			$player->data['RecordsEyepiece']['Maplist']['Records'] = array();
-			$player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'] = array();
+			$player->data['PluginRecordsEyepiece']['Window']['Action'] = false;
+			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
+			$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = false;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = array();
+			$player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'] = array();
 		}
 
 
@@ -3916,7 +3925,7 @@ class PluginRecordsEyepiece extends Plugin {
 				foreach ($aseco->server->players->player_list as $player) {
 
 					// Display the MusicWidget only to the Player if they did'nt has them set to hidden
-					if ( ($player->data['RecordsEyepiece']['Prefs']['WidgetState'] == true) && ($this->cache['MusicWidget'] != false) ) {
+					if ( ($player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] == true) && ($this->cache['MusicWidget'] != false) ) {
 						$this->sendManialink($this->cache['MusicWidget'], $player->login, 0);
 					}
 				}
@@ -4149,7 +4158,7 @@ class PluginRecordsEyepiece extends Plugin {
 				foreach ($aseco->server->players->player_list as $player) {
 
 					// Display the MusicWidget only to the Player if they did'nt has them set to hidden
-					if ( ($player->data['RecordsEyepiece']['Prefs']['WidgetState'] == true) && ($this->cache['MusicWidget'] != false) ) {
+					if ( ($player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] == true) && ($this->cache['MusicWidget'] != false) ) {
 						$this->sendManialink($this->cache['MusicWidget'], $player->login, 0);
 					}
 				}
@@ -5576,7 +5585,7 @@ class PluginRecordsEyepiece extends Plugin {
 			foreach ($player_list as $player) {
 
 				// Did the Player has the Records Widget set to hidden?
-				if ($player->data['RecordsEyepiece']['Prefs']['WidgetState'] == false) {
+				if ($player->data['PluginRecordsEyepiece']['Prefs']['WidgetState'] == false) {
 					continue;
 				}
 
@@ -5598,7 +5607,7 @@ class PluginRecordsEyepiece extends Plugin {
 					);
 				}
 				if ( (($buildLiveRankingsWidget == true) || ($force['LiveRankings'] == true)) && ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) ) {
-					$widgets .= $this->buildLiveRankingsWidget($player->login, $player->data['RecordsEyepiece']['Prefs']['WidgetEmptyEntry'], $gamemode, $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]);
+					$widgets .= $this->buildLiveRankingsWidget($player->login, $player->data['PluginRecordsEyepiece']['Prefs']['WidgetEmptyEntry'], $gamemode, $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]);
 				}
 
 				if ($widgets != '') {
@@ -6785,7 +6794,7 @@ class PluginRecordsEyepiece extends Plugin {
 			COUNT(`r`.`Score`) AS `vote_count`,
 			`p`.`Login` AS `login`,
 			`p`.`Nickname` AS `nickname`
-		FROM `%prefix%karmas` AS `r`, `%prefix%players` AS `p`
+		FROM `%prefix%ratings` AS `r`, `%prefix%players` AS `p`
 		WHERE `r`.`PlayerId` = `p`.`PlayerId`
 		GROUP BY `r`.`PlayerId`
 		ORDER BY `vote_count` DESC
@@ -7646,7 +7655,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Set the preset
 		$preset = false;
 		if ($player !== false) {
-			$preset = $player->data['RecordsEyepiece']['Prefs']['WidgetEmptyEntry'];
+			$preset = $player->data['PluginRecordsEyepiece']['Prefs']['WidgetEmptyEntry'];
 		}
 
 		// Set the Topcount
@@ -10273,62 +10282,62 @@ EOL;
 		// Filter activity requested?
 		$maplist = array();
 		$listoptions = '';	// Title addition
-		if ( is_array($player->data['RecordsEyepiece']['Maplist']['Filter']) ) {
-			if ( isset($player->data['RecordsEyepiece']['Maplist']['Filter']['environment']) ){
+		if ( is_array($player->data['PluginRecordsEyepiece']['Maplist']['Filter']) ) {
+			if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment']) ){
 				// Filter for environment
 				foreach ($this->cache['MapList'] as $map) {
-					if (strtoupper($map['environment']) == $player->data['RecordsEyepiece']['Maplist']['Filter']['environment']) {
+					if (strtoupper($map['environment']) == $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment']) {
 						$maplist[] = $map;
 					}
 				}
 				unset($map);
-				$listoptions = '(Filter: Only env. '. ucfirst(strtolower($player->data['RecordsEyepiece']['Maplist']['Filter']['environment'])) .')';
+				$listoptions = '(Filter: Only env. '. ucfirst(strtolower($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment'])) .')';
 			}
-			else if ( isset($player->data['RecordsEyepiece']['Maplist']['Filter']['mood'])) {
+			else if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['mood'])) {
 				foreach ($this->cache['MapList'] as $map) {
-					if (strtoupper($map['mood']) == $player->data['RecordsEyepiece']['Maplist']['Filter']['mood']) {
+					if (strtoupper($map['mood']) == $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['mood']) {
 						$maplist[] = $map;
 					}
 				}
 				unset($map);
-				$listoptions = '(Filter: Only mood '. ucfirst(strtolower($player->data['RecordsEyepiece']['Maplist']['Filter']['mood'])) .')';
+				$listoptions = '(Filter: Only mood '. ucfirst(strtolower($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['mood'])) .')';
 			}
-			else if ( isset($player->data['RecordsEyepiece']['Maplist']['Filter']['author']) ){
+			else if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author']) ){
 				// Filter for MapAuthor
 				foreach ($this->cache['MapList'] as $map) {
-					if ($map['author'] == $player->data['RecordsEyepiece']['Maplist']['Filter']['author']) {
+					if ($map['author'] == $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author']) {
 						$maplist[] = $map;
 					}
 				}
 				unset($map);
-				$listoptions = '(Filter: Only Maps by '. $player->data['RecordsEyepiece']['Maplist']['Filter']['author'] .')';
+				$listoptions = '(Filter: Only Maps by '. $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author'] .')';
 			}
-			else if ( isset($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'])) {
-				if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORANK') {
+			else if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'])) {
+				if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORANK') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( !isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
+						if ( !isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
 							$maplist[] = $map;
 						}
 					}
 					unset($map);
 					$listoptions = '(Filter: Not Ranked Maps)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRANK') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRANK') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
 							$maplist[] = $map;
 						}
 					}
 					unset($map);
 					$listoptions = '(Filter: Only Ranked Maps)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOAUTHOR') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOAUTHOR') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
-							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['authortime_filter']) ) {
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
+							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['authortime_filter']) ) {
 								$maplist[] = $map;
 							}
-							else if ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['authortime_filter']) {
+							else if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['authortime_filter']) {
 								$maplist[] = $map;
 							}
 						}
@@ -10336,13 +10345,13 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Author Time)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOGOLD') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOGOLD') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
-							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['goldtime_filter']) ) {
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
+							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['goldtime_filter']) ) {
 								$maplist[] = $map;
 							}
-							else if ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['goldtime_filter']) {
+							else if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['goldtime_filter']) {
 								$maplist[] = $map;
 							}
 						}
@@ -10350,13 +10359,13 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Gold Time)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOSILVER') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOSILVER') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
-							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['silvertime_filter']) ) {
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
+							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['silvertime_filter']) ) {
 								$maplist[] = $map;
 							}
-							else if ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['silvertime_filter']) {
+							else if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['silvertime_filter']) {
 								$maplist[] = $map;
 							}
 						}
@@ -10364,13 +10373,13 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Silver Time)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOBRONZE') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOBRONZE') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
-							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['bronzetime_filter']) ) {
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]) ) {
+							if ( ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) && ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] <= $map['bronzetime_filter']) ) {
 								$maplist[] = $map;
 							}
-							else if ($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['bronzetime_filter']) {
+							else if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['score'] > $map['bronzetime_filter']) {
 								$maplist[] = $map;
 							}
 						}
@@ -10378,7 +10387,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Bronze Time)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORECENT') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORECENT') {
 					foreach ($this->cache['MapList'] as $map) {
 						if ( !in_array($map['uid'], $aseco->plugins['PluginRaspJukebox']->jb_buffer) ) {
 							$maplist[] = $map;
@@ -10386,7 +10395,7 @@ EOL;
 					}
 					$listoptions = '(Filter: No Recent)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRECENT') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRECENT') {
 					foreach (array_reverse($aseco->plugins['PluginRaspJukebox']->jb_buffer, true) as $uid) {
 						foreach ($this->cache['MapList'] as $map) {
 							if ($map['uid'] == $uid) {
@@ -10398,7 +10407,7 @@ EOL;
 					unset($uid);
 					$listoptions = '(Filter: Only Recent)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'JUKEBOX') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'JUKEBOX') {
 					foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
 						foreach ($this->cache['MapList'] as $map) {
 							// Find the Maps from the Jukebox
@@ -10412,7 +10421,7 @@ EOL;
 					unset($item);
 					$listoptions = '(Filter: Only Jukebox)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYMULTILAP') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYMULTILAP') {
 					foreach ($this->cache['MapList'] as $map) {
 						if ($map['multilap'] == true) {
 							$maplist[] = $map;
@@ -10421,7 +10430,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: Only Multilap)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOMULTILAP') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOMULTILAP') {
 					foreach ($this->cache['MapList'] as $map) {
 						if ($map['multilap'] != true) {
 							$maplist[] = $map;
@@ -10430,9 +10439,9 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Multilap)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOFINISH') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOFINISH') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( in_array($map['uid'], $player->data['RecordsEyepiece']['Maplist']['Unfinished']) ) {
+						if ( in_array($map['uid'], $player->data['PluginRecordsEyepiece']['Maplist']['Unfinished']) ) {
 							$maplist[] = $map;
 						}
 					}
@@ -10440,11 +10449,11 @@ EOL;
 					$listoptions = '(Filter: Not Finished Maps)';
 				}
 			}
-			else if ( isset($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'])) {
-				if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'BEST') {
+			else if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'])) {
+				if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'BEST') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
-							$map['rank'] = $player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'];
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
+							$map['rank'] = $player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'];
 							$maplist[] = $map;
 						}
 					}
@@ -10459,10 +10468,10 @@ EOL;
 
 					$listoptions = '(Sorting: Best Player Rank)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'WORST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'WORST') {
 					foreach ($this->cache['MapList'] as $map) {
-						if ( isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
-							$map['rank'] = $player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'];
+						if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ) {
+							$map['rank'] = $player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'];
 							$maplist[] = $map;
 						}
 					}
@@ -10477,7 +10486,7 @@ EOL;
 
 					$listoptions = '(Sorting: Worst Player Rank)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'SHORTEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'SHORTEST') {
 					$maplist = $this->cache['MapList'];
 
 					// Sort the array now
@@ -10490,7 +10499,7 @@ EOL;
 
 					$listoptions = '(Sorting: Shortest Author Time)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'LONGEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'LONGEST') {
 					$maplist = $this->cache['MapList'];
 
 					// Sort the array now
@@ -10503,7 +10512,7 @@ EOL;
 
 					$listoptions = '(Sorting: Longest Author Time)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'NEWEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'NEWEST') {
 					$maplist = $this->cache['MapList'];
 
 					// Sort the array now
@@ -10516,7 +10525,7 @@ EOL;
 
 					$listoptions = '(Sorting: Newest Maps First)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'OLDEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'OLDEST') {
 					$maplist = $this->cache['MapList'];
 
 					// Sort the array now
@@ -10529,7 +10538,7 @@ EOL;
 
 					$listoptions = '(Sorting: Oldest Maps First)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'MAPNAME') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'MAPNAME') {
 					$maplist = $this->cache['MapList'];
 
 					// Sort the array now
@@ -10542,7 +10551,7 @@ EOL;
 
 					$listoptions = '(Sorting: By Map Name)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'AUTHORNAME') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'AUTHORNAME') {
 					$maplist = $this->cache['MapList'];
 
 					// Sort the array now
@@ -10555,7 +10564,7 @@ EOL;
 
 					$listoptions = '(Sorting: By Author Name)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'BESTMAPS') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'BESTMAPS') {
 					foreach ($this->cache['MapList'] as $map) {
 						$maplist[] = $map;
 					}
@@ -10570,7 +10579,7 @@ EOL;
 
 					$listoptions = '(Sorting: Karma Best Maps)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'WORSTMAPS') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'WORSTMAPS') {
 					foreach ($this->cache['MapList'] as $map) {
 						$maplist[] = $map;
 					}
@@ -10585,7 +10594,7 @@ EOL;
 
 					$listoptions = '(Sorting: Karma Worst Maps)';
 				}
-				else if ($player->data['RecordsEyepiece']['Maplist']['Filter']['sort'] == 'AUTHORNATION') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'AUTHORNATION') {
 					foreach ($this->cache['MapList'] as $map) {
 						$maplist[] = $map;
 					}
@@ -10601,19 +10610,19 @@ EOL;
 					$listoptions = '(Sorting: By Author Nation)';
 				}
 			}
-			else if ( isset($player->data['RecordsEyepiece']['Maplist']['Filter']['key'])) {
+			else if ( isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key'])) {
 				foreach ($this->cache['MapList'] as $map) {
 					if (
-						(stripos($map['author'], $player->data['RecordsEyepiece']['Maplist']['Filter']['key']) !== false)
+						(stripos($map['author'], $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key']) !== false)
 						||
-						(stripos($map['name_stripped'], $player->data['RecordsEyepiece']['Maplist']['Filter']['key']) !== false)
+						(stripos($map['name_stripped'], $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key']) !== false)
 						||
-						(stripos($map['filename'], $player->data['RecordsEyepiece']['Maplist']['Filter']['key']) !== false)
+						(stripos($map['filename'], $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key']) !== false)
 					)
 					{
 						$maplist[] = $map;
 					}
-					$listoptions = '(Search: &apos;'. $this->handleSpecialChars($player->data['RecordsEyepiece']['Maplist']['Filter']['key']) .'&apos;)';
+					$listoptions = '(Search: &apos;'. $this->handleSpecialChars($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key']) .'&apos;)';
 				}
 				unset($map);
 			}
@@ -10651,7 +10660,7 @@ EOL;
 
 			// Reset all Filters/Titles
 			$listoptions = '';
-			$player->data['RecordsEyepiece']['Maplist']['Filter'] = false;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = false;
 		}
 
 
@@ -10787,7 +10796,7 @@ EOL;
 
 		$line = 0;
 		$offset = 0;
-		$player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'] = array();
+		$player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'] = array();
 
 		$xml .= '<frame posn="3.2 -5.7 0.05">';
 		if (count($maplist) > 0) {
@@ -10803,7 +10812,7 @@ EOL;
 				$map = &$maplist[$i];
 
 				// Add this map to the current list from Player
-				$player->data['RecordsEyepiece']['Maplist']['CurrentDisplay'][] = $map;
+				$player->data['PluginRecordsEyepiece']['Maplist']['CurrentDisplay'][] = $map;
 
 				// Find the Player who has juked this Map
 				$login = false;
@@ -10885,7 +10894,7 @@ EOL;
 				$xml .= '<label posn="2.4 -7.15 0.04" sizen="5 1.5" scale="0.75" text="'. $map['authortime'] .'"/>';
 
 				// Player Rank
-				$pos = isset($player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ? $player->data['RecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'] : 0;
+				$pos = isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank']) ? $player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map['uid']]['rank'] : 0;
 				$xml .= '<quad posn="6.3 -6.8 0.04" sizen="2 1.6" style="BgRaceScore2" substyle="LadderRank"/>';
 				$xml .= '<label posn="8.1 -7.15 0.04" sizen="3.8 1.5" scale="0.75" text="'. (($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ? sprintf("%0". strlen($aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ."d.", $pos) : '$ZNone') .'"/>';
 
@@ -15121,7 +15130,7 @@ EOL;
 					`m`.`MapId`,
 					COUNT(`Score`) AS `Count`
 				FROM `%prefix%maps` AS `m`
-				LEFT JOIN `%prefix%karmas` AS `k` ON `m`.`MapId` = `k`.`MapId`
+				LEFT JOIN `%prefix%ratings` AS `k` ON `m`.`MapId` = `k`.`MapId`
 				WHERE `k`.`Score` = ". $vote ."
 				GROUP BY `m`.`MapId`;
 				";
@@ -15191,7 +15200,7 @@ EOL;
 				`MapId`,
 				SUM(`Score`) AS `Karma`,
 				COUNT(`Score`) AS `Count`
-			FROM `%prefix%karmas`
+			FROM `%prefix%ratings`
 			GROUP BY `MapId`;
 			";
 

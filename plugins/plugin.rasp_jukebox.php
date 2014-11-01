@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-01
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1914,7 +1914,7 @@ class PluginRaspJukebox extends Plugin {
 			(SELECT
 				`Uid`,
 				SUM(`Score`) AS `Karma`
-			FROM `%prefix%maps` AS `m`, `%prefix%karmas` AS `k`
+			FROM `%prefix%maps` AS `m`, `%prefix%ratings` AS `k`
 			WHERE `m`.`MapId` = `k`.`MapId`
 			GROUP BY `Uid` HAVING `Karma` = 0)
 			UNION (
@@ -1925,7 +1925,7 @@ class PluginRaspJukebox extends Plugin {
 				WHERE `MapId` NOT IN (
 					SELECT DISTINCT
 						`MapId`
-					FROM `%prefix%karmas`
+					FROM `%prefix%ratings`
 				)
 			)
 			ORDER BY `Karma` ". $order .";
@@ -1936,7 +1936,7 @@ class PluginRaspJukebox extends Plugin {
 			SELECT
 				`Uid`,
 				SUM(`Score`) AS `Karma`
-			FROM `%prefix%maps` AS `m`, `%prefix%karmas` AS `k`
+			FROM `%prefix%maps` AS `m`, `%prefix%ratings` AS `k`
 			WHERE `m`.`MapId` = `k`.`MapId`
 			GROUP BY `Uid`
 			HAVING `Karma` ". ($karmaval < 0 ? '<= $karmaval' : '>= $karmaval') ."
@@ -3198,7 +3198,7 @@ class PluginRaspJukebox extends Plugin {
 		$sql = "
 		SELECT
 			`Uid`
-		FROM `%prefix%maps` AS `m`, `%prefix%karmas` AS `k`
+		FROM `%prefix%maps` AS `m`, `%prefix%ratings` AS `k`
 		WHERE `m`.`MapId` = `k`.`MapId`
 		AND `k`.`PlayerId` = ". $player->id .";
 		";

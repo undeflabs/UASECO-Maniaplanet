@@ -20,7 +20,7 @@ Version 1.0.0
 
    Changes
    ~~~~~~~
-   - Changed "memory_limit" to 192MB
+   - Changed "memory_limit" to 256 MB
    - Included support for Modescript Gamemodes from the Maniaplanet 3 update, e.g. "TimeAttack.Script.txt", "Rounds.Script.txt"...
    - Added many new callback events like "onPlayerStartCountdown", "onPlayerStartLine", "onPlayerFinishLine", "onPlayerRespawn", "onBeginPodium"..., see documentation for details
    - Included Database support into controller and changed all MySQL statements from "MySQL Extension" to "MySQL Improved Extension"
@@ -132,15 +132,15 @@ Version 1.0.0
      - Removed `Game`
      - Removed `TeamName`
    - Table `players_extra` has been removed:
-     - Moved `Cps` to `players` table and get stored into serialized `Settings`
-     - Moved `DediCps` to `players` table and get stored into serialized `Settings`
+     - Moved `Cps` to `settings` table and get stored into serialized `Value`
+     - Moved `DediCps` to `settings` table and get stored into serialized `Value`
      - Moved `Donations` to `players` table
-     - Moved `Style` to `players` table and get stored into serialized `Settings`
-     - Moved `Panels` to `players` table and get stored into serialized `Settings`
-     - Moved `PanelBG` to `players` table and get stored into serialized `Settings`
+     - Moved `Style` to `settings` table and get stored into serialized `Value`
+     - Moved `Panels` to `settings` table and get stored into serialized `Value`
+     - Moved `PanelBG` to `settings` table and get stored into serialized `Value`
    - Table `records`:
      - Removed `Id`
-   - Table `karma` renamed to `karmas`
+   - Table `rs_karma` renamed to `ratings`
      - Removed `Id`
    - Table `rs_rank` renamed to `ranks`
      - Renamed `Avg` to `Average`
