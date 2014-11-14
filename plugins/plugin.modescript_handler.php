@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -69,7 +69,6 @@ class PluginModescriptHandler extends Plugin {
 		$this->setDescription('Handle the Modescript Callbacks send by the dedicated server and related settings.');
 
 		$this->registerEvent('onSync',				'onSync');
-		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndRound',			'onEndRound');
 		$this->registerEvent('onBeginScriptInitialisation',	'onBeginScriptInitialisation');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
@@ -201,40 +200,12 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onLoadingMap ($aseco, $index) {
-
-		// Store the settings at the dedicated Server
-		$this->setupModescriptSettings();
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onBeginScriptInitialisation ($aseco) {
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
 			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
 			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
 		}
-
-		// On restarting the script/map it is required to set the settings again,
-		// because a restart resets the most settings in a Modescript.
-		// Details: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
-
-		// Block some callbacks we did not want to use
-		$this->setupBlockCallbacks();
-
-		// Store the settings at the dedicated Server
-		$this->setupModescriptSettings();
-
-		// Setup the custom Scoretable
-		$this->setupCustomScoretable();
-
-		// Setup the UI
-		$this->setupUserInterface();
 	}
 
 	/*
@@ -707,12 +678,6 @@ class PluginModescriptHandler extends Plugin {
 					$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
 				}
 		    		break;
-
-
-
-			case 'LibXmlRpc_BeginMatchStop':
-				// Ignore: http://forum.maniaplanet.com/viewtopic.php?p=232113#p232113
-				break;
 
 
 

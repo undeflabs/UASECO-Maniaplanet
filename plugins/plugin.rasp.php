@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -99,9 +99,9 @@ class PluginRasp extends Plugin {
 		$aseco->console('[Rasp] Cleaning up unused data...');
 		$this->cleanData($aseco);
 
-		// prune records and rs_times entries for maps deleted from server
+		// prune records and times entries for maps deleted from server
 		if ($this->prune_records_times) {
-			$aseco->console('[Rasp] Pruning `%prefix%records` and `%prefix%times` for deleted maps:');
+			$aseco->console('[Rasp] Pruning `%prefix%records`, `%prefix%ratings` and `%prefix%times` for deleted maps:');
 			$maps = $aseco->server->maps->map_list;
 
 			// Get list of maps IDs with records in the database
@@ -117,10 +117,13 @@ class PluginRasp extends Plugin {
 					$removed = array();
 					while ($row = $res->fetch_row()) {
 						$map = $row[0];
-						// delete records & rs_times if it's not in server's maps list
+						// Delete records, ratings and times if is not in the maps list from Server
 						if (!in_array($map, $maps)) {
 							$removed[] = $map;
 							$query = 'DELETE FROM `%prefix%records` WHERE `MapId` = '. $map .';';
+							$aseco->db->query($query);
+
+							$query = 'DELETE FROM `%prefix%ratings` WHERE `MapId` = '. $map .';';
 							$aseco->db->query($query);
 
 							$query = 'DELETE FROM `%prefix%times` WHERE `MapId` = '. $map .';';
@@ -533,7 +536,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting records for deleted maps: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'records` for deleted maps: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%records`
 			WHERE `MapId` IN (". implode(', ', $deletelist) .");
@@ -559,7 +562,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting records for deleted players: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'records` for deleted players: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%records`
 			WHERE `PlayerId` IN (". implode(', ', $deletelist) .");
@@ -585,7 +588,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting rs_times for deleted maps: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'times` for deleted maps: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%times`
 			WHERE `MapId` IN (". implode(', ', $deletelist) .");
@@ -611,7 +614,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting rs_times for deleted players: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'times` for deleted players: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%times`
 			WHERE `PlayerId` IN (". implode(', ', $deletelist) .");
@@ -638,7 +641,8 @@ class PluginRasp extends Plugin {
 		// Erase old average data
 		$aseco->db->query('TRUNCATE TABLE `%prefix%ranks`;');
 
-		// get list of players with at least $minrecs records (possibly unranked)
+		// Get list of players with at least $minrecs records (possibly unranked)
+		$aseco->db->query('START TRANSACTION;');
 		$query = "
 		SELECT
 			`PlayerId`,
@@ -656,7 +660,7 @@ class PluginRasp extends Plugin {
 			$res->free_result();
 
 			if (!empty($players)) {
-				// get ranked records for all maps
+				// Get ranked records for all maps
 				$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 				foreach ($maps as $map) {
 					$query = "
@@ -704,8 +708,8 @@ class PluginRasp extends Plugin {
 					// increase MySQL's max_allowed_packet setting
 				}
 			}
-
 		}
+		$aseco->db->query('COMMIT;');
 		$aseco->console('[Rasp] ...Done!');
 	}
 

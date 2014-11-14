@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -983,8 +983,7 @@ class PluginPanels extends Plugin {
 			array($rank, $avg, $recs, $wins, $play, $dons),
 			$aseco->statspanel
 		);
-		$xml = $this->set_panel_bg($xml, $player->panelbg);
-
+		$xml = $this->replacePanelBG($xml, $player->panelbg);
 		$aseco->addManialink($xml, $player->login, 0, false);
 	}
 

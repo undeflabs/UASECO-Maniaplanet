@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-02
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -75,7 +75,9 @@ class Database extends mysqli {
 		}
 
 		$this->debug = $setup['debug'];
-		$this->table_prefix = $setup['table_prefix'];
+		if (!empty($setup['table_prefix'])) {
+			$this->table_prefix = $setup['table_prefix'];
+		}
 	}
 
 	/*
@@ -84,7 +86,7 @@ class Database extends mysqli {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __destruct() {
+	public function __destruct () {
 		$this->disconnect();
 	}
 

@@ -1,7 +1,7 @@
 onPlayerDisconnectPrepare
 Data:		Player object
 Example:	[]
-Note:		This callback is sent when a Player disconnects and before the event onPlayerDisconnect to let Plugins store the Player settings with $player->setSettings()
+Note:		This callback is sent when a Player disconnects and before the event onPlayerDisconnect to let Plugins store the Player settings
 
 
 onBeginScriptInitialisation

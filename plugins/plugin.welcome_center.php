@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-30
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -80,7 +80,7 @@ class PluginWelcomeCenter extends Plugin {
 		if (!$this->config = $aseco->parser->xmlToArray('config/welcome_center.xml', true, true)) {
 			trigger_error('[WelcomeCenter] Could not read/parse config file "config/welcome_center.xml"!', E_USER_ERROR);
 		}
-		$this->config = $this->config['WELCOME_CENTER'];
+		$this->config = $this->config['SETTINGS'];
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
 		$this->config['WELCOME_WINDOW'][0]['ENABLED'][0]			= ((strtoupper($this->config['WELCOME_WINDOW'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
@@ -118,7 +118,12 @@ class PluginWelcomeCenter extends Plugin {
 		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] == true) {
 			$skip = false;
 			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == true) {
-				$query = "SELECT `Average` FROM `%prefix%ranks` WHERE `PlayerId` = '". $player->id ."';";
+				$query = "SELECT
+					`Average`
+				FROM `%prefix%ranks`
+				WHERE `PlayerId` = ". $aseco->db->quote($player->id) ."
+				LIMIT 1;
+				";
 				$res = $aseco->db->query($query);
 				if ($res) {
 					if ($res->num_rows > 0) {
@@ -332,7 +337,7 @@ class PluginWelcomeCenter extends Plugin {
 		$window = new Window();
 		$window->setLayoutTitle($settings_title);
 		$window->setContent('Welcome to '. $aseco->stripColors($aseco->server->name) .'!', $xml);
-		$window->send($player, 0, false);
+		$window->send($player, $this->config['WELCOME_WINDOW'][0]['AUTOHIDE'][0], false);
 	}
 }
 

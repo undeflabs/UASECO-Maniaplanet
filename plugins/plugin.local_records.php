@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -206,7 +206,6 @@ class PluginLocalRecords extends Plugin {
 		LEFT JOIN `%prefix%records` AS `r` ON `r`.`MapId` = `m`.`MapId`
 		LEFT JOIN `%prefix%players` AS `p` ON `r`.`PlayerId` = `p`.`PlayerId`
 		WHERE `m`.`Uid` = ". $aseco->db->quote($map->uid) ."
-		GROUP BY `r`.`MapId`
 		ORDER BY `r`.`Score` ". $order .", `r`.`Date` ASC
 		LIMIT ". ($this->records->getMaxRecords() ? $this->records->getMaxRecords() : 50) .";
 		";

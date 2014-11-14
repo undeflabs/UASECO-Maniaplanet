@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -151,7 +151,7 @@ class PluginMessageLog extends Plugin {
 		}
 
 		$lines = array_slice($this->message_buffer, -$this->window_length);
-		$aseco->plugins['PluginManialinks']->display_msgwindow($aseco, $lines, $timeout);
+		$this->display_msgwindow($aseco, $lines, $timeout);
 	}
 
 	/*
@@ -177,6 +177,30 @@ class PluginMessageLog extends Plugin {
 		}
 	}
 
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	/**
+	 * Displays the Message window
+	 *
+	 * $msgs   : lines to be displayed
+	 * $timeout: timeout for window in msec
+	 */
+	public function display_msgwindow ($aseco, $msgs, $timeout) {
+
+		$cnt = count($msgs);
+		$xml = '<manialink id="UASECO-7"><frame posn="-49 43.5 0">';
+		$pos = -1;
+		foreach ($msgs as $msg) {
+			$xml .= '<label posn="1 '. $pos .' 1" sizen="91 1" style="TextRaceChat" text="'. $aseco->handleSpecialChars($msg) .'"/>';
+			$pos -= 2.5;
+		}
+		$xml .= '</frame></manialink>';
+		$aseco->addManialink($xml, false, $timeout, false);
+	}
 }
 
 ?>

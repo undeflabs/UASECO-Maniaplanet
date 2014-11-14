@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-22
+ * Date:	2014-11-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -30,7 +30,6 @@
  *  - plugins/plugin.donate.php
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.dedimania.php
- *  - plugins/plugin.mania_exchange_info.php
  *
  */
 
@@ -66,7 +65,6 @@ class PluginInfoBar extends Plugin {
 		$this->addDependence('PluginDonate',			Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDedimania',			Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginManiaExchangeInfo',		Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onEveryTenSeconds',		'onEveryTenSeconds');
@@ -391,7 +389,6 @@ class PluginInfoBar extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Event from plugin.mania_exchange_info.php
 	public function onManiaExchangeBestLoaded ($aseco, $score) {
 
 		// Store global for new Player connections
@@ -794,19 +791,27 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 #Include "TextLib" as TextLib
+#Include "AnimLib" as AnimLib
 Void WipeIn (Text ChildId, Vec2 EndSize) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
+//	declare Vec3 OriginalPosition = Container.RelativePosition;
 
 	Container.Hide();
-	Container.RelativePosition.X = Container.RelativePosition.X + (EndSize.X / 2);
+//	Container.RelativePosition.X = Container.RelativePosition.X + (EndSize.X / 2);
 	Container.RelativeScale = 0.0;
 	Container.Show();
 
-	while (Container.RelativeScale < 1.0) {
-		Container.RelativePosition.X = Container.RelativePosition.X - (EndSize.X / 2 / 10);
-		Container.RelativeScale += 0.10;
+	declare Real AnimDuration = 500.0;
+	declare Real AnimFactor = 0.0;
+	declare Integer AnimStartTime = Now;
+	while ((Now - AnimStartTime * 1.0) < AnimDuration) {
+		AnimFactor = AnimLib::Ease("BounceOut", ((Now - AnimStartTime) * 1.0), 0.0, 1.0, AnimDuration);
+
+//		Container.RelativePosition.X = Container.RelativePosition.X - ((EndSize.X / 2) / (AnimDuration / 10));
+		Container.RelativeScale = AnimFactor;
 		yield;
 	}
+//	Container.RelativePosition.X = OriginalPosition.X;
 }
 main() {
 	declare CMlControl DropDownDonation <=> (Page.GetFirstChild("DropDownDonation") as CMlFrame);
@@ -1008,6 +1013,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 #Include "TextLib" as TextLib
+#Include "AnimLib" as AnimLib
 Text FormatTime (Integer _Time) {
 	declare Text Time = "0:00.000";
 
@@ -1069,17 +1075,24 @@ Void ReplaceRecords (Text _Time, Text _Label, Text _ImageUrl) {
 }
 Void WipeIn (Text ChildId, Vec2 EndSize) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
+//	declare Vec3 OriginalPosition = Container.RelativePosition;
 
 	Container.Hide();
-	Container.RelativePosition.X = Container.RelativePosition.X + (EndSize.X / 2);
+//	Container.RelativePosition.X = Container.RelativePosition.X + (EndSize.X / 2);
 	Container.RelativeScale = 0.0;
 	Container.Show();
 
-	while (Container.RelativeScale < 1.0) {
-		Container.RelativePosition.X = Container.RelativePosition.X - (EndSize.X / 2 / 10);
-		Container.RelativeScale += 0.10;
+	declare Real AnimDuration = 500.0;
+	declare Real AnimFactor = 0.0;
+	declare Integer AnimStartTime = Now;
+	while ((Now - AnimStartTime * 1.0) < AnimDuration) {
+		AnimFactor = AnimLib::Ease("BounceOut", ((Now - AnimStartTime) * 1.0), 0.0, 1.0, AnimDuration);
+
+//		Container.RelativePosition.X = Container.RelativePosition.X - ((EndSize.X / 2) / (AnimDuration / 10));
+		Container.RelativeScale = AnimFactor;
 		yield;
 	}
+//	Container.RelativePosition.X = OriginalPosition.X;
 }
 main() {
 	declare CMlControl DropDownRecords <=> (Page.GetFirstChild("DropDownRecords") as CMlFrame);

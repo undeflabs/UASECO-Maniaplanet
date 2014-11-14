@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -31,7 +31,6 @@
  *  - plugins/plugin.rasp.php
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.panels.php
- *  - plugins/plugin.styles.php
  *
  */
 
@@ -63,7 +62,6 @@ class PluginChatStats extends Plugin {
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginStyles',		Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerChatCommand('stats',	'chat_stats',		'Displays statistics of current player',	Player::PLAYERS);
 		$this->registerChatCommand('settings',	'chat_settings',	'Displays your personal settings',		Player::PLAYERS);
@@ -205,14 +203,6 @@ class PluginChatStats extends Plugin {
 			}
 		}
 
-		// get style setting
-		if ( isset($aseco->plugins['PluginStyles']) ) {
-			$style = $aseco->plugins['PluginStyles']->getStyle($target->login);
-		}
-		else {
-			$style = false;
-		}
-
 		// get panel settings
 		if ( isset($aseco->plugins['PluginPanels']) ) {
 			$panels = $aseco->plugins['PluginPanels']->getPanels($target->login);
@@ -231,7 +221,6 @@ class PluginChatStats extends Plugin {
 
 		$header = 'Settings for: ' . $target->nickname . '$z / {#login}' . $target->login;
 		$settings = array();
-		$settings[] = array('Window Style', '{#black}' . $style);
 		$settings[] = array('Panel Background', '{#black}' . $panelbg);
 
 		if ($panels) {

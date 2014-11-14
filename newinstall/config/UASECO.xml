@@ -242,11 +242,6 @@
 		<connect_dialog>{#welcome}Connection problem, please retry.$z</connect_dialog>
 		<connect_error>{#welcome}$sThis is an administrative notice.$z{br}{br}UASECO encountered a very rare player connection{br}problem. Please re-join the server to correct it.{br}Apologies for the inconvenience.{br}{br}$sThe server administrators.</connect_error>
 
-		<!-- idlekick messages -->
-		<idlekick_play>{#server}» IdleKick player {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}!</idlekick_play>
-		<idlespec_play>{#server}» IdleSpec player {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}</idlespec_play>
-		<idlekick_spec>{#server}» IdleKick spectator {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}!</idlekick_spec>
-
 		<!-- miscellaneous messages -->
 		<song>{#server}» Map {#highlite}{1} {#server}plays song: {#highlite}{2}</song>
 		<mod>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</mod>

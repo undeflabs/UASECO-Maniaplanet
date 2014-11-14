@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -213,7 +213,7 @@ abstract class Plugin {
 		if (isset($player) && get_class($player) != 'Player') {
 			return;
 		}
-		if (!empty($key) && !empty($data)) {
+		if (!empty($key)) {
 			$player->data[$this->getClassname()][$key] = $data;
 		}
 	}

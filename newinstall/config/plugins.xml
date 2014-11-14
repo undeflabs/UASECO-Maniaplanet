@@ -8,17 +8,19 @@
 	<plugin>plugin.rasp.php</plugin>
 	<plugin>chat.admin.php</plugin>
 	<plugin>plugin.panels.php</plugin>
-	<plugin>plugin.styles.php</plugin>
 
 	<!-- Optional plugins -->
-	<plugin>plugin.info_bar.php</plugin>
-	<plugin>plugin.welcome_center.php</plugin>
 	<plugin>plugin.checkpoints.php</plugin>		<!-- 2014-07-11: UNFINISHED, not all Gamemodes included	-->
 	<plugin>plugin.dedimania.php</plugin>
+	<plugin>plugin.welcome_center.php</plugin>
+	<plugin>plugin.info_bar.php</plugin>
+	<plugin>plugin.stunt_messages.php</plugin>
+	<plugin>plugin.tachometer.php</plugin>
+	<plugin>plugin.nickname_sync.php</plugin>
+	<plugin>plugin.donate.php</plugin>
 	<plugin>plugin.rounds.php</plugin>
 	<plugin>plugin.round_points.php</plugin>
 	<plugin>plugin.mania_exchange_info.php</plugin>
-	<plugin>plugin.stunt_messages.php</plugin>
 	<plugin>plugin.mistral_idlekick.php</plugin>
 	<plugin>plugin.rasp_jukebox.php</plugin>
 <!--	<plugin>plugin.rasp_karma.php</plugin>		-->
@@ -29,7 +31,6 @@
 	<plugin>plugin.muting.php</plugin>
 	<plugin>plugin.chat_log.php</plugin>
 	<plugin>plugin.message_log.php</plugin>
-	<plugin>plugin.donate.php</plugin>
 	<plugin>plugin.uptodate.php</plugin>
 
 	<!-- Optional chat related plugins -->
@@ -48,9 +49,7 @@
 	<plugin>chat.rasp_nextrank.php</plugin>
 
 	<!-- Add here third-party plugins -->
-	<plugin>plugin.tachometer.php</plugin>
 	<plugin>plugin.records_eyepiece.php</plugin>
 	<plugin>plugin.mania_karma.php</plugin>
 	<plugin>plugin.vote_manager.php</plugin>
-<!--	<plugin>test.chatcmds.php</plugin>		ONLY FOR DEVELOPMENT, DO NOT ACTIVATE THIS!!!	-->
 </plugins>

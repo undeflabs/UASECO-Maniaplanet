@@ -126,7 +126,7 @@
 	<autosave_matchsettings></autosave_matchsettings>
 
 	<!--
-	Set to true if you want start-up to prune records/rs_times for players and
+	Set to true if you want start-up to prune `records` and `times` for players and
 	maps deleted from database, and for maps deleted from the server
 	Only enable this if you know what you're doing!
 	//-->

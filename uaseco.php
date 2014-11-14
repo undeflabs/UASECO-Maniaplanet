@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-11-01');
+	define('UASECO_BUILD',		'2014-11-05');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1658,6 +1658,10 @@ class UASECO extends Helper {
 			$response = new MXInfoFetcher('TM2', $map->uid, true);
 			if ($response->error == '') {
 				$map->mx = $response;
+				$this->releaseEvent('onManiaExchangeBestLoaded', ($this->server->gameinfo->mode == Gameinfo::STUNTS ? (isset($map->mx->recordlist[0]['stuntscore']) ? $map->mx->recordlist[0]['stuntscore'] : 0) : (isset($map->mx->recordlist[0]['replaytime']) ? $map->mx->recordlist[0]['replaytime'] : 0)));
+			}
+			else {
+				$this->releaseEvent('onManiaExchangeBestLoaded', ($this->server->gameinfo->mode == Gameinfo::STUNTS ? 0 : 0));
 			}
 		}
 		else if ($this->debug) {
@@ -1866,8 +1870,9 @@ class UASECO extends Helper {
 				}
 			}
 
-			// Create Player object
+			// Create Player object, and adds new Player to the Player list
 			$player = new Player($data);
+			$this->server->players->addPlayer($player);
 
 			// Get the current ranking for this player, required to have the rankings up-to-date on a running race,
 			// but not in TEAM mode (requires a special handling).
@@ -1883,9 +1888,6 @@ class UASECO extends Helper {
 				// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
 				$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $player->login);
 			}
-
-			// Adds a new Player to the Player list
-			$this->server->players->addPlayer($player);
 
 			// Log console message
 			$this->console('[Player] Connection from Player [{1}] from {2} [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',

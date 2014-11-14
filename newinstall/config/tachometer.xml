@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<position>
+		<x>136.0</x>
+		<y>-77.0</y>
+		<z>-60.0</z>
+	</position>
+
+
+	<!-- Change the scale factor, 1.0 = 100% -->
+	<scale>1.0</scale>
+
+
+	<!--
+	With this you can change the colors of the tachometer scale
+
+	Nice modulate colors (RRGGBB)
+	~~~~~~~~~~~~~~~~~~~~
+	ACC720 = Green
+	5E8ADB = Blue
+	FFF700 = Yellow
+	F7AC1E = Orange
+	E74F3C = Red
+	F74BD3 = Pink (for the Girls)
+	//-->
+	<modulation>
+		<complete>E74F3C</complete>
+		<needle>FBBE08</needle>
+		<tiles>
+			<tile01>FFF700</tile01>
+			<tile02>FFF700</tile02>
+			<tile03>FFF700</tile03>
+			<tile04>FFF700</tile04>
+			<tile05>FFF700</tile05>
+			<tile06>FFF700</tile06>
+			<tile07>FFF700</tile07>
+			<tile08>FFF700</tile08>
+			<tile09>FFF700</tile09>
+			<tile10>FFF700</tile10>
+			<tile11>FFF700</tile11>
+			<tile12>FFF700</tile12>
+		</tiles>
+	</modulation>
+
+
+	<images>
+		<background>http://static.undef.name/ingame/tachometer/tachometer-background3.png</background>
+		<needle>http://static.undef.name/ingame/tachometer/needle-light.png</needle>
+
+		<scale>
+			<complete>http://static.undef.name/ingame/tachometer/tachometer-scale.png</complete>
+			<tiles>
+				<tile01>http://static.undef.name/ingame/tachometer/tachometer-scale-01.png</tile01>
+				<tile02>http://static.undef.name/ingame/tachometer/tachometer-scale-02.png</tile02>
+				<tile03>http://static.undef.name/ingame/tachometer/tachometer-scale-03.png</tile03>
+				<tile04>http://static.undef.name/ingame/tachometer/tachometer-scale-04.png</tile04>
+				<tile05>http://static.undef.name/ingame/tachometer/tachometer-scale-05.png</tile05>
+				<tile06>http://static.undef.name/ingame/tachometer/tachometer-scale-06.png</tile06>
+				<tile07>http://static.undef.name/ingame/tachometer/tachometer-scale-07.png</tile07>
+				<tile08>http://static.undef.name/ingame/tachometer/tachometer-scale-08.png</tile08>
+				<tile09>http://static.undef.name/ingame/tachometer/tachometer-scale-09.png</tile09>
+				<tile10>http://static.undef.name/ingame/tachometer/tachometer-scale-10.png</tile10>
+				<tile11>http://static.undef.name/ingame/tachometer/tachometer-scale-11.png</tile11>
+				<tile12>http://static.undef.name/ingame/tachometer/tachometer-scale-12.png</tile12>
+			</tiles>
+		</scale>
+	</images>
+
+
+	<sounds>
+		<drive_backward>http://static.undef.name/ingame/tachometer/biep-biep-biep.ogg</drive_backward>
+		<gear_shift>http://static.undef.name/ingame/tachometer/gear-shift.ogg</gear_shift>
+	</sounds>
+</settings>

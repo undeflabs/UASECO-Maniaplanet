@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -162,6 +162,33 @@ class PluginManialinks extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function getStyle () {
+		$style['WINDOW'][0]['STYLE'][0] = 'BgsPlayerCard';
+		$style['WINDOW'][0]['SUBSTYLE'][0] = 'BgCard';
+		$style['WINDOW'][0]['BLACKCOLOR'][0] = '$ffc';
+
+		$style['HEADER'][0]['STYLE'][0] = 'Bgs1InRace';
+		$style['HEADER'][0]['SUBSTYLE'][0] = 'BgCardList';
+		$style['HEADER'][0]['TEXTSIZE'][0] = '0.07';
+		$style['HEADER'][0]['TEXTSTYLE'][0] = 'TextValueMedium';
+
+		$style['BODY'][0]['STYLE'][0] = 'BgsPlayerCard';
+		$style['BODY'][0]['SUBSTYLE'][0] = 'BgCard';
+		$style['BODY'][0]['TEXTSIZE'][0] = '0.04';
+		$style['BODY'][0]['TEXTSTYLE'][0] = 'TextCardSmallScores2';
+
+		$style['BUTTON'][0]['STYLE'][0] = 'BgsPlayerCard';
+		$style['BUTTON'][0]['SUBSTYLE'][0] = 'BgCard';
+
+		return $style;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	/**
 	 * Displays a single ManiaLink window to a player
 	 *
@@ -183,7 +210,7 @@ class PluginManialinks extends Plugin {
 		if (!$player = $aseco->server->players->getPlayer($login)) {
 			return;
 		}
-		$style = $player->style;
+		$style = $this->getStyle();
 
 		$hsize = $style['HEADER'][0]['TEXTSIZE'][0];
 		$bsize = $style['BODY'][0]['TEXTSIZE'][0];
@@ -467,7 +494,7 @@ class PluginManialinks extends Plugin {
 		$header = $player->msgs[0][1];
 		$widths = $player->msgs[0][2];
 		$icon = $player->msgs[0][3];
-		$style = $player->style;
+		$style = $this->getStyle();
 
 		$hsize = $style['HEADER'][0]['TEXTSIZE'][0];
 		$bsize = $style['BODY'][0]['TEXTSIZE'][0];
@@ -649,34 +676,6 @@ class PluginManialinks extends Plugin {
 		$xml .= '<manialink id="UASECO-4"></manialink>';
 		$xml .= '<manialink id="UASECO-6"></manialink>';
 		$aseco->addManialink($xml, false, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Displays the Message window
-	 *
-	 * $msgs   : lines to be displayed
-	 * $timeout: timeout for window in msec
-	 */
-	public function display_msgwindow ($aseco, $msgs, $timeout) {
-
-		$cnt = count($msgs);
-		$xml = '<manialink id="UASECO-7"><frame posn="-49 43.5 0">' . LF .
-		       '<quad sizen="93 ' . (1.5 + $cnt*2.5) . '" style="%STYLE%" substyle="%SUBST%"/>' . LF;
-		$pos = -1;
-		foreach ($msgs as $msg) {
-			$xml .= '<label posn="1 ' . $pos . ' 1" sizen="91 1" style="TextRaceChat" text="' . $aseco->handleSpecialChars($msg) . '"/>' . LF .
-			$pos -= 2.5;
-		}
-		$xml .= '</frame></manialink>';
-		$xml = $this->set_panel_bg($xml, $aseco->panelbg);
-
-		$aseco->addManialink($xml, false, $timeout, false);
 	}
 }
 

@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-11-01
+ * Date:		2014-11-05
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -2446,18 +2446,18 @@ class PluginRecordsEyepiece extends Plugin {
 			// Get current Gamemode
 			$gamemode = $aseco->server->gameinfo->mode;
 
-			// Is the CheckpointCountWidget enabled?
-			if ($this->config['CHECKPOINTCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
-
-				// Catch all Spectators (e.g.: Spectator, TemporarySpectator or PureSpectator)
-				if ($changes['SpectatorStatus'] > 0) {
-					$xml = '<manialink id="CheckpointCountWidget" name="CheckpointCountWidget"></manialink>';
-					$this->sendManialink($xml, $changes['Login'], 0, false, 0);
-				}
-				else {
-					$this->buildCheckpointCountWidget(-1, $changes['Login']);
-				}
-			}
+//			// Is the CheckpointCountWidget enabled?
+//			if ($this->config['CHECKPOINTCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+//
+//				// Catch all Spectators (e.g.: Spectator, TemporarySpectator or PureSpectator)
+//				if ($changes['SpectatorStatus'] > 0) {
+//					$xml = '<manialink id="CheckpointCountWidget" name="CheckpointCountWidget"></manialink>';
+//					$this->sendManialink($xml, $changes['Login'], 0, false, 0);
+//				}
+//				else {
+//					$this->buildCheckpointCountWidget(-1, $changes['Login']);
+//				}
+//			}
 
 			// Refresh Player and Team membership
 			if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
@@ -12514,6 +12514,15 @@ main() {
 		yield;
 		if (!PageIsVisible || InputPlayer == Null) {
 			continue;
+		}
+
+		// Hide the Widget for Spectators (also temporary one)
+		if (InputPlayer.IsSpawned == False) {
+			Container.Hide();
+			continue;
+		}
+		else {
+			Container.Show();
 		}
 
 		if (CurrentTime > RefreshTime) {

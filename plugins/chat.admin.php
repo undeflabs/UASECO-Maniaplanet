@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
+ * Date:	2014-11-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -194,10 +194,7 @@ class PluginChatAdmin extends Plugin {
 			'forcespec'			=> 'Forces player into free spectator',
 			'specfree'			=> 'Forces spectator into free mode',
 			'panel'				=> 'Selects admin panel (see: /admin panel help)',
-			'style'				=> 'Selects default window style',
 			'admpanel'			=> 'Selects default admin panel',
-			'donpanel'			=> 'Selects default donate panel',
-			'recpanel'			=> 'Selects default records panel',
 			'votepanel'			=> 'Selects default vote panel',
 			'panelbg'			=> 'Selects default panel background',
 			'planets'			=> 'Shows server\'s planets amount',
@@ -3008,7 +3005,7 @@ class PluginChatAdmin extends Plugin {
 		}
 		else if ($command['params'][0] == 'delrec' && $command['params'][1] != '') {
 			/**
-			 * Delete records/rs_times database entries for specific record & sync.
+			 * Delete `records` and `times` database entries for specific record & sync.
 			 */
 
 			if ( isset($aseco->plugins['PluginLocalRecords']) ) {
@@ -3054,7 +3051,7 @@ class PluginChatAdmin extends Plugin {
 		}
 		else if ($command['params'][0] == 'prunerecs' && $command['params'][1] != '') {
 			/**
-			 * Prune records/rs_times database entries for specific map.
+			 * Prune `records` and `times` database entries for specific map.
 			 */
 
 			// verify parameter
@@ -3074,7 +3071,7 @@ class PluginChatAdmin extends Plugin {
 					$map = $aseco->server->maps->getMapByUid($uid);
 
 					if ($map->id > 0) {
-						// delete the records and rs_times
+						// delete the `records` and `times`
 						$query = 'DELETE FROM `%prefix%records` WHERE `MapId` = '. $map->id .';';
 						$aseco->db->query($query);
 						$query = 'DELETE FROM `%prefix%times` WHERE `MapId` = '. $map->id .';';
@@ -3461,33 +3458,6 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'style' && $command['params'][1] != '') {
-			/**
-			 * Selects default window style.
-			 */
-
-			$style_file = 'styles/'. $command['params'][1] .'.xml';
-			// load default style
-			if (($style = $aseco->parser->xmlToArray($style_file, true, true)) && isset($style['STYLES'])) {
-				$aseco->style = $style['STYLES'];
-
-				// log console message
-				$aseco->console('[Admin] {1} [{2}] selects default window style [{3}]', $logtitle, $login, $command['params'][1]);
-
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default window style {#highlite}{3}',
-					$chattitle,
-					$admin->nickname,
-					$command['params'][1]
-				);
-				$aseco->sendChatMessage($message);
-			}
-			else {
-				// Could not read/parse XML file
-				$message = '{#server}» {#error}No valid style file, use {#highlite}$i /style list {#error}!';
-				$aseco->sendChatMessage($message, $login);
-			}
-		}
 		else if ($command['params'][0] == 'admpanel' && $command['params'][1] != '') {
 			/**
 			 * Selects default admin panel.
@@ -3533,104 +3503,6 @@ class PluginChatAdmin extends Plugin {
 				else {
 					// Could not read XML file
 					$message = '{#server}» {#error}No valid admin panel file, use {#highlite}$i /admin panel list {#error}!';
-					$aseco->sendChatMessage($message, $login);
-				}
-			}
-		}
-		else if ($command['params'][0] == 'donpanel' && $command['params'][1] != '') {
-			/**
-			 * Selects default donate panel.
-			 */
-
-			if (strtolower($command['params'][1]) == 'off') {
-				$aseco->panels['donate'] = '';
-				$aseco->settings['donate_panel'] = 'Off';
-
-				// log console message
-				$aseco->console('[Admin] {1} [{2}] reset default donate panel', $logtitle, $login);
-
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default donate panel',
-					$chattitle,
-					$admin->nickname
-				);
-				$aseco->sendChatMessage($message);
-			}
-			else {
-				// added file prefix
-				$panel = $command['params'][1];
-				if (strtolower(substr($command['params'][1], 0, 6)) != 'donate') {
-					$panel = 'Donate'. $panel;
-				}
-				$panel_file = 'panels/'. $panel .'.xml';
-
-				// load default panel
-				if ($panel = @file_get_contents($panel_file)) {
-					$aseco->panels['donate'] = $panel;
-
-					// log console message
-					$aseco->console('[Admin] {1} [{2}] selects default donate panel [{3}]', $logtitle, $login, $command['params'][1]);
-
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default donate panel {#highlite}{3}',
-						$chattitle,
-						$admin->nickname,
-						$command['params'][1]
-					);
-					$aseco->sendChatMessage($message);
-				}
-				else {
-					// Could not read XML file
-					$message = '{#server}» {#error}No valid donate panel file, use {#highlite}$i /donpanel list {#error}!';
-					$aseco->sendChatMessage($message, $login);
-				}
-			}
-		}
-		else if ($command['params'][0] == 'recpanel' && $command['params'][1] != '') {
-			/**
-			 * Selects default records panel.
-			 */
-
-			if (strtolower($command['params'][1]) == 'off') {
-				$aseco->panels['records'] = '';
-				$aseco->settings['records_panel'] = 'Off';
-
-				// log console message
-				$aseco->console('[Admin] {1} [{2}] reset default records panel', $logtitle, $login);
-
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default records panel',
-					$chattitle,
-					$admin->nickname
-				);
-				$aseco->sendChatMessage($message);
-			}
-			else {
-				// added file prefix
-				$panel = $command['params'][1];
-				if (strtolower(substr($command['params'][1], 0, 7)) != 'records') {
-					$panel = 'Records'. $panel;
-				}
-				$panel_file = 'panels/'. $panel .'.xml';
-
-				// load default panel
-				if ($panel = @file_get_contents($panel_file)) {
-					$aseco->panels['records'] = $panel;
-
-					// log console message
-					$aseco->console('[Admin] {1} [{2}] selects default records panel [{3}]', $logtitle, $login, $command['params'][1]);
-
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default records panel {#highlite}{3}',
-						$chattitle,
-						$admin->nickname,
-						$command['params'][1]
-					);
-					$aseco->sendChatMessage($message);
-				}
-				else {
-					// Could not read XML file
-					$message = '{#server}» {#error}No valid records panel file, use {#highlite}$i /recpanel list {#error}!';
 					$aseco->sendChatMessage($message, $login);
 				}
 			}

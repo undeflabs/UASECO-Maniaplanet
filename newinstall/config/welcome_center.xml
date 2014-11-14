@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<welcome_center>
+<settings>
 
 	<!-- The content of <message> are displayed to each Player who connects to this Server. -->
 	<welcome_window>
@@ -100,4 +100,4 @@
 		</messages>
 	</info_messages>
 
-</welcome_center>
+</settings>

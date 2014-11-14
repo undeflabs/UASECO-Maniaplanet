@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mistral_idlekick>
-
+<settings>
 	<!--
 	Player idle this number of maps and get kicked or specced
 	//-->
@@ -34,4 +33,9 @@
 		<finish>false</finish>
 	</reset>
 
-</mistral_idlekick>
+	<messages>
+		<idlekick_play>{#server}» IdleKick player {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}!</idlekick_play>
+		<idlespec_play>{#server}» IdleSpec player {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}</idlespec_play>
+		<idlekick_spec>{#server}» IdleKick spectator {#highlite}{1}$z$s{#server} after {#highlite}{2}{#server} map{3}!</idlekick_spec>
+	</messages>
+</settings>

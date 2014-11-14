@@ -3,7 +3,7 @@ UASECO
  - Donation: $mindonation, $publicappr and $donation_values in xml
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
- - Lift dependecies from plugin.styles.php and remove it
+
 
 
 ManiaKarma
@@ -13,9 +13,9 @@ ManiaKarma
 
 Records-Eyepiece
 ~~~~~~~~~~~~~~~~
+ - Check positions of the widgets (small ones are not the same height then the larger ones)
  - Add possibilities for <background_color> at <checkpointcount_widget>, <donation_widget>
  - Remove <ladderlimit_widget>, <gamemode_widget>, <player_spectator_widget>, <current_ranking_widget>
  - Change F7 for toggle widgets
- - At TopCount and foreign online Players have no red background in LocalRecords
  - Do not send <quad...> when "BgEmpty" is used
  - BUG: After juke a song, the next/prev page buttons does not work

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2014-10-24
+ * Date:	2014-11-05
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -72,32 +72,20 @@ class PluginTachometer extends Plugin {
 
 	public function onSync ($aseco) {
 
-//		// Read Configuration
-//		if (!$this->config = $aseco->parser->xmlToArray('config/tachometer.xml', true, true)) {
-//			trigger_error('[WelcomeCenter] Could not read/parse config file "config/tachometer.xml"!', E_USER_ERROR);
-//		}
-//		$this->config = $this->config['INFO_BAR'];
-//
-//		// Transform 'TRUE' or 'FALSE' from string to boolean
-//		$this->config['xxx'][0]['ENABLED'][0]			= ((strtoupper($this->config['xxx'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
+		// Read Configuration
+		if (!$this->config = $aseco->parser->xmlToArray('config/tachometer.xml', true, true)) {
+			trigger_error('[WelcomeCenter] Could not read/parse config file "config/tachometer.xml"!', E_USER_ERROR);
+		}
+		$settings = $this->config['SETTINGS'];
 
-		$this->config['manialinkid']				= 'Tachometer';
-
-		// Modulate colors
-		// ACC720 = Green
-		// 5E8ADB = Blue
-		// FFF700 = Yellow
-		// F7AC1E = Orange
-		// E74F3C = Red
-		// F74BD3 = Pink (for the Girls)
 		$this->config['tachometer'] = array(
 			'position' => array(
-				'x'					=> 136.0,
-				'y'					=> -77.0,
-				'z'					=> -60.0,
+				'x'					=> $aseco->formatFloat($settings['POSITION'][0]['X'][0]),
+				'y'					=> $aseco->formatFloat($settings['POSITION'][0]['Y'][0]),
+				'z'					=> $aseco->formatFloat($settings['POSITION'][0]['Z'][0]),
 			),
 			'sizes'	=> array(
-				'scale'					=> $aseco->formatFloat(1.0),
+				'scale'					=> $aseco->formatFloat($settings['SCALE'][0]),
 				'background' => array(
 					'x'				=> 47.75,
 					'y'				=> 47.75,
@@ -108,50 +96,53 @@ class PluginTachometer extends Plugin {
 				),
 			),
 			'images' => array(
-				'background' 				=> 'http://static.undef.name/ingame/tachometer/tachometer-background3.png',
-				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-light.png',
+				'background' 				=> $settings['IMAGES'][0]['BACKGROUND'][0],
+				'needle'				=> $settings['IMAGES'][0]['NEEDLE'][0],
 //				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-dark.png',
 //				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-test.png',
 				'scale' => array(
-					'complete'			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale.png',
+					'complete'			=> $settings['IMAGES'][0]['SCALE'][0]['COMPLETE'][0],
 					'tiles' => array(
-						1			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-01.png',
-						2			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-02.png',
-						3			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-03.png',
-						4			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-04.png',
-						5			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-05.png',
-						6			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-06.png',
-						7			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-07.png',
-						8			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-08.png',
-						9			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-09.png',
-						10			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-10.png',
-						11			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-11.png',
-						12			=> 'http://static.undef.name/ingame/tachometer/tachometer-scale-12.png',
+						1			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE01'][0],
+						2			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE02'][0],
+						3			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE03'][0],
+						4			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE04'][0],
+						5			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE05'][0],
+						6			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE06'][0],
+						7			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE07'][0],
+						8			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE08'][0],
+						9			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE09'][0],
+						10			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE10'][0],
+						11			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE11'][0],
+						12			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE12'][0],
 					),
 				),
 			),
 			'modulation' => array(
-				'complete'				=> 'E74F3C',
-				'needle'				=> 'FBBE08',
+				'complete'				=> $settings['MODULATION'][0]['COMPLETE'][0],
+				'needle'				=> $settings['MODULATION'][0]['NEEDLE'][0],
 				'tiles' => array(
-					1				=> 'FFF700',
-					2				=> 'FFF700',
-					3				=> 'FFF700',
-					4				=> 'FFF700',
-					5				=> 'FFF700',
-					6				=> 'FFF700',
-					7				=> 'FFF700',
-					8				=> 'FFF700',
-					9				=> 'FFF700',
-					10				=> 'FFF700',
-					11				=> 'FFF700',
-					12				=> 'FFF700',
+					1				=> $settings['MODULATION'][0]['TILES'][0]['TILE01'][0],
+					2				=> $settings['MODULATION'][0]['TILES'][0]['TILE02'][0],
+					3				=> $settings['MODULATION'][0]['TILES'][0]['TILE03'][0],
+					4				=> $settings['MODULATION'][0]['TILES'][0]['TILE04'][0],
+					5				=> $settings['MODULATION'][0]['TILES'][0]['TILE05'][0],
+					6				=> $settings['MODULATION'][0]['TILES'][0]['TILE06'][0],
+					7				=> $settings['MODULATION'][0]['TILES'][0]['TILE07'][0],
+					8				=> $settings['MODULATION'][0]['TILES'][0]['TILE08'][0],
+					9				=> $settings['MODULATION'][0]['TILES'][0]['TILE09'][0],
+					10				=> $settings['MODULATION'][0]['TILES'][0]['TILE10'][0],
+					11				=> $settings['MODULATION'][0]['TILES'][0]['TILE11'][0],
+					12				=> $settings['MODULATION'][0]['TILES'][0]['TILE12'][0],
 				),
 			),
 			'sounds' => array(
-				'drivebackward'				=> 'http://static.undef.name/ingame/tachometer/biep-biep-biep.ogg',
+				'drive_backward'			=> $settings['SOUNDS'][0]['DRIVE_BACKWARD'][0],
+				'gear_shift'				=> $settings['SOUNDS'][0]['GEAR_SHIFT'][0],
 			),
 		);
+
+		$this->config['manialinkid']				= 'Tachometer';
 
 		// Disable parts of the UI
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('position', false);
@@ -276,11 +267,15 @@ main() {
 	declare CMlLabel LabelGearNeutral	<=> (Page.GetFirstChild("LabelGearNeutral") as CMlLabel);
 	declare CMlLabel LabelGearDriving	<=> (Page.GetFirstChild("LabelGearDriving") as CMlLabel);
 
-	declare SoundDriveBackward		= Audio.CreateSound("{$this->config['tachometer']['sounds']['drivebackward']}", 0.8, False, True, False);
+	declare SoundDriveBackward		= Audio.CreateSound("{$this->config['tachometer']['sounds']['drive_backward']}", 1.0, False, True, False);
+	declare SoundGearShift			= Audio.CreateSound("{$this->config['tachometer']['sounds']['gear_shift']}", 1.0, False, False, False);
 	declare Text LastGear			= "P";
 
 	// Settings
 	FrameTachometer.RelativeScale		= {$this->config['tachometer']['sizes']['scale']};
+
+	SoundDriveBackward.Volume		= 1.0;
+	SoundGearShift.Volume			= 0.3;
 
 	QuadTachoscale01.Opacity		= 0.0;
 	QuadTachoscale02.Opacity		= 0.0;
@@ -313,6 +308,17 @@ main() {
 		yield;
 		if (!PageIsVisible || InputPlayer == Null) {
 			continue;
+		}
+
+		// Hide the Widget for Spectators (also temporary one)
+		if (InputPlayer.IsSpawned == False) {
+			SoundGearShift.Stop();
+			SoundDriveBackward.Stop();
+			FrameTachometer.Hide();
+			continue;
+		}
+		else {
+			FrameTachometer.Show();
 		}
 
 		// Update Speed display
@@ -357,7 +363,8 @@ main() {
 				if (LastGear != "P") {
 					LastGear = "P";
 					SoundDriveBackward.Stop();
-					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+					SoundGearShift.Stop();
+					SoundGearShift.Play();
 				}
 				LabelGearParking.Opacity = 1.0;
 				LabelGearReverse.Opacity = 0.5;
@@ -368,17 +375,19 @@ main() {
 				if (LastGear != "D") {
 					LastGear = "D";
 					SoundDriveBackward.Stop();
-					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+					SoundGearShift.Stop();
+					SoundGearShift.Play();
 				}
 				LabelGearParking.Opacity = 0.5;
 				LabelGearReverse.Opacity = 0.5;
 				LabelGearNeutral.Opacity = 0.5;
 				LabelGearDriving.Opacity = 1.0;
 			}
-			else if ((InputPlayer.Speed * 3.6) < -10.0) {
+			else if ((InputPlayer.Speed * 3.6) <= -0.1) {
 				if (LastGear != "R") {
 					LastGear = "R";
-					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
+					SoundGearShift.Stop();
+					SoundGearShift.Play();
 					SoundDriveBackward.Play();
 				}
 				LabelGearParking.Opacity = 0.5;
@@ -391,6 +400,8 @@ main() {
 //			if (LastGear != "N") {
 //				LastGear = "N";
 //				SoundDriveBackward.Stop();
+//				SoundGearShift.Stop();
+//				SoundGearShift.Play();
 //				Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 1, 1.0);
 //			}
 //			LabelGearParking.Opacity = 0.5;
@@ -405,20 +416,7 @@ main() {
 //			switch (Event.Type) {
 //				case CMlEvent::Type::MouseClick : {
 //					if (Event.ControlId == "QuadTachometer") {
-//						QuadTachometer.Size = <QuadTachometer.Size.Y, QuadTachometer.Size.Y>;
-//						QuadTachoscale.Size = <QuadTachoscale.Size.Y, QuadTachoscale.Size.Y>;
-//						QuadTachoscale01.Size = <QuadTachoscale01.Size.Y, QuadTachoscale01.Size.Y>;
-//						QuadTachoscale02.Size = <QuadTachoscale02.Size.Y, QuadTachoscale02.Size.Y>;
-//						QuadTachoscale03.Size = <QuadTachoscale03.Size.Y, QuadTachoscale03.Size.Y>;
-//						QuadTachoscale04.Size = <QuadTachoscale04.Size.Y, QuadTachoscale04.Size.Y>;
-//						QuadTachoscale05.Size = <QuadTachoscale05.Size.Y, QuadTachoscale05.Size.Y>;
-//						QuadTachoscale06.Size = <QuadTachoscale06.Size.Y, QuadTachoscale06.Size.Y>;
-//						QuadTachoscale07.Size = <QuadTachoscale07.Size.Y, QuadTachoscale07.Size.Y>;
-//						QuadTachoscale08.Size = <QuadTachoscale08.Size.Y, QuadTachoscale08.Size.Y>;
-//						QuadTachoscale09.Size = <QuadTachoscale09.Size.Y, QuadTachoscale09.Size.Y>;
-//						QuadTachoscale10.Size = <QuadTachoscale10.Size.Y, QuadTachoscale10.Size.Y>;
-//						QuadTachoscale11.Size = <QuadTachoscale11.Size.Y, QuadTachoscale11.Size.Y>;
-//						QuadTachoscale12.Size = <QuadTachoscale12.Size.Y, QuadTachoscale12.Size.Y>;
+//
 //					}
 //				}
 //			}

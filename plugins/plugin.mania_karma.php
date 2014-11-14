@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		2.0.0
- * Date:		2014-11-01
+ * Date:		2014-11-02
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -1172,7 +1172,7 @@ class PluginManiaKarma extends Plugin {
 			$this->handlePlayerVote($player, 1);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'13') {		// Vote undecided
-			$this->showUndecidedMessage($command);
+			$this->showUndecidedMessage($player);
 		}
 		else if ($answer[2] == $this->config['manialink_id'] .'14') {		// Vote -
 			$this->handlePlayerVote($player, -1);
@@ -3051,17 +3051,17 @@ EOL;
 	*/
 
 	// This shows the undecided message to other players.
-	public function showUndecidedMessage ($command) {
+	public function showUndecidedMessage ($caller) {
 		global $aseco;
 
 		// Should all other player (except the vote given player) be informed/asked?
 		if ($this->config['show_player_vote_public'] == true) {
 			foreach ($aseco->server->players->player_list as $player) {
 
-				// Show only to players that did not voted yes
+				// Show only to players that did not voted yet
 				if ($this->karma['global']['players'][$player->login]['vote'] == 0) {
-					// Don't ask/tell the player that give the vote
-					if ($player->login == $command['author']->login) {
+					// Don't ask/tell the player that give the undecided vote
+					if ($player->login == $caller->login) {
 						continue;
 					}
 
@@ -3071,7 +3071,7 @@ EOL;
 					}
 
 					$message = $aseco->formatText($this->config['messages']['karma_show_undecided'],
-							$aseco->stripColors($command['author']->nickname)
+							$aseco->stripColors($caller->nickname)
 					);
 					$message = str_replace('{br}', LF, $message);  // split long message
 					$aseco->sendChatMessage($message, $player->login);

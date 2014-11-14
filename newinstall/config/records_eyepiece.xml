@@ -1247,7 +1247,7 @@
 		<clock_icon>http://static.undef.name/ingame/records-eyepiece/clock-icon.png</clock_icon>
 		<worldmap>http://static.undef.name/ingame/records-eyepiece/worldmap-pure.png</worldmap>
 		<no_screenshot>http://static.undef.name/ingame/records-eyepiece/no-screenshot-tm2.jpg</no_screenshot>
-		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.png</progress_indicator>
+		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.webm</progress_indicator>
 
 		<environment>
 			<logos>

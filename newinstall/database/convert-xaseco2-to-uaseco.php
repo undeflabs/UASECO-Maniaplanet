@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -37,6 +37,15 @@
 	// Include required classes
 	require_once('includes/core/xmlparser.class.php');
 	require_once('includes/core/database.class.php');
+
+
+	// Define process settings
+	if (function_exists('date_default_timezone_get') && function_exists('date_default_timezone_set')) {
+		date_default_timezone_set(@date_default_timezone_get());
+	}
+
+	setlocale(LC_NUMERIC, 'C');
+	mb_internal_encoding('UTF-8');
 
 
 	$config_file = 'config/UASECO.xml';
@@ -131,7 +140,6 @@ class Converter {
 			`pe`.`Cps`,
 			`pe`.`DediCps`,
 			`pe`.`Donations`,
-			`pe`.`Style`,
 			`pe`.`Panels`,
 			`pe`.`PanelBG`
 		FROM `players` AS `p`
@@ -151,21 +159,6 @@ class Converter {
 			$count['added'] = 0;
 			$count['skipped'] = 0;
 			foreach ($players as $row) {
-
-				// Setup the stored settings for each plugin
-				$settings = array(
-					'PluginCheckpoint' => array(
-						'LocalCheckpointTracking'	=> $row['Cps'],
-						'DedimaniaCheckpointTracking'	=> $row['DediCps'],
-					),
-					'PluginStyles' => array(
-						'Style'				=> $row['Style'],
-					),
-					'PluginPanels' => array(
-						'Panels'			=> $row['Panels'],
-						'PanelBG'			=> $row['PanelBG'],
-					),
-				);
 
 				$query = "
 				INSERT INTO `%prefix%players` (
@@ -214,9 +207,6 @@ class Converter {
 					'PluginCheckpoint' => array(
 						'LocalCheckpointTracking'	=> $row['Cps'],
 						'DedimaniaCheckpointTracking'	=> $row['DediCps'],
-					),
-					'PluginStyles' => array(
-						'Style'				=> $row['Style'],
 					),
 					'PluginPanels' => array(
 						'Panels'			=> $row['Panels'],

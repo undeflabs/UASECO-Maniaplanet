@@ -6,7 +6,6 @@ Version 1.0.0
    - A database from XAseco2/1.03 is NOT compatible with UASECO, convert a XAseco2 database with newinstall/database/convert-xaseco2-to-uaseco.php!
    - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed before first stable release!
      Use Class Window instead: http://www.uaseco.org/Development/Classes/Window.php
-   - Plugin "plugin.styles.php" and related files in the folder "config/styles" are deprecated and get removed before first stable release!
    - Plugin "plugin.panels.php" and related files in the folder "config/panels" are deprecated and get removed before first stable release!
 
 
@@ -70,6 +69,7 @@ Version 1.0.0
    - Removed "manialinks.inc.php", moved parts from it into the related Plugins and replaced the "Window" with the new class "window.class.php"
    - Removed Plugin "plugin.matchsave.php", and related files "matchsave.xml", "html.tpl" and "text.tpl"
    - Removed Jfreu-Plugins "jfreu.chat.php", "jfreu.lite.php" and "jfreu.plugin.php" with all related files ("plugin.welcome_center.php" replaces "jfreu.lite.php")
+   - Removed "plugin.styles.php" and related files in the folder "config/styles".
    - Removed "addChatCommand()" and added "$this->registerChatCommand()" (in the Class Plugin)
    - A callback handler of a registered chat command has now four parameter instead of two: ($aseco, $login, $chat_command, $chat_parameter)
    - Added "$aseco->server->rankings->ranking_list[]" which holds the current ranking for all Players in all Gamemodes (no need to call the ListMethod "GetCurrentRanking")

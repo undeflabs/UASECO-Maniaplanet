@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -134,7 +134,8 @@ class PlayerList {
 			SELECT
 				`PlayerId`
 			FROM `%prefix%players`
-			WHERE `Login` = ". $aseco->db->quote($login) .";
+			WHERE `Login` = ". $aseco->db->quote($login) ."
+			LIMIT 1;
 			";
 
 			$res = $aseco->db->query($query);
@@ -168,7 +169,8 @@ class PlayerList {
 			SELECT
 				`Nickname`
 			FROM `%prefix%players`
-			WHERE `Login` = ". $aseco->db->quote($login) .";
+			WHERE `Login` = ". $aseco->db->quote($login) ."
+			LIMIT 1;
 			";
 
 			$res = $aseco->db->query($query);
@@ -239,7 +241,8 @@ class PlayerList {
 				`Wins`,
 				`TimePlayed`
 			FROM `%prefix%players`
-			WHERE `Login` = ". $aseco->db->quote($param) .";
+			WHERE `Login` = ". $aseco->db->quote($param) ."
+			LIMIT 1;
 			";
 
 			$res = $aseco->db->query($query);
@@ -290,7 +293,8 @@ class PlayerList {
 			`Donations`,
 			`TimePlayed`
 		FROM `%prefix%players`
-		WHERE `Login`= ". $aseco->db->quote($player->login) .";
+		WHERE `Login`= ". $aseco->db->quote($player->login) ."
+		LIMIT 1;
 		";
 		$result = $aseco->db->query($query);
 		if ($result) {

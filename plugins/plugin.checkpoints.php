@@ -549,9 +549,32 @@ class PluginCheckpoint extends Plugin {
 	public function buildCheckpointWidget ($logins, $cp, $diff, $besttime) {
 		global $aseco;
 
+$maniascript = <<<EOL
+<script><!--
+main() {
+	// Declarations
+	declare CMlFrame Container <=> (Page.GetFirstChild("CheckpointWidget") as CMlFrame);
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Hide the Widget for Spectators (also temporary one)
+		if (InputPlayer.IsSpawned == False) {
+			Container.Hide();
+		}
+		else {
+			Container.Show();
+		}
+	}
+}
+--></script>
+EOL;
+
 		// Build Manialink
 		$xml = '<manialink id="'. $this->manialinkid .'" name="CheckpointWidget">';
-		$xml .= '<frame posn="'. $this->position['x'] .' '. $this->position['y'] .' '. $this->position['z'] .'">';
+		$xml .= '<frame posn="'. $this->position['x'] .' '. $this->position['y'] .' '. $this->position['z'] .'" id="CheckpointWidget">';
 		if ($this->layout['background_color'] != '') {
 			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->layout['background_color'] .'"/>';
 		}
@@ -561,6 +584,7 @@ class PluginCheckpoint extends Plugin {
 		$xml .= '<label posn="8 -0.65 0.02" sizen="16 2.2" textsize="2" scale="0.8" halign="center" textcolor="'. $this->textcolors['default_checkpoint'] .'" text="$O'. $cp .': '. $diff .'"/>';
 		$xml .= '<label posn="8 -2.5 0.02" sizen="16 2.2" textsize="1" scale="0.8" halign="center" textcolor="'. $this->textcolors['default_besttime'] .'" text="BEST '. $besttime .'"/>';
 		$xml .= '</frame>';
+		$xml .= $maniascript;
 		$xml .= '</manialink>';
 		$aseco->sendManialink($xml, $logins, 0);
 	}

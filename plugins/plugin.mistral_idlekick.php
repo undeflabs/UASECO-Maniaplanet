@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
+ * Date:	2014-11-03
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -48,8 +48,7 @@ class PluginMistralIdlekick extends Plugin {
 	public $reset_onchat;
 	public $reset_oncheckpoint;
 	public $reset_onfinish;
-	public $start;
-	public $log;
+	public $messages;
 	public $debug;
 
 	/*
@@ -73,16 +72,19 @@ class PluginMistralIdlekick extends Plugin {
 		if (!$settings = $aseco->parser->xmlToArray('config/mistral_idlekick.xml', true, true)) {
 			trigger_error('[MistralIdlekick] Could not read/parse config file [config/mistral_idlekick.xml]!', E_USER_ERROR);
 		}
-		$settings = $settings['MISTRAL_IDLEKICK'];
+		$settings = $settings['SETTINGS'];
 
-		$this->kick_player_after	= (int)$settings['KICK_PLAYER_AFTER'][0];
-		$this->kick_spectator_after	= (int)$settings['KICK_SPECTATOR_AFTER'][0];
-		$this->kick_spectators		= $aseco->string2bool($settings['KICK_SPECTATORS'][0]);
-		$this->force_spectator_first	= $aseco->string2bool($settings['FORCE_SPECTATOR_FIRST'][0]);
-		$this->reset_onchat		= $aseco->string2bool($settings['RESET'][0]['CHAT'][0]);
-		$this->reset_oncheckpoint	= $aseco->string2bool($settings['RESET'][0]['CHECKPOINT'][0]);
-		$this->reset_onfinish		= $aseco->string2bool($settings['RESET'][0]['FINISH'][0]);
+		$this->kick_player_after		= (int)$settings['KICK_PLAYER_AFTER'][0];
+		$this->kick_spectator_after		= (int)$settings['KICK_SPECTATOR_AFTER'][0];
+		$this->kick_spectators			= $aseco->string2bool($settings['KICK_SPECTATORS'][0]);
+		$this->force_spectator_first		= $aseco->string2bool($settings['FORCE_SPECTATOR_FIRST'][0]);
+		$this->reset_onchat			= $aseco->string2bool($settings['RESET'][0]['CHAT'][0]);
+		$this->reset_oncheckpoint		= $aseco->string2bool($settings['RESET'][0]['CHECKPOINT'][0]);
+		$this->reset_onfinish			= $aseco->string2bool($settings['RESET'][0]['FINISH'][0]);
 
+		$this->messages['idlekick_play']	= $settings['MESSAGES'][0]['IDLEKICK_PLAY'][0];
+		$this->messages['idlespec_play']	= $settings['MESSAGES'][0]['IDLESPEC_PLAY'][0];
+		$this->messages['idlekick_spec']	= $settings['MESSAGES'][0]['IDLEKICK_SPEC'][0];
 
 		// Register required events
 		if ($this->reset_onchat == true) {
@@ -95,10 +97,8 @@ class PluginMistralIdlekick extends Plugin {
 			$this->registerEvent('onPlayerFinish', 'onPlayerFinish');
 		}
 
-
 		// Do not touch:
-		$this->log			= false;
-		$this->debug			= false;
+		$this->debug				= true;
 	}
 
 	/*
@@ -111,7 +111,7 @@ class PluginMistralIdlekick extends Plugin {
 
 		$this->storePlayerData($player, 'IdleCount', 0);
 		if ($this->debug) {
-			$aseco->console('[MistralIdlekick] {1} initialised with 0', $player->login);
+			$aseco->console('[MistralIdlekick] Player [{1}] initialised with "0".', $player->login);
 		}
 	}
 
@@ -143,7 +143,7 @@ class PluginMistralIdlekick extends Plugin {
 		if ($player = $aseco->server->players->getPlayer($chat[1])) {
 			$this->storePlayerData($player, 'IdleCount', 0);
 			if ($this->debug) {
-				$aseco->console('[MistralIdlekick] Player [{1}] reset on chat ', $player->login);
+				$aseco->console('[MistralIdlekick] Player [{1}] reset on chat.', $player->login);
 			}
 		}
 	}
@@ -165,7 +165,7 @@ class PluginMistralIdlekick extends Plugin {
 		if ($player = $aseco->server->players->getPlayer($checkpt[0])) {
 			$this->storePlayerData($player, 'IdleCount', 0);
 			if ($this->debug) {
-				$aseco->console('[MistralIdlekick] Player [{1}] reset on checkpoint', $player->login);
+				$aseco->console('[MistralIdlekick] Player [{1}] reset on checkpoint.', $player->login);
 			}
 		}
 	}
@@ -186,7 +186,7 @@ class PluginMistralIdlekick extends Plugin {
 		$player = $finish_item->player;
 		$this->storePlayerData($player, 'IdleCount', 0);
 		if ($this->debug) {
-			$aseco->console('[MistralIdlekick] Player [{1}] reset on finish', $player->login);
+			$aseco->console('[MistralIdlekick] Player [{1}] reset on finish.', $player->login);
 		}
 	}
 
@@ -208,8 +208,8 @@ class PluginMistralIdlekick extends Plugin {
 			if ($this->kick_spectators || !$player->isspectator) {
 				$this->storePlayerData($player, 'IdleCount', ($this->getPlayerData($player, 'IdleCount') + 1));
 			}
-			if ($this->log) {
-				$aseco->console('[MistralIdlekick] {1} set to {2}', $player->login, $this->getPlayerData($player, 'IdleCount'));
+			if ($this->debug) {
+				$aseco->console('[MistralIdlekick] Player [{1}] set to "{2}"', $player->login, $this->getPlayerData($player, 'IdleCount'));
 			}
 		}
 	}
@@ -229,8 +229,8 @@ class PluginMistralIdlekick extends Plugin {
 				if ($player->isspectator) {
 					$dokick = true;
 					// Log console message
-					$aseco->console('[MistralIdlekick] spectator: {1} after {2} map(s) without action', $player->login, $this->kick_spectator_after);
-					$message = $aseco->formatText($aseco->getChatMessage('IDLEKICK_SPEC'),
+					$aseco->console('[MistralIdlekick] Spectator [{1}] after "{2}" map(s) without action.', $player->login, $this->kick_spectator_after);
+					$message = $aseco->formatText($this->messages['idlekick_spec'],
 						$player->nickname,
 						$this->kick_spectator_after,
 						($this->kick_spectator_after == 1 ? '' : 's')
@@ -239,8 +239,8 @@ class PluginMistralIdlekick extends Plugin {
 				else {
 					if ($this->force_spectator_first) {
 						// Log console message
-						$aseco->console('[MistralIdlekick] IdleSpec player: {1} after {2} map(s) without action', $player->login, $this->kick_player_after);
-						$message = $aseco->formatText($aseco->getChatMessage('IDLESPEC_PLAY'),
+						$aseco->console('[MistralIdlekick] Set Player [{1}] after "{2}" map(s) without action as Spectator.', $player->login, $this->kick_player_after);
+						$message = $aseco->formatText($this->messages['idlespec_play'],
 							$player->nickname,
 							$this->kick_player_after,
 							($this->kick_player_after == 1 ? '' : 's')
@@ -267,9 +267,10 @@ class PluginMistralIdlekick extends Plugin {
 					}
 					else {
 						$dokick = true;
+
 						// Log console message
-						$aseco->console('[MistralIdlekick] Kick player: {1} after {2} map(s) without action', $player->login, $this->kick_player_after);
-						$message = $aseco->formatText($aseco->getChatMessage('IDLEKICK_PLAY'),
+						$aseco->console('[MistralIdlekick] Kick Player [{1}] after "{2}" map(s) without action.', $player->login, $this->kick_player_after);
+						$message = $aseco->formatText($this->messages['idlekick_play'],
 							$player->nickname,
 							$this->kick_player_after,
 							($this->kick_player_after == 1 ? '' : 's')
@@ -282,11 +283,13 @@ class PluginMistralIdlekick extends Plugin {
 
 				// Kick idle player
 				if ($dokick) {
-					$aseco->client->query('Kick', $player->login);
+					try {
+						$aseco->client->query('Kick', $player->login);
+					}
+					catch (Exception $exception) {
+						$aseco->console('[MistralIdlekick] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Kick');
+					}
 				}
-			}
-			else if ($this->debug) {
-				$aseco->console('[MistralIdlekick] {1} current value is {2}', $player->login, $this->getPlayerData($player, 'IdleCount'));
 			}
 		}
 	}
