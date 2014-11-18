@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-24
+ * Date:	2014-11-16
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -70,12 +70,15 @@ class Continent {
 				return self::ASIA;
 
 			case 'Middle East':
+			case 'Middle_East':
 				return self::MIDDLE_EAST;
 
 			case 'North America':
+			case 'North_America':
 				return self::NORTH_AMERICA;
 
 			case 'South America':
+			case 'South_America':
 				return self::SOUTH_AMERICA;
 
 			case 'Oceania':
@@ -95,7 +98,7 @@ class Continent {
 	// Convert abbreviation to continent
 	public function abbrToContinent ($abbreviation) {
 
-		switch ($abbreviation) {
+		switch (strtoupper($abbreviation)) {
 			case self::EUROPE:
 				return 'Europe';
 

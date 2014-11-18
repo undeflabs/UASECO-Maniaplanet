@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
+ * Date:	2014-11-16
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -274,14 +274,15 @@ class MapList {
 		$database = array();
 		$database['insert'] = array();
 		$database['update'] = array();
+		$database['filenames'] = array();
 		foreach ($maplist as $mapinfo) {
 			// Setup from database, if not present, add this to the list for adding into database
 			if (isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename'])) {
-				// Create and setup dummy Map with data from the database
+				// Create a dummy Map and setup it with data from the database
 				$map			= new Map(null, null);
 				$map->id		= $dbinfos[$mapinfo['UId']]['mapid'];
 				$map->uid		= $dbinfos[$mapinfo['UId']]['uid'];
-				$map->filename		= $dbinfos[$mapinfo['UId']]['filename'];
+				$map->filename		= $mapinfo['FileName'];
 				$map->name		= $dbinfos[$mapinfo['UId']]['name'];
 				$map->name_stripped	= $dbinfos[$mapinfo['UId']]['name_stripped'];
 				$map->comment		= $dbinfos[$mapinfo['UId']]['comment'];
@@ -311,6 +312,10 @@ class MapList {
 				$map->modurl		= $dbinfos[$mapinfo['UId']]['modurl'];
 				$map->songfile		= $dbinfos[$mapinfo['UId']]['songfile'];
 				$map->songurl		= $dbinfos[$mapinfo['UId']]['songurl'];
+
+				// Always update Map pathes in the database, to make sure the map can be found
+				// if the admin has moved the Map files
+				$database['filenames'][$mapinfo['UId']] = $mapinfo['FileName'];
 			}
 			else {
 				// Retrieve MapInfo from GBXInfoFetcher
@@ -329,7 +334,6 @@ class MapList {
 				}
 			}
 
-
 			// Add calculated karma to map
 			if ( isset($karma[$map->uid]) ) {
 				$map->karma = $karma[$map->uid];
@@ -340,7 +344,6 @@ class MapList {
 					'votes'	=> 0,
 				);
 			}
-
 
 			// Add to the Maplist
 			if ($map->uid) {
@@ -370,6 +373,10 @@ class MapList {
 				$this->map_list[$map->uid] = $map;
 			}
 		}
+
+		// Update all current Filenames
+		$this->updateFilenamesInDatabase($database['filenames']);
+
 		$aseco->db->query('COMMIT;');
 		unset($database);
 
@@ -591,6 +598,31 @@ class MapList {
 		}
 		else {
 			return true;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function updateFilenamesInDatabase ($list) {
+		global $aseco;
+
+		foreach ($list as $uid => $filename) {
+			$query = "
+			UPDATE `%prefix%maps`
+			SET
+				`Filename` = ". $aseco->db->quote($filename) ."
+			WHERE `Uid` = ". $aseco->db->quote($uid) ."
+			LIMIT 1;
+			";
+
+			$result = $aseco->db->query($query);
+//			if (!$result) {
+//				trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+//			}
 		}
 	}
 

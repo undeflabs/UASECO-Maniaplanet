@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-23
+ * Date:	2014-11-18
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -92,6 +92,41 @@ class Helper {
 		);
 		$string = $this->stripNewlines($string);
 		return $this->validateUTF8String($string);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	/**
+	 * http://sourcecookbook.com/en/recipes/8/function-to-slugify-strings-in-php
+	 * This is a function to slugify (replace non-ASCII characters with ASCII characters) strings in PHP.
+	 * It tries to replace some characters like ñ or ç to a similar ASCII character (for example, it will transform a ñ to a n).
+	 */
+	public function slugify ($string) {
+		// Replace non letter by "-"
+		$string = preg_replace('#[^\\pL]+#u', '-', $string);
+
+		// Transliterate
+		if (function_exists('iconv')) {
+			$string = iconv('utf-8', 'us-ascii//TRANSLIT', $string);
+		}
+
+		// Remove unwanted characters
+		$string = preg_replace('#[^-\w]+#', '', $string);
+
+		// Replace multiple "---" with single "-"
+		$string = preg_replace('#-{2,}#', '-', $string);
+
+		// Trim
+		$string = trim($string, '-');
+
+		if (empty($string)) {
+			return date('Y-m-d-H-i-s') .'_unnamed';
+		}
+		return $string;
 	}
 
 	/*

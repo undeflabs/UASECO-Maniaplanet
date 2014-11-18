@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
+ * Date:	2014-11-18
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -53,8 +53,6 @@ class PluginManiaExchangeInfo extends Plugin {
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
 		$this->setDescription('Provides world record message at start of each map.');
-
-		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
 		$this->registerEvent('onBeginMap1',	'onBeginMap1');
 	}

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+	<replay>
+		<enabled>true</enabled> 		<!-- Defines whether this button is active, bool' -->
+		<cvote_off>true</cvote_off>		<!-- Defines whether to disable the servers callvote_restart function, bool -->
+		<posx>-48.38</posx>			<!-- Defines the x coordinate of the widget, num -->
+		<posy>43.3</posy>			<!-- Defines the y coordinate of the widget, num -->
+		<cost>50</cost>				<!-- Defines the cost to replay a track, int -->
+		<ramping>true</ramping>			<!-- Multiplies cost by number of sucessive replays (50 for 1st reply, 100 for 2nd etc), bool -->
+		<max_replays>0</max_replays>		<!-- Defines the maximum number of consecutive replays, '0' for infinite, int -->
+		<blink>true</blink>			<!-- Defines whether button blinks when replay is imminent, bool -->
+	</replay>
+
+	<skip>
+		<enabled>true</enabled> 		<!-- Defines whether this button is active, bool -->
+		<cvote_off>true</cvote_off>		<!-- Defines whether to disable the servers callvote_skip function, bool -->
+		<posx>-43.58</posx>			<!-- Defines the x coordinate of the widget, num -->
+		<posy>43.3</posy>			<!-- Defines the y coordinate of the widget, num -->
+		<cost>50</cost>				<!-- Defines the cost to skip a track, int -->
+		<delay>10</delay>			<!-- Defines the delay before the map skips in seconds, int -->
+		<blink>true</blink>			<!-- Defines whether button blinks when skip is imminent, bool -->
+	</skip>
+
+
+	<style>
+		<!-- Background-Color, Format: RRGGBBAA (A = Alphachanal, Opacity) -->
+		<background_default>55556699</background_default>
+		<background_focus>004B7D99</background_focus>
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</style>
+</settings>

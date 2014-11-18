@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
+ * Date:	2014-11-16
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -98,7 +98,7 @@ class PluginMistralIdlekick extends Plugin {
 		}
 
 		// Do not touch:
-		$this->debug				= true;
+		$this->debug				= false;
 	}
 
 	/*

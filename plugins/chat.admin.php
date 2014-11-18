@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-04
+ * Date:	2014-11-18
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -2070,14 +2070,22 @@ class PluginChatAdmin extends Plugin {
 			}
 
 			try {
+				// Make a backup
+				$source = $aseco->server->mapdir .'MatchSettings/'. $filename;
+				$destination = $aseco->server->mapdir .'MatchSettings/'. date('Y-m-d-H-i-s') .'_'. $filename .'.bak';
+				if (!copy($source, $destination)) {
+					trigger_error('Could not copy match settings file "'. $source .'" to "'. $destination .'"!', E_USER_WARNING);
+				}
+
+				// Let the dedicated store the current settings
 				$aseco->client->query('SaveMatchSettings', 'MatchSettings/'. $filename);
 
-				// should a random filter be added?
+				// Should a random filter be added?
 				if ($aseco->settings['writemaplist_random']) {
 					$mapsfile = $aseco->server->mapdir .'MatchSettings/'. $filename;
 					// read the match settings file
 					if (!$list = @file_get_contents($mapsfile)) {
-						trigger_error('Could not read match settings file '. $mapsfile .' !', E_USER_WARNING);
+						trigger_error('Could not read match settings file "'. $mapsfile .'"!', E_USER_WARNING);
 					}
 					else {
 						// insert random filter after <gameinfos> section
@@ -2089,7 +2097,7 @@ class PluginChatAdmin extends Plugin {
 
 						// write out the match settings file
 						if (!@file_put_contents($mapsfile, $list)) {
-							trigger_error('Could not write match settings file '. $mapsfile .' !', E_USER_WARNING);
+							trigger_error('Could not write match settings file "'. $mapsfile .'"!', E_USER_WARNING);
 						}
 					}
 				}
@@ -2106,7 +2114,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 			catch (Exception $exception) {
-				$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - LoadGuestList');
+				$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveMatchSettings');
 				$message = '{#server}» {#error}Error writing {#highlite}$i '. $filename .' {#error}!';
 				$aseco->sendChatMessage($message, $login);
 			}
@@ -4245,11 +4253,7 @@ class PluginChatAdmin extends Plugin {
 
 					// rename ID filename to map's name
 					$md5new = md5_file($localfile);
-					$filename = trim($aseco->stripColors($aseco->stripNewlines($aseco->stripBOM($gbx->name)), true));
-					$filename = preg_replace('#[^A-Za-z0-9]+#u', '-', $filename);
-					$filename = preg_replace('# +#u', '-', $filename);
-					$filename = preg_replace('#^-#u', '', $filename);
-					$filename = preg_replace('#-$#u', '', $filename);
+					$filename = $aseco->slugify(trim($aseco->stripColors($aseco->stripNewlines($aseco->stripBOM($gbx->name)), true)));
 					$partialdir = $aseco->plugins['PluginRasp']->mxdir . $sepchar . $filename .'_'. $trkid .'.Map.gbx';
 
 					// insure unique filename by incrementing sequence number,

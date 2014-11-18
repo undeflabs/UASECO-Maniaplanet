@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-11-05
+ * Date:		2014-11-16
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -12395,7 +12395,7 @@ EOL;
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->cache['Map'][$type]['name'],
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->cache['Map'][$type]['authortime'],
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->cache['Map'][$type]['author'],
-						$this->cache['Map'][$type]['author_nation'],
+						(strtoupper($this->cache['Map'][$type]['author_nation']) == 'OTH' ? 'other' : $this->cache['Map'][$type]['author_nation']),
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->cache['Map'][$type]['environment'],
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->cache['Map'][$type]['mood'],
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->cache['Map'][$type]['goldtime'],
