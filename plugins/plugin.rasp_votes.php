@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-11-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -31,7 +31,6 @@
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.map.php
  *  - plugins/plugin.rasp_jukebox.php
- *  - plugins/plugin.panels.php
  *
  */
 
@@ -73,7 +72,6 @@ class PluginRaspVotes extends Plugin {
 		$this->addDependence('PluginRaspJukebox',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginMap',		Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onEndMap1',		'onEndMap1');		// use pre event before all other processing
@@ -135,11 +133,6 @@ class PluginRaspVotes extends Plugin {
 				$aseco->sendChatMessage($message);
 			}
 			$this->chatvote = array();  // $this->mxadd is already reset in rasp_newmap()
-
-			// disable all vote panels
-			if ( isset($aseco->plugins['PluginPanels']) ) {
-				$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-			}
 		}
 
 		// reset counters
@@ -224,11 +217,6 @@ class PluginRaspVotes extends Plugin {
 					$aseco->sendChatMessage($message);
 				}
 				$this->chatvote = array();
-
-				// disable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-				}
 			}
 		}
 	}
@@ -261,11 +249,6 @@ class PluginRaspVotes extends Plugin {
 				$aseco->sendChatMessage($message);
 			}
 			$this->chatvote = array();
-
-			// disable all vote panels
-			if ( isset($aseco->plugins['PluginPanels']) ) {
-				$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-			}
 			return;
 		}
 
@@ -292,11 +275,6 @@ class PluginRaspVotes extends Plugin {
 						$aseco->sendChatMessage($message);
 					}
 					$this->chatvote = array();
-
-					// disable all vote panels
-					if ( isset($aseco->plugins['PluginPanels']) ) {
-						$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-					}
 				}
 				else {
 					// !empty($this->mxadd)
@@ -316,11 +294,6 @@ class PluginRaspVotes extends Plugin {
 						$aseco->sendChatMessage($message);
 					}
 					$this->mxadd = array();
-
-					// disable all vote panels
-					if ( isset($aseco->plugins['PluginPanels']) ) {
-						$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-					}
 				}
 			}
 			else {
@@ -397,11 +370,6 @@ class PluginRaspVotes extends Plugin {
 						$aseco->sendChatMessage($message);
 					}
 					$this->chatvote = array();
-
-					// disable all vote panels
-					if ( isset($aseco->plugins['PluginPanels']) ) {
-						$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-					}
 				}
 				else {
 					// !empty($this->mxadd)
@@ -421,11 +389,6 @@ class PluginRaspVotes extends Plugin {
 						$aseco->sendChatMessage($message);
 					}
 					$this->mxadd = array();
-
-					// disable all vote panels
-					if ( isset($aseco->plugins['PluginPanels']) ) {
-						$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-					}
 				}
 			}
 			else {
@@ -597,11 +560,6 @@ class PluginRaspVotes extends Plugin {
 			$aseco->sendChatMessage($message);
 		}
 
-		// enable all vote panels
-		if ( isset($aseco->plugins['PluginPanels']) ) {
-			$aseco->plugins['PluginPanels']->allvotepanels_on($aseco, $player->login, $aseco->formatColors('{#vote}'));
-		}
-
 		// vote automatically for vote starter?
 		if ($this->auto_vote_starter) {
 			$aseco->releaseChatCommand('/y', $player->login);
@@ -731,11 +689,6 @@ class PluginRaspVotes extends Plugin {
 		}
 		else {
 			$aseco->sendChatMessage($message);
-		}
-
-		// enable all vote panels
-		if ( isset($aseco->plugins['PluginPanels']) ) {
-			$aseco->plugins['PluginPanels']->allvotepanels_on($aseco, $player->login, $aseco->formatColors('{#vote}'));
 		}
 
 		// vote automatically for vote starter?
@@ -886,11 +839,6 @@ class PluginRaspVotes extends Plugin {
 			$aseco->sendChatMessage($message);
 		}
 
-		// enable all vote panels
-		if ( isset($aseco->plugins['PluginPanels']) ) {
-			$aseco->plugins['PluginPanels']->allvotepanels_on($aseco, $player->login, $aseco->formatColors('{#vote}'));
-		}
-
 		// vote automatically for vote starter?
 		if ($this->auto_vote_starter) {
 			$aseco->releaseChatCommand('/y', $player->login);
@@ -1022,12 +970,6 @@ class PluginRaspVotes extends Plugin {
 			$aseco->sendChatMessage($message);
 		}
 
-		// enable all vote panels
-		if ( isset($aseco->plugins['PluginPanels']) ) {
-			$aseco->plugins['PluginPanels']->allvotepanels_on($aseco, $player->login, $aseco->formatColors('{#vote}'));
-		}
-
-
 		// vote automatically for vote starter?
 		if ($this->auto_vote_starter) {
 			$aseco->releaseChatCommand('/y', $player->login);
@@ -1117,11 +1059,6 @@ class PluginRaspVotes extends Plugin {
 				}
 				else {
 					$aseco->sendChatMessage($message);
-				}
-
-				// enable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_on($aseco, $player->login, $aseco->formatColors('{#vote}'));
 				}
 
 				// vote automatically for vote starter?
@@ -1225,11 +1162,6 @@ class PluginRaspVotes extends Plugin {
 					$aseco->sendChatMessage($message);
 				}
 
-				// enable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_on($aseco, $player->login, $aseco->formatColors('{#vote}'));
-				}
-
 				// vote automatically for vote starter?
 				if ($this->auto_vote_starter) {
 					$aseco->releaseChatCommand('/y', $player->login);
@@ -1278,11 +1210,6 @@ class PluginRaspVotes extends Plugin {
 					$aseco->sendChatMessage($message);
 				}
 				$this->chatvote = array();
-
-				// disable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-				}
 			}
 			else {
 				$message = '{#server}» {#error}You didn\'t start the current vote!';
@@ -1308,11 +1235,6 @@ class PluginRaspVotes extends Plugin {
 					$aseco->sendChatMessage($message);
 				}
 				$this->mxadd = array();
-
-				// disable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-				}
 			}
 			else {
 				$message = '{#server}» {#error}You didn\'t start the current vote!';

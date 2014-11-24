@@ -4,7 +4,7 @@
 
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const	RoundsBaseVersion		"2014-10-15"
+#Const	RoundsBaseVersion		"2014-11-19"
 #Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
 
 // ---------------------------------- //
@@ -35,7 +35,13 @@ MB_LogVersion(RoundsBaseScriptName, RoundsBaseVersion);
 // Initialize mode
 UiRounds = True;
 MB_UseSectionRound = True;
-MB_PointsRepartition = C_PointsRepartition;
+declare Integer[] Rounds_PointsRepartitionBackUp for This;
+// Reload XmlRpc or load default values
+if (Rounds_PointsRepartitionBackUp.count > 0) {
+	MB_PointsRepartition = Rounds_PointsRepartitionBackUp;
+} else {
+	MB_PointsRepartition = C_PointsRepartition;
+}
 
 UI::LoadModules(["TimeGap", "SmallScoresTable", "Chrono", "CheckpointTime", "PrevBestTime", "SpeedAndDistance", "Countdown"]);
 UI::DisplayTimeDiff(S_DisplayTimeDiff);
@@ -135,7 +141,11 @@ foreach (Event in XmlRpc.PendingEvents) {
 		foreach (Point in Event.ParamArray2) {
 			PointsRepartition.add(TL::ToInteger(Point));
 		}
-		if (PointsRepartition.count > 1) MB_PointsRepartition = PointsRepartition;
+		if (PointsRepartition.count >= 1) {
+			MB_PointsRepartition = PointsRepartition;
+			declare Integer[] Rounds_PointsRepartitionBackUp for This;
+			Rounds_PointsRepartitionBackUp = MB_PointsRepartition;
+		}
 	} else if (Event.Param1 == "Rounds_GetPointsRepartition") {
 		declare PointsRepartition = Text[];
 		foreach (Point in MB_PointsRepartition) {

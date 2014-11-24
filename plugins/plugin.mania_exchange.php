@@ -1,13 +1,13 @@
 <?php
 /*
- * Plugin: Mania Exchange Info
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Plugin: Mania Exchange
+ * ~~~~~~~~~~~~~~~~~~~~~~
  * » Provides world record message at start of each map.
  * » Based upon plugin.mxinfo.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-18
+ * Date:	2014-11-23
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -32,7 +32,7 @@
  */
 
 	// Start the plugin
-	$_PLUGIN = new PluginManiaExchangeInfo();
+	$_PLUGIN = new PluginManiaExchange();
 
 /*
 #///////////////////////////////////////////////////////////////////////#
@@ -40,7 +40,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class PluginManiaExchangeInfo extends Plugin {
+class PluginManiaExchange extends Plugin {
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

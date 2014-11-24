@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
+ * Date:	2014-11-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -45,7 +45,6 @@
 
 class PluginPanels extends Plugin {
 	public $settings;
-	public $style;
 	public $panels;
 	public $panelbg;
 	public $statspanel;
@@ -73,141 +72,11 @@ class PluginPanels extends Plugin {
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 
 
-		// handles action id's "-100"-"-49" for selecting from max. 50 record panel templates
 		// handles action id's "-48"-"-7" for selecting from max. 40 admin panel templates
-		// handles action id's "37"-"48" for selecting from max. 10 vote panel templates
 		// handles action id's "7231"-"7262" for selecting from max. 30 panel background templates
 		$this->registerEvent('onPlayerManialinkPageAnswer', 'onPlayerManialinkPageAnswer');
 
-// Maybe move to "plugin.rasp_jukebox.php"?
-		$this->registerChatCommand('votepanel',	'chat_votepanel',	'Selects vote panel (see: /votepanel help)',		Player::PLAYERS);
-
 		$this->registerChatCommand('panelbg',	'chat_panelbg',		'Selects panel background (see: /panelbg help)',	Player::PLAYERS);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_votepanel ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			return;
-		}
-
-		if ($chat_parameter == 'help') {
-			$header = '{#black}/votepanel$g will change the vote panel:';
-			$help = array();
-			$help[] = array('...', '{#black}help',
-			                'Displays this help information');
-			$help[] = array('...', '{#black}list',
-			                'Displays available panels');
-			$help[] = array('...', '{#black}default',
-			                'Resets panel to server default');
-			$help[] = array('...', '{#black}off',
-			                'Disables vote panel');
-			$help[] = array('...', '{#black}xxx',
-			                'Selects vote panel xxx');
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(0.8, 0.05, 0.15, 0.6), 'OK');
-		}
-		else if ($chat_parameter == 'list') {
-			$player->maplist = array();
-
-			// read list of vote panel files
-			$paneldir = 'config/panels/';
-			$dir = opendir($paneldir);
-			$files = array();
-			while (($file = readdir($dir)) !== false) {
-				if (strtolower(substr($file, 0, 4)) == 'vote' && strtolower(substr($file, -4)) == '.xml') {
-					$files[] = substr($file, 4, strlen($file)-8);
-				}
-			}
-			closedir($dir);
-			sort($files, SORT_STRING);
-			if (count($files) > 10) {
-				$files = array_slice($files, 0, 10);  // maximum 10 templates
-				trigger_error('Too many vote panel templates - maximum 10!', E_USER_WARNING);
-			}
-			// sneak in standard entries
-			$files[] = 'default';
-			$files[] = 'off';
-
-			$head = 'Currently available vote panels:';
-			$list = array();
-			$pid = 1;
-			$lines = 0;
-			$player->msgs = array();
-			$player->msgs[0] = array(1, $head, array(0.8, 0.1, 0.7), array('Icons128x128_1', 'Custom'));
-			foreach ($files as $file) {
-				// store panel in player object for jukeboxing
-				$trkarr = array();
-				$trkarr['panel'] = $file;
-				$player->maplist[] = $trkarr;
-
-				$list[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) . '.',
-				                array('{#black}' . $file, $pid+36));  // action id
-				$pid++;
-				if (++$lines > 14) {
-					$player->msgs[] = $list;
-					$lines = 0;
-					$list = array();
-				}
-			}
-
-			// add if last batch exists
-			if (!empty($list)) {
-				$player->msgs[] = $list;
-			}
-
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-		}
-		else if ($chat_parameter != '') {
-			$panel = $chat_parameter;
-			if (is_numeric($panel) && $panel > 0) {
-				$pid = ltrim($panel, '0');
-				$pid--;
-				if (array_key_exists($pid, $player->maplist) && isset($player->maplist[$pid]['panel'])) {
-					$panel = $player->maplist[$pid]['panel'];
-				}
-			}
-			if ($panel == 'off') {
-				$player->panels['vote'] = '';
-				$message = '{#server}» Vote panel disabled!';
-				$this->setPanel($login, 'vote', '');
-			}
-			else if ($panel == 'default') {
-				$player->panels['vote'] = $this->replacePanelBG($this->panels['vote'], $player->panelbg);
-				$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
-				$message = '{#server}» Vote panel reset to server default {#highlite}' . substr($this->settings['vote_panel'], 4) . '{#server} !';
-				$this->setPanel($login, 'vote', $this->settings['vote_panel']);
-			}
-			else {
-				// add file prefix
-				if (strtolower(substr($panel, 0, 4)) != 'vote')
-					$panel = 'Vote' . $panel;
-				$panel_file = 'config/panels/' . $panel . '.xml';
-				// load new panel
-				if ($paneldata = @file_get_contents($panel_file)) {
-					$player->panels['vote'] = $this->replacePanelBG($paneldata, $player->panelbg);
-					$this->display_votepanel($aseco, $player, $aseco->formatColors('{#vote}') . 'Yes - F5', '$333No - F6', 2000);
-					$message = '{#server}» Vote panel {#highlite}' . $chat_parameter . '{#server} selected!';
-					$this->setPanel($login, 'vote', $panel);
-				} else {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read vote panel file ['. $panel_file .']!', E_USER_WARNING);
-					$message = '{#server}» {#error}No valid vote panel file, use {#highlite}$i /votepanel list {#error}!';
-				}
-			}
-			$aseco->sendChatMessage($message, $login);
-		}
-		else {
-			$message = '{#server}» {#error}No vote panel specified, use {#highlite}$i /votepanel help {#error}!';
-			$aseco->sendChatMessage($message, $login);
-		}
 	}
 
 	/*
@@ -304,7 +173,6 @@ class PluginPanels extends Plugin {
 
 				$this->init_playerpanels($aseco, $player);
 				$this->load_admpanel($aseco, $player);
-				$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
 			}
 			else {
 				// add file prefix
@@ -319,7 +187,6 @@ class PluginPanels extends Plugin {
 
 					$this->init_playerpanels($aseco, $player);
 					$this->load_admpanel($aseco, $player);
-					$this->display_votepanel($aseco, $player, $aseco->formatColors('{#emotic}') . 'Yes - F5', '$333No - F6', 2000);
 				}
 				else {
 					// Could not parse XML file
@@ -351,9 +218,6 @@ class PluginPanels extends Plugin {
 			// set admin panel (none = no panel)
 			$this->settings['admin_panel'] = $settings['ADMIN_PANEL'][0];
 
-			// set vote panel (none = no panel)
-			$this->settings['vote_panel'] = $settings['VOTE_PANEL'][0];
-
 			// display individual stats panels at scoreboard?
 			$this->settings['sb_stats_panels'] = $aseco->string2bool($settings['SB_STATS_PANELS'][0]);
 
@@ -365,19 +229,18 @@ class PluginPanels extends Plugin {
 
 			// initialise default panel background
 			$panelbg_file = 'config/panels/'. $this->settings['panel_bg'] .'.xml';
-			$aseco->console('[Config] Load default panel background [{1}]', $panelbg_file);
+			$aseco->console('[Panel] Load default panel background [{1}]', $panelbg_file);
 			// load default background
 			if (($this->panelbg = $aseco->parser->xmlToArray($panelbg_file)) && isset($this->panelbg['PANEL']['BACKGROUND'][0])) {
 				$this->panelbg = $this->panelbg['PANEL']['BACKGROUND'][0];
 			}
 			else {
 				// Could not parse XML file
-				trigger_error('[Config] Could not read/parse panel background file ['. $panelbg_file .']!', E_USER_ERROR);
+				trigger_error('[Panel] Could not read/parse panel background file ['. $panelbg_file .']!', E_USER_ERROR);
 			}
 
 			$this->panels = array();
 			$this->panels['admin'] = '';
-			$this->panels['vote'] = '';
 
 
 			// check for default admin panel
@@ -388,17 +251,6 @@ class PluginPanels extends Plugin {
 				if (!$this->panels['admin'] = @file_get_contents($panel_file)) {
 					// Could not read XML file
 					trigger_error('[Panel] Could not read admin panel file ['. $panel_file .']!', E_USER_ERROR);
-				}
-			}
-
-			// check for default vote panel
-			if ($this->settings['vote_panel'] != '') {
-				$panel_file = 'config/panels/' . $this->settings['vote_panel'] . '.xml';
-				$aseco->console('[Panel] Load default vote panel [{1}]', $panel_file);
-				// load default panel
-				if (!$this->panels['vote'] = @file_get_contents($panel_file)) {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read vote panel file ['. $panel_file .']!', E_USER_ERROR);
 				}
 			}
 		}
@@ -493,7 +345,6 @@ class PluginPanels extends Plugin {
 
 		// Set default window style, panels & background
 		$player->panels['admin'] = $this->replacePanelBG($this->panels['admin'], $this->panelbg);
-		$player->panels['vote'] = $this->replacePanelBG($this->panels['vote'], $this->panelbg);
 		$player->panelbg = $this->panelbg;
 
 		$this->init_playerpanels($aseco, $player);
@@ -509,33 +360,14 @@ class PluginPanels extends Plugin {
 	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
 	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
 
-		// leave actions outside -7 - -100 & 7201 - 7222 & 7231 - 7262 to other handlers
 		$action = (int) $answer[2];
-		if ($action >= -100 && $action <= -49) {
-			// get player & records panel
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
-				$panel = $player->maplist[abs($action)-49]['panel'];
-
-				// select new panel
-				$aseco->releaseChatCommand('/recpanel '. $panel, $player->login);
-			}
-		}
-		else if ($action >= -48 && $action <= -7) {
+		if ($action >= -48 && $action <= -7) {
 			// get player & admin panel
 			if ($player = $aseco->server->players->getPlayer($answer[1])) {
 				$panel = $player->maplist[abs($action)-7]['panel'];
 
 				// select new panel
 				$aseco->releaseChatCommand('/admin panel '. $panel, $player->login);
-			}
-		}
-		else if ($action >= 37 && $action <= 48) {
-			// get player & vote panel
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
-				$panel = $player->maplist[$action-37]['panel'];
-
-				// select new panel
-				$aseco->releaseChatCommand('/votepanel '. $panel, $player->login);
 			}
 		}
 		else if ($action >= 7231 && $action <= 7262) {
@@ -580,18 +412,6 @@ class PluginPanels extends Plugin {
 			else {
 				$player->panels['admin'] = '';
 			}
-
-			if ($panels['vote'] != '') {
-				$panel_file = 'config/panels/' . $panels['vote'] . '.xml';
-				if (!$player->panels['vote'] = @file_get_contents($panel_file)) {
-					// Could not read XML file
-					trigger_error('[Panel] Could not read vote panel file ['. $panel_file .']!', E_USER_WARNING);
-				}
-				$player->panels['vote'] = $this->replacePanelBG($player->panels['vote'], $player->panelbg);
-			}
-			else {
-				$player->panels['vote'] = '';
-			}
 		}
 	}
 
@@ -606,32 +426,6 @@ class PluginPanels extends Plugin {
 		// check for any admin
 		if ($aseco->isAnyAdmin($player) && $player->panels['admin'] != '') {
 			$this->display_adminpanel($aseco, $player);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function allvotepanels_on ($aseco, $login, $ycolor) {
-		// enable all vote panels
-		foreach ($aseco->server->players->player_list as $player) {
-			// check if vote starter hasn't auto-voted
-			if ($player->login != $login || (isset($aseco->plugins['PluginRaspVotes']) && !$aseco->plugins['PluginRaspVotes']->auto_vote_starter)) {
-				// check for spectators
-				if ($player->isspectator) {
-					// check whether they can vote (no function keys)
-					if ((isset($aseco->plugins['PluginRaspVotes']) && $aseco->plugins['PluginRaspVotes']->allow_spec_voting) || $aseco->isAnyAdmin($player)) {
-						$this->display_votepanel($aseco, $player, $ycolor . 'Yes', '$333No', 0);
-					}
-				}
-				else {
-					// player, so function keys work
-					$this->display_votepanel($aseco, $player, $ycolor . 'Yes - F5', '$333No - F6', 0);
-				}
-			}
 		}
 	}
 
@@ -779,17 +573,17 @@ class PluginPanels extends Plugin {
 		if (isset($panels)) {
 			$panel = explode('/', $panels);
 			$panels = array();
-			$panels['admin'] = $panel[0];
-			$panels['vote'] = $panel[3];
+			if (isset($panel[0])) {
+				$panels['admin'] = $panel[0];
+			}
 			return $panels;
 		}
 		else {
 			// Setup defaults
 			$panels = array();
 			$panels['admin'] = $this->settings['admin_panel'];
-			$panels['vote'] = $this->settings['vote_panel'];
 
-			$settings = $panels['admin'] .'///'. $panels['vote'];
+			$settings = $panels['admin'] .'///';
 			$this->storePlayerData($player, 'Panels', $settings);
 
 			return $panels;
@@ -809,7 +603,7 @@ class PluginPanels extends Plugin {
 		$panels = $this->getPanels($login);
 		$panels[$type] = $panel;
 
-		$settings = $panels['admin'] .'///'. $panels['vote'];
+		$settings = $panels['admin'] .'///';
 
 		$player = $aseco->server->players->getPlayer($login);
 		$this->storePlayerData($player, 'Panels', $settings);
@@ -897,65 +691,6 @@ class PluginPanels extends Plugin {
 
 		$xml = '<manialink id="UASECO-3"></manialink>';
 		$aseco->addManialink($xml, $login, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Displays a Vote panel
-	 *
-	 * $player : player to send panel to
-	 * $yesstr : string for the Yes button
-	 * $nostr  : string for the No button
-	 * $timeout: timeout for temporary panel (used only by /votepanel list)
-	 */
-	public function display_votepanel ($aseco, $player, $yesstr, $nostr, $timeout) {
-
-		// build manialink
-		$xml = str_replace(
-			array('%YES%', '%NO%'),
-			array($yesstr, $nostr),
-			$player->panels['vote']
-		);
-
-		// disable panel once clicked
-		$aseco->addManialink($xml, $player->login, $timeout, true);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Disables a Vote panel
-	 *
-	 * $login: player login to disable panel for
-	 */
-	public function votepanel_off ($aseco, $login) {
-
-		$xml = '<manialink id="UASECO-5"></manialink>';
-		$aseco->addManialink($xml, $login, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	/**
-	 * Disables all Vote panels
-	 */
-	public function allvotepanels_off ($aseco) {
-
-		$xml = '<manialink id="UASECO-5"></manialink>';
-		$aseco->addManialink($xml, false, 0, false);
 	}
 
 	/*

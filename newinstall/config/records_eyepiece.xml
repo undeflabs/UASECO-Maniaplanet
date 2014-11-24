@@ -203,6 +203,12 @@
 
 		<!-- Set to 'true' if you want to see the warm-up progression displayed on the right of the screen during warm-up, otherwise set 'false' -->
 		<warmup>false</warmup>
+
+		<!-- Set to 'true' if you want to see the progression box displayed on the top of the screen at the end of the map -->
+		<endmap_ladder_recap>false</endmap_ladder_recap>
+
+		<!-- Set to 'true' if you want to see the Lap indicator on the right of the screen on multilaps map -->
+		<multilap_info>false</multilap_info>
 	</ui_properties>
 
 

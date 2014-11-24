@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-18
+ * Date:	2014-11-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -366,8 +366,11 @@ class Helper {
 					$this->client->query('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
 				}
 				catch (Exception $exception) {
-					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendManialink(): SendDisplayManialinkPageToLogin: '. $logins);
-					$this->console('[DUMP] '. $widgets);
+					$errmsg = $exception->getMessage();
+					if ($errmsg != 'Login unknown.') {
+						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - sendManialink(): SendDisplayManialinkPageToLogin: '. $logins);
+						$this->console('[DUMP] '. $widgets);
+					}
 				}
 			}
 			else {
@@ -407,7 +410,11 @@ class Helper {
 					$this->client->addCall('SendDisplayManialinkPageToLogin', $logins, $xml, ($timeout * 1000), $hideclick);
 				}
 				catch (Exception $exception) {
-					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - addManialink(): SendDisplayManialinkPageToLogin: '. $logins);
+					$errmsg = $exception->getMessage();
+					if ($errmsg != 'Login unknown.') {
+						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - addManialink(): SendDisplayManialinkPageToLogin: '. $logins);
+						$this->console('[DUMP] '. $widgets);
+					}
 				}
 			}
 			else {
@@ -461,7 +468,10 @@ class Helper {
 					$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $logins);
 				}
 				catch (Exception $exception) {
-					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendChatMessage(): ChatSendServerMessageToLogin: '. $logins);
+					$errmsg = $exception->getMessage();
+					if ($errmsg != 'Login unknown.') {
+						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - sendChatMessage(): ChatSendServerMessageToLogin: '. $logins);
+					}
 				}
 			}
 			else {
@@ -470,7 +480,7 @@ class Helper {
 					$this->client->query('ChatSendServerMessage', $this->formatColors($message));
 				}
 				catch (Exception $exception) {
-					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendChatMessage(): ChatSendServerMessage ');
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - sendChatMessage(): ChatSendServerMessage');
 				}
 			}
 		}

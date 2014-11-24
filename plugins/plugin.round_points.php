@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-05
+ * Date:	2014-11-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -58,7 +58,6 @@ class PluginRoundPoints extends Plugin {
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onRestartMap',	'onRestartMap');
 
 		$this->registerChatCommand('rpoints', 'chat_rpoints', 'Shows current Rounds points system.', Player::PLAYERS);
 
@@ -245,21 +244,6 @@ class PluginRoundPoints extends Plugin {
 				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
 			}
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onRestartMap ($aseco, $uid) {
-
-		// On restart it is required to set the round points again,
-		// because this resets the most settings in a Modescript,
-		// "Rounds_SetPointsRepartition" is one of it.
-		// Details: http://forum.maniaplanet.com/viewtopic.php?p=221734#p221734
-		$this->onSync($aseco);
 	}
 
 	/*

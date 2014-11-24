@@ -20,7 +20,7 @@
 	<plugin>plugin.donate.php</plugin>
 	<plugin>plugin.rounds.php</plugin>
 	<plugin>plugin.round_points.php</plugin>
-	<plugin>plugin.mania_exchange_info.php</plugin>
+	<plugin>plugin.mania_exchange.php</plugin>
 	<plugin>plugin.mistral_idlekick.php</plugin>
 	<plugin>plugin.rasp_jukebox.php</plugin>
 <!--	<plugin>plugin.rasp_karma.php</plugin>		-->

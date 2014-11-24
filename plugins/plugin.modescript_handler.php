@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-05
+ * Date:	2014-11-20
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -172,6 +172,8 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 
 		// Send the UI settings
 		$this->setupUserInterface();
@@ -742,6 +744,8 @@ class PluginModescriptHandler extends Plugin {
 		$settings .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Z'][0]) .'" />';
 		$settings .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'" />';
 		$settings .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$settings .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'" />';
+		$settings .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'" />';
 		$settings .= '</ui_properties>';
 
 		$aseco->client->query('TriggerModeScriptEvent', 'UI_SetProperties', $settings);

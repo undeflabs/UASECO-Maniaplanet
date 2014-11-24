@@ -7,7 +7,7 @@
 			<visible>true</visible>
 		</map_info>
 
-		<!-- ... -->
+		<!-- Only visible in solo modes, it hides the medal/ghost selection UI -->
 		<opponents_info>
 			<visible>true</visible>
 		</opponents_info>
@@ -120,10 +120,21 @@
 				<z>0.0</z>
 			</position>
 		</warmup>
+
+		<!-- Ladder progression box displayed on the top of the screen at the end of the map -->
+		<endmap_ladder_recap>
+			<visible>false</visible>
+		</endmap_ladder_recap>
+
+		<!-- Laps count displayed on the right of the screen on multilaps map -->
+		<multilap_info>
+			<visible>false</visible>
+		</multilap_info>
 	</ui_properties>
 
 
 
+	<!-- Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html -->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
 		<chat_time>15</chat_time>

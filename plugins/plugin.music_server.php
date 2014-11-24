@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
+ * Date:	2014-11-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1017,7 +1017,7 @@ class PluginMusicServer extends Plugin {
 		);
 
 		$fh = @fopen($url, 'rb', false, $stream_context);
-		fclose($fh);
+		@fclose($fh);
 
 		// http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 		$headers = get_headers($url);

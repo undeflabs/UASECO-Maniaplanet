@@ -6,7 +6,7 @@
  *	- SmallScoresTable -> display the player ranking at the end of the round
  *	- Chrono -> display a chrono at the bottom of the screen
  */
-#Const	Version		"2014-11-04"
+#Const	Version		"2014-11-12"
 #Const	ScriptName	"UI.Script.txt"
 
 #Include "TextLib" as TL
@@ -1379,6 +1379,8 @@ Void Private_SetVisibility(Text _Name, Text _Visible) {
 		case "checkpoint_time"			: SetModuleVisibility("CheckpointTime", !Hide);
 		case "personal_best_and_rank"	: SetModuleVisibility("PrevBestTime", !Hide);
 		case "warmup"					: WarmUp::SetLayerVisibility(!Hide);
+		case "endmap_ladder_recap"		: UIManager.UIAll.OverlayHideEndMapLadderRecap = Hide;
+		case "multilap_info"			: UIManager.UIAll.OverlayHideMultilapInfos = Hide;
 	}
 }
 
@@ -1458,6 +1460,8 @@ Text Private_GetProperties() {
 	<checkpoint_time visible="{{{Private_BooleanToText(GetModuleVisibility("CheckpointTime"))}}}" pos="{{{Private_Vec3ToText(GetModulePosition("CheckpointTime"))}}}" />
 	<chat_avatar visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayChatHideAvatar)}}}" />
 	<warmup visible="{{{Private_BooleanToText(WarmUp::GetLayerVisibility())}}}" pos="{{{Private_Vec3ToText(WarmUp::GetLayerPosition())}}}" />
+	<endmap_ladder_recap visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideEndMapLadderRecap)}}}" />
+	<multilap_info visible="{{{Private_BooleanToText(!UIManager.UIAll.OverlayHideMultilapInfos)}}}" />
 </ui_properties>""";
 }
 

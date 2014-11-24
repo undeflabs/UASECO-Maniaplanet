@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-11-16
+ * Date:		2014-11-23
  * Copyright:		2009 - 2014 by undef.de
  * System:		UASECO/1.0.0+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -34,7 +34,7 @@
  *  - plugins/plugin.modescript_handler.php	Required
  *  - plugins/plugin.local_records.php		Required, for Datasbase access and LocalRecordsWidget
  *  - plugins/plugin.welcome_center.php		Required, for TopVisitors
- *  - plugins/plugin.mania_exchange_info.php	Required, for MapWidget, MXMapInfoWindow and <placement>-Placeholder
+ *  - plugins/plugin.mania_exchange.php		Required, for MapWidget, MXMapInfoWindow and <placement>-Placeholder
  *  - plugins/plugin.rasp_jukebox.php		Required, for MaplistWindow
  *  - plugins/plugin.rasp.php			Required, only if you enable the TopRankingsWidget (enabled by default)
  *  - plugins/plugin.dedimania.php		Required, only if you enable the DedimaniaWidget (enabled by default)
@@ -206,7 +206,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginWelcomeCenter',		Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginManiaExchangeInfo',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginManiaExchange',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginRasp',			Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginRaspJukebox',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDedimania',			Dependence::WANTED,	'1.0.0', null);
@@ -326,6 +326,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]) == 'TRUE')				? true : false);
 		$this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]) == 'TRUE')				? true : false);
 		$this->config['UI_PROPERTIES'][0]['WARMUP'][0]					= ((strtoupper($this->config['UI_PROPERTIES'][0]['WARMUP'][0]) == 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0]) == 'TRUE')			? true : false);
+		$this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0]) == 'TRUE')			? true : false);
 		$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]			= ((strtoupper($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]) == 'TRUE')		? true : false);
 		$this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]				= ((strtoupper($this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]) == 'TRUE')				? true : false);
 		$this->config['FEATURES'][0]['NUMBER_FORMAT'][0]				= strtolower($this->config['FEATURES'][0]['NUMBER_FORMAT'][0]);
@@ -1170,6 +1172,22 @@ class PluginRecordsEyepiece extends Plugin {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('warmup', true);
 		}
 
+		// Setup 'endmap_ladder_recap'
+		if ($this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0] == false) {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('endmap_ladder_recap', false);
+		}
+		else {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('endmap_ladder_recap', true);
+		}
+
+		// Setup 'multilap_info'
+		if ($this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0] == false) {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('multilap_info', false);
+		}
+		else {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('multilap_info', true);
+		}
+
 		// Send the UI settings
 		$aseco->plugins['PluginModescriptHandler']->setupUserInterface();
 
@@ -1307,7 +1325,7 @@ class PluginRecordsEyepiece extends Plugin {
 			if ($aseco->isAnyAdminL($login)) {
 
 				if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
-					$message = '{#server}>> There are outstanding disbursements in the amount of ';
+					$message = '{#server}» There are outstanding disbursements in the amount of ';
 					$outstanding = 0;
 					foreach ($this->cache['PlayerWinnings'] as $login => $struct) {
 						$outstanding += $this->cache['PlayerWinnings'][$login]['FinishPayment'];
@@ -1316,7 +1334,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$message .= $this->formatNumber($outstanding, 0) .' Planets.';
 				}
 				else {
-					$message = '{#server}>> WinningPayoutWidget is not enabled, no payouts to do!';
+					$message = '{#server}» WinningPayoutWidget is not enabled, no payouts to do!';
 				}
 
 				// Show message
@@ -1477,44 +1495,44 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->sendManialink($xml, false, 0);
 				}
 
-				$message = '{#admin}>> Reload of the configuration "config/records_eyepiece.xml" done.';
+				$message = '{#admin}» Reload of the configuration "config/records_eyepiece.xml" done.';
 			}
 			else {
-				$message = '{#admin}>> Can not reload the configuration at Score!';
+				$message = '{#admin}» Can not reload the configuration at Score!';
 			}
 		}
 		else if ( preg_match("/^lfresh \d+$/i", $chat_parameter) ) {
 
 			$param = preg_split("/^lfresh (\d+)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-			$message = '{#admin}>> Set <refresh_interval> (normal mode) to "'. $param[0] .'" sec.';
+			$message = '{#admin}» Set <refresh_interval> (normal mode) to "'. $param[0] .'" sec.';
 			$this->config['FEATURES'][0]['REFRESH_INTERVAL'][0] = $param[0];
 
 		}
 		else if ( preg_match("/^hfresh \d+$/i", $chat_parameter) ) {
 
 			$param = preg_split("/^hfresh (\d+)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-			$message = '{#admin}>> Set <refresh_interval> (nice mode) to "'. $param[0] .'" sec.';
+			$message = '{#admin}» Set <refresh_interval> (nice mode) to "'. $param[0] .'" sec.';
 			$this->config['NICEMODE'][0]['REFRESH_INTERVAL'][0] = $param[0];
 
 		}
 		else if ( preg_match("/^llimit \d+$/i", $chat_parameter) ) {
 
 			$param = preg_split("/^llimit (\d+)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-			$message = '{#admin}>> Set <lower_limit> (nice mode) to "'. $param[0] .'" Players.';
+			$message = '{#admin}» Set <lower_limit> (nice mode) to "'. $param[0] .'" Players.';
 			$this->config['NICEMODE'][0]['LIMITS'][0]['LOWER_LIMIT'][0] = $param[0];
 
 		}
 		else if ( preg_match("/^ulimit \d+$/i", $chat_parameter) ) {
 
 			$param = preg_split("/^ulimit (\d+)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-			$message = '{#admin}>> Set <upper_limit> (nice mode) to "'. $param[0] .'" Players.';
+			$message = '{#admin}» Set <upper_limit> (nice mode) to "'. $param[0] .'" Players.';
 			$this->config['NICEMODE'][0]['LIMITS'][0]['UPPER_LIMIT'][0] = $param[0];
 
 		}
 		else if ( preg_match("/^forcenice (true|false)$/i", $chat_parameter) ) {
 
 			$param = preg_split("/^forcenice (true|false)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-			$message = '{#admin}>> Set <nicemode><force> to "'. $param[0] .'".';
+			$message = '{#admin}» Set <nicemode><force> to "'. $param[0] .'".';
 			$this->config['NICEMODE'][0]['FORCE'][0]	= ((strtoupper($param[0]) == 'TRUE') ? true : false);
 			$this->config['States']['NiceMode']	= ((strtoupper($param[0]) == 'TRUE') ? true : false);
 
@@ -1526,7 +1544,7 @@ class PluginRecordsEyepiece extends Plugin {
 		else if ( preg_match("/^playermarker (true|false)$/i", $chat_parameter) ) {
 
 			$param = preg_split("/^playermarker (true|false)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
-			$message = '{#admin}>> Set <features><mark_online_player_records> to "'. $param[0] .'".';
+			$message = '{#admin}» Set <features><mark_online_player_records> to "'. $param[0] .'".';
 			$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]	= ((strtoupper($param[0]) == 'TRUE') ? true : false);
 
 			// Lets refresh the Widgets
@@ -1534,7 +1552,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->config['States']['LocalRecords']['UpdateDisplay']		= true;
 		}
 		else {
-			$message = '{#admin}>> Did not found any possible parameter to set!';
+			$message = '{#admin}» Did not found any possible parameter to set!';
 		}
 
 

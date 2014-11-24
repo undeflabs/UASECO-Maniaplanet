@@ -6,12 +6,12 @@
  * http://www.undef.name/UASECO/Mania-Karma.php
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Version:		2.0.0
- * Date:		2014-11-02
- * Copyright:		2009 - 2014 by undef.de
- * System:		UASECO/1.0.0+
- * Game:		ManiaPlanet Trackmania2 (TM2)
+ * Author:	undef.de
+ * Version:	2.0.0
+ * Date:	2014-11-24
+ * Copyright:	2009 - 2014 by undef.de
+ * System:	UASECO/1.0.0+
+ * Game:	ManiaPlanet Trackmania2 (TM2)
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -410,17 +410,17 @@ class PluginManiaKarma extends Plugin {
 
 
 		if ((string)$xmlcfg->urls->api_auth == '') {
-			trigger_error("[ManiaKarma] <urls><api_auth> is empty in config file 'mania_karma.xml'!", E_USER_ERROR);
+			trigger_error("[ManiaKarma] <urls><api_auth> is empty in config file 'config/mania_karma.xml'!", E_USER_ERROR);
 		}
 
 		if ((string)$xmlcfg->nation == '') {
-			trigger_error("[ManiaKarma] <nation> is empty in config file 'mania_karma.xml'!", E_USER_ERROR);
+			trigger_error("[ManiaKarma] <nation> is empty in config file 'config/mania_karma.xml'!", E_USER_ERROR);
 		}
 		else if ((string)$xmlcfg->nation == 'YOUR_SERVER_NATION') {
-			trigger_error("[ManiaKarma] <nation> is not set in config file 'mania_karma.xml'! Please change 'YOUR_SERVER_NATION' with your server nation code.", E_USER_ERROR);
+			trigger_error("[ManiaKarma] <nation> is not set in config file 'config/mania_karma.xml'! Please change 'YOUR_SERVER_NATION' with your server nation code.", E_USER_ERROR);
 		}
 		else if (! $iso3166Alpha3[strtoupper((string)$xmlcfg->nation)][1] ) {
-			trigger_error("[ManiaKarma] <nation> is not valid in config file 'mania_karma.xml'! Please change <nation> to valid ISO-3166 ALPHA-3 nation code!", E_USER_ERROR);
+			trigger_error("[ManiaKarma] <nation> is not valid in config file 'config/mania_karma.xml'! Please change <nation> to valid ISO-3166 ALPHA-3 nation code!", E_USER_ERROR);
 		}
 
 
@@ -851,7 +851,7 @@ class PluginManiaKarma extends Plugin {
 		else if (strtoupper($chat_parameter) == 'RELOAD') {
 			if ($aseco->isMasterAdmin($player)) {
 				$aseco->console('[ManiaKarma] MasterAdmin '. $player->login .' reloads the configuration.');
-				$message = '{#admin}Reloading the configuration "mania_karma.xml" now.';
+				$message = '{#admin}» Reload of the configuration "config/mania_karma.xml" done.';
 				$this->onSync($aseco);
 			}
 		}
@@ -3080,8 +3080,8 @@ EOL;
 		}
 
 		// Close reminder-window if there is one for this Player
-		if ($this->getPlayerData($command['author'], 'ReminderWindow') == true) {
-			$this->closeReminderWindow($command['author']);
+		if ($this->getPlayerData($caller, 'ReminderWindow') == true) {
+			$this->closeReminderWindow($caller);
 		}
 	}
 
@@ -3767,19 +3767,19 @@ EOL;
 				else if ($type == 'EXPORT') {
 					if ($response['Code'] == 200) {
 						$this->config['import_done'] = true;		// Set to true, otherwise only after restart UASECO knows that
-						$message = '{#server}>> {#admin}Export done. Thanks for supporting mania-karma.com!';
+						$message = '{#server}» {#admin}Export done. Thanks for supporting mania-karma.com!';
 						$aseco->sendChatMessage($message, $target->login);
 					}
 					else if ($response['Code'] == 406) {
-						$message = '{#server}>> {#error}Export rejected! Please check your <login> and <nation> in config file "mania_karma.xml"!';
+						$message = '{#server}» {#error}Export rejected! Please check your <login> and <nation> in config file "config/mania_karma.xml"!';
 						$aseco->sendChatMessage($message, $target->login);
 					}
 					else if ($response['Code'] == 409) {
-						$message = '{#server}>> {#error}Export rejected! Export was already done, allowed only one time!';
+						$message = '{#server}» {#error}Export rejected! Export was already done, allowed only one time!';
 						$aseco->sendChatMessage($message, $target->login);
 					}
 					else {
-						$message = '{#server}>> {#error}Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .']' ."\n\r";
+						$message = '{#server}» {#error}Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .']' ."\n\r";
 						$aseco->sendChatMessage($message, $target->login);
 					}
 				}
@@ -4178,12 +4178,12 @@ EOL;
 		global $aseco;
 
 		if ($this->config['import_done'] != false) {
-			$message = "{#server}>> {#admin}Export of local votes already done, skipping...";
+			$message = "{#server}» {#admin}Export of local votes already done, skipping...";
 			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
-		$message = "{#server}>> {#admin}Collecting players with their votes on Maps...";
+		$message = "{#server}» {#admin}Collecting players with their votes on Maps...";
 		$aseco->sendChatMessage($message, $player->login);
 
 		// Generate the content for this export
@@ -4225,23 +4225,23 @@ EOL;
 			$res->free_result();
 		}
 
-		$message = "{#server}>> {#admin}Found ". number_format($count, 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." votes in database.";
+		$message = "{#server}» {#admin}Found ". number_format($count, 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." votes in database.";
 		$aseco->sendChatMessage($message, $player->login);
 
 
 		// gzip the CSV
-		$message = "{#server}>> {#admin}Compressing collected data...";
+		$message = "{#server}» {#admin}Compressing collected data...";
 		$aseco->sendChatMessage($message, $player->login);
 		$csv = gzencode($csv, 9, FORCE_GZIP);
 
 
 		// Encode them Base64
-		$message = "{#server}>> {#admin}Encoding data...";
+		$message = "{#server}» {#admin}Encoding data...";
 		$aseco->sendChatMessage($message, $player->login);
 		$csv = base64_encode($csv);
 
 
-		$message = "{#server}>> {#admin}Sending now the export with size of ". number_format(strlen($csv), 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." bytes...";
+		$message = "{#server}» {#admin}Sending now the export with size of ". number_format(strlen($csv), 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." bytes...";
 		$aseco->sendChatMessage($message, $player->login);
 
 		// Generate the url for the Import-Request

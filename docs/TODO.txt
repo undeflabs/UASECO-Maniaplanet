@@ -1,3 +1,10 @@
+Dedimania
+~~~~~~~~~
+ - In Rounds.Script.txt multilap maps are required to run the min. required laps:
+   Rounds final time. And for a multilap challenge only if the number of laps is the main
+   number of laps of the map, and not a different number (forced using RoundForcedLaps for example)!
+
+
 UASECO
 ~~~~~~
  - Retrieve MX-Infos for NextMap

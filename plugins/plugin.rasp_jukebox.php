@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
+ * Date:	2014-11-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -39,7 +39,6 @@
  *  - plugins/chat.records.php
  *  - plugins/plugin.map.php
  *  - plugins/plugin.rasp_votes.php
- *  - plugins/plugin.panels.php
  *
  */
 
@@ -79,7 +78,6 @@ class PluginRaspJukebox extends Plugin {
 		$this->addDependence('PluginMap',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDedimania',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
 
 		// handles action id's "101"-"2000" for jukeboxing max. 1900 maps
 		// handles action id's "-101"-"-2000" for listing max. 1900 authors
@@ -424,11 +422,6 @@ class PluginRaspJukebox extends Plugin {
 				$aseco->sendChatMessage($message);
 			}
 			$this->mxadd = array();
-
-			// disable all vote panels
-			if ( isset($aseco->plugins['PluginPanels']) ) {
-				$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-			}
 		}
 
 		// reset UID check
@@ -1384,11 +1377,6 @@ class PluginRaspJukebox extends Plugin {
 
 				// register this player's vote
 				$this->plrvotes[] = $login;
-
-				// disable panel in case /y was used to vote
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->votepanel_off($aseco, $login);
-				}
 			}
 			else {
 				// pass, so add it to jukebox
@@ -1415,11 +1403,6 @@ class PluginRaspJukebox extends Plugin {
 
 				// clear for next vote
 				$this->mxadd = array();
-
-				// disable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-				}
 
 				// throw 'jukebox changed' event
 				$aseco->releaseEvent('onJukeboxChanged', array('add', $this->jukebox[$uid]));
@@ -1448,11 +1431,6 @@ class PluginRaspJukebox extends Plugin {
 
 				// register this player's vote
 				$this->plrvotes[] = $login;
-
-				// disable panel in case /y was used to vote
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->votepanel_off($aseco, $login);
-				}
 			}
 			else {
 				// show chat message
@@ -1607,11 +1585,6 @@ class PluginRaspJukebox extends Plugin {
 
 				// clear for next vote
 				$aseco->plugins['PluginRaspVotes']->chatvote = array();
-
-				// disable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-				}
 			}
 		}
 		else {

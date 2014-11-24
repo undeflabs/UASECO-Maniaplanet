@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-18
+ * Date:	2014-11-24
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -195,7 +195,6 @@ class PluginChatAdmin extends Plugin {
 			'specfree'			=> 'Forces spectator into free mode',
 			'panel'				=> 'Selects admin panel (see: /admin panel help)',
 			'admpanel'			=> 'Selects default admin panel',
-			'votepanel'			=> 'Selects default vote panel',
 			'panelbg'			=> 'Selects default panel background',
 			'planets'			=> 'Shows server\'s planets amount',
 			'pay'				=> 'Pays server planets to login',
@@ -840,11 +839,6 @@ class PluginChatAdmin extends Plugin {
 				if ( isset($aseco->plugins['PluginRaspVotes']) ) {
 					if (!empty($aseco->plugins['PluginRaspVotes']->chatvote) && $aseco->plugins['PluginRaspVotes']->chatvote['type'] == 2) {
 						$aseco->plugins['PluginRaspVotes']->chatvote = array();
-
-						// disable all vote panels
-						if ( isset($aseco->plugins['PluginPanels']) ) {
-							$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-						}
 					}
 				}
 
@@ -1519,11 +1513,6 @@ class PluginChatAdmin extends Plugin {
 			}
 			if ( isset($aseco->plugins['PluginRaspVotes']) ) {
 				$aseco->plugins['PluginRaspVotes']->chatvote = array();
-
-				// disable all vote panels
-				if ( isset($aseco->plugins['PluginPanels']) ) {
-					$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-				}
 			}
 
 			// log console message
@@ -1545,11 +1534,6 @@ class PluginChatAdmin extends Plugin {
 			if ( isset($aseco->plugins['PluginRaspVotes']) ) {
 				if (!empty($aseco->plugins['PluginRaspVotes']->chatvote) && $aseco->plugins['PluginRaspVotes']->chatvote['type'] == 0) {
 					$aseco->plugins['PluginRaspVotes']->chatvote = array();
-
-					// disable all vote panels
-					if ( isset($aseco->plugins['PluginPanels']) ) {
-						$aseco->plugins['PluginPanels']->allvotepanels_off($aseco);
-					}
 				}
 			}
 
@@ -3511,55 +3495,6 @@ class PluginChatAdmin extends Plugin {
 				else {
 					// Could not read XML file
 					$message = '{#server}» {#error}No valid admin panel file, use {#highlite}$i /admin panel list {#error}!';
-					$aseco->sendChatMessage($message, $login);
-				}
-			}
-		}
-		else if ($command['params'][0] == 'votepanel' && $command['params'][1] != '') {
-			/**
-			 * Selects default vote panel.
-			 */
-
-			if (strtolower($command['params'][1]) == 'off') {
-				$aseco->panels['vote'] = '';
-				$aseco->settings['vote_panel'] = 'Off';
-
-				// log console message
-				$aseco->console('[Admin] {1} [{2}] reset default vote panel', $logtitle, $login);
-
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} reset default vote panel',
-					$chattitle,
-					$admin->nickname
-				);
-				$aseco->sendChatMessage($message);
-			}
-			else {
-				// added file prefix
-				$panel = $command['params'][1];
-				if (strtolower(substr($command['params'][1], 0, 4)) != 'vote') {
-					$panel = 'Vote'. $panel;
-				}
-				$panel_file = 'panels/'. $panel .'.xml';
-
-				// load default panel
-				if ($panel = @file_get_contents($panel_file)) {
-					$aseco->panels['vote'] = $panel;
-
-					// log console message
-					$aseco->console('[Admin] {1} [{2}] selects default vote panel [{3}]', $logtitle, $login, $command['params'][1]);
-
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} selects default vote panel {#highlite}{3}',
-						$chattitle,
-						$admin->nickname,
-						$command['params'][1]
-					);
-					$aseco->sendChatMessage($message);
-				}
-				else {
-					// Could not read XML file
-					$message = '{#server}» {#error}No valid vote panel file, use {#highlite}$i /votepanel list {#error}!';
 					$aseco->sendChatMessage($message, $login);
 				}
 			}

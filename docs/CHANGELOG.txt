@@ -69,8 +69,8 @@ Version 1.0.0
    - Removed "manialinks.inc.php", moved parts from it into the related Plugins and replaced the "Window" with the new class "window.class.php"
    - Removed Plugin "plugin.matchsave.php", and related files "matchsave.xml", "html.tpl" and "text.tpl"
    - Removed Jfreu-Plugins "jfreu.chat.php", "jfreu.lite.php" and "jfreu.plugin.php" with all related files ("plugin.welcome_center.php" replaces "jfreu.lite.php")
-   - Removed "plugin.styles.php" and related files in the folder "config/styles".
-   - Removed "addChatCommand()" and added "$this->registerChatCommand()" (in the Class Plugin)
+   - Removed "plugin.styles.php" and related files in the folder "config/styles"
+   - Removed "addChatCommand()" and added "$this->registerChatCommand()" (in Class Plugin)
    - A callback handler of a registered chat command has now four parameter instead of two: ($aseco, $login, $chat_command, $chat_parameter)
    - Added "$aseco->server->rankings->ranking_list[]" which holds the current ranking for all Players in all Gamemodes (no need to call the ListMethod "GetCurrentRanking")
    - Added "$aseco->server->maps->map_list[]" which holds all Maps from the dedicated Server (no need to call the ListMethod "GetMapList")
@@ -112,6 +112,7 @@ Version 1.0.0
    - Remamed "$map->authortime" to "$map->author_time" ($map = includes/core/map.class.php)
    - Removed all donate panels ("Donate*.xml") from "config/panels"
    - Removed all records panels ("Records*.xml") from "config/panels"
+   - Removed all vote panels ("Vote*.xml") from "config/panels"
    - Removed "http_get_file()", use "$aseco->webaccess->request()" instead
    - Removed chat command "/top10" from plugin.rasp.php, use "/top100" instead
    - Removed chat command "/clans" and "/topclans" from chat.player_info.php
