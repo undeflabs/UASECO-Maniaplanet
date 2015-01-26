@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!-- THIS IS THE CONFIG FILE FOR THE TM2-PORT ONLY -->
+
+	<widget>
+		<race>
+			<pos_y>-22.8</pos_y>
+		</race>
+		<score>
+			<pos_y>-27.5</pos_y>
+		</score>
+
+		<icon_style>Icons128x128_1</icon_style>
+		<icon_substyle>Buddies</icon_substyle>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+
+		<button_style>UIConstructionSimple_Buttons</button_style>
+		<button_substyle>Item</button_substyle>
+	</widget>
+
+
+	<!-- Add your buttons, max. amount is 20 -->
+	<!-- <text_color> Format: RGBA (A = Alphachanal, Opacity) -->
+	<commands>
+		<entry>
+			<title>Hello All</title>
+			<message></message>
+			<chat_command>/hi</chat_command>
+			<text_color>00AF</text_color>
+		</entry>
+		<entry>
+			<title>I'm Back Again</title>
+			<message>I'm Back Again !</message>
+			<chat_command></chat_command>
+			<text_color>00AF</text_color>
+		</entry>
+		<entry>
+			<title> Welcome Back</title>
+			<message>Welcome Back !</message>
+			<chat_command></chat_command>
+			<text_color>00AF</text_color>
+		</entry>
+
+
+		<entry>
+			<title>AFK</title>
+			<message></message>
+			<chat_command>/afk</chat_command>
+			<text_color>D00F</text_color>
+		</entry>
+		<entry>
+			<title>Bye All</title>
+			<message>I have to go... Bye All !</message>
+			<chat_command></chat_command>
+			<text_color>D00F</text_color>
+		</entry>
+		<entry>
+			<title>Bye Dude</title>
+			<message>Bye Dude !</message>
+			<chat_command></chat_command>
+			<text_color>D00F</text_color>
+		</entry>
+
+
+
+		<entry>
+			<title> Good Game</title>
+			<message>Good Game !</message>
+			<chat_command></chat_command>
+			<text_color>000F</text_color>
+		</entry>
+		<entry>
+			<title> Good Game All</title>
+			<message>Good Game All !</message>
+			<chat_command></chat_command>
+			<text_color>000F</text_color>
+		</entry>
+		<entry>
+			<title>Bad Game Me</title>
+			<message>Bad Game For Me !</message>
+			<chat_command></chat_command>
+			<text_color>000F</text_color>
+		</entry>
+		<entry>
+			<title> Thank You</title>
+			<message>Thank You !</message>
+			<chat_command></chat_command>
+			<text_color>000F</text_color>
+		</entry>
+
+
+
+		<entry>
+			<title>GL & HF</title>
+			<message>Good Luck And Have Fun !</message>
+			<chat_command></chat_command>
+			<text_color>000F</text_color>
+		</entry>
+
+
+
+		<entry>
+			<title> Nice Time</title>
+			<message>Nice Time !</message>
+			<chat_command></chat_command>
+			<text_color>070F</text_color>
+		</entry>
+		<entry>
+			<title>Very Nice Time</title>
+			<message>Very Nice Time !</message>
+			<chat_command></chat_command>
+			<text_color>070F</text_color>
+		</entry>
+		<entry>
+			<title> Nice One</title>
+			<message></message>
+			<chat_command>/n1</chat_command>
+			<text_color>070F</text_color>
+		</entry>
+		<entry>
+			<title> Nice Finish</title>
+			<message>Nice Finish !</message>
+			<chat_command></chat_command>
+			<text_color>070F</text_color>
+		</entry>
+
+	</commands>
+</settings>

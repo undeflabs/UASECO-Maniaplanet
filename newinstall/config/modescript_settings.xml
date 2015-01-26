@@ -158,7 +158,7 @@
 		<!-- Settings for TimeAttack.Script.txt -->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
-			<time_limit>1200</time_limit>
+			<time_limit>300</time_limit>
 		</timeattack>
 
 

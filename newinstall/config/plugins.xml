@@ -52,5 +52,7 @@
 	<plugin>plugin.pay2play.php</plugin>
 	<plugin>plugin.records_eyepiece.php</plugin>
 	<plugin>plugin.mania_karma.php</plugin>
+	<plugin>plugin.lazy_buttons.php</plugin>
+	<plugin>plugin.greeting_dude.php</plugin>
 	<plugin>plugin.vote_manager.php</plugin>
 </plugins>
