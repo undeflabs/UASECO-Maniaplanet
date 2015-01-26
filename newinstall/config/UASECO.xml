@@ -78,8 +78,6 @@
 	<guestlist_file>guestlist.txt</guestlist_file>
 
 
-
-	<welcome_msg_window>false</welcome_msg_window>
 	<lock_password></lock_password>
 	<log_all_chat>false</log_all_chat>
 	<chatpmlog_times>true</chatpmlog_times>
@@ -94,11 +92,6 @@
 	5 = blacklist & ban
 	//-->
 	<cheater_action>0</cheater_action>
-
-	<!--
-	2 = in message window, 1 = in chat, 0 = none
-	//-->
-	<show_mxrec>1</show_mxrec>
 
 	<!--
 	2 = in message window, 1 = in chat, 0 = none
@@ -247,7 +240,6 @@
 		<mod>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</mod>
 		<planets>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets!</planets>
 		<time>{#server}» {#interact}Current Server Time: {#highlite}$i {1}{#interact} on {#highlite}$i {2}</time>
-		<mxrec>{#server}» {#record}MX World Record: {#highlite}{1}{#record} by {#highlite}{2}</mxrec>
 		<round>$n{#message}Round {#highlite}{1}{#message}: </round>
 		<no_cpsspec>{#server}» {#highlite}/cpsspec{#server} is not currently enabled on this server.</no_cpsspec>
 		<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>

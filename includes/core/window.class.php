@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-04
+ * Date:	2014-11-25
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -576,6 +576,7 @@ Void WipeOut (Text ChildId) {
 
 //	// Reset
 //	EnableMenuNavigationInputs = False;
+//	EnableMenuNavigation(False, False, (Page.GetFirstChild("ClassWindowClose") as CMlFrame), 20);
 }
 Void Minimize (Text ChildId) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
@@ -607,6 +608,7 @@ Void Maximize (Text ChildId) {
 }
 main () {
 //	EnableMenuNavigationInputs = True;  // to enable pressing escape-key + tab-key
+//	EnableMenuNavigation(True, False, (Page.GetFirstChild("ClassWindowClose") as CMlFrame), 20);
 
 	declare CMlControl Container <=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
 	declare CMlQuad Quad;

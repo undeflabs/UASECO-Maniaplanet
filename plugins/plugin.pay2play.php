@@ -284,17 +284,15 @@ class PluginPay2Play extends Plugin {
 
 	public function click($aseco, $command) {  //Deal with button clicks
 
-		$login = $command[1];
 		$answer = $command[2];
-		$player = $aseco->client->query('GetDetailedPlayerInfo', $login);
-		$nickname = $player['NickName'];
+		$player = $aseco->server->players->getPlayer($command[1]);
 
 		if ($answer == $this->p2p['manialink'].'|replay') {
 			$nextmap = $aseco->client->query('GetNextMapInfo');
 			if ($this->p2p['thismap']['FileName'] != $nextmap['FileName']) {
 				$message = 'You need to pay '.$this->p2p['replay']['cost'].' planets to replay this map';
 				$id = $aseco->client->query('SendBill', $login, $this->p2p['replay']['cost'], $message, '');
-				$this->p2p['bills'][$id] = array($login, $nickname, 'replay');
+				$this->p2p['bills'][$id] = array($login, $player->nickname, 'replay');
 			} else {
 				$message = '>$f00 This track is already being replayed';
 				$aseco->sendChatMessage($message, $login);
@@ -306,7 +304,7 @@ class PluginPay2Play extends Plugin {
 			} else {
 				$message = 'You need to pay '.$this->p2p['skip']['cost'].' planets to skip this map';
 				$id = $aseco->client->query('SendBill', $login, $this->p2p['skip']['cost'], $message, '');
-				$this->p2p['bills'][$id] = array($login, $nickname, 'skip');
+				$this->p2p['bills'][$id] = array($login, $player->nickname, 'skip');
 			}
 		}
 	}

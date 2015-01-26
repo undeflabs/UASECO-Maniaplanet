@@ -8,9 +8,9 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2014-10-08
- * Copyright:		2012 - 2014 by undef.de
- * System:		UASECO/1.0.0+
+ * Date:		2015-01-20
+ * Copyright:		2012 - 2015 by undef.de
+ * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
  * ----------------------------------------------------------------------------------
  *
@@ -112,15 +112,10 @@ class PluginVoteManager extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '1.0.0';
+		$uaseco_min_version = '0.9.5';
 		if ( defined('UASECO_VERSION') ) {
-			$version = str_replace(
-				array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'),
-				array('.1','.2','.3','.4','.5','.6','.7','.8','.9'),
-				UASECO_VERSION
-			);
-			if ( version_compare($version, $uaseco_min_version, '<') ) {
-				trigger_error('[VoteManager] Not supported USAECO version ('. $version .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
+			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
+				trigger_error('[VoteManager] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
 		}
 		else {

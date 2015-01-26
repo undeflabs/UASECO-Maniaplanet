@@ -11,6 +11,10 @@
 	<scale>1.0</scale>
 
 
+	<!-- Change here the speed unit to whatever you want, default = 'KPH' (kilometer per hour) -->
+	<velocity_unit>KPH</velocity_unit>
+
+
 	<!--
 	With this you can change the colors of the tachometer scale
 

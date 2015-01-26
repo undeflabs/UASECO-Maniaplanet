@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - November 2014 by undef.de
+ * Copyright:	May 2014 - January 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2014-11-24');
+	define('UASECO_BUILD',		'2015-01-26');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -416,11 +416,6 @@ class UASECO extends Helper {
 	// Sends program header to console and ingame chat.
 	private function sendHeader () {
 
-		// Calculate uptime for dedicated server
-		$updays = floor($this->server->networkstats['Uptime'] / (24 * 3600));
-		$uptime = $this->server->networkstats['Uptime'] - ($updays * 24 * 3600);
-		$uptime_dedicated = $updays .' day'. ($updays == 1 ? ' ' : 's ') . $this->formatTime($uptime * 1000, false);
-
 		$this->console_text('#####################################################################################');
 		$this->console_text('» Server:    {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripColors($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
 		if ($this->server->isrelay) {
@@ -431,7 +426,7 @@ class UASECO extends Helper {
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»            Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
-		$this->console_text('»            Uptime: {1}', $uptime_dedicated);
+		$this->console_text('»            Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» UASECO:    Version {1} build {2}, running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
     		$this->console_text('»            based upon work of the authors and projects of:');
@@ -468,17 +463,6 @@ class UASECO extends Helper {
 
 	private function logDebugInformations () {
 
-		// Calculate uptime for UASECO
-		$uptime = time() - $this->uptime;
-		$updays = floor($uptime / (24 * 3600));
-		$uptime = $uptime - ($updays * 24 * 3600);
-		$uptime_uaseco = $updays .' day'. ($updays == 1 ? ' ' : 's ') . $this->formatTime($uptime * 1000, false);
-
-		// Calculate uptime for dedicated server
-		$updays = floor($this->server->networkstats['Uptime'] / (24 * 3600));
-		$uptime = $this->server->networkstats['Uptime'] - ($updays * 24 * 3600);
-		$uptime_dedicated = $updays .' day'. ($updays == 1 ? ' ' : 's ') . $this->formatTime($uptime * 1000, false);
-
 		$this->console_text('#### DEBUG ##########################################################################');
 		$this->console_text('» StartupPhase:  {1}', $this->bool2string($this->startup_phase));
 		$this->console_text('» WarmupPhase:   {1}', $this->bool2string($this->warmup_phase));
@@ -486,7 +470,7 @@ class UASECO extends Helper {
 		$this->console_text('» Restarting:    {1}', $this->bool2string($this->restarting));
 		$this->console_text('» CurrentStatus: [{1}] {2}', $this->current_status, $this->server->state_names[$this->current_status]);
 		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» Uptime:        {1}', $uptime_uaseco);
+		$this->console_text('» Uptime:        {1}', $this->timeString(time() - $this->uptime));
 		if ( function_exists('sys_getloadavg') ) {
 			$this->console_text('» System Load:   {1}', implode(', ', sys_getloadavg()));
 		}
@@ -508,7 +492,7 @@ class UASECO extends Helper {
 		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
-		$this->console_text('»                Uptime: {1}', $uptime_dedicated);
+		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), ini_get('safe_mode'), ini_get('memory_limit'), ini_get('max_execution_time'), ini_get('allow_url_fopen'));
@@ -585,9 +569,6 @@ class UASECO extends Helper {
 			// set script timeout
 			$this->settings['script_timeout'] = $settings['SCRIPT_TIMEOUT'][0];
 
-			// show MX world record?
-			$this->settings['show_mxrec'] = $settings['SHOW_MXREC'][0];
-
 			// show played time at end of map?
 			$this->settings['show_playtime'] = $settings['SHOW_PLAYTIME'][0];
 
@@ -629,9 +610,6 @@ class UASECO extends Helper {
 
 			// set default rounds points system
 			$this->settings['default_rpoints'] = $settings['DEFAULT_RPOINTS'][0];
-
-			// display welcome message as window ?
-			$this->settings['welcome_msg_window'] = $this->string2bool($settings['WELCOME_MSG_WINDOW'][0]);
 
 			// log all chat, not just chat commands ?
 			$this->settings['log_all_chat'] = $this->string2bool($settings['LOG_ALL_CHAT'][0]);
@@ -1604,7 +1582,10 @@ class UASECO extends Helper {
 			$this->client->multiquery();
 		}
 		catch (Exception $exception) {
-			trigger_error('ExecuteMulticall XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage(), E_USER_ERROR);
+			$errmsg = $exception->getMessage();
+			if ($errmsg != 'Login unknown.') {
+				$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - executeMulticall()');
+			}
 		}
 	}
 
@@ -1625,6 +1606,7 @@ class UASECO extends Helper {
 		if ($this->logfile['file'] != './logs'.DIRECTORY_SEPARATOR.date('Y-m-d').'-current.txt') {
 			// Setup new logfile
 			$this->setupLogfile();
+			$this->sendHeader();
 		}
 
 		// Cleanup Player rankings
@@ -1904,7 +1886,7 @@ class UASECO extends Helper {
 				$query = "UPDATE `%prefix%players` SET `Visits` = `Visits` + 1 WHERE `PlayerId` = ". $player->id ." LIMIT 1;";
 				$result = $this->db->query($query);
 				if (!$result) {
-					$this->console('[Player] UPDATE `Visits` at `%prefix%players` failed. [for statement "'. $query .'"]!');
+					$this->console('[Player] UPDATE `Visits` at `%prefix%players` failed [for statement "'. $query .'"]!');
 				}
 			}
 
@@ -1915,27 +1897,9 @@ class UASECO extends Helper {
 				UASECO_VERSION
 			);
 			// Hyperlink package name & version number
-			$message = preg_replace('/UASECO.+'. UASECO_VERSION .'/', '$l['. UASECO_WEBSITE .']$0$l', $message);
-
-			// Send welcome popup or chat message
-			if ($this->settings['welcome_msg_window']) {
-				$message = str_replace('{#highlite}', '{#message}', $message);
-				$message = preg_split('/{br}/', $this->formatColors($message));
-				// repack all lines
-				foreach ($message as &$line) {
-					$line = array($line);
-				}
-				$this->plugins['PluginManialinks']->display_manialink(
-					$player->login,
-					'',
-					array('Icons64x64_1', 'Inbox'), $message,
-					array(1.2), 'OK'
-				);
-			}
-			else {
-				$message = str_replace('{br}', LF, $message);
-				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $player->login);
-			}
+			$message = preg_replace('/UASECO.+'. UASECO_VERSION .'/', '$L['. UASECO_WEBSITE .']$0$L', $message);
+			$message = str_replace('{br}', LF, $message);
+			$this->sendChatMessage(str_replace(LF.LF, LF, $message), $player->login);
 
 			// Throw main 'player connects' event
 			$this->releaseEvent('onPlayerConnect', $player);
@@ -1985,7 +1949,7 @@ class UASECO extends Helper {
 		// Log console message
 		$this->console('[Player] Disconnection from Player [{1}] after {2} playtime [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 			$player->login,
-			$this->formatTime($player->getTimeOnline() * 1000, false),
+			$this->timeString($player->getTimeOnline()),
 			$this->stripColors($player->nickname, false),
 			$player->ip,
 			$player->ladderrank,

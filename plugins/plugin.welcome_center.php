@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-01-16
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@
  *
  * Dependencies:
  *  - includes/core/window.class.php
+ *  - plugins/plugin.rasp.php
  *
  */
 
@@ -55,9 +56,10 @@ class PluginWelcomeCenter extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Displays a message in the chat and can display a Welcome-Window on Player connects.');
 
+		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
+
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
-		$this->registerEvent('onPlayerConnect1',	'onPlayerConnect1');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
 		$this->registerEvent('onEndMap',		'onEndMap');
 
@@ -115,6 +117,58 @@ class PluginWelcomeCenter extends Plugin {
 
 	public function onPlayerConnect ($aseco, $player) {
 
+		if ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] == true && $aseco->startup_phase == false) {
+
+			// Define Admin/Player title
+			$title = 'New Player';
+			if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] == true) {
+				$title = $aseco->isMasterAdmin($player) ? '{#logina}'. $aseco->titles['MASTERADMIN'][0] :
+					($aseco->isAdmin($player) ? '{#logina}'. $aseco->titles['ADMIN'][0] :
+					($aseco->isOperator($player) ? '{#logina}'. $aseco->titles['OPERATOR'][0] :
+					'New Player')
+				);
+			}
+
+			// Setup Ladderrank, Serverrank, Nation and Zone
+			$ladderrank = $aseco->formatNumber($player->ladderrank, 0);
+			$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
+			$zone = $player->zone;
+			array_shift($zone);		// Remove continent from $zone array
+
+			// Show new Player joins message to all Players
+			$message = str_replace(
+				array(
+					'{title}',
+					'{nickname}',
+					'{continent}',
+					'{nation}',
+					'{zone}',
+					'{visits}',
+					'{ladderrank}',
+					'{serverrank}',
+				),
+				array(
+					$title,
+					$aseco->stripColors($player->nickname),
+					$player->continent,
+					$aseco->country->iocToCountry($player->nation),
+					implode(', ', $zone),
+					$player->visits,
+					$ladderrank,
+					$serverrank,
+				),
+				$this->config['JOIN_LEAVE_INFO'][0]['JOIN_MESSAGE'][0]
+			);
+			if (!empty($message)) {
+				if ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] == true && function_exists('send_window_message')) {
+					send_window_message($aseco, $message, false);
+				}
+				else {
+					$aseco->sendChatMessage($message);
+				}
+			}
+		}
+
 		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] == true) {
 			$skip = false;
 			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == true) {
@@ -135,86 +189,6 @@ class PluginWelcomeCenter extends Plugin {
 			if ($skip == false) {
 				// Send it direct to the Player
 				$this->buildWelcomeWindow($player);
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onPlayerConnect1 ($aseco, $player) {
-
-		if ( ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] == true) && ($aseco->startup_phase == false) ) {
-			// Retrieve the amount of visits
-			$visits = 0;
-			$query = "
-			SELECT
-				`Visits`
-			FROM `%prefix%players`
-			WHERE `PlayerId` = '". $player->id ."'
-			LIMIT 1;
-			";
-			$res = $aseco->db->query($query);
-			if ($res) {
-				if ($res->num_rows > 0) {
-					while ($row = $res->fetch_object()) {
-						$visits = $row->Visits;
-					}
-				}
-				$res->free_result();
-			}
-
-			// Define Admin/Player title
-			$title = 'New Player';
-			if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] == true) {
-				$title = $aseco->isMasterAdmin($player) ? '{#logina}'. $aseco->titles['MASTERADMIN'][0] :
-					($aseco->isAdmin($player) ? '{#logina}'. $aseco->titles['ADMIN'][0] :
-					($aseco->isOperator($player) ? '{#logina}'. $aseco->titles['OPERATOR'][0] :
-					'New Player')
-				);
-			}
-
-			// Setup Ladderrank, Serverrank, Nation and Zone
-			$ladderrank = $aseco->formatNumber($player->ladderrank, 0);
-			$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
-			$zone = $player->zone;
-			array_shift($zone);		// Remove continent from $zone array
-
-			// Show new Player joins message to all Players
-			$message = $this->config['JOIN_LEAVE_INFO'][0]['JOIN_MESSAGE'][0];
-			$message = str_replace(
-				array(
-					'{title}',
-					'{nickname}',
-					'{continent}',
-					'{nation}',
-					'{zone}',
-					'{visits}',
-					'{ladderrank}',
-					'{serverrank}',
-				),
-				array(
-					$title,
-					$aseco->stripColors($player->nickname),
-					$player->continent,
-					$aseco->country->iocToCountry($player->nation),
-					implode(', ', $zone),
-					$visits,
-					$ladderrank,
-					$serverrank,
-				),
-				$message
-			);
-			if ($message != '') {
-				if ( ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] == true) && (function_exists('send_window_message')) ) {
-					send_window_message($aseco, $message, false);
-				}
-				else {
-					$aseco->sendChatMessage($message);
-				}
 			}
 		}
 	}
@@ -248,7 +222,7 @@ class PluginWelcomeCenter extends Plugin {
 					$player->continent,
 					$aseco->country->iocToCountry($player->nation),
 					implode(', ', $zone),
-					$aseco->formatTime($player->getTimeOnline() * 1000, false),
+					$aseco->timeString($player->getTimeOnline()),
 				),
 				$message
 			);

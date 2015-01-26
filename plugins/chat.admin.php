@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-24
+ * Date:	2014-12-29
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -4552,6 +4552,10 @@ class PluginChatAdmin extends Plugin {
 			if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings) {
 				if (file_exists($aseco->server->mapdir .'MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings)) {
 					try {
+						if (!$admin = $aseco->server->players->getPlayer($login)) {
+							return;
+						}
+
 						// Get map count
 						$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings);
 

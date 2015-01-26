@@ -11,6 +11,31 @@ UASECO
  - Donation: $mindonation, $publicappr and $donation_values in xml
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
+ - Create core/timemanager.class.php in where plugins can register timed event callbacks instead of required listening "onEverySecond"
+
+
+
+InfoBar
+~~~~~~~
+ - Split PersonalBest, 1. Local Record, 1. Dedimania and MX-Record
+
+
+
+Menu
+~~~~
++ AddFavorite
+
+http://doc.maniaplanet.com/creation/manialink/actions.html
+
+<label action="maniaplanet:quitserver" posn="0 -4.2 0" sizen="33 6" style="TextButtonBig" textcolor="fff" text="Enter"/>
+
+or
+
+TriggerPageAction("maniaplanet:quitserver")
+
+"maniaplanet:quitserver"	icon: open door with arrow to right
+"maniaplanet:savereplay"	icon: document with arrow down(?)
+"maniaplanet:togglespec"	icon: eye / driver (test what this does)
 
 
 

@@ -56,6 +56,7 @@ class FaultException extends Exception
 			case 'invalid index':
 				return new IndexOutOfBoundException($faultString, $faultCode);
 			case 'the next map must be different from the current one.':
+			case 'No next map currently defined.':
 				return new NextMapException($faultString, $faultCode);
 			case 'Change in progress.':
 				return new ChangeInProgressException($faultString, $faultCode);

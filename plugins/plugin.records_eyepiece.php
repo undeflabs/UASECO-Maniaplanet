@@ -9,9 +9,9 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2014-11-23
- * Copyright:		2009 - 2014 by undef.de
- * System:		UASECO/1.0.0+
+ * Date:		2015-01-26
+ * Copyright:		2009 - 2015 by undef.de
+ * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
  * ----------------------------------------------------------------------------------
  *
@@ -265,7 +265,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '1.0.0';
+		$uaseco_min_version = '0.9.5';
 		if ( defined('UASECO_VERSION') ) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[RecordsEyepiece] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
@@ -879,21 +879,15 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->cache['Map']['Jukebox']		= false;
 		$this->cache['Map']['NbCheckpoints']	= 0;
 
-
-
-		// Store the Name and associated Icons if one of the Widgets is enabled
-		if ( ($this->config['GAMEMODE_WIDGET'][0]['ENABLED'][0] == true) || ($this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0] == true) ) {
-			// Need for Gamemode-Widget
-			$this->config['Gamemodes'] = array(
-				Gameinfo::ROUNDS	=> array('name' => 'ROUNDS',		'icon' => 'RT_Rounds'),
-				Gameinfo::TIMEATTACK	=> array('name' => 'TIME ATTACK',	'icon' => 'RT_TimeAttack'),
-				Gameinfo::TEAM		=> array('name' => 'TEAM',		'icon' => 'RT_Team'),
-				Gameinfo::LAPS		=> array('name' => 'LAPS',		'icon' => 'RT_Laps'),
-				Gameinfo::CUP		=> array('name' => 'CUP',		'icon' => 'RT_Cup'),
-				Gameinfo::STUNTS	=> array('name' => 'STUNTS',		'icon' => 'RT_Stunts'),
-//				Gameinfo::TEAMATTACK	=> array('name' => 'TEAM ATTACK',	'icon' => 'RT_Team'),
-			);
-		}
+		$this->config['Gamemodes'] = array(
+			Gameinfo::ROUNDS	=> array('name' => 'ROUNDS',		'icon' => 'RT_Rounds'),
+			Gameinfo::TIMEATTACK	=> array('name' => 'TIME ATTACK',	'icon' => 'RT_TimeAttack'),
+			Gameinfo::TEAM		=> array('name' => 'TEAM',		'icon' => 'RT_Team'),
+			Gameinfo::LAPS		=> array('name' => 'LAPS',		'icon' => 'RT_Laps'),
+			Gameinfo::CUP		=> array('name' => 'CUP',		'icon' => 'RT_Cup'),
+			Gameinfo::STUNTS	=> array('name' => 'STUNTS',		'icon' => 'RT_Stunts'),
+			Gameinfo::TEAMATTACK	=> array('name' => 'TEAM ATTACK',	'icon' => 'RT_Team'),
+		);
 
 		if ($reload === null) {
 			$aseco->console('[RecordsEyepiece] » Checking Database for required extensions...');
@@ -1017,7 +1011,7 @@ class PluginRecordsEyepiece extends Plugin {
 							");
 						}
 						$aseco->db->query('COMMIT;');
-						unset($mostfinished);
+						unset($mostrecords);
 					}
 					$res->free_result();
 				}

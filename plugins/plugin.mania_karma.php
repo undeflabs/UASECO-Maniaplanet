@@ -8,9 +8,9 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2014-11-24
- * Copyright:	2009 - 2014 by undef.de
- * System:	UASECO/1.0.0+
+ * Date:	2015-01-20
+ * Copyright:	2009 - 2015 by undef.de
+ * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
  * ----------------------------------------------------------------------------------
  *
@@ -121,7 +121,7 @@ class PluginManiaKarma extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '1.0.0';
+		$uaseco_min_version = '0.9.5';
 		if ( defined('UASECO_VERSION') ) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[ManiaKarma] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
@@ -4192,12 +4192,13 @@ EOL;
 		SELECT
 			`m`.`Uid`,
 			`m`.`Name`,
-			`m`.`Author`,
+			`a`.`Login` AS `AuthorLogin`,
 			`m`.`Environment`,
-			`p`.`Login`,
-			`rs`.`Score`
+			`p`.`Login` AS `PlayerLogin`,
+			`rs`.`Score` AS `PlayerVote`
 		FROM `%prefix%ratings` AS `rs`
 		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId`=`rs`.`MapId`
+		LEFT JOIN `%prefix%authors` AS `a` ON `a`.`AuthorId`=`m`.`AuthorId`
 		LEFT JOIN `%prefix%players` AS `p` ON `p`.`PlayerId`=`rs`.`PlayerId`
 		ORDER BY `m`.`Uid`;
 		";
@@ -4210,24 +4211,23 @@ EOL;
 						$csv .= sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 							$row->Uid,
 							$row->Name,
-							$row->Author,
+							$row->AuthorLogin,
 							$row->Environment,
 							$this->config['account']['login'],
 							$this->config['account']['authcode'],
 							$this->config['account']['nation'],
-							$row->Login,
-							$row->Score
+							$row->PlayerLogin,
+							$row->PlayerVote
 						);
 					}
 					$count ++;
 				}
+
+				$message = "{#server}» {#admin}Found ". number_format($count, 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." votes in database.";
+				$aseco->sendChatMessage($message, $player->login);
 			}
 			$res->free_result();
 		}
-
-		$message = "{#server}» {#admin}Found ". number_format($count, 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) ." votes in database.";
-		$aseco->sendChatMessage($message, $player->login);
-
 
 		// gzip the CSV
 		$message = "{#server}» {#admin}Compressing collected data...";

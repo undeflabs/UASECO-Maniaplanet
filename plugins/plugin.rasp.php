@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-04
- * Copyright:	2014 by undef.de
+ * Date:	2015-01-20
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -509,7 +509,7 @@ class PluginRasp extends Plugin {
 		$sql = "DELETE FROM `%prefix%maps` WHERE `Uid` = '';";
 		$aseco->db->query($sql);
 
-		$aseco->console('[Rasp] » Cleaning up '. $aseco->settings['mysql']['table_prefix'] .'players`.');
+		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['mysql']['table_prefix'] .'players`.');
 		$sql = "DELETE FROM `%prefix%players` WHERE `Login` = '';";
 		$aseco->db->query($sql);
 
@@ -937,9 +937,13 @@ class PluginRasp extends Plugin {
 				". $time->map->id .",
 				". $pid .",
 				". $time->score .",
-				UNIX_TIMESTAMP(),
+				". $aseco->db->quote(date('Y-m-d H:i:s')) .",
 				". $aseco->db->quote($cps) ."
-			);
+			)
+			ON DUPLICATE KEY UPDATE
+				`Score` = VALUES(`Score`),
+				`Date` = VALUES(`Date`),
+				`Checkpoints` = VALUES(`Checkpoints`);
 			";
 			$aseco->db->query($query);
 			if ($aseco->db->affected_rows === -1) {
@@ -1065,7 +1069,7 @@ class PluginRasp extends Plugin {
 
 				// Get corresponding record
 				$pos = isset($reclist[$map->uid]) ? $reclist[$map->uid] : 0;
-				$pos = ($pos >= 1 && $pos <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) ? str_pad($pos, 2, '0', STR_PAD_LEFT) : '--';
+				$pos = ($pos >= 1) ? str_pad($pos, 2, '0', STR_PAD_LEFT) : '--';
 
 				$msg[] = array(
 					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',

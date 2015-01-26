@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-23
+ * Date:	2014-12-04
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - includes/core/mxinfofetcher.class.php
+ *  - none
  *
  */
 
@@ -41,6 +41,7 @@
 */
 
 class PluginManiaExchange extends Plugin {
+	public $config;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -54,7 +55,27 @@ class PluginManiaExchange extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Provides world record message at start of each map.');
 
+		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onBeginMap1',	'onBeginMap1');
+
+		$this->registerChatCommand('mx', 'chat_mx', 'xxxxx', Player::MASTERADMINS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+	public function onSync ($aseco) {
+
+		if (!$settings = $aseco->parser->xmlToArray('config/mania_exchange.xml', true, true)) {
+			trigger_error('[ManiaExchange] Could not read/parse config file [config/mania_exchange.xml]!', E_USER_ERROR);
+		}
+		$settings = $settings['SETTINGS'];
+
+		$this->config['show_records']		= (int)$settings['SHOW_RECORDS'][0];
+
+		$this->config['messages']['records']	= $settings['MESSAGES'][0]['RECORDS'][0];
 	}
 
 	/*
@@ -64,16 +85,15 @@ class PluginManiaExchange extends Plugin {
 	*/
 	public function onBeginMap1 ($aseco, $data) {
 
-		// obtain MX records
-		$mxdata = $aseco->server->maps->current->mx;
-		if ($mxdata && !empty($mxdata->recordlist)) {
+		// Obtain MX records
+		if ($aseco->server->maps->current->mx && !empty($aseco->server->maps->current->mx->recordlist)) {
 			// check whether to show MX record at start of map
-			if ($aseco->settings['show_mxrec'] > 0) {
-				$message = $aseco->formatText($aseco->getChatMessage('MXREC'),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $mxdata->recordlist[0]['stuntscore'] : $aseco->formatTime($mxdata->recordlist[0]['replaytime'])),
-					$mxdata->recordlist[0]['username']
+			if ($this->config['show_records'] > 0) {
+				$message = $aseco->formatText($this->config['messages']['records'],
+					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $aseco->server->maps->current->mx->recordlist[0]['stuntscore'] : $aseco->formatTime($aseco->server->maps->current->mx->recordlist[0]['replaytime'])),
+					$aseco->server->maps->current->mx->recordlist[0]['username']
 				);
-				if ($aseco->settings['show_mxrec'] == 2) {
+				if ($this->config['show_records'] == 2) {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
@@ -81,6 +101,20 @@ class PluginManiaExchange extends Plugin {
 				}
 			}
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_mx ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
+
 	}
 }
 

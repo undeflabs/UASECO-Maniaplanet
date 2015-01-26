@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-24
- * Copyright:	2014 by undef.de
+ * Date:	2015-01-16
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -40,7 +40,6 @@
 */
 
 class Helper {
-
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -152,6 +151,7 @@ class Helper {
 		$xml .= ' <uaseco>'.LF;
 		$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
 		$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;
+		$xml .= '  <uptime>'. (time() - $this->uptime) .'</uptime>'.LF;
 		$xml .= ' </uaseco>'.LF;
 		$xml .= ' <dedicated>'.LF;
 		$xml .= '  <version>'. $this->server->version .'</version>'.LF;
@@ -353,9 +353,7 @@ class Helper {
 
 		if ($widgets != '') {
 			$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
-			$xml .= '<manialinks>';
 			$xml .= $widgets;
-			$xml .= '</manialinks>';
 
 			if ($logins !== false) {
 				try {
@@ -397,9 +395,7 @@ class Helper {
 
 		if ($widgets != '') {
 			$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
-			$xml .= '<manialinks>';
 			$xml .= $widgets;
-			$xml .= '</manialinks>';
 
 			if ($logins !== false) {
 				try {
@@ -746,6 +742,36 @@ class Helper {
 
 	public function formatFloat ($number, $decimals = 4, $dec_point = '.', $thousands_sep = '') {
 		return number_format($number, $decimals, $dec_point, $thousands_sep);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function timeString ($given) {
+
+		$seconds = (int)($given % 60);
+		$given /= 60;
+		$minutes = (int)($given % 60);
+		$given /= 60;
+		$hours = (int)($given % 24);
+		$days = (int)($given / 24);
+
+		$timestring = '';
+		if ($days) {
+			$timestring .= sprintf("%d day%s", $days, ($days == 1 ? ' ' : 's '));
+		}
+		if ($hours) {
+			$timestring .= sprintf("%d hour%s", $hours, ($hours == 1 ? ' ' : 's '));
+		}
+		if ($minutes) {
+			$timestring .= sprintf("%d minute%s", $minutes, ($minutes == 1 ? ' ' : 's '));
+		}
+		$timestring .= sprintf("%d second%s", $seconds, ($seconds == 1 ? ' ' : 's'));
+
+		return $timestring;
 	}
 
 	/*
@@ -1746,15 +1772,14 @@ class Helper {
 						// Delete all logfiles older then 14 days
 						unlink($dir . DIRECTORY_SEPARATOR . $logfile);
 					}
-					if ($lastmodified < (time() - 60*60)) {
-						$result = preg_match('/-current\.txt$/', $logfile);
-						if ($result !== false && $result >= 1) {
-							// Rename all logfiles marked with "-current.txt" and older then one hour
-							rename(
-								$dir . DIRECTORY_SEPARATOR . $logfile,
-								$dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s', $lastmodified) .'.txt'
-							);
-						}
+
+					$result = preg_match('/-current\.txt$/', $logfile);
+					if ($result !== false && $result >= 1) {
+						// Rename all logfiles marked with "-current.txt" and older then one hour
+						rename(
+							$dir . DIRECTORY_SEPARATOR . $logfile,
+							$dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s', $lastmodified) .'.txt'
+						);
 					}
 				}
 			}

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-04
+ * Date:	2014-12-14
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -118,13 +118,13 @@ class PluginInfoBar extends Plugin {
 		$this->config['spectator_count']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-spectators.png';
 		$this->config['spectator_count']['modulatecolor']		= 'DDDDDD';	// RRGGBB
 
-		$this->config['donation']['icon']				= 'http://static.undef.name/ingame/info-bar/icon-donate.png';
-		$this->config['donation']['modulatecolor']			= 'DDDDDD';
-
 		$this->config['current_ranking']['label']			= 'RANKING';
 		$this->config['current_ranking']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-player-ranking.png';
 		$this->config['current_ranking']['modulatecolor']		= 'DDDDDD';	// RRGGBB
 		$this->config['current_ranking']['action']			= 'showLiveRankingsWindow';
+
+		$this->config['donation']['icon']				= 'http://static.undef.name/ingame/info-bar/icon-donate.png';
+		$this->config['donation']['modulatecolor']			= 'DDDDDD';
 
 		$this->config['records']['personal_best']['label']		= 'PERSONAL BEST';
 		$this->config['records']['personal_best']['icon']		= 'http://static.undef.name/ingame/info-bar/icon-personal-best-time.png';
@@ -880,7 +880,7 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Donation" name="'. $this->config['manialinkid'] .'Donation" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 46) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 69) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad posn="0 0 0.02" sizen="28 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonDonation" ScriptEvents="1"/>';
 			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
 			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['donation']['modulatecolor'] .'" image="'. $this->config['donation']['icon'] .'"/>';
@@ -889,7 +889,7 @@ EOL;
 			$xml .= '</frame>';
 
 			// Build onClick full Widget
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 46) .' '. ($this->config['bar']['position']['y'] - 7.05) .' '. ($this->config['bar']['position']['z'] + 0.02) .'" id="DropDownDonation" hidden="true">';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 69) .' '. ($this->config['bar']['position']['y'] - 7.05) .' '. ($this->config['bar']['position']['z'] + 0.02) .'" id="DropDownDonation" hidden="true">';
 			$xml .= '<quad posn="0 -0.1 0.02" sizen="55.6 12" bgcolor="'. $this->config['bar']['background_color'] .'" ScriptEvents="1"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="55.6 0.2" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
 			$xml .= '<label posn="3 -1.7 0.04" sizen="55 2.625" textcolor="FFFF" textsize="1" scale="0.9" text="Please enter the value you want to Donate:"/>';
@@ -979,7 +979,7 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'CurrentRanking" name="'. $this->config['manialinkid'] .'CurrentRanking" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 74) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 46) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonRanking" ScriptEvents="1"/>';
 			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
 			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['current_ranking']['modulatecolor'] .'" image="'. $this->config['current_ranking']['icon'] .'"/>';

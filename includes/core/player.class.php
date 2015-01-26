@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
- * Copyright:	2014 by undef.de
+ * Date:	2015-01-13
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -348,7 +348,7 @@ class Player {
 		FROM `%prefix%records` AS `r`
 		LEFT JOIN `%prefix%maps` AS `m` ON `r`.`MapId` = `m`.`MapId`
 		WHERE `Uid` IS NOT NULL
-		ORDER BY `MapId` ASC, `Score` ". $order .", `Date` ASC;
+		ORDER BY `r`.`MapId` ASC, `Score` ". $order .", `Date` ASC;
 		";
 
 		$result = $aseco->db->query($query);

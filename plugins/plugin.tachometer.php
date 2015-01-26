@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2014-11-05
+ * Date:	2014-11-25
  * Copyright:	2014 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -84,7 +84,7 @@ class PluginTachometer extends Plugin {
 				'y'					=> $aseco->formatFloat($settings['POSITION'][0]['Y'][0]),
 				'z'					=> $aseco->formatFloat($settings['POSITION'][0]['Z'][0]),
 			),
-			'sizes'	=> array(
+			'sizes' => array(
 				'scale'					=> $aseco->formatFloat($settings['SCALE'][0]),
 				'background' => array(
 					'x'				=> 47.75,
@@ -94,6 +94,9 @@ class PluginTachometer extends Plugin {
 					'x'				=> 43.8125,
 					'y'				=> 43.8125,
 				),
+			),
+			'display' => array(
+				'velocity_unit'				=> $settings['VELOCITY_UNIT'][0],
 			),
 			'images' => array(
 				'background' 				=> $settings['IMAGES'][0]['BACKGROUND'][0],
@@ -253,6 +256,7 @@ main() {
 	declare CMlQuad QuadTachoscale11	<=> (Page.GetFirstChild("QuadTachoscale11") as CMlQuad);
 	declare CMlQuad QuadTachoscale12	<=> (Page.GetFirstChild("QuadTachoscale12") as CMlQuad);
 
+	declare CMlLabel LabelVelocityUnit	<=> (Page.GetFirstChild("LabelVelocityUnit") as CMlLabel);
 	declare CMlLabel LabelSpeed		<=> (Page.GetFirstChild("LabelSpeed") as CMlLabel);
 
 	declare CMlLabel LabelDistance1		<=> (Page.GetFirstChild("LabelDistance1") as CMlLabel);
@@ -272,6 +276,8 @@ main() {
 	declare Text LastGear			= "P";
 
 	// Settings
+	LabelVelocityUnit.Opacity		= 0.65;
+
 	FrameTachometer.RelativeScale		= {$this->config['tachometer']['sizes']['scale']};
 
 	SoundDriveBackward.Volume		= 1.0;
@@ -410,7 +416,6 @@ main() {
 //			LabelGearDriving.Opacity = 0.5;
 //		}
 
-
 //		// Check for MouseEvents
 //		foreach (Event in PendingEvents) {
 //			switch (Event.Type) {
@@ -421,7 +426,6 @@ main() {
 //				}
 //			}
 //		}
-
 	}
 }
 --></script>
@@ -445,7 +449,8 @@ EOL;
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][10] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][10] .'" id="QuadTachoscale10"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][11] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][11] .'" id="QuadTachoscale11"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][12] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][12] .'" id="QuadTachoscale12"/>';
-			$xml .= '<label posn="0 4.1 0.04" sizen="40 10" halign="center" valign="center2" style="TextButtonBig" textsize="4.7" text="0" id="LabelSpeed"/>';
+			$xml .= '<label posn="0 7.2 0.04" sizen="10 2" halign="center" valign="center2" style="TextButtonSmall" textsize="0.5" text="'. $this->config['tachometer']['display']['velocity_unit'] .'" id="LabelVelocityUnit"/>';
+			$xml .= '<label posn="0 3.4 0.04" sizen="40 10" halign="center" valign="center2" style="TextButtonBig" textsize="4.7" text="0" id="LabelSpeed"/>';
 
 			$xml .= '<frame posn="-5.55 -1 0.04">';
 			$xml .= '<label posn="0 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance1"/>';
