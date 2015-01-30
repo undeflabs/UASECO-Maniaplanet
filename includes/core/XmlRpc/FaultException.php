@@ -33,6 +33,7 @@ class FaultException extends Exception
 				return new LockedFeatureException($faultString, $faultCode);
 			case 'Login or Uid unknown.':
 			case 'Login unknown.':
+			case 'Payer login unknown.':						// typo "Payer"
 				return new UnknownPlayerException($faultString, $faultCode);
 			case 'The player is not a spectator':
 			case 'The player is not a spectator.':
@@ -71,6 +72,8 @@ class FaultException extends Exception
 			case 'You cannot change the max spectators count: AllowSpectatorRelays is activated.':
 			case 'There are too many players':
 			case 'There are too many spectators':
+			case 'Unknown hideserver value':
+			case 'Value of type STRING supplied where type BOOL was expected.':
 				return new ServerOptionsException($faultString, $faultCode);
 			case 'New mode unknown.':
 			case 'You need to stop the server to change to/from script mode.':

@@ -289,22 +289,22 @@ class PluginPay2Play extends Plugin {
 
 		if ($answer == $this->p2p['manialink'].'|replay') {
 			$nextmap = $aseco->client->query('GetNextMapInfo');
-			if ($this->p2p['thismap']['FileName'] != $nextmap['FileName']) {
+			if ($this->p2p['thismap'] != $nextmap['FileName']) {
 				$message = 'You need to pay '.$this->p2p['replay']['cost'].' planets to replay this map';
-				$id = $aseco->client->query('SendBill', $login, $this->p2p['replay']['cost'], $message, '');
-				$this->p2p['bills'][$id] = array($login, $player->nickname, 'replay');
+				$id = $aseco->client->query('SendBill', $player->login, $this->p2p['replay']['cost'], $message, '');
+				$this->p2p['bills'][$id] = array($player->login, $player->nickname, 'replay');
 			} else {
 				$message = '>$f00 This track is already being replayed';
-				$aseco->sendChatMessage($message, $login);
+				$aseco->sendChatMessage($message, $player->login);
 			}
 		} elseif ($answer == $this->p2p['manialink'].'|skip') {
 			if ($this->p2p['timelimit'] < ($this->p2p['skip']['delay'] + time() + 10) && $this->p2p['timelimit'] != 'disabled') {
 				$message = '>$f00 This track will end before your action can be completed, please be patient.';
-				$aseco->sendChatMessage($message, $login);
+				$aseco->sendChatMessage($message, $player->login);
 			} else {
 				$message = 'You need to pay '.$this->p2p['skip']['cost'].' planets to skip this map';
-				$id = $aseco->client->query('SendBill', $login, $this->p2p['skip']['cost'], $message, '');
-				$this->p2p['bills'][$id] = array($login, $player->nickname, 'skip');
+				$id = $aseco->client->query('SendBill', $player->login, $this->p2p['skip']['cost'], $message, '');
+				$this->p2p['bills'][$id] = array($player->login, $player->nickname, 'skip');
 			}
 		}
 	}

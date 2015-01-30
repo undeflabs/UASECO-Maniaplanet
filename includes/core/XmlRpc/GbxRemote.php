@@ -4,15 +4,16 @@
  * ~~~~~~~~~~~~~~~~
  * » ManiaPlanet dedicated server Xml-RPC client.
  * » Based upon GbxRemote.php from 'https://github.com/NewboO/dedicated-server-api/',
- *   changed to UASECO requirements.
+ *   version from 2015-01-28 and changed to UASECO requirements.
  *
- *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
  *   2014-10-03: Renamed query() into singlequery(), changed parameter for addCall() and query()
+ *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
+ *   2015-01-28: Added a try/catch at query() to catch all exception (possibly forgoten by Plugin authors)
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-10
- * Copyright:	2014 by undef.de
+ * Date:	2015-01-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: http://www.gnu.org/licenses/lgpl.html LGPL License 3
@@ -170,10 +171,17 @@ class GbxRemote {
 	 * @throws MessageException
 	 */
 	public function query () {
+		global $aseco;
+
 		$args = func_get_args();
 		$method = array_shift($args);
 
-		return $this->singlequery($method, $args);
+		try {
+			return $this->singlequery($method, $args);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" at '. get_class($this) .'::query() for method "'. $method .'" with args "'. $aseco->dump($args) .'"');
+		}
 	}
 
 	/*
@@ -248,13 +256,14 @@ class GbxRemote {
 
 			default:
 				$result = $this->singlequery('system.multicall', array($this->multicallBuffer));
-				foreach ($result as &$value)
+				foreach ($result as &$value) {
 					if (isset($value['faultCode'])) {
 						$value = FaultException::create($value['faultString'], $value['faultCode']);
 					}
 					else {
 						$value = $value[0];
 					}
+				}
 				$this->multicallBuffer = array();
 				return $result;
 		}
