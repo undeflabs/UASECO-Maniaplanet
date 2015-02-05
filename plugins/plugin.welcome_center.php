@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-16
+ * Date:	2015-01-31
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -222,7 +222,7 @@ class PluginWelcomeCenter extends Plugin {
 					$player->continent,
 					$aseco->country->iocToCountry($player->nation),
 					implode(', ', $zone),
-					$aseco->timeString($player->getTimeOnline()),
+					$aseco->timeString($player->getTimeOnline(), true),
 				),
 				$message
 			);

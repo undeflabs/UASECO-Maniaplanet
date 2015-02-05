@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - January 2015 by undef.de
+ * Copyright:	May 2014 - February 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-01-28');
+	define('UASECO_BUILD',		'2015-02-05');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -209,12 +209,27 @@ class UASECO extends Helper {
 		$this->loadSettings($config_file);
 
 		// Load admin/operator/ability lists, if available
-		$this->console('[Config] Load admin/ops lists [{1}]', $this->settings['adminops_file']);
+		$this->console('[Config] Load admin and operator lists [{1}]', $this->settings['adminops_file']);
 		$this->readLists();
 
 		// Load banned IPs list, if available
 		$this->console('[Config] Load banned IPs list [{1}]', $this->settings['bannedips_file']);
 		$this->readIPs();
+
+		// Setup PHP memory_limit
+		$limit = $this->shorthand2bytes(ini_get('memory_limit'));
+		if ($limit != -1) {
+			ini_set('memory_limit', $this->settings['memory_limit']);
+		}
+		$limit = $this->shorthand2bytes(ini_get('memory_limit'));
+		if ($limit != -1 && $limit < 256 * 1048576) {
+			ini_set('memory_limit', '256M');
+		}
+		$this->console('[PHP] Setup memory limit to '. $this->bytes2shorthand(ini_get('memory_limit'), 'M'));
+
+		// Setup PHP script_timeout
+		@set_time_limit($this->settings['script_timeout']);
+		$this->console('[PHP] Setup script timeout to '. $this->settings['script_timeout'] .' second'. ($this->settings['script_timeout'] == 1 ? '' : 's'));
 
 		// Connect to Trackmania Dedicated Server
 		if (!$this->connectDedicated()) {
@@ -378,9 +393,6 @@ class UASECO extends Helper {
 	// and reads all Maps from server.
 	private function serverSync () {
 
-		// Setup API-Version
-		$this->client->query('SetApiVersion', API_VERSION);
-
 		// Trigger 'LibXmlRpc_PlayersRanking'
 		$this->client->query('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
 
@@ -416,6 +428,8 @@ class UASECO extends Helper {
 	// Sends program header to console and ingame chat.
 	private function sendHeader () {
 
+		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') == 1 ? '' : 's');
+
 		$this->console_text('#####################################################################################');
 		$this->console_text('» Server:    {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripColors($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
 		if ($this->server->isrelay) {
@@ -425,7 +439,7 @@ class UASECO extends Helper {
 		$this->console_text('» Gamemode:  {1} with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»            Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
-		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
+		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»            Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» UASECO:    Version {1} build {2}, running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
@@ -437,7 +451,7 @@ class UASECO extends Helper {
 		$this->console_text('» Website:   {1}', UASECO_WEBSITE);
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:        {1}', php_uname());
-		$this->console_text('» PHP:       PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), ini_get('safe_mode'), ini_get('memory_limit'), ini_get('max_execution_time'), ini_get('allow_url_fopen'));
+		$this->console_text('» PHP:       PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), $this->bool2string(ini_get('safe_mode')), $this->bytes2shorthand(ini_get('memory_limit'), 'M'), $max_execution_time, $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
 		$this->console_text('» MySQL:     Server:  {1}', $this->db->server_version());
 		$this->console_text('»            Client:  {1}', $this->db->client_version());
 		$this->console_text('»            Connect: {1}', $this->db->connection_info());
@@ -462,6 +476,8 @@ class UASECO extends Helper {
 	*/
 
 	private function logDebugInformations () {
+
+		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') == 1 ? '' : 's');
 
 		$this->console_text('#### DEBUG ##########################################################################');
 		$this->console_text('» StartupPhase:  {1}', $this->bool2string($this->startup_phase));
@@ -491,11 +507,11 @@ class UASECO extends Helper {
 		$this->console_text('» Gamemode:      {1} with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
 		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
-		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->server->networkstats['TotalSendingSize'], $this->server->networkstats['TotalReceivingSize']);
+		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
-		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), ini_get('safe_mode'), ini_get('memory_limit'), ini_get('max_execution_time'), ini_get('allow_url_fopen'));
+		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), $this->bool2string(ini_get('safe_mode')), $this->bytes2shorthand(ini_get('memory_limit'), 'M'), $max_execution_time, $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
 		$this->console_text('» MySQL:         Server:  {1}', $this->db->server_version());
 		$this->console_text('»                Client:  {1}', $this->db->client_version());
 		$this->console_text('»                Connect: {1}', $this->db->connection_info());
@@ -565,9 +581,6 @@ class UASECO extends Helper {
 
 			// set cheater action
 			$this->settings['cheater_action'] = $settings['CHEATER_ACTION'][0];
-
-			// set script timeout
-			$this->settings['script_timeout'] = $settings['SCRIPT_TIMEOUT'][0];
 
 			// show played time at end of map?
 			$this->settings['show_playtime'] = $settings['SHOW_PLAYTIME'][0];
@@ -657,8 +670,17 @@ class UASECO extends Helper {
 			$this->settings['global_blacklist_merge'] = $this->string2bool($settings['GLOBAL_BLACKLIST_MERGE'][0]);
 			$this->settings['global_blacklist_url'] = $settings['GLOBAL_BLACKLIST_URL'][0];
 
+			// set stripling path
+			$this->settings['stripling_path'] = $settings['STRIPLING_PATH'][0];
+
 			// Log passwords in logfile?
 			$this->settings['mask_password'] = $this->string2bool($settings['MASK_PASSWORD'][0]);
+
+			// set script_timeout
+			$this->settings['script_timeout'] = $settings['SCRIPT_TIMEOUT'][0];
+
+			// set memory_limit
+			$this->settings['memory_limit'] = $settings['MEMORY_LIMIT'][0];
 
 			// Read <mysql> settings and apply them
 			$this->settings['mysql']['host'] = $settings['MYSQL'][0]['HOST'][0];
@@ -1418,6 +1440,9 @@ class UASECO extends Helper {
 			// Wait for server to be ready
 			$this->waitServerReady();
 
+			// Setup API-Version
+			$this->client->query('SetApiVersion', API_VERSION);
+
 			// Connection established
 			return true;
 		}
@@ -1650,7 +1675,7 @@ class UASECO extends Helper {
 			$this->console('[Map] MX infos cached, last fetched at '. date('Y-m-d H:i:s', $map->mx->timestamp_fetched));
 		}
 
-		// Report usage back to home website
+		// Report usage back to home website and store file for the "stripling.php"
 		$this->reportServerInfo();
 
 		// Refresh game info
@@ -2188,22 +2213,6 @@ class UASECO extends Helper {
 	}
 }
 
-/*
-#///////////////////////////////////////////////////////////////////////#
-#									#
-#///////////////////////////////////////////////////////////////////////#
-*/
-
-// Convert php.ini memory shorthand string to integer bytes
-// http://www.php.net/manual/en/function.ini-get.php#96996
-function shorthand2bytes ($size_str) {
-	switch (substr($size_str, -1)) {
-		case 'M': case 'm': return (int)$size_str * 1048576;
-		case 'K': case 'k': return (int)$size_str * 1024;
-		case 'G': case 'g': return (int)$size_str * 1073741824;
-		default: return (int)$size_str;
-	}
-}
 
 /*
 #///////////////////////////////////////////////////////////////////////#
@@ -2218,11 +2227,6 @@ if (function_exists('date_default_timezone_get') && function_exists('date_defaul
 
 setlocale(LC_NUMERIC, 'C');
 mb_internal_encoding('UTF-8');
-
-$limit = shorthand2bytes(ini_get('memory_limit'));
-if ( ($limit != -1) && ($limit < 256 * 1048576) ) {
-	ini_set('memory_limit', '256M');
-}
 
 // Create an instance of UASECO and run it
 $aseco = new UASECO();

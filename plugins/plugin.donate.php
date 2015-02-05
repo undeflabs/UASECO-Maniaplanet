@@ -5,15 +5,10 @@
  * » Processes planet donations to and payments from the server.
  * » Based upon plugin.donate.php from XAseco2/1.03 written by Xymph
  *
- *   Important: you must make an initial donation from a player login
- *   to your server login via the in-game message system, so that
- *   there are sufficient planets in the account to pay the Nadeo tax
- *   on the first /donate transaction.
- *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-04
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -32,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - plugins/plugin.manialinks.php
+ *  - none
  *
  */
 
@@ -48,9 +43,8 @@
 class PluginDonate extends Plugin {
 	public $bills		= array();
 	public $payments	= array();
-	public $mindonation	= 10;						// minimum donation amount (because of Nadeo tax)
-	public $publicappr	= 100;						// public appreciation threshold (show Thank You to all)
-	public $donation_values	= array(20, 50, 100, 200, 500, 1000, 2000);	// default planets values for donate panel
+	public $mindonation	= 10;
+	public $publicappr	= 50;
 
 
 	/*
@@ -65,13 +59,30 @@ class PluginDonate extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Processes planet donations to and payments from the server.');
 
-		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
-
+		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onBillUpdated',			'onBillUpdated');
 
 		$this->registerChatCommand('donate',	'chat_donate',	'Donates planets to server',		Player::PLAYERS);
 		$this->registerChatCommand('topdons',	'chat_topdons',	'Displays top 100 highest donators',	Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+
+		// Read Configuration
+		if (!$this->config = $aseco->parser->xmlToArray('config/donate.xml', true, true)) {
+			trigger_error('[Donate] Could not read/parse config file "config/donate.xml"!', E_USER_ERROR);
+		}
+		$this->config = $this->config['SETTINGS'];
+
+		$this->mindonation	= (int)$this->config['MINIMUM_DONATION'][0];
+		$this->publicappr	= (int)$this->config['PUBLIC_APPRECIATION_THRESHOLD'][0];
 	}
 
 	/*
@@ -309,42 +320,6 @@ class PluginDonate extends Plugin {
 				// log clicked command
 				$aseco->console('Player [{1}] cancelled command "/admin pay"', $player->login);
 				$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, false);
-				return;
-
-			// Donate panel buttons
-			case 30:
-				// donate panel field 1
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[0], $player->login);
-				return;
-
-			case 31:
-				// donate panel field 2
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[1], $player->login);
-				return;
-
-			case 32:
-				// donate panel field 3
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[2], $player->login);
-				return;
-
-			case 33:
-				// donate panel field 4
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[3], $player->login);
-				return;
-
-			case 34:
-				// donate panel field 5
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[4], $player->login);
-				return;
-
-			case 35:
-				// donate panel field 6
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[5], $player->login);
-				return;
-
-			case 36:
-				// donate panel field 7
-				$aseco->releaseChatCommand('/donate '. $this->donation_values[6], $player->login);
 				return;
 		}
 	}

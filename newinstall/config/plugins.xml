@@ -16,7 +16,6 @@
 	<plugin>plugin.info_bar.php</plugin>
 	<plugin>plugin.stunt_messages.php</plugin>
 	<plugin>plugin.tachometer.php</plugin>
-	<plugin>plugin.nickname_sync.php</plugin>
 	<plugin>plugin.donate.php</plugin>
 	<plugin>plugin.rounds.php</plugin>
 	<plugin>plugin.round_points.php</plugin>
@@ -52,6 +51,7 @@
 	<plugin>plugin.pay2play.php</plugin>
 	<plugin>plugin.records_eyepiece.php</plugin>
 	<plugin>plugin.mania_karma.php</plugin>
+	<plugin>plugin.nickname_sync.php</plugin>
 	<plugin>plugin.lazy_buttons.php</plugin>
 	<plugin>plugin.greeting_dude.php</plugin>
 	<plugin>plugin.vote_manager.php</plugin>

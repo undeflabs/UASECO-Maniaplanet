@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-12-14
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-05
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -90,89 +90,24 @@ class PluginInfoBar extends Plugin {
 
 	public function onSync ($aseco) {
 
-//		// Read Configuration
-//		if (!$this->config = $aseco->parser->xmlToArray('config/info_bar.xml', true, true)) {
-//			trigger_error('[WelcomeCenter] Could not read/parse config file "config/info_bar.xml"!', E_USER_ERROR);
-//		}
-//		$this->config = $this->config['INFO_BAR'];
-//
-//		// Transform 'TRUE' or 'FALSE' from string to boolean
-//		$this->config['xxx'][0]['ENABLED'][0]			= ((strtoupper($this->config['xxx'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
+		// Read Configuration
+		if (!$this->config = $aseco->parser->xmlToArray('config/info_bar.xml', true, true)) {
+			trigger_error('[WelcomeCenter] Could not read/parse config file "config/info_bar.xml"!', E_USER_ERROR);
+		}
+		$this->config = $this->config['SETTINGS'];
 
-		$this->config['bar']['background_color']			= '55556699';	// RRGGBBAA
 		$this->config['bar']['position']['x']				= -160.0;
 		$this->config['bar']['position']['y']				= 90.0;
 		$this->config['bar']['position']['z']				= 20.0;
 
-		$this->config['box']['font_color_top']				= 'FFFFFFFF';	// RRGGBBAA
-		$this->config['box']['font_color_bottom']			= 'DDDDDDFF';	// RRGGBBAA
-		$this->config['box']['seperator_color']				= 'DDDDDD66';	// RRGGBBAA
-		$this->config['box']['background_color_default']		= 'FFFFFF00';	// RRGGBBAA
-		$this->config['box']['background_color_focus']			= '0099FFFF';	// RRGGBBAA
-
-		$this->config['player_count']['label']				= 'PLAYER';
-		$this->config['player_count']['icon']				= 'http://static.undef.name/ingame/info-bar/icon-players.png';
-		$this->config['player_count']['modulatecolor']			= 'DDDDDD';	// RRGGBB
-
-		$this->config['spectator_count']['label']			= 'SPECTATOR';
-		$this->config['spectator_count']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-spectators.png';
-		$this->config['spectator_count']['modulatecolor']		= 'DDDDDD';	// RRGGBB
-
-		$this->config['current_ranking']['label']			= 'RANKING';
-		$this->config['current_ranking']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-player-ranking.png';
-		$this->config['current_ranking']['modulatecolor']		= 'DDDDDD';	// RRGGBB
-		$this->config['current_ranking']['action']			= 'showLiveRankingsWindow';
-
-		$this->config['donation']['icon']				= 'http://static.undef.name/ingame/info-bar/icon-donate.png';
-		$this->config['donation']['modulatecolor']			= 'DDDDDD';
-
-		$this->config['records']['personal_best']['label']		= 'PERSONAL BEST';
-		$this->config['records']['personal_best']['icon']		= 'http://static.undef.name/ingame/info-bar/icon-personal-best-time.png';
-		$this->config['records']['personal_best']['modulatecolor']	= 'DDDDDD';	// RRGGBB
-		$this->config['records']['personal_best']['action']		= '';
-
-		$this->config['records']['local']['label']			= '1. LOCAL RECORD';
-		$this->config['records']['local']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-local-record.png';
-		$this->config['records']['local']['modulatecolor']		= 'DDDDDD';	// RRGGBB
-		$this->config['records']['local']['action']			= 'showLocalRecordsWindow';
-
-		$this->config['records']['dedimania']['label']			= '1. DEDIMANIA';
-		$this->config['records']['dedimania']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-dedimania-record.png';
-		$this->config['records']['dedimania']['modulatecolor']		= 'DDDDDD';	// RRGGBB
-		$this->config['records']['dedimania']['action']			= 'showDedimaniaRecordsWindow';
-
-		$this->config['records']['mania_exchange']['label']		= 'MANIA EXCHANGE';
-		$this->config['records']['mania_exchange']['icon']		= 'http://static.undef.name/ingame/info-bar/icon-maniaexchange.png';
-		$this->config['records']['mania_exchange']['modulatecolor']	= 'DDDDDD';	// RRGGBB
-		$this->config['records']['mania_exchange']['action']		= 'showManiaExchangeMapInfoWindow';
-
-		$this->config['best_last_time']['best']['label']		= 'BEST RACE TIME';
-		$this->config['best_last_time']['best']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-best-race-time.png';
-		$this->config['best_last_time']['best']['modulatecolor']	= 'DDDDDD';	// RRGGBB
-
-		$this->config['best_last_time']['last']['label']		= 'LAST RACE TIME';
-		$this->config['best_last_time']['last']['icon']			= 'http://static.undef.name/ingame/info-bar/icon-last-race-time.png';
-		$this->config['best_last_time']['last']['modulatecolor']	= 'DDDDDD';	// RRGGBB
-
-		$this->config['clock']['label']					= 'LOCAL TIME';
-		$this->config['clock']['icon']					= 'http://static.undef.name/ingame/info-bar/icon-clock.png';
-		$this->config['clock']['modulatecolor']				= 'DDDDDD';	// RRGGBB
-
-		$this->config['ladder_limits']['label']				= 'LADDER';
-		$this->config['ladder_limits']['icon']				= 'http://static.undef.name/ingame/info-bar/icon-ladder-limits.png';
-		$this->config['ladder_limits']['modulatecolor']			= 'DDDDDD';	// RRGGBB
-
-		$this->config['gamemode']['icon']				= 'http://static.undef.name/ingame/info-bar/icon-gamemode.png';
-		$this->config['gamemode']['modulatecolor']			= 'DDDDDD';	// RRGGBB
-
 		$this->config['manialinkid']					= 'InfoBar';
 
-		$this->records['local']						= 0;
-		$this->records['dedimania']					= 0;
+		$this->records['local_record']					= 0;
+		$this->records['dedimania_record']				= 0;
 		$this->records['mania_exchange']				= 0;
 
-		$this->update['local']						= false;
-		$this->update['dedimania']					= false;
+		$this->update['local_record']					= false;
+		$this->update['dedimania_record']				= false;
 		$this->update['mania_exchange']					= false;
 
 		// Disable parts of the UI
@@ -205,10 +140,10 @@ class PluginInfoBar extends Plugin {
 
 		// Setup records
 		$score = $aseco->plugins['PluginLocalRecords']->getPersonalBest($player->login, $aseco->server->maps->current->id);
-		$this->players[$player->login]['records']['personal_best']	= $score['time'];
-		$this->players[$player->login]['records']['local']		= $this->records['local'];
-		$this->players[$player->login]['records']['dedimania']		= $this->records['dedimania'];
-		$this->players[$player->login]['records']['mania_exchange']	= $this->records['mania_exchange'];
+		$this->players[$player->login]['personal_best']		= $aseco->formatTime($score['time']);
+		$this->players[$player->login]['local_record']		= $aseco->formatTime($this->records['local_record']);
+		$this->players[$player->login]['dedimania_record']	= $aseco->formatTime($this->records['dedimania_record']);
+		$this->players[$player->login]['mania_exchange']	= $aseco->formatTime($this->records['mania_exchange']);
 
 		// Send Info-Bar to all Players
 		$this->sendInfoBar($player->login, true);
@@ -249,10 +184,10 @@ class PluginInfoBar extends Plugin {
 
 		foreach ($aseco->server->players->player_list as $player) {
 			$score = $aseco->plugins['PluginLocalRecords']->getPersonalBest($player->login, $map->id);
-			$this->players[$player->login]['records']['personal_best']	= $score['time'];
-			$this->players[$player->login]['records']['local']		= $this->records['local'];
-			$this->players[$player->login]['records']['dedimania']		= $this->records['dedimania'];
-			$this->players[$player->login]['records']['mania_exchange']	= $this->records['mania_exchange'];
+			$this->players[$player->login]['personal_best']		= $aseco->formatTime($score['time']);
+			$this->players[$player->login]['local_record']		= $aseco->formatTime($this->records['local_record']);
+			$this->players[$player->login]['dedimania_record']	= $aseco->formatTime($this->records['dedimania_record']);
+			$this->players[$player->login]['mania_exchange']	= $aseco->formatTime($this->records['mania_exchange']);
 		}
 	}
 
@@ -299,9 +234,10 @@ class PluginInfoBar extends Plugin {
 	*/
 
 	public function onUnloadingMap ($aseco, $data) {
+
 		// Reset all records
-		$this->records['local']			= 0;
-		$this->records['dedimania']		= 0;
+		$this->records['local_record']		= 0;
+		$this->records['dedimania_record']	= 0;
 		$this->records['mania_exchange']	= 0;
 	}
 
@@ -314,10 +250,10 @@ class PluginInfoBar extends Plugin {
 	// Event from plugin.localdatabase.php
 	public function onLocalRecord ($aseco, $record) {
 
-		if ($this->players[$record->player->login]['records']['local'] > $record->score || $this->players[$record->player->login]['records']['local'] == 0) {
+		if ($this->players[$record->player->login]['local_record'] > $record->score || $this->players[$record->player->login]['local_record'] == 0) {
 			// Store new 1. Local Record at each connected Player
 			foreach ($aseco->server->players->player_list as $player) {
-				$this->players[$player->login]['records']['local'] = $record->score;
+				$this->players[$player->login]['local_record'] = $aseco->formatTime($record->score);
 			}
 		}
 	}
@@ -332,15 +268,15 @@ class PluginInfoBar extends Plugin {
 	public function onLocalRecordBestLoaded ($aseco, $score) {
 
 		// Store global for new Player connections
-		$this->records['local'] = $score;
+		$this->records['local_record'] = $score;
 
 		// Store at each connected Player
 		foreach ($aseco->server->players->player_list as $player) {
-			$this->players[$player->login]['records']['local'] = $score;
+			$this->players[$player->login]['local_record'] = $aseco->formatTime($score);
 		}
 
 		// Mark for required update
-		$this->update['local'] = true;
+		$this->update['local_record'] = true;
 	}
 
 	/*
@@ -352,11 +288,14 @@ class PluginInfoBar extends Plugin {
 	// Event from plugin.dedimania.php
 	public function onDedimaniaRecord ($aseco, $record) {
 
-		if ($this->players[$record['Login']]['records']['dedimania'] > $record['Best'] || $this->players[$record['Login']]['records']['dedimania'] == 0) {
+		if ($this->players[$record['Login']]['dedimania_record'] > $record['Best'] || $this->players[$record['Login']]['dedimania_record'] == 0) {
 			// Store new 1. Dedimania Record at each connected Player
 			foreach ($aseco->server->players->player_list as $player) {
-				$this->players[$player->login]['records']['dedimania'] = $record['Best'];
+				$this->players[$player->login]['dedimania_record'] = $aseco->formatTime($record['Best']);
 			}
+
+			// Mark for required update
+			$this->update['dedimania_record'] = true;
 		}
 	}
 
@@ -371,15 +310,15 @@ class PluginInfoBar extends Plugin {
 
 		if (count($records) > 0) {
 			// Store global for new Player connections
-			$this->records['dedimania'] = $records[0]['Best'];
+			$this->records['dedimania_record'] = $records[0]['Best'];
 
 			// Store at each connected Player
 			foreach ($aseco->server->players->player_list as $player) {
-				$this->players[$player->login]['records']['dedimania'] = $records[0]['Best'];
+				$this->players[$player->login]['dedimania_record'] = $aseco->formatTime($records[0]['Best']);
 			}
 
 			// Mark for required update
-			$this->update['dedimania'] = true;
+			$this->update['dedimania_record'] = true;
 		}
 	}
 
@@ -396,7 +335,7 @@ class PluginInfoBar extends Plugin {
 
 		// Store at each connected Player
 		foreach ($aseco->server->players->player_list as $player) {
-			$this->players[$player->login]['records']['mania_exchange'] = $score;
+			$this->players[$player->login]['mania_exchange'] = $aseco->formatTime($score);
 		}
 
 		// Mark for required update
@@ -412,24 +351,22 @@ class PluginInfoBar extends Plugin {
 	public function updateRecords () {
 		global $aseco;
 
-		$update = false;
-		if ($this->update['local'] == true) {
-			$this->update['local'] = false;
-			$update = true;
-		}
-		if ($this->update['dedimania'] == true) {
-			$this->update['dedimania'] = false;
-			$update = true;
-		}
-		if ($this->update['mania_exchange'] == true) {
-			$this->update['mania_exchange'] = false;
-			$update = true;
-		}
-
-		if ($update == true) {
-			// Send Records
-			foreach ($aseco->server->players->player_list as $player) {
-				$xml = $this->buildRecords($this->players[$player->login]['records'], true);
+		foreach ($aseco->server->players->player_list as $player) {
+			$xml = false;
+			if ($this->update['local_record'] == true) {
+				$this->update['local_record'] = false;
+				$xml .= $this->buildLocalRecord($this->players[$player->login]['local_record'], true);
+			}
+			if ($this->update['dedimania_record'] == true) {
+				$this->update['dedimania_record'] = false;
+				$xml .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], true);
+			}
+			if ($this->update['mania_exchange'] == true) {
+				$this->update['mania_exchange'] = false;
+				$xml .= $this->buildManiaExchange($this->players[$player->login]['mania_exchange'], true);
+			}
+			if ($xml !== false) {
+				// Send Records
 				$aseco->sendManiaLink($xml, $player->login);
 			}
 		}
@@ -447,7 +384,7 @@ class PluginInfoBar extends Plugin {
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'MainBar" name="'. $this->config['manialinkid'] .'MainBar" version="1">';
 		if ($show == true) {
 			$xml .= '<frame posn="'. $this->config['bar']['position']['x'] .' '. $this->config['bar']['position']['y'] .' '. $this->config['bar']['position']['z'] .'">';
-			$xml .= '<quad posn="0 0 0.01" sizen="380 7" bgcolor="'. $this->config['bar']['background_color'] .'"/>';
+			$xml .= '<quad posn="0 0 0.01" sizen="380 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 			$xml .= '</frame>';
 		}
 		$xml .= '</manialink>';
@@ -463,14 +400,20 @@ class PluginInfoBar extends Plugin {
 			$mls = $xml;
 			foreach ($aseco->server->players->player_list as $player) {
 				$mls = $xml;
-				$mls .= $this->buildRecords($this->players[$player->login]['records'], $show);
+				$mls .= $this->buildPersonalBest($this->players[$player->login]['personal_best'], $show);
+				$mls .= $this->buildLocalRecord($this->players[$player->login]['local_record'], $show);
+				$mls .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], $show);
+				$mls .= $this->buildManiaExchange($this->players[$player->login]['mania_exchange'], $show);
 				$aseco->sendManiaLink($mls, $player->login);
 			}
 		}
 		else {
 			foreach (explode(',', $logins) as $login) {
 				$mls = $xml;
-				$mls .= $this->buildRecords($this->players[$login]['records'], $show);
+				$mls .= $this->buildPersonalBest($this->players[$login]['personal_best'], $show);
+				$mls .= $this->buildLocalRecord($this->players[$login]['local_record'], $show);
+				$mls .= $this->buildDedimaniaRecord($this->players[$login]['dedimania_record'], $show);
+				$mls .= $this->buildManiaExchange($this->players[$login]['mania_exchange'], $show);
 				$aseco->sendManiaLink($mls, $login);
 			}
 		}
@@ -516,13 +459,12 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Clock" name="'. $this->config['manialinkid'] .'Clock" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 297) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-//			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonClock" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="23 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['clock']['modulatecolor'] .'" image="'. $this->config['clock']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="00:00:00" id="'. $this->config['manialinkid'] .'LabelLocalTime"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['clock']['label'] .'"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 298) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<quad posn="0 0 0.02" sizen="22 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonClock" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['CLOCK'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['CLOCK'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="00:00:00" id="'. $this->config['manialinkid'] .'LabelLocalTime"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['CLOCK'][0]['LABEL'][0] .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -542,12 +484,12 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'LadderLimits" name="'. $this->config['manialinkid'] .'LadderLimits" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 274) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-//			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonLadderLimits" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['ladder_limits']['modulatecolor'] .'" image="'. $this->config['ladder_limits']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="'. substr(($aseco->server->ladder_limit_min / 1000), 0, 3) .'-'. substr(($aseco->server->ladder_limit_max / 1000), 0, 3) .'k" id="'. $this->config['manialinkid'] .'LabelLadderLimits"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="LADDER"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 276) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<quad posn="0 0 0.02" sizen="22 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonLadderLimits" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['LADDER_LIMITS'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['LADDER_LIMITS'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="9 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. substr(($aseco->server->ladder_limit_min / 1000), 0, 3) .'-'. substr(($aseco->server->ladder_limit_max / 1000), 0, 3) .'k" id="'. $this->config['manialinkid'] .'LabelLadderLimits"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="17 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="LADDER"/>';
 			$xml .= '</frame>';
 		}
 		$xml .= '</manialink>';
@@ -642,12 +584,12 @@ EOL;
 					break;
 			}
 
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 251) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonGamemodeHelp" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['gamemode']['modulatecolor'] .'" image="'. $this->config['gamemode']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="'. $limits .'" id="'. $this->config['manialinkid'] .'Gamemode"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. strtoupper($modename) .'"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 254) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			$xml .= '<quad posn="0 0 0.02" sizen="22 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonGamemodeHelp" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['GAMEMODE'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['GAMEMODE'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="9 2.625" textcolor="'. $this->config['GAMEMODE'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $limits .'" id="'. $this->config['manialinkid'] .'Gamemode"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="17 2.625" textcolor="'. $this->config['GAMEMODE'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. strtoupper($modename) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -748,18 +690,18 @@ EOL;
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'PlayerSpectatorCount" name="'. $this->config['manialinkid'] .'PlayerSpectatorCount" version="1">';
 		if ($show == true) {
 			$xml .= '<frame posn="'. $this->config['bar']['position']['x'] .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-//			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonPlayerCount" ScriptEvents="1"/>';
-//			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['player_count']['modulatecolor'] .'" image="'. $this->config['player_count']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0/'. $aseco->server->options['CurrentMaxPlayers'] .'" id="'. $this->config['manialinkid'] .'LabelPlayerCount"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['player_count']['label'] .'"/>';
+//			$xml .= '<quad posn="0 0 0.02" sizen="22 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonPlayerCount" ScriptEvents="1"/>';
+//			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['PLAYER_COUNT'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['PLAYER_COUNT'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="9 2.625" textcolor="'. $this->config['PLAYER_COUNT'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0/'. $aseco->server->options['CurrentMaxPlayers'] .'" id="'. $this->config['manialinkid'] .'LabelPlayerCount"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="17 2.625" textcolor="'. $this->config['PLAYER_COUNT'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['PLAYER_COUNT'][0]['LABEL'][0] .'"/>';
 			$xml .= '</frame>';
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 23) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-//			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonSpectatorCount" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['spectator_count']['modulatecolor'] .'" image="'. $this->config['spectator_count']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0/'. $aseco->server->options['CurrentMaxSpectators'] .'" id="'. $this->config['manialinkid'] .'LabelSpectatorCount"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['spectator_count']['label'] .'"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 22) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<quad posn="0 0 0.02" sizen="22 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonSpectatorCount" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['SPECTATOR_COUNT'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['SPECTATOR_COUNT'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="9 2.625" textcolor="'. $this->config['SPECTATOR_COUNT'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0/'. $aseco->server->options['CurrentMaxSpectators'] .'" id="'. $this->config['manialinkid'] .'LabelSpectatorCount"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="17 2.625" textcolor="'. $this->config['SPECTATOR_COUNT'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['SPECTATOR_COUNT'][0]['LABEL'][0] .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -880,18 +822,18 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Donation" name="'. $this->config['manialinkid'] .'Donation" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 69) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-			$xml .= '<quad posn="0 0 0.02" sizen="28 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonDonation" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['donation']['modulatecolor'] .'" image="'. $this->config['donation']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="DONATE"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="PLANETS PLEASE"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 66) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			$xml .= '<quad posn="0 0 0.02" sizen="26 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonDonation" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['DONATION'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['DONATION'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="13 2.625" textcolor="'. $this->config['DONATION'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="DONATE"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="23 2.625" textcolor="'. $this->config['DONATION'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="PLANETS PLEASE"/>';
 			$xml .= '</frame>';
 
 			// Build onClick full Widget
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 69) .' '. ($this->config['bar']['position']['y'] - 7.05) .' '. ($this->config['bar']['position']['z'] + 0.02) .'" id="DropDownDonation" hidden="true">';
-			$xml .= '<quad posn="0 -0.1 0.02" sizen="55.6 12" bgcolor="'. $this->config['bar']['background_color'] .'" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.04" sizen="55.6 0.2" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 66) .' '. ($this->config['bar']['position']['y'] - 7.05) .' '. ($this->config['bar']['position']['z'] + 0.02) .'" id="DropDownDonation" hidden="true">';
+			$xml .= '<quad posn="0 -0.1 0.02" sizen="55.6 12" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.04" sizen="55.6 0.2" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<label posn="3 -1.7 0.04" sizen="55 2.625" textcolor="FFFF" textsize="1" scale="0.9" text="Please enter the value you want to Donate:"/>';
 			$xml .= '<quad posn="3 -7.8 0.03" sizen="19 5.1" valign="center" style="Bgs1InRace" substyle="BgColorContour"/>';
 			$xml .= '<entry posn="12.45 -7.8 0.04" sizen="17.9 4" halign="center" valign="center2" style="TextValueSmall" textsize="1" textcolor="FFFF" default="500" autonewline="0" id="EntryDonate" ScriptEvents="1"/>';
@@ -962,8 +904,8 @@ main() {
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
 				case CMlEvent::Type::MouseClick : {
-					if (Event.ControlId == "ButtonRanking") {
-						TriggerPageAction("{$this->config['current_ranking']['action']}");
+					if (Event.ControlId == "ButtonCurrentRanking") {
+						TriggerPageAction("{$this->config['CURRENT_RANKING'][0]['ACTION'][0]}");
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 					}
 				}
@@ -979,310 +921,14 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'CurrentRanking" name="'. $this->config['manialinkid'] .'CurrentRanking" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 46) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-			$xml .= '<quad posn="0 0 0.02" sizen="23 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonRanking" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['current_ranking']['modulatecolor'] .'" image="'. $this->config['current_ranking']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="10 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0/0" id="'. $this->config['manialinkid'] .'LabelCurrentRanking"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="18 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['current_ranking']['label'] .'"/>';
-			$xml .= '</frame>';
-			$xml .= $maniascript;
-		}
-		$xml .= '</manialink>';
-
-		return $xml;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function buildRecords ($records, $show = true) {
-		global $aseco;
-
-$maniascript = <<<EOL
-<script><!--
- /*
- * ----------------------------------
- * Function:	RecordsRotation
- * Author:	undef.de
- * Website:	http://www.undef.name
- * License:	GPLv3
- * ----------------------------------
- */
-#Include "TextLib" as TextLib
-#Include "AnimLib" as AnimLib
-Text FormatTime (Integer _Time) {
-	declare Text Time = "0:00.000";
-
-	if (_Time > 0) {
-		declare Text _TimeText = TextLib::ToText(_Time);
-		declare Hundredth = TextLib::ToInteger(TextLib::SubString(_TimeText, TextLib::Length(_TimeText)-3, 3));
-		declare Seconds = (_Time / 1000) % 60;
-		declare Minutes = (_Time / 60000) % 60;
-		declare Hours = (_Time / 3600000);
-
-		if (Hours > 0) {
-			Time = Hours ^":"^ TextLib::FormatInteger(Minutes, 2) ^":"^ TextLib::FormatInteger(Seconds, 2) ^"."^ TextLib::FormatInteger(Hundredth, 3);
-		}
-		else {
-			Time = Minutes ^":"^ TextLib::FormatInteger(Seconds, 2) ^"."^ TextLib::FormatInteger(Hundredth, 3);
-		}
-	}
-	return Time;
-}
-Void ReplaceRecords (Text _Time, Text _Label, Text _ImageUrl) {
-	declare CMlQuad QuadIcon <=> (Page.GetFirstChild("QuadIcon") as CMlQuad);
-	declare CMlLabel LabelTime <=> (Page.GetFirstChild("LabelTime") as CMlLabel);
-	declare CMlLabel LabelText <=> (Page.GetFirstChild("LabelText") as CMlLabel);
-
-	// Fade out <label>s
-	while (LabelTime.Opacity > 0.0) {
-		if ((LabelTime.Opacity - 0.05) < 0.0) {
-			QuadIcon.Opacity = 0.0;
-			LabelTime.Opacity = 0.0;
-			LabelText.Opacity = 0.0;
-			break;
-		}
-		QuadIcon.Opacity -= 0.05;
-		LabelTime.Opacity -= 0.05;
-		LabelText.Opacity -= 0.05;
-		yield;
-	}
-
-	// Replace content
-	if (_ImageUrl != "") {
-		QuadIcon.ImageUrl = _ImageUrl;
-	}
-	LabelTime.SetText(FormatTime(TextLib::ToInteger(_Time)));
-	LabelText.SetText(_Label);
-
-	// Fade in <label>s
-	while (LabelTime.Opacity < 1.0) {
-		if ((LabelTime.Opacity + 0.05) > 1.0) {
-			QuadIcon.Opacity = 1.0;
-			LabelTime.Opacity = 1.0;
-			LabelText.Opacity = 1.0;
-			break;
-		}
-		QuadIcon.Opacity += 0.05;
-		LabelTime.Opacity += 0.05;
-		LabelText.Opacity += 0.05;
-		yield;
-	}
-}
-Void WipeIn (Text ChildId, Vec2 EndSize) {
-	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-//	declare Vec3 OriginalPosition = Container.RelativePosition;
-
-	Container.Hide();
-//	Container.RelativePosition.X = Container.RelativePosition.X + (EndSize.X / 2);
-	Container.RelativeScale = 0.0;
-	Container.Show();
-
-	declare Real AnimDuration = 500.0;
-	declare Real AnimFactor = 0.0;
-	declare Integer AnimStartTime = Now;
-	while ((Now - AnimStartTime * 1.0) < AnimDuration) {
-		AnimFactor = AnimLib::Ease("BounceOut", ((Now - AnimStartTime) * 1.0), 0.0, 1.0, AnimDuration);
-
-//		Container.RelativePosition.X = Container.RelativePosition.X - ((EndSize.X / 2) / (AnimDuration / 10));
-		Container.RelativeScale = AnimFactor;
-		yield;
-	}
-//	Container.RelativePosition.X = OriginalPosition.X;
-}
-main() {
-	declare CMlControl DropDownRecords <=> (Page.GetFirstChild("DropDownRecords") as CMlFrame);
-	declare CMlLabel LabelPersonalBest <=> (Page.GetFirstChild("LabelPersonalBest") as CMlLabel);
-	declare CMlLabel LabelLocalRecord <=> (Page.GetFirstChild("LabelLocalRecord") as CMlLabel);
-	declare CMlLabel LabelDedimania <=> (Page.GetFirstChild("LabelDedimania") as CMlLabel);
-	declare CMlLabel LabelManiaExchange <=> (Page.GetFirstChild("LabelManiaExchange") as CMlLabel);
-
-	declare RecordScores = Text[Text][Integer];
-	RecordScores[0] = [
-		"Score"		=> "{$records['personal_best']}",
-		"Label"		=> "{$this->config['records']['personal_best']['label']}",
-		"ImageUrl"	=> "{$this->config['records']['personal_best']['icon']}"
-	];
-	RecordScores[1] = [
-		"Score"		=> "{$records['local']}",
-		"Label"		=> "{$this->config['records']['local']['label']}",
-		"ImageUrl"	=> "{$this->config['records']['local']['icon']}"
-	];
-	RecordScores[2] = [
-		"Score"		=> "{$records['dedimania']}",
-		"Label"		=> "{$this->config['records']['dedimania']['label']}",
-		"ImageUrl"	=> "{$this->config['records']['dedimania']['icon']}"
-	];
-	RecordScores[3] = [
-		"Score"		=> "{$records['mania_exchange']}",
-		"Label"		=> "{$this->config['records']['mania_exchange']['label']}",
-		"ImageUrl"	=> "{$this->config['records']['mania_exchange']['icon']}"
-	];
-
-	// Insert the Records into the Labels
-	LabelPersonalBest.SetText(FormatTime(TextLib::ToInteger(RecordScores[0]["Score"])));
-	LabelLocalRecord.SetText(FormatTime(TextLib::ToInteger(RecordScores[1]["Score"])));
-	LabelDedimania.SetText(FormatTime(TextLib::ToInteger(RecordScores[2]["Score"])));
-	LabelManiaExchange.SetText(FormatTime(TextLib::ToInteger(RecordScores[3]["Score"])));
-
-
-	declare Integer TimeOut = 7;
-	declare Integer NextRotation = (CurrentTime / 1000);
-	declare Integer NextUpdate = CurrentTime;
-	declare Integer SecondsCounter = 0;
-	declare Integer DisplayedRecord = 0;
-	while (True) {
-		yield;
-		if (!PageIsVisible || InputPlayer == Null) {
-			continue;
-		}
-
-		// Throttling to work only on every half-second
-		if (NextUpdate <= CurrentTime) {
-			NextUpdate = CurrentTime + 500;
-
-			foreach (Player in Players) {
-				// Skip on Login from Server, that is not a Player ;)
-				if (Player.Login == CurrentServerLogin) {
-					continue;
-				}
-				if (Player.Score != Null && Player.Score.BestRace.Time > 0) {
-					// Check for improved PersonalBest of InputPlayer
-					if ((Player.Login == InputPlayer.Login) && (Player.Score.BestRace.Time < TextLib::ToInteger(RecordScores[0]["Score"]) || TextLib::ToInteger(RecordScores[0]["Score"]) == 0)) {
-						RecordScores[0]["Score"] = TextLib::ToText(Player.Score.BestRace.Time);
-						LabelPersonalBest.SetText(FormatTime(TextLib::ToInteger(RecordScores[0]["Score"])));
-					}
-					// Check for improved LocalRecord
-					if (Player.Score.BestRace.Time < TextLib::ToInteger(RecordScores[1]["Score"]) || TextLib::ToInteger(RecordScores[1]["Score"]) == 0) {
-						RecordScores[1]["Score"] = TextLib::ToText(Player.Score.BestRace.Time);
-						LabelLocalRecord.SetText(FormatTime(TextLib::ToInteger(RecordScores[1]["Score"])));
-					}
-					// Check for improved DedimaniaRecord
-					if ((Player.Score.BestRace.Time < TextLib::ToInteger(RecordScores[2]["Score"]) || TextLib::ToInteger(RecordScores[2]["Score"]) == 0) && (Player.CurRace.Checkpoints.count >= 2 || Map.AuthorLogin == "Nadeo")) {
-						RecordScores[2]["Score"] = TextLib::ToText(Player.Score.BestRace.Time);
-						LabelDedimania.SetText(FormatTime(TextLib::ToInteger(RecordScores[2]["Score"])));
-					}
-				}
-//log("best: "^ FormatTime(Player.Score.BestRace.Time) ^", prev: "^ FormatTime(Player.Score.PrevRace.Time));
-//log("State: "^ Player.RaceState ^", current: "^ FormatTime(Player.CurRace.Time) ^", PB: "^ FormatTime(TextLib::ToInteger(RecordScores[0]["Score"])));
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 44) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			if (!empty($this->config['CURRENT_RANKING'][0]['ACTION'][0])) {
+				$xml .= '<quad posn="0 0 0.02" sizen="22 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonCurrentRanking" ScriptEvents="1"/>';
 			}
-
-		}
-
-		// Throttling to change only every "TimeOut" seconds
-		if (NextRotation <= (CurrentTime / 1000) && DropDownRecords.Visible == False) {
-			NextRotation = (CurrentTime / 1000) + TimeOut;
-
-			// Replace displayed record
-			ReplaceRecords(
-				RecordScores[DisplayedRecord]["Score"],
-				RecordScores[DisplayedRecord]["Label"],
-				RecordScores[DisplayedRecord]["ImageUrl"]
-			);
-
-			DisplayedRecord += 1;
-			if (DisplayedRecord >= RecordScores.count) {
-				DisplayedRecord = 0;
-			}
-		}
-
-		// Check for MouseEvents
-		foreach (Event in PendingEvents) {
-			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
-					if (Event.ControlId == "ButtonRecords") {
-						if (DropDownRecords.Visible == True) {
-							Audio.PlaySoundEvent(CAudioManager::ELibSound::HideMenu, 0, 1.0);
-							DropDownRecords.Hide();
-						}
-						else {
-							Audio.PlaySoundEvent(CAudioManager::ELibSound::ShowMenu, 0, 1.0);
-							WipeIn("DropDownRecords", <28.0, 28.6>);
-						}
-					}
-//					else if (Event.ControlId == "ButtonPersonalBest") {
-//						TriggerPageAction("{$this->config['records']['personal_best']['action']}");
-//						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
-//					}
-					else if (Event.ControlId == "ButtonLocalRecord") {
-						TriggerPageAction("{$this->config['records']['local']['action']}");
-						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
-					}
-					else if (Event.ControlId == "ButtonDedimaniaRecord") {
-						TriggerPageAction("{$this->config['records']['dedimania']['action']}");
-						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
-					}
-					else if (Event.ControlId == "ButtonManiaExchange") {
-						TriggerPageAction("{$this->config['records']['mania_exchange']['action']}");
-						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
-					}
-				}
-				case CMlEvent::Type::MouseOver : {
-					if (Event.ControlId != "ButtonPersonalBest") {
-						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
-					}
-				}
-			}
-		}
-	}
-}
---></script>
-EOL;
-
-		$xml = '<manialink id="'. $this->config['manialinkid'] .'Records" name="'. $this->config['manialinkid'] .'Records" version="1">';
-		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 97) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-			$xml .= '<quad posn="0 0 0.02" sizen="28 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonRecords" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['records']['personal_best']['modulatecolor'] .'" id="QuadIcon"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text=" " id="LabelTime"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text=" " id="LabelText"/>';
-			$xml .= '</frame>';
-
-			// Build onClick full Widget
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 97) .' '. ($this->config['bar']['position']['y'] - 7.05) .' '. ($this->config['bar']['position']['z'] + 0.02) .'" id="DropDownRecords" hidden="true">';
-
-			// Personal Best
-			$xml .= '<frame posn="0 0 0.02">';
-//			$xml .= '<quad posn="0 -0.1 0.02" sizen="28 7" bgcolor="'. $this->config['bar']['background_color'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonPersonalBest" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 -0.1 0.02" sizen="28 7" bgcolor="'. $this->config['bar']['background_color'] .'" bgcolorfocus="'. $this->config['bar']['background_color'] .'" id="ButtonPersonalBest" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.04" sizen="28 0.2" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['records']['personal_best']['modulatecolor'] .'" image="'. $this->config['records']['personal_best']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text=" " id="LabelPersonalBest"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['records']['personal_best']['label'] .'"/>';
-			$xml .= '</frame>';
-
-			// Local Record
-			$xml .= '<frame posn="0 -7.2 0.02">';
-			$xml .= '<quad posn="0 -0.1 0.02" sizen="28 7" bgcolor="'. $this->config['bar']['background_color'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonLocalRecord" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.04" sizen="28 0.2" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['records']['local']['modulatecolor'] .'" image="'. $this->config['records']['local']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text=" " id="LabelLocalRecord"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['records']['local']['label'] .'"/>';
-			$xml .= '</frame>';
-
-			// Dedimania Record
-			$xml .= '<frame posn="0 -14.4 0.02">';
-			$xml .= '<quad posn="0 -0.1 0.02" sizen="28 7" bgcolor="'. $this->config['bar']['background_color'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonDedimaniaRecord" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.04" sizen="28 0.2" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['records']['dedimania']['modulatecolor'] .'" image="'. $this->config['records']['dedimania']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text=" " id="LabelDedimania"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['records']['dedimania']['label'] .'"/>';
-			$xml .= '</frame>';
-
-			// Mania Exchange Offline Record
-			$xml .= '<frame posn="0 -21.6 0.02">';
-			$xml .= '<quad posn="0 -0.1 0.02" sizen="28 7" bgcolor="'. $this->config['bar']['background_color'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonManiaExchange" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.04" sizen="28 0.2" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['records']['mania_exchange']['modulatecolor'] .'" image="'. $this->config['records']['mania_exchange']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text=" " id="LabelManiaExchange"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['records']['mania_exchange']['label'] .'"/>';
-			$xml .= '</frame>';
-
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['CURRENT_RANKING'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['CURRENT_RANKING'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="9 2.625" textcolor="'. $this->config['CURRENT_RANKING'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0/0" id="'. $this->config['manialinkid'] .'LabelCurrentRanking"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="17 2.625" textcolor="'. $this->config['CURRENT_RANKING'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['CURRENT_RANKING'][0]['LABEL'][0] .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -1298,7 +944,6 @@ EOL;
 	*/
 
 	private function buildBestLastTime ($show = true) {
-		global $aseco;
 
 $maniascript = <<<EOL
 <script><!--
@@ -1366,22 +1011,283 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'PlayerBestLastTime" name="'. $this->config['manialinkid'] .'PlayerBestLastTime" version="1">';
 		if ($show == true) {
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 125) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-//			$xml .= '<quad posn="0 0 0.02" sizen="28 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonBestTime" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['best_last_time']['best']['modulatecolor'] .'" image="'. $this->config['best_last_time']['best']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelBestTime"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['best_last_time']['best']['label'] .'"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 92) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<quad posn="0 0 0.02" sizen="27 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonBestTime" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['BEST_TIME'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['BEST_TIME'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="14 2.625" textcolor="'. $this->config['BEST_TIME'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelBestTime"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="24 2.625" textcolor="'. $this->config['BEST_TIME'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['BEST_TIME'][0]['LABEL'][0] .'"/>';
 			$xml .= '</frame>';
-			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 153) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
-//			$xml .= '<quad posn="0 0 0.02" sizen="28 7" bgcolor="'. $this->config['box']['background_color_default'] .'" bgcolorfocus="'. $this->config['box']['background_color_focus'] .'" id="ButtonLastTime" ScriptEvents="1"/>';
-			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="28 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['box']['seperator_color'] .'"/>';
-			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['best_last_time']['last']['modulatecolor'] .'" image="'. $this->config['best_last_time']['last']['icon'] .'"/>';
-			$xml .= '<label posn="9.9 -1.4 0.03" sizen="15 2.625" textcolor="'. $this->config['box']['font_color_top'] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelLastTime"/>';
-			$xml .= '<label posn="9.9 -4.2 0.03" sizen="25 2.625" textcolor="'. $this->config['box']['font_color_bottom'] .'" textsize="1" scale="0.6" text="'. $this->config['best_last_time']['last']['label'] .'"/>';
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 119) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+//			$xml .= '<quad posn="0 0 0.02" sizen="27 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonLastTime" ScriptEvents="1"/>';
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['LAST_TIME'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['LAST_TIME'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="14 2.625" textcolor="'. $this->config['LAST_TIME'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelLastTime"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="24 2.625" textcolor="'. $this->config['LAST_TIME'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['LAST_TIME'][0]['LABEL'][0] .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
+		}
+		$xml .= '</manialink>';
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildPersonalBest ($score, $show = true) {
+
+$maniascript = <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Function:	PersonalBest
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
+#Include "TextLib" as TextLib
+main() {
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					if (Event.ControlId == "ButtonPersonalBest") {
+						TriggerPageAction("{$this->config['PERSONAL_BEST'][0]['ACTION'][0]}");
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+					}
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
+}
+--></script>
+EOL;
+
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'PersonalBest" name="'. $this->config['manialinkid'] .'PersonalBest" version="1">';
+		if ($show == true) {
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 146) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			if (!empty($this->config['PERSONAL_BEST'][0]['ACTION'][0])) {
+				$xml .= '<quad posn="0 0 0.02" sizen="27 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonPersonalBest" ScriptEvents="1"/>';
+			}
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['PERSONAL_BEST'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['PERSONAL_BEST'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="14 2.625" textcolor="'. $this->config['PERSONAL_BEST'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $score .'"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="24 2.625" textcolor="'. $this->config['PERSONAL_BEST'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['PERSONAL_BEST'][0]['LABEL'][0] .'"/>';
+			$xml .= '</frame>';
+			if (!empty($this->config['PERSONAL_BEST'][0]['ACTION'][0])) {
+				$xml .= $maniascript;
+			}
+		}
+		$xml .= '</manialink>';
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildLocalRecord ($score, $show = true) {
+
+$maniascript = <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Function:	LocalRecord
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
+#Include "TextLib" as TextLib
+main() {
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					if (Event.ControlId == "ButtonLocalRecord") {
+						TriggerPageAction("{$this->config['LOCAL_RECORD'][0]['ACTION'][0]}");
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+					}
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
+}
+--></script>
+EOL;
+
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'LocalRecord" name="'. $this->config['manialinkid'] .'LocalRecord" version="1">';
+		if ($show == true) {
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 173) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			if (!empty($this->config['LOCAL_RECORD'][0]['ACTION'][0])) {
+				$xml .= '<quad posn="0 0 0.02" sizen="27 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonLocalRecord" ScriptEvents="1"/>';
+			}
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['LOCAL_RECORD'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['LOCAL_RECORD'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="14 2.625" textcolor="'. $this->config['LOCAL_RECORD'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $score .'"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="24 2.625" textcolor="'. $this->config['LOCAL_RECORD'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['LOCAL_RECORD'][0]['LABEL'][0] .'"/>';
+			$xml .= '</frame>';
+			if (!empty($this->config['LOCAL_RECORD'][0]['ACTION'][0])) {
+				$xml .= $maniascript;
+			}
+		}
+		$xml .= '</manialink>';
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildDedimaniaRecord ($score, $show = true) {
+
+$maniascript = <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Function:	DedimaniaRecord
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
+#Include "TextLib" as TextLib
+main() {
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					if (Event.ControlId == "ButtonDedimaniaRecord") {
+						TriggerPageAction("{$this->config['DEDIMANIA_RECORD'][0]['ACTION'][0]}");
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+					}
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
+}
+--></script>
+EOL;
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'DedimaniaRecord" name="'. $this->config['manialinkid'] .'DedimaniaRecord" version="1">';
+		if ($show == true) {
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 200) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			if (!empty($this->config['DEDIMANIA_RECORD'][0]['ACTION'][0])) {
+				$xml .= '<quad posn="0 0 0.02" sizen="27 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonDedimaniaRecord" ScriptEvents="1"/>';
+			}
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['DEDIMANIA_RECORD'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['DEDIMANIA_RECORD'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="14 2.625" textcolor="'. $this->config['DEDIMANIA_RECORD'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $score .'"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="24 2.625" textcolor="'. $this->config['DEDIMANIA_RECORD'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['DEDIMANIA_RECORD'][0]['LABEL'][0] .'"/>';
+			$xml .= '</frame>';
+			if (!empty($this->config['DEDIMANIA_RECORD'][0]['ACTION'][0])) {
+				$xml .= $maniascript;
+			}
+		}
+		$xml .= '</manialink>';
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildManiaExchange ($score, $show = true) {
+
+$maniascript = <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Function:	ManiaExchange
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
+#Include "TextLib" as TextLib
+main() {
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Check for MouseEvents
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					if (Event.ControlId == "ButtonManiaExchange") {
+						TriggerPageAction("{$this->config['MANIA_EXCHANGE'][0]['ACTION'][0]}");
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
+					}
+				}
+				case CMlEvent::Type::MouseOver : {
+					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+				}
+			}
+		}
+	}
+}
+--></script>
+EOL;
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'ManiaExchange" name="'. $this->config['manialinkid'] .'ManiaExchange" version="1">';
+		if ($show == true) {
+			$xml .= '<frame posn="'. ($this->config['bar']['position']['x'] + 227) .' '. $this->config['bar']['position']['y'] .' '. ($this->config['bar']['position']['z'] + 0.01) .'">';
+			if (!empty($this->config['DEDIMANIA_RECORD'][0]['ACTION'][0])) {
+				$xml .= '<quad posn="0 0 0.02" sizen="27 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonManiaExchange" ScriptEvents="1"/>';
+			}
+			$xml .= '<quad posn="0 0 0.03" sizen="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
+			$xml .= '<quad posn="1.6 -1 0.03" sizen="7 5.25" modulatecolor="'. $this->config['MANIA_EXCHANGE'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['MANIA_EXCHANGE'][0]['ICON'][0] .'"/>';
+			$xml .= '<label posn="9.9 -1.4 0.03" sizen="14 2.625" textcolor="'. $this->config['MANIA_EXCHANGE'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $score .'"/>';
+			$xml .= '<label posn="9.9 -4.2 0.03" sizen="24 2.625" textcolor="'. $this->config['MANIA_EXCHANGE'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['MANIA_EXCHANGE'][0]['LABEL'][0] .'"/>';
+			$xml .= '</frame>';
+			if (!empty($this->config['DEDIMANIA_RECORD'][0]['ACTION'][0])) {
+				$xml .= $maniascript;
+			}
 		}
 		$xml .= '</manialink>';
 

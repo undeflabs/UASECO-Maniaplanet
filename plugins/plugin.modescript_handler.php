@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-26
+ * Date:	2015-02-05
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -82,6 +82,9 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	public function onSync ($aseco) {
+
+		// Block some callbacks we did not want to use
+		$this->setupBlockCallbacks();
 
 		// Read Configuration
 		if (!$settings = $aseco->parser->xmlToArray('config/modescript_settings.xml', true, true)) {
@@ -177,9 +180,6 @@ class PluginModescriptHandler extends Plugin {
 
 		// Send the UI settings
 		$this->setupUserInterface();
-
-		// Block some callbacks we did not want to use
-		$this->setupBlockCallbacks();
 	}
 
 	/*

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-16
+ * Date:	2015-02-04
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -148,10 +148,12 @@ class Helper {
 		// Create Server informations
 		$xml = '<?xml version="1.0" encoding="utf-8"?>'.LF;
 		$xml .= '<info>'.LF;
+		$xml .= ' <timestamp>'. time() .'</timestamp>'.LF;
 		$xml .= ' <uaseco>'.LF;
 		$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
 		$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;
 		$xml .= '  <uptime>'. (time() - $this->uptime) .'</uptime>'.LF;
+		$xml .= '  <processid>'. getmypid() .'</processid>'.LF;
 		$xml .= ' </uaseco>'.LF;
 		$xml .= ' <dedicated>'.LF;
 		$xml .= '  <version>'. $this->server->version .'</version>'.LF;
@@ -196,19 +198,24 @@ class Helper {
 		$xml .= '   <bronzetime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->bronzetime	: $this->server->maps->current->bronzetime) .'</bronzetime>'.LF;
 		$xml .= '   <mxurl>'. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .'</mxurl>'.LF;
 		$xml .= '  </map>'.LF;
-//		$xml .= '  <players>'.LF;
-//		foreach ($this->server->players->player_list as $player) {
-//				$xml .= '   <player>'.LF;
-//				$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripColors($player->nickname)) .'</nickname>'.LF;
-//				$xml .= '     <login>'. $player->login .'</login>'.LF;
-//				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
-//				$xml .= '     <ladder>'. $player->ladderrank .'</ladder>'.LF;
-//				$xml .= '     <spectator>'. $this->bool2string($player->isspectator) .'</spectator>'.LF;
-//				$xml .= '   </player>'.LF;
-//		}
-//		$xml .= '  </players>'.LF;
+		$xml .= '  <players>'.LF;
+		foreach ($this->server->players->player_list as $player) {
+				$xml .= '   <player>'.LF;
+				$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripColors($player->nickname)) .'</nickname>'.LF;
+				$xml .= '     <login>'. $player->login .'</login>'.LF;
+				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
+				$xml .= '     <ladder>'. $player->ladderrank .'</ladder>'.LF;
+				$xml .= '     <spectator>'. $this->bool2string($player->isspectator) .'</spectator>'.LF;
+				$xml .= '   </player>'.LF;
+		}
+		$xml .= '  </players>'.LF;
 		$xml .= ' </current>'.LF;
 		$xml .= '</info>'.LF;
+
+		// Store this information too.
+		if (!empty($this->settings['stripling_path'])) {
+			file_put_contents($this->settings['stripling_path'], $xml);
+		}
 
 		// Send and ignore response
 		$this->webaccess->request(
@@ -750,7 +757,7 @@ class Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function timeString ($given) {
+	public function timeString ($given, $short = false) {
 
 		$seconds = (int)($given % 60);
 		$given /= 60;
@@ -767,11 +774,54 @@ class Helper {
 			$timestring .= sprintf("%d hour%s", $hours, ($hours == 1 ? ' ' : 's '));
 		}
 		if ($minutes) {
-			$timestring .= sprintf("%d minute%s", $minutes, ($minutes == 1 ? ' ' : 's '));
+			if ($short === true) {
+				$timestring .= sprintf("%d min.", $minutes);
+			}
+			else {
+				$timestring .= sprintf("%d minute%s", $minutes, ($minutes == 1 ? ' ' : 's '));
+			}
 		}
-		$timestring .= sprintf("%d second%s", $seconds, ($seconds == 1 ? ' ' : 's'));
+		if ($short === true) {
+			$timestring .= sprintf("%d sec.", $seconds);
+		}
+		else {
+			$timestring .= sprintf("%d second%s", $seconds, ($seconds == 1 ? ' ' : 's'));
+		}
 
 		return $timestring;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Convert php.ini memory shorthand string to integer bytes
+	// http://www.php.net/manual/en/function.ini-get.php#96996
+	public function shorthand2bytes ($size_str) {
+		switch (substr($size_str, -1)) {
+			case 'M': case 'm': return (int)$size_str * 1048576;
+			case 'K': case 'k': return (int)$size_str * 1024;
+			case 'G': case 'g': return (int)$size_str * 1073741824;
+			default: return (int)$size_str;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Convert bytes into a php.ini memory shorthand string
+	public function bytes2shorthand ($bytes, $size_format) {
+		switch ($size_format) {
+			case 'M': return (int)($bytes / 1048576) .'M';
+			case 'K': return (int)($bytes / 1024) .'K';
+			case 'G': return (int)($bytes / 1073741824) .'G';
+			default: return (int)($bytes / 1048576) .'M';
+		}
 	}
 
 	/*
@@ -1731,8 +1781,8 @@ class Helper {
 	*/
 
 	public function customFatalErrorShutdownHandler () {
-		$last_error = error_get_last();
 
+		$last_error = error_get_last();
 		if ($last_error['type'] === E_ERROR) {
 			$this->customErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
 		}

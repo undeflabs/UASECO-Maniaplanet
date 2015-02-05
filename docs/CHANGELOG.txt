@@ -4,9 +4,9 @@ Version 1.0.0
    ~~~~~
    - Third-party Plugins for XAseco2 are NOT compatible without changes (see "Differences between XAseco2 and UASECO" below)!
    - A database from XAseco2/1.03 is NOT compatible with UASECO, convert a XAseco2 database with newinstall/database/convert-xaseco2-to-uaseco.php!
-   - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed before first stable release!
+   - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed in the near future!
      Use Class Window instead: http://www.uaseco.org/Development/Classes/Window.php
-   - Plugin "plugin.panels.php" and related files in the folder "config/panels" are deprecated and get removed before first stable release!
+   - Plugin "plugin.panels.php" and related files in the folder "config/panels" are deprecated and get removed in the near future!
 
 
    Requirements
@@ -19,7 +19,7 @@ Version 1.0.0
 
    Changes
    ~~~~~~~
-   - Changed "memory_limit" to 256 MB
+   - Admins are now able to setup the PHP "memory_limit" within the UASECO.xml, default is set to 256 MB
    - Included support for Modescript Gamemodes from the Maniaplanet 3 update, e.g. "TimeAttack.Script.txt", "Rounds.Script.txt"...
    - Added many new callback events like "onPlayerStartCountdown", "onPlayerStartLine", "onPlayerFinishLine", "onPlayerRespawn", "onBeginPodium"..., see documentation for details
    - Included Database support into controller and changed all MySQL statements from "MySQL Extension" to "MySQL Improved Extension"
@@ -47,7 +47,7 @@ Version 1.0.0
    - Merged several Plugins into one Plugin
    - Renamed several Plugins
    - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
-   - Added new GbxRemote from 2014-10-24 from https://github.com/NewboO/dedicated-server-api/
+   - Added new GbxRemote from 2015-01-24 from https://github.com/NewboO/dedicated-server-api/
 
 
    Bugfix (in XAseco2)

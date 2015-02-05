@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<!--
+	Important: You must make an initial donation from a player login
+	to your server login via the in-game message system, so that
+	there are sufficient planets in the server account to pay the Nadeo tax
+	on the first "/donate" transaction!
+	//-->
+
+	<!-- Minimum donation amount (because of Nadeo tax) -->
+	<minimum_donation>10</minimum_donation>
+
+	<!-- Public appreciation threshold (show "Thank You" to all) -->
+	<public_appreciation_threshold>50</public_appreciation_threshold>
+</settings>

@@ -7,22 +7,15 @@ Dedimania
 
 UASECO
 ~~~~~~
- - Retrieve MX-Infos for NextMap
- - Donation: $mindonation, $publicappr and $donation_values in xml
+ - Include $aseco->server->maps->next (ala $aseco->server->maps->current)
+ - Retrieve MX-Infos for PrevMap and NextMap (after restart)
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
- - Create core/timemanager.class.php in where plugins can register timed event callbacks instead of required listening "onEverySecond"
 
 
 
-InfoBar
-~~~~~~~
- - Split PersonalBest, 1. Local Record, 1. Dedimania and MX-Record
-
-
-
-Menu
-~~~~
+RMB-Menu
+~~~~~~~~
 + AddFavorite
 
 http://doc.maniaplanet.com/creation/manialink/actions.html
@@ -46,6 +39,7 @@ ManiaKarma
 
 Records-Eyepiece
 ~~~~~~~~~~~~~~~~
+ - CheckpointWidget: In multilap Maps reset the text "Finished, next Lap!" after about 4-5 sec. to the Checkpoint count
  - Player marker from Players behind current should be "grey" instead of red
  - Check positions of the widgets (small ones are not the same height then the larger ones)
  - Add possibilities for <background_color> at <checkpointcount_widget>, <donation_widget>
@@ -53,3 +47,22 @@ Records-Eyepiece
  - Change F7 for toggle widgets
  - Do not send <quad...> when "BgEmpty" is used
  - BUG: After juke a song, the next/prev page buttons does not work
+
+
+
+
+
+
+
+
+Linux
+~~~~~
+Starting ManiaPlanet Date=2014-11-21_14_00 Svn=59500 GameVersion=3.3.0...
+Initializing...
+Configuration file : dedicated_tm2mixed.cfg
+Loading system configuration...
+...system configuration loaded
+Loading cache...
+...OK
+Listening for xml-rpc commands on port 5001.
+ManiaPlanet server daemon started with pid=1331 (parent=1330).

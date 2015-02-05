@@ -1,13 +1,14 @@
 <?php
 /* Plugin: Manialinks
  * ~~~~~~~~~~~~~~~~~~
+ * » DEPRECATED, DO NOT USE!
  * » Provides simple ManiaLink windows, also handles special panels and custom UI changes.
  * » Based upon the manialinks.inc.php from XAseco2, written by the Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-04
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -34,7 +35,6 @@
  *            "UASECO-3": Admin panel
  *            "UASECO-4": Records panel
  *            "UASECO-5": Vote panel
- *            "UASECO-6": Donate panel
  *            "UASECO-7": Messages window
  *            "UASECO-9": Scoreboard stats panel
  *    action= "0": Close main pop-up window
@@ -70,13 +70,6 @@
  *           "27": Admin panel Buddies button     call "/admin players"
  *           "28": Server planets Payment dialog Yes
  *           "29": Server planets Payment dialog No
- *           "30": Donate panel, button 1         call "/donate 20"
- *           "31": Donate panel, button 2         call "/donate 50"
- *           "32": Donate panel, button 3         call "/donate 100"
- *           "33": Donate panel, button 4         call "/donate 200"
- *           "34": Donate panel, button 5         call "/donate 500"
- *           "35": Donate panel, button 6         call "/donate 1000"
- *           "36": Donate panel, button 7         call "/donate 2000"
  *      "37"-"48": Vote panels, handled in plugin.panels.php
  *     "-7"-"-48": Admin panels, handled in plugin.panels.php
  *     "49"-"100": Window styles, handled in plugin.style.php
@@ -105,7 +98,6 @@
  *  "5701"-"6200": MX numbers for /add, handled in plugin.rasp_jukebox.php
  *  "6201"-"6700": MX numbers for /admin add, handled in plugin.rasp_jukebox.php
  *  "6701"-"7200": Authors for /xlist auth:, handled in plugin.rasp_jukebox.php
- *  "7201"-"7222": Donate panels, handled in plugin.panels.php
  *  "7224"-"7230": reserved for future use
  *  "7231"-"7262": Panel backgrounds, handled in plugin.panels.php
  *"-4001"-"-4200": Player numbers for /jfreu badword, handled in chat.jfreu.php
@@ -120,9 +112,6 @@
  *"-5801"-"-6000": Team numbers for /jfreu listvipteams, handled in chat.jfreu.php
  *"-6001"-"-7900": Map numbers for /karma, handled in plugin.rasp_jukebox.php
  *"-7901"-"-8100": Player numbers for /admin unbanip, handled in chat.admin.php
- *
- * Dependencies:
- * - plugins/plugin.donate.php
  *
  */
 
@@ -148,8 +137,6 @@ class PluginManialinks extends Plugin {
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
 		$this->setDescription('Provides simple ManiaLink windows, also handles special panels and custom UI changes.');
-
-		$this->addDependence('PluginDonate',			Dependence::WANTED,	'1.0.0', null);
 
 		// Register functions for events
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'event_manialink');
@@ -339,11 +326,6 @@ class PluginManialinks extends Plugin {
 		// leave actions outside -6 - 36 to other handlers
 		$action = (int)$answer[2];
 		if ($action < -6 || $action > 36) {
-			return;
-		}
-
-		// Do not handle plugin.donate.php
-		if ($action >= 28 && $action <= 36) {
 			return;
 		}
 
@@ -671,10 +653,9 @@ class PluginManialinks extends Plugin {
 	// called @ onEndMap
 	public function allwindows_off ($aseco, $data) {
 
-		// Disable all pop-up windows and records & donate panels at all Players
+		// Disable all pop-up windows and records panels at all Players
 		$xml  = '<manialink id="UASECO-1"></manialink>';
 		$xml .= '<manialink id="UASECO-4"></manialink>';
-		$xml .= '<manialink id="UASECO-6"></manialink>';
 		$aseco->addManialink($xml, false, 0, false);
 	}
 }

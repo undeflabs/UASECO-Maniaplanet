@@ -4,15 +4,15 @@
  * ~~~~~~~~~~~~~~~~
  * » ManiaPlanet dedicated server Xml-RPC client.
  * » Based upon GbxRemote.php from 'https://github.com/NewboO/dedicated-server-api/',
- *   version from 2015-01-28 and changed to UASECO requirements.
+ *   version from 2015-01-24 and changed to UASECO requirements.
  *
  *   2014-10-03: Renamed query() into singlequery(), changed parameter for addCall() and query()
  *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
- *   2015-01-28: Added a try/catch at query() to catch all exception (possibly forgoten by Plugin authors)
+ *   2015-01-28: Added a try/catch at query() to catch all exception (possibly forgotten by Plugin authors)
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-28
+ * Date:	2015-01-31
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -60,7 +60,7 @@ class GbxRemote {
 	*/
 
 	public function __construct () {
-		$this->requestHandle = (int) 0x80000000;
+		$this->requestHandle	= (int) 0x80000000;
 	}
 
 	/*
@@ -180,7 +180,13 @@ class GbxRemote {
 			return $this->singlequery($method, $args);
 		}
 		catch (Exception $exception) {
-			$aseco->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" at '. get_class($this) .'::query() for method "'. $method .'" with args "'. $aseco->dump($args) .'"');
+			if ($aseco->debug) {
+				$aseco->console_text('[UASECO Exception] Error returned: "'. $exception->getMessage() .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
+				$aseco->dump($args);
+			}
+			else {
+				$aseco->console_text('[UASECO Exception] Error returned: "'. $exception->getMessage() .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
+			}
 		}
 	}
 

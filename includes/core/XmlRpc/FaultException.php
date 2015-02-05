@@ -33,7 +33,9 @@ class FaultException extends Exception
 				return new LockedFeatureException($faultString, $faultCode);
 			case 'Login or Uid unknown.':
 			case 'Login unknown.':
-			case 'Payer login unknown.':						// typo "Payer"
+			case 'Payer login unknown.':
+			case 'payee invalid.':
+			case 'SenderLogin unknown.':
 				return new UnknownPlayerException($faultString, $faultCode);
 			case 'The player is not a spectator':
 			case 'The player is not a spectator.':

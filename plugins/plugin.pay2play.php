@@ -286,7 +286,6 @@ class PluginPay2Play extends Plugin {
 
 		$answer = $command[2];
 		$player = $aseco->server->players->getPlayer($command[1]);
-
 		if ($answer == $this->p2p['manialink'].'|replay') {
 			$nextmap = $aseco->client->query('GetNextMapInfo');
 			if ($this->p2p['thismap'] != $nextmap['FileName']) {

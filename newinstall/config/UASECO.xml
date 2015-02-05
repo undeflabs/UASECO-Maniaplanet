@@ -61,6 +61,12 @@
 	<global_blacklist_url>http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml</global_blacklist_url>
 
 	<!--
+	We supports the "stripling" script for controlling the dedicated Server and UASECO,
+	here you can setup the path where the XML-File will be stored.
+	//-->
+	<stripling_path>cache/stripling.xml</stripling_path>
+
+	<!--
 	Maplist used by the dedicated server, typical located in
 	"UserData/Maps/MatchSettings/"
 	//-->
@@ -247,10 +253,24 @@
 
 
 
+
 	<!--
-	For details see: http://www.php.net/manual/en/function.set-time-limit.php
+	Setup a timeout to make sure that UASECO or a Plugin does not hang,
+	for more details see: http://www.php.net/manual/en/function.set-time-limit.php
 	//-->
 	<script_timeout>120</script_timeout>
+
+	<!--
+	Setup the PHP "memory_limit" for UASECO, e.g.:
+		"-1"	= no limit
+		"256M"	= max. 256 MB (minimum)
+		"1G"	= max. 1024 MB
+	If the value is "-1" in the php.ini or as exe parameter, then this setting will be ignored!
+
+	For more details see: http://www.php.net/manual/en/ini.core.php#ini.memory-limit and
+	http://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+	//-->
+	<memory_limit>256M</memory_limit>
 
 	<!--
 	If you are not a developer of plugins, please let this settings
