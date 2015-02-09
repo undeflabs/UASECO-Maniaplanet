@@ -15,6 +15,9 @@
 
 		<background_color_default>00000000</background_color_default>
 		<background_color_focus>0099FFFF</background_color_focus>
+
+		<!-- Image to indicate that a box is clickable -->
+		<clickable_indicator>http://static.undef.name/ingame/info-bar/edge-open-ld-light.png</clickable_indicator>
 	</box>
 
 
