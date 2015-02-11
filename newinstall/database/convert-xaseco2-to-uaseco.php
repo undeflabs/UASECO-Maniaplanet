@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -536,9 +536,9 @@ class Converter {
 				$count['skipped'] = 0;
 				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 
-					// Insert the rank into the new table `%prefix%ranks`
+					// Insert the rank into the new table `%prefix%rankings`
 					$insert = "
-					INSERT INTO `%prefix%ranks` (
+					INSERT INTO `%prefix%rankings` (
 						`PlayerId`,
 						`Average`
 					)
@@ -759,9 +759,9 @@ class Converter {
 		$this->db->query($query);
 
 
-		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		$query = "
-		CREATE TABLE IF NOT EXISTS `%prefix%ranks` (
+		CREATE TABLE IF NOT EXISTS `%prefix%rankings` (
 		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		   `Average` int(4) unsigned NOT NULL DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`)
@@ -775,7 +775,7 @@ class Converter {
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
 		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
@@ -851,7 +851,7 @@ class Converter {
 		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
 		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
 		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
 		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
 		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
 		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
@@ -873,14 +873,27 @@ class Converter {
 
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		$query = "
-		ALTER TABLE `%prefix%ranks`
+		ALTER TABLE `%prefix%rankings`
 		  ADD CONSTRAINT `%prefix%ranks_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
+		}
+
+
+
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$query = "
+		ALTER TABLE `%prefix%ratings`
+		  ADD CONSTRAINT `%prefix%ratings_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+		  ADD CONSTRAINT `%prefix%ratings_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 

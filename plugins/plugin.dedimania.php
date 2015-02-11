@@ -11,8 +11,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-11
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -1373,8 +1373,9 @@ class PluginDedimania extends Plugin {
 					$this->db['ModeList'][Gameinfo::TEAM]		= 'Rounds';
 					$this->db['ModeList'][Gameinfo::LAPS]		= 'TA';
 					$this->db['ModeList'][Gameinfo::CUP]		= 'Rounds';
-					$this->db['ModeList'][Gameinfo::STUNTS]		= '';
 					$this->db['ModeList'][Gameinfo::TEAMATTACK]	= 'Rounds';	// 2014-07-01: UNTESTED!!!
+					$this->db['ModeList'][Gameinfo::CHASE]		= false;	// 2015-02-11: unsupported mode
+					$this->db['ModeList'][Gameinfo::STUNTS]		= false;
 				}
 				else {
 					trigger_error('No URL specified in your Dedimania config file!', E_USER_ERROR);
@@ -1772,6 +1773,12 @@ class PluginDedimania extends Plugin {
 			$aseco->console('[Dedimania] onBeginMap() - map'. CRLF . print_r($map, true));
 		}
 
+		// Bail out on unsupported gamemodes
+		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+			$aseco->console('[Dedimania] Unsupported gamemode, records ignored!');
+			return;
+		}
+
 		// check for valid connection
 		$this->db['Map'] = array();
 		if (isset($this->db['XmlrpcDB']) && !$this->db['XmlrpcDB']->isBad()) {
@@ -1805,11 +1812,7 @@ class PluginDedimania extends Plugin {
 		$this->db['ServerMaxRank'] = $this->db['MaxRank'];
 		$this->db['Top1Init'] = -1;
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			// check for Stunts mode
-			$aseco->console('[Dedimania] Stunts mode unsupported: records ignored');
-		}
-		else if ($map->nbcheckpoints < 2 && $map->author != 'Nadeo') {
+		if ($map->nbcheckpoints < 2 && $map->author != 'Nadeo') {
 			// check for map without actual checkpoints
 			$aseco->console('[Dedimania] Map\'s NbCheckpoints < 2: records ignored');
 		}
@@ -1842,8 +1845,8 @@ class PluginDedimania extends Plugin {
 		//                 'Players': array of struct {'Login': string, 'MaxRank': int},
 		//                 'TotalRaces': int, 'TotalPlayers': int}
 
-		// if Stunts mode, bail out
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		// Bail out on unsupported gamemodes
+		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			return;
 		}
 
@@ -1942,8 +1945,8 @@ class PluginDedimania extends Plugin {
 
 	public function onEndMap ($aseco, $map) {
 
-		// if Stunts mode, bail out
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		// Bail out on unsupported gamemodes
+		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			return;
 		}
 
@@ -2148,8 +2151,13 @@ class PluginDedimania extends Plugin {
 
 	public function onPlayerFinish ($aseco, $finish_item) {
 
-		// if no Dedimania records, bail out - Stunts mode temporarily too
-		if (!$this->db['RecsValid'] || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		// if no Dedimania records, bail out
+		if (!$this->db['RecsValid']) {
+			return;
+		}
+
+		// Bail out on unsupported gamemodes
+		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			return;
 		}
 
@@ -2183,8 +2191,9 @@ class PluginDedimania extends Plugin {
 		}
 
 
-		// check finish/checkpoints consistency, unless Stunts mode
-		if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
+		// check finish/checkpoints consistency, only for supported gamemodes
+		// Bail out on unsupported gamemodes
+		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			if ($aseco->checkpoints[$login]->current['finish'] == PHP_INT_MAX) {
 				// Skip if no checkpoint times are stored
 				return;

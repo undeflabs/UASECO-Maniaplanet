@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -359,7 +359,7 @@ class PlayerList {
 					". $aseco->db->quote($aseco->continent->continentToAbbr($player->continent)) .",
 					". $aseco->db->quote($player->nation) .",
 					NOW(),
-					1,
+					0,
 					0,
 					0,
 					0

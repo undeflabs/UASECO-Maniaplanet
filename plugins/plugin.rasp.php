@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-20
+ * Date:	2015-02-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -327,7 +327,7 @@ class PluginRasp extends Plugin {
 			`p`.`Nickname`,
 			`r`.`Average`
 		FROM `%prefix%players` AS `p`
-		LEFT JOIN `%prefix%ranks` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
+		LEFT JOIN `%prefix%rankings` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
 		WHERE `r`.`Average` != 0
 		ORDER BY `r`.`Average` ASC
 		LIMIT ". $top .";
@@ -639,7 +639,7 @@ class PluginRasp extends Plugin {
 		$total = count($maps);
 
 		// Erase old average data
-		$aseco->db->query('TRUNCATE TABLE `%prefix%ranks`;');
+		$aseco->db->query('TRUNCATE TABLE `%prefix%rankings`;');
 
 		// Get list of players with at least $minrecs records (possibly unranked)
 		$aseco->db->query('START TRANSACTION;');
@@ -691,7 +691,7 @@ class PluginRasp extends Plugin {
 
 				// one-shot insert for queries up to 1 MB (default max_allowed_packet),
 				// or about 75K rows at 14 bytes/row (avg)
-				$query = 'INSERT INTO `%prefix%ranks` VALUES ';
+				$query = 'INSERT INTO `%prefix%rankings` VALUES ';
 				// compute each player's new average score
 				foreach ($players as $player => $ranked) {
 					// ranked maps sum + $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() rank for all remaining maps
@@ -829,14 +829,14 @@ class PluginRasp extends Plugin {
 		$query = "
 		SELECT
 			`Average`
-		FROM `%prefix%ranks`
+		FROM `%prefix%rankings`
 		WHERE `PlayerId` = ". $pid .";
 		";
 		$res = $aseco->db->query($query);
 		if ($res) {
 			if ($res->num_rows > 0) {
 				$row = $res->fetch_array(MYSQLI_ASSOC);
-				$query2 = 'SELECT `PlayerId` FROM `%prefix%ranks` ORDER BY `Average` ASC;';
+				$query2 = 'SELECT `PlayerId` FROM `%prefix%rankings` ORDER BY `Average` ASC;';
 				$res2 = $aseco->db->query($query2);
 				if ($res2) {
 					$rank = 1;
@@ -876,7 +876,7 @@ class PluginRasp extends Plugin {
 		$query = "
 		SELECT
 			`Average`
-		FROM `%prefix%ranks`
+		FROM `%prefix%rankings`
 		WHERE `PlayerId` = ". $pid .";
 		";
 		$res = $aseco->db->query($query);
@@ -886,7 +886,7 @@ class PluginRasp extends Plugin {
 				$query2 = "
 				SELECT
 					`PlayerId`
-				FROM `%prefix%ranks`
+				FROM `%prefix%rankings`
 				ORDER BY `Average` ASC;
 				";
 				$res2 = $aseco->db->query($query2);

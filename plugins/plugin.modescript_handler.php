@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-05
+ * Date:	2015-02-11
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -90,7 +90,7 @@ class PluginModescriptHandler extends Plugin {
 		if (!$settings = $aseco->parser->xmlToArray('config/modescript_settings.xml', true, true)) {
 			trigger_error('[ModescriptHandler] Could not read/parse config file "config/modescript_settings.xml"!', E_USER_ERROR);
 		}
-		$settings = $settings['MODESCRIPT_SETTINGS'];
+		$settings = $settings['SETTINGS'];
 
 
 		// ModeBase
@@ -148,6 +148,19 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->team_attack['MinPlayerPerClan']	= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MIN_PLAYER_PER_CLAN'][0];
 		$aseco->server->gameinfo->team_attack['MaxPlayerPerClan']	= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_PLAYER_PER_CLAN'][0];
 		$aseco->server->gameinfo->team_attack['MaxClanNb']		= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_CLAN_NUMBER'][0];
+
+
+		// Chase
+		$aseco->server->gameinfo->chase['TimeLimit']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->chase['PointsLimit']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->chase['PointsGap']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['POINTS_GAP'][0];
+		$aseco->server->gameinfo->chase['GiveUpMax']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['GIVE_UP_MAX'][0];
+		$aseco->server->gameinfo->chase['MinPlayersNb']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['MIN_PLAYERS_NUMBER'][0];
+		$aseco->server->gameinfo->chase['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['FORCE_LAPS_NUMBER'][0];
+		$aseco->server->gameinfo->chase['FinishTimeout']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->chase['UsePlayerClublinks']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['USE_PLAYER_CLUBLINKS'][0]);
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MAX'][0];
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MIN'][0];
 
 
 		// Store the settings at the dedicated Server
@@ -912,6 +925,21 @@ class PluginModescriptHandler extends Plugin {
 				'S_MinPlayerPerClan'		=> $aseco->server->gameinfo->team_attack['MinPlayerPerClan'],
 				'S_MaxPlayerPerClan'		=> $aseco->server->gameinfo->team_attack['MaxPlayerPerClan'],
 				'S_MaxClanNb'			=> $aseco->server->gameinfo->team_attack['MaxClanNb'],
+			);
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			// Chase
+			$modesetup = array(
+				'S_TimeLimit'			=> $aseco->server->gameinfo->chase['TimeLimit'],
+				'S_PointsLimit'			=> $aseco->server->gameinfo->chase['PointsLimit'],
+				'S_PointsGap'			=> $aseco->server->gameinfo->chase['PointsGap'],
+				'S_GiveUpMax'			=> $aseco->server->gameinfo->chase['GiveUpMax'],
+				'S_MinPlayersNb'		=> $aseco->server->gameinfo->chase['MinPlayersNb'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->chase['ForceLapsNb'],
+				'S_FinishTimeout'		=> $aseco->server->gameinfo->chase['FinishTimeout'],
+				'S_UsePlayerClublinks'		=> $aseco->server->gameinfo->chase['UsePlayerClublinks'],
+				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMax'],
+				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMin'],
 			);
 		}
 //		else if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {

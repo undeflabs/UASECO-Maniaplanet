@@ -5,7 +5,7 @@
 #Extends "Modes/TrackMania/RoundsBase.Script.txt"
 
 #Const  CompatibleMapTypes  "Race"
-#Const	Version		"2014-10-07"
+#Const	Version		"2014-12-31"
 #Const	ScriptName	"Team.Script.txt"
 
 #Include "TextLib" as TL
@@ -17,6 +17,10 @@
 #Setting S_MaxPointsPerRound	6		as _("Max points :")	///< The maxium number of points attirbuted to the first player to cross the finish line
 #Setting S_PointsGap			1		as _("Points gap :")	///< The number of points lead a team must have to win the map
 #Setting S_UsePlayerClublinks	False	as _("Use Clublinks :")	///< Use the players clublinks, or otherwise use the default teams
+// @mm start
+#Setting S_NbPlayersPerTeamMax	5		as _("Maximum number of players per team in matchmaking")
+#Setting S_NbPlayersPerTeamMin	2		as _("Minimum number of players per team in matchmaking")
+// @mm end
 
 // ---------------------------------- //
 // Constants
@@ -45,6 +49,38 @@ The $f00winning team$fff is the first team whose total reaches the $f00point lim
 MB_LogVersion(ScriptName, Version);
 ***
 
+// @mm start
+***LobbyStartServer***
+***
+MM_SetFormat([S_NbPlayersPerTeamMax, S_NbPlayersPerTeamMax]);
+if (S_NbPlayersPerTeamMax > S_NbPlayersPerTeamMin) {
+	declare Formats = Integer[][];
+	for (I, S_NbPlayersPerTeamMin, S_NbPlayersPerTeamMax-1) {
+		if (I > 0) Formats.add([I, I]);
+	}
+	MM_SetProgressiveFormats(Formats);
+}
+***
+// @mm end
+
+// @mm start
+***ManialinkRules***
+***
+ManialinkRules = """<label posn="-62.5 25" sizen="125 50" autonewline="1" maxline="10" textemboss="1" textsize="2" text="{{{Description}}}" />""";
+***
+// @mm end
+
+// @mm start
+***InitMatchmaking***
+***
+// ---------------------------------- //
+// Matchmaking mode
+if (MM_IsMatchServer()) {
+	MM_Init([S_NbPlayersPerTeamMax, S_NbPlayersPerTeamMax]);
+}
+***
+// @mm end
+
 ***StartServer***
 ***
 // ---------------------------------- //
@@ -66,6 +102,12 @@ MB_SetScoresTableStyleFromXml(S_ScoresTableStylePath);
 Scores_Clear();
 ST2::ClearScores();
 
+// Skip intro in matchmaking
+// @mm start
+if (MM_IsMatchServer()) MB_UseIntro = False;
+else MB_UseIntro = True;
+// @mm end
+
 // ---------------------------------- //
 // Set scores table for race
 ST2::DestroyCol("LibST_TMBestTime");
@@ -81,11 +123,45 @@ ST2::Build("TM");
 // ---------------------------------- //
 // Initialize map
 Users_SetNbFakeUsers(C_BlueBotsNb, C_RedBotsNb);
+// @mm start
+/*
 MB_WarmUp(-1);
 SetFooterText();
 
 Clublink::DefineTeamAuto();
-Clublink::SyncUpdate();
+*/
+// @mm end
+
+// @mm start
+if (MM_IsMatchServer()) {
+	// ---------------------------------- //
+	// Set matchmaking scores
+	MM_SetScores([ClanScores[1], ClanScores[2]]);
+	
+	// ---------------------------------- //
+	// Wait players when using matchmaking
+	if (!IsRematch) {
+		MM_MatchWait();
+		MM_VoteForNextMap(True);
+	} else {
+		MM_WaitPlayers(15000);
+	}
+} else {
+	// ---------------------------------- //
+	// Standard warm up
+	MB_WarmUp(-1);
+}
+
+SetFooterText();
+
+Clublink::DefineTeamAuto();
+
+IsRematch = False;
+
+// ---------------------------------- //
+// Matchmaking : allow substitutes
+if (MM_IsMatchServer()) MM_AllowSubstitutes(True);
+// @mm end
 ***
 
 ***StartRound***
@@ -163,8 +239,19 @@ if (ForceEndRound) {
 	UIManager.UIAll.UISequence = CUIConfig::EUISequence::Playing;
 	
 	SetFooterText();
-	if (MapIsOver()) MB_StopMap = True;
+	if (MapIsOver()) {
+		MB_StopMap = True;
+		MB_StopMatch = True;
+	}
 }
+
+// @mm start
+// ---------------------------------- //
+// Set matchmaking scores
+if (MM_IsMatchServer()) {
+	MM_SetScores([ClanScores[1], ClanScores[2]]);
+}
+// @mm end
 ***
 
 ***EndMap***
@@ -182,6 +269,13 @@ if (Clan1Score > Clan2Score) {
 	MB_VictoryMessage = _("This map is a draw.");
 }
 foreach (Score in Scores) {
+	// @mm start
+	if (Score.Points > MasterPoints) {
+		MasterLogin = Score.User.Login;
+		MasterPoints = Score.Points;
+	}
+	// @mm end
+	Score.Points = 0;
 	if (WinningTeam == 1 || WinningTeam == 2) {
 		if (Score.LadderClan == WinningTeam) {
 			Score.Points = 2;
@@ -202,8 +296,19 @@ foreach (Score in Scores) {
 
 // ---------------------------------- //
 // Close ladder
-Ladder_ComputeRank(CTmMode::ETmScoreSortOrder::TotalPoints);
-MB_Ladder_CloseMatch();
+// @mm start
+//Ladder_ComputeRank(CTmMode::ETmScoreSortOrder::TotalPoints);
+//MB_Ladder_CloseMatch();
+if (MM_IsMatchServer() && (TM2::GetClanNbPlayers(1) == 0 || TM2::GetClanNbPlayers(2) == 0 || MM_RestartMatchmaking) && MB_SectionRoundNb <= 1) {
+	MM_SetLadderMatchId();
+	MB_Ladder_CancelMatch();
+	MB_Log("Cancel match and don't give LP because one of the team left the match.");
+} else {
+	if (MM_IsMatchServer()) MM_SetLadderMatchId();
+	Ladder_ComputeRank(CTmMode::ETmScoreSortOrder::TotalPoints);
+	MB_Ladder_CloseMatch();
+}
+// @mm end
 
 // ---------------------------------- //
 // Set scores table for podium
@@ -369,6 +474,7 @@ Void ComputeScores() {
 	}
 	
 	foreach (Score in Scores) {
+		Score.Points += Score.PrevRaceDeltaPoints;
 		Score.PrevRaceDeltaPoints = 0;
 		if (Score.User.RequestsSpectate) {
 			Score.LadderClan = -1;

@@ -6,7 +6,7 @@
  *	- SmallScoresTable -> display the player ranking at the end of the round
  *	- Chrono -> display a chrono at the bottom of the screen
  */
-#Const	Version		"2014-11-12"
+#Const	Version		"2014-12-31"
 #Const	ScriptName	"UI.Script.txt"
 
 #Include "TextLib" as TL
@@ -526,7 +526,11 @@ main() {
 				LibUI_SmallScoresTable_PrevTeamNum = Player.Score.TeamNum;
 				if (Player.Score.PrevRace.Time >= 0) NeedUpdate = True; 
 			}
-			if (Player.Score.PrevRace.Time >= 0 && InputPlayer.RaceState != CTmMlPlayer::ERaceState::Running) OneFinish = True;
+			if (
+				Player.Score.PrevRace.Time >= 0 && 
+				InputPlayer.RaceState != CTmMlPlayer::ERaceState::Running && 
+				UI.UISequence != CUIConfig::EUISequence::Podium
+			) OneFinish = True;
 		}
 		
 		if (NeedUpdate) UpdateSmallScoresTable();

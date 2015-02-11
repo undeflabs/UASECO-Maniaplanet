@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-04
+ * Date:	2015-02-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -775,14 +775,14 @@ class Helper {
 		}
 		if ($minutes) {
 			if ($short === true) {
-				$timestring .= sprintf("%d min.", $minutes);
+				$timestring .= sprintf("%d min. ", $minutes);
 			}
 			else {
 				$timestring .= sprintf("%d minute%s", $minutes, ($minutes == 1 ? ' ' : 's '));
 			}
 		}
 		if ($short === true) {
-			$timestring .= sprintf("%d sec.", $seconds);
+			$timestring .= sprintf("%d sec. ", $seconds);
 		}
 		else {
 			$timestring .= sprintf("%d second%s", $seconds, ($seconds == 1 ? ' ' : 's'));

@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ class PluginChatRaspNextrank extends Plugin {
 			$query = "
 			SELECT
 				`Average`
-			FROM `%prefix%ranks`
+			FROM `%prefix%rankings`
 			WHERE `PlayerId` = ". $player->id .";
 			";
 
@@ -97,7 +97,7 @@ class PluginChatRaspNextrank extends Plugin {
 				SELECT
 					`PlayerId`,
 					`Average`
-				FROM `%prefix%ranks`
+				FROM `%prefix%rankings`
 				WHERE `Average` <". $avg ."
 				ORDER BY `Average`;
 				";

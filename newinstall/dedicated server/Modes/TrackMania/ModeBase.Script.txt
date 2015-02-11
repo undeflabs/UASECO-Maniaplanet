@@ -4,7 +4,7 @@
 
 #RequireContext CTmMode
 
-#Const	ModeBaseVersion		"2014-10-16"
+#Const	ModeBaseVersion		"2014-11-27"
 #Const	ModeBaseScriptName	"ModeBase.Script.txt"
 
 #Include "Libs/Nadeo/Mode.Script.txt" as Mode
@@ -123,13 +123,14 @@ while (Now < CutOffTimeLimit) {
 		ScoresTableStartTime = ChatStartTime + ((S_ChatTime * 0.25) * 1000);
 	}
 	
-	if (UIManager.UIAll.ScoreTableVisibility != CUIConfig::EVisibility::ForcedVisible && Now > ScoresTableStartTime) {
+	if (MB_UsePodiumScoresTable && UIManager.UIAll.ScoreTableVisibility != CUIConfig::EVisibility::ForcedVisible && Now > ScoresTableStartTime) {
 		if (MB_VictoryMessage != "") UIManager.UIAll.BigMessage = "";
 		UIManager.UIAll.ScoreTableVisibility = CUIConfig::EVisibility::ForcedVisible;
 	}
 }
 CutOffTimeLimit = -1;
 MB_VictoryMessage = "";
+UIManager.UIAll.BigMessage = "";
 UIManager.UIAll.ScoreTableVisibility = CUIConfig::EVisibility::Normal;
 ***
 
@@ -159,6 +160,8 @@ declare CTmMode::ETMRespawnBehaviour MB_DefaultRespawnMode;
 declare Boolean MB_AllowRespawn;
 // Points repartition in rounds based modes
 declare Integer[] MB_PointsRepartition;
+// Matchmaking
+declare Boolean MM_RestartMatchmaking;
 
 // ---------------------------------- //
 // Functions
@@ -484,6 +487,7 @@ main() {
 	declare MB_UseLogging	= False;
 	declare MB_UseIntro		= True;
 	declare MB_UsePodium	= True;
+	declare MB_UsePodiumScoresTable = True;
 	// Determine wich section will be used
 	declare MB_UseSectionSubmatch	= False;	///< Use the submatch section
 	declare MB_UseSectionRound		= False;	///< Use the round section
@@ -506,6 +510,8 @@ main() {
 	TM2::Load();
 	WarmUp::Load();
 	ST2::Load();
+	
+	---Matchmaking---
 	+++InitServer+++
 	XmlRpc::BeginServer();
 	+++StartServer+++
@@ -520,10 +526,11 @@ main() {
 		&& !MB_StopServer
 	) {
 		// Match initialization
-		MB_CurrentSection	= "StartMatch";
-		MB_SectionMatchNb	+= 1;
-		MB_SectionMapNb		= 0;
-		MB_StopMatch		= False;
+		MB_CurrentSection		= "StartMatch";
+		MB_SectionMatchNb		+= 1;
+		MB_SectionMapNb			= 0;
+		MB_StopMatch			= False;
+		MM_RestartMatchmaking	= False;
 		MB_XmlRpcCheck();
 		MB_AllowRespawnCheck();
 		
@@ -546,6 +553,7 @@ main() {
 			!ServerShutdownRequested
 			&& !MB_StopServer
 			&& !MB_StopMatch
+			&& !MM_RestartMatchmaking
 		) {
 			// Map initialization
 			MB_CurrentSection		= "StartMap";
@@ -594,6 +602,7 @@ main() {
 				&& !MB_StopServer
 				&& !MatchEndRequested
 				&& !MB_StopMatch
+				&& !MM_RestartMatchmaking
 				&& !MB_StopMap
 			) {
 				// Submatch initialization
@@ -621,6 +630,7 @@ main() {
 					&& !MB_StopServer
 					&& !MatchEndRequested
 					&& !MB_StopMatch
+					&& !MM_RestartMatchmaking
 					&& !MB_StopMap
 					&& !MB_StopSubmatch
 				) {
@@ -650,6 +660,7 @@ main() {
 						&& !MB_StopServer
 						&& !MatchEndRequested
 						&& !MB_StopMatch
+						&& !MM_RestartMatchmaking
 						&& !MB_StopMap
 						&& !MB_StopSubmatch
 						&& !MB_StopRound
@@ -682,6 +693,7 @@ main() {
 							&& !MB_StopServer
 							&& !MatchEndRequested
 							&& !MB_StopMatch
+							&& !MM_RestartMatchmaking
 							&& !MB_StopMap
 							&& !MB_StopSubmatch
 							&& !MB_StopRound
@@ -774,6 +786,8 @@ main() {
 				---SequencePodium---
 			}
 			XmlRpc::EndPodium();
+			
+			+++EndMapAfterPodium+++
 			
 			XmlRpc::UnloadingMap(MB_SectionMapNb);
 			MB_MapRestarted = False;

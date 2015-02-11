@@ -207,6 +207,12 @@
 	<!-- Position of the Widget and selection of the Gamemode to enable/disable the displaying of the Widget -->
 	<karma_widget>
 		<gamemode>
+			<score>
+				<enabled>true</enabled>
+				<pos_x>47.8</pos_x>
+				<pos_y>33.2</pos_y>
+				<scale>1.0</scale>
+			</score>
 			<rounds>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
@@ -237,18 +243,24 @@
 				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</cup>
+			<team_attack>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>34.6</pos_y>
+				<scale>1.0</scale>
+			</team_attack>
+			<chase>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>34.6</pos_y>
+				<scale>1.0</scale>
+			</chase>
 			<stunts>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
 				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</stunts>
-			<score>
-				<enabled>true</enabled>
-				<pos_x>47.8</pos_x>
-				<pos_y>33.2</pos_y>
-				<scale>1.0</scale>
-			</score>
 		</gamemode>
 	</karma_widget>
 

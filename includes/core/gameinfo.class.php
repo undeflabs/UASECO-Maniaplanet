@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-02
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-11
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ class Gameinfo {
 	public $laps;					// array()
 	public $cup;					// array()
 	public $team_attack;				// array()
+	public $chase;					// array()
 //	public $stunts;					// array() unused
 
 	const ROUNDS		= 1;
@@ -58,7 +59,8 @@ class Gameinfo {
 	const LAPS		= 4;
 	const CUP		= 5;
 	const TEAMATTACK	= 6;
-	const STUNTS		= 7;
+	const CHASE		= 7;
+	const STUNTS		= 8;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -110,6 +112,10 @@ class Gameinfo {
 
 			case 'TeamAttack':
 				$this->mode = self::TEAMATTACK;
+				break;
+
+			case 'Chase':
+				$this->mode = self::CHASE;
 				break;
 
 			case 'Stunts':
@@ -212,6 +218,19 @@ class Gameinfo {
 			$this->team_attack['MaxPlayerPerClan']		= $modescript['settings']['S_MaxPlayerPerClan'];
 			$this->team_attack['MaxClanNb']			= $modescript['settings']['S_MaxClanNb'];
 		}
+		else if ($this->mode == self::CHASE) {
+			// Chase
+			$this->chase['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
+			$this->chase['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
+			$this->chase['PointsGap']			= $modescript['settings']['S_PointsGap'];
+			$this->chase['GiveUpMax']			= $modescript['settings']['S_GiveUpMax'];
+			$this->chase['MinPlayersNb']			= $modescript['settings']['S_MinPlayersNb'];
+			$this->chase['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
+			$this->chase['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
+			$this->chase['UsePlayerClublinks']		= $modescript['settings']['S_UsePlayerClublinks'];
+			$this->chase['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
+			$this->chase['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
+		}
 	}
 
 	/*
@@ -255,6 +274,9 @@ class Gameinfo {
 			case self::TEAMATTACK:
 				return 'TeamAttack.Script.txt';
 
+			case self::CHASE:
+				return 'Chase.Script.txt';
+
 			case self::STUNTS:
 				return 'Stunts.Script.txt';
 
@@ -294,6 +316,9 @@ class Gameinfo {
 			case self::TEAMATTACK:
 				return 'Team Attack';
 
+			case self::CHASE:
+				return 'Chase';
+
 			case self::STUNTS:
 				return 'Stunts';
 
@@ -332,6 +357,9 @@ class Gameinfo {
 
 			case 'team attack':
 				return self::TEAMATTACK;
+
+			case 'chase':
+				return self::CHASE;
 
 			case 'stunts':
 				return self::STUNTS;

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-09
+ * Date:	2015-02-11
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -579,6 +579,10 @@ EOL;
 					$limits = '???';
 					break;
 
+				case Gameinfo::CHASE:
+					$limits = $aseco->server->gameinfo->chase['PointsLimit'] .' pts.';
+					break;
+
 				case Gameinfo::STUNTS:
 					$limits = 'NONE';
 					break;
@@ -673,7 +677,7 @@ main() {
 
 			// Update labels
 			SpectatorCount = SpectatorsList.count;
-			PlayerCount = (Players.count - SpectatorCount - 1);
+			PlayerCount = (Players.count - SpectatorCount);
 			if (PlayerCount >= CurrentMaxPlayers) {
 				LabelPlayerCount.SetText("\$FA0"^ PlayerCount ^"/"^ CurrentMaxPlayers);
 			}
@@ -874,7 +878,6 @@ $maniascript = <<<EOL
  * License:	GPLv3
  * ----------------------------------
  */
-#Include "TextLib" as TextLib
 main() {
 	declare CMlLabel LabelCurrentRanking <=> (Page.GetFirstChild("{$this->config['manialinkid']}LabelCurrentRanking") as CMlLabel);
 
@@ -897,10 +900,10 @@ main() {
 				// Did the Player already finished the Map?
 				if (Score.User.Login == InputPlayer.Login) {
 					if (Score != Null && (Score.BestRace.Time > 0 || Score.Points > 0)) {
-						LabelCurrentRanking.SetText(CurrentPlayerRank ^"/"^ (Players.count - 1));
+						LabelCurrentRanking.SetText(CurrentPlayerRank ^"/"^ Players.count);
 					}
 					else {
-						LabelCurrentRanking.SetText("0/"^ (Players.count - 1));
+						LabelCurrentRanking.SetText("0/"^ Players.count);
 					}
 				}
 			}
@@ -1049,7 +1052,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildPersonalBest ($score, $show = true) {
+	private function buildPersonalBest ($score, $show = true) {
 		global $aseco;
 
 		$HandlePendingEvents = 'True';
@@ -1166,7 +1169,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildLocalRecord ($score, $show = true) {
+	private function buildLocalRecord ($score, $show = true) {
 		global $aseco;
 
 		$HandlePendingEvents = 'True';
@@ -1283,7 +1286,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildDedimaniaRecord ($score, $show = true) {
+	private function buildDedimaniaRecord ($score, $show = true) {
 		global $aseco;
 
 		$HandlePendingEvents = 'True';
@@ -1399,7 +1402,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildManiaExchange ($score, $show = true) {
+	private function buildManiaExchange ($score, $show = true) {
 		global $aseco;
 
 $maniascript = <<<EOL

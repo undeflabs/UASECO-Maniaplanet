@@ -2,7 +2,7 @@
  *	TM library
  */
 
-#Const Version		"2014-06-30"
+#Const Version		"2014-12-30"
 #Const ScriptName	"TM2.Script.txt"
 
 #Include "TextLib" as TL
@@ -29,15 +29,21 @@
 // ---------------------------------- //
 /** Start the outro sequence for a player
  *
- *	@param	_Player		The player to set in outro sequence
+ *	@param	_Player					The player to set in outro sequence
+ *	@param	_DisplayScoresTable		Display the scores table during the outro
  */
-Void Private_OutroStart(CTmPlayer _Player) {
+Void Private_OutroStart(CTmPlayer _Player, Boolean _DisplayScoresTable) {
 	if (_Player == Null) return;
 	
 	declare LibTM2_OutroEndTime for _Player = -1;
-	declare LibTM2_OutroScoresTableTime for _Player = -1;
 	LibTM2_OutroEndTime = Now + C_OutroDuration;
-	LibTM2_OutroScoresTableTime = Now + C_OutroScoresTableTime;
+	
+	declare LibTM2_OutroScoresTableTime for _Player = -1;
+	if (_DisplayScoresTable) {
+		LibTM2_OutroScoresTableTime = Now + C_OutroScoresTableTime;
+	} else {
+		LibTM2_OutroScoresTableTime = -1;
+	}
 }
 
 // ---------------------------------- //
@@ -81,7 +87,7 @@ Void Private_OutroStop(CTmPlayer _Player) {
 // ---------------------------------- //
 /** Return the version number of the script
  *
- *	@return		The version number of the script
+ *	@return				The version number of the script
  */
 Text GetScriptVersion() {
 	return Version;
@@ -90,7 +96,7 @@ Text GetScriptVersion() {
 // ---------------------------------- //
 /** Return the name of the script
  *
- *	@return		The name of the script
+ *	@return				The name of the script
  */
 Text GetScriptName() {
 	return ScriptName;
@@ -99,7 +105,7 @@ Text GetScriptName() {
 // ---------------------------------- //
 /// Unload the library
 Void Unload() {
-	foreach (Player in ConnectedPlayers) {
+	foreach (Player in AllPlayers) {
 		declare LibTM2_SpawnStatus for Player = C_SpawnStatus_Waiting;
 		declare LibTM2_OutroEndTime for Player = -1;
 		declare LibTM2_OutroScoresTableTime for Player = -1;
@@ -174,15 +180,33 @@ Void StartRace(CTmPlayer _Player) {
 // ---------------------------------- //
 /** Unspawn a racing player and send him in the outro sequence
  *
- *	@param	_Player		The player to unspawn
+ *	@param	_Player					The player to unspawn
+ *	@param	_DisplayScoresTable		Display the scores table during the outro
  */
-Void EndRace(CTmPlayer _Player) {
+Void EndRace(CTmPlayer _Player, Boolean _DisplayScoresTable) {
 	if (_Player == Null) return;
 	
 	declare LibTM2_SpawnStatus for _Player = C_SpawnStatus_Waiting;
 	LibTM2_SpawnStatus = C_SpawnStatus_Outro;
 	
-	Private_OutroStart(_Player);
+	Private_OutroStart(_Player, _DisplayScoresTable);
+}
+
+// ---------------------------------- //
+/** Unspawn a racing player and send him in the outro sequence
+ *
+ *	@param	_Player		The player to unspawn
+ */
+Void EndRace(CTmPlayer _Player) {
+	EndRace(_Player, True);
+}
+
+// ---------------------------------- //
+/// End race all the players
+Void EndRaceAll() {
+	foreach (Player in AllPlayers) {
+		EndRace(Player);
+	}
 }
 
 // ---------------------------------- //
@@ -207,7 +231,7 @@ Void WaitRace(CTmPlayer _Player) {
 // ---------------------------------- //
 /// Unspawn all the players
 Void WaitRaceAll() {
-	foreach (Player in ConnectedPlayers) {
+	foreach (Player in AllPlayers) {
 		WaitRace(Player);
 	}
 }
@@ -217,7 +241,7 @@ Void WaitRaceAll() {
  *
  *	@param	_Player		The player to check
  *
- *	@return		True if the player is racing, false otherwise
+ *	@return				True if the player is racing, false otherwise
  */
 Boolean IsRacing(CTmPlayer _Player) {
 	if (_Player == Null) return False;
@@ -232,7 +256,7 @@ Boolean IsRacing(CTmPlayer _Player) {
  *
  *	@param	_Player		The player to check
  *
- *	@return		True if the player is waiting to be spawned, false otherwise
+ *	@return				True if the player is waiting to be spawned, false otherwise
  */
 Boolean IsWaiting(CTmPlayer _Player) {
 	if (_Player == Null) return False;
@@ -247,7 +271,7 @@ Boolean IsWaiting(CTmPlayer _Player) {
  *
  *	@param	_Player		The player to check
  *
- *	@return		True if the player is watching the outro, false otherwise
+ *	@return				True if the player is watching the outro, false otherwise
  */
 Boolean IsWatchingOutro(CTmPlayer _Player) {
 	if (_Player == Null) return False;
@@ -262,7 +286,7 @@ Boolean IsWatchingOutro(CTmPlayer _Player) {
  *
  *	@param	_Player		The player to check
  *
- *	@return		The current status of the player or -1 if the player doesn't exist
+ *	@return				The current status of the player or -1 if the player doesn't exist
  */
 Integer GetPlayerStatus(CTmPlayer _Player) {
 	if (_Player == Null) return -1;
@@ -274,7 +298,7 @@ Integer GetPlayerStatus(CTmPlayer _Player) {
 // ---------------------------------- //
 /// Update the library
 Void Loop() {
-	foreach (Player in ConnectedPlayers) {
+	foreach (Player in AllPlayers) {
 		declare LibTM2_SpawnStatus for Player = C_SpawnStatus_Waiting;
 		
 		// ---------------------------------- //
@@ -429,7 +453,7 @@ Integer TextToTime(Text _Value) {
 // ---------------------------------- //
 /**	Inject TimeToText into a ManiaLink
  *	
- *	@return		TimeToText() function
+ *	@return				TimeToText() function
  */
 Text InjectMLTimeToText() {
 	return """
@@ -452,7 +476,7 @@ Text TimeToText(Integer _Time) {
 // ---------------------------------- //
 /**	Inject TextToTime into a ManiaLink
  *	
- *	@return			TextToTime() function
+ *	@return				TextToTime() function
  */
 Text InjectMLTextToTime() {
 	return """
@@ -501,4 +525,162 @@ Integer TextToTime(Text _Value) {
 	if (Time < 0) Time = 0;
 	return Time;
 }""";
+}
+
+// ---------------------------------- //
+/** Get the number of clans with at least one player
+ *
+ *	@return				The number of clans with at least one player
+ */
+Integer GetClansNbTotal() {
+	declare Integer[] Clans;
+	
+	foreach (Player in AllPlayers) {
+		if (!Clans.existskey(Player.CurrentClan)) {
+			Clans.add(Player.CurrentClan);
+		}
+	}
+	
+	return Clans.count;
+}
+
+// ---------------------------------- //
+/** Get the number of clans with at least one player racing
+ *
+ *	@return				The number of clans with at least one player racing
+ */
+Integer GetClansNbRacing() {
+	declare Integer[] Clans;
+	
+	foreach (Player in PlayersRacing) {
+		if (!Clans.existskey(Player.CurrentClan)) {
+			Clans.add(Player.CurrentClan);
+		}
+	}
+	
+	return Clans.count;
+}
+
+// ---------------------------------- //
+/** Get the number of clans with all players waiting
+ *
+ *	@return				The number of clans with all players waiting
+ */
+Integer GetClansNbWaiting() {
+	return GetClansNbTotal() - GetClansNbRacing();
+}
+
+// ---------------------------------- //
+/** Get the number of players in a clan
+ *
+ *	@param	_Clan		The clan to check
+ *
+ *	@return				The number of players in the clan
+ */
+Integer GetClanNbPlayers(Integer _Clan) {
+	declare Count = 0;
+	
+	if (ClansNbPlayers.existskey(_Clan)) {
+		return ClansNbPlayers[_Clan];
+	}
+	
+	foreach (Player in AllPlayers) {
+		if (_Clan == Player.CurrentClan) {
+			Count += 1;
+		}
+	}
+	
+	return Count;
+}
+
+// ---------------------------------- //
+/** Get the number of players in each clan
+ *
+ *	@return				The number of players in each clan
+ */
+Integer[Integer] GetClansNbPlayers() {
+	declare Integer[Integer] Count;
+	
+	foreach (Player in AllPlayers) {
+		if (!Count.existskey(Player.CurrentClan)) {
+			Count[Player.CurrentClan] = 0;
+		}
+		Count[Player.CurrentClan] += 1;
+	}
+	
+	return Count;
+}
+
+// ---------------------------------- //
+/** Get the number of players racing in a clan
+ *
+ *	@param	_Clan		The clan to check
+ *
+ *	@return				The number of players racing in the given clan
+ */
+Integer GetClanNbPlayersRacing(Integer _Clan) {
+	declare Integer Count;
+	
+	foreach (Player in PlayersRacing) {
+		if (_Clan == Player.CurrentClan) {
+			Count += 1;
+		}
+	}
+	
+	return Count;
+}
+
+// ---------------------------------- //
+/** Get the number of players racing in racing clans
+ *
+ *	@return				The number of players racing in racing clans
+ */
+Integer[Integer] GetClansNbPlayersRacing() {
+	declare Integer[Integer] Count;
+	
+	foreach (Player in PlayersRacing) {
+		if (!Count.existskey(Player.CurrentClan)) {
+			Count[Player.CurrentClan] = 0;
+		}
+		Count[Player.CurrentClan] += 1;
+	}
+	
+	return Count;
+}
+
+// ---------------------------------- //
+/** Get the number of players waiting in a clan
+ *
+ *	@param	_Clan		The clan to check
+ *
+ *	@return				The number of players waiting in the given clan
+ */
+Integer GetClanNbPlayersWaiting(Integer _Clan) {
+	declare Integer Count;
+	
+	foreach (Player in PlayersWaiting) {
+		if (_Clan == Player.CurrentClan) {
+			Count += 1;
+		}
+	}
+	
+	return Count;
+}
+
+// ---------------------------------- //
+/** Get the number of players waiting in waiting clans
+ *
+ *	@return				The number of players waiting in waiting clans
+ */
+Integer[Integer] GetClansNbPlayersWaiting() {
+	declare Integer[Integer] Count;
+	
+	foreach (Player in PlayersWaiting) {
+		if (!Count.existskey(Player.CurrentClan)) {
+			Count[Player.CurrentClan] = 0;
+		}
+		Count[Player.CurrentClan] += 1;
+	}
+	
+	return Count;
 }

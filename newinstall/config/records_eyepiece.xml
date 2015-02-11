@@ -346,6 +346,24 @@
 				<topcount>3</topcount>
 			</cup>
 
+			<team_attack>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>15</entries>
+				<topcount>3</topcount>
+			</team_attack>
+
+			<chase>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>32.9</pos_y>
+				<scale>1.0</scale>
+				<entries>15</entries>
+				<topcount>3</topcount>
+			</chase>
+
 			<stunts>						<!-- Unsupported by Dedimania, leave as is! -->
 				<enabled>false</enabled>
 			</stunts>
@@ -405,6 +423,24 @@
 				<entries>14</entries>
 				<topcount>3</topcount>
 			</cup>
+
+			<team_attack>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>2.5</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
+			</team_attack>
+
+			<chase>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>2.5</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
+			</chase>
 
 			<stunts>
 				<enabled>true</enabled>
@@ -473,6 +509,24 @@
 				<entries>11</entries>
 				<topcount>3</topcount>
 			</cup>
+
+			<team_attack>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>28.3</pos_y>
+				<scale>1.0</scale>
+				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
+				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
+			</team_attack>
+
+			<chase>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>28.3</pos_y>
+				<scale>1.0</scale>
+				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
+				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
+			</chase>
 
 			<stunts>
 				<enabled>true</enabled>
@@ -576,6 +630,42 @@
 					<topcount>2</topcount>			<!-- max. 2 -->
 				</warmup>
 			</cup>
+
+			<team_attack>
+				<enabled>true</enabled>
+				<race>
+					<pos_x>48.64</pos_x>
+					<pos_y>21.3</pos_y>
+					<scale>1.0</scale>
+					<entries>23</entries>
+					<topcount>3</topcount>
+				</race>
+				<warmup>
+					<pos_x>48.64</pos_x>
+					<pos_y>21.3</pos_y>
+					<scale>1.0</scale>
+					<entries>2</entries>			<!-- max. 2 -->
+					<topcount>2</topcount>			<!-- max. 2 -->
+				</warmup>
+			</team_attack>
+
+			<chase>
+				<enabled>true</enabled>
+				<race>
+					<pos_x>48.64</pos_x>
+					<pos_y>21.3</pos_y>
+					<scale>1.0</scale>
+					<entries>23</entries>
+					<topcount>3</topcount>
+				</race>
+				<warmup>
+					<pos_x>48.64</pos_x>
+					<pos_y>21.3</pos_y>
+					<scale>1.0</scale>
+					<entries>2</entries>			<!-- max. 2 -->
+					<topcount>2</topcount>			<!-- max. 2 -->
+				</warmup>
+			</chase>
 
 			<stunts>
 				<enabled>false</enabled>			<!-- Unsupported, leave as is! -->
@@ -1137,7 +1227,7 @@
 		<placement>
 			<enabled>[true|false]</enabled>
 			<description>enter here whatever you want as an description (this is just for you to remember what this is)</description>
-			<display>[rounds|time_attack|team|laps|cup|stunts|race|score|always]</display>
+			<display>[rounds|time_attack|team|laps|cup|team_attack|chase|stunts|race|score|always]</display>
 			<pos_x>[signed/unsigned float]</pos_x>
 			<pos_y>[signed/unsigned float]</pos_y>
 			<layer>[signed/unsigned float]</layer>				from "-3" till "20"

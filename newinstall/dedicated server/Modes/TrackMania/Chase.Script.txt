@@ -1,0 +1,1166 @@
+/**
+ *	Chase mode
+ */
+
+#Extends "Modes/TrackMania/ModeMatchmaking.Script.txt"
+
+#Const  CompatibleMapTypes  "Race"
+#Const	Version		"2014-12-31"
+#Const	ScriptName	"Chase.Script.txt"
+
+// ---------------------------------- //
+// Settings
+// ---------------------------------- //
+#Setting S_TimeLimit			600		as _("Time limit :")
+#Setting S_PointsLimit			3		as _("Points limit : ")
+#Setting S_PointsGap			3		as _("Points gap :")
+#Setting S_GiveUpMax			1		as _("Maximum number of give up :")
+#Setting S_MinPlayersNb			3		as _("Minimum number of players in a team :")
+#Setting S_ForceLapsNb			5		as _("Number of Laps :")
+#Setting S_FinishTimeout		-1		as _("Finish timeout :")
+#Setting S_UsePlayerClublinks	False	as _("Use Clublinks :")
+// Matchmaking
+#Setting S_NbPlayersPerTeamMax	3		as _("Maximum number of players per team in matchmaking")
+#Setting S_NbPlayersPerTeamMin	3		as _("Minimum number of players per team in matchmaking")
+
+// ---------------------------------- //
+// Constants
+// ---------------------------------- //
+#Const C_WinType_Undefined		0	///< No winning conditions met
+#Const C_WinType_Points 		1	///< Win by points gap
+#Const C_WinType_Finish			2	///< Win by finishing first
+#Const C_WinType_Forfeit		3	///< Win by forfeit
+#Const C_WinType_Time			4	///< Time limit
+#Const C_WinType_Draw			5	///< Draw
+
+#Const C_EndRoundDuration			5000	///< Duration of the end round sequence
+#Const C_SubstituteWaitingTime		15000	///< Max waiting time for substitutes
+#Const C_MissingPlayersWaitingTime	45000	///< Max waiting time for missing players
+
+#Const C_BlueBotsNb	0	///< Number of bots in the blue team
+#Const C_RedBotsNb	0	///< Number of bots in the red team
+/// Description of the mode displayed in the help window
+#Const Description _("""$fffIn $f00Chase$fff mode, the goal is to cross the finish line $f00first$fff with its team or scoring enough $f00points$fff.
+
+To score one $f00point$fff the last player of a team passing a checkpoint must be the first at the next one.
+
+The $f00winner$fff is the team who passed the $f00finish$fff first or had a big enough $f00points$fff advantage over the other team.""")
+
+
+// ---------------------------------- //
+// Globales
+// ---------------------------------- //
+
+// ---------------------------------- //
+// Extend
+// ---------------------------------- //
+***LogVersion***
+***
+MB_LogVersion(ScriptName, Version);
+***
+
+***LobbyStartServer***
+***
+MM_SetFormat([S_NbPlayersPerTeamMax, S_NbPlayersPerTeamMax]);
+if (S_NbPlayersPerTeamMax > S_NbPlayersPerTeamMin) {
+	declare Formats = Integer[][];
+	for (I, S_NbPlayersPerTeamMin, S_NbPlayersPerTeamMax-1) {
+		if (I > 0) Formats.add([I, I]);
+	}
+	MM_SetProgressiveFormats(Formats);
+}
+***
+
+***ManialinkRules***
+***
+ManialinkRules = """<label posn="-60 25" sizen="120 50" autonewline="1" maxline="10" textemboss="1" textsize="2" text="{{{Description}}}" />""";
+***
+
+***InitServer***
+***
+declare Integer PrevTimeLimit;
+declare Integer StartTime;
+declare IsRematch = False;	///< Do the players want a rematch ?
+declare RematchNb = 0;		///< Number of consecutive rematch
+***
+
+***StartServer***
+***
+// ---------------------------------- //
+// Initialize mode
+UseClans = True;
+MB_UsePlayerClublinks = S_UsePlayerClublinks;
+MB_UseSectionRound = True;
+MB_UsePodiumScoresTable = False;
+PrevTimeLimit = S_TimeLimit;
+SetLapsNb(S_ForceLapsNb, StartTime);
+StartTime = -1;
+
+// ---------------------------------- //
+// Force round/lap synchro of the cars
+// In time attack mode the synchro of the car is less strict, 
+// creating a small delay between the real position of the player 
+// and the position of his car on the screen
+UiRounds = True;
+UiLaps = True;
+
+// ---------------------------------- //
+// Matchmaking mode
+if (MM_IsMatchServer()) {
+	MM_Init([S_NbPlayersPerTeamMax, S_NbPlayersPerTeamMax]);
+}
+
+// ---------------------------------- //
+// Initialize UI
+UiLaps = True;
+UI::LoadModules(["TimeGap", "Chrono", "CheckpointTime", "PrevBestTime", "SpeedAndDistance", "Countdown"]);
+UI::DisplayTimeDiff(False);
+Layers::Create("ChaseInfo", GetMLChaseInfo());
+
+// ---------------------------------- //
+// Create scores table
+ST2::SetStyle("LibST_TMBaseTeams");
+ST2::SetModeIcon("Icons128x32_1|RT_Laps");
+ST2::CreateCol("LibST_TMCheckpoints", "", "0", 3., 60.);
+ST2::CreateCol("LibST_TMBestTime", "", "--:--.---", 8., 70.);
+ST2::SetColTextAlign("LibST_TMBestTime", CMlControl::AlignHorizontal::Right);
+ST2::SetColTextSize("LibST_TMCheckpoints", 1.5);
+ST2::SetColTextSize("LibST_TMBestTime", 2.);
+MB_SetScoresTableStyleFromXml(S_ScoresTableStylePath);
+ST2::Build("TM");
+***
+
+***InitMap***
+***
+declare Integer MapWinType; ///< How the map was won
+
+SetLapsNb(S_ForceLapsNb, StartTime);
+UpdateScoresTableFooter();
+
+// ---------------------------------- //
+// Initialize scores
+Scores_Clear();
+ST2::ClearScores();
+declare netwrite Net_Chase_MapPoints for Teams[0] = Integer[Integer];
+declare netwrite Net_Chase_RoundPoints for Teams[0] = Integer[Integer];
+declare netwrite Net_Chase_PointsGap for Teams[0] = S_PointsGap;
+Net_Chase_MapPoints.clear();
+Net_Chase_RoundPoints.clear();
+Net_Chase_PointsGap = S_PointsGap;
+UpdateClanScores();
+
+// ---------------------------------- //
+// Skip intro in matchmaking
+if (MM_IsMatchServer()) MB_UseIntro = False;
+else MB_UseIntro = True;
+***
+
+***StartMap***
+***
+// ---------------------------------- //
+// Initialize map
+MB_Ladder_OpenMatch_All();
+Users_SetNbFakeUsers (C_BlueBotsNb, C_RedBotsNb);
+UpdateScoresTableFooter();
+MapWinType = C_WinType_Undefined;
+
+// ---------------------------------- //
+// Matchmaking
+if (MM_IsMatchServer()) {
+	// ---------------------------------- //
+	// Set matchmaking scores
+	MM_SetScores([0, 0]);
+	
+	// ---------------------------------- //
+	// Wait players when using matchmaking
+	if (!IsRematch) {
+		MM_MatchWait();
+		MM_VoteForNextMap(True);
+	} else {
+		MM_WaitPlayers(15000);
+	}
+	
+	IsRematch = False;
+	MM_AllowSubstitutes(True);
+} 
+// ---------------------------------- //
+// Warm up
+else {
+	declare ObjectiveNbLaps = Map.TMObjective_NbLaps;
+	if (ObjectiveNbLaps <= 0 || !Map.TMObjective_IsLapRace) ObjectiveNbLaps = 1;
+	declare MaxTime = (Map.TMObjective_AuthorTime / ObjectiveNbLaps) * S_WarmUpDuration;
+	declare WarmUpTimeLimit = Now + 3000 + MaxTime + (MaxTime / 6);
+	MB_WarmUp(WarmUpTimeLimit);
+}
+***
+
+***InitRound***
+***
+declare Ident[][Integer] RoundPlayers; ///< Ids of the players for this round
+declare Ident[][Integer] RoundGiveUp; ///< Number of give up
+declare Ident[][Ident][Integer][Integer] Progress; ///< Current progress of the race
+declare Ident[][Ident][Integer][Integer] CurrentCheckpoint; ///< Current progress at the current checkpoint
+declare Boolean ForceEndRound; ///< Force the round to end
+declare Integer RoundWinType; ///< How the round was won
+declare Boolean FirstFinish; ///< First player finishing the map
+***
+
+***StartRound***
+***
+// ---------------------------------- //
+// Initialize scores
+Scores_Clear();
+ST2::ClearScores();
+Net_Chase_RoundPoints.clear();
+Net_Chase_PointsGap = S_PointsGap;
+RoundWinType = C_WinType_Undefined;
+UpdateClanScores();
+
+// ---------------------------------- //
+// Initialize checkpoints
+declare netwrite Integer Net_Chase_NextPlayerUpdate for Teams[0];
+declare netwrite Text[Integer] Net_Chase_NextPlayer for Teams[0];
+Net_Chase_NextPlayer.clear();
+Net_Chase_NextPlayerUpdate = Now;
+
+// ---------------------------------- //
+// Wait minimum number of players in each clan
+if (MM_IsMatchServer()) {
+	if (!EnoughPlayers()) {
+		WaitForPlayers(C_MissingPlayersWaitingTime);
+		if (!EnoughPlayers()) {
+			RoundWinType = C_WinType_Forfeit;
+			MapWinType = C_WinType_Forfeit;
+			MB_StopMatch = True;
+		}
+	}
+} else {
+	WaitForPlayers(-1);
+}
+
+// ---------------------------------- //
+// Initialize race
+StartTime = Now + 3000;
+SetTimeLimit(StartTime);
+FirstFinish = True;
+UIManager.UIAll.UISequence = CUIConfig::EUISequence::Playing;
+
+// ---------------------------------- //
+// Spawn players for the round
+TM2::WaitRaceAll();
+foreach (Player in Players) {
+	// Skip invalid players in matchmaking
+	if (MM_IsMatchServer() && !MM_PlayerIsValid(Player)) continue;
+	
+	SetPlayerClan(Player, MM_GetRequestedClan(Player));
+	TM2::StartRace(Player, StartTime);
+	if (!RoundPlayers.existskey(Player.CurrentClan)) RoundPlayers[Player.CurrentClan] = Ident[];
+	RoundPlayers[Player.CurrentClan].add(Player.Id);
+	Player.Score.LadderClan = Player.CurrentClan;
+}
+
+UpdateScoresTableFooter();
+Clublink::DefineTeamAuto();
+Layers::Attach("ChaseInfo");
+***
+
+***WarmUp***
+***
+if (S_WarmUpDuration > 0) {		
+	WarmUp::Begin();
+	WarmUp::SetProgression(1, 1);
+	CutOffTimeLimit = _TimeLimit;
+	
+	while (Now < CutOffTimeLimit && !WarmUp::Stop() && !ServerShutdownRequested && !MatchEndRequested) {
+		MB_Yield();
+		WarmUp::Loop();
+		WarmUp::ManageEvents();
+	}
+	WarmUp::End();
+	
+	UIManager.UIAll.BigMessage = _("End of warmup, match starting...");
+	UIManager.UIAll.UISequence = CUIConfig::EUISequence::EndRound;
+	CutOffTimeLimit = Now + 4000;
+	while (Now < CutOffTimeLimit && !ServerShutdownRequested && !MatchEndRequested) {
+		MB_Yield();
+	}
+	CutOffTimeLimit = -1;
+	UIManager.UIAll.BigMessage = "";
+	UIManager.UIAll.UISequence = CUIConfig::EUISequence::Playing;
+}
+***
+
+***Yield***
+***
+Message::Loop();
+***
+
+***PlayLoop***
+***
+// ---------------------------------- //
+// Update the map duration setting
+if (PrevTimeLimit != S_TimeLimit) {
+	PrevTimeLimit = S_TimeLimit;
+	SetTimeLimit(StartTime);
+}
+
+// ---------------------------------- //
+// Check if any player disconnected or gave up
+declare Ident[][Integer] PlayersToRemove;
+foreach (Clan => PlayersIds in RoundPlayers) {
+	foreach (PlayerId in PlayersIds) {
+		if (!PlayersRacing.existskey(PlayerId)) {
+			if (!PlayersToRemove.existskey(Clan)) PlayersToRemove[Clan] = Ident[];
+			PlayersToRemove[Clan].add(PlayerId);
+		}
+	}
+	// Stop round if a clan doesn't have any players left
+	if (PlayersIds.count <= 0 || PlayersIds.count < S_MinPlayersNb) {
+		if (RoundWinType == C_WinType_Undefined) {
+			RoundWinType = C_WinType_Forfeit;
+			MB_StopRound = True;
+		}
+	}
+}
+foreach (Clan => PlayersIds in PlayersToRemove) {
+	foreach (PlayerId in PlayersIds) {
+		declare Removed = RoundPlayers[Clan].remove(PlayerId);
+		
+		// Stop round if too many players give up
+		if (Removed) {
+			if (!RoundGiveUp.existskey(Clan)) RoundGiveUp[Clan] = Ident[];
+			if (!RoundGiveUp[Clan].exists(PlayerId)) RoundGiveUp[Clan].add(PlayerId);
+			if (RoundWinType == C_WinType_Undefined && RoundGiveUp[Clan].count > S_GiveUpMax) {
+				RoundWinType = C_WinType_Forfeit;
+				MB_StopRound = True;
+			}
+		}
+	}
+}
+
+foreach (Event in PendingEvents) {
+	PassOn(Event);
+	XmlRpc::PassOn(Event);
+	
+	// ---------------------------------- //
+	// Waypoint
+	if (Event.Type == CTmModeEvent::EType::WayPoint) {
+		if (Event.IsEndRace) {
+			if (Event.Player.Score !=  Null) Event.Player.Score.PrevRace = Event.Player.CurRace;
+			TM2::EndRace(Event.Player);
+			
+			// ---------------------------------- //
+			// Start the countdown if it's the first player to finish
+			if (FirstFinish) {
+				FirstFinish = False;
+				CutOffTimeLimit = GetFinishTimeout();
+				RoundWinType = C_WinType_Finish;
+			}
+		}
+		
+		if (Event.Player.Score !=  Null) {
+			Event.Player.Score.BestRace = Event.Player.CurRace;
+			
+			// ---------------------------------- //
+			// Save the best lap time
+			if (Event.IsEndLap) {
+				if (Event.Player.Score.BestLap.Compare(Event.Player.CurLap, CTmResult::ETmRaceResultCriteria::Time) <= 0) {
+						Event.Player.Score.BestLap = Event.Player.CurLap;
+				}
+			}
+		}
+		Scores_Sort(CTmMode::ETmScoreSortOrder::BestRace_CheckpointsProgress);
+		
+		// Update progress
+		declare NewCheckpoint = False;
+		if (!Progress.existskey(Event.Player.CurrentClan)) {
+			Progress[Event.Player.CurrentClan] = Ident[][Ident][Integer];
+		}
+		if (!Progress[Event.Player.CurrentClan].existskey(Event.Player.CurrentNbLaps)) {
+			Progress[Event.Player.CurrentClan][Event.Player.CurrentNbLaps] = Ident[][Ident];
+		}
+		if (!Progress[Event.Player.CurrentClan][Event.Player.CurrentNbLaps].existskey(Event.BlockId)) {
+			Progress[Event.Player.CurrentClan][Event.Player.CurrentNbLaps][Event.BlockId] = Ident[];
+			NewCheckpoint = True;
+		}
+		Progress[Event.Player.CurrentClan][Event.Player.CurrentNbLaps][Event.BlockId].add(Event.Player.Id);
+		
+		// New checkpoint
+		if (NewCheckpoint) {
+			// Check order
+			foreach (Clan => Laps in CurrentCheckpoint) {
+				if (!RoundPlayers.existskey(Clan) || Event.Player.CurrentClan != Clan) continue;
+				foreach (Lap => CheckpointsIds in Laps) {
+					foreach (CheckpointId => PlayersIds in CheckpointsIds) {
+						if (RoundPlayers[Event.Player.CurrentClan].count <= PlayersIds.count) {
+							declare ExpectedPlayerId = PlayersIds[PlayersIds.count - 1];
+							// Relay successful
+							if (ExpectedPlayerId == Event.Player.Id) {
+								if (!Net_Chase_RoundPoints.existskey(Event.Player.CurrentClan)) {
+									Net_Chase_RoundPoints[Event.Player.CurrentClan] = 0;
+								}
+								Net_Chase_RoundPoints[Event.Player.CurrentClan] += 1;
+								Net_Chase_PointsGap = S_PointsGap;
+								
+								SendMessage(TL::Compose("$0c0%1", _("|Chase mode|Relay successful")), "", Event.Player.CurrentClan);
+							}
+							// Relay failed
+							else {
+								SendMessage(TL::Compose("$f00%1", _("|Chase mode|Relay failed")), "", Event.Player.CurrentClan);
+							}
+						} else {
+							SendMessage(TL::Compose("$f00%1", _("|Chase mode|Relay failed")), "", Event.Player.CurrentClan);
+						}
+					}
+				}
+			}
+			// Update order
+			CurrentCheckpoint[Event.Player.CurrentClan] = Ident[][Ident][Integer];
+			CurrentCheckpoint[Event.Player.CurrentClan][Event.Player.CurrentNbLaps] = Ident[][Ident];
+			CurrentCheckpoint[Event.Player.CurrentClan][Event.Player.CurrentNbLaps][Event.BlockId] = Ident[];
+			CurrentCheckpoint[Event.Player.CurrentClan][Event.Player.CurrentNbLaps][Event.BlockId].add(Event.Player.Id);
+			
+			SetNextCheckpointPlayer(Event.Player.CurrentClan, "-");
+		} 
+		// Existing checkpoint
+		else if (
+			CurrentCheckpoint.existskey(Event.Player.CurrentClan) &&
+			CurrentCheckpoint[Event.Player.CurrentClan].existskey(Event.Player.CurrentNbLaps) &&
+			CurrentCheckpoint[Event.Player.CurrentClan][Event.Player.CurrentNbLaps].existskey(Event.BlockId)
+		) {
+			CurrentCheckpoint[Event.Player.CurrentClan][Event.Player.CurrentNbLaps][Event.BlockId].add(Event.Player.Id);
+			
+			// Last player pass the checkpoint
+			if (
+				RoundPlayers.existskey(Event.Player.CurrentClan) && 
+				RoundPlayers[Event.Player.CurrentClan].count <= CurrentCheckpoint[Event.Player.CurrentClan][Event.Player.CurrentNbLaps][Event.BlockId].count
+			) {
+				if (!Event.IsEndRace) SendMessage(_("|Chase mode|Next checkpoint"), Event.Player.User.Name, Event.Player.CurrentClan);
+				SetNextCheckpointPlayer(Event.Player.CurrentClan, Event.Player.User.Name);
+			}
+		}
+	}
+	// ---------------------------------- //
+	// GiveUp
+	else if (Event.Type == CTmModeEvent::EType::GiveUp) {
+		TM2::WaitRace(Event.Player);
+	}
+}
+
+// ---------------------------------- //
+// Manage XmlRpc events
+foreach (Event in XmlRpc.PendingEvents) {
+	if (Event.Param1 == "Rounds_ForceEndRound") {
+		ForceEndRound = True;
+	}
+}
+
+// ---------------------------------- //
+// End the round 
+// If All players finished
+if (Players.count > 0 && PlayersRacing.count <= 0) {
+	MB_StopRound = True;
+}
+// If a clan reach the points gap
+if (RoundWinType == C_WinType_Undefined) {
+	declare Points1 = 0;
+	declare Points2 = 0;
+	if (Net_Chase_RoundPoints.existskey(1)) Points1 = Net_Chase_RoundPoints[1];
+	if (Net_Chase_RoundPoints.existskey(2)) Points2 = Net_Chase_RoundPoints[2];
+	if (ML::Abs(Points1 - Points2) >= S_PointsGap) {
+		RoundWinType = C_WinType_Points;
+		MB_StopRound = True;
+	}
+}
+// If time limit is reached
+if (CutOffTimeLimit > 0 && Now >= CutOffTimeLimit) {
+	if (RoundWinType == C_WinType_Undefined) RoundWinType = C_WinType_Time;
+	MB_StopRound = True;
+}
+// If forced end round
+if (ForceEndRound) {
+	RoundWinType = C_WinType_Draw;
+	MB_StopRound = True;
+}
+***
+
+***EndRound***
+***
+// ---------------------------------- //
+// Update UI
+UIManager.UIAll.UISequence = CUIConfig::EUISequence::EndRound;
+Layers::Detach("ChaseInfo");
+Message::CleanAllMessages();
+CutOffTimeLimit = -1;
+
+// ---------------------------------- //
+// Find round winner
+declare RoundWinClan = -1;
+switch (RoundWinType) {
+	case C_WinType_Points: {
+		declare MaxPoints = 0;
+		foreach (Clan => Points in Net_Chase_RoundPoints) {
+			if (Points > MaxPoints) {
+				MaxPoints = Points;
+				RoundWinClan = Clan;
+				UIManager.UIAll.StatusMessage = _("Victory by points gap");
+			}
+		}
+	}
+	case C_WinType_Finish: {
+		Scores_Sort(CTmMode::ETmScoreSortOrder::BestRace_CheckpointsProgress);
+		if (Scores.existskey(0) && Scores[0].BestRace.Time > 0) {
+			RoundWinClan = Scores[0].TeamNum;
+			UIManager.UIAll.StatusMessage = TL::Compose(_("$<%1$> crossed the finish line!"), Scores[0].User.Name);
+		}
+	}
+	case C_WinType_Forfeit: {
+		declare PossibleWinners = Integer[];
+		foreach (Clan => PlayersIds in RoundPlayers) {
+			if (PlayersIds.count > 0 && PlayersIds.count >= S_MinPlayersNb && !PossibleWinners.exists(Clan)) PossibleWinners.add(Clan);
+		}
+		foreach (Clan => PlayersIds in RoundGiveUp) {
+			if (PlayersIds.count > S_GiveUpMax) {
+				declare Removed = PossibleWinners.remove(Clan);
+			}
+		}
+		if (PossibleWinners.count == 1) {
+			RoundWinClan = PossibleWinners[0];
+			UIManager.UIAll.StatusMessage = _("Victory by forfeit");
+		}
+	}
+	case C_WinType_Time: {
+		// Victory by points advantage
+		declare Points1 = 0;
+		declare Points2 = 0;
+		if (Net_Chase_RoundPoints.existskey(1)) Points1 = Net_Chase_RoundPoints[1];
+		if (Net_Chase_RoundPoints.existskey(2)) Points2 = Net_Chase_RoundPoints[2];
+		if (Points1 != Points2) {
+			if (Points1 > Points2) RoundWinClan = 1;
+			else RoundWinClan = 2;
+			UIManager.UIAll.StatusMessage = _("Victory by points advantage");
+		} 
+		// Victory by checkpoints advatange
+		else {
+			declare Integer[Integer] CheckpointsCount;
+			foreach (Score in Scores) {
+				if (!CheckpointsCount.existskey(Score.TeamNum)) CheckpointsCount[Score.TeamNum] = 0;
+				CheckpointsCount[Score.TeamNum] += Score.BestRace.Checkpoints.count;
+			}
+			declare MaxCheckpoints = 0;
+			foreach (Clan => CheckpointsNb in CheckpointsCount) {
+				if (CheckpointsNb > MaxCheckpoints) {
+					RoundWinClan = Clan;
+					MaxCheckpoints = CheckpointsNb;
+				} else if (CheckpointsNb == MaxCheckpoints) {
+					RoundWinClan = -1;
+				}
+			}
+			
+			if (RoundWinClan != -1) {
+				UIManager.UIAll.StatusMessage = _("Victory by checkpoints advantage");
+			} 
+			// Victory by time advantage
+			else {
+				Scores_Sort(CTmMode::ETmScoreSortOrder::BestRace_CheckpointsProgress);
+				if (Scores.existskey(0) && Scores[0].BestRace.Time > 0) {
+					RoundWinClan = Scores[0].TeamNum;
+					UIManager.UIAll.StatusMessage = _("Victory by time advantage");
+				}
+			}
+		}
+	}
+	case C_WinType_Draw: {
+		UIManager.UIAll.StatusMessage = _("Forced round end");
+	}
+}
+
+// ---------------------------------- //
+// Update scores
+if (RoundWinClan != -1) {
+	if (!Net_Chase_MapPoints.existskey(RoundWinClan)) Net_Chase_MapPoints[RoundWinClan] = 0;
+	Net_Chase_MapPoints[RoundWinClan] += 1;
+}
+UpdateClanScores();
+
+if (MM_IsMatchServer()) {
+	declare AllowSubstitutes = True;
+	
+	foreach (Points in Net_Chase_MapPoints) {
+		if (Points >= S_PointsLimit - 1) {
+			AllowSubstitutes = False;
+			break;
+		}
+	}
+	
+	MM_AllowSubstitutes(AllowSubstitutes && !MB_StopMatch);
+	MM_SetScores([ClanScores[1], ClanScores[2]]);
+}
+
+// ---------------------------------- //
+// Display round winner
+if (Teams.existskey(RoundWinClan - 1)) {
+	Message::SendBigMessage(TL::Compose(_("$<%1$> wins the round!"), Teams[RoundWinClan - 1].ColorizedName), C_EndRoundDuration, 1);
+} else {
+	Message::SendBigMessage(_("This round is a draw."), C_EndRoundDuration, 1);
+}
+
+// ---------------------------------- //
+// Unspawn players
+MB_Sleep(250);
+TM2::WaitRaceAll();
+
+UIManager.UIAll.ScoreTableVisibility = CUIConfig::EVisibility::ForcedVisible;
+MB_Sleep(C_EndRoundDuration - 250);
+UIManager.UIAll.ScoreTableVisibility = CUIConfig::EVisibility::Normal;
+UIManager.UIAll.StatusMessage = "";
+Message::CleanAllMessages();
+
+// ---------------------------------- //
+// Map points limit reached
+foreach (Points in Net_Chase_MapPoints) {
+	if (Points >= S_PointsLimit) {
+		MB_StopMap = True;
+		MB_StopMatch = True;
+		if (MapWinType == C_WinType_Undefined) MapWinType = C_WinType_Points;
+	}
+}
+***
+
+***EndMap***
+***
+// ---------------------------------- //
+// Bug : spawn players to be able to clear the status message
+foreach (Player in Players) {
+	Player.IsSpawned = True;
+}
+UIManager.UIAll.StatusMessage = "";
+Message::CleanAllMessages();
+MB_Sleep(250);
+TM2::WaitRaceAll();
+
+// ---------------------------------- //
+// Find map winner
+declare WinClan = -1;
+if (MapWinType == C_WinType_Forfeit) {
+	// Win by forfeit
+	declare Integer[Integer] StartingClansPlayersNb;
+	foreach (Player in Players) {
+		if (!StartingClansPlayersNb.existskey(Player.CurrentClan)) {
+			StartingClansPlayersNb[Player.CurrentClan] = 0;
+		}
+		StartingClansPlayersNb[Player.CurrentClan] += 1;
+	}
+	for (Clan, 1, 2) {
+		if (!StartingClansPlayersNb.existskey(Clan) || StartingClansPlayersNb[Clan] < S_MinPlayersNb) {
+			if (WinClan != -1) {
+				WinClan = -1;
+				break;
+			}
+			WinClan = 3 - Clan;
+		}
+	}
+} else {
+	// Win by points
+	declare MaxPoints = 0;
+	foreach (Clan => Points in Net_Chase_MapPoints) {
+		if (Points > MaxPoints) {
+			WinClan = Clan;
+			MaxPoints = Points;
+		} else if (Points == MaxPoints) {
+			WinClan = -1;
+		}
+	}
+}
+
+if (Teams.existskey(WinClan - 1)) {
+	MB_VictoryMessage = TL::Compose(_("$<%1$> wins the map!"), Teams[WinClan - 1].ColorizedName);
+} else {
+	MB_VictoryMessage = _("This map is a draw.");
+}
+
+// ---------------------------------- //
+// Close ladder
+if (MM_IsMatchServer() && (TM2::GetClanNbPlayers(1) == 0 || TM2::GetClanNbPlayers(2) == 0 || MM_RestartMatchmaking) && MB_SectionRoundNb <= 1) {
+	MM_SetLadderMatchId();
+	MB_Ladder_CancelMatch();
+	MB_Log("Cancel match and don't give LP because one of the team left the match.");
+} else {
+	foreach (Score in Scores) {
+		if (Score.LadderClan == WinClan) {
+			Score.Points = 2;
+		} else if (Score.LadderClan == 3 - WinClan) {
+			Score.Points = 1;
+		} else {
+			Score.Points = 0;
+		}
+	}
+	
+	if (MM_IsMatchServer()) MM_SetLadderMatchId();
+	Ladder_ComputeRank(CTmMode::ETmScoreSortOrder::TotalPoints);
+	MB_Ladder_CloseMatch();
+}
+***
+
+***EndMapAfterPodium***
+***
+// ---------------------------------- //
+// Vote rematch / vote map
+if (MM_IsMatchServer()) {
+	if (!MM_RestartMatchmaking && TM2::GetClanNbPlayers(1) > 0 && TM2::GetClanNbPlayers(2) > 0) {
+		if (MB_StopMatch) {
+			if (RematchNb < S_MatchmakingRematchNbMax) {
+				IsRematch = MM_VoteForRematch();
+				RematchNb += 1;
+			}
+			
+			if (!IsRematch) {
+				RematchNb = 0;
+				MM_MatchEnd("");
+				MM_MatchToLobby();
+			} else {
+				MM_VoteForNextMap(False);
+			}
+		} else {
+			MM_VoteForNextMap(False);
+		}
+	} else {
+		RematchNb = 0;
+		MM_MatchEnd("");
+		MM_MatchToLobby();
+	}
+}
+***
+
+***EndServer***
+***
+Layers::Destroy("ChaseInfo");
+***
+
+// ---------------------------------- //
+// Functions
+// ---------------------------------- //
+// ---------------------------------- //
+/// Update the footer of the scores table
+Void UpdateScoresTableFooter() {
+	ST2::SetFooterText(TL::Compose("%1 "^S_PointsLimit^" | %2 "^S_PointsGap, _("Points limit : "), _("Points gap :")));
+}
+
+// ---------------------------------- //
+/** Get the time left to the players to finish the map after the first player
+ *
+ *	@return 				The time left in ms
+ */
+Integer GetFinishTimeout() {
+	declare FinishTimeout = 0;
+	
+	if (S_FinishTimeout >= 0) {
+		FinishTimeout = S_FinishTimeout * 1000;
+	} else {
+		declare ObjectiveNbLaps = Map.TMObjective_NbLaps;
+		if (ObjectiveNbLaps <= 0 || !Map.TMObjective_IsLapRace) ObjectiveNbLaps = 1;
+		FinishTimeout = 5000 + (((Map.TMObjective_AuthorTime / ObjectiveNbLaps) * NbLaps) / 6);
+	}
+	
+	return Now + FinishTimeout;
+}
+
+// ---------------------------------- //
+/** Set the time limit
+ *
+ *	@param	_StartTime		The time at which the race started
+ */
+Void SetTimeLimit(Integer _StartTime) {
+	// User define time limit with a setting
+	if (S_TimeLimit > 0) {
+		CutOffTimeLimit = _StartTime + (S_TimeLimit * 1000);
+	} 
+	// No time limit
+	else if (S_TimeLimit == 0) {
+		CutOffTimeLimit = -1;
+	} 
+	// Time limit auto adjusted
+	else {
+		declare ObjectiveNbLaps = Map.TMObjective_NbLaps;
+		if (ObjectiveNbLaps <= 0) ObjectiveNbLaps = 1;
+		declare TimePerLap = ML::NearestInteger((Map.TMObjective_BronzeTime + (Map.TMObjective_BronzeTime * 0.1)) / ObjectiveNbLaps);
+		CutOffTimeLimit = _StartTime + (TimePerLap * NbLaps);
+	}
+}
+
+// ---------------------------------- //
+/** Set the number of laps 
+ *
+ *	@param _LapsNb			The number of laps
+ *	@param _StartTime		The time at which the race started
+ */
+Void SetLapsNb(Integer _LapsNb, Integer _StartTime) {
+	MB_SetLapsNb(_LapsNb);
+	SetTimeLimit(_StartTime);
+}
+
+// ---------------------------------- //
+/** Send a message to a clan
+ *
+ *	@param _StatusMessage	The status message
+ *	@param _BigMessage		The big message
+ *	@param _StartTime		The clan that will receive the message
+ */
+Void SendMessage(Text _StatusMessage, Text _BigMessage, Integer _Clan) {
+	if (_BigMessage == "" && _StatusMessage == "") return;
+	
+	foreach (Player in AllPlayers) {
+		// Spectators
+		if (Player.User.RequestsSpectate) {
+			declare UI <=> UIManager.GetUI(Player);
+			if (UI != Null) {
+				declare netread Integer Net_Chase_SpectatingClan for UI;
+				if (Net_Chase_SpectatingClan == _Clan) {
+					if (_StatusMessage != "") Message::SendStatusMessage(Player, _StatusMessage, 3000, 1);
+					if (_BigMessage != "") Message::SendBigMessage(Player, _BigMessage, 3000, 1);
+				}
+			}
+		} 
+		// Players
+		else {
+			if (Player.CurrentClan == _Clan) {
+				if (_StatusMessage != "") Message::SendStatusMessage(Player, _StatusMessage, 3000, 1);
+				if (_BigMessage != "") Message::SendBigMessage(Player, _BigMessage, 3000, 1);
+			}
+		}
+	}
+}
+
+// ---------------------------------- //
+/** Set the name of the next checkpoint player
+ *
+ *	@param _Clan			Clan of the player
+ *	@param _Name			Name of the player
+ */
+Void SetNextCheckpointPlayer(Integer _Clan, Text _Name) {
+	declare netwrite Integer Net_Chase_NextPlayerUpdate for Teams[0];
+	declare netwrite Text[Integer] Net_Chase_NextPlayer for Teams[0];
+	Net_Chase_NextPlayer[_Clan] = _Name;
+	Net_Chase_NextPlayerUpdate = Now;
+}
+
+// ---------------------------------- //
+/// Update the clan scores
+Void UpdateClanScores() {
+	declare netwrite Integer[Integer] Net_Chase_MapPoints for Teams[0];
+	foreach (Clan => Points in Net_Chase_MapPoints) {
+		if (ClanScores.existskey(Clan)) ClanScores[Clan] = Points;
+	}
+}
+
+// ---------------------------------- //
+/** Check if there are enough players
+ *
+ *	@return					True if there are enough players, False otherwise
+ */
+Boolean EnoughPlayers() {
+	declare Integer[Integer] StartingClansPlayersNb;
+	foreach (Player in Players) {
+		SetPlayerClan(Player, MM_GetRequestedClan(Player));
+		
+		if (!StartingClansPlayersNb.existskey(Player.CurrentClan)) {
+			StartingClansPlayersNb[Player.CurrentClan] = 0;
+		}
+		StartingClansPlayersNb[Player.CurrentClan] += 1;
+	}
+	if (
+		StartingClansPlayersNb.existskey(1) &&
+		StartingClansPlayersNb.existskey(2) &&
+		StartingClansPlayersNb[1] >= S_MinPlayersNb &&
+		StartingClansPlayersNb[2] >= S_MinPlayersNb
+	) {
+		return True;
+	}
+	
+	return False;
+}
+
+// ---------------------------------- //
+/** Waiting enough players in each team
+ *
+ *	@param	_WaitingTime	Maximum waiting time
+ */
+Void WaitForPlayers(Integer _WaitingTime) {
+	if (_WaitingTime > 0) {
+		// Add 15 seconds to wait for potential selected
+		// substitute to connect to the server
+		CutOffTimeLimit = Now + _WaitingTime + 15000;
+	} else {
+		CutOffTimeLimit = -1;
+	}
+	
+	TM2::WaitRaceAll();
+	if (EnoughPlayers()) return;
+	
+	UIManager.UIAll.UISequence = CUIConfig::EUISequence::Playing;
+	UIManager.UIAll.StatusMessage = _("Waiting for players");
+	declare WaitSubstitute = False;
+	declare EnoughPlayers = False;
+	
+	while (!ServerShutdownRequested && !MatchEndRequested) {
+		MB_Yield();
+		
+		// ---------------------------------- //
+		// Update players
+		declare Integer[Integer] ClansPlayersNb;
+		foreach (Player in Players) {
+			declare RequestedClan = MM_GetRequestedClan(Player);
+			if (RequestedClan != Player.CurrentClan) {
+				TM2::WaitRace(Player);
+				SetPlayerClan(Player, RequestedClan);
+			}
+			
+			if (!ClansPlayersNb.existskey(Player.CurrentClan)) {
+				ClansPlayersNb[Player.CurrentClan] = 0;
+			}
+			ClansPlayersNb[Player.CurrentClan] += 1;
+			
+			if (TM2::IsWaiting(Player)) {
+				TM2::StartRace(Player);
+			}
+		}
+		
+		// ---------------------------------- //
+		// Manage events
+		foreach (Event in PendingEvents) {
+			PassOn(Event);
+			
+			// ---------------------------------- //
+			// Waypoint
+			if (Event.Type == CTmModeEvent::EType::WayPoint) {
+				if (Event.IsEndRace) {
+					TM2::EndRace(Event.Player);
+				}
+			}
+			// ---------------------------------- //
+			// GiveUp
+			else if (Event.Type == CTmModeEvent::EType::GiveUp) {
+				TM2::WaitRace(Event.Player);
+			}
+		}
+		
+		// ---------------------------------- //
+		// Stop when there's enough players
+		if (
+			ClansPlayersNb.existskey(1) &&
+			ClansPlayersNb.existskey(2)
+		) {
+			declare MissingClan = [1 => S_MinPlayersNb - ClansPlayersNb[1], 2 => S_MinPlayersNb - ClansPlayersNb[2]];
+			if (MissingClan[1] < 0) MissingClan[1] = 0;
+			if (MissingClan[2] < 0) MissingClan[2] = 0;
+			UIManager.UIAll.BigMessage = "$<"^Teams[0].ColorizedName^"$> "^MissingClan[1]^" - "^MissingClan[2]^" $<"^Teams[1].ColorizedName^"$>";
+			
+			if (
+				ClansPlayersNb[1] >= S_MinPlayersNb &&
+				ClansPlayersNb[2] >= S_MinPlayersNb
+			) {
+				EnoughPlayers = True;
+				break;
+			}
+		}
+
+		// Wait for substitute
+		if (CutOffTimeLimit > 0 && !WaitSubstitute && Now >= CutOffTimeLimit - C_SubstituteWaitingTime) {
+			WaitSubstitute = True;
+			MM_AllowSubstitutes(False);
+		}
+
+		// ---------------------------------- //
+		// Stop if time limit is reached
+		if (CutOffTimeLimit > 0 && Now >= CutOffTimeLimit) break;
+	}
+	
+	UIManager.UIAll.StatusMessage = "";
+	if (EnoughPlayers) {
+		MB_Sleep(250);
+		UIManager.UIAll.UISequence = CUIConfig::EUISequence::EndRound;
+		TM2::WaitRaceAll();
+		UIManager.UIAll.BigMessage = _("Match starting ...");
+		MB_Sleep(4000);
+	}
+	UIManager.UIAll.BigMessage = "";
+	UIManager.UIAll.UISequence = CUIConfig::EUISequence::None;
+	TM2::WaitRaceAll();
+	
+	CutOffTimeLimit = -1;
+}
+
+// ---------------------------------- //
+/** Create the manialink for the next checkpoint player
+ *
+ *	@return					The manialink
+ */
+Text GetMLChaseInfo() {
+	return """
+<manialink version="2" name="Chase:NextPlayer">
+<stylesheet>
+	<style class="RoundPoints" sizen="10 10" style="TextRaceMessageBig" textsize="6" />
+	<style class="MapPoints" sizen="5 10" style="TextRaceMessageBig" textsize="4" />
+</stylesheet>
+<frame id="Frame_Global">
+	<frame posn="0 76" id="Frame_NextCheckpoint">
+		<quad sizen="6 6" halign="right" valign="center2" style="Icons128x32_1" substyle="RT_Laps" id="Quad_NextPlayer" />
+		<label posn="-7 0.3" sizen="30 6" halign="right" valign="center" textsize="3" textemboss="1" text="-" id="Label_NextPlayer" />
+	</frame>
+	<frame posn="0 92" id="Frame_Score">
+		<quad sizen="30 14 -1" halign="right" style="UiSMSpectatorScoreBig" substyle="HandleLeft" id="Quad_Score1"/>
+		<quad sizen="30 14 -1" style="UiSMSpectatorScoreBig" substyle="HandleRight" id="Quad_Score2" />
+		<label posn="-2 -2.8" halign="right" class="RoundPoints" text="0" id="Label_RoundPoints1"/>
+		<label posn="2 -2.8" class="RoundPoints" text="0" id="Label_RoundPoints2" />
+		<label posn="-19 -2.8" class="MapPoints" text="0" id="Label_MapPoints1"/>
+		<label posn="19 -2.8" halign="right" class="MapPoints" text="0" id="Label_MapPoints2" />
+		<gauge posn="-20 -1.85 -2" sizen="40 5" halign="right" style="BgCard" id="Gauge_Points1" />
+		<gauge posn="20 -1.85 -2" sizen="40 5" style="BgCard" id="Gauge_Points2" />
+	</frame>
+</frame>
+<script><!--
+#Include "TextLib" as TL
+
+Void UpdateNextCheckpoint(Text _Name) {
+	declare Frame_NextCheckpoint <=> (Page.GetFirstChild("Frame_NextCheckpoint") as CMlFrame);
+	declare Label_NextPlayer <=> (Frame_NextCheckpoint.GetFirstChild("Label_NextPlayer") as CMlLabel);
+	declare Quad_NextPlayer <=> (Frame_NextCheckpoint.GetFirstChild("Quad_NextPlayer") as CMlQuad);
+	Label_NextPlayer.Value = _Name;
+	declare Width = Label_NextPlayer.ComputeWidth(_Name) + Quad_NextPlayer.Size.X;
+	Frame_NextCheckpoint.RelativePosition.X = Width / 2.;
+}
+
+Void UpdateGaugePoints() {
+	declare Frame_Score <=> (Page.GetFirstChild("Frame_Score") as CMlFrame);
+	declare Gauge_Points1 <=> (Frame_Score.GetFirstChild("Gauge_Points1") as CMlGauge);
+	declare Gauge_Points2 <=> (Frame_Score.GetFirstChild("Gauge_Points2") as CMlGauge);
+	
+	declare netread Integer Net_Chase_PointsGap for Teams[0];
+	declare netread Integer[Integer] Net_Chase_RoundPoints for Teams[0];
+	declare RoundPoints1 = 0;
+	declare RoundPoints2 = 0;
+	if (Net_Chase_RoundPoints.existskey(1)) RoundPoints1 = Net_Chase_RoundPoints[1];
+	if (Net_Chase_RoundPoints.existskey(2)) RoundPoints2 = Net_Chase_RoundPoints[2];
+	declare PointsDifference = RoundPoints1 - RoundPoints2;
+	
+	if (PointsDifference > 0) {
+		Gauge_Points1.Ratio = PointsDifference / (Net_Chase_PointsGap * 1.);
+		Gauge_Points2.Ratio = 0.;
+	} else if (PointsDifference < 0) {
+		Gauge_Points1.Ratio = 0.;
+		Gauge_Points2.Ratio = -PointsDifference / (Net_Chase_PointsGap * 1.);
+	} else {
+		Gauge_Points1.Ratio = 0.;
+		Gauge_Points2.Ratio = 0.;
+	}
+}
+
+main() {
+	declare Frame_Global <=> (Page.GetFirstChild("Frame_Global") as CMlFrame);
+	declare Label_NextPlayer <=> (Page.GetFirstChild("Label_NextPlayer") as CMlLabel);
+	declare Frame_Score <=> (Page.GetFirstChild("Frame_Score") as CMlFrame);
+	declare Quad_Score1 <=> (Frame_Score.GetFirstChild("Quad_Score1") as CMlQuad);
+	declare Quad_Score2 <=> (Frame_Score.GetFirstChild("Quad_Score2") as CMlQuad);
+	declare Label_RoundPoints1 <=> (Frame_Score.GetFirstChild("Label_RoundPoints1") as CMlLabel);
+	declare Label_RoundPoints2 <=> (Frame_Score.GetFirstChild("Label_RoundPoints2") as CMlLabel);
+	declare Label_MapPoints1 <=> (Frame_Score.GetFirstChild("Label_MapPoints1") as CMlLabel);
+	declare Label_MapPoints2 <=> (Frame_Score.GetFirstChild("Label_MapPoints2") as CMlLabel);
+	declare Gauge_Points1 <=> (Frame_Score.GetFirstChild("Gauge_Points1") as CMlGauge);
+	declare Gauge_Points2 <=> (Frame_Score.GetFirstChild("Gauge_Points2") as CMlGauge);
+	
+	declare netread Integer Net_Chase_NextPlayerUpdate for Teams[0];
+	declare netread Text[Integer] Net_Chase_NextPlayer for Teams[0];
+	declare netread Integer[Integer] Net_Chase_MapPoints for Teams[0];
+	declare netread Integer[Integer] Net_Chase_RoundPoints for Teams[0];
+	declare netread Integer Net_Chase_PointsGap for Teams[0];
+	declare netwrite Integer Net_Chase_SpectatingClan for UI;
+	
+	declare PrevNextPlayerUpdate = -1;
+	declare PrevSpecClan = -1;
+	declare PrevTeamColor = [0 => <0., 0., 0.>, 1 => <1., 1., 1.>];
+	declare PrevRoundPoints = [1 => 0, 2 => 0];
+	declare PrevMapPoints = [1 => 0, 2 => 0];
+	declare PrevPointsGap = -1;
+	
+	while (True) {
+		sleep(250);
+		
+		if (!PageIsVisible || InputPlayer == Null) continue;
+		
+		if (PrevNextPlayerUpdate != Net_Chase_NextPlayerUpdate) {
+			PrevNextPlayerUpdate = Net_Chase_NextPlayerUpdate;
+			
+			if (GUIPlayer != Null && Net_Chase_NextPlayer.existskey(GUIPlayer.CurrentClan)) {
+				UpdateNextCheckpoint(Net_Chase_NextPlayer[GUIPlayer.CurrentClan]);
+			} else {
+				UpdateNextCheckpoint("-");
+			}
+		}
+		
+		if (
+			GUIPlayer != Null && 
+			GUIPlayer.Id != InputPlayer.Id && 
+			PrevSpecClan != GUIPlayer.CurrentClan
+		) {
+			PrevSpecClan = GUIPlayer.CurrentClan;
+			Net_Chase_SpectatingClan = GUIPlayer.CurrentClan;
+			
+			if (Net_Chase_NextPlayer.existskey(GUIPlayer.CurrentClan)) {
+				UpdateNextCheckpoint(Net_Chase_NextPlayer[GUIPlayer.CurrentClan]);
+			} else {
+				UpdateNextCheckpoint("-");
+			}
+		}
+		
+		if (
+			PrevTeamColor[0] != Teams[0].ColorPrimary ||
+			PrevTeamColor[1] != Teams[1].ColorPrimary
+		) {
+			PrevTeamColor[0] = Teams[0].ColorPrimary;
+			PrevTeamColor[1] = Teams[1].ColorPrimary;
+			Quad_Score1.ModulateColor = Teams[0].ColorPrimary;
+			Quad_Score2.ModulateColor = Teams[1].ColorPrimary;
+			Gauge_Points1.Color = Teams[0].ColorPrimary;
+			Gauge_Points2.Color = Teams[1].ColorPrimary;
+		}
+		
+		if (PrevPointsGap != Net_Chase_PointsGap) {
+			PrevPointsGap = Net_Chase_PointsGap;
+			Gauge_Points1.GradingRatio = 1. / Net_Chase_PointsGap;
+			Gauge_Points2.GradingRatio = 1. / Net_Chase_PointsGap;
+			UpdateGaugePoints();
+		}
+		
+		for (Clan, 1, 2) {
+			if (Net_Chase_RoundPoints.existskey(Clan)) {
+				if (PrevRoundPoints[Clan] != Net_Chase_RoundPoints[Clan]) {
+					PrevRoundPoints[Clan] = Net_Chase_RoundPoints[Clan];
+					if (Clan == 1) Label_RoundPoints1.Value = TL::ToText(Net_Chase_RoundPoints[Clan]);
+					else if (Clan == 2) Label_RoundPoints2.Value = TL::ToText(Net_Chase_RoundPoints[Clan]);
+					UpdateGaugePoints();
+				}
+			} else if (PrevRoundPoints[Clan] != 0) {
+				PrevRoundPoints[Clan] = 0;
+				if (Clan == 1) Label_RoundPoints1.Value = "0";
+				else if (Clan == 2) Label_RoundPoints2.Value = "0";
+				UpdateGaugePoints();
+			}
+			
+			if (Net_Chase_MapPoints.existskey(Clan)) {
+				if (PrevMapPoints[Clan] != Net_Chase_MapPoints[Clan]) {
+					PrevMapPoints[Clan] = Net_Chase_MapPoints[Clan];
+					if (Clan == 1) Label_MapPoints1.Value = TL::ToText(Net_Chase_MapPoints[Clan]);
+					else if (Clan == 2) Label_MapPoints2.Value = TL::ToText(Net_Chase_MapPoints[Clan]);
+				}
+			} else if (PrevMapPoints[Clan] != 0) {
+				PrevMapPoints[Clan] = 0;
+				if (Clan == 1) Label_MapPoints1.Value = "0";
+				else if (Clan == 2) Label_MapPoints2.Value = "0";
+			}
+		}
+	}
+}
+--></script>
+</manialink>
+""";
+}

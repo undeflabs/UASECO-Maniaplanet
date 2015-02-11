@@ -2,9 +2,9 @@
  *	Rounds base mode
  */
 
-#Extends "Modes/TrackMania/ModeBase.Script.txt"
+#Extends "Modes/TrackMania/ModeMatchmaking.Script.txt"
 
-#Const	RoundsBaseVersion		"2014-11-19"
+#Const	RoundsBaseVersion		"2014-12-31"
 #Const	RoundsBaseScriptName	"RoundsBase.Script.txt"
 
 // ---------------------------------- //
@@ -29,8 +29,18 @@ declare Integer G_RoundStartTime;
 MB_LogVersion(RoundsBaseScriptName, RoundsBaseVersion);
 ***
 
+// @mm start
+***InitServer***
+***
+declare IsRematch = False;	///< Do the players want a rematch ?
+declare RematchNb = 0;		///< Number of consecutive rematch
+***
+// @mm end
+
 ***StartServer***
 ***
+---InitMatchmaking---
+
 // ---------------------------------- //
 // Initialize mode
 UiRounds = True;
@@ -66,13 +76,20 @@ MB_Ladder_OpenMatch_All();
 MB_SetLapsNb(S_ForceLapsNb);
 ***
 
+// @mm start
 ***CanSpawn***
 ***
 foreach (Score in Scores) {
 	declare CanSpawn for Score = True;
-	CanSpawn = True;
+	if (MM_IsMatchServer()) {
+		declare Player <=> TM2::GetPlayer(Score.User.Login);
+		CanSpawn = MM_PlayerIsValid(Player);
+	} else {
+		CanSpawn = True;
+	}
 }
 ***
+// @mm end
 
 ***InitRound***
 ***
@@ -108,6 +125,7 @@ foreach (Player in Players) {
 	
 	declare CanSpawn for Player.Score = True;
 	if (CanSpawn) {
+		if (UseClans) SetPlayerClan(Player, MM_GetRequestedClan(Player));
 		TM2::StartRace(Player, G_RoundStartTime);
 		CanSpawn = False;
 	} else {
@@ -116,6 +134,7 @@ foreach (Player in Players) {
 }
 ***
 
+// @mm start
 ***PlayLoopSpawnPlayers***
 ***
 // ---------------------------------- //
@@ -125,11 +144,20 @@ foreach (Player in Players) {
 	
 	declare CanSpawn for Player.Score = True;
 	if (TM2::IsWaiting(Player) && CanSpawn) {
-		TM2::StartRace(Player, G_RoundStartTime);
+		if (MM_IsMatchServer()) {
+			if (MM_PlayerIsValid(Player)) {
+				if (UseClans) SetPlayerClan(Player, MM_GetRequestedClan(Player));
+				TM2::StartRace(Player, G_RoundStartTime);
+			}
+		} else {
+			if (UseClans) SetPlayerClan(Player, MM_GetRequestedClan(Player));
+			TM2::StartRace(Player, G_RoundStartTime);
+		}
 		CanSpawn = False;
 	}
 }
 ***
+// @mm end
 
 ***Yield***
 ***
@@ -179,6 +207,44 @@ if (CutOffTimeLimit > 0 && Now >= CutOffTimeLimit) MB_StopRound = True;
 // If forced end round
 if (ForceEndRound) MB_StopRound = True;
 ***
+
+// @mm start
+***EndMap***
+***
+declare MasterLogin = "";
+declare MasterPoints = 0;
+***
+// @mm end
+
+// @mm start
+***EndMapAfterPodium***
+***
+if (MM_IsMatchServer()) {
+	if (!MM_RestartMatchmaking && TM2::GetClanNbPlayers(1) > 0 && TM2::GetClanNbPlayers(2) > 0) {
+		if (MB_StopMatch) {
+			if (RematchNb < S_MatchmakingRematchNbMax) {
+				IsRematch = MM_VoteForRematch();
+				RematchNb += 1;
+			}
+			
+			if (!IsRematch) {
+				RematchNb = 0;
+				MM_MatchEnd(MasterLogin);
+				MM_MatchToLobby();
+			} else {
+				MM_VoteForNextMap(False);
+			}
+		} else {
+			MM_VoteForNextMap(False);
+		}
+	} else {
+		RematchNb = 0;
+		MM_MatchEnd(MasterLogin);
+		MM_MatchToLobby();
+	}
+}
+***
+// @mm end
 
 ***EndServer***
 ***

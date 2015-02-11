@@ -13,7 +13,7 @@ Version 1.0.0
    ~~~~~~~~~~~~
    - Requires PHP/5.2.1 or higher
    - Requires MySQL/5.x or higher
-   - Requires a Maniaplanet dedicated Server build 2014-11-21_14_00 or higher
+   - Requires a Maniaplanet dedicated Server build 2015-02-10_18_00 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
 
 
@@ -143,7 +143,7 @@ Version 1.0.0
      - Removed `Id`
    - Table `rs_karma` renamed to `ratings`
      - Removed `Id`
-   - Table `rs_rank` renamed to `ranks`
+   - Table `rs_rank` renamed to `rankings`
      - Renamed `Avg` to `Average`
    - Table `rs_times` renamed to `times`
      - Removed `Id`

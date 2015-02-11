@@ -39,15 +39,14 @@
  *
  */
 
-
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-02-05');
+	define('UASECO_BUILD',		'2015-02-11');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2014-11-21_14_00');
+	define('MANIAPLANET_BUILD',	'2015-02-10_18_00');
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.2.1');
 
@@ -61,6 +60,14 @@
 
 	// Report all
 	error_reporting(-1);
+
+	if (function_exists('date_default_timezone_get') && function_exists('date_default_timezone_set')) {
+		date_default_timezone_set(@date_default_timezone_get());
+	}
+
+	setlocale(LC_NUMERIC, 'C');
+	mb_internal_encoding('UTF-8');
+
 
 	// Include required classes
 	require_once('includes/core/helper.class.php');			// Misc. functions for UASECO, e.g. $aseco->console()... based upon basic.inc.php
@@ -225,7 +232,13 @@ class UASECO extends Helper {
 		if ($limit != -1 && $limit < 256 * 1048576) {
 			ini_set('memory_limit', '256M');
 		}
-		$this->console('[PHP] Setup memory limit to '. $this->bytes2shorthand(ini_get('memory_limit'), 'M'));
+		$limit = $this->shorthand2bytes(ini_get('memory_limit'));
+		if ($limit == -1) {
+			$this->console('[PHP] Setup memory limit to unlimited');
+		}
+		else {
+			$this->console('[PHP] Setup memory limit to '. $this->bytes2shorthand($limit, 'M'));
+		}
 
 		// Setup PHP script_timeout
 		@set_time_limit($this->settings['script_timeout']);
@@ -436,7 +449,7 @@ class UASECO extends Helper {
 			$this->console_text('=> Relays:    {1} - {2}', $this->stripColors($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:     {1}', $this->server->title);
-		$this->console_text('» Gamemode:  {1} with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
+		$this->console_text('» Gamemode:  "{1}" with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»            Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
@@ -504,7 +517,7 @@ class UASECO extends Helper {
 		$this->console_text('» RegChatCmds:   {1} : {2} bytes', sprintf("%5s", count($this->registered_chatcmds)), sprintf("%10s", $this->formatNumber(strlen(serialize($this->registered_chatcmds)),0,'.','.')));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» Title:         {1}', $this->server->title);
-		$this->console_text('» Gamemode:      {1} with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
+		$this->console_text('» Gamemode:      "{1}" with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
 		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
@@ -1054,7 +1067,7 @@ class UASECO extends Helper {
 		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
 		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
 		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
 		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
 		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
 		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
@@ -1062,26 +1075,50 @@ class UASECO extends Helper {
 		if ($check[1]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'authors`');
+		}
 		if ($check[2]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		}
 		if ($check[3]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'players`');
 		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'players`');
+		}
 		if ($check[4]) {
-			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
+		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		}
 		if ($check[5]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		}
 		if ($check[6]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		}
 		if ($check[7]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'settings`');
 		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		}
 		if ($check[8]) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		}
 		if ($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8]) {
 			$this->console('[Database] ...successfully done!');
@@ -1187,9 +1224,9 @@ class UASECO extends Helper {
 		$this->displayLoadStatus('Checking database structure...', 0.35);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		$query = "
-		CREATE TABLE IF NOT EXISTS `%prefix%ranks` (
+		CREATE TABLE IF NOT EXISTS `%prefix%rankings` (
 		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `Average` int(4) unsigned NOT NULL DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`)
@@ -1204,7 +1241,7 @@ class UASECO extends Helper {
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
 		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
@@ -1284,18 +1321,17 @@ class UASECO extends Helper {
 		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
 		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
 		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'ranks', $tables);
+		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
 		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
 		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
 		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
 		$check[8] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
 		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8])) {
-			trigger_error('[Database] Table structure incorrect, can not setup all tables: '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('[Database] Table structure incorrect, automatic setup failed!', E_USER_ERROR);
 		}
 
 
 		$this->displayLoadStatus('Checking database structure...', 0.9);
-
 		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		$query = "
 		ALTER TABLE `%prefix%maps`
@@ -1308,20 +1344,34 @@ class UASECO extends Helper {
 
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.91);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks`');
+		$this->displayLoadStatus('Checking database structure...', 0.93);
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		$query = "
-		ALTER TABLE `%prefix%ranks`
+		ALTER TABLE `%prefix%rankings`
 		  ADD CONSTRAINT `%prefix%ranks_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ranks` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.93);
+		$this->displayLoadStatus('Checking database structure...', 0.94);
+		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$query = "
+		ALTER TABLE `%prefix%ratings`
+		  ADD CONSTRAINT `%prefix%ratings_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+		  ADD CONSTRAINT `%prefix%ratings_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		";
+		$result = $this->db->query($query);
+		if (!$result) {
+			trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+		}
+
+
+
+		$this->displayLoadStatus('Checking database structure...', 0.95);
 		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		$query = "
 		ALTER TABLE `%prefix%records`
@@ -1335,7 +1385,7 @@ class UASECO extends Helper {
 
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.94);
+		$this->displayLoadStatus('Checking database structure...', 0.96);
 		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings`');
 		$query = "
 		ALTER TABLE `%prefix%settings`
@@ -1348,7 +1398,7 @@ class UASECO extends Helper {
 
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.96);
+		$this->displayLoadStatus('Checking database structure...', 0.97);
 		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		$query = "
 		ALTER TABLE `%prefix%times`
@@ -1974,7 +2024,7 @@ class UASECO extends Helper {
 		// Log console message
 		$this->console('[Player] Disconnection from Player [{1}] after {2} playtime [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 			$player->login,
-			$this->timeString($player->getTimeOnline()),
+			$this->timeString($player->getTimeOnline(), true),
 			$this->stripColors($player->nickname, false),
 			$player->ip,
 			$player->ladderrank,
@@ -2213,20 +2263,11 @@ class UASECO extends Helper {
 	}
 }
 
-
 /*
 #///////////////////////////////////////////////////////////////////////#
 #									#
 #///////////////////////////////////////////////////////////////////////#
 */
-
-// Define process settings
-if (function_exists('date_default_timezone_get') && function_exists('date_default_timezone_set')) {
-	date_default_timezone_set(@date_default_timezone_get());
-}
-
-setlocale(LC_NUMERIC, 'C');
-mb_internal_encoding('UTF-8');
 
 // Create an instance of UASECO and run it
 $aseco = new UASECO();

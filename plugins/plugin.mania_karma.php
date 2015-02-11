@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-01-20
+ * Date:	2015-02-11
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -565,8 +565,9 @@ class PluginManiaKarma extends Plugin {
 			'team'		=> Gameinfo::TEAM,
 			'laps'		=> Gameinfo::LAPS,
 			'cup'		=> Gameinfo::CUP,
-			'stunts'	=> Gameinfo::STUNTS,
 			'team_attack'	=> Gameinfo::TEAMATTACK,
+			'chase'		=> Gameinfo::CHASE,
+			'stunts'	=> Gameinfo::STUNTS,
 		);
 		foreach ($gamemodes as $mode => $id) {
 			if ( isset($xmlcfg->karma_widget->gamemode->$mode) ) {

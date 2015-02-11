@@ -40,6 +40,11 @@
 	<admin_contact>YOUR@EMAIL.COM</admin_contact>
 
 	<!--
+	To protect all "/admin" commands you should setup a unlock password
+	//-->
+	<lock_password></lock_password>
+
+	<!--
 	Set to 'false' to log passwords in the logfile
 	//-->
 	<mask_password>true</mask_password>
@@ -84,7 +89,6 @@
 	<guestlist_file>guestlist.txt</guestlist_file>
 
 
-	<lock_password></lock_password>
 	<log_all_chat>false</log_all_chat>
 	<chatpmlog_times>true</chatpmlog_times>
 

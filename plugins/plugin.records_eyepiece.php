@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-01-26
+ * Date:		2015-02-11
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -341,7 +341,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Autodisable unsupported Widgets in some Gamemodes
-		$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0]['Stunts'][0]['ENABLED'][0]		= 'false';
+		$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0]['STUNTS'][0]['ENABLED'][0]		= 'false';
+		$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0]['CHASE'][0]['ENABLED'][0]		= 'false';
 		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0]['TIME_ATTACK'][0]['ENABLED'][0]		= 'false';
 		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0]['STUNTS'][0]['ENABLED'][0]		= 'false';
 
@@ -352,6 +353,8 @@ class PluginRecordsEyepiece extends Plugin {
 			'TEAM'		=> Gameinfo::TEAM,
 			'LAPS'		=> Gameinfo::LAPS,
 			'CUP'		=> Gameinfo::CUP,
+			'TEAM_ATTACK'	=> Gameinfo::TEAMATTACK,
+			'CHASE'		=> Gameinfo::CHASE,
 			'STUNTS'	=> Gameinfo::STUNTS,
 		);
 
@@ -885,8 +888,9 @@ class PluginRecordsEyepiece extends Plugin {
 			Gameinfo::TEAM		=> array('name' => 'TEAM',		'icon' => 'RT_Team'),
 			Gameinfo::LAPS		=> array('name' => 'LAPS',		'icon' => 'RT_Laps'),
 			Gameinfo::CUP		=> array('name' => 'CUP',		'icon' => 'RT_Cup'),
-			Gameinfo::STUNTS	=> array('name' => 'STUNTS',		'icon' => 'RT_Stunts'),
 			Gameinfo::TEAMATTACK	=> array('name' => 'TEAM ATTACK',	'icon' => 'RT_Team'),
+			Gameinfo::CHASE		=> array('name' => 'CHASE',		'icon' => 'RT_Team'),
+			Gameinfo::STUNTS	=> array('name' => 'STUNTS',		'icon' => 'RT_Stunts'),
 		);
 
 		if ($reload === null) {
@@ -4264,6 +4268,10 @@ class PluginRecordsEyepiece extends Plugin {
 		// Set next refresh timestamp
 		$this->config['States']['RefreshTimestampRecordWidgets'] = (time() + $this->config['FEATURES'][0]['REFRESH_INTERVAL'][0]);
 
+		// Is the CheckpointCountWidget enabled?
+		if ($this->config['CHECKPOINTCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			$widgets .= $this->buildCheckpointCountWidget(-1, false);
+		}
 
 		// Display the MapWidget (if enabled)
 		$widgets .= (($this->cache['MapWidget']['Race'] != false) ? $this->cache['MapWidget']['Race'] : '');
@@ -6437,7 +6445,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`p`.`Nickname`,
 			(ROUND(`r`.`Average` / 1000) / 10) AS `Average`
 		FROM `%prefix%players` AS `p`
-		LEFT JOIN `%prefix%ranks` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
+		LEFT JOIN `%prefix%rankings` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
 		WHERE `r`.`Average` != 0
 		ORDER BY `r`.`Average` ASC
 		". $appendix .";

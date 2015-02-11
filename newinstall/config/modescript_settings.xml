@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<modescript_settings>
+<settings>
 	<!-- Documentation: http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html -->
 	<ui_properties>
 		<!-- The map name and author displayed in the top right of the screen when viewing the scores table -->
@@ -280,5 +280,40 @@
 			<!-- Maximum number of clans, set to '-1' to disable -->
 			<max_clan_number>-1</max_clan_number>
 		</teamattack>
+
+
+
+		<!-- Settings for Chase.Script.txt -->
+		<chase>
+			<!-- Time limit (0 to disable, < 0 automatic, based on author time) -->
+			<time_limit>600</time_limit>
+
+			<!-- Points limit -->
+			<points_limit>3</points_limit>
+
+			<!-- The number of points lead a team must have to win the round -->
+			<points_gap>3</points_gap>
+
+			<!-- Maximum number of give up per team -->
+			<give_up_max>1</give_up_max>
+
+			<!-- Minimum number of players in a team -->
+			<min_players_number>3</min_players_number>
+
+			<!-- Number of Laps (<= 0 to disable) -->
+			<force_laps_number>5</force_laps_number>
+
+			<!-- Finish timeout (< 0 automatic, based on author time) -->
+			<finish_timeout>-1</finish_timeout>
+
+			<!-- Use the players' clublinks, or otherwise use the default teams -->
+			<use_player_clublinks>false</use_player_clublinks>
+
+			<!-- Maximum number of players per team in matchmaking -->
+			<number_players_per_team_max>3</number_players_per_team_max>
+
+			<!-- Minimum number of players per team in matchmaking -->
+			<number_players_per_team_min>3</number_players_per_team_min>
+		</chase>
 	</modesetup>
-</modescript_settings>
+</settings>
