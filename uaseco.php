@@ -1239,10 +1239,10 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
+		  `MapId` mediumint(3) unsigned NOT NULL,
+  		  `PlayerId` mediumint(3) unsigned NOT NULL,
+          	  `Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  `Score` tinyint(1) NOT NULL,
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
