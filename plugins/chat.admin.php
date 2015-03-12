@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-12-29
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -515,91 +515,90 @@ class PluginChatAdmin extends Plugin {
 		}
 		else if ($command['params'][0] == 'setgamemode' && $command['params'][1] != '') {
 			/**
-			 * Sets new game mode that will be active upon the next map:
-			 * timeattack, rounds, team, laps, stunts, teamattack
+			 * Sets new game mode that will be active upon the next map.
 			 */
 
-			$aseco->console('[Admin] Command currently unsupported, due a bug of the dedicated server!');
-			$message = '{#server}» Command currently unsupported, due a bug of the dedicated server!';
-			$aseco->sendChatMessage($message, $login);
-			return;
+			// check mode parameter
+			$modeId = false;
+			$modeScript = false;
+			switch (strtolower($command['params'][1])) {
+				case 'rounds':
+					$modeId = Gameinfo::ROUNDS;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::ROUNDS);
+					break;
 
-//			// check mode parameter
-//			$mode = false;
-//			$script = false;
-//			switch (strtolower($command['params'][1])) {
-//				case 'rounds':
-//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::ROUNDS);
-//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::ROUNDS);
+				case 'timeattack':
+					$modeId = Gameinfo::TIME_ATTACK;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::TIME_ATTACK);
+					break;
+
+				case 'team':
+					$modeId = Gameinfo::TEAM;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::TEAM);
+					break;
+
+				case 'laps':
+					$modeId = Gameinfo::LAPS;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::LAPS);
+					break;
+
+				case 'cup':
+					$modeId = Gameinfo::CUP;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::CUP);
+					break;
+
+				case 'teamattack':
+					$modeId = Gameinfo::TEAM_ATTACK;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::TEAM_ATTACK);
+					break;
+
+				case 'chase':
+					$modeId = Gameinfo::CHASE;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::CHASE);
+					break;
+
+//				case 'stunts':
+//					$modeId = Gameinfo::STUNTS;
+//					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::STUNTS);
 //					break;
-//
-//				case 'timeattack':
-//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::TIMEATTACK);
-//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TIMEATTACK);
-//					break;
-//
-//				case 'team':
-//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::TEAM);
-//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TEAM);
-//					break;
-//
-//				case 'laps':
-//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::LAPS);
-//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::LAPS);
-//					break;
-//
-//				case 'cup':
-//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::CUP);
-//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::CUP);
-//					break;
-//
-//				case 'teamattack':
-//					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::TEAMATTACK);
-//					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::TEAMATTACK);
-//					break;
-//
-////				case 'stunts':
-////					$script = $aseco->server->gameinfo->getGamemodeScriptname(Gameinfo::STUNTS);
-////					$mode = $aseco->server->gameinfo->getGamemodeName(Gameinfo::STUNTS);
-////					break;
-//
-//				default:
-//					$mode = false;
-//			}
-//
-//			if ($mode !== false) {
-//				if ($aseco->changing_to_gamemode !== false || $mode !== $aseco->server->gameinfo->mode) {
-//
-//					// Store the next Gamemode
-//					$aseco->changing_to_gamemode = $mode;
-//
-//					// Tell server to set new game mode
-//					$aseco->client->query('SetScriptName', $script);
-//
-//					// Refresh server game info
-//					$aseco->server->getCurrentGameInfo();
-//
-//					// log console message
-//					$aseco->console('[Admin] {1} [{2}] set new game mode [{3}]', $logtitle, $login, $mode);
-//
-//					// show chat message
-//					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets next game mode to {#highlite}{3}{#admin} !',
-//						$chattitle,
-//						$admin->nickname,
-//						$mode
-//					);
-//					$aseco->sendChatMessage($message);
-//				}
-//				else {
-//					$aseco->changing_to_gamemode = false;
-//					$message = '{#server}» Same game mode {#highlite}'. strtoupper($command['params'][1]);
-//					$aseco->sendChatMessage($message, $login);
-//				}
-//			}
-//			else {
-//				$message = '{#server}» {#error}Invalid game mode {#highlite}$i '. strtoupper($command['params'][1]) .'$z$s {#error}!';
-//				$aseco->sendChatMessage($message, $login);
-//			}
+
+				default:
+					$modeId = false;
+			}
+
+			if ($modeId !== false) {
+				if ($aseco->changing_to_gamemode !== false || $modeId !== $aseco->server->gameinfo->mode) {
+
+					// Store the next Gamemode
+					$aseco->changing_to_gamemode = $modeId;
+
+					// Tell server to set new game mode
+					$aseco->client->query('SetScriptName', $modeScript);
+
+					// Refresh server game info
+					$aseco->server->getCurrentGameInfo();
+
+					// log console message
+					$aseco->console('[Admin] {1} [{2}] set new game mode [{3}]', $logtitle, $login, $modeScript);
+
+					// show chat message
+					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets next game mode to {#highlite}{3}{#admin}!',
+						$chattitle,
+						$admin->nickname,
+						$modeScript
+					);
+					$aseco->sendChatMessage($message);
+				}
+				else {
+					$aseco->changing_to_gamemode = false;
+					$message = '{#server}» Same game mode {#highlite}'. $modeScript;
+					$aseco->sendChatMessage($message, $login);
+				}
+			}
+			else {
+				$message = '{#server}» {#error}Invalid game mode {#highlite}$i '. strtoupper($command['params'][1]) .'$Z$S{#error}!';
+				$aseco->sendChatMessage($message, $login);
+			}
 		}
 		else if ($command['params'][0] == 'setrefmode') {
 			/**
@@ -3670,7 +3669,7 @@ class PluginChatAdmin extends Plugin {
 				}
 				else {
 					if ($key == 'GameMode') {
-						$stats[] = array($key, '{#black}'. $val .'$g  ('. $aseco->server->gameinfo->getGamemodeName() .')');
+						$stats[] = array($key, '{#black}'. $val .'$g  ('. str_replace('_', ' ', $aseco->server->gameinfo->getModeName()) .')');
 					}
 					else {
 						$stats[] = array($key, '{#black}'. $val);
@@ -4231,8 +4230,8 @@ class PluginChatAdmin extends Plugin {
 
 								// Create Map object
 								$map = new Map($gbx, $mapinfo['FileName']);
-								$map = $aseco->server->maps->insertMapIntoDatabase($map);
-								if ($map->id == 0) {
+								$result = $aseco->server->maps->insertMapIntoDatabase($map);
+								if ($result->id == 0) {
 									// Map maybe already present in database, try to update
 									$result = $aseco->server->maps->updateMapInDatabase($map);
 									if ($result == false) {

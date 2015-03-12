@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-10
+ * Date:	2015-02-16
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -61,6 +61,22 @@ class PlayerList {
 
 	public function count () {
 		return count($this->player_list);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getSpectatorCount () {
+		$count = 0;
+		foreach ($this->player_list as $player) {
+			if ($player->isspectator == true) {
+				$count += 1;
+			}
+		}
+		return $count;
 	}
 
 	/*

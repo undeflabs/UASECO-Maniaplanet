@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-24
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -191,11 +191,6 @@ class PluginMusicServer extends Plugin {
 
 	public function onEndMap ($aseco, $data) {
 
-		// if restart, bail out immediately
-		if ($aseco->restarting != 0) {
-			return;
-		}
-
 		// check for manual next song by admin
 		if ($this->mannext) {
 			$this->mannext = false;
@@ -289,7 +284,7 @@ class PluginMusicServer extends Plugin {
 		}
 
 		// compile updated tags cache
-		$list = '<?xml version="1.0" encoding="utf-8"?>'. CRLF;
+		$list = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'. CRLF;
 		$list .= '<tags>'. CRLF;
 
 		foreach ($this->tags as $song => $tags) {

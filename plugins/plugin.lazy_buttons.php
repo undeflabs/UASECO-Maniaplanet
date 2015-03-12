@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-01-20
+ * Date:		2015-02-28
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -72,7 +72,7 @@ class PluginLazyButtons extends Plugin {
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
-		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
 		$this->registerEvent('onEndMap1',			'onEndMap1');
 
@@ -285,7 +285,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $unused) {
+	public function onLoadingMap ($aseco, $unused) {
 		$aseco->sendManialink($this->config['Widget']['Race'], false);
 	}
 

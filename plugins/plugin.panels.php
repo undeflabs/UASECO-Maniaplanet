@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-24
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ class PluginPanels extends Plugin {
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onEndMap',			'onEndMap');
-		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onUnloadingMap',			'onUnloadingMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 
 
@@ -330,7 +330,7 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $data) {
+	public function onUnloadingMap ($aseco, $data) {
 
 		$this->statspanels_off($aseco);
 	}

@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ class PluginCheckpoint extends Plugin {
 		$this->addDependence('PluginLocalRecords', Dependence::REQUIRED, '1.0.0', null);
 
 		// Register functions for events
-		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
@@ -181,7 +181,7 @@ class PluginCheckpoint extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		// Clear all checkpoints
 		foreach ($aseco->checkpoints as $login => $cp) {
@@ -333,7 +333,7 @@ class PluginCheckpoint extends Plugin {
 	public function onPlayerStartCountdown ($aseco, $login) {
 
 		// Reset for next run in TimeAttack mode
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 			$aseco->checkpoints[$login]->current['cps'] = array();
 		}
 

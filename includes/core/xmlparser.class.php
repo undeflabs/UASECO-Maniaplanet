@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-07-19
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-17
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -149,7 +149,7 @@ class XmlParser {
 	 * Parses an array into an XML structure.
 	 */
 	public function arrayToXml ($array) {
-		$xmlstring = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+		$xmlstring = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 		$xmlstring .= $this->parseArrayElements($array);
 		return $xmlstring;
 	}

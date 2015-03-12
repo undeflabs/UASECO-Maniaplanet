@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-16
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ class Server {
 	// Listmethod 'GetMapsDirectory'
 	public $mapdir;
 
-	// Listmethod 'GetCurrentGameInfo' and 'GetModeScriptSettings'
+	// Listmethod 'GetCurrentGameInfo', 'GetModeScriptInfo' and 'GetModeScriptSettings'
 	public $gameinfo;			// Used by class Gameinfo
 
 	// Listmethod 'IsRelayServer' and 'GetMainServerPlayerInfo'

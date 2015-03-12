@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-11
+ * Date:	2015-03-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -50,11 +50,30 @@
 
 class PluginModescriptHandler extends Plugin {
 
+	// Block some callbacks we did not want to use
+	public $callback_blocklist = array(
+		'LibXmlRpc_BeginMatchStop',
+		'LibXmlRpc_BeginMapStop',
+		'LibXmlRpc_BeginSubmatchStop',
+		'LibXmlRpc_BeginRoundStop',
+		'LibXmlRpc_BeginTurnStop',
+		'LibXmlRpc_EndTurnStop',
+		'LibXmlRpc_EndRoundStop',
+		'LibXmlRpc_EndSubmatchStop',
+		'LibXmlRpc_EndMapStop',
+		'LibXmlRpc_EndMatchStop',
+		'LibXmlRpc_EndServerStop',
+		'LibXmlRpc_PlayersTimes',
+		'LibXmlRpc_PlayersScores',
+		'LibXmlRpc_TeamsMode',						// Maybe used later?
+	);
+
 	// Stores the state of finished Players
 	private $player_finished	= array();
 
 	// Stores the <ui_properties>
 	private $ui_properties		= array();
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -70,6 +89,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onEndRound',			'onEndRound');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onBeginScriptInitialisation',	'onBeginScriptInitialisation');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
 		$this->registerEvent('onModeScriptCallback',		'onModeScriptCallback');
@@ -152,15 +172,22 @@ class PluginModescriptHandler extends Plugin {
 
 		// Chase
 		$aseco->server->gameinfo->chase['TimeLimit']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['TIME_LIMIT'][0];
-		$aseco->server->gameinfo->chase['PointsLimit']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->chase['PointsGap']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['POINTS_GAP'][0];
+		$aseco->server->gameinfo->chase['MapPointsLimit']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['MAP_POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->chase['RoundPointsLimit']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['ROUND_POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->chase['RoundPointsGap']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['ROUND_POINTS_GAP'][0];
 		$aseco->server->gameinfo->chase['GiveUpMax']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['GIVE_UP_MAX'][0];
 		$aseco->server->gameinfo->chase['MinPlayersNb']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['MIN_PLAYERS_NUMBER'][0];
 		$aseco->server->gameinfo->chase['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->chase['FinishTimeout']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->chase['DisplayWarning']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['DISPLAY_WARNING'][0]);
 		$aseco->server->gameinfo->chase['UsePlayerClublinks']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['USE_PLAYER_CLUBLINKS'][0]);
 		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MAX'][0];
 		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MIN'][0];
+		$aseco->server->gameinfo->chase['CompetitiveMode']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['COMPETITIVE_MODE'][0]);
+		$aseco->server->gameinfo->chase['WaypointEventDelay']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['WAYPOINT_EVENT_DELAY'][0];
+		$aseco->server->gameinfo->chase['PauseBetweenRound']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['PAUSE_BETWEEN_ROUND'][0];
+		$aseco->server->gameinfo->chase['WaitingTimeMax']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['WAITING_TIME_MAX'][0];
+
 
 
 		// Store the settings at the dedicated Server
@@ -215,6 +242,20 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function onLoadingMap ($aseco, $map) {
+
+		if ($aseco->changing_to_gamemode !== false) {
+			// Re-Store the settings at the dedicated Server for the new Modescript
+			$this->onSync($aseco);
+	}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function onBeginScriptInitialisation ($aseco) {
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
@@ -233,6 +274,11 @@ class PluginModescriptHandler extends Plugin {
 
 		$name = $data[0];
 		$params = isset($data[1]) ? $data[1] : '';
+
+		// Bail out if callback is on blocklist
+		if (in_array($name, $this->callback_blocklist)) {
+			return;
+		}
 
 		switch($name) {
 			// [0]=Login
@@ -355,7 +401,7 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			// [0]=IndexOfMap
+			// [0]=IndexOfMap, [1]=Uid, [2]=RestartFlag
 			case 'LibXmlRpc_LoadingMap':
 				// Cleanup rankings
 				$aseco->server->rankings->reset();
@@ -364,21 +410,23 @@ class PluginModescriptHandler extends Plugin {
 				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 					$aseco->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
 				}
-
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Loading Map');
+				if ($aseco->string2bool($params[2]) === true) {
+					$aseco->restarting = true;			// Map was restarted
 				}
-				$aseco->releaseEvent('onLoadingMap', (int)$params[0]);
+				else {
+					$aseco->restarting = false;			// No Restart
+				}
+				$aseco->loadingMap($params[1]);
 		    		break;
 
 
 
-			// [0]=IndexOfMap
+			// [0]=IndexOfMap, [1]=Uid
 			case 'LibXmlRpc_UnloadingMap':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Unloading Map');
 				}
-				$aseco->releaseEvent('onUnloadingMap', (int)$params[0]);
+				$aseco->releaseEvent('onUnloadingMap', (int)$params[1]);
 		    		break;
 
 
@@ -405,14 +453,14 @@ class PluginModescriptHandler extends Plugin {
 
 			// [0]=IndexOfMap, [1]=Uid, [2]=RestartFlag
 			case 'LibXmlRpc_BeginMap':
+				// Reset
+				$aseco->changing_to_gamemode = false;
+
 				$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetWarmUp', '');
-				if ($aseco->string2bool($params[2]) === true) {
-					$aseco->restarting = true;			// Map was restarted
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] Begin Map');
 				}
-				else {
-					$aseco->restarting = false;			// No Restart
-				}
-				$aseco->beginMap($params[1]);
+				$aseco->releaseEvent('onBeginMap', $params[1]);
 				break;
 
 
@@ -424,16 +472,10 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			// [0]=NbMatch, [1]=RestartFlag
+			// [0]=NbMatch, [1]=ScriptRestartFlag
 			case 'LibXmlRpc_BeginMatch':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Begin Match');
-				}
-				if ($aseco->string2bool($params[1]) === true) {
-					$aseco->restarting = true;			// Map was restarted
-				}
-				else {
-					$aseco->restarting = false;			// No Restart
 				}
 				$aseco->releaseEvent('onBeginMatch', (int)$params[0], $aseco->string2bool($params[1]));
 				break;
@@ -520,6 +562,16 @@ class PluginModescriptHandler extends Plugin {
 					$aseco->console('[Event] End Turn');
 				}
 				$aseco->releaseEvent('onEndTurn', (int)$params[0]);
+				break;
+
+
+
+			// [0]=Status
+			case 'LibXmlRpc_Pause':
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] ModeScript Pause changed');
+				}
+				$aseco->releaseEvent('onModeScriptPauseChanged', $aseco->string2bool($params[0]));
 				break;
 
 
@@ -815,25 +867,8 @@ class PluginModescriptHandler extends Plugin {
 	public function setupBlockCallbacks () {
 		global $aseco;
 
-		// Block some callbacks we did not want to use
-		$blocklist = array(
-			'LibXmlRpc_BeginMatchStop',
-			'LibXmlRpc_BeginMapStop',
-			'LibXmlRpc_BeginSubmatchStop',
-			'LibXmlRpc_BeginRoundStop',
-			'LibXmlRpc_BeginTurnStop',
-			'LibXmlRpc_EndTurnStop',
-			'LibXmlRpc_EndRoundStop',
-			'LibXmlRpc_EndSubmatchStop',
-			'LibXmlRpc_EndMapStop',
-			'LibXmlRpc_EndMatchStop',
-			'LibXmlRpc_EndServerStop',
-			'LibXmlRpc_PlayersTimes',
-			'LibXmlRpc_PlayersScores',
-			'LibXmlRpc_TeamsMode',					// Maybe used later?
-		);
-		foreach ($blocklist as $cb) {
-			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_BlockCallback', $cb);
+		foreach ($this->callback_blocklist as $callback) {
+			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_BlockCallback', $callback);
 		}
 	}
 
@@ -844,7 +879,7 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	// http://doc.maniaplanet.com/dedicated-server/settings-list.html
-	private function setupModescriptSettings () {
+	public function setupModescriptSettings () {
 		global $aseco;
 
 		// ModeBase
@@ -872,7 +907,7 @@ class PluginModescriptHandler extends Plugin {
 				'S_UseTieBreak'			=> $aseco->server->gameinfo->rounds['UseTieBreak'],
 			);
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 			// TimeAttack
 			$modesetup = array(
 				'S_TimeLimit'			=> $aseco->server->gameinfo->time_attack['TimeLimit'],
@@ -918,7 +953,7 @@ class PluginModescriptHandler extends Plugin {
 				'S_WarmUpDuration'		=> $aseco->server->gameinfo->cup['WarmUpDuration'],
 			);
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAMATTACK) {
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
 			// TeamAttack
 			$modesetup = array(
 				'S_TimeLimit'			=> $aseco->server->gameinfo->team_attack['TimeLimit'],
@@ -931,15 +966,21 @@ class PluginModescriptHandler extends Plugin {
 			// Chase
 			$modesetup = array(
 				'S_TimeLimit'			=> $aseco->server->gameinfo->chase['TimeLimit'],
-				'S_PointsLimit'			=> $aseco->server->gameinfo->chase['PointsLimit'],
-				'S_PointsGap'			=> $aseco->server->gameinfo->chase['PointsGap'],
+				'S_MapPointsLimit'		=> $aseco->server->gameinfo->chase['MapPointsLimit'],
+				'S_RoundPointsLimit'		=> $aseco->server->gameinfo->chase['RoundPointsLimit'],
+				'S_RoundPointsGap'		=> $aseco->server->gameinfo->chase['RoundPointsGap'],
 				'S_GiveUpMax'			=> $aseco->server->gameinfo->chase['GiveUpMax'],
 				'S_MinPlayersNb'		=> $aseco->server->gameinfo->chase['MinPlayersNb'],
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->chase['ForceLapsNb'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->chase['FinishTimeout'],
+				'S_DisplayWarning'		=> $aseco->server->gameinfo->chase['DisplayWarning'],
 				'S_UsePlayerClublinks'		=> $aseco->server->gameinfo->chase['UsePlayerClublinks'],
 				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMax'],
 				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMin'],
+				'S_CompetitiveMode'		=> $aseco->server->gameinfo->chase['CompetitiveMode'],
+				'S_WaypointEventDelay'		=> $aseco->server->gameinfo->chase['WaypointEventDelay'],
+				'S_PauseBetweenRound'		=> $aseco->server->gameinfo->chase['PauseBetweenRound'],
+				'S_WaitingTimeMax'		=> $aseco->server->gameinfo->chase['WaitingTimeMax'],
 			);
 		}
 //		else if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
@@ -969,7 +1010,7 @@ class PluginModescriptHandler extends Plugin {
 //		$aseco->client->query('DisconnectFakePlayer', '*');
 
 		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
-		$xml = '<?xml version="1.0" encoding="utf-8"?>';
+		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 		$xml .= '<scorestable version="1">';
 		$xml .= ' <properties>';
 		$xml .= '  <position x="0.0" y="51.0" z="20.0" />';

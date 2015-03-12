@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-05
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -59,8 +59,8 @@ class PluginLocalRecords extends Plugin {
 		$this->setDescription('Saves record into a local database.');
 
 		$this->registerEvent('onStartup',		'onStartup');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
-		$this->registerEvent('onBeginMap1',		'onBeginMap1');
 		$this->registerEvent('onEndMapRanking',		'onEndMapRanking');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
@@ -182,7 +182,7 @@ class PluginLocalRecords extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		// Reset record list
 		$this->records->clear();
@@ -238,7 +238,7 @@ class PluginLocalRecords extends Plugin {
 				}
 				$aseco->releaseEvent('onLocalRecordsLoaded', $this->records);
 				// log records when debugging is set to true
-				//if ($aseco->debug) $aseco->console('onBeginMap records:' . CRLF . print_r($this->records, true));
+				//if ($aseco->debug) $aseco->console('onLoadingMap records:' . CRLF . print_r($this->records, true));
 			}
 			$result->free_result();
 		}
@@ -302,7 +302,7 @@ class PluginLocalRecords extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $map) {
+	public function onBeginMap ($aseco, $map) {
 
 		// Show top-8 & records of all online players before map
 		if (($this->settings['show_recs_before'] & 2) == 2) {

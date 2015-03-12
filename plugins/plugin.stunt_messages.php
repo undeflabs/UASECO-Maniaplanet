@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-01
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -69,13 +69,13 @@ class PluginStuntMessages extends Plugin {
 //		$this->registerEvent('onPlayerRespawn',		'onPlayerRespawn');
 //		$this->registerEvent('onPlayerGiveUp',		'onPlayerGiveUp');
 
-		$this->manialinkid		= 'PluginStuntsMessage';
+		$this->manialinkid				= 'PluginStuntsMessage';
 
-		$this->db			= array();
-		$this->text_colors['stunts']	= 'EEEF';
-		$this->text_colors['points']	= 'FA0F';
-		$this->text_colors['bonus']	= 'FA0F';
-		$this->text_colors['penalty']	= 'F30F';
+		$this->db					= array();
+		$this->text_colors['stunts']			= 'EEEF';
+		$this->text_colors['points']			= 'FA0F';
+		$this->text_colors['bonus']			= 'FA0F';
+		$this->text_colors['penalty']			= 'F30F';
 
 		// http://en.tm-wiki.org/wiki/Stunt_Mode
 		// http://telechargeurfou.free.fr/upload/trackmania/figures/
@@ -418,8 +418,8 @@ class PluginStuntMessages extends Plugin {
 			// Add "StuntPoints"
 			$points[] = (($positive_points == true) ? '+' : '-') . $params[1] .' '. (($params[1] == 1) ? 'point' : 'points');
 
-			// Add "StuntFactor"
-			if ($params[4] > 1 && $positive_points == true) {
+			// Add "StuntFactor", but only on a higher amount of points
+			if ($params[1] > 10 && $params[4] > 1 && $positive_points == true) {
 				$sum = (ceil($params[1] * $params[4]) - $params[1]);
 				$bonus = '+'. $sum .' Bonus '. (($sum == 1) ? 'Point' : 'Points') .'!!';
 				$this->db[$params[0]]['total_bonus'] += $sum;

@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-11
+ * Date:	2015-03-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -261,6 +261,10 @@ class PluginDedimania extends Plugin {
 			'supported'		=> false,
 			'packmask'		=> 'Trackmania_2@nadeolabs',
 		),
+		'Raid2@meuh21'			=> array(
+			'supported'		=> true,
+			'packmask'		=> 'Trackmania_2@nadeolabs',
+		),
 		'Maximum_30_Seconds@kata78'	=> array(
 			'supported'		=> true,
 			'packmask'		=> 'Trackmania_2@nadeolabs',
@@ -295,7 +299,7 @@ class PluginDedimania extends Plugin {
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
-		$this->registerEvent('onBeginMap',		'onBeginMap');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onEndMap',		'onEndMap');
 
 		$this->registerChatCommand('helpdedi',		'chat_helpdedi',	'Displays info about the Dedimania records system',	Player::PLAYERS);
@@ -1020,7 +1024,7 @@ class PluginDedimania extends Plugin {
 
 	/*
 	 * Universal function to generate list of Dedimania records for current track.
-	 * Called by chat_dedinew(), chat_dedilive(), onEndMap() and onBeginMap()
+	 * Called by chat_dedinew(), chat_dedilive(), onEndMap() and onLoadingMap()
 	 * Show to a player if $login defined, otherwise show to all players.
 	 * $mode = 0 (only new), 1 (top-8 & online players at start of track),
 	 *         2 (top-6 & online during track), 3 (top-8 & new at end of track)
@@ -1369,11 +1373,11 @@ class PluginDedimania extends Plugin {
 
 					$this->db['ModeList'] = array();
 					$this->db['ModeList'][Gameinfo::ROUNDS]		= 'Rounds';
-					$this->db['ModeList'][Gameinfo::TIMEATTACK]	= 'TA';
+					$this->db['ModeList'][Gameinfo::TIME_ATTACK]	= 'TA';
 					$this->db['ModeList'][Gameinfo::TEAM]		= 'Rounds';
 					$this->db['ModeList'][Gameinfo::LAPS]		= 'TA';
 					$this->db['ModeList'][Gameinfo::CUP]		= 'Rounds';
-					$this->db['ModeList'][Gameinfo::TEAMATTACK]	= 'Rounds';	// 2014-07-01: UNTESTED!!!
+					$this->db['ModeList'][Gameinfo::TEAM_ATTACK]	= 'Rounds';	// 2014-07-01: UNTESTED!!!
 					$this->db['ModeList'][Gameinfo::CHASE]		= false;	// 2015-02-11: unsupported mode
 					$this->db['ModeList'][Gameinfo::STUNTS]		= false;
 				}
@@ -1767,10 +1771,10 @@ class PluginDedimania extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		if ($this->debug > 1) {
-			$aseco->console('[Dedimania] onBeginMap() - map'. CRLF . print_r($map, true));
+			$aseco->console('[Dedimania] onLoadingMap() - map'. CRLF . print_r($map, true));
 		}
 
 		// Bail out on unsupported gamemodes
@@ -2540,7 +2544,7 @@ class PluginDedimania extends Plugin {
 					$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 				}
 			}
-			else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
+			else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 				$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 			}
 			else {
@@ -2548,11 +2552,10 @@ class PluginDedimania extends Plugin {
 			}
 
 			$validation_success = true;
-// 2014-09-20: Disabled because of the "onelap" Bug: http://forum.maniaplanet.com/viewtopic.php?p=217747#p217747
-//			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
-//				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
-//				$validation_success = false;
-//			}
+			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+				$validation_success = false;
+			}
 			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
 				if ($cpsrace != count($allcps)) {
 					$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
@@ -2640,7 +2643,7 @@ class PluginDedimania extends Plugin {
 					$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 				}
 			}
-			else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
+			else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 				$cpsrace = $aseco->server->maps->current->nbcheckpoints;
 			}
 			else {

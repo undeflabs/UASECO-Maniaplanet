@@ -3,6 +3,7 @@ Dedimania
  - In Rounds.Script.txt multilap maps are required to run the min. required laps:
    Rounds final time. And for a multilap challenge only if the number of laps is the main
    number of laps of the map, and not a different number (forced using RoundForcedLaps for example)!
+   ListMethod: SetRoundForcedLaps(int)
 
 
 UASECO
@@ -16,6 +17,17 @@ UASECO
 
 RMB-Menu
 ~~~~~~~~
+	Admin Buttons
+	~~~~~~~~~~~~~
+	"/admin restartmap"
+	"/admin endround"
+	"/admin nextmap"
+	"/admin replaymap"
+	"/admin pass"
+	"/admin cancel"
+	"/admin players live"
+
+
 + AddFavorite
 
 http://doc.maniaplanet.com/creation/manialink/actions.html
@@ -57,7 +69,7 @@ Records-Eyepiece
 
 Linux
 ~~~~~
-Starting ManiaPlanet Date=2014-11-21_14_00 Svn=59500 GameVersion=3.3.0...
+Starting ManiaPlanet Date=2015-02-18_12_00 Svn=607465 GameVersion=3.3.0...
 Initializing...
 Configuration file : dedicated_tm2mixed.cfg
 Loading system configuration...
@@ -65,4 +77,4 @@ Loading system configuration...
 Loading cache...
 ...OK
 Listening for xml-rpc commands on port 5001.
-ManiaPlanet server daemon started with pid=1331 (parent=1330).
+ManiaPlanet server daemon started with pid=1416 (parent=1415).

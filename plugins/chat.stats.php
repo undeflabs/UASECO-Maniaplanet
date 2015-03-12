@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-24
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -228,8 +228,6 @@ class PluginChatStats extends Plugin {
 			if ($aseco->isAnyAdmin($target)) {
 				$settings[] = array('Admin Panel', '{#black}' . substr($panels['admin'], 5));
 			}
-			$settings[] = array('Records Panel', '{#black}' . substr($panels['records'], 7));
-			$settings[] = array('Vote Panel', '{#black}' . substr($panels['vote'], 4));
 		}
 
 		// display ManiaLink message

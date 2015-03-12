@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-11
+ * Date:	2015-03-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -54,11 +54,11 @@ class Gameinfo {
 //	public $stunts;					// array() unused
 
 	const ROUNDS		= 1;
-	const TIMEATTACK	= 2;
+	const TIME_ATTACK	= 2;
 	const TEAM		= 3;
 	const LAPS		= 4;
 	const CUP		= 5;
-	const TEAMATTACK	= 6;
+	const TEAM_ATTACK	= 6;
 	const CHASE		= 7;
 	const STUNTS		= 8;
 
@@ -70,20 +70,17 @@ class Gameinfo {
 
 	public function __construct ($aseco, $clone = false) {
 
-		$gameinfo = $aseco->client->query('GetCurrentGameInfo', 1);
-
-		if ($gameinfo['GameMode'] !== 0) {
+		$info = $aseco->client->query('GetCurrentGameInfo', 1);
+		if ($info['GameMode'] !== 0) {
 			// Bail out if <playlist><gameinfos><game_mode> is not "0"
 			trigger_error('[Gameinfo] UASECO can only be used for scripted Gamemodes! Please set in "UserData/Maps/MatchSettings/'. $aseco->settings['default_maplist'] .'" <playlist><gameinfos><game_mode> to "0" and <script_name> to e.g. "TimeAttack.Script.txt".', E_USER_ERROR);
 		}
-
+		unset($info);
 
 		// 2014-06-12: Name, CompatibleMapTypes, Description, Version, ParamDescs, CommandDescs
 		$modescript['info'] = $aseco->client->query('GetModeScriptInfo');
-
 		$modescript['settings'] = $aseco->client->query('GetModeScriptSettings');
-
-// $aseco->dump($gameinfo, $modescript['info'], $modescript['settings']);
+//		$aseco->dump($info, $modescript['info'], $modescript['settings']);
 
 		$this->script['Name']			= $modescript['info']['Name'];
 		$this->script['Version']		= $modescript['info']['Version'];
@@ -95,7 +92,7 @@ class Gameinfo {
 				break;
 
 			case 'TimeAttack':
-				$this->mode = self::TIMEATTACK;
+				$this->mode = self::TIME_ATTACK;
 				break;
 
 			case 'Team':
@@ -111,7 +108,7 @@ class Gameinfo {
 				break;
 
 			case 'TeamAttack':
-				$this->mode = self::TEAMATTACK;
+				$this->mode = self::TEAM_ATTACK;
 				break;
 
 			case 'Chase':
@@ -142,11 +139,11 @@ class Gameinfo {
 			// Rounds (+RoundsBase)
 			if ( isset($clone->rounds['PointsRepartition']) ) {
 				// Custom settings
-				$this->rounds['PointsRepartition']	= $clone->rounds['PointsRepartition'];	// Refreshed every 'onBeginMap' event
+				$this->rounds['PointsRepartition']	= $clone->rounds['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
 			}
 			else {
 				// Dedicated defaults
-				$this->rounds['PointsRepartition']	= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onBeginMap' event
+				$this->rounds['PointsRepartition']	= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onLoadingMap' event
 			}
 			if ($modescript['settings']['S_UseAlternateRules'] == true) {
 				$this->rounds['UseAlternateRules']	= true;
@@ -162,17 +159,17 @@ class Gameinfo {
 
 			$this->rounds['UseTieBreak']			= $modescript['settings']['S_UseTieBreak'];
 		}
-		else if ($this->mode == self::TIMEATTACK) {
+		else if ($this->mode == self::TIME_ATTACK) {
 			// TimeAttack
 			$this->time_attack['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 		}
 		else if ($this->mode == self::TEAM) {
 			// Team  (+RoundsBase)
 			if ( isset($clone->team['PointsRepartition']) ) {
-				$this->team['PointsRepartition']	= $clone->team['PointsRepartition'];	// Refreshed every 'onBeginMap' event
+				$this->team['PointsRepartition']	= $clone->team['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
 			}
 			else {
-				$this->team['PointsRepartition']	= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onBeginMap' event
+				$this->team['PointsRepartition']	= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onLoadingMap' event
 			}
 			if ($modescript['settings']['S_UseAlternateRules'] == true) {
 				$this->team['UseAlternateRules']	= true;
@@ -199,10 +196,10 @@ class Gameinfo {
 		else if ($this->mode == self::CUP) {
 			// Cup (+RoundsBase)
 			if ( isset($clone->cup['PointsRepartition']) ) {
-				$this->cup['PointsRepartition']		= $clone->cup['PointsRepartition'];	// Refreshed every 'onBeginMap' event
+				$this->cup['PointsRepartition']		= $clone->cup['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
 			}
 			else {
-				$this->cup['PointsRepartition']		= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onBeginMap' event
+				$this->cup['PointsRepartition']		= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onLoadingMap' event
 			}
 			$this->cup['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
 			$this->cup['DisplayTimeDiff']			= false;
@@ -211,7 +208,7 @@ class Gameinfo {
 			$this->cup['NbOfWinners']			= $modescript['settings']['S_NbOfWinners'];
 			$this->cup['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
 		}
-		else if ($this->mode == self::TEAMATTACK) {
+		else if ($this->mode == self::TEAM_ATTACK) {
 			// TeamAttack
 			$this->team_attack['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->team_attack['MinPlayerPerClan']		= $modescript['settings']['S_MinPlayerPerClan'];
@@ -221,15 +218,21 @@ class Gameinfo {
 		else if ($this->mode == self::CHASE) {
 			// Chase
 			$this->chase['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
-			$this->chase['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
-			$this->chase['PointsGap']			= $modescript['settings']['S_PointsGap'];
+			$this->chase['MapPointsLimit']			= $modescript['settings']['S_MapPointsLimit'];
+			$this->chase['RoundPointsLimit']		= $modescript['settings']['S_RoundPointsLimit'];
+			$this->chase['RoundPointsGap']			= $modescript['settings']['S_RoundPointsGap'];
 			$this->chase['GiveUpMax']			= $modescript['settings']['S_GiveUpMax'];
 			$this->chase['MinPlayersNb']			= $modescript['settings']['S_MinPlayersNb'];
 			$this->chase['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->chase['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
+			$this->chase['DisplayWarning']			= $modescript['settings']['S_DisplayWarning'];
 			$this->chase['UsePlayerClublinks']		= $modescript['settings']['S_UsePlayerClublinks'];
 			$this->chase['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
 			$this->chase['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
+			$this->chase['CompetitiveMode']			= $modescript['settings']['S_CompetitiveMode'];
+			$this->chase['WaypointEventDelay']		= $modescript['settings']['S_WaypointEventDelay'];
+			$this->chase['PauseBetweenRound']		= $modescript['settings']['S_PauseBetweenRound'];
+			$this->chase['WaitingTimeMax']			= $modescript['settings']['S_WaitingTimeMax'];
 		}
 	}
 
@@ -240,7 +243,7 @@ class Gameinfo {
 	*/
 
 	// Returns current Gamemode version (e.g. "2014-07-02")
-	public function getGamemodeVersion () {
+	public function getModeVersion () {
 		return $this->script['Version'];
 	}
 
@@ -250,8 +253,8 @@ class Gameinfo {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Returns current or given Gamemode Scriptname (e.g. "TimeAttack.Script.txt")
-	public function getGamemodeScriptname ($id = false) {
+	// Returns current or given Gamemode Id's Scriptname (e.g. "TimeAttack.Script.txt")
+	public function getModeScriptName ($id = false) {
 		if ($id === false) {
 			return $this->script['Name'];
 		}
@@ -259,7 +262,7 @@ class Gameinfo {
 			case self::ROUNDS:
 				return 'Rounds.Script.txt';
 
-			case self::TIMEATTACK:
+			case self::TIME_ATTACK:
 				return 'TimeAttack.Script.txt';
 
 			case self::TEAM:
@@ -271,7 +274,7 @@ class Gameinfo {
 			case self::CUP:
 				return 'Cup.Script.txt';
 
-			case self::TEAMATTACK:
+			case self::TEAM_ATTACK:
 				return 'TeamAttack.Script.txt';
 
 			case self::CHASE:
@@ -292,7 +295,7 @@ class Gameinfo {
 	*/
 
 	// Returns current or given Gamemode as string
-	public function getGamemodeName ($id = false) {
+	public function getModeName ($id = false) {
 
 		if ($id === false) {
 			$id = $this->mode;
@@ -301,8 +304,8 @@ class Gameinfo {
 			case self::ROUNDS:
 				return 'Rounds';
 
-			case self::TIMEATTACK:
-				return 'Time Attack';
+			case self::TIME_ATTACK:
+				return 'Time_Attack';
 
 			case self::TEAM:
 				return 'Team';
@@ -313,8 +316,8 @@ class Gameinfo {
 			case self::CUP:
 				return 'Cup';
 
-			case self::TEAMATTACK:
-				return 'Team Attack';
+			case self::TEAM_ATTACK:
+				return 'Team_Attack';
 
 			case self::CHASE:
 				return 'Chase';
@@ -337,14 +340,14 @@ class Gameinfo {
 	public function getGamemodeId ($name = false) {
 
 		if ($name === false) {
-			$name = $this->getGamemodeName();
+			$name = $this->getModeName();
 		}
 		switch (strtolower($name)) {
 			case 'rounds':
 				return self::ROUNDS;
 
-			case 'time attack':
-				return self::TIMEATTACK;
+			case 'time_attack':
+				return self::TIME_ATTACK;
 
 			case 'team':
 				return self::TEAM;
@@ -355,13 +358,96 @@ class Gameinfo {
 			case 'cup':
 				return self::CUP;
 
-			case 'team attack':
-				return self::TEAMATTACK;
+			case 'team_attack':
+				return self::TEAM_ATTACK;
 
 			case 'chase':
 				return self::CHASE;
 
 			case 'stunts':
+				return self::STUNTS;
+
+			default:
+				return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Returns next Gamemode as string
+	public function getNextModeName () {
+		global $aseco;
+
+		$info = $aseco->client->query('GetGameInfos');
+		switch (str_replace('.Script.txt', '', $info['NextGameInfos']['ScriptName'])) {
+			case 'Rounds':
+				return $this->getModeName(self::ROUNDS);
+
+			case 'TimeAttack':
+				return $this->getModeName(self::TIME_ATTACK);
+
+			case 'Team':
+				return $this->getModeName(self::TEAM);
+
+			case 'Laps':
+				return $this->getModeName(self::LAPS);
+
+			case 'Cup':
+				return $this->getModeName(self::CUP);
+
+			case 'TeamAttack':
+				return $this->getModeName(self::TEAM_ATTACK);
+
+			case 'Chase':
+				return $this->getModeName(self::CHASE);
+
+			case 'Stunts':
+				return $this->getModeName(self::STUNTS);
+
+			default:
+				return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Returns next Gamemode as Id
+	public function getNextModeId () {
+
+		global $aseco;
+
+		$info = $aseco->client->query('GetGameInfos');
+		switch (str_replace('.Script.txt', '', $info['NextGameInfos']['ScriptName'])) {
+			case 'Rounds':
+				return self::ROUNDS;
+
+			case 'TimeAttack':
+				return self::TIME_ATTACK;
+
+			case 'Team':
+				return self::TEAM;
+
+			case 'Laps':
+				return self::LAPS;
+
+			case 'Cup':
+				return self::CUP;
+
+			case 'TeamAttack':
+				return self::TEAM_ATTACK;
+
+			case 'Chase':
+				return self::CHASE;
+
+			case 'Stunts':
 				return self::STUNTS;
 
 			default:

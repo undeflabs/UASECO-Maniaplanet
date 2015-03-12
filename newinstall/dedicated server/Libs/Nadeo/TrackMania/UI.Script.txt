@@ -6,7 +6,7 @@
  *	- SmallScoresTable -> display the player ranking at the end of the round
  *	- Chrono -> display a chrono at the bottom of the screen
  */
-#Const	Version		"2014-12-31"
+#Const	Version		"2015-02-16"
 #Const	ScriptName	"UI.Script.txt"
 
 #Include "TextLib" as TL
@@ -141,13 +141,15 @@ Text Private_CreateMLTimeGap() {
 	<label posn="18.5 0" sizen="35 4" valign="bottom" id="Label_Name" />
 </framemodel>
 <frame posn="{{{C_LibUI_TimeGapPos.X}}} {{{C_LibUI_TimeGapPos.Y}}} {{{C_LibUI_TimeGapPos.Z}}}" id="Frame_TimeGap" hidden="1">
-	<quad posn="0 20" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
-	<quad posn="0 16" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
-	<quad posn="0 12" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
-	<quad posn="0 8" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
-	<quad posn="0 4" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
-	<quad posn="0 0" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
 	<quad posn="14 0 1" sizen="4 24 1" valign="bottom" bgcolor="0009" />
+	<frame id="Frame_Backgrounds">
+		<quad posn="0 20" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
+		<quad posn="0 16" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
+		<quad posn="0 12" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
+		<quad posn="0 8" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
+		<quad posn="0 4" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
+		<quad posn="0 0" sizen="54 3.8 0" valign="bottom" bgcolor="7783" />
+	</frame>
 	<frame posn="0 0 2" id="Frame_PlayersList">
 		<format textemboss="1" textsize="1.5" />
 		<frameinstance posn="0 20" modelid="Framemodel_Player" />
@@ -164,6 +166,7 @@ Text Private_CreateMLTimeGap() {
 #Const C_LibUI_TimeGapPos <{{{C_LibUI_TimeGapPos.X}}}, {{{C_LibUI_TimeGapPos.Y}}}, {{{C_LibUI_TimeGapPos.Z}}}>
 
 declare CMlFrame[] Frames_Player;
+declare CMlQuad[] Quads_Background;
 
 Text TimeToText(Integer _Time) {
 	declare Time = TL::TimeToText(_Time, True);
@@ -173,14 +176,19 @@ Text TimeToText(Integer _Time) {
 }
 
 Void UpdateSlot(Integer _SlotNb, CTmMlPlayer _Player) {
-	if (!Frames_Player.existskey(_SlotNb)) return;
+	if (!Frames_Player.existskey(_SlotNb) || !Quads_Background.existskey(_SlotNb)) return;
 	declare Frame_Player	<=> Frames_Player[_SlotNb];
 	declare Label_Time		<=> (Frame_Player.GetFirstChild("Label_Time")		as CMlLabel);
 	declare Label_LocalRank	<=> (Frame_Player.GetFirstChild("Label_LocalRank")	as CMlLabel);
 	declare Label_Name		<=> (Frame_Player.GetFirstChild("Label_Name")		as CMlLabel);
+	declare Quad_Background <=> Quads_Background[_SlotNb];
 	
 	if (_Player != Null && Scores.count > 0) {
 		if (!Frame_Player.Visible) Frame_Player.Visible = True;
+		if (_Player.CurrentClan == 1) Quad_Background.BgColor = Teams[0].ColorPrimary;
+		else if (_Player.CurrentClan == 2) Quad_Background.BgColor = Teams[1].ColorPrimary;
+		else Quad_Background.BgColor = <0.46, 0.46, 0.53>;
+		Quad_Background.Opacity = 0.2;
 		
 		declare Format = "";
 		if (_Player.Id == InputPlayer.Id) Format = "$0f0";
@@ -219,6 +227,8 @@ Void UpdateSlot(Integer _SlotNb, CTmMlPlayer _Player) {
 		Label_Name.Value = _Player.Score.User.Name;
 	} else {
 		if (Frame_Player.Visible) Frame_Player.Visible = False;
+		Quad_Background.BgColor = <0.46, 0.46, 0.53>;
+		Quad_Background.Opacity = 0.2;
 	}
 }
 
@@ -287,6 +297,10 @@ main() {
 	declare Frame_PlayersList	<=> (Page.GetFirstChild("Frame_PlayersList")	as CMlFrame);
 	foreach (Control in Frame_PlayersList.Controls) {
 		Frames_Player.add((Control as CMlFrame));
+	}
+	declare Frame_Backgrounds	<=> (Page.GetFirstChild("Frame_Backgrounds")	as CMlFrame);
+	foreach (Control in Frame_Backgrounds.Controls) {
+		Quads_Background.add((Control as CMlQuad));
 	}
 	
 	declare netread Integer Net_LibUI_SettingsUpdate for Teams[0];

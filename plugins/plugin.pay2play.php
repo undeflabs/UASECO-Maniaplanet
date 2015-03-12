@@ -23,7 +23,8 @@ class PluginPay2Play extends Plugin {
 
 		$this->registerEvent('onStartup',			'setup');
 		$this->registerEvent('onPlayerConnect',			'connect');
-		$this->registerEvent('onBeginMap',			'check');
+		$this->registerEvent('onLoadingMap',			'check');
+		$this->registerEvent('onRestartMap',			'check');
 		$this->registerEvent('onWarmUpStatusChanged',		'check');
 		$this->registerEvent('onEndRound',			'off');
 		$this->registerEvent('onEndMap',			'off');
@@ -142,7 +143,7 @@ class PluginPay2Play extends Plugin {
 			$this->buildSkip($aseco, 'replay');
 		}
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && !$aseco->warmup_phase) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && !$aseco->warmup_phase) {
 			$this->p2p['timelimit'] = time() + $aseco->server->gameinfo->time_attack['TimeLimit'];
 		} elseif ($aseco->server->gameinfo->mode == Gameinfo::LAPS && !$aseco->warmup_phase) {
 			$this->p2p['timelimit'] = time() + $aseco->server->gameinfo->laps['TimeLimit'];

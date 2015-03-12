@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-12-04
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ class PluginManiaExchange extends Plugin {
 		$this->setDescription('Provides world record message at start of each map.');
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onBeginMap1',	'onBeginMap1');
+		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 
 		$this->registerChatCommand('mx', 'chat_mx', 'xxxxx', Player::MASTERADMINS);
 	}
@@ -83,7 +83,7 @@ class PluginManiaExchange extends Plugin {
 	#									#
 	#///////////////////////////////////////////////////////////////////////#
 	*/
-	public function onBeginMap1 ($aseco, $data) {
+	public function onLoadingMap ($aseco, $data) {
 
 		// Obtain MX records
 		if ($aseco->server->maps->current->mx && !empty($aseco->server->maps->current->mx->recordlist)) {

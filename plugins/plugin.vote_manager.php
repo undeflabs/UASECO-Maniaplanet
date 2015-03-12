@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-01-20
+ * Date:		2015-03-10
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -88,7 +88,7 @@ class PluginVoteManager extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onPlayerChat',			'onPlayerChat');
 		$this->registerEvent('onEverySecond',			'onEverySecond');
-		$this->registerEvent('onBeginMap1',			'onBeginMap1');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
 		$this->registerEvent('onEndMap1',			'onEndMap1');
 		$this->registerEvent('onShutdown',			'onShutdown');
@@ -507,7 +507,7 @@ class PluginVoteManager extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $map_item) {
+	public function onLoadingMap ($aseco, $map_item) {
 
 		// Reset all before votings
 		$this->config['RunningVote'] = $this->cleanupCurrentVote();
@@ -518,7 +518,7 @@ class PluginVoteManager extends Plugin {
 		$this->config['Cache']['Todo']['onEndMap'] = false;
 
 		// Store the Timelimit at TA
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 			$this->config['TimeAttackTimelimit'] = time() + $aseco->server->gameinfo->time_attack['TimeLimit'];
 		}
 		else {
@@ -551,8 +551,11 @@ class PluginVoteManager extends Plugin {
 			$this->config['Cache']['LastMap']['Runs'] = 0;
 		}
 
-		// Emulate event onBeginMap1
-		$this->onBeginMap1($aseco, $map_item);
+		// Reset Todo's
+		$this->config['Cache']['Todo']['onEndMap'] = false;
+
+		// Emulate event onLoadingMap
+		$this->onLoadingMap($aseco, $map_item);
 	}
 
 	/*
@@ -562,18 +565,6 @@ class PluginVoteManager extends Plugin {
 	*/
 
 	public function onEndMap1 ($aseco, $data) {
-
-		// Test for "Restart Map (with ChatTime)"
-		if ($aseco->restarting == 2) {
-			// Reset Todo's
-			$this->config['Cache']['Todo']['onEndMap'] = false;
-
-			// -1 because the Admin has restarted
-			$this->config['Cache']['LastMap']['Runs'] --;
-			if ($this->config['Cache']['LastMap']['Runs'] < 0) {
-				$this->config['Cache']['LastMap']['Runs'] = 0;
-			}
-		}
 
 		// Hide all Widgets from all Players
 		$xml = '<manialink id="'. $this->config['ManialinkId'] .'00"></manialink>';	// Widget
@@ -1000,8 +991,8 @@ EOL;
 		$preset['Mode']			= false;
 		$preset['Votes']['Yes']		= array();
 		$preset['Votes']['No']		= array();
-		$preset['Votes']['Restart']	= $this->config['RunningVote']['Votes']['Restart'];	// Are reseted at onBeginMap2
-		$preset['Votes']['Skip']	= $this->config['RunningVote']['Votes']['Skip'];		// Are reseted at onBeginMap2
+		$preset['Votes']['Restart']	= $this->config['RunningVote']['Votes']['Restart'];	// Reseted at onLoadingMap
+		$preset['Votes']['Skip']	= $this->config['RunningVote']['Votes']['Skip'];	// Reseted at onLoadingMap
 
 		return $preset;
 	}
@@ -1131,7 +1122,7 @@ EOL;
 			return false;
 		}
 
-		if ( ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK) && ($this->config['TimeAttackTimelimit'] != -1) ) {
+		if ( ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) && ($this->config['TimeAttackTimelimit'] != -1) ) {
 			if ($this->config['TimeAttackTimelimit'] > (time() + $this->config['VOTING'][0]['TIMEOUT_LIMIT'][0])) {
 				return true;
 			}

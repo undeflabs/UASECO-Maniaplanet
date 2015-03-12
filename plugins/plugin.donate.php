@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-04
+ * Date:	2015-02-24
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -378,7 +378,7 @@ class PluginDonate extends Plugin {
 							$newplanets
 						);
 						$aseco->sendChatMessage($message, $login);
-						$aseco->console('Server paid {1} planets to login "{2}" (TxId {3})', abs($planets), $login, $txid);
+						$aseco->console('[Donate] Server paid {1} planets to login "{2}" (TxId {3})', abs($planets), $login, $txid);
 					}
 					unset($this->bills[$billid]);
 					break;
@@ -386,7 +386,7 @@ class PluginDonate extends Plugin {
 				case 5:  // Refused
 					$message = '{#server}» {#error}Transaction refused!';
 					$aseco->sendChatMessage($message, $login);
-					$aseco->console('Refused transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
+					$aseco->console('[Donate] Refused transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);
 					break;
 
@@ -398,7 +398,7 @@ class PluginDonate extends Plugin {
 					else {
 						$aseco->sendChatMessage($message);
 					}
-					$aseco->console('Failed transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
+					$aseco->console('[Donate] Failed transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);
 					break;
 
@@ -407,7 +407,7 @@ class PluginDonate extends Plugin {
 			}
 		}
 		else {
-			$aseco->console('BillUpdated for unknown BillId {1} {2} (TxId {3})', $billid, $bill[2], $txid);
+			$aseco->console('[Donate] BillUpdated for unknown BillId {1} {2} (TxId {3})', $billid, $bill[2], $txid);
 		}
 	}
 

@@ -1,3 +1,10 @@
+onModeScriptPauseChanged
+Data:		An boolean value with one value saying if the mode is in pause or not
+Example:	true
+Note:		This callback is sent after using the LibXmlRpc_GetPause method or when the pause status changes.
+Version:	available since XmlRpcCommon.Script.txt_v2015-02-23
+
+
 onPlayerDisconnectPrepare
 Data:		Player object
 Example:	[]
@@ -148,28 +155,21 @@ Note:		This event is sent at the end of the podium sequence
 
 
 onLoadingMap
-Data:		An integer with the number of the map
-Example:	1
-Note:		This event is sent when the script start to load a map
-
-
-onUnloadingMap
-Data:		An integer with the number of the map
-Example:	1
-Note:		This event is sent when the script start to unload a map
-
-
-onBeginMap
 Data:		Map object
 Example:	-
 Note:		This event is sent when all map data are loaded (without loaded records)
 
 
-onBeginMap1
-XAseco2:	onBeginMap2
-Data:		Map object
+onUnloadingMap
+Data:		UID from the Map
+Example:	'Cvy2ESexF365pzcEfsBWJe4pL58'
+Note:		This event is sent when the script start to unload a map
+
+
+onBeginMap
+Data:		Map UId
 Example:	-
-Note:		This event is sent after 'onBeginMap' when all map data and local records are loaded
+Note:		This event is sent after onLoadingMap
 
 
 onRestartMap

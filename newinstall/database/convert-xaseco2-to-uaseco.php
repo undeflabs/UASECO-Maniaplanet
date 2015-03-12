@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-10
+ * Date:	2015-02-24
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -194,7 +194,7 @@ class Converter {
 				}
 			}
 			$this->db->query('COMMIT;');
-			$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Players.');
+			$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Players.');
 
 
 			$this->console(' > Working on table `players_extra`...');
@@ -244,7 +244,7 @@ class Converter {
 				}
 			}
 			$this->db->query('COMMIT;');
-			$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' settings.');
+			$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' settings.');
 
 		}
 		else {
@@ -274,11 +274,11 @@ class Converter {
 				}
 
 				// Add required columns
-				$this->db->query('ALTER TABLE `%prefix%players` ADD `MostFinished` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`MostFinished`);');
-				$this->db->query('ALTER TABLE `%prefix%players` ADD `MostRecords` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`MostRecords`);');
-				$this->db->query('ALTER TABLE `%prefix%players` ADD `RoundPoints` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`RoundPoints`);');
-				$this->db->query('ALTER TABLE `%prefix%players` ADD `TeamPoints` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`TeamPoints`);');
-				$this->db->query('ALTER TABLE `%prefix%players` ADD `WinningPayout` MEDIUMINT(3) UNSIGNED NOT NULL DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`WinningPayout`);');
+				$this->db->query('ALTER TABLE `%prefix%players` ADD `MostFinished` MEDIUMINT(3) UNSIGNED DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`MostFinished`);');
+				$this->db->query('ALTER TABLE `%prefix%players` ADD `MostRecords` MEDIUMINT(3) UNSIGNED DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`MostRecords`);');
+				$this->db->query('ALTER TABLE `%prefix%players` ADD `RoundPoints` MEDIUMINT(3) UNSIGNED DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`RoundPoints`);');
+				$this->db->query('ALTER TABLE `%prefix%players` ADD `TeamPoints` MEDIUMINT(3) UNSIGNED DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`TeamPoints`);');
+				$this->db->query('ALTER TABLE `%prefix%players` ADD `WinningPayout` MEDIUMINT(3) UNSIGNED DEFAULT "0" COMMENT "Added by plugin.records_eyepiece.php", ADD INDEX (`WinningPayout`);');
 			}
 			$result->free_result();
 
@@ -381,7 +381,7 @@ class Converter {
 				";
 				$result = $this->db->query($query);
 				if (!$result) {
-//					$this->console('Could not insert map "'. $row['Name'] .'": '. $this->db->errmsg() );
+					$this->console('Could not insert map "'. $row['Name'] .'": '. $this->db->errmsg() );
 					$count['skipped'] += 1;
 				}
 				else {
@@ -389,7 +389,7 @@ class Converter {
 				}
 			}
 			$this->db->query('COMMIT;');
-			$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Maps.');
+			$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Maps.');
 		}
 		else {
 			$this->console('ERROR: No entries found in `maps`!');
@@ -448,7 +448,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Records'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Records'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -505,7 +505,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Karma votes'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Karma votes'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -557,7 +557,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Player ranks'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Player ranks'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -619,7 +619,7 @@ class Converter {
 					}
 				}
 				$this->db->query('COMMIT;');
-				$this->console(' ...added '. $count['added'] .', skipped: '. $count['skipped'] .' Times'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
+				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Times'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
 		}
@@ -668,12 +668,12 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%authors` (
-		  `AuthorId` mediumint(3) unsigned NOT NULL AUTO_INCREMENT,
-		  `Login` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nickname` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Zone` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Continent` varchar(2) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nation` varchar(3) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `AuthorId` mediumint(3) unsigned AUTO_INCREMENT,
+		  `Login` varchar(64) COLLATE utf8_bin DEFAULT '',
+		  `Nickname` varchar(100) COLLATE utf8_bin DEFAULT '',
+		  `Zone` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `Continent` varchar(2) COLLATE utf8_bin DEFAULT '',
+		  `Nation` varchar(3) COLLATE utf8_bin DEFAULT '',
 		  PRIMARY KEY (`AuthorId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
@@ -686,33 +686,33 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%maps` (
-		  `MapId` mediumint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-		  `Uid` varchar(27) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Filename` text COLLATE utf8_bin NOT NULL,
-		  `Name` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Comment` text COLLATE utf8_bin NOT NULL,
-		  `AuthorId` mediumint(3) unsigned NOT NULL,
-		  `AuthorScore` int(4) unsigned NOT NULL,
-		  `AuthorTime` int(4) unsigned NOT NULL,
-		  `GoldTime` int(4) unsigned NOT NULL,
-		  `SilverTime` int(4) unsigned NOT NULL,
-		  `BronzeTime` int(4) unsigned NOT NULL,
-		  `Environment` varchar(10) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE utf8_bin NOT NULL,
-		  `Cost` mediumint(3) unsigned NOT NULL,
-		  `Type` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Style` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `MultiLap` enum('false','true') COLLATE utf8_bin NOT NULL,
-		  `NbLaps` tinyint(1) unsigned NOT NULL,
-		  `NbCheckpoints` tinyint(1) unsigned NOT NULL,
-		  `Validated` enum('null','false','true') COLLATE utf8_bin NOT NULL,
-		  `ExeVersion` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ExeBuild` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ModName` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ModFile` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ModUrl` text COLLATE utf8_bin NOT NULL,
-		  `SongFile` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `SongUrl` text COLLATE utf8_bin NOT NULL,
+		  `MapId` mediumint(3) UNSIGNED AUTO_INCREMENT,
+		  `Uid` varchar(27) COLLATE utf8_bin DEFAULT '',
+		  `Filename` text COLLATE utf8_bin,
+		  `Name` varchar(100) COLLATE utf8_bin DEFAULT '',
+		  `Comment` text COLLATE utf8_bin,
+		  `AuthorId` mediumint(3) unsigned DEFAULT '0',
+		  `AuthorScore` int(4) unsigned DEFAULT '0',
+		  `AuthorTime` int(4) unsigned DEFAULT '0',
+		  `GoldTime` int(4) unsigned DEFAULT '0',
+		  `SilverTime` int(4) unsigned DEFAULT '0',
+		  `BronzeTime` int(4) unsigned DEFAULT '0',
+		  `Environment` varchar(10) COLLATE utf8_bin DEFAULT '',
+		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE utf8_bin,
+		  `Cost` mediumint(3) unsigned DEFAULT '0',
+		  `Type` varchar(32) COLLATE utf8_bin DEFAULT '',
+		  `Style` varchar(16) COLLATE utf8_bin DEFAULT '',
+		  `MultiLap` enum('false','true') COLLATE utf8_bin,
+		  `NbLaps` tinyint(1) unsigned DEFAULT '0',
+		  `NbCheckpoints` tinyint(1) unsigned DEFAULT '0',
+		  `Validated` enum('null','false','true') COLLATE utf8_bin,
+		  `ExeVersion` varchar(16) COLLATE utf8_bin DEFAULT '',
+		  `ExeBuild` varchar(32) COLLATE utf8_bin DEFAULT '',
+		  `ModName` varchar(64) COLLATE utf8_bin DEFAULT '',
+		  `ModFile` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `ModUrl` text COLLATE utf8_bin,
+		  `SongFile` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `SongUrl` text COLLATE utf8_bin,
 		  PRIMARY KEY (`MapId`),
 		  UNIQUE KEY `Uid` (`Uid`),
 		  KEY `AuthorId` (`AuthorId`),
@@ -734,17 +734,17 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%players` (
-		  `PlayerId` mediumint(3) unsigned NOT NULL AUTO_INCREMENT,
-		  `Login` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nickname` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Zone` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Continent` varchar(2) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nation` varchar(3) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `LastVisit` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Visits` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Wins` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Donations` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `TimePlayed` int(4) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned AUTO_INCREMENT,
+		  `Login` varchar(64) COLLATE utf8_bin DEFAULT '',
+		  `Nickname` varchar(100) COLLATE utf8_bin DEFAULT '',
+		  `Zone` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `Continent` varchar(2) COLLATE utf8_bin DEFAULT '',
+		  `Nation` varchar(3) COLLATE utf8_bin DEFAULT '',
+		  `LastVisit` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Visits` mediumint(3) unsigned DEFAULT '0',
+		  `Wins` mediumint(3) unsigned DEFAULT '0',
+		  `Donations` mediumint(3) unsigned DEFAULT '0',
+		  `TimePlayed` int(4) unsigned DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
@@ -762,8 +762,8 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%rankings` (
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		   `Average` int(4) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		   `Average` int(4) unsigned DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
@@ -773,10 +773,10 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `Score` tinyint(1) signed DEFAULT '0',
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
@@ -790,11 +790,11 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Score` int(4) unsigned NOT NULL DEFAULT '0',
-		  `Checkpoints` text COLLATE utf8_bin NOT NULL,
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Score` int(4) unsigned DEFAULT '0',
+		  `Checkpoints` text COLLATE utf8_bin,
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
@@ -808,10 +808,10 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%settings` (
-		  `Plugin` varchar(64) COLLATE utf8_bin NOT NULL,
-		  `PlayerId` mediumint(3) unsigned NOT NULL,
-		  `Key` varchar(64) COLLATE utf8_bin NOT NULL,
-		  `Value` text COLLATE utf8_bin NOT NULL,
+		  `Plugin` varchar(64) COLLATE utf8_bin,
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Key` varchar(64) COLLATE utf8_bin,
+		  `Value` text COLLATE utf8_bin,
 		  PRIMARY KEY (`Plugin`,`PlayerId`,`Key`),
 		  KEY `PlayerId` (`PlayerId`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -822,11 +822,11 @@ class Converter {
 		$this->console(' > Checking table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%times` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Score` int(4) unsigned NOT NULL DEFAULT '0',
-		  `Checkpoints` text COLLATE utf8_bin NOT NULL,
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Score` int(4) unsigned DEFAULT '0',
+		  `Checkpoints` text COLLATE utf8_bin,
 		  PRIMARY KEY (`MapId`,`PlayerId`, `Score`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
@@ -945,6 +945,16 @@ class Converter {
 		}
 
 		$this->console('...successfully done!');
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function formatNumber ($number, $decimals = 0, $dec_point = '.', $thousands_sep = ',') {
+		return number_format($number, $decimals, $dec_point, $thousands_sep);
 	}
 
 	/*

@@ -2,7 +2,7 @@
  *	TM library
  */
 
-#Const Version		"2014-12-30"
+#Const Version		"2015-02-17"
 #Const ScriptName	"TM2.Script.txt"
 
 #Include "TextLib" as TL
@@ -683,4 +683,26 @@ Integer[Integer] GetClansNbPlayersWaiting() {
 	}
 	
 	return Count;
+}
+
+// ---------------------------------- //
+/** Reset a score without removing him from the ladder
+ *
+ *	@param	_Score		The score to reset
+ */
+Void ResetScore(CTmScore _Score) {
+	_Score.Points = 0;
+	_Score.PrevRaceDeltaPoints = 0;
+	_Score.BestRace = Null;
+	_Score.BestLap = Null;
+	_Score.PrevRace = Null;
+	_Score.TempResult = Null;
+}
+
+// ---------------------------------- //
+/// Reset all scores
+Void ResetAllScores() {
+	foreach (Score in Scores) {
+		ResetScore(Score);
+	}
 }

@@ -2,13 +2,13 @@
 /*
  * Plugin: Chat Server
  * ~~~~~~~~~~~~~~~~~~~
- * » Displays server/UASECO info & plugins/nations lists.
+ * » Displays server and UASECO info
  * » Based upon chat.server.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-11
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -54,16 +54,16 @@ class PluginChatServer extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Builds a chat message starting with the nickname from player.');
+		$this->setDescription('Displays server and UASECO info');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginLocalRecords',	Dependence::WANTED, '1.0.0', null);
-		$this->addDependence('PluginRaspVotes',		Dependence::WANTED, '1.0.0', null);
+		$this->addDependence('PluginLocalRecords',	Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerChatCommand('server',	'chat_server',	'Displays info about this server',		Player::PLAYERS);
 		$this->registerChatCommand('uaseco',	'chat_uaseco',	'Displays info about this UASECO',		Player::PLAYERS);
 		$this->registerChatCommand('plugins',	'chat_plugins',	'Displays list of active plugins',		Player::PLAYERS);
-		$this->registerChatCommand('nations',	'chat_nations',	'Displays top 10 most visiting nations',	Player::PLAYERS);
+		$this->registerChatCommand('time',	'chat_time',	'Shows current server time and date',		Player::PLAYERS);
 	}
 
 	/*
@@ -137,31 +137,31 @@ class PluginChatServer extends Plugin {
 		else {
 			$stats[] = array('Map Count', '{#black}'. count($aseco->server->maps->map_list));
 		}
-		$stats[] = array('Game Mode', '{#black}' . $aseco->server->gameinfo->getGamemodeName());
+		$stats[] = array('Game Mode', '{#black}' . str_replace('_', ' ', $aseco->server->gameinfo->getModeName()));
 		switch ($aseco->server->gameinfo->mode) {
 			case Gameinfo::ROUNDS:
-				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->rounds['PointsLimit']);
+				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->rounds['PointsLimit'] .' points.');
 				break;
 
-			case Gameinfo::TIMEATTACK:
-				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime($aseco->server->gameinfo->time_attack['TimeLimit'], false));
+			case Gameinfo::TIME_ATTACK:
+				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(($aseco->server->gameinfo->time_attack['TimeLimit'] * 1000), false) .' min.');
 				break;
 
 			case Gameinfo::TEAM:
-				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->team['PointsLimit']);
+				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->team['PointsLimit'] .' points.');
 				break;
 
 			case Gameinfo::LAPS:
-				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime($aseco->server->gameinfo->laps['TimeLimit'], false));
+				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(($aseco->server->gameinfo->laps['TimeLimit'] * 1000), false) .' min.');
 				break;
 
 			case Gameinfo::CUP:
 				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->cup['PointsLimit'] . '$g   R/C: {#black}' . $cuprpc);
 				break;
 
-			case Gameinfo::STUNTS:
-				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(5 * 60 * 1000, false));  // always 5 minutes?
-				break;
+//			case Gameinfo::STUNTS:
+//				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(5 * 60 * 1000, false) .' min.');  // always 5 minutes?
+//				break;
 		}
 		$stats[] = array('Max Players', '{#black}' . $aseco->server->options['CurrentMaxPlayers']);
 		$stats[] = array('Max Specs', '{#black}' . $aseco->server->options['CurrentMaxSpectators']);
@@ -309,51 +309,13 @@ class PluginChatServer extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function chat_nations ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			return;
-		}
-
-		$top = 10;
-		$query = "
-		SELECT
-			`Nation`,
-			COUNT(`Nation`) AS `Count`
-		FROM `%prefix%players`
-		GROUP BY `Nation`
-		ORDER BY `Count` DESC
-		LIMIT ". $top .";
-		";
-		$res = $aseco->db->query($query);
-		if ($res) {
-			// collect and sort nations
-			if ($res->num_rows > 0) {
-				$nations = array();
-				while ($row = $res->fetch_row()) {
-					$nations[$row[0]] = $row[1];
-				}
-			}
-			$res->free_result();
-		}
-		else {
-			trigger_error('No players/nations found!', E_USER_WARNING);
-			return;
-		}
-		arsort($nations);
-
-		$header = 'TOP 10 Most Visiting Nations:';
-		$nats = array();
-		$bgn = '{#black}';  // nation begin
-
-		// compile sorted nations
-		$i = 1;
-		foreach ($nations as $nat => $tot) {
-			$nats[] = array($i++ . '.', $bgn . $nat, $tot);
-		}
-
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink($player->login, $header, array('Icons128x128_1', 'Credits'), $nats, array(0.8, 0.1, 0.4, 0.3), 'OK');
+	public function chat_time ($aseco, $login, $chat_command, $chat_parameter) {
+		// show chat message
+		$message = $aseco->formatText($aseco->getChatMessage('TIME'),
+			date('H:i:s T'),
+			date('Y-m-d')
+		);
+		$aseco->sendChatMessage($message, $login);
 	}
 }
 

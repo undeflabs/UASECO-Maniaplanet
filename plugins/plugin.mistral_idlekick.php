@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-16
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ class PluginMistralIdlekick extends Plugin {
 
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
-		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndMap',			'onEndMap');
 
 		if (!$settings = $aseco->parser->xmlToArray('config/mistral_idlekick.xml', true, true)) {
@@ -196,7 +196,7 @@ class PluginMistralIdlekick extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		foreach ($aseco->server->players->player_list as $player) {
 			// Check for admin immunity

@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-24
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ class PluginRaspVotes extends Plugin {
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onEndMap1',		'onEndMap1');		// use pre event before all other processing
-		$this->registerEvent('onBeginMap1',		'onBeginMap1');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onPlayerCheckpoint',	'onPlayerCheckpoint');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
@@ -152,7 +152,7 @@ class PluginRaspVotes extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $data) {
+	public function onLoadingMap ($aseco, $data) {
 
 		// always enable voting after scoreboard
 		$this->disabled_scoreboard = false;
@@ -231,7 +231,7 @@ class PluginRaspVotes extends Plugin {
 
 		// in TimeAttack/Laps/Stunts modes, bail out immediately
 		// (ignoring the 1 EndRound event that happens at the end of the map)
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
 			return;
 		}
 
@@ -350,7 +350,7 @@ class PluginRaspVotes extends Plugin {
 		if (!empty($this->chatvote) || !empty($this->mxadd)) {
 			// check for expiration limit
 			$expire_limit = !empty($this->mxadd) ? $this->ta_expire_limit[5] : $this->ta_expire_limit[$this->chatvote['type']];
-			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+			$played = (time() - $aseco->server->maps->current->starttime);
 			if (($played - $this->ta_expire_start) >= $expire_limit) {
 				// check for type of vote
 				if (!empty($this->chatvote)) {
@@ -527,9 +527,9 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check for TimeAttack/Laps/Stunts modes
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
 			$message = '{#server}» {#error}Running {#highlite}$i ' .
-			           $aseco->server->gameinfo->getGamemodeName() .
+			           str_replace('_', ' ', $aseco->server->gameinfo->getModeName()) .
 			           '{#error} mode - end round disabled!';
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -647,9 +647,9 @@ class PluginRaspVotes extends Plugin {
 				return;
 			}
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && $this->ta_time_limits) {
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
-			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+			$played = (time() - $aseco->server->maps->current->starttime);
 			$info = $aseco->client->query('GetTimeAttackLimit');
 			$limit = $info['CurrentValue'] / 1000;  // convert to seconds
 
@@ -675,7 +675,7 @@ class PluginRaspVotes extends Plugin {
 		$aseco->plugins['PluginRaspJukebox']->plrvotes = array();
 		$this->r_expire_num = 0;
 		$this->ta_show_num = 0;
-		$this->ta_expire_start = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+		$this->ta_expire_start = (time() - $aseco->server->maps->current->starttime);
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
@@ -795,9 +795,9 @@ class PluginRaspVotes extends Plugin {
 				return;
 			}
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && $this->ta_time_limits) {
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
-			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+			$played = (time() - $aseco->server->maps->current->starttime);
 			$info = $aseco->client->query('GetTimeAttackLimit');
 			$limit = $info['CurrentValue'] / 1000;  // convert to seconds
 
@@ -823,7 +823,7 @@ class PluginRaspVotes extends Plugin {
 		$aseco->plugins['PluginRaspJukebox']->plrvotes = array();
 		$this->r_expire_num = 0;
 		$this->ta_show_num = 0;
-		$this->ta_expire_start = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+		$this->ta_expire_start = (time() - $aseco->server->maps->current->starttime);
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
@@ -926,9 +926,9 @@ class PluginRaspVotes extends Plugin {
 				return;
 			}
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK && $this->ta_time_limits) {
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
-			$played = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+			$played = (time() - $aseco->server->maps->current->starttime);
 			$info = $aseco->client->query('GetTimeAttackLimit');
 			$limit = $info['CurrentValue'] / 1000;  // convert to seconds
 
@@ -954,7 +954,7 @@ class PluginRaspVotes extends Plugin {
 		$aseco->plugins['PluginRaspJukebox']->plrvotes = array();
 		$this->r_expire_num = 0;
 		$this->ta_show_num = 0;
-		$this->ta_expire_start = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+		$this->ta_expire_start = (time() - $aseco->server->maps->current->starttime);
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
@@ -1045,7 +1045,7 @@ class PluginRaspVotes extends Plugin {
 				$aseco->plugins['PluginRaspJukebox']->plrvotes = array();
 				$this->r_expire_num = 0;
 				$this->ta_show_num = 0;
-				$this->ta_expire_start = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+				$this->ta_expire_start = (time() - $aseco->server->maps->current->starttime);
 
 				// compile & show chat message
 				$message = $aseco->formatText($this->messages['VOTE_START'][0],
@@ -1146,7 +1146,7 @@ class PluginRaspVotes extends Plugin {
 				$aseco->plugins['PluginRaspJukebox']->plrvotes = array();
 				$this->r_expire_num = 0;
 				$this->ta_show_num = 0;
-				$this->ta_expire_start = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+				$this->ta_expire_start = (time() - $aseco->server->maps->current->starttime);
 
 				// compile & show chat message
 				$message = $aseco->formatText($this->messages['VOTE_START'][0],

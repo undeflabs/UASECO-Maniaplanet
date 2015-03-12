@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-10
+ * Date:	2015-02-28
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -70,7 +70,7 @@ class PluginRasp extends Plugin {
 		$this->registerEvent('onStartup',		'onStartup');
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onMapListModified',	'onMapListModified');
-		$this->registerEvent('onBeginMap1',		'onBeginMap1');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onEndMap',		'onEndMap');
 		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
@@ -202,7 +202,7 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		if ($this->feature_stats && !$aseco->server->isrelay) {
 			foreach ($aseco->server->players->player_list as $pl) {
@@ -741,9 +741,8 @@ class PluginRasp extends Plugin {
 
 		// check whether to show PB (e.g. for /pb)
 		if (!$always_show) {
-			// check for ranked record that's already shown at map start,
-			// or for player's records panel showing it
-			if (($found && $aseco->settings['show_recs_before'] == 2) || $player->panels['records'] != '') {
+			// check for ranked record that's already shown at map start
+			if ($found && $aseco->plugins['PluginLocalRecords']->settings['show_recs_before'] == 2) {
 				return;
 			}
 		}

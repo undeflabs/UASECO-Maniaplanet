@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-02-11
+ * Date:	2015-02-28
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -95,9 +95,9 @@ class PluginManiaKarma extends Plugin {
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerFinish',			'onPlayerFinish');
-		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
-		$this->registerEvent('onEndMap1',			'onEndMap1');
+		$this->registerEvent('onEndMapRanking',			'onEndMapRanking');
 		$this->registerEvent('onUnloadingMap',			'onUnloadingMap');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onKarmaChange',			'onKarmaChange');
@@ -561,11 +561,11 @@ class PluginManiaKarma extends Plugin {
 		$gamemodes = array(
 			'score'		=> 0,
 			'rounds'	=> Gameinfo::ROUNDS,
-			'time_attack'	=> Gameinfo::TIMEATTACK,
+			'time_attack'	=> Gameinfo::TIME_ATTACK,
 			'team'		=> Gameinfo::TEAM,
 			'laps'		=> Gameinfo::LAPS,
 			'cup'		=> Gameinfo::CUP,
-			'team_attack'	=> Gameinfo::TEAMATTACK,
+			'team_attack'	=> Gameinfo::TEAM_ATTACK,
 			'chase'		=> Gameinfo::CHASE,
 			'stunts'	=> Gameinfo::STUNTS,
 		);
@@ -1228,7 +1228,7 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		// Reset and Setup data for MultiVotes
 		$this->karma = $this->setEmptyKarma(true);
@@ -1404,7 +1404,7 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $data) {
+	public function onEndMapRanking ($aseco, $data) {
 
 		// If there no players, bail out immediately
 		if (count($aseco->server->players->player_list) == 0) {
@@ -3473,7 +3473,7 @@ EOL;
 				// Set the $destination to the $source vote
 				$this->karma[$destination]['players'][$login]['vote'] = $votes['vote'];
 
-				// Set the sync'd vote as a new vote to store them into the database at onBeginMap
+				// Set the sync'd vote as a new vote to store them into the database at onLoadingMap
 				if ($setup_global === true) {
 					$this->karma['new']['players'][$login] = $votes['vote'];
 				}

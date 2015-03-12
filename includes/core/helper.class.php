@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-10
+ * Date:	2015-03-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -52,9 +52,9 @@ class Helper {
 		$xml = '<manialink id="UASECO-LoadStatus" version="1">';
 		if ($message !== false && $this->startup_phase === true) {
 			$xml .= '<frame posn="-44.375 60.75 0.01">';
-			$xml .= '<quad posn="0 0 0.01" sizen="88.75 16.125" url="'. UASECO_WEBSITE .'" image="http://www.uaseco.org/media/uaseco/logo-uaseco.png"/>';
-			$xml .= '<label posn="0 -16 0.02" sizen="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
-			$xml .= '<gauge posn="0 -18 0.03" sizen="88.75 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
+			$xml .= '<quad posn="0 0 0.01" sizen="91.8 22.4" url="'. UASECO_WEBSITE .'" image="http://www.uaseco.org/media/uaseco/logo-uaseco.png"/>';
+			$xml .= '<label posn="1.8 -22 0.02" sizen="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
+			$xml .= '<gauge posn="0 -24 0.03" sizen="91.8 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
 			$xml .= '</frame>';
 		}
 		$xml .= '</manialink>';
@@ -146,7 +146,7 @@ class Helper {
 		$amount_players = $amount_players - $amount_spectators;
 
 		// Create Server informations
-		$xml = '<?xml version="1.0" encoding="utf-8"?>'.LF;
+		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'.LF;
 		$xml .= '<info>'.LF;
 		$xml .= ' <timestamp>'. time() .'</timestamp>'.LF;
 		$xml .= ' <uaseco>'.LF;
@@ -169,8 +169,8 @@ class Helper {
 		$xml .= '  <mode>'.LF;
 		$xml .= '   <title>'. $this->server->title .'</title>'.LF;
 		$xml .= '   <script>'.LF;
-		$xml .= '    <name>'. $this->server->gameinfo->getGamemodeScriptname() .'</name>'.LF;
-		$xml .= '    <version>'. $this->server->gameinfo->getGamemodeVersion() .'</version>'.LF;
+		$xml .= '    <name>'. $this->server->gameinfo->getModeScriptName() .'</name>'.LF;
+		$xml .= '    <version>'. $this->server->gameinfo->getModeVersion() .'</version>'.LF;
 		$xml .= '   </script>'.LF;
 		$xml .= '  </mode>'.LF;
 		$xml .= '  <players>'.LF;
@@ -359,7 +359,7 @@ class Helper {
 	public function sendManialink ($widgets, $logins = false, $timeout = 0, $hideclick = false) {
 
 		if ($widgets != '') {
-			$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
+			$xml  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 			$xml .= $widgets;
 
 			if ($logins !== false) {
@@ -401,7 +401,7 @@ class Helper {
 	public function addManialink ($widgets, $logins = false, $timeout = 0, $hideclick = false) {
 
 		if ($widgets != '') {
-			$xml  = '<?xml version="1.0" encoding="UTF-8"?>';
+			$xml  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 			$xml .= $widgets;
 
 			if ($logins !== false) {
@@ -500,7 +500,7 @@ class Helper {
 		$newlist = array();
 		foreach (explode(',', $csv) as $item) {
 			$item = trim($item);
-			if ($item != false) {
+			if (!empty($item)) {
 				$newlist[] = $item;
 			}
 		}
@@ -782,7 +782,7 @@ class Helper {
 			}
 		}
 		if ($short === true) {
-			$timestring .= sprintf("%d sec. ", $seconds);
+			$timestring .= sprintf("%d sec.", $seconds);
 		}
 		else {
 			$timestring .= sprintf("%d second%s", $seconds, ($seconds == 1 ? ' ' : 's'));
@@ -1575,7 +1575,7 @@ class Helper {
 		$adminops_file = $this->settings['adminops_file'];
 
 		// compile lists file contents
-		$lists  = '<?xml version="1.0" encoding="utf-8"?>'. CRLF;
+		$lists  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'. CRLF;
 		$lists .= '<lists>'. CRLF;
 		$lists .= "\t" . '<titles>'. CRLF;
 		foreach ($this->titles as $title => $value) {
@@ -1684,7 +1684,7 @@ class Helper {
 		$empty = true;
 
 		// compile banned IPs file contents
-		$list  = '<?xml version="1.0" encoding="utf-8"?>'. CRLF;
+		$list  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'. CRLF;
 		$list .= '<ban_list>'. CRLF;
 		for ($i = 0; $i < count($this->banned_ips); $i++) {
 			if ($this->banned_ips[$i] != '') {
@@ -1729,6 +1729,9 @@ class Helper {
 
 				// Throw 'shutting down' event
 				$this->releaseEvent('onShutdown', null);
+
+				// Make sure the Dedicated-Server have the control
+				$this->client->query('ManualFlowControlEnable', false);
 
 				try {
 					// Clear all ManiaLinks
@@ -1808,7 +1811,7 @@ class Helper {
 
 		// On stop or crash replace old logfile
 		if (file_exists($this->logfile['file']) && !$this->logfile['handle']) {
-			rename($this->logfile['file'], $dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s') .'.txt');
+			@rename($this->logfile['file'], $dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s') .'.txt');
 		}
 
 		// Check for logfiles from the past
@@ -1826,7 +1829,7 @@ class Helper {
 					$result = preg_match('/-current\.txt$/', $logfile);
 					if ($result !== false && $result >= 1) {
 						// Rename all logfiles marked with "-current.txt" and older then one hour
-						rename(
+						@rename(
 							$dir . DIRECTORY_SEPARATOR . $logfile,
 							$dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s', $lastmodified) .'.txt'
 						);

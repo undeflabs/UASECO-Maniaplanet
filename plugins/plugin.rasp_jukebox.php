@@ -11,8 +11,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-24
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,6 @@
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.dedimania.php
  *  - plugins/chat.records.php
- *  - plugins/plugin.map.php
  *  - plugins/plugin.rasp_votes.php
  *
  */
@@ -75,7 +74,6 @@ class PluginRaspJukebox extends Plugin {
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginChatRecords',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginMap',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDedimania',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
 
@@ -91,7 +89,7 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onEndMap',	'onEndMap');
-		$this->registerEvent('onBeginMap',	'onBeginMap');
+		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 
 		$this->registerChatCommand('list',	'chat_list',		'Lists maps currently on the server (see: /list help)',		Player::PLAYERS);
 		$this->registerChatCommand('jukebox',	'chat_jukebox',		'Sets map to be played next (see: /jukebox help)',		Player::PLAYERS);
@@ -127,7 +125,7 @@ class PluginRaspJukebox extends Plugin {
 			// keep only most recent $this->buffersize entries
 			$this->jb_buffer = array_slice($this->jb_buffer, -$this->buffersize);
 
-			// drop current (last) map as onBeginMap() will add it back
+			// drop current (last) map as onLoadingMap() will add it back
 			array_pop($this->jb_buffer);
 		}
 	}
@@ -252,7 +250,7 @@ class PluginRaspJukebox extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
@@ -289,9 +287,9 @@ class PluginRaspJukebox extends Plugin {
 		// process jukebox
 		if (!empty($this->jukebox)) {
 			if ($aseco->debug) {
-				$aseco->console_text('onBeginMap step1 - $map->uid: '. $map->uid);
-				$aseco->console_text('onBeginMap step1 - $this->jukebox_check: '. $this->jukebox_check);
-				$aseco->console_text('onBeginMap step1 - $this->jukebox:'. CRLF .
+				$aseco->console_text('onLoadingMap step1 - $map->uid: '. $map->uid);
+				$aseco->console_text('onLoadingMap step1 - $this->jukebox_check: '. $this->jukebox_check);
+				$aseco->console_text('onLoadingMap step1 - $this->jukebox:'. CRLF .
 					print_r($this->jukebox, true)
 				);
 			}
@@ -325,7 +323,7 @@ class PluginRaspJukebox extends Plugin {
 				unset($this->jukebox[$map->uid]);
 
 				if ($aseco->debug) {
-					$aseco->console_text('onBeginMap step2a - $this->jukebox:'. CRLF .
+					$aseco->console_text('onLoadingMap step2a - $this->jukebox:'. CRLF .
 						print_r($this->jukebox, true)
 					);
 				}
@@ -350,7 +348,7 @@ class PluginRaspJukebox extends Plugin {
 						unset($this->jukebox[$this->jukebox_check]);
 
 						if ($aseco->debug) {
-							$aseco->console_text('onBeginMap step2b - $this->jukebox:'. CRLF .
+							$aseco->console_text('onLoadingMap step2b - $this->jukebox:'. CRLF .
 								print_r($this->jukebox, true)
 							);
 						}
@@ -373,7 +371,7 @@ class PluginRaspJukebox extends Plugin {
 			// unless it is permanent
 			if (!$this->jukebox_permadd) {
 				if ($aseco->debug) {
-					$aseco->console_text('onBeginMap step3 - remove: '. $this->mxplayed);
+					$aseco->console_text('onLoadingMap step3 - remove: '. $this->mxplayed);
 				}
 				try {
 					$aseco->client->query('RemoveMap', $this->mxplayed);
@@ -443,7 +441,7 @@ class PluginRaspJukebox extends Plugin {
 					foreach ($aseco->server->players->player_list as $pl) {
 						if ($pl->login == $next['Login'] || ($this->jukebox_adminnoskip && $aseco->isAnyAdminL($next['Login']))) {
 							// found player, so proceed to play this map
-							// put it back for onBeginMap to remove
+							// put it back for onLoadingMap to remove
 							$uid = $next['uid'];
 							$this->jukebox = array_merge(array($uid => $next), $this->jukebox);
 							break 2;  // exit foreach & while
@@ -476,7 +474,7 @@ class PluginRaspJukebox extends Plugin {
 				// just play the next map
 				$next = array_shift($this->jukebox);
 
-				// put it back for onBeginMap to remove
+				// put it back for onLoadingMap to remove
 				$uid = $next['uid'];
 				$this->jukebox = array_merge(array($uid => $next), $this->jukebox);
 			}
@@ -1268,7 +1266,7 @@ class PluginRaspJukebox extends Plugin {
 						if ( isset($aseco->plugins['PluginRaspVotes']) ) {
 							$aseco->plugins['PluginRaspVotes']->r_expire_num = 0;
 							$aseco->plugins['PluginRaspVotes']->ta_show_num = 0;
-							$aseco->plugins['PluginRaspVotes']->ta_expire_start = $aseco->plugins['PluginMap']->getTimePlayingMap($aseco);
+							$aseco->plugins['PluginRaspVotes']->ta_expire_start = (time() - $aseco->server->maps->current->starttime);
 						}
 
 						// compile & show chat message

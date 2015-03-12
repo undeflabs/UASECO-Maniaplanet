@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-16
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-12
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -179,8 +179,8 @@ class MapList {
 		$uid = false;
 		if (isset($aseco->plugins['PluginRaspJukebox']->jukebox) && count($aseco->plugins['PluginRaspJukebox']->jukebox) > 0) {
 			foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $map) {
-				// Need just the next juke'd Map Information, not more
-				$uid = $map->uid;
+				// Need just the next Map UID
+				$uid = $map['uid'];
 				break;
 			}
 			unset($map);
@@ -359,7 +359,7 @@ class MapList {
 			$new = $this->insertMapIntoDatabase($map);
 
 			// Update the Maplist
-			if ($new->uid) {
+			if ($new->id > 0) {
 				$this->map_list[$new->uid] = $new;
 			}
 		}
@@ -369,7 +369,7 @@ class MapList {
 			$result = $this->updateMapInDatabase($map);
 
 			// Update the Maplist
-			if ($result) {
+			if ($result == true) {
 				$this->map_list[$map->uid] = $map;
 			}
 		}
@@ -429,25 +429,48 @@ class MapList {
 			}
 		}
 		else {
-			$authorid = $result['AuthorId'];
+			if ($map->author_continent != '' && $map->author_nation != 'OTH') {
+				$query = "
+				UPDATE `%prefix%authors`
+				SET
+					`Nickname` = ". $aseco->db->quote($map->author_nickname) .",
+					`Zone` = ". $aseco->db->quote(implode('|', $map->author_zone)) .",
+					`Continent` = ". $aseco->db->quote($map->author_continent) .",
+					`Nation` = ". $aseco->db->quote($map->author_nation) ."
+				WHERE `AuthorId` = ". $result['AuthorId'] ."
+				LIMIT 1;
+				";
 
-			$query = "
-			UPDATE `%prefix%authors`
-			SET
-				`Nickname` = ". $aseco->db->quote($map->author_nickname) .",
-				`Zone` = ". $aseco->db->quote(implode('|', $map->author_zone)) .",
-				`Continent` = ". $aseco->db->quote($map->author_continent) .",
-				`Nation` = ". $aseco->db->quote($map->author_nation) ."
-			WHERE `AuthorId` = ". $authorid ."
-			LIMIT 1;
-			";
-
-			$result = $aseco->db->query($query);
-			if ($result) {
-				return $authorid;
+				$result = $aseco->db->query($query);
+				if ($result) {
+					return $result['AuthorId'];
+				}
+				else {
+					return 0;
+				}
 			}
 			else {
-				return 0;
+				$query = "
+				SELECT
+					`AuthorId`,
+					`Login`,
+					`Nickname`,
+					`Zone`,
+					`Continent`,
+					`Nation`
+				FROM `%prefix%authors`
+				WHERE `Login` = ". $aseco->db->quote($map->author) ."
+				LIMIT 1;
+				";
+				$result = $aseco->db->select_one($query);
+
+				$map->author		= $result['Login'];
+				$map->author_nickname	= $result['Nickname'];
+				$map->author_zone	= explode('|', $result['Zone']);
+				$map->author_continent	= $result['Continent'];
+				$map->author_nation	= $result['Nation'];
+
+				return $result['AuthorId'];
 			}
 		}
 	}

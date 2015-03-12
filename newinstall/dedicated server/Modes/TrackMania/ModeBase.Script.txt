@@ -4,7 +4,7 @@
 
 #RequireContext CTmMode
 
-#Const	ModeBaseVersion		"2014-11-27"
+#Const	ModeBaseVersion		"2015-02-18"
 #Const	ModeBaseScriptName	"ModeBase.Script.txt"
 
 #Include "Libs/Nadeo/Mode.Script.txt" as Mode
@@ -566,17 +566,27 @@ main() {
 			
 			+++BeforeLoadMap+++
 			
-			// Load map
-			XmlRpc::LoadingMap(MB_SectionMapNb);
-			MB_LoadMap();
-			
-			if (MB_UseLogging) MB_Log("StartMap");
-			
 			// Initialize players for intro
 			foreach (UI in UIManager.UI) {
 				declare MB_HasSeenIntro for UI = False;
 				MB_HasSeenIntro = False;
 			}
+			if (MB_UseIntro) {
+				foreach (Player in AllPlayers) {
+					declare UI <=> UIManager.GetUI(Player);
+					if (UI != Null) UI.UISequence = CUIConfig::EUISequence::Intro;
+				}
+			}
+			foreach (Player in Players) {
+				Player.IsSpawned = True;
+			}
+			
+			// Load map
+			XmlRpc::LoadingMap(MB_SectionMapNb);
+			MB_LoadMap();
+			
+			
+			if (MB_UseLogging) MB_Log("StartMap");
 			
 			+++InitMap+++
 			
@@ -588,6 +598,10 @@ main() {
 				---MapIntro---
 			}
 			MB_Synchro_DoBarrier();
+			
+			foreach (Player in AllPlayers) {
+				Player.IsSpawned = False;
+			}
 			
 			+++StartMap+++
 			XmlRpc::BeginMapStop(MB_SectionMapNb, MB_MapRestarted);

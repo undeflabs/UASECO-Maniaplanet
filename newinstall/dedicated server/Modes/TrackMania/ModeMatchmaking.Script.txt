@@ -5,7 +5,7 @@
  */
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const ModeMatchmakingVersion		"2014-12-31"
+#Const ModeMatchmakingVersion		"2015-02-13"
 #Const ModeMatchmakingScriptName	"ModeMatchmaking.Script.txt"
 
 #Include "TextLib" as TL
@@ -27,6 +27,7 @@
 #Setting S_MatchmakingRematchNbMax	2			as "<hidden>"	///< Maxium number of consecutive rematch
 #Setting S_MatchmakingVoteForMap	False		as "<hidden>"	///< Allow players to vote for the next played map
 #Setting S_MatchmakingProgressive	False		as "<hidden>"	///< Can start a match with less players than the required number
+#Setting S_MatchmakingWaitingTime	45			as "<hidden>"	///< Waiting time at the beginning of the matches
 #Setting S_LobbyRoundPerMap  		6			as "<hidden>"	///< "Nb of rounds per map in lobby mode")
 #Setting S_LobbyMatchmakerPerRound	30			as "<hidden>"	///< Number of matchmaker call in a "King of the Lobby" round
 #Setting S_LobbyMatchmakerWait		2			as "<hidden>"	///< Waiting time before the next call to the matchmaking function
@@ -679,6 +680,8 @@ Void Private_Lobby_SpawnPlayers() {
 			
 			SpawnThePlayer = !MMLobby::IsOnVersusScreen(Player);
 			
+			if (SpawnThePlayer) SpawnThePlayer = !MMLobby::IsBeingTransferred(Player);
+			
 			if (SpawnThePlayer || UI == Null) {
 				TM2::StartRace(Player);
 			}
@@ -1072,7 +1075,7 @@ Void MM_WaitPlayers(Integer _MaxDuration) {
 // ---------------------------------- //
 /// Prepare a new match
 Void Private_MM_PrepareMatch() {
-	CutOffTimeLimit = MMMatch::PrepareMatch_Begin(Now);
+	CutOffTimeLimit = MMMatch::PrepareMatch_Begin(Now, S_MatchmakingWaitingTime);
 	Layers::Attach("StartingMatch");
 	
 	while (MMMatch::PrepareMatch_IsRunning()) {

@@ -9,10 +9,11 @@
  *   2014-10-03: Renamed query() into singlequery(), changed parameter for addCall() and query()
  *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
  *   2015-01-28: Added a try/catch at query() to catch all exception (possibly forgotten by Plugin authors)
+ *   2015-02-18: Added ignore list for error messages for ListMethods
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-31
+ * Date:	2015-02-18
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -52,6 +53,10 @@ class GbxRemote {
 	private $callbacksBuffer	= array();
 	private $multicallBuffer	= array();
 	private $lastNetworkActivity	= 0;
+
+	private $ignore_error_messages	= array(
+		'Start index out of bound.',					// GetMapList
+	);
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -180,12 +185,15 @@ class GbxRemote {
 			return $this->singlequery($method, $args);
 		}
 		catch (Exception $exception) {
-			if ($aseco->debug) {
-				$aseco->console_text('[UASECO Exception] Error returned: "'. $exception->getMessage() .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
-				$aseco->dump($args);
-			}
-			else {
-				$aseco->console_text('[UASECO Exception] Error returned: "'. $exception->getMessage() .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
+			$message = $exception->getMessage();
+			if (!in_array($message, $this->ignore_error_messages)) {
+				if ($aseco->debug) {
+					$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
+					$aseco->dump($args);
+				}
+				else {
+					$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
+				}
 			}
 		}
 	}

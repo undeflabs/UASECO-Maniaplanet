@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2014-11-25
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ class PluginTachometer extends Plugin {
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
-		$this->registerEvent('onBeginMap',			'onBeginMap');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
 	}
@@ -87,12 +87,12 @@ class PluginTachometer extends Plugin {
 			'sizes' => array(
 				'scale'					=> $aseco->formatFloat($settings['SCALE'][0]),
 				'background' => array(
-					'x'				=> 47.75,
-					'y'				=> 47.75,
+					'x'				=> 95.5,
+					'y'				=> 95.5,
 				),
 				'needle' => array(
-					'x'				=> 43.8125,
-					'y'				=> 43.8125,
+					'x'				=> 87.625,
+					'y'				=> 87.625,
 				),
 			),
 			'display' => array(
@@ -174,7 +174,7 @@ class PluginTachometer extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		$xml = $this->buildTachometer(true);
 		$aseco->sendManiaLink($xml, false);
@@ -224,7 +224,6 @@ $maniascript = <<<EOL
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
-#Include "AnimLib" as AnimLib
 Text AdjustLength (Text _String, Integer _MaxLength) {
 	declare Text String = _String;
 	while (TextLib::Length(String) < _MaxLength) {
@@ -296,6 +295,11 @@ main() {
 	QuadTachoscale11.Opacity		= 0.0;
 	QuadTachoscale12.Opacity		= 0.0;
 
+	LabelGearParking.Opacity		= 1.0;
+	LabelGearReverse.Opacity		= 0.5;
+	LabelGearNeutral.Opacity		= 0.5;
+	LabelGearDriving.Opacity		= 0.5;
+
 	declare Text[] QuadTachoscaleIds = [
 		"QuadTachoscale01",
 		"QuadTachoscale02",
@@ -310,6 +314,7 @@ main() {
 		"QuadTachoscale11",
 		"QuadTachoscale12"
 	];
+
 	while (True) {
 		yield;
 		if (!PageIsVisible || InputPlayer == Null) {
@@ -435,7 +440,7 @@ EOL;
 		if ($show == true) {
 			$xml .= '<frame posn="'. $this->config['tachometer']['position']['x'] .' '. $this->config['tachometer']['position']['y'] .' '. $this->config['tachometer']['position']['z'] .'" id="FrameTachometer">';
 			$xml .= '<quad posn="0 0 0.01" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" image="'. $this->config['tachometer']['images']['background'] .'" id="QuadTachometer"/>';
-			$xml .= '<quad posn="0 -1.1 0.05" sizen="'. $this->config['tachometer']['sizes']['needle']['x'] .' '. $this->config['tachometer']['sizes']['needle']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['needle'] .'" image="'. $this->config['tachometer']['images']['needle'] .'" id="QuadTachoneedle"/>';
+			$xml .= '<quad posn="0 -2.2 0.05" sizen="'. $this->config['tachometer']['sizes']['needle']['x'] .' '. $this->config['tachometer']['sizes']['needle']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['needle'] .'" image="'. $this->config['tachometer']['images']['needle'] .'" id="QuadTachoneedle"/>';
 			$xml .= '<quad posn="0 0 0.03" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['complete'] .'" image="'. $this->config['tachometer']['images']['scale']['complete'] .'" id="QuadTachoscale"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][1] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][1] .'" id="QuadTachoscale01"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][2] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][2] .'" id="QuadTachoscale02"/>';
@@ -449,23 +454,23 @@ EOL;
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][10] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][10] .'" id="QuadTachoscale10"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][11] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][11] .'" id="QuadTachoscale11"/>';
 			$xml .= '<quad posn="0 0 0.04" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['tiles'][12] .'" image="'. $this->config['tachometer']['images']['scale']['tiles'][12] .'" id="QuadTachoscale12"/>';
-			$xml .= '<label posn="0 7.2 0.04" sizen="10 2" halign="center" valign="center2" style="TextButtonSmall" textsize="0.5" text="'. $this->config['tachometer']['display']['velocity_unit'] .'" id="LabelVelocityUnit"/>';
-			$xml .= '<label posn="0 3.4 0.04" sizen="40 10" halign="center" valign="center2" style="TextButtonBig" textsize="4.7" text="0" id="LabelSpeed"/>';
+			$xml .= '<label posn="0 14.4 0.04" sizen="20 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="'. $this->config['tachometer']['display']['velocity_unit'] .'" id="LabelVelocityUnit"/>';
+			$xml .= '<label posn="0 6.8 0.04" sizen="80 20" halign="center" valign="center2" style="TextButtonBig" textsize="10" text="0" id="LabelSpeed"/>';
 
-			$xml .= '<frame posn="-5.55 -1 0.04">';
-			$xml .= '<label posn="0 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance1"/>';
-			$xml .= '<label posn="2.25 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance2"/>';
-			$xml .= '<label posn="4.5 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance3"/>';
-			$xml .= '<label posn="6.75 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance4"/>';
-			$xml .= '<label posn="9 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance5"/>';
-			$xml .= '<label posn="11.25 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonSmall" textsize="1" scale="0.8" text="0" id="LabelDistance6"/>';
+			$xml .= '<frame posn="-11.1 -1.9 0.04">';
+			$xml .= '<label posn="0 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance1"/>';
+			$xml .= '<label posn="4.5 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance2"/>';
+			$xml .= '<label posn="9 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance3"/>';
+			$xml .= '<label posn="13.5 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance4"/>';
+			$xml .= '<label posn="18 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance5"/>';
+			$xml .= '<label posn="22.5 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance6"/>';
 			$xml .= '</frame>';
 
-			$xml .= '<frame posn="-6 -5.4 0.04">';
-			$xml .= '<label posn="0 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="P" id="LabelGearParking"/>';
-			$xml .= '<label posn="4 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="R" id="LabelGearReverse"/>';
-			$xml .= '<label posn="8 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="N" id="LabelGearNeutral"/>';
-			$xml .= '<label posn="12 0 0.04" sizen="4 2" halign="center" valign="center2" style="TextButtonMedium" textsize="1.5" text="D" id="LabelGearDriving"/>';
+			$xml .= '<frame posn="-12 -10.8 0.04">';
+			$xml .= '<label posn="0 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonMedium" textsize="3" text="P" id="LabelGearParking"/>';
+			$xml .= '<label posn="8 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonMedium" textsize="3" text="R" id="LabelGearReverse"/>';
+			$xml .= '<label posn="16 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonMedium" textsize="3" text="N" id="LabelGearNeutral"/>';
+			$xml .= '<label posn="24 0 0.04" sizen="8 4" halign="center" valign="center2" style="TextButtonMedium" textsize="3" text="D" id="LabelGearDriving"/>';
 			$xml .= '</frame>';
 
 			$xml .= '</frame>';

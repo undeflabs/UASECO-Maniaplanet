@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - February 2015 by undef.de
+ * Copyright:	May 2014 - March 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,11 +42,11 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-02-11');
+	define('UASECO_BUILD',		'2015-03-12');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2015-02-10_18_00');
+	define('MANIAPLANET_BUILD',	'2015-03-09_18_00');
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.2.1');
 
@@ -327,7 +327,7 @@ class UASECO extends Helper {
 			$this->console('[UASECO] Waiting for the server to start a map...');
 		}
 		else {
-			$this->beginMap($this->server->maps->current->uid);
+			$this->loadingMap($this->server->maps->current->uid);
 		}
 
 		// Startup done
@@ -444,12 +444,12 @@ class UASECO extends Helper {
 		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') == 1 ? '' : 's');
 
 		$this->console_text('#####################################################################################');
-		$this->console_text('» Server:    {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripColors($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
+		$this->console_text('» Server:    {1} ({2}), join link: "maniaplanet://#join={3}@{4}" or "http://maniapla.net/#join={5}"', $this->stripColors($this->server->name, false), $this->server->login, $this->server->login, $this->server->title, $this->server->login);
 		if ($this->server->isrelay) {
 			$this->console_text('=> Relays:    {1} - {2}', $this->stripColors($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:     {1}', $this->server->title);
-		$this->console_text('» Gamemode:  "{1}" with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
+		$this->console_text('» Gamemode:  "{1}" with script {2} version {3}', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»            Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
@@ -464,7 +464,7 @@ class UASECO extends Helper {
 		$this->console_text('» Website:   {1}', UASECO_WEBSITE);
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:        {1}', php_uname());
-		$this->console_text('» PHP:       PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), $this->bool2string(ini_get('safe_mode')), $this->bytes2shorthand(ini_get('memory_limit'), 'M'), $max_execution_time, $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
+		$this->console_text('» PHP:       PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), $this->bool2string(ini_get('safe_mode')), ini_get('memory_limit'), $max_execution_time, $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
 		$this->console_text('» MySQL:     Server:  {1}', $this->db->server_version());
 		$this->console_text('»            Client:  {1}', $this->db->client_version());
 		$this->console_text('»            Connect: {1}', $this->db->connection_info());
@@ -495,7 +495,6 @@ class UASECO extends Helper {
 		$this->console_text('#### DEBUG ##########################################################################');
 		$this->console_text('» StartupPhase:  {1}', $this->bool2string($this->startup_phase));
 		$this->console_text('» WarmupPhase:   {1}', $this->bool2string($this->warmup_phase));
-		$this->console_text('» ChangingMode:  {1}', $this->bool2string($this->changing_to_gamemode));
 		$this->console_text('» Restarting:    {1}', $this->bool2string($this->restarting));
 		$this->console_text('» CurrentStatus: [{1}] {2}', $this->current_status, $this->server->state_names[$this->current_status]);
 		$this->console_text('» -----------------------------------------------------------------------------------');
@@ -516,15 +515,19 @@ class UASECO extends Helper {
 		$this->console_text('» RegEvents:     {1} : {2} bytes', sprintf("%5s", count($this->registered_events)), sprintf("%10s", $this->formatNumber(strlen(serialize($this->registered_events)),0,'.','.')));
 		$this->console_text('» RegChatCmds:   {1} : {2} bytes', sprintf("%5s", count($this->registered_chatcmds)), sprintf("%10s", $this->formatNumber(strlen(serialize($this->registered_chatcmds)),0,'.','.')));
 		$this->console_text('» -----------------------------------------------------------------------------------');
+		$this->console_text('» Server:        {1} ({2}), join link: "maniaplanet://#join={3}@{4}" or "http://maniapla.net/#join={5}"', $this->stripColors($this->server->name, false), $this->server->login, $this->server->login, $this->server->title, $this->server->login);
+		if ($this->server->isrelay) {
+			$this->console_text('=> Relays:       {1} - {2}', $this->stripColors($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
+		}
 		$this->console_text('» Title:         {1}', $this->server->title);
-		$this->console_text('» Gamemode:      "{1}" with script {2} version {3}', $this->server->gameinfo->getGamemodeName(), $this->server->gameinfo->getGamemodeScriptname(), $this->server->gameinfo->getGamemodeVersion());
+		$this->console_text('» Gamemode:      "{1}" with script {2} version {3}', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
 		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
-		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), $this->bool2string(ini_get('safe_mode')), $this->bytes2shorthand(ini_get('memory_limit'), 'M'), $max_execution_time, $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
+		$this->console_text('» PHP:           PHP/{1} with settings: SafeMode: {2}, MemoryLimit: {3}, MaxExecutionTime: {4}, AllowUrlFopen: {5}', phpversion(), $this->bool2string(ini_get('safe_mode')), ini_get('memory_limit'), $max_execution_time, $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
 		$this->console_text('» MySQL:         Server:  {1}', $this->db->server_version());
 		$this->console_text('»                Client:  {1}', $this->db->client_version());
 		$this->console_text('»                Connect: {1}', $this->db->connection_info());
@@ -586,11 +589,17 @@ class UASECO extends Helper {
 					trigger_error("MasterAdmin mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
 			}
 
-			// set admin contact
+			// Set admin contact
 			$this->settings['admin_contact'] = $settings['ADMIN_CONTACT'][0];
+			if (strtolower($this->settings['admin_contact']) == 'your@email.com') {
+				$this->console('[WARNING] You should setup a working mail to concact you at <admin_contact>!');
+			}
 
-			// set admin lock password
+			// Set admin lock password
 			$this->settings['lock_password'] = $settings['LOCK_PASSWORD'][0];
+			if (empty($this->settings['lock_password'])) {
+				$this->console('[WARNING] To increase security you should setup a lock password at <lock_password>!');
+			}
 
 			// set cheater action
 			$this->settings['cheater_action'] = $settings['CHEATER_ACTION'][0];
@@ -765,7 +774,8 @@ class UASECO extends Helper {
 
 					// Load only plugins that were configured right...
 					if (!isset($_PLUGIN) || get_parent_class($_PLUGIN) != 'Plugin') {
-						trigger_error('$_PLUGIN was not set or was set in a wrong way in the file [plugins/'. $plugin .'].'. CRLF .'This is probably an old version of the plugin, update it or remove it from the [config/plugins.xml]!', E_USER_ERROR);
+						trigger_error('require_once() does not load the file [plugins/'. $plugin .'] from <plugin> position '. ($count + 1) .', which means that this Plugin is probably an old version or it is added twice at [config/plugins.xml]!', E_USER_WARNING);
+						continue;
 					}
 
 					$count ++;
@@ -1130,12 +1140,12 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%authors` (
-		  `AuthorId` mediumint(3) unsigned NOT NULL AUTO_INCREMENT,
-		  `Login` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nickname` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Zone` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Continent` varchar(2) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nation` varchar(3) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `AuthorId` mediumint(3) unsigned AUTO_INCREMENT,
+		  `Login` varchar(64) COLLATE utf8_bin DEFAULT '',
+		  `Nickname` varchar(100) COLLATE utf8_bin DEFAULT '',
+		  `Zone` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `Continent` varchar(2) COLLATE utf8_bin DEFAULT '',
+		  `Nation` varchar(3) COLLATE utf8_bin DEFAULT '',
 		  PRIMARY KEY (`AuthorId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
@@ -1149,33 +1159,33 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%maps` (
-		  `MapId` mediumint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-		  `Uid` varchar(27) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Filename` text COLLATE utf8_bin NOT NULL,
-		  `Name` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Comment` text COLLATE utf8_bin NOT NULL,
-		  `AuthorId` mediumint(3) unsigned NOT NULL,
-		  `AuthorScore` int(4) unsigned NOT NULL,
-		  `AuthorTime` int(4) unsigned NOT NULL,
-		  `GoldTime` int(4) unsigned NOT NULL,
-		  `SilverTime` int(4) unsigned NOT NULL,
-		  `BronzeTime` int(4) unsigned NOT NULL,
-		  `Environment` varchar(10) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `MapId` mediumint(3) UNSIGNED AUTO_INCREMENT,
+		  `Uid` varchar(27) COLLATE utf8_bin DEFAULT '',
+		  `Filename` text COLLATE utf8_bin,
+		  `Name` varchar(100) COLLATE utf8_bin DEFAULT '',
+		  `Comment` text COLLATE utf8_bin,
+		  `AuthorId` mediumint(3) unsigned DEFAULT '0',
+		  `AuthorScore` int(4) unsigned DEFAULT '0',
+		  `AuthorTime` int(4) unsigned DEFAULT '0',
+		  `GoldTime` int(4) unsigned DEFAULT '0',
+		  `SilverTime` int(4) unsigned DEFAULT '0',
+		  `BronzeTime` int(4) unsigned DEFAULT '0',
+		  `Environment` varchar(10) COLLATE utf8_bin DEFAULT '',
 		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE utf8_bin NOT NULL,
-		  `Cost` mediumint(3) unsigned NOT NULL,
-		  `Type` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Style` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '',
+		  `Cost` mediumint(3) unsigned DEFAULT '0',
+		  `Type` varchar(32) COLLATE utf8_bin DEFAULT '',
+		  `Style` varchar(16) COLLATE utf8_bin DEFAULT '',
 		  `MultiLap` enum('false','true') COLLATE utf8_bin NOT NULL,
-		  `NbLaps` tinyint(1) unsigned NOT NULL,
-		  `NbCheckpoints` tinyint(1) unsigned NOT NULL,
+		  `NbLaps` tinyint(1) unsigned DEFAULT '0',
+		  `NbCheckpoints` tinyint(1) unsigned DEFAULT '0',
 		  `Validated` enum('null','false','true') COLLATE utf8_bin NOT NULL,
-		  `ExeVersion` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ExeBuild` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ModName` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ModFile` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `ModUrl` text COLLATE utf8_bin NOT NULL,
-		  `SongFile` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `SongUrl` text COLLATE utf8_bin NOT NULL,
+		  `ExeVersion` varchar(16) COLLATE utf8_bin DEFAULT '',
+		  `ExeBuild` varchar(32) COLLATE utf8_bin DEFAULT '',
+		  `ModName` varchar(64) COLLATE utf8_bin DEFAULT '',
+		  `ModFile` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `ModUrl` text COLLATE utf8_bin,
+		  `SongFile` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `SongUrl` text COLLATE utf8_bin,
 		  PRIMARY KEY (`MapId`),
 		  UNIQUE KEY `Uid` (`Uid`),
 		  KEY `AuthorId` (`AuthorId`),
@@ -1198,17 +1208,17 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%players` (
-		  `PlayerId` mediumint(3) unsigned NOT NULL AUTO_INCREMENT,
-		  `Login` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nickname` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Zone` varchar(256) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Continent` varchar(2) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `Nation` varchar(3) COLLATE utf8_bin NOT NULL DEFAULT '',
-		  `LastVisit` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Visits` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Wins` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Donations` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `TimePlayed` int(4) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned AUTO_INCREMENT,
+		  `Login` varchar(64) COLLATE utf8_bin DEFAULT '',
+		  `Nickname` varchar(100) COLLATE utf8_bin DEFAULT '',
+		  `Zone` varchar(256) COLLATE utf8_bin DEFAULT '',
+		  `Continent` varchar(2) COLLATE utf8_bin DEFAULT '',
+		  `Nation` varchar(3) COLLATE utf8_bin DEFAULT '',
+		  `LastVisit` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Visits` mediumint(3) unsigned DEFAULT '0',
+		  `Wins` mediumint(3) unsigned DEFAULT '0',
+		  `Donations` mediumint(3) unsigned DEFAULT '0',
+		  `TimePlayed` int(4) unsigned DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
@@ -1227,8 +1237,8 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%rankings` (
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Average` int(4) unsigned NOT NULL DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Average` int(4) unsigned DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
@@ -1239,10 +1249,10 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		  `Score` tinyint(1) signed NOT NULL DEFAULT '0',
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+		  `Score` tinyint(1) signed DEFAULT '0',
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
@@ -1257,11 +1267,11 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Score` int(4) unsigned NOT NULL DEFAULT '0',
-		  `Checkpoints` text COLLATE utf8_bin NOT NULL,
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Score` int(4) unsigned DEFAULT '0',
+		  `Checkpoints` text COLLATE utf8_bin,
 		  PRIMARY KEY (`MapId`,`PlayerId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
@@ -1277,9 +1287,9 @@ class UASECO extends Helper {
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%settings` (
 		  `Plugin` varchar(64) COLLATE utf8_bin NOT NULL,
-		  `PlayerId` mediumint(3) unsigned NOT NULL,
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
 		  `Key` varchar(64) COLLATE utf8_bin NOT NULL,
-		  `Value` text COLLATE utf8_bin NOT NULL,
+		  `Value` text COLLATE utf8_bin,
 		  PRIMARY KEY (`Plugin`,`PlayerId`,`Key`),
 		  KEY `PlayerId` (`PlayerId`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -1291,11 +1301,11 @@ class UASECO extends Helper {
 		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%times` (
-		  `MapId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `PlayerId` mediumint(3) unsigned NOT NULL DEFAULT '0',
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-		  `Score` int(4) unsigned NOT NULL DEFAULT '0',
-		  `Checkpoints` text COLLATE utf8_bin NOT NULL,
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Score` int(4) unsigned DEFAULT '0',
+		  `Checkpoints` text COLLATE utf8_bin,
 		  PRIMARY KEY (`MapId`,`PlayerId`,`Score`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
@@ -1523,6 +1533,9 @@ class UASECO extends Helper {
 					$this->console('[Dedicated] » Status: ['. $status['Code'] .'] '. $status['Name']);
 					$laststatus = $status['Name'];
 				}
+				if (empty($status['Code'])) {
+					trigger_error('[Dedicated] Connection failed on empty status!', E_USER_ERROR);
+				}
 				if (isset($this->server->timeout) && $timeout++ > $this->server->timeout) {
 					trigger_error('[Dedicated] Timed out while waiting for dedicated server!', E_USER_ERROR);
 				}
@@ -1672,7 +1685,7 @@ class UASECO extends Helper {
 
 	// When a new map is started we have to get information about the new map,
 	// get record to current map etc.
-	public function beginMap ($uid) {
+	public function loadingMap ($uid) {
 
 		// Setup race status
 		$this->server->gamestate = Server::RACE;
@@ -1687,28 +1700,30 @@ class UASECO extends Helper {
 		// Cleanup Player rankings
 		$this->server->rankings->reset();
 
-		// Check for restarting map
-		$this->changing_to_gamemode = false;
-		if ($this->restarting == true) {
+		// Get current map object
+		$map = $this->server->maps->getCurrentMapInfo();
 
+		// Check for restarting map
+		if ($this->restarting == true) {
 			// Throw postfix 'restart map' event
 			if ($this->settings['developer']['log_events']['common'] == true) {
 				$this->console('[Event] Restart Map');
 			}
-			$this->releaseEvent('onRestartMap', $uid);
-			return;
-		}
+			$this->releaseEvent('onRestartMap', $map->uid);
 
-		// Refresh the current round point system (only Rounds, Team and Cup)
-		if ($this->server->gameinfo->mode == Gameinfo::ROUNDS || $this->server->gameinfo->mode == Gameinfo::TEAM || $this->server->gameinfo->mode == Gameinfo::CUP) {
-			$this->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
+			// Reset status
+			$this->restarting == false;
+
+			return;
 		}
 
 		// Setup previous map
 		$this->server->maps->previous = $this->server->maps->current;
 
-		// Get current map object
-		$map = $this->server->maps->getCurrentMapInfo();
+		// Refresh the current round point system (only Rounds, Team and Cup)
+		if ($this->server->gameinfo->mode == Gameinfo::ROUNDS || $this->server->gameinfo->mode == Gameinfo::TEAM || $this->server->gameinfo->mode == Gameinfo::CUP) {
+			$this->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
+		}
 
 		// Search MX for map
 		if ( ($map->mx == false) || (time() > ($map->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) ) {
@@ -1762,14 +1777,11 @@ class UASECO extends Helper {
 		// Update the field which contains current map
 		$this->server->maps->current = $map;
 
-		// Throw main 'begin map' event
+		// Throw main 'loading map' event
 		if ($this->settings['developer']['log_events']['common'] == true) {
-			$this->console('[Event] Begin Map');
+			$this->console('[Event] Loading Map');
 		}
-		$this->releaseEvent('onBeginMap', $map);
-
-		// Throw postfix 'begin map' event (various)
-		$this->releaseEvent('onBeginMap1', $map);
+		$this->releaseEvent('onLoadingMap', $map);
 	}
 
 	/*
@@ -1842,9 +1854,6 @@ class UASECO extends Helper {
 
 		// Throw main 'end map' event
 		$this->releaseEvent('onEndMap', $this->server->maps->current);
-
-		// Reset status before begin map
-		$this->restarting == false;
 	}
 
 	/*

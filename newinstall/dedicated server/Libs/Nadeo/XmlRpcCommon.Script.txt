@@ -1,10 +1,15 @@
 /**
  *	XmlRpc lib common
  */
-#Const	Version		"2014-11-05"
+#Const	Version		"2015-02-23"
 #Const	ScriptName	"XmlRpc.Script.txt"
 
 #Include "TextLib" as TL
+
+// ---------------------------------- //
+// Globales
+// ---------------------------------- //
+declare Boolean G_IsInPause;
 
 // ---------------------------------- //
 // Functions
@@ -253,9 +258,13 @@ Void Unload() {
 	UnregisterCallback("LibXmlRpc_EndPodium");
 	UnregisterCallback("LibXmlRpc_BeginWarmUp");
 	UnregisterCallback("LibXmlRpc_EndWarmUp");
+	UnregisterCallback("LibXmlRpc_Pause");
+	UnregisterCallback("LibXmlRpc_ScoresReady");
 	
 	declare Text[Text] LibXmlRpc_CallbacksRegistered for This;
 	LibXmlRpc_CallbacksRegistered.clear();
+	
+	G_IsInPause = False;
 	
 	/* Don't unblock callbacks at load, let the user do it himself if he needs it
 	declare Text[] LibXmlRpc_CallbacksBlocked for This;
@@ -290,14 +299,15 @@ RegisterCallback("LibXmlRpc_BlockedCallbacks", """
 """);
 
 RegisterCallback("LibXmlRpc_LoadingMap", """
-* Data : An array with the number of the map
-* Example : ["1"]
-* Note : This callback is sent when the script start to load a map
+* Data : An array with the number of the map, its UID and if the map is new or restarted.
+* Example : ["1", "2icir0pvzfqwf4h9j3B5lkjYu4n", "False"]
+* Note : This callback is sent when the script start to load a map.
+* Version : UID and restart status are available since XmlRpc.Script.txt_v2015-02-19
 """);
 
 RegisterCallback("LibXmlRpc_UnloadingMap", """
-* Data : An array with the number of the map
-* Example : ["1"]
+* Data : An array with the number of the map and its UID
+* Example : ["1", "2icir0pvzfqwf4h9j3B5lkjYu4n"]
 * Note : This callback is sent when the script start to unload a map
 """);
 
@@ -480,6 +490,19 @@ RegisterCallback("LibXmlRpc_EndWarmUp", """
 * Example : []
 * Note : This callback is sent at the end of the warm up
 """);
+
+RegisterCallback("LibXmlRpc_Pause", """
+* Data : An array with one value saying if the mode is in pause or not
+* Example : ["True"]
+* Note : This callback is sent after using the `LibXmlRpc_GetPause` method or when the pause status changes.
+* Version : available since Chase.Script.txt_v2015-02-23
+""");
+
+RegisterCallback("LibXmlRpc_ScoresReady", """
+* Data : Nothing
+* Example : []
+* Note : This callback is sent at the end of the gaming sequence, when the scores are accurate and ready to be used for statistical purpose for example.
+""");
 }
 
 // ---------------------------------- //
@@ -487,10 +510,25 @@ RegisterCallback("LibXmlRpc_EndWarmUp", """
  *	Data:
  *	[Number of the map]
  */
-Void LoadingMap(Integer _Number) {
+Void LoadingMap(Integer _Number, Boolean _Restarted) {
 	if (!CallbackIsAllowed("LibXmlRpc_LoadingMap")) return;
 	
-	SendCallbackArray("LibXmlRpc_LoadingMap", [TL::ToText(_Number)]);
+	declare MapUID = "";
+	if (MapList.count > 0) {
+		declare MapIndex = NextMapIndex;
+		if (_Number == 1) MapIndex = NextMapIndex - 1;
+		if (MapIndex < 0) MapIndex = MapList.count - 1;
+		if (MapList.existskey(MapIndex)) MapUID = ""^MapList[MapIndex].MapUid;
+	}
+	
+	declare Restarted = "False";
+	if (_Restarted) Restarted = "True";
+	SendCallbackArray("LibXmlRpc_LoadingMap", [TL::ToText(_Number), MapUID, Restarted]);
+	
+	declare MapNames = Text[Ident];
+	foreach (MapInfo in MapList) {
+		MapNames[MapInfo.MapUid] = MapInfo.Name;
+	}
 }
 
 // ---------------------------------- //
@@ -501,7 +539,9 @@ Void LoadingMap(Integer _Number) {
 Void UnloadingMap(Integer _Number) {
 	if (!CallbackIsAllowed("LibXmlRpc_UnloadingMap")) return;
 	
-	SendCallbackArray("LibXmlRpc_UnloadingMap", [TL::ToText(_Number)]);
+	declare MapUID = "";
+	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.MapUid;
+	SendCallbackArray("LibXmlRpc_UnloadingMap", [TL::ToText(_Number), MapUID]);
 }
 
 // ---------------------------------- //
@@ -561,7 +601,7 @@ Void BeginMap(Integer _Number, Boolean _Restarted) {
 	if (!CallbackIsAllowed("LibXmlRpc_BeginMap")) return;
 	
 	declare MapUID = "";
-	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.Id;
+	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.MapUid;
 	declare Restarted = "False";
 	if (_Restarted) Restarted = "True";
 	SendCallbackArray("LibXmlRpc_BeginMap", [TL::ToText(_Number), MapUID, Restarted]);
@@ -576,7 +616,7 @@ Void BeginMapStop(Integer _Number, Boolean _Restarted) {
 	if (!CallbackIsAllowed("LibXmlRpc_BeginMapStop")) return;
 	
 	declare MapUID = "";
-	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.Id;
+	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.MapUid;
 	declare Restarted = "False";
 	if (_Restarted) Restarted = "True";
 	SendCallbackArray("LibXmlRpc_BeginMapStop", [TL::ToText(_Number), MapUID, Restarted]);
@@ -745,7 +785,7 @@ Void EndMap(Integer _Number) {
 	if (!CallbackIsAllowed("LibXmlRpc_EndMap")) return;
 	
 	declare MapUID = "";
-	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.Id;
+	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.MapUid;
 	SendCallbackArray("LibXmlRpc_EndMap", [TL::ToText(_Number), MapUID]);
 }
 
@@ -758,7 +798,7 @@ Void EndMapStop(Integer _Number) {
 	if (!CallbackIsAllowed("LibXmlRpc_EndMapStop")) return;
 	
 	declare MapUID = "";
-	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.Id;
+	if (Map != Null && Map.MapInfo != Null) MapUID = ""^Map.MapInfo.MapUid;
 	SendCallbackArray("LibXmlRpc_EndMapStop", [TL::ToText(_Number), MapUID]);
 }
 
@@ -839,6 +879,66 @@ Void EndWarmUp() {
 }
 
 // ---------------------------------- //
+/** Send the warm up status
+ *	Data:
+ *	[IsInPause]
+ */
+Void GetPause() {
+	if (!CallbackIsAllowed("LibXmlRpc_Pause")) return;
+	
+	declare IsInPause = "False";
+	if (G_IsInPause) IsInPause = "True";
+	SendCallbackArray("LibXmlRpc_Pause", [IsInPause]);
+}
+
+// ---------------------------------- //
+/** Set the pause status
+ *
+ *	@param	_IsInPause	True to set the mode in pause, False otherwise
+ */
+Void SetPause(Boolean _IsInPause) {
+	if (G_IsInPause == _IsInPause) return;
+	
+	G_IsInPause = _IsInPause;
+	GetPause();
+}
+// ---------------------------------- //
+/// Overload SetPause()
+Void SetPause(Text _IsInPause) {
+	if (_IsInPause == "False" || _IsInPause == "false" || _IsInPause == "") SetPause(False);
+	else SetPause(True);
+}
+
+// ---------------------------------- //
+/// Callback sent at the beginning of the pause
+Void BeginPause() {
+	SetPause(True);
+}
+
+// ---------------------------------- //
+/// Callback sent at the end of the pause
+Void EndPause() {
+	SetPause(False);
+}
+
+// ---------------------------------- //
+/** Check if a pause is requested
+ *
+ *	@return		True if a pause is requested, False otherwise
+ */
+Boolean PauseRequested() {
+	return G_IsInPause;
+}
+
+// ---------------------------------- //
+/// Callback sent when the scores are ready to be used
+Void ScoresReady() {
+	if (!CallbackIsAllowed("LibXmlRpc_ScoresReady")) return;
+	
+	SendCallbackArray("LibXmlRpc_ScoresReady", Text[]);
+}
+
+// ---------------------------------- //
 /// Wait for XmlRpc callbacks
 Void Loop() {
 	if (!IsEnabled()) return;
@@ -853,6 +953,8 @@ Void Loop() {
 				case "LibXmlRpc_UnblockCallback"	: UnblockCallback(Event.Param2);
 				case "LibXmlRpc_UnblockAllCallbacks": UnblockAllCallbacks();
 				case "LibXmlRpc_ListBlockedCallbacks": GetBlockedCallbacks(True);
+				case "LibXmlRpc_SetPause"			: SetPause(Event.Param2);
+				case "LibXmlRpc_GetPause"			: GetPause();
 			}
 		}
 	}

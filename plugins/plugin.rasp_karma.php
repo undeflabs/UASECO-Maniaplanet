@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ class PluginRaspKarma extends Plugin {
 		$this->setDescription('Votes for a map and displays current score of it.');
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onBeginMap1',	'onBeginMap1');
+		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 		$this->registerEvent('onPlayerChat',	'onPlayerChat');
 		$this->registerEvent('onPlayerFinish',	'onPlayerFinish');
 		$this->registerEvent('onEndMap',	'onEndMap');
@@ -286,7 +286,7 @@ class PluginRaspKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		if ($this->feature_karma && $this->karma_show_start) {
 			// Show players' actual votes, or global karma message?

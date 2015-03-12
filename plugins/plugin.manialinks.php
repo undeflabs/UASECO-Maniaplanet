@@ -1,13 +1,14 @@
 <?php
 /* Plugin: Manialinks
  * ~~~~~~~~~~~~~~~~~~
- * » DEPRECATED, DO NOT USE!
+ * » DEPRECATED, DO NOT USE! DOCS IN HERE ARE TOTALLY OUTDATED OR WRONG!
+ *
  * » Provides simple ManiaLink windows, also handles special panels and custom UI changes.
  * » Based upon the manialinks.inc.php from XAseco2, written by the Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-04
+ * Date:	2015-02-24
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -31,10 +32,7 @@
  * Currently reserved ManiaLink id's and action's:
  *        id= "UASECO-0": dummy for custom_ui block
  *            "UASECO-1": Main pop-up window
- *            "UASECO-2": CheckPoints panel
  *            "UASECO-3": Admin panel
- *            "UASECO-4": Records panel
- *            "UASECO-5": Vote panel
  *            "UASECO-7": Messages window
  *            "UASECO-9": Scoreboard stats panel
  *    action= "0": Close main pop-up window
@@ -50,10 +48,6 @@
  *           "-6": /stats field Server Rank       call "/top100"
  *            "5": /stats field Records           call "/toprecs"
  *            "6": /stats field Races Won         call "/topwins"
- *            "7": Records panel PB field         call "/topsums"
- *            "8": Records panel Local field      call "/recs"
- *            "9": Records panel Dedi field       call "/dedirecs"
- *           "10": Records panel MX field         call "/mxrecs"
  *           "11": /list Env field Canyon         call "/list env:Canyon"
  *           "12": /list Env field Stadium        call "/list env:Stadium"
  *           "13": /list Env field Valley         call "/list env:Valley"
@@ -73,7 +67,6 @@
  *      "37"-"48": Vote panels, handled in plugin.panels.php
  *     "-7"-"-48": Admin panels, handled in plugin.panels.php
  *     "49"-"100": Window styles, handled in plugin.style.php
- *   "-49"-"-100": Records panels, handled in plugin.panels.php
  *   "101"-"2000": Map numbers for /jukebox, handled in plugin.rasp_jukebox.php
  * "-101"-"-2000": Map authors for /list, handled in plugin.rasp_jukebox.php
  *"-2001"-"-2100": Jukebox drop numbers, handled in plugin.rasp_jukebox.php
@@ -359,24 +352,6 @@ class PluginManialinks extends Plugin {
 				$aseco->releaseChatCommand('/topwins', $player->login);
 				return;
 
-			// Records panel fields
-			case  7:
-				// records panel PB field
-				$aseco->releaseChatCommand('/topsums', $player->login);
-				return;
-			case  8:
-				// records panel Local field
-				$aseco->releaseChatCommand('/recs', $player->login);
-				return;
-			case  9:
-				// records panel Dedi field
-				$aseco->releaseChatCommand('/dedirecs', $player->login);
-				return;
-			case 10:
-				// records panel MX field
-				$aseco->releaseChatCommand('/mxrecs', $player->login);
-				return;
-
 			// /list Env fields
 			case 11:
 				// close main window because /list can take a while
@@ -653,7 +628,7 @@ class PluginManialinks extends Plugin {
 	// called @ onEndMap
 	public function allwindows_off ($aseco, $data) {
 
-		// Disable all pop-up windows and records panels at all Players
+		// Disable all pop-up windows at all Players
 		$xml  = '<manialink id="UASECO-1"></manialink>';
 		$xml .= '<manialink id="UASECO-4"></manialink>';
 		$aseco->addManialink($xml, false, 0, false);

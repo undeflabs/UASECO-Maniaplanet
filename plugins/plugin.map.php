@@ -2,14 +2,15 @@
 /*
  * Plugin: Map
  * ~~~~~~~~~~~
- * » Times playing time of a map, and provides map and time info.
+ * » Times playing time of a map, provides map and time info and shows (file)names of current map's and song mod.
  * » Based upon plugin.map.php from XAseco2/1.03 written by Xymph
+ *   and chat.songmod.php from XAseco2/1.03 written by Xymph
  *   and plugin.rasp_nextmap.php from XAseco2/1.03 updated by Xymph and AssemblerManiac
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-04
- * Copyright:	2014 by undef.de
+ * Date:	2015-02-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -53,19 +54,20 @@ class PluginMap extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Times playing time of a map, and provides map and time info.');
+		$this->setDescription('Times playing time of a map, provides map and time info and shows (file)names of current map\'s and song mod.');
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
+		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 		$this->registerEvent('onBeginMap',	'onBeginMap');
-		$this->registerEvent('onBeginMap1',	'onBeginMap1');		// use 2nd event to start timer just before racing commences
 		$this->registerEvent('onEndMap',	'onEndMap');
 
 		$this->registerChatCommand('map',	'chat_map',		'Shows info about the current map',		Player::PLAYERS);
+		$this->registerChatCommand('song',	'chat_song',		'Shows filename of current map\'s song',	Player::PLAYERS);
+		$this->registerChatCommand('mod',	'chat_mod',		'Shows (file)name of current map\'s mod',	Player::PLAYERS);
 		$this->registerChatCommand('nextmap',	'chat_nextmap',		'Shows name of the next map',			Player::PLAYERS);
 		$this->registerChatCommand('playtime',	'chat_playtime',	'Shows time current map has been playing',	Player::PLAYERS);
-		$this->registerChatCommand('time',	'chat_time',		'Shows current server time and date',		Player::PLAYERS);
 	}
 
 	/*
@@ -106,6 +108,75 @@ class PluginMap extends Plugin {
 
 		// show chat message
 		$aseco->sendChatMessage($message, $login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_song ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
+
+		// Check for map's song
+		if ($aseco->server->maps->current->songfile) {
+			$message = $aseco->formatText($aseco->getChatMessage('SONG'),
+				$aseco->stripColors($aseco->server->maps->current->name),
+				$aseco->server->maps->current->songfile
+			);
+
+			// Use only first parameter
+			$chat_parameter = explode(' ', $chat_parameter, 2);
+			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->songurl) {
+				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->songurl .']'. $aseco->server->maps->current->songurl .'$l';
+			}
+		}
+		else {
+			$message = '{#server}» {#error}No map song found!';
+			if ((class_exists('PluginMusicServer')) && (is_callable('PluginMusicServer::chat_music')) ) {
+				$message .= ' Try {#highlite}$i /music current {#error}instead.';
+			}
+		}
+
+		// Show chat message
+		$aseco->sendChatMessage($message, $player->login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_mod ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayer($login)) {
+			return;
+		}
+
+		// Check for map's mod
+		if ($aseco->server->maps->current->modname) {
+			$message = $aseco->formatText($aseco->getChatMessage('MOD'),
+				$aseco->stripColors($aseco->server->maps->current->name),
+				$aseco->server->maps->current->modname,
+				$aseco->server->maps->current->modfile
+			);
+			// Use only first parameter
+			$chat_parameter = explode(' ', $chat_parameter, 2);
+			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->modurl) {
+				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->modurl .']'. $aseco->server->maps->current->modurl .'$l';
+			}
+		}
+		else {
+			$message = '{#server}» {#error}No map mod found!';
+		}
+
+		// Show chat message
+		$aseco->sendChatMessage($message, $player->login);
 	}
 
 	/*
@@ -185,21 +256,6 @@ class PluginMap extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function chat_time ($aseco, $login, $chat_command, $chat_parameter) {
-		// show chat message
-		$message = $aseco->formatText($aseco->getChatMessage('TIME'),
-			date('H:i:s T'),
-			date('Y/M/d')
-		);
-		$aseco->sendChatMessage($message, $login);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onSync ($aseco, $data) {
 
 		if ( isset($aseco->plugins['PluginRaspJukebox']) ) {
@@ -215,7 +271,7 @@ class PluginMap extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onLoadingMap ($aseco, $map) {
 
 		// check for divider message
 		if ($aseco->settings['show_curmap'] > 0) {
@@ -247,7 +303,7 @@ class PluginMap extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap1 ($aseco, $data) {
+	public function onBeginMap ($aseco, $data) {
 
 		// remember time this map starts playing
 		$aseco->server->maps->current->starttime = time();
@@ -262,7 +318,7 @@ class PluginMap extends Plugin {
 	public function onEndMap ($aseco, $data) {
 
 		// Skip if TimeAttack/Stunts mode (always same playing time), or if disabled
-		if ($aseco->settings['show_playtime'] == 0 || $aseco->server->gameinfo->mode == Gameinfo::TIMEATTACK || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		if ($aseco->settings['show_playtime'] == 0 || $aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
 			return;
 		}
 

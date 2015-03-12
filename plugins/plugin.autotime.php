@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-08
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-12
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -56,6 +56,8 @@ class PluginAutotime extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Changes Timelimit for TimeAttack dynamically depending on the next map\'s author time.');
 
+		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
+
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onEndMap',	'onEndMap');		// use post event after all join processing
 	}
@@ -68,16 +70,12 @@ class PluginAutotime extends Plugin {
 
 	public function onSync ($aseco) {
 
-		// Initialize flags
-		$this->active = false;
-
 		// Load config file
 		$config_file = 'config/autotime.xml';
 		if (file_exists($config_file)) {
 			$aseco->console('[AutoTime] Load auto timelimit config ['. $config_file .']');
 			if ($xml = $aseco->parser->xmlToArray($config_file, true, true)) {
-				$this->config = $xml['AUTOTIME'];
-				$this->active = true;
+				$this->config = $xml['SETTINGS'];
 			}
 			else {
 				trigger_error('[AutoTime] Could not read/parse config file ['. $config_file .']!', E_USER_WARNING);
@@ -96,63 +94,60 @@ class PluginAutotime extends Plugin {
 
 	public function onEndMap ($aseco, $data) {
 
-		// If not active, bail out immediately
-		if (!$this->active) {
-			return;
-		}
-
-		// Get next game settings
-		$nextgame = $aseco->client->query('GetNextGameInfo');
-
 		// Check for TimeAttack on next map
-		if ($nextgame['GameMode'] == Gameinfo::TIMEATTACK) {
+		if ($aseco->server->gameinfo->getNextModeId() == Gameinfo::TIME_ATTACK) {
 			// Check if auto timelimit enabled
 			if ($this->config['MULTIPLICATOR'][0] > 0) {
 				// Check if at least one active player on the server
 				if ( $this->checkForActivePlayer() ) {
 					// Get next map object
 					$map = $aseco->server->maps->getNextMap();
-					$newtime = intval($map->author_time);
+					$newtime = substr((int)$map->author_time, 0, -3);
+
 				}
 				else {
 					// Server already switched so get current map name
 					$newtime = 0;  // force default
-					$newtime = intval($aseco->server->maps->current->author_time);
+					$newtime = substr((int)$aseco->server->maps->current->author_time, 0, -3);
 				}
 
 				// Compute new timelimit
 				if ($newtime <= 0) {
-					$newtime = $this->config['DEFAULTTIME'][0] * 60 * 1000;
+					$newtime = $this->config['DEFAULTTIME'][0] * 60;
 					$tag = 'default';
 				}
 				else {
 					$newtime *= $this->config['MULTIPLICATOR'][0];
-					$newtime -= ($newtime % 1000);  // round down to seconds
 					$tag = 'new';
 				}
 
 				// Check for min/max times
-				if ($newtime < $this->config['MINTIME'][0] * 60 * 1000) {
-					$newtime = $this->config['MINTIME'][0] * 60 * 1000;
-					$tag = 'min';
+				if ($newtime < $this->config['MINTIME'][0] * 60) {
+					$newtime = $this->config['MINTIME'][0] * 60;
+					$tag = 'minimum';
 				}
-				else if ($newtime > $this->config['MAXTIME'][0] * 60 * 1000) {
-					$newtime = $this->config['MAXTIME'][0] * 60 * 1000;
-					$tag = 'max';
+				else if ($newtime > $this->config['MAXTIME'][0] * 60) {
+					$newtime = $this->config['MAXTIME'][0] * 60;
+					$tag = 'maximum';
 				}
 
-				// Set and log timelimit (strip .00 sec)
-				$aseco->client->addcall('SetTimeAttackLimit', $newtime);
-				$aseco->console('[AutoTime] set {1} timelimit for [{2}]: {3} (Author time: {4})',
-					$tag, stripColors($map->name, false),
-					substr($aseco->formatTime($newtime), 0, -3),
+				// Send new time
+				$aseco->server->gameinfo->time_attack['TimeLimit'] = (int)$newtime;
+				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
+
+				// Set and log timelimit (strip .000 sec)
+				$aseco->console('[AutoTime] Set {1} timelimit for [{2}] to {3} (Author time: {4})',
+					$tag,
+					$aseco->stripColors($map->name, false),
+					substr($aseco->formatTime($newtime * 1000), 0, -4),
 					$aseco->formatTime($map->author_time)
 				);
 
-				// Display timelimit (strip .00 sec)
-				$message = $aseco->formatText($this->config['MESSAGE'][0], $tag,
-					stripColors($map->name),
-					substr($aseco->formatTime($newtime), 0, -3),
+				// Display timelimit (strip .000 sec)
+				$message = $aseco->formatText($this->config['MESSAGE'][0],
+					$tag,
+					$aseco->stripColors($map->name),
+					substr($aseco->formatTime($newtime * 1000), 0, -4),
 					$aseco->formatTime($map->author_time)
 				);
 

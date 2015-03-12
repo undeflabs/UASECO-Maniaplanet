@@ -13,7 +13,7 @@ Version 1.0.0
    ~~~~~~~~~~~~
    - Requires PHP/5.2.1 or higher
    - Requires MySQL/5.x or higher
-   - Requires a Maniaplanet dedicated Server build 2015-02-10_18_00 or higher
+   - Requires a Maniaplanet dedicated Server build 2015-03-09_18_00 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
 
 
@@ -62,15 +62,16 @@ Version 1.0.0
    - All XML configuration files has to be located into the "config" folder
    - The folder "panels" has been moved into the "config" folder
    - The folder "styles" has been moved into the "config" folder
-   - All "mysql_*()" does not work anymore, use "$aseco->db->*" instead (e.g. "$res = "$aseco->db->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php
-   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIMEATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
-   - Added constant "Gameinfo::TEAMATTACK"
+   - All "mysql_*()" does not work anymore, use "$aseco->db->*" instead (e.g. "$res = "$aseco->db->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php and http://www.uaseco.org/Development/Classes/Database.php
+   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIME_ATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
+   - Added constants "Gameinfo::TEAM_ATTACK" and "Gameinfo::CHASE"
    - Renamed "config/config.xml" to "config/UASECO.xml"
    - Removed "manialinks.inc.php", moved parts from it into the related Plugins and replaced the "Window" with the new class "window.class.php"
    - Removed Plugin "plugin.matchsave.php", and related files "matchsave.xml", "html.tpl" and "text.tpl"
    - Removed Jfreu-Plugins "jfreu.chat.php", "jfreu.lite.php" and "jfreu.plugin.php" with all related files ("plugin.welcome_center.php" replaces "jfreu.lite.php")
    - Removed "plugin.styles.php" and related files in the folder "config/styles"
    - Removed "addChatCommand()" and added "$this->registerChatCommand()" (in Class Plugin)
+   - Merged chat.songmod.php, plugin.map.php and plugin.rasp_nextmap.php together
    - A callback handler of a registered chat command has now four parameter instead of two: ($aseco, $login, $chat_command, $chat_parameter)
    - Added "$aseco->server->rankings->ranking_list[]" which holds the current ranking for all Players in all Gamemodes (no need to call the ListMethod "GetCurrentRanking")
    - Added "$aseco->server->maps->map_list[]" which holds all Maps from the dedicated Server (no need to call the ListMethod "GetMapList")
@@ -101,8 +102,9 @@ Version 1.0.0
    - Event "onCheckpoint" renamed to "onPlayerCheckpoint"
    - Event "onChat" splitted into "onServerChat" and "onPlayerChat" (no need to check for a Server message at "onPlayerChat")
    - Event "onRestartMap" removed and renamed "onRestartMap2" to "onRestartMap" (there is no more a difference between the restarts)
-   - Event "onBeginMap2" renamed to "onBeginMap1"
-   - Event "onBeginMap" is now send after "$aseco->server->maps->current" is updated
+   - Event "onLoadingMap" is send after "$aseco->server->maps->current" is updated (which is fired before "onBeginMap")
+   - Event "onBeginMap" is fired after "onLoadingMap"
+   - Event "onBeginMap2" removed
    - Event "onDediRecsLoaded" renamed to "onDedimaniaRecordsLoaded"
    - Event "onMaplistChanged" renamed to "onMapListChanged" (uppercase "L")
    - Event "onPlayerConnect2" renamed to "onPlayerConnect1"
