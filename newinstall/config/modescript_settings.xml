@@ -153,9 +153,11 @@
 	</modebase>
 
 
-
 	<modesetup>
-		<!-- Settings for TimeAttack.Script.txt -->
+		<!--
+		Settings for TimeAttack.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#TimeAttack
+		//-->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
 			<time_limit>300</time_limit>
@@ -163,7 +165,11 @@
 
 
 
-		<!-- Settings for Rounds.Script.txt -->
+		<!--
+		Settings for Rounds.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#RoundsBase
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Rounds%2D%2D%2DRoundsBase%2D
+		//-->
 		<rounds>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
@@ -190,7 +196,11 @@
 
 
 
-		<!-- Settings for Team.Script.txt -->
+		<!--
+		Settings for Team.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#RoundsBase
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Team%2D%2D%2DRoundsBase%2D
+		//-->
 		<team>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
@@ -223,7 +233,10 @@
 
 
 
-		<!-- Settings for Laps.Script.txt -->
+		<!--
+		Settings for Laps.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Laps
+		//-->
 		<laps>
 			<!-- Time limit in seconds, until the next Map is loaded -->
 			<time_limit>300</time_limit>
@@ -237,7 +250,12 @@
 
 
 
-		<!-- Settings for Cup.Script.txt -->
+
+		<!--
+		Settings for Cup.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#RoundsBase
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Cup%2D%2D%2DRoundsBase%2D
+		//-->
 		<cup>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
@@ -266,7 +284,11 @@
 
 
 
-		<!-- Settings for TeamAttack.Script.txt -->
+
+		<!--
+		Settings for TeamAttack.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#TeamAttack
+		//-->
 		<teamattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
 			<time_limit>300</time_limit>
@@ -283,28 +305,38 @@
 
 
 
-		<!-- Settings for Chase.Script.txt -->
+
+		<!--
+		Settings for Chase.Script.txt
+		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Chase
+		//-->
 		<chase>
 			<!-- Time limit (0 to disable, < 0 automatic, based on author time) -->
-			<time_limit>600</time_limit>
+			<time_limit>900</time_limit>
 
-			<!-- Points limit -->
-			<points_limit>3</points_limit>
+			<!-- Map points limit -->
+			<map_points_limit>3</map_points_limit>
 
-			<!-- The number of points lead a team must have to win the round -->
-			<points_gap>3</points_gap>
+			<!-- Round points limit (0 to disable, negative values automatic based on number of checkpoints) -->
+			<round_points_limit>-5</round_points_limit>
+
+			<!-- The number of round points lead a team must have to win the round -->
+			<round_points_gap>3</round_points_gap>
 
 			<!-- Maximum number of give up per team -->
 			<give_up_max>1</give_up_max>
 
-			<!-- Minimum number of players in a team -->
-			<min_players_number>3</min_players_number>
+			<!-- Minimum number of players in a team, min. 2 -->
+			<min_players_number>2</min_players_number>
 
-			<!-- Number of Laps (<= 0 to disable) -->
+			<!-- Number of Laps (-1 to use the map default, 0 to disable laps limit) -->
 			<force_laps_number>5</force_laps_number>
 
 			<!-- Finish timeout (< 0 automatic, based on author time) -->
 			<finish_timeout>-1</finish_timeout>
+
+			<!-- Display a big red message in the middle of the screen of the player that crosses a checkpoint when it wasn't it's turn. -->
+			<display_warning>true</display_warning>
 
 			<!-- Use the players' clublinks, or otherwise use the default teams -->
 			<use_player_clublinks>false</use_player_clublinks>
@@ -314,6 +346,18 @@
 
 			<!-- Minimum number of players per team in matchmaking -->
 			<number_players_per_team_min>3</number_players_per_team_min>
+
+			<!-- In this mode only players that take a slot in a team during the warm up can play, the others will have to spec until they can get a free slot in a team. -->
+			<competitive_mode>false</competitive_mode>
+
+			<!--  Put the waypoint events in a buffer for 500ms to avoid errors in the checkpoint order check. -->
+			<waypoint_event_delay>500</waypoint_event_delay>
+
+			<!--  Allow to set a pause between the rounds, default are 15 sec. -->
+			<pause_between_round>15</pause_between_round>
+
+			<!--  Allow the players who are waiting for a match to play on different maps, default are 600 sec. -->
+			<waiting_time_max>600</waiting_time_max>
 		</chase>
 	</modesetup>
 </settings>

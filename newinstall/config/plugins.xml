@@ -42,7 +42,6 @@
 	<plugin>chat.last_window.php</plugin>
 	<plugin>chat.stats.php</plugin>
 	<plugin>chat.server.php</plugin>
-	<plugin>chat.map_mods.php</plugin>
 	<plugin>chat.me.php</plugin>
 	<plugin>chat.rasp.php</plugin>
 	<plugin>chat.rasp_nextrank.php</plugin>
