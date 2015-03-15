@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-10
+ * Date:	2015-03-15
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -416,7 +416,10 @@ class PluginModescriptHandler extends Plugin {
 				else {
 					$aseco->restarting = false;			// No Restart
 				}
-				$aseco->loadingMap($params[1]);
+///start work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=241929#p241929
+///uncomment after bugfix
+//				$aseco->loadingMap($params[1]);
+///END
 		    		break;
 
 
@@ -453,6 +456,10 @@ class PluginModescriptHandler extends Plugin {
 
 			// [0]=IndexOfMap, [1]=Uid, [2]=RestartFlag
 			case 'LibXmlRpc_BeginMap':
+///start work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=241929#p241929
+///remove after bugfix
+$aseco->loadingMap($params[1]);
+///END
 				// Reset
 				$aseco->changing_to_gamemode = false;
 

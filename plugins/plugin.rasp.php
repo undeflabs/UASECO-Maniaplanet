@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-03-15
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -71,6 +71,7 @@ class PluginRasp extends Plugin {
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onMapListModified',	'onMapListModified');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
+		$this->registerEvent('onUnloadingMap',		'onUnloadingMap');
 		$this->registerEvent('onEndMap',		'onEndMap');
 		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
@@ -224,7 +225,7 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap ($aseco, $data) {
+	public function onUnloadingMap ($aseco, $map) {
 
 		// Check for relay server
 		if ($aseco->server->isrelay) {
@@ -235,6 +236,26 @@ class PluginRasp extends Plugin {
 			if (isset($aseco->plugins['PluginRaspJukebox']) && !$aseco->plugins['PluginRaspJukebox']->mxplayed) {
 				$this->resetRanks($aseco);
 			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onEndMap ($aseco, $data) {
+
+		// Check for relay server
+		if ($aseco->server->isrelay) {
+			return;
+		}
+
+		if ($this->feature_ranks) {
+//			if (isset($aseco->plugins['PluginRaspJukebox']) && !$aseco->plugins['PluginRaspJukebox']->mxplayed) {
+//				$this->resetRanks($aseco);
+//			}
 			foreach ($aseco->server->players->player_list as $pl) {
 				$this->showRank($pl->login);
 			}

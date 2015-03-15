@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-18
+ * Date:	2015-03-15
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -155,7 +155,7 @@ class Map {
 
 			$this->cost		= $gbx->cost;
 			$this->environment	= $gbx->envir;
-			$this->mood		= str_replace('64x64', '', $gbx->mood);		// "64x64Day" to "Day", for Stadium 64x64 (with no Stadium decoration for custom titles)
+			$this->mood		= str_replace(array('64x64', '48'), '', $gbx->mood);		// "64x64Day" to "Day" for Stadium 64x64 (with no Stadium decoration for custom titles); "Day48" to "Day for Valley maps (mostly returned by ListMethod GetCurrentMapInfo())
 			$this->type		= $gbx->mapType;
 			$this->style		= trim($gbx->mapStyle);
 

@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-03-15
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -428,8 +428,7 @@ class PluginRaspJukebox extends Plugin {
 		// check for jukeboxed map(s)
 		if (!empty($this->jukebox)) {
 			if ($aseco->debug) {
-				$aseco->console_text('onEndMap step1 - $this->jukebox:'. CRLF .
-					print_r($this->jukebox, true)
+				$aseco->console_text('onEndMap step1 - $this->jukebox:'. CRLF . print_r($this->jukebox, true)
 				);
 			}
 
@@ -484,9 +483,7 @@ class PluginRaspJukebox extends Plugin {
 
 			if ($aseco->debug) {
 				$aseco->console_text('onEndMap step2 - $this->jukebox_check: '. $this->jukebox_check);
-				$aseco->console_text('onEndMap step2 - $this->jukebox:'. CRLF .
-					print_r($this->jukebox, true)
-				);
+				$aseco->console_text('onEndMap step2 - $this->jukebox:'. CRLF . print_r($this->jukebox, true));
 			}
 
 			// if a MX map, add it to server

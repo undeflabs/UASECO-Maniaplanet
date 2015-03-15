@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-12
+ * Date:	2015-03-15
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -326,6 +326,7 @@ class MapList {
 
 				if (!empty($dbinfos[$mapinfo['UId']])) {
 					// Update this Map in the database
+					$map->id = $dbinfos[$mapinfo['UId']]['mapid'];
 					$database['update'][] = $map;
 				}
 				else {
@@ -429,6 +430,7 @@ class MapList {
 			}
 		}
 		else {
+			$aid = $result['AuthorId'];
 			if ($map->author_continent != '' && $map->author_nation != 'OTH') {
 				$query = "
 				UPDATE `%prefix%authors`
@@ -437,13 +439,13 @@ class MapList {
 					`Zone` = ". $aseco->db->quote(implode('|', $map->author_zone)) .",
 					`Continent` = ". $aseco->db->quote($map->author_continent) .",
 					`Nation` = ". $aseco->db->quote($map->author_nation) ."
-				WHERE `AuthorId` = ". $result['AuthorId'] ."
+				WHERE `AuthorId` = ". $aid ."
 				LIMIT 1;
 				";
 
 				$result = $aseco->db->query($query);
 				if ($result) {
-					return $result['AuthorId'];
+					return $aid;
 				}
 				else {
 					return 0;
@@ -463,14 +465,18 @@ class MapList {
 				LIMIT 1;
 				";
 				$result = $aseco->db->select_one($query);
+				if ($result) {
+					$map->author		= $result['Login'];
+					$map->author_nickname	= $result['Nickname'];
+					$map->author_zone	= explode('|', $result['Zone']);
+					$map->author_continent	= $result['Continent'];
+					$map->author_nation	= $result['Nation'];
 
-				$map->author		= $result['Login'];
-				$map->author_nickname	= $result['Nickname'];
-				$map->author_zone	= explode('|', $result['Zone']);
-				$map->author_continent	= $result['Continent'];
-				$map->author_nation	= $result['Nation'];
-
-				return $result['AuthorId'];
+					return $result['AuthorId'];
+				}
+				else {
+					return 0;
+				}
 			}
 		}
 	}
@@ -614,7 +620,7 @@ class MapList {
 		LIMIT 1;
 		";
 
-		$aseco->db->query($query);
+		$result = $aseco->db->query($query);
 		if ($aseco->db->affected_rows === -1) {
 //			trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
 			return false;
@@ -790,8 +796,8 @@ class MapList {
 		$response = $aseco->client->query('GetCurrentMapInfo');
 
 		// Get Map from map_list[]
-		if ($map = $this->getMapByUid($response['UId'])) {
-
+		$map = $this->getMapByUid($response['UId']);
+		if ($map->uid !== false) {
 			// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response,
 			// this is required for old Maps (e.g. early Canyon beta or converted TMF Stadium)
 			$map->nblaps = $response['NbLaps'];
@@ -802,6 +808,7 @@ class MapList {
 
 			return $map;
 		}
+		return new Map(null, null);
 	}
 
 	/*

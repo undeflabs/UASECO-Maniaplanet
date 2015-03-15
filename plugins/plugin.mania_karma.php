@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-02-28
+ * Date:	2015-03-15
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -450,8 +450,8 @@ class PluginManiaKarma extends Plugin {
 		// Set connection status to 'all fine'
 		$this->config['retrytime'] = 0;
 
-		// 15 min. wait until try to reconnect
-		$this->config['retrywait'] = (10 * 60);
+		// wait a little bit until try to reconnect (currently 60 sec.)
+		$this->config['retrywait'] = 60;
 
 		// Set login data
 		$this->config['account']['login']	= strtolower((string)$aseco->server->login);
@@ -3609,15 +3609,15 @@ EOL;
 						if ($xml->status == 200) {
 							$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
 
-							$this->karma['global']['votes']['fantastic']['percent']	= (float)$xml->votes->fantastic['percent'];
+							$this->karma['global']['votes']['fantastic']['percent']		= (float)$xml->votes->fantastic['percent'];
 							$this->karma['global']['votes']['fantastic']['count']		= (int)$xml->votes->fantastic['count'];
-							$this->karma['global']['votes']['beautiful']['percent']	= (float)$xml->votes->beautiful['percent'];
+							$this->karma['global']['votes']['beautiful']['percent']		= (float)$xml->votes->beautiful['percent'];
 							$this->karma['global']['votes']['beautiful']['count']		= (int)$xml->votes->beautiful['count'];
 							$this->karma['global']['votes']['good']['percent']		= (float)$xml->votes->good['percent'];
 							$this->karma['global']['votes']['good']['count']		= (int)$xml->votes->good['count'];
 
 							$this->karma['global']['votes']['bad']['percent']		= (float)$xml->votes->bad['percent'];
-							$this->karma['global']['votes']['bad']['count']		= (int)$xml->votes->bad['count'];
+							$this->karma['global']['votes']['bad']['count']			= (int)$xml->votes->bad['count'];
 							$this->karma['global']['votes']['poor']['percent']		= (float)$xml->votes->poor['percent'];
 							$this->karma['global']['votes']['poor']['count']		= (int)$xml->votes->poor['count'];
 							$this->karma['global']['votes']['waste']['percent']		= (float)$xml->votes->waste['percent'];
