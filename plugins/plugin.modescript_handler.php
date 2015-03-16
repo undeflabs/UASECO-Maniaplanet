@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-15
+ * Date:	2015-03-16
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -458,6 +458,12 @@ class PluginModescriptHandler extends Plugin {
 			case 'LibXmlRpc_BeginMap':
 ///start work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=241929#p241929
 ///remove after bugfix
+if ($aseco->string2bool($params[2]) === true) {
+	$aseco->restarting = true;			// Map was restarted
+}
+else {
+	$aseco->restarting = false;			// No Restart
+}
 $aseco->loadingMap($params[1]);
 ///END
 				// Reset
