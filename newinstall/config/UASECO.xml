@@ -72,6 +72,13 @@
 	<stripling_path>cache/stripling.xml</stripling_path>
 
 	<!--
+	Full path in where the "ManiaPlanetServer" or "ManiaPlanetServer.exe" is located,
+	required for the checking routine of the dedicated server scripts.
+	E.g.: /home/user/bin/GameServer
+	//-->
+	<dedicated_installation>PATH_TO_DEDICATED_SERVER</dedicated_installation>
+
+	<!--
 	Maplist used by the dedicated server, typical located in
 	"UserData/Maps/MatchSettings/"
 	//-->

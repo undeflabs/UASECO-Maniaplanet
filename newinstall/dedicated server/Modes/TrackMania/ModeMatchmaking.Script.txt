@@ -5,7 +5,7 @@
  */
 #Extends "Modes/TrackMania/ModeBase.Script.txt"
 
-#Const ModeMatchmakingVersion		"2015-02-13"
+#Const ModeMatchmakingVersion		"2015-03-11"
 #Const ModeMatchmakingScriptName	"ModeMatchmaking.Script.txt"
 
 #Include "TextLib" as TL
@@ -185,7 +185,7 @@ while (
 		+++LobbyBeforeLoadMap+++
 		
 		// Load map
-		XmlRpc::LoadingMap(MB_SectionMapNb);
+		XmlRpc::LoadingMap(MB_SectionMapNb, MB_MapRestarted);
 		MB_LoadMap();
 		
 		if (MB_UseLogging) MB_Log("LobbyStartMap");
@@ -633,7 +633,7 @@ MMLobby::MatchmakerStop();
 // Functions
 // ---------------------------------- //
 // ---------------------------------- //
-// Lobby private functions
+// Private lobby functions
 // ---------------------------------- //
 // ---------------------------------- //
 /// Start the MatchMaker

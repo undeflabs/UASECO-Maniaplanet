@@ -360,4 +360,111 @@
 			<waiting_time_max>600</waiting_time_max>
 		</chase>
 	</modesetup>
+
+
+
+	<!--
+	Settings for MatchMaking
+	Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html#ModeMatchmaking
+	//-->
+	<matchmaking>
+		<!-- URL of the matchmaking API. If you don't plan to use a custom matchmaking function leave this setting at its default value. -->
+		<matchmaking_api_url>https://matchmaking.maniaplanet.com/v8</matchmaking_api_url>
+
+		<!--
+		This is the most important setting, it can take one of these values:
+		0 -> matchmaking turned off, standard server
+		1 -> matchmaking turned on, use this server as a lobby server
+		2 -> matchmaking turned on, use this server as a match server
+		3 -> matchmaking turned off, use this server as a universal lobby server
+		4 -> matchmaking turned off, use this server as a universal match server
+		//-->
+		<matchmaking_mode>0</matchmaking_mode>
+
+		<!--
+		Set the minimum ratio of players that have to agree to play a rematch before launching one.
+		The value range from 0.0 to 1.0. Any negative value turns off the rematch vote.
+		//-->
+		<matchmaking_rematch_ratio>-1.0</matchmaking_rematch_ratio>
+
+		<!-- Set the maximum number of consecutive rematches possible. -->
+		<matchmaking_rematch_number_max>2</matchmaking_rematch_number_max>
+
+		<!-- (Dis-)Allow the players to vote for the next map. -->
+		<matchmaking_vote_for_map>false</matchmaking_vote_for_map>
+
+		<!-- Enable or disable the progressive matchmaking. -->
+		<matchmaking_progressive>false</matchmaking_progressive>
+
+		<!-- Waiting time at the beginning of the matches. -->
+		<matchmaking_waiting_time>45</matchmaking_waiting_time>
+
+		<!-- Number of rounds played before switching to the next map. -->
+		<lobby_round_per_map>6</lobby_round_per_map>
+
+		<!-- Set how many times the matchmaking function is called before ending the current round of King of the Lobby. -->
+		<lobby_matchmaker_per_round>30</lobby_matchmaker_per_round>
+
+		<!-- Set the waiting time before calling the matchmaking function again. -->
+		<lobby_matchmaker_wait>2</lobby_matchmaker_wait>
+
+		<!-- Duration (in seconds) of the matchmaking function. It allows the players to see who they will play their match with or cancel it if necessary. -->
+		<lobby_matchmaker_time>8</lobby_matchmaker_time>
+
+		<!-- Display a list of Masters players in the lobby. -->
+		<lobby_display_masters>true</lobby_display_masters>
+
+		<!-- Disable lobby UI -->
+		<lobby_disable_ui>false</lobby_disable_ui>
+
+		<!-- This message is displayed in the chat to inform the players that an error occured in the matchmaking system. -->
+		<matchmaking_error_message>An error occured in the matchmaking API. If the problem persist please try to contact this server administrator.</matchmaking_error_message>
+
+		<!--
+		Log the API errors. You can activate it if something doesn't work and you have to investigate.
+		Otherwise it's better to leave it turned off because this can quickly write huge log files.
+		//-->
+		<matchmaking_log_api_error>false</matchmaking_log_api_error>
+
+		<!-- Same as above, only turn it on if necessary. -->
+		<matchmaking_log_api_debug>false</matchmaking_log_api_debug>
+
+		<!-- Same as above, only turn it on if necessary. -->
+		<matchmaking_log_misc_debug>false</matchmaking_log_misc_debug>
+
+		<!-- Average waiting time before progressive matchmaking activate. -->
+		<progressive_activation_waiting_time>180000</progressive_activation_waiting_time>
+
+		<!-- Multiply the required players nb by this, if there's less player in the lobby activate progressive. -->
+		<progressive_activation_players_number_ratio>1</progressive_activation_players_number_ratio>
+	</matchmaking>
+
+
+	<!--
+	DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING!
+	//-->
+	<scripts>
+		<entry>Libs/Nadeo/TrackMania/UI/TeamModes.Script.txt|2014-04-04</entry>
+		<entry>Libs/Nadeo/TrackMania/Map.Script.txt|2013-12-17</entry>
+		<entry>Libs/Nadeo/TrackMania/MultiClans.Script.txt|2014-01-08</entry>
+		<entry>Libs/Nadeo/TrackMania/TM2.Script.txt|2015-02-17</entry>
+		<entry>Libs/Nadeo/TrackMania/UI.Script.txt|2015-02-16</entry>
+		<entry>Libs/Nadeo/TrackMania/WarmUp.Script.txt|2014-11-26</entry>
+		<entry>Libs/Nadeo/TrackMania/WarmUp2.Script.txt|2015-02-23</entry>
+		<entry>Libs/Nadeo/TrackMania/XmlRpc.Script.txt|2015-03-23</entry>
+		<entry>Libs/Nadeo/MatchmakingLobby.Script.txt|2015-03-03</entry>
+		<entry>Libs/Nadeo/MatchmakingMatch.Script.txt|2015-02-24</entry>
+		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-04-05</entry>
+		<entry>Libs/Nadeo/XmlRpcCommon.Script.txt|2015-02-23</entry>
+		<entry>Modes/TrackMania/Chase.Script.txt|2015-03-05</entry>
+		<entry>Modes/TrackMania/Cup.Script.txt|2015-02-06</entry>
+		<entry>Modes/TrackMania/Laps.Script.txt|2014-10-07</entry>
+		<entry>Modes/TrackMania/ModeBase.Script.txt|2015-02-26</entry>
+		<entry>Modes/TrackMania/ModeMatchmaking.Script.txt|2015-03-11</entry>
+		<entry>Modes/TrackMania/Rounds.Script.txt|2014-10-07</entry>
+		<entry>Modes/TrackMania/RoundsBase.Script.txt|2014-12-31</entry>
+		<entry>Modes/TrackMania/Team.Script.txt|2014-12-31</entry>
+		<entry>Modes/TrackMania/TeamAttack.Script.txt|2014-10-07</entry>
+		<entry>Modes/TrackMania/TimeAttack.Script.txt|2014-10-07</entry>
+	</scripts>
 </settings>

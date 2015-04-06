@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-01
+ * Date:	2015-04-05
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -66,8 +66,9 @@ class PluginStuntMessages extends Plugin {
 		$this->registerEvent('onBeginMap',		'onBeginMap');
 		$this->registerEvent('onEndMap1',		'onEndMap1');
 		$this->registerEvent('onRestartMap',		'onRestartMap');
+		$this->registerEvent('onPlayerStartCountdown',	'onPlayerStartCountdown');
 //		$this->registerEvent('onPlayerRespawn',		'onPlayerRespawn');
-//		$this->registerEvent('onPlayerGiveUp',		'onPlayerGiveUp');
+		$this->registerEvent('onPlayerGiveUp',		'onPlayerGiveUp');
 
 		$this->manialinkid				= 'PluginStuntsMessage';
 
@@ -78,8 +79,6 @@ class PluginStuntMessages extends Plugin {
 		$this->text_colors['penalty']			= 'F30F';
 
 		// http://en.tm-wiki.org/wiki/Stunt_Mode
-		// http://telechargeurfou.free.fr/upload/trackmania/figures/
-
 		$this->stunt_events = array(
 			'::EStuntFigure::TimePenalty'		=> 'Time Penalty',
 			'::EStuntFigure::RespawnPenalty'	=> 'Respawn Penalty',
@@ -251,9 +250,9 @@ class PluginStuntMessages extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerRespawn ($aseco, $login) {
-		$this->hideWidget($login);
-	}
+//	public function onPlayerRespawn ($aseco, $login) {
+//		$this->hideWidget($login);
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -262,7 +261,28 @@ class PluginStuntMessages extends Plugin {
 	*/
 
 	public function onPlayerGiveUp ($aseco, $login) {
-		$this->hideWidget($login);
+		// Reset all points
+		$this->db[$login] = array(
+			'total_points'	=> 0,
+			'total_bonus'	=> 0,
+			'total_penalty'	=> 0,
+		);
+//		$this->hideWidget($login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerStartCountdown ($aseco, $login) {
+		// Reset all points
+		$this->db[$login] = array(
+			'total_points'	=> 0,
+			'total_bonus'	=> 0,
+			'total_penalty'	=> 0,
+		);
 	}
 
 	/*

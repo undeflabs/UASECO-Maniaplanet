@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-15
+ * Date:	2015-03-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -47,7 +47,6 @@
 
 class PluginRasp extends Plugin {
 	public $aseco;
-	public $map_list_cache;
 
 
 	/*
@@ -69,7 +68,6 @@ class PluginRasp extends Plugin {
 
 		$this->registerEvent('onStartup',		'onStartup');
 		$this->registerEvent('onSync',			'onSync');
-		$this->registerEvent('onMapListModified',	'onMapListModified');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onUnloadingMap',		'onUnloadingMap');
 		$this->registerEvent('onEndMap',		'onEndMap');
@@ -81,9 +79,6 @@ class PluginRasp extends Plugin {
 		$this->registerChatCommand('top100',	'chat_top100',	'Displays top 100 best ranked players',		Player::PLAYERS);
 		$this->registerChatCommand('topwins',	'chat_topwins',	'Displays top 100 victorious players',		Player::PLAYERS);
 		$this->registerChatCommand('active',	'chat_active',	'Displays top 100 most active players',		Player::PLAYERS);
-
-
-		$this->map_list_cache = array();
 	}
 
 	/*
@@ -186,35 +181,11 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onMapListModified ($aseco, $data) {
-
-		// clear cache if map list modified
-		if ($data[2]) {
-			$this->map_list_cache = array();
-			if ($aseco->debug) {
-				$aseco->console_text('maps cache cleared');
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onLoadingMap ($aseco, $map) {
 
 		if ($this->feature_stats && !$aseco->server->isrelay) {
 			foreach ($aseco->server->players->player_list as $pl) {
 				$this->showPb($pl, $map->id, $this->always_show_pb);
-			}
-		}
-
-		if ($this->reset_cache_start) {
-			$this->map_list_cache = array();
-			if ($aseco->debug) {
-				$aseco->console_text('maps cache reset');
 			}
 		}
 	}
@@ -730,8 +701,8 @@ class PluginRasp extends Plugin {
 				}
 			}
 		}
-		$aseco->db->query('COMMIT;');
-		$aseco->console('[Rasp] ...Done!');
+		$aseco->db->commit();
+		$aseco->console('[Rasp] ...successfully done!');
 	}
 
 	/*
@@ -1195,7 +1166,6 @@ class PluginRasp extends Plugin {
 				$this->jukebox_permadd		= $aseco->string2bool($xml['RASP']['JUKEBOX_PERMADD'][0]);
 				$this->jukebox_adminadd		= $aseco->string2bool($xml['RASP']['JUKEBOX_ADMINADD'][0]);
 				$this->jukebox_in_window	= $aseco->string2bool($xml['RASP']['JUKEBOX_IN_WINDOW'][0]);
-				$this->reset_cache_start	= $aseco->string2bool($xml['RASP']['RESET_CACHE_START'][0]);
 				$this->autosave_matchsettings	= $xml['RASP']['AUTOSAVE_MATCHSETTINGS'][0];
 				$this->feature_votes		= $aseco->string2bool($xml['RASP']['FEATURE_VOTES'][0]);
 				$this->prune_records_times	= $aseco->string2bool($xml['RASP']['PRUNE_RECORDS_TIMES'][0]);
@@ -1222,7 +1192,6 @@ class PluginRasp extends Plugin {
 				$this->mxvoteratio		= $xml['RASP']['MX_VOTERATIO'][0];
 				$this->mxdir			= $xml['RASP']['MX_DIR'][0];
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
-				$this->maphistory_file		= $xml['RASP']['MAPHISTORY_FILE'][0];
 
 				$this->jukebox			= array();
 				$this->jb_buffer		= array();

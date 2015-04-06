@@ -48,6 +48,7 @@
 
 	<!-- Add here third-party plugins -->
 	<plugin>plugin.pay2play.php</plugin>
+	<plugin>plugin.effect_studio.php</plugin>
 	<plugin>plugin.records_eyepiece.php</plugin>
 	<plugin>plugin.mania_karma.php</plugin>
 	<plugin>plugin.nickname_sync.php</plugin>

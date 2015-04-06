@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-03
+ * Date:	2015-04-04
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -126,7 +126,9 @@ class PluginInfoBar extends Plugin {
 	public function onEveryTenSeconds ($aseco) {
 
 		// Check for required updates
-		$this->updateRecords();
+		if ($aseco->server->gamestate != Server::SCORE) {
+			$this->updateRecords();
+		}
 	}
 
 	/*

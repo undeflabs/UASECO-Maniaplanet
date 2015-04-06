@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-15
+ * Date:	2015-03-28
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -378,7 +378,7 @@ class MapList {
 		// Update all current Filenames
 		$this->updateFilenamesInDatabase($database['filenames']);
 
-		$aseco->db->query('COMMIT;');
+		$aseco->db->commit();
 		unset($database);
 
 
@@ -769,7 +769,13 @@ class MapList {
 		$gbx = new GBXChallMapFetcher(true, false, false);
 		try {
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-				$gbx->processFile(iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $aseco->stripBOM($file)));
+				$file = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $aseco->stripBOM($file));
+				if ($file !== false) {
+					$gbx->processFile($file);
+				}
+				else {
+					trigger_error('[MapList] Could not read Map ['. $file .'] because iconv() returned "false".', E_USER_WARNING);
+				}
 			}
 			else {
 				$gbx->processFile($aseco->stripBOM($file));

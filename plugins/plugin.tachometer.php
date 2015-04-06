@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-03-03
+ * Date:	2015-03-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -274,9 +274,12 @@ main() {
 	declare SoundGearShift			= Audio.CreateSound("{$this->config['tachometer']['sounds']['gear_shift']}", 1.0, False, False, False);
 	declare Text LastGear			= "P";
 
-	// Settings
-	LabelVelocityUnit.Opacity		= 0.65;
+	declare Integer RefreshInterval		= 100;
+	declare Integer RefreshTime		= CurrentTime;
+	declare Integer MeasuredTopSpeed	= 0;
+	declare Integer TimeCount		= 1;
 
+	// Settings
 	FrameTachometer.RelativeScale		= {$this->config['tachometer']['sizes']['scale']};
 
 	SoundDriveBackward.Volume		= 1.0;
@@ -295,6 +298,7 @@ main() {
 	QuadTachoscale11.Opacity		= 0.0;
 	QuadTachoscale12.Opacity		= 0.0;
 
+	LabelVelocityUnit.Opacity		= 0.65;
 	LabelGearParking.Opacity		= 1.0;
 	LabelGearReverse.Opacity		= 0.5;
 	LabelGearNeutral.Opacity		= 0.5;
@@ -314,6 +318,16 @@ main() {
 		"QuadTachoscale11",
 		"QuadTachoscale12"
 	];
+
+//	declare CMlGraph GraphStatistic			<=> (Page.GetFirstChild("GraphStatistic") as CMlGraph);
+//	GraphStatistic.CoordsMin			= <0.0, -1200.0>;
+//	GraphStatistic.CoordsMax			= <720.0, 7200.0>;
+//
+//	declare CMlGraphCurve[] Curves			= [GraphStatistic.AddCurve(), GraphStatistic.AddCurve()];
+//	Curves[0].Color					= <0.9, 0.9, 0.9>;
+//	Curves[1].Color					= <0.0, 7.0, 0.0>;
+//
+//	declare CMlLabel LabelSpeedStatistic		<=> (Page.GetFirstChild("LabelSpeedStatistic") as CMlLabel);
 
 	while (True) {
 		yield;
@@ -340,6 +354,49 @@ main() {
 		if (InputPlayer.DisplaySpeed >= 1200.0) {
 			NeedleRotation = 299.2;
 		}
+
+
+//		// Store TopSpeed
+//		if (InputPlayer.DisplaySpeed > MeasuredTopSpeed) {
+//			MeasuredTopSpeed = InputPlayer.DisplaySpeed;
+//		}
+//		if (CurrentTime > RefreshTime) {
+//			// Check for max. width and reset if required
+//			if (TimeCount >= GraphStatistic.CoordsMax.X || InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart) {
+//				declare ColorSpeed = Curves[0].Color;
+//				declare ColorAltitude = Curves[1].Color;
+//
+//				GraphStatistic.RemoveCurve(Curves[0]);
+//				GraphStatistic.RemoveCurve(Curves[1]);
+//				Curves = [GraphStatistic.AddCurve(), GraphStatistic.AddCurve()];
+//				Curves[0].Color = ColorSpeed;
+//				Curves[1].Color = ColorAltitude;
+//
+//				MeasuredTopSpeed = 0;
+//				TimeCount = 1;
+//			}
+//
+//			// Store current Speed at timestamp
+//			Curves[0].Points.add(<(TimeCount + 0.00001), (InputPlayer.Speed * 3.6)>);
+//
+//			// Compensate differences and store current Altitude
+//			declare Real Altitude = InputPlayer.Position.Y;
+//			if (Map.CollectionName == "Canyon") {
+//				Altitude += 0.005517;
+//			}
+//			else if (Map.CollectionName == "Stadium") {
+//				Altitude -= 9.01413;
+//			}
+//			else if (Map.CollectionName == "Valley") {
+//				Altitude -= 2.00138;
+//			}
+//			Curves[1].Points.add(<(TimeCount + 0.00001), (Altitude * 3)>);
+//			LabelSpeedStatistic.SetText("Top Speed: "^ MeasuredTopSpeed ^" {$this->config['tachometer']['display']['velocity_unit']}");
+//
+//			// Reset RefreshTime and update Counter
+//			RefreshTime = (CurrentTime + RefreshInterval);
+//			TimeCount += 1;
+//		}
 
 		// Let the needle tremble a little bit depending on speed
 		QuadTachoneedle.RelativeRotation = NeedleRotation + MathLib::Rand(0.0, MathLib::Abs((((InputPlayer.Speed * 3.6) / 1000.0) * 4)));
@@ -438,6 +495,14 @@ EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'" name="'. $this->config['manialinkid'] .'" version="1">';
 		if ($show == true) {
+
+//			$xml .= '<frame posn="-115 -20 20.01">';
+//			$xml .= '<label posn="0 0 0.05" sizen="60 4" textsize="1" text="" id="LabelSpeedStatistic"/>';
+//			$xml .= '<quad posn="0 25 0.01" sizen="230 75" bgcolor="AAA6"/>';
+//			$xml .= '<quad posn="0 -39.2 0.02" sizen="230 0.2" bgcolor="0005"/>';
+//			$xml .= '<graph posn="0 25 2.0" sizen="690 225" scale="'. (1.0 / 3) .'" id="GraphStatistic"/>';
+//			$xml .= '</frame>';
+
 			$xml .= '<frame posn="'. $this->config['tachometer']['position']['x'] .' '. $this->config['tachometer']['position']['y'] .' '. $this->config['tachometer']['position']['z'] .'" id="FrameTachometer">';
 			$xml .= '<quad posn="0 0 0.01" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" image="'. $this->config['tachometer']['images']['background'] .'" id="QuadTachometer"/>';
 			$xml .= '<quad posn="0 -2.2 0.05" sizen="'. $this->config['tachometer']['sizes']['needle']['x'] .' '. $this->config['tachometer']['sizes']['needle']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['needle'] .'" image="'. $this->config['tachometer']['images']['needle'] .'" id="QuadTachoneedle"/>';

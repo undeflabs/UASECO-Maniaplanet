@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-03-10
+ * Date:		2015-04-06
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -227,6 +227,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 		$this->registerEvent('onDedimaniaRecord',		'onDedimaniaRecord');
+		$this->registerEvent('onLocalRecordsLoaded',		'onLocalRecordsLoaded');
 		$this->registerEvent('onLocalRecord',			'onLocalRecord');
 		$this->registerEvent('onWarmUpStatusChanged',		'onWarmUpStatusChanged');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
@@ -978,7 +979,7 @@ class PluginRecordsEyepiece extends Plugin {
 								LIMIT 1;
 							");
 						}
-						$aseco->db->query('COMMIT;');
+						$aseco->db->commit();
 						unset($mostfinished);
 					}
 					$res->free_result();
@@ -1014,7 +1015,7 @@ class PluginRecordsEyepiece extends Plugin {
 								LIMIT 1;
 							");
 						}
-						$aseco->db->query('COMMIT;');
+						$aseco->db->commit();
 						unset($mostrecords);
 					}
 					$res->free_result();
@@ -1879,7 +1880,7 @@ class PluginRecordsEyepiece extends Plugin {
 			if ($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
 				if (count($aseco->plugins['PluginLocalRecords']->records->record_list) >= 1) {
 					$localDigest = $this->buildRecordDigest('locals', $aseco->plugins['PluginLocalRecords']->records->record_list);
-					if ($this->config['States']['LocalRecords']['ChkSum'] != $localDigest) {
+					if ($this->config['States']['LocalRecords']['ChkSum'] != $localDigest && $this->config['States']['LocalRecords']['NoRecordsFound'] === false) {
 						$this->config['States']['LocalRecords']['NeedUpdate'] = true;
 					}
 				}
@@ -3272,7 +3273,20 @@ class PluginRecordsEyepiece extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Event from plugin.localdatabase.php
+	public function onLocalRecordsLoaded ($aseco, $records) {
+
+		$this->config['States']['LocalRecords']['NeedUpdate']		= true;
+		$this->config['States']['LocalRecords']['NoRecordsFound']	= false;
+		$this->config['States']['LocalRecords']['ChkSum']		= false;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Event from plugin.local_records.php
 	public function onLocalRecord ($aseco, $finish_item) {
 
 
@@ -3470,7 +3484,7 @@ class PluginRecordsEyepiece extends Plugin {
 			unset($player);
 		}
 
-		if (!empty($widgets)) {
+		if (!empty($widgets) && $aseco->server->gamestate != Server::SCORE) {
 			// Send Manialink to all Players
 			$this->sendManialink($widgets, false, 0);
 		}
@@ -3497,18 +3511,16 @@ class PluginRecordsEyepiece extends Plugin {
 			// Init
 			$widgets = '';
 
-			if ($aseco->plugins['PluginRasp']->reset_cache_start) {
-				// Get the new Maplist
-				$this->getMaplist(false);
+			// Get the new Maplist
+			$this->getMaplist(false);
 
-				if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
-					// Refresh the MapcountWidget
-					$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
+			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+				// Refresh the MapcountWidget
+				$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
 
-					// Display the MapcountWidget to all Player
-					if ($aseco->server->gamestate == Server::RACE) {
-						$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
-					}
+				// Display the MapcountWidget to all Player
+				if ($aseco->server->gamestate == Server::RACE) {
+					$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
 				}
 			}
 
@@ -5518,12 +5530,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 				// Get current Records
 				$this->getLocalRecords($gamemode);
-
-				// Only set to false if records are loaded and displayed,
-				// but only if there are Records. If nobody reached a Record, do not try again.
-				if ($this->config['States']['LocalRecords']['NoRecordsFound'] == false) {
-					$this->config['States']['LocalRecords']['NeedUpdate'] = false;
-				}
+				$this->config['States']['LocalRecords']['NeedUpdate'] = false;
 
 				// Say yes to build the Widget
 				$buildLocalRecordsWidget = true;
@@ -5556,7 +5563,6 @@ class PluginRecordsEyepiece extends Plugin {
 				$buildLiveRankingsWidget = true;
 			}
 		}
-
 
 
 		if ($this->config['States']['NiceMode'] == false) {
@@ -6558,6 +6564,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`Nickname`,
 			`MostFinished`
 		FROM `%prefix%players`
+		WHERE `MostFinished` > 0
 		ORDER BY `MostFinished` DESC
 		". $appendix .";
 		";
@@ -10018,8 +10025,8 @@ EOL;
 		$xml .= '<format textsize="1" textcolor="FFFF"/>';
 		$xml .= '<quad posn="0 0 0.02" sizen="24.05 47" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 		$xml .= '<quad posn="0.4 -0.36 0.04" sizen="23.25 2" style="BgsPlayerCard" substyle="ProgressBar"/>';
-		$xml .= '<quad posn="'. $this->config['Positions']['left']['icon']['x'] .' '. $this->config['Positions']['left']['icon']['y'] .' 0.05" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['LAST_MAP'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['LAST_MAP'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="'. $this->config['Positions']['left']['title']['x'] .' '. $this->config['Positions']['left']['title']['y'] .' 0.05" sizen="23.6 0" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLE'][0]['LAST_MAP'][0] .'"/>';
+		$xml .= '<quad posn="'. $this->config['Positions']['left']['icon']['x'] .' '. $this->config['Positions']['left']['icon']['y'] .' 0.05" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['LAST'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['LAST'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<label posn="'. $this->config['Positions']['left']['title']['x'] .' '. $this->config['Positions']['left']['title']['y'] .' 0.05" sizen="23.6 0" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLES'][0]['LAST'][0] .'"/>';
 		$xml .= '<quad posn="1.4 -3.6 0.03" sizen="21.45 16.29" bgcolor="FFF9"/>';
 		$xml .= '<label posn="12.1 -11 0.04" sizen="20 2" halign="center" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="1.5 -3.7 0.50" sizen="21.25 16.09" image="'. $this->cache['Map']['Last']['imageurl'] .'"/>';
@@ -10087,8 +10094,8 @@ EOL;
 		$xml .= '<format textsize="1" textcolor="FFFF"/>';
 		$xml .= '<quad posn="0 0 0.02" sizen="24.05 47" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 		$xml .= '<quad posn="0.4 -0.36 0.04" sizen="23.25 2" style="BgsPlayerCard" substyle="ProgressBar"/>';
-		$xml .= '<quad posn="'. $this->config['Positions']['left']['icon']['x'] .' '. $this->config['Positions']['left']['icon']['y'] .' 0.05" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT_MAP'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT_MAP'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="'. $this->config['Positions']['left']['title']['x'] .' '. $this->config['Positions']['left']['title']['y'] .' 0.05" sizen="23.6 0" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLE'][0]['CURRENT_MAP'][0] .'"/>';
+		$xml .= '<quad posn="'. $this->config['Positions']['left']['icon']['x'] .' '. $this->config['Positions']['left']['icon']['y'] .' 0.05" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<label posn="'. $this->config['Positions']['left']['title']['x'] .' '. $this->config['Positions']['left']['title']['y'] .' 0.05" sizen="23.6 0" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLES'][0]['CURRENT'][0] .'"/>';
 		$xml .= '<quad posn="1.4 -3.6 0.03" sizen="21.45 16.29" bgcolor="FFF9"/>';
 		$xml .= '<label posn="12.1 -11 0.04" sizen="20 2" halign="center" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="1.5 -3.7 0.50" sizen="21.25 16.09" image="'. $this->cache['Map']['Current']['imageurl'] .'"/>';
@@ -10156,8 +10163,8 @@ EOL;
 		$xml .= '<format textsize="1" textcolor="FFFF"/>';
 		$xml .= '<quad posn="0 0 0.02" sizen="24.05 47" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 		$xml .= '<quad posn="0.4 -0.36 0.04" sizen="23.25 2" style="BgsPlayerCard" substyle="ProgressBar"/>';
-		$xml .= '<quad posn="'. $this->config['Positions']['left']['icon']['x'] .' '. $this->config['Positions']['left']['icon']['y'] .' 0.05" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT_MAP'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT_MAP'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="'. $this->config['Positions']['left']['title']['x'] .' '. $this->config['Positions']['left']['title']['y'] .' 0.05" sizen="23.6 0" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLE'][0]['NEXT_MAP'][0] .'"/>';
+		$xml .= '<quad posn="'. $this->config['Positions']['left']['icon']['x'] .' '. $this->config['Positions']['left']['icon']['y'] .' 0.05" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<label posn="'. $this->config['Positions']['left']['title']['x'] .' '. $this->config['Positions']['left']['title']['y'] .' 0.05" sizen="23.6 0" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLES'][0]['NEXT'][0] .'"/>';
 		$xml .= '<quad posn="1.4 -3.6 0.03" sizen="21.45 16.29" bgcolor="FFF9"/>';
 		$xml .= '<label posn="12.1 -11 0.04" sizen="20 2" halign="center" textsize="1" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="1.5 -3.7 0.50" sizen="21.25 16.09" image="'. $this->cache['Map']['Next']['imageurl'] .'"/>';
@@ -10841,7 +10848,7 @@ EOL;
 					}
 					$xml .= '<quad posn="0.27 -0.34 0.04" sizen="17.4 2.2" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
 					$xml .= '<label posn="6 -0.65 0.05" sizen="7.3 0" textcolor="000F" textsize="1" text="#'. ($i+1) .'"/>';
-					$xml .= '<quad posn="0.8 -0.5 0.05" sizen="5 1.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map['environment'])][0] .'"/>';
+					$xml .= '<quad posn="0.8 -0.5 0.05" sizen="5 1.5" modulatecolor="000" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map['environment'])][0] .'"/>';
 					$xml .= '<label posn="1 -2.7 0.04" sizen="16 2" scale="1" text="'. $aseco->stripColors($map['name'], true) .'"/>';
 					$xml .= '<quad posn="1 -4.2 0.04" sizen="1.8 1.8" image="file://Skins/Avatars/Flags/'. (strtoupper($map['author_nation']) == 'OTH' ? 'other' : $map['author_nation']) .'.dds"/>';
 					$xml .= '<label posn="3.3 -4.5 0.04" sizen="13 2" scale="0.9" text="by '. $aseco->stripColors($map['author'], true) .'"/>';
@@ -12342,18 +12349,18 @@ EOL;
 
 				// Setup defaults
 				$type = $this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0];
-				$title = $this->config['MAP_WIDGET'][0]['TITLE'][0]['NEXT_MAP'][0];
+				$title = $this->config['MAP_WIDGET'][0]['TITLES'][0]['NEXT'][0];
 				$icon = array(
-					$this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT_MAP'][0]['ICON_STYLE'][0],
-					$this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT_MAP'][0]['ICON_SUBSTYLE'][0]
+					$this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT'][0]['ICON_STYLE'][0],
+					$this->config['MAP_WIDGET'][0]['ICONS'][0]['NEXT'][0]['ICON_SUBSTYLE'][0]
 				);
 
 				// Check for changing display
 				if ($type == 'Current') {
-					$title = $this->config['MAP_WIDGET'][0]['TITLE'][0]['CURRENT_MAP'][0];
+					$title = $this->config['MAP_WIDGET'][0]['TITLES'][0]['CURRENT'][0];
 					$icon = array(
-						$this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT_MAP'][0]['ICON_STYLE'][0],
-						$this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT_MAP'][0]['ICON_SUBSTYLE'][0]
+						$this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_STYLE'][0],
+						$this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_SUBSTYLE'][0]
 					);
 				}
 
@@ -13375,8 +13382,8 @@ EOL;
 		else {
 			$header .= '<quad posn="0.4 -0.36 0.03" sizen="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 0.8) .' 2" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_SUBSTYLE'][0] .'"/>';
 		}
-		$header .= '<quad posn="%posx_icon% %posy_icon% 0.04" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT_MAP'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT_MAP'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$header .= '<label posn="%posx_title% %posy_title% 0.04" sizen="10.2 0" halign="%halign%" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLE'][0]['CURRENT_MAP'][0] .'"/>';
+		$header .= '<quad posn="%posx_icon% %posy_icon% 0.04" sizen="2.5 2.5" style="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$header .= '<label posn="%posx_title% %posy_title% 0.04" sizen="10.2 0" halign="%halign%" textsize="1" text="'. $this->config['MAP_WIDGET'][0]['TITLES'][0]['CURRENT'][0] .'"/>';
 		$header .= '<label posn="1 -2.7 0.04" sizen="13.55 2" scale="1" text="%mapname%"/>';
 		$header .= '<quad posn="1 -4.2 0.04" sizen="1.8 1.8" image="file://Skins/Avatars/Flags/%author_nation%.dds"/>';
 		$header .= '<label posn="3.3 -4.5 0.04" sizen="13 2" scale="0.9" text="by %author%"/>';
@@ -14715,7 +14722,7 @@ EOL;
 
 				// Make sure the Widgets are refreshed without the Player highlites
 				$this->config['States']['DedimaniaRecords']['NeedUpdate']	= true;
-				$this->config['States']['LocalRecords']['NeedUpdate']	= true;
+				$this->config['States']['LocalRecords']['NeedUpdate']		= true;
 
 				// Set new refresh interval
 				$this->config['FEATURES'][0]['REFRESH_INTERVAL'][0] = $this->config['NICEMODE'][0]['REFRESH_INTERVAL'][0];
@@ -14957,7 +14964,7 @@ EOL;
 //			$gbx = new GBXChallMapFetcher(true);
 //			try {
 //				if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-//					$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $aseco->stripBOM($mapfile)));
+//					$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $aseco->stripBOM($mapfile)));
 //				}
 //				else {
 //					$gbx->processFile($aseco->server->mapdir . $aseco->stripBOM($mapfile));

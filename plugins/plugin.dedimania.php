@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-10
+ * Date:	2015-03-24
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1481,7 +1481,7 @@ class PluginDedimania extends Plugin {
 					}
 				}
 				else if (($errors = $this->is_error($response)) !== false) {
-					$aseco->console('[Dedimania] Connection Error!!! ('. $response['Headers']['server'][0] .')'. CRLF . $errors . CRLF .'  !!!');
+					$aseco->console('[Dedimania] Connection Error: '. $errors . CRLF .'!!!');
 				}
 				else if (!isset($response['Code'])) {
 					$aseco->console('[Dedimania] Error no database response ('. $this->db['Url'] .')'. CRLF .'  !!!');
@@ -1820,7 +1820,7 @@ class PluginDedimania extends Plugin {
 			// check for map without actual checkpoints
 			$aseco->console('[Dedimania] Map\'s NbCheckpoints < 2: records ignored');
 		}
-		else if ($map->multilap && $aseco->server->gameinfo->rounds['ForceLapsNb'] > 0 && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP)) {
+		else if (($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) && $map->multilap && $aseco->server->gameinfo->rounds['ForceLapsNb'] > 0) {
 			// check for multilap map in Rounds/Team/Cup modes
 			$aseco->console('[Dedimania] RoundForcedLaps > 0: records ignored');
 		}

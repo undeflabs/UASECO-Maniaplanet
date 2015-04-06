@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-24
+ * Date:	2015-03-18
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -193,7 +193,7 @@ class Converter {
 					$count['added'] += 1;
 				}
 			}
-			$this->db->query('COMMIT;');
+			$this->db->commit();
 			$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Players.');
 
 
@@ -243,7 +243,7 @@ class Converter {
 					}
 				}
 			}
-			$this->db->query('COMMIT;');
+			$this->db->commit();
 			$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' settings.');
 
 		}
@@ -300,7 +300,7 @@ class Converter {
 //					$this->console('Could not update Player "'. $row['PlayerId'] .'": '. $this->db->errmsg() );
 //				}
 			}
-			$this->db->query('COMMIT;');
+			$this->db->commit();
 			$this->console('...finished converting Records-Eyepiece entries.');
 		}
 		else {
@@ -388,7 +388,7 @@ class Converter {
 					$count['added'] += 1;
 				}
 			}
-			$this->db->query('COMMIT;');
+			$this->db->commit();
 			$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Maps.');
 		}
 		else {
@@ -447,7 +447,7 @@ class Converter {
 						$count['added'] += 1;
 					}
 				}
-				$this->db->query('COMMIT;');
+				$this->db->commit();
 				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Records'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
@@ -504,7 +504,7 @@ class Converter {
 						$count['added'] += 1;
 					}
 				}
-				$this->db->query('COMMIT;');
+				$this->db->commit();
 				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Karma votes'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
@@ -556,7 +556,7 @@ class Converter {
 						$count['added'] += 1;
 					}
 				}
-				$this->db->query('COMMIT;');
+				$this->db->commit();
 				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Player ranks'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
@@ -618,7 +618,7 @@ class Converter {
 						$count['added'] += 1;
 					}
 				}
-				$this->db->query('COMMIT;');
+				$this->db->commit();
 				$this->console(' ...added '. $this->formatNumber($count['added']) .', skipped '. $this->formatNumber($count['skipped']) .' Times'. ($count['skipped'] > 0 ? ', because Map not found in Database' : '') .'.');
 			}
 			$result->free_result();
@@ -643,7 +643,7 @@ class Converter {
 	                'password'		=> $this->settings['mysql']['password'],
 			'database'		=> $this->settings['mysql']['database'],
 			'table_prefix'		=> $this->settings['mysql']['table_prefix'],
-			'autocommit'		=> 0,				// NO AUTOCOMMIT!
+			'autocommit'		=> false,			// NO AUTOCOMMIT!
 			'charset'		=> 'utf8',
 			'collate'		=> 'utf8_bin',
 			'debug'			=> false,

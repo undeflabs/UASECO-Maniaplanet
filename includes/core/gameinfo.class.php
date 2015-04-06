@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-10
+ * Date:	2015-03-20
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -42,16 +42,17 @@ class Gameinfo {
 	public $mode;
 	public $script;
 
-	public $options;
+	public $matchmaking	= array();
+	public $modebase	= array();
 
-	public $rounds;					// array()
-	public $time_attack;				// array()
-	public $team;					// array()
-	public $laps;					// array()
-	public $cup;					// array()
-	public $team_attack;				// array()
-	public $chase;					// array()
-//	public $stunts;					// array() unused
+	public $rounds		= array();
+	public $time_attack	= array();
+	public $team		= array();
+	public $laps		= array();
+	public $cup		= array();
+	public $team_attack	= array();
+	public $chase		= array();
+//	public $stunts		= array();					// currently unused
 
 	const ROUNDS		= 1;
 	const TIME_ATTACK	= 2;
@@ -126,12 +127,12 @@ class Gameinfo {
 
 
 		// ModeBase
-		$this->options['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
-		$this->options['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
-		$this->options['ChatTime']		= $modescript['settings']['S_ChatTime'];
-		$this->options['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
-		$this->options['WarmUpDuration']	= $modescript['settings']['S_WarmUpDuration'];
-		$this->options['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
+		$this->modebase['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
+		$this->modebase['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
+		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
+		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
+		$this->modebase['WarmUpDuration']	= $modescript['settings']['S_WarmUpDuration'];
+		$this->modebase['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
 
 
 		// http://doc.maniaplanet.com/dedicated-server/settings-list.html

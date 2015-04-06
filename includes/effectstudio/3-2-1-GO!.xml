@@ -1,0 +1,86 @@
+<manialink id="3-2-1-GO" name="3-2-1-GO" version="1">
+<frame posn="0 17 20" id="AnimationFrame">
+<quad posn="0 0 0.04" sizen="20 20" halign="center" valign="center" style="Icons64x64_1" substyle="Third" id="Quad3" hidden="true" opacity="0.0"/>
+<quad posn="0 0 0.03" sizen="20 20" halign="center" valign="center" style="Icons64x64_1" substyle="Second" id="Quad2" hidden="true" opacity="0.0"/>
+<quad posn="0 0 0.02" sizen="20 20" halign="center" valign="center" style="Icons64x64_1" substyle="First" id="Quad1" hidden="true" opacity="0.0"/>
+<quad posn="0 0 0.01" sizen="30 30" halign="center" valign="center" style="Icons64x64_1" substyle="StateSuggested" id="QuadGo" hidden="true" opacity="0.0"/>
+</frame>
+<script><!--
+ /*
+ * ----------------------------------
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * Version:	2015-03-24
+ * ----------------------------------
+ */
+Void Animate321GO () {
+	declare AnimationFrame		<=> (Page.GetFirstChild("AnimationFrame") as CMlFrame);
+	declare Quad3			<=> (Page.GetFirstChild("Quad3") as CMlQuad);
+	declare Quad2			<=> (Page.GetFirstChild("Quad2") as CMlQuad);
+	declare Quad1			<=> (Page.GetFirstChild("Quad1") as CMlQuad);
+	declare QuadGo			<=> (Page.GetFirstChild("QuadGo") as CMlQuad);
+
+	declare Real FadeSteps		= 0.05;
+	declare Real EndPosnX		= AnimationFrame.RelativePosition.X;
+
+	// Set frame at top
+	AnimationFrame.RelativePosition.X = 180.0;
+
+	// Setup Quad
+	Quad3.Visible	= True;
+	Quad3.Size	= <0.0, 0.0>;
+
+
+	declare Real MovementSteps = ((AnimationFrame.RelativePosition.X + EndPosnX) / (1.0 / FadeSteps));
+	while (Quad3.Opacity < 1.0) {
+		if ((Quad3.Opacity + FadeSteps) > 1.0) {
+			Quad3.Opacity = 1.0;
+
+			Quad3.RelativePosition.X -= MovementSteps;
+			break;
+		}
+
+		// FadeIn
+		Quad3.Opacity += FadeSteps;
+
+		// Zoom
+		Quad3.Size = <(Quad3.Size.X + 0.5), (Quad3.Size.Y + 0.5)>;
+
+		// Scroll
+		Quad3.RelativePosition.X -= MovementSteps;
+
+		yield;
+	}
+}
+main() {
+	declare Boolean RunningAnimation	= False;
+	declare Integer TimeOut			= 5;
+	declare Integer SecondsCounter		= 0;
+	declare Text PrevTime			= CurrentLocalDateText;
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+		if (PrevTime != CurrentLocalDateText) {
+			PrevTime = CurrentLocalDateText;
+			SecondsCounter += 1;
+		}
+		if (InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running && RunningAnimation == True) {
+			if (SecondsCounter >= TimeOut) {
+				RunningAnimation = False;
+				SecondsCounter = 0;
+log(CurrentLocalDateText ^" Reset...");
+			}
+		}
+		if (InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart && RunningAnimation == False) {
+			RunningAnimation = True;
+			Animate321GO();
+log(CurrentLocalDateText ^" Starting...");
+		}
+	}
+}
+--></script>
+</manialink>

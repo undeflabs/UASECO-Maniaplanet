@@ -3,7 +3,7 @@
  *	Simple commons callbacks
  *	And mode specific callbacks
  */
-#Const	Version		"2015-02-23"
+#Const	Version		"2015-03-23"
 #Const	ScriptName	"XmlRpc.Script.txt"
 
 #Include "TextLib" as TL
@@ -147,9 +147,15 @@ Void Unload() {
 	UnregisterCallback("LibXmlRpc_OnStartCountdown");
 	UnregisterCallback("LibXmlRpc_OnStartLine");
 	UnregisterCallback("LibXmlRpc_OnWayPoint");
+	UnregisterCallback("LibXmlRpc_OnPlayerFinish");
 	UnregisterCallback("LibXmlRpc_OnGiveUp");
 	UnregisterCallback("LibXmlRpc_OnRespawn");
 	UnregisterCallback("LibXmlRpc_OnStunt");
+	
+	foreach (Player in AllPlayers) {
+		declare LibXmlRpc_CanRespawn for Player = False;
+		LibXmlRpc_CanRespawn = False;
+	}
 	
 	XmlRpc::Unload();
 }
@@ -220,6 +226,12 @@ RegisterCallback("LibXmlRpc_OnWayPoint", """
 * Data : An array with the login of the player crossing the waypoint, the id of the waypoint block, the current race time, the waypoint number in the race, if the waypoint is the end of the race, the current lap time, the waypoint number in the lap and if the waypoint is the end of the lap.
 * Example : ["Login", "#123456", "21723", "7", "False", "6164", "1", "False"]
 * Note : This callback is sent when a player crosses a waypoint (checkpoint, finish, multilap, ...).
+""");
+
+RegisterCallback("LibXmlRpc_OnPlayerFinish", """
+* Data : An array with the login of the player crossing the finish, the id of the finish block and the race time.
+* Example : ["Login", "#123456", "21723"]
+* Note : This callback is sent when a player crosses the finish.
 """);
 
 RegisterCallback("LibXmlRpc_OnGiveUp", """
@@ -760,6 +772,10 @@ Void ScoresReady() {
 // ---------------------------------- //
 /// Callback sent when the countdown start
 Void OnStartCountdown(CTmPlayer _Player) {
+	// Allow the respawn and giveup callback
+	declare LibXmlRpc_CanRespawn for _Player = False;
+	LibXmlRpc_CanRespawn = True;
+		
 	if (!CallbackIsAllowed("LibXmlRpc_OnStartCountdown")) return;
 	
 	SendCallbackArray("LibXmlRpc_OnStartCountdown", [_Player.Login]);
@@ -773,9 +789,35 @@ Void OnStartCountdown(CTmPlayer _Player) {
  *	@param	_Event		The event to handle
  */
 Void OnStartLine(CTmModeEvent _Event) {
+	// Allow the respawn and giveup callback
+	declare LibXmlRpc_CanRespawn for _Event.Player = False;
+	LibXmlRpc_CanRespawn = True;
+		
 	if (!CallbackIsAllowed("LibXmlRpc_OnStartLine")) return;
 	
 	SendCallbackArray("LibXmlRpc_OnStartLine", [_Event.Player.Login]);
+}
+
+// ---------------------------------- //
+/** Callback sent when a player crosses the finish
+ *	Data:
+ *	[Player login, id of the waypoint block, current race time]
+ *
+ *	@param	_Event		The event to handle
+ */
+Void OnPlayerFinish(CTmModeEvent _Event) {
+	if (!_Event.IsEndRace && !(IndependantLaps && _Event.IsEndLap)) return;
+	
+	// Disallow the respawn and giveup callback
+	declare LibXmlRpc_CanRespawn for _Event.Player = False;
+	LibXmlRpc_CanRespawn = False;
+		
+	if (!CallbackIsAllowed("LibXmlRpc_OnPlayerFinish")) return;
+	
+	declare RaceTime = _Event.RaceTime;
+	if (IndependantLaps) RaceTime = _Event.LapTime;
+	
+	SendCallbackArray("LibXmlRpc_OnPlayerFinish", [_Event.Player.Login, ""^_Event.BlockId, TL::ToText(RaceTime)]);
 }
 
 // ---------------------------------- //
@@ -786,9 +828,11 @@ Void OnStartLine(CTmModeEvent _Event) {
  *	@param	_Event		The event to handle
  */
 Void OnWayPoint(CTmModeEvent _Event) {
-	if (!CallbackIsAllowed("LibXmlRpc_OnWayPoint")) return;
+	if (CallbackIsAllowed("LibXmlRpc_OnWayPoint")) {
+		SendCallbackArray("LibXmlRpc_OnWayPoint", [_Event.Player.Login, ""^_Event.BlockId, TL::ToText(_Event.RaceTime), TL::ToText(_Event.CheckpointInRace), TL::ToText(_Event.IsEndRace), TL::ToText(_Event.LapTime), TL::ToText(_Event.CheckpointInLap), TL::ToText(_Event.IsEndLap)]);
+	}
 	
-	SendCallbackArray("LibXmlRpc_OnWayPoint", [_Event.Player.Login, ""^_Event.BlockId, TL::ToText(_Event.RaceTime), TL::ToText(_Event.CheckpointInRace), TL::ToText(_Event.IsEndRace), TL::ToText(_Event.LapTime), TL::ToText(_Event.CheckpointInLap), TL::ToText(_Event.IsEndLap)]);
+	OnPlayerFinish(_Event);
 }
 
 // ---------------------------------- //
@@ -799,6 +843,14 @@ Void OnWayPoint(CTmModeEvent _Event) {
  *	@param	_Event		The event to handle
  */
 Void OnGiveUp(CTmModeEvent _Event) {
+	// Check if we can send the callback
+	declare LibXmlRpc_CanRespawn for _Event.Player = False;
+	if (!LibXmlRpc_CanRespawn || !_Event.Player.IsSpawned) {
+		LibXmlRpc_CanRespawn = False;
+		return;
+	}
+	LibXmlRpc_CanRespawn = False;
+	
 	if (!CallbackIsAllowed("LibXmlRpc_OnGiveUp")) return;
 	
 	SendCallbackArray("LibXmlRpc_OnGiveUp", [_Event.Player.Login]);
@@ -812,6 +864,10 @@ Void OnGiveUp(CTmModeEvent _Event) {
  *	@param	_Event		The event to handle
  */
 Void OnRespawn(CTmModeEvent _Event) {
+	// Check if we can send the callback
+	declare LibXmlRpc_CanRespawn for _Event.Player = False;
+	if (!LibXmlRpc_CanRespawn || !_Event.Player.IsSpawned) return;
+	
 	if (!CallbackIsAllowed("LibXmlRpc_OnRespawn")) return;
 	
 	SendCallbackArray("LibXmlRpc_OnRespawn", [_Event.Player.Login, ""^_Event.BlockId, TL::ToText(_Event.CheckpointInRace), TL::ToText(_Event.CheckpointInLap), TL::ToText(_Event.NbRespawns)]);

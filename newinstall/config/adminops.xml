@@ -162,7 +162,6 @@
 		<chat_add_mref>false</chat_add_mref>
 		<chat_match>false</chat_match>
 		<chat_tc_listen>false</chat_tc_listen>
-		<chat_jfreu>true</chat_jfreu>
 		<chat_musicadmin>true</chat_musicadmin>
 		<noidlekick_play>false</noidlekick_play>
 		<noidlekick_spec>true</noidlekick_spec>
@@ -313,7 +312,6 @@
 		<chat_add_mref>false</chat_add_mref>
 		<chat_match>false</chat_match>
 		<chat_tc_listen>false</chat_tc_listen>
-		<chat_jfreu>false</chat_jfreu>
 		<chat_musicadmin>false</chat_musicadmin>
 		<noidlekick_play>false</noidlekick_play>
 		<noidlekick_spec>true</noidlekick_spec>

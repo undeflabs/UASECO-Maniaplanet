@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - March 2015 by undef.de
+ * Copyright:	May 2014 - April 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-03-14');
+	define('UASECO_BUILD',		'2015-04-06');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -570,7 +570,7 @@ class UASECO extends Helper {
 			$this->settings['developer']['log_events']['registered_types']	= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['LOG_EVENTS'][0]['REGISTERED_TYPES'][0]);
 			$this->settings['developer']['log_events']['all_types']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['LOG_EVENTS'][0]['ALL_TYPES'][0]);
 
-			// read settings and apply them
+			// Read settings and apply them
 			$this->chat_colors = $settings['COLORS'][0];
 			$this->chat_messages = $settings['MESSAGES'][0];
 			$this->masteradmin_list = $settings['MASTERADMINS'][0];
@@ -578,9 +578,9 @@ class UASECO extends Helper {
 				trigger_error('No MasterAdmin(s) configured in [config/UASECO.xml]!', E_USER_ERROR);
 			}
 
-			// check masteradmin list consistency
+			// Check masteradmin list consistency
 			if (empty($this->masteradmin_list['IPADDRESS'])) {
-				// fill <ipaddress> list to same length as <tmlogin> list
+				// Fill <ipaddress> list to same length as <tmlogin> list
 				if (($cnt = count($this->masteradmin_list['TMLOGIN'])) > 0)
 					$this->masteradmin_list['IPADDRESS'] = array_fill(0, $cnt, '');
 			}
@@ -601,107 +601,113 @@ class UASECO extends Helper {
 				$this->console('[WARNING] To increase security you should setup a lock password at <lock_password>!');
 			}
 
-			// set cheater action
+			// Set cheater action
 			$this->settings['cheater_action'] = $settings['CHEATER_ACTION'][0];
 
-			// show played time at end of map?
+			// Show played time at end of map?
 			$this->settings['show_playtime'] = $settings['SHOW_PLAYTIME'][0];
 
-			// show current map at start?
+			// Show current map at start?
 			$this->settings['show_curmap'] = $settings['SHOW_CURMAP'][0];
 
-			// set default filename for readmaplist/writemaplist
+			// Set default filename for readmaplist/writemaplist
 			$this->settings['default_maplist'] = $settings['DEFAULT_MAPLIST'][0];
 
-			// add random filter to /admin writemaplist output
+			// Add random filter to /admin writemaplist output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
 
-			// set multiple of win count to show global congrats message
+			// Set multiple of win count to show global congrats message
 			$this->settings['global_win_multiple'] = ($settings['GLOBAL_WIN_MULTIPLE'][0] > 0 ? $settings['GLOBAL_WIN_MULTIPLE'][0] : 1);
 
-			// timeout of the message window in seconds
+			// Timeout of the message window in seconds
 			$this->settings['window_timeout'] = $settings['WINDOW_TIMEOUT'][0];
 
-			// set filename of admin/operator/ability lists file
+			// Set filename of admin/operator/ability lists file
 			$this->settings['adminops_file'] = $settings['ADMINOPS_FILE'][0];
 
-			// set filename of banned IPs list file
+			// Set filename of banned IPs list file
 			$this->settings['bannedips_file'] = $settings['BANNEDIPS_FILE'][0];
 
-			// set filename of blacklist file
+			// Set filename of blacklist file
 			$this->settings['blacklist_file'] = $settings['BLACKLIST_FILE'][0];
 
-			// set filename of guestlist file
+			// Set filename of guestlist file
 			$this->settings['guestlist_file'] = $settings['GUESTLIST_FILE'][0];
 
-			// add random filter to /admin writemaplist output
+			// Add random filter to /admin writemaplist output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
 
-			// set minimum admin client version
+			// Set minimum admin client version
 			$this->settings['admin_client'] = $settings['ADMIN_CLIENT_VERSION'][0];
 
-			// set minimum player client version
+			// Set minimum player client version
 			$this->settings['player_client'] = $settings['PLAYER_CLIENT_VERSION'][0];
 
-			// set default rounds points system
+			// Set default rounds points system
 			$this->settings['default_rpoints'] = $settings['DEFAULT_RPOINTS'][0];
 
-			// log all chat, not just chat commands ?
+			// Log all chat, not just chat commands ?
 			$this->settings['log_all_chat'] = $this->string2bool($settings['LOG_ALL_CHAT'][0]);
 
-			// show timestamps in /chatlog, /pmlog & /admin pmlog ?
+			// Show timestamps in /chatlog, /pmlog & /admin pmlog ?
 			$this->settings['chatpmlog_times'] = $this->string2bool($settings['CHATPMLOG_TIMES'][0]);
 
-			// show round reports in message window?
+			// Show round reports in message window?
 			$this->settings['rounds_in_window'] = $this->string2bool($settings['ROUNDS_IN_WINDOW'][0]);
 
-			// color nicknames in the various /top... etc lists?
+			// Color nicknames in the various /top... etc lists?
 			$this->settings['lists_colornicks'] = $this->string2bool($settings['LISTS_COLORNICKS'][0]);
 
-			// color mapnames in the various /lists... lists?
+			// Color mapnames in the various /lists... lists?
 			$this->settings['lists_colormaps'] = $this->string2bool($settings['LISTS_COLORMAPS'][0]);
 
-			// display checkpoints panel?
+			// Display checkpoints panel?
 			$this->settings['display_checkpoints'] = $this->string2bool($settings['DISPLAY_CHECKPOINTS'][0]);
 
-			// enable /cpsspec command?
+			// Enable /cpsspec command?
 			$this->settings['enable_cpsspec'] = $this->string2bool($settings['ENABLE_CPSSPEC'][0]);
 
-			// automatically enable /cps for new players?
+			// Automatically enable /cps for new players?
 			$this->settings['auto_enable_cps'] = $this->string2bool($settings['AUTO_ENABLE_CPS'][0]);
 
-			// automatically enable /dedicps for new players?
+			// Automatically enable /dedicps for new players?
 			$this->settings['auto_enable_dedicps'] = $this->string2bool($settings['AUTO_ENABLE_DEDICPS'][0]);
 
-			// automatically add IP for new admins/operators?
+			// Automatically add IP for new admins/operators?
 			$this->settings['auto_admin_addip'] = $this->string2bool($settings['AUTO_ADMIN_ADDIP'][0]);
 
-			// automatically force spectator on player using /afk ?
+			// Automatically force spectator on player using /afk ?
 			$this->settings['afk_force_spec'] = $this->string2bool($settings['AFK_FORCE_SPEC'][0]);
 
-			// provide clickable buttons in lists?
+			// Provide clickable buttons in lists?
 			$this->settings['clickable_lists'] = $this->string2bool($settings['CLICKABLE_LISTS'][0]);
 
-			// show logins in /recs?
+			// Show logins in /recs?
 			$this->settings['show_rec_logins'] = $this->string2bool($settings['SHOW_REC_LOGINS'][0]);
 
-			// perform UASECO version check at start-up & MasterAdmin connect
+			// Perform UASECO version check at start-up & MasterAdmin connect
 			$this->settings['uptodate_check'] = $this->string2bool($settings['UPTODATE_CHECK'][0]);
 
-			// set global blacklist settings
+			// Set global blacklist settings
 			$this->settings['global_blacklist_merge'] = $this->string2bool($settings['GLOBAL_BLACKLIST_MERGE'][0]);
 			$this->settings['global_blacklist_url'] = $settings['GLOBAL_BLACKLIST_URL'][0];
 
-			// set stripling path
+			// Set stripling path
 			$this->settings['stripling_path'] = $settings['STRIPLING_PATH'][0];
+
+			// Set dedicated Server installation path
+			$this->settings['dedicated_installation'] = $settings['DEDICATED_INSTALLATION'][0];
+			if (strtoupper($this->settings['dedicated_installation']) == 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
+				trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
+			}
 
 			// Log passwords in logfile?
 			$this->settings['mask_password'] = $this->string2bool($settings['MASK_PASSWORD'][0]);
 
-			// set script_timeout
+			// Set script_timeout
 			$this->settings['script_timeout'] = $settings['SCRIPT_TIMEOUT'][0];
 
-			// set memory_limit
+			// Set memory_limit
 			$this->settings['memory_limit'] = $settings['MEMORY_LIMIT'][0];
 
 			// Read <mysql> settings and apply them
@@ -725,14 +731,14 @@ class UASECO extends Helper {
 			}
 
 			if ($this->settings['admin_client'] != '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['admin_client']) != 1 || $this->settings['admin_client'] == '2.11.10') {
-				trigger_error('Invalid admin client version : '. $this->settings['admin_client'] .'!', E_USER_ERROR);
+				trigger_error('Invalid admin client version: '. $this->settings['admin_client'] .'!', E_USER_ERROR);
 			}
 			if ($this->settings['player_client'] != '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['player_client']) != 1 || $this->settings['player_client'] == '2.11.10') {
 				trigger_error('Invalid player client version: '. $this->settings['player_client'] .'!', E_USER_ERROR);
 			}
 		}
 		else {
-			// could not parse XML file
+			// Could not parse XML file
 			trigger_error('Could not read/parse config file ['. $config_file .']!', E_USER_ERROR);
 		}
 	}
@@ -1041,7 +1047,7 @@ class UASECO extends Helper {
 	                'password'		=> $this->settings['mysql']['password'],
 			'database'		=> $this->settings['mysql']['database'],
 			'table_prefix'		=> $this->settings['mysql']['table_prefix'],
-			'autocommit'		=> 1,
+			'autocommit'		=> true,
 			'charset'		=> 'utf8',
 			'collate'		=> 'utf8_bin',
 			'debug'			=> $this->debug,
@@ -1580,14 +1586,24 @@ class UASECO extends Helper {
 						}
 						break;
 
+					case 'ManiaPlanet.PlayerInfoChanged':
+						// [0] = SPlayerInfo PlayerInfo
+						$this->playerInfoChanged($call[1][0]);
+						break;
+
+					case 'ManiaPlanet.PlayerManialinkPageAnswer':
+						// [0] = int PlayerUid, [1] = string Login, [2] = string Answer, [3] = SEntryVal Entries[]
+						$this->releaseEvent('onPlayerManialinkPageAnswer', $call[1]);
+						break;
+
 					case 'ManiaPlanet.PlayerConnect':
 						// [0] = string Login, [1] = bool IsSpectator
 						$this->playerConnect($call[1][0], $call[1][1]);
 						break;
 
-					case 'ManiaPlanet.PlayerInfoChanged':
-						// [0] = SPlayerInfo PlayerInfo
-						$this->playerInfoChanged($call[1][0]);
+					case 'ManiaPlanet.PlayerDisconnect':
+						// [0] = string Login, [1] = string DisconnectionReason
+						$this->playerDisconnect($call[1][0], $call[1][0]);
 						break;
 
 					case 'ManiaPlanet.StatusChanged':
@@ -1596,18 +1612,15 @@ class UASECO extends Helper {
 						$this->releaseEvent('onStatusChangeTo'. $this->current_status, $call[1]);
 						break;
 
-					case 'ManiaPlanet.PlayerManialinkPageAnswer':
-						// [0] = int PlayerUid, [1] = string Login, [2] = string Answer, [3] = SEntryVal Entries[]
-						$this->releaseEvent('onPlayerManialinkPageAnswer', $call[1]);
-						break;
-
-					case 'ManiaPlanet.PlayerDisconnect':
-						// [0] = string Login, [1] = string DisconnectionReason
-						$this->playerDisconnect($call[1][0], $call[1][0]);
-						break;
-
 					case 'ManiaPlanet.MapListModified':
 						// [0] = int CurMapIndex, [1] = int NextMapIndex, [2] = bool IsListModified
+						if ($call[1][2] == true) {
+							$this->console('[MapList] Re-reading complete map list from server...');
+							$this->server->maps->readMapList();
+							$count = count($this->server->maps->map_list);
+							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count == 1 ? '' : 's') .' which matches server settings.');
+							$this->releaseEvent('onMapListChanged', array('read', null));
+						}
 						$this->releaseEvent('onMapListModified', $call[1]);
 						break;
 

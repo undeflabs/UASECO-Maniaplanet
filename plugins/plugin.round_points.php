@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-20
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-24
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - plugins/plugin.manialinks.php
+ *  - includes/core/window.class.php
  *
  */
 
@@ -55,12 +55,10 @@ class PluginRoundPoints extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
-		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
+		$this->registerEvent('onSync',			'onSync');
 
-		$this->registerEvent('onSync',		'onSync');
-
-		$this->registerChatCommand('rpoints', 'chat_rpoints', 'Shows current Rounds points system.', Player::PLAYERS);
-
+		$this->registerChatCommand('setrpoints',	'chat_setrpoints',	'Sets custom Rounds points (see: /setrpoints help)',	Player::ADMINS);
+		$this->registerChatCommand('rpoints',		'chat_rpoints',		'Shows current Rounds points system.',			Player::PLAYERS);
 
 
 		// Define common points systems, any players finishing beyond the last points entry get
@@ -304,59 +302,71 @@ class PluginRoundPoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function admin_rpoints ($aseco, $admin, $logtitle, $chattitle, $command) {
+	public function chat_setrpoints ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$login = $admin->login;
-		$command = explode(' ', preg_replace('/ +/', ' ', $command));
-		$system = strtolower($command[0]);
+		// Get Player object
+		$player = $aseco->server->players->getPlayer($login);
 
-		if ($command[0] == 'help') {
-			$header = '{#black}/admin rpoints$g sets custom Rounds points:';
-			$help = array();
-			$help[] = array('...', '{#black}help',
-			                'Displays this help information');
-			$help[] = array('...', '{#black}list',
-			                'Displays available points systems');
-			$help[] = array('...', '{#black}show',
-			                'Shows current points system');
-			$help[] = array('...', '{#black}xxx',
-			                'Sets custom points system labelled xxx');
-			$help[] = array('...', '{#black}X,Y,...,Z',
-			                'Sets custom points system with specified values;');
-			$help[] = array('', '',
-			                'X,Y,...,Z must be decreasing integers and there');
-			$help[] = array('', '',
-			                'must be at least two values with no spaces');
-			$help[] = array('...', '{#black}off',
-			                'Disables custom points system');
+		if ($chat_parameter == 'help') {
+			$data = array();
+			$data[] = array('/setrpoints help',		'Displays this help information');
+			$data[] = array('/setrpoints list',		'Displays available points systems');
+			$data[] = array('/setrpoints show',		'Shows current points system');
+			$data[] = array('/setrpoints xxx',		'Sets custom points system labelled xxx');
+			$data[] = array('/setrpoints X,Y,...,Z',	'Sets custom points system with specified values;');
+			$data[] = array('',				'X,Y,...,Z must be decreasing integers and there');
+			$data[] = array('',				'must be at least two values with no spaces');
+			$data[] = array('/setrpoints off',		'Disables custom points system');
 
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(1.05, 0.05, 0.2, 0.8), 'OK');
+			// Setup settings for Window
+			$settings_title = array(
+				'icon'	=> 'Icons64x64_1,TrackInfo',
+			);
+			$settings_heading = array(
+				'textcolors'	=> array('FF5F', 'FFFF'),
+			);
+			$settings_columns = array(
+				'columns'	=> 1,
+				'widths'	=> array(30, 70),
+				'textcolors'	=> array('FF5F', 'FFFF'),
+				'heading'	=> array('Command', 'Description'),
+			);
+
+			$window = new Window();
+			$window->setLayoutTitle($settings_title);
+			$window->setLayoutHeading($settings_heading);
+			$window->setColumns($settings_columns);
+			$window->setContent('Help for /setrpoints', $data);
+			$window->send($player, 0, false);
 		}
-		else if ($command[0] == 'list') {
-			$head = 'Currently available Rounds points systems:';
-			$list = array();
-			$list[] = array('Label', '{#black}System', '{#black}Distribution');
-			$lines = 0;
-			$admin->msgs = array();
-			$admin->msgs[0] = array(1, $head, array(1.3, 0.2, 0.4, 0.7), array('Icons128x32_1', 'RT_Rounds'));
+		else if ($chat_parameter == 'list') {
+			$data = array();
 			foreach ($this->rounds_points as $tag => $points) {
-				$list[] = array('{#black}'. $tag, $points[0],
-				                implode(',', $points[1]) .',...');
-				if (++$lines > 14) {
-					$admin->msgs[] = $list;
-					$lines = 0;
-					$list = array();
-					$list[] = array('Label', '{#black}System', '{#black}Distribution');
-				}
+				$data[] = array($tag, $points[0], implode(', ', $points[1]) .', ...');
 			}
-			if (!empty($list)) {
-				$admin->msgs[] = $list;
-			}
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
+
+			// Setup settings for Window
+			$settings_title = array(
+				'icon'	=> 'Icons128x32_1,RT_Rounds',
+			);
+			$settings_heading = array(
+				'textcolors'	=> array('FF5F', 'FFFF'),
+			);
+			$settings_columns = array(
+				'columns'	=> 1,
+				'widths'	=> array(10, 20, 70),
+				'textcolors'	=> array('FF5F', 'FF5F', 'FFFF'),
+				'heading'	=> array('Label', 'System', 'Distribution'),
+			);
+
+			$window = new Window();
+			$window->setLayoutTitle($settings_title);
+			$window->setLayoutHeading($settings_heading);
+			$window->setColumns($settings_columns);
+			$window->setContent('Currently available Rounds points systems', $data);
+			$window->send($player, 0, false);
 		}
-		else if ($command[0] == 'show') {
+		else if ($chat_parameter == 'show') {
 			// Get custom points
 			$points = array();
 			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
@@ -400,35 +410,33 @@ class PluginRoundPoints extends Plugin {
 			}
 			$aseco->sendChatMessage($message, $login);
 		}
-		else if ($command[0] == 'off') {
+		else if ($chat_parameter == 'off') {
 			// disable custom points
 			$rtn = $aseco->client->query('SetRoundCustomPoints', array(), false);
 
 			// log console message
-			$aseco->console('[RoundPoints] {1} [{2}] disabled custom points', $logtitle, $login);
+			$aseco->console('[RoundPoints] [{1}] disabled custom points', $login);
 
 			// show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} disables custom rounds points',
-				$chattitle,
-				$admin->nickname
+			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} disables custom rounds points',
+				$player->nickname
 			);
 			$aseco->sendChatMessage($message);
 		}
-		else if (preg_match('/^\d+,[\d,]*\d+$/', $command[0])) {
+		else if (preg_match('/^\d+,[\d,]*\d+$/', $chat_parameter)) {
 			// set new custom points as array of ints
-			$points = array_map('intval', explode(',', $command[0]));
+			$points = array_map('intval', explode(',', $chat_parameter));
 
 			try {
 				$aseco->client->query('SetRoundCustomPoints', $points, false);
 
 				// log console message
-				$aseco->console('[RoundPoints] {1} [{2}] set new custom points: {3}', $logtitle, $login, $command[0]);
+				$aseco->console('[RoundPoints] [{1}] set new custom points: {2}', $login, $chat_parameter);
 
 				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets custom rounds points: {#highlite}{3},...',
-					$chattitle,
-					$admin->nickname,
-					$command[0]
+				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets custom rounds points: {#highlite}{2},...',
+					$player->nickname,
+					$chat_parameter
 				);
 				$aseco->sendChatMessage($message);
 			}
@@ -437,17 +445,19 @@ class PluginRoundPoints extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if (array_key_exists($system, $this->rounds_points)) {
+		else if (array_key_exists(strtolower($chat_parameter), $this->rounds_points)) {
 			try {
+				$system = strtolower($chat_parameter);
+
 				// Set new custom points
 				$aseco->client->query('SetRoundCustomPoints', $this->rounds_points[$system][1], false);
+
 				// log console message
-				$aseco->console('[RoundPoints] {1} [{2}] set new custom points [{3}]', $logtitle, $login, strtoupper($command[0]));
+				$aseco->console('[RoundPoints] [{1}] set new custom points [{2}]', $login, strtoupper($chat_parameter));
 
 				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets rounds points to {#highlite}{3}{#admin}: {#highlite}{4},...',
-					$chattitle,
-					$admin->nickname,
+				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#admin}: {#highlite}{4},...',
+					$player->nickname,
 					$this->rounds_points[$system][0],
 					implode(',', $this->rounds_points[$system][1])
 				);
@@ -458,7 +468,7 @@ class PluginRoundPoints extends Plugin {
 			}
 		}
 		else {
-			$message = '{#server}» {#error}Unknown points system {#highlite}$i '. strtoupper($command[0]) .'$z$s {#error}!';
+			$message = '{#server}» {#error}Unknown points system {#highlite}$i '. strtoupper($chat_parameter) .'$z$s {#error}!';
 			$aseco->sendChatMessage($message, $login);
 		}
 	}

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-03
+ * Date:	2015-04-06
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -105,27 +105,31 @@ class Helper {
 	 * It tries to replace some characters like ñ or ç to a similar ASCII character (for example, it will transform a ñ to a n).
 	 */
 	public function slugify ($string) {
+		// Remove unnecessary chars
+		$new = trim($this->stripColors($this->stripNewlines($this->stripBOM($string)), true));
+
 		// Replace non letter by "-"
-		$string = preg_replace('#[^\\pL]+#u', '-', $string);
+		$new = preg_replace('#[^\\pL]+#u', '-', $new);
 
 		// Transliterate
-		if (function_exists('iconv')) {
-			$string = iconv('utf-8', 'us-ascii//TRANSLIT', $string);
+		$new = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $new);
+		if ($new !== false) {
+			$new = iconv('UTF-8', 'US-ASCII//TRANSLIT//IGNORE', $string);
 		}
 
 		// Remove unwanted characters
-		$string = preg_replace('#[^-\w]+#', '', $string);
+		$new = preg_replace('#[^-\w]+#', '', $new);
 
 		// Replace multiple "---" with single "-"
-		$string = preg_replace('#-{2,}#', '-', $string);
+		$new = preg_replace('#-{2,}#', '-', $new);
 
 		// Trim
-		$string = trim($string, '-');
+		$new = trim($new, '-');
 
-		if (empty($string)) {
+		if (empty($new)) {
 			return date('Y-m-d-H-i-s') .'_unnamed';
 		}
-		return $string;
+		return $new;
 	}
 
 	/*
@@ -236,7 +240,7 @@ class Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Created by Xymph: Univeral show help for user, admin & Jfreu commands.
+	// Created by Xymph: Univeral show help for user and admin commands.
 	// $width is the width of the first column in the ManiaLink window
 	public function showHelp ($aseco, $login, $chat_commands, $head, $showadmin = false, $dispall = false, $width = 0.3) {
 

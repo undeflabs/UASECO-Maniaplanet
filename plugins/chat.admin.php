@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-15
+ * Date:	2015-04-06
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,6 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
+ *  - includes/core/window.class.php
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.access.php
  *  - plugins/plugin.autotime.php
@@ -80,7 +81,6 @@ class PluginChatAdmin extends Plugin {
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginRoundPoints',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginUptodate',		Dependence::WANTED,	'1.0.0', null);
 
 		// handles action id's "2201"-"2400" for /admin warn
@@ -183,7 +183,6 @@ class PluginChatAdmin extends Plugin {
 			'wall/mta'			=> 'Displays popup message to all players',
 			'delrec'			=> 'Deletes specific record on current map',
 			'prunerecs'			=> 'Deletes records for specified map',
-			'rpoints'			=> 'Sets custom Rounds points (see: /admin rpoints help)',
 			'amdl'				=> 'Sets AllowMapDownload {ON/OFF}',
 			'autotime'			=> 'Sets Auto TimeLimit {ON/OFF}',
 			'disablerespawn'		=> 'Disables respawn at CPs {ON/OFF}',
@@ -1064,17 +1063,34 @@ class PluginChatAdmin extends Plugin {
 				// display warning message
 				$message = $aseco->getChatMessage('WARNING');
 				$message = preg_split('/{br}/', $aseco->formatColors($message));
-				foreach ($message as &$line)
+				foreach ($message as &$line) {
 					$line = array($line);
+				}
 
-				$aseco->plugins['PluginManialinks']->display_manialink($target->login, $aseco->formatColors('{#welcome}WARNING:'), array('Icons64x64_1', 'TV'),
-					$message,
-					array(0.8),
-					'OK'
+
+				// Setup settings for Window
+				$settings_title = array(
+					'icon'	=> 'Icons64x64_1,TV',
+				);
+				$settings_heading = array(
+					'textcolors'	=> array('FF5F', 'FFFF'),
+				);
+				$settings_columns = array(
+					'columns'	=> 1,
+					'widths'	=> array(100),
+					'textcolors'	=> array('FF5F'),
 				);
 
+				$window = new Window();
+				$window->setLayoutTitle($settings_title);
+				$window->setLayoutHeading($settings_heading);
+				$window->setColumns($settings_columns);
+				$window->setContent('Administrative WARNING!', $message);
+				$window->send($target, 0, false);
+
+
 				// log console message
-				$aseco->console('[Admin] {1} [{2}] warned Player [{3}], Nickname [{4}]!',
+				$aseco->console('[Admin] {1} [{2}] warned Player [{3}] -> Nickname [{4}]!',
 					$logtitle,
 					$login,
 					$target->login,
@@ -1585,8 +1601,8 @@ class PluginChatAdmin extends Plugin {
 				$admin->playerlist[] = $plarr;
 
 				// format nickname & login
-				$ply = '{#black}'. str_ireplace('$w', '', $player[1])
-				       .'$z / {#login}'. $player[0];
+				$ply = '{#black}'. str_ireplace('$w', '', $player[1]) .'$z / {#login}'. $player[0];
+
 				// add clickable button
 				if ($aseco->settings['clickable_lists'] && $pid <= 200) {
 					$ply = array($ply, $pid+4600);  // action id
@@ -2088,7 +2104,7 @@ class PluginChatAdmin extends Plugin {
 				// log console message
 				$aseco->console('[Admin] {1} [{2}] wrote map list: {3} !', $logtitle, $login, $filename);
 
-				$message = '{#server}» {#highlite}'. $filename .'{#admin} written';
+				$message = '{#server}» {#highlite}'. $aseco->server->mapdir .'MatchSettings/'. $filename .'{#admin} written';
 
 				// throw 'maplist changed' event
 				$aseco->releaseEvent('onMapListChanged', array('write', null));
@@ -2886,12 +2902,6 @@ class PluginChatAdmin extends Plugin {
 						$chat = true;
 					}
 					break;
-				case 'chat_jfreu':
-					if ($value[0] || $master) {
-						$help[] = array('chat_jfreu', 'use all {#black}/jfreu$g commands');
-						$chat = true;
-					}
-					break;
 				case 'chat_musicadmin':
 					if ($value[0] || $master) {
 						$help[] = array('chat_musicadmin', 'use {#black}/music$g admin commands');
@@ -2922,10 +2932,29 @@ class PluginChatAdmin extends Plugin {
 			if ($chat) {
 				$help[] = array();
 			}
-			$help[] = array('See {#black}/admin helpall$g for available /admin commands');
+			$help[] = array('', 'See {#black}/admin helpall$g for available /admin commands');
 
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons128x128_1', 'ProfileAdvanced', 0.02), $help, array(1.0, 0.3, 0.7), 'OK');
+
+			// Setup settings for Window
+			$settings_title = array(
+				'icon'	=> 'Icons128x128_1,ProfileAdvanced',
+			);
+			$settings_heading = array(
+				'textcolors'	=> array('FF5F', 'FFFF'),
+			);
+			$settings_columns = array(
+				'columns'	=> 2,
+				'widths'	=> array(25, 75),
+				'textcolors'	=> array('FF5F', 'FFFF'),
+				'heading'	=> array('Function', 'Description'),
+			);
+
+			$window = new Window();
+			$window->setLayoutTitle($settings_title);
+			$window->setLayoutHeading($settings_heading);
+			$window->setColumns($settings_columns);
+			$window->setContent($header, $help);
+			$window->send($aseco->server->players->getPlayer($login), 0, false);
 		}
 		else if ($command['params'][0] == 'writeabilities') {
 			/**
@@ -3087,21 +3116,6 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				$message = $aseco->plugins['PluginRasp']->messages['JUKEBOX_HELP'][0];
-				$aseco->sendChatMessage($message, $login);
-			}
-		}
-		else if ($command['params'][0] == 'rpoints' && $command['params'][1] != '') {
-			/**
-			 * Sets custom rounds points.
-			 */
-
-			// from plugin.round_points.php
-			if ( isset($aseco->plugins['PluginRoundPoints']) ) {
-				$aseco->plugins['PluginRoundPoints']->admin_rpoints($aseco, $admin, $logtitle, $chattitle, $arglist[1]);
-			}
-			else {
-				// show chat message
-				$message = '{#server}» {#admin}Custom Rounds points unavailable - include plugin.round_points.php in [config/plugins.xml]';
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
@@ -4187,7 +4201,7 @@ class PluginChatAdmin extends Plugin {
 
 					// rename ID filename to map's name
 					$md5new = md5_file($localfile);
-					$filename = $aseco->slugify(trim($aseco->stripColors($aseco->stripNewlines($aseco->stripBOM($gbx->name)), true)));
+					$filename = $aseco->slugify($gbx->name);
 					$partialdir = $aseco->plugins['PluginRasp']->mxdir . $sepchar . $filename .'_'. $trkid .'.Map.gbx';
 
 					// insure unique filename by incrementing sequence number,

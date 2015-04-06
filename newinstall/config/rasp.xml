@@ -109,11 +109,6 @@
 	<jukebox_in_window>false</jukebox_in_window>
 
 	<!--
-	Set to true to reset the map list cache at the start of each map
-	//-->
-	<reset_cache_start>false</reset_cache_start>
-
-	<!--
 	Path to a file where the map history can be stored, used in jukebox
 	//-->
 	<maphistory_file>cache/maphistory.txt</maphistory_file>

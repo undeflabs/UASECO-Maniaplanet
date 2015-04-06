@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-02
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-18
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -58,8 +58,8 @@ class Database extends mysqli {
 		if ($this->connect_error) {
 			trigger_error('[MySQL] Could not authenticate at MySQL server: ['. $this->connect_errno .'] '. $this->connect_error, E_USER_ERROR);
 		}
-		if ( !$this->query('SET AUTOCOMMIT='. $setup['autocommit'] .';') ) {
-			trigger_error('[MySQL] Could not "SET AUTOCOMMIT='. $setup['autocommit'] .'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
+		if ( !$this->autocommit($setup['autocommit']) ) {
+			trigger_error('[MySQL] Could not set autocommit to '. (($setup['autocommit']) ? 'true' : 'false') .'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);
 		}
 		if ( !$this->query('SET character_set_client = "'. $setup['charset'] .'";') ) {
 			trigger_error('[MySQL] Could not "SET character_set_client \''. $setup['charset'] .'\'": ['. $this->errno .'] '. $this->error, E_USER_ERROR);

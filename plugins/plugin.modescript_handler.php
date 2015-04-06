@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-16
+ * Date:	2015-04-05
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -68,8 +68,11 @@ class PluginModescriptHandler extends Plugin {
 		'LibXmlRpc_TeamsMode',						// Maybe used later?
 	);
 
-	// Stores the state of finished Players
-	private $player_finished	= array();
+	// Stores the modescript_settings.xml settings
+	private $settings		= array();
+
+	// Stores the time/points of finished Players
+//	private $player_finished	= array();
 
 	// Stores the <ui_properties>
 	private $ui_properties		= array();
@@ -107,86 +110,104 @@ class PluginModescriptHandler extends Plugin {
 		$this->setupBlockCallbacks();
 
 		// Read Configuration
-		if (!$settings = $aseco->parser->xmlToArray('config/modescript_settings.xml', true, true)) {
+		if (!$this->settings = $aseco->parser->xmlToArray('config/modescript_settings.xml', true, true)) {
 			trigger_error('[ModescriptHandler] Could not read/parse config file "config/modescript_settings.xml"!', E_USER_ERROR);
 		}
-		$settings = $settings['SETTINGS'];
+		$this->settings = $this->settings['SETTINGS'];
 
+
+		// Check the installed Scripts from the dedicated Server
+		$this->checkModescriptVersions();
+
+
+		// MatchMaking
+		$aseco->server->gameinfo->matchmaking['MatchmakingAPIUrl']			= $this->settings['MATCHMAKING'][0]['MATCHMAKING_API_URL'][0];
+		$aseco->server->gameinfo->matchmaking['MatchmakingMode']			= (int)$this->settings['MATCHMAKING'][0]['MATCHMAKING_MODE'][0];
+		$aseco->server->gameinfo->matchmaking['MatchmakingRematchRatio']		= (float)$this->settings['MATCHMAKING'][0]['MATCHMAKING_REMATCH_RATIO'][0];
+		$aseco->server->gameinfo->matchmaking['MatchmakingRematchNbMax']		= (int)$this->settings['MATCHMAKING'][0]['MATCHMAKING_REMATCH_NUMBER_MAX'][0];
+		$aseco->server->gameinfo->matchmaking['MatchmakingVoteForMap']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_VOTE_FOR_MAP'][0]);
+		$aseco->server->gameinfo->matchmaking['MatchmakingProgressive']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_PROGRESSIVE'][0]);
+		$aseco->server->gameinfo->matchmaking['MatchmakingWaitingTime']			= (int)$this->settings['MATCHMAKING'][0]['MATCHMAKING_WAITING_TIME'][0];
+		$aseco->server->gameinfo->matchmaking['LobbyRoundPerMap']			= (int)$this->settings['MATCHMAKING'][0]['LOBBY_ROUND_PER_MAP'][0];
+		$aseco->server->gameinfo->matchmaking['LobbyMatchmakerPerRound']		= (int)$this->settings['MATCHMAKING'][0]['LOBBY_MATCHMAKER_PER_ROUND'][0];
+		$aseco->server->gameinfo->matchmaking['LobbyMatchmakerWait']			= (int)$this->settings['MATCHMAKING'][0]['LOBBY_MATCHMAKER_WAIT'][0];
+		$aseco->server->gameinfo->matchmaking['LobbyMatchmakerTime']			= (int)$this->settings['MATCHMAKING'][0]['LOBBY_MATCHMAKER_TIME'][0];
+		$aseco->server->gameinfo->matchmaking['LobbyDisplayMasters']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISPLAY_MASTERS'][0]);
+		$aseco->server->gameinfo->matchmaking['lobby_disable_ui']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISABLE_UI'][0]);
+		$aseco->server->gameinfo->matchmaking['MatchmakingErrorMessage']		= $this->settings['MATCHMAKING'][0]['MATCHMAKING_ERROR_MESSAGE'][0];
+		$aseco->server->gameinfo->matchmaking['MatchmakingLogAPIError']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_API_ERROR'][0]);
+		$aseco->server->gameinfo->matchmaking['MatchmakingLogAPIDebug']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_API_DEBUG'][0]);
+		$aseco->server->gameinfo->matchmaking['MatchmakingLogMiscDebug']		= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_MISC_DEBUG'][0]);
+		$aseco->server->gameinfo->matchmaking['ProgressiveActivation_WaitingTime']	= (int)$this->settings['MATCHMAKING'][0]['PROGRESSIVE_ACTIVATION_WAITING_TIME'][0];
+		$aseco->server->gameinfo->matchmaking['ProgressiveActivation_PlayersNbRatio']	= (int)$this->settings['MATCHMAKING'][0]['PROGRESSIVE_ACTIVATION_PLAYERS_NUMBER_RATIO'][0];
 
 		// ModeBase
-		$aseco->server->gameinfo->options['UseScriptCallbacks']		= true;		// Turn on the script callbacks
-		$aseco->server->gameinfo->options['UseLegacyCallbacks']		= false;	// Disable the legacy callbacks (default value: True)
-		$aseco->server->gameinfo->options['ChatTime']			= (int)$settings['MODEBASE'][0]['CHAT_TIME'][0];
-		$aseco->server->gameinfo->options['AllowRespawn']		= $aseco->string2bool($settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
-		$aseco->server->gameinfo->options['WarmUpDuration']		= (int)$settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
-		$aseco->server->gameinfo->options['ScoresTableStylePath']	= $settings['MODEBASE'][0]['SCORES_TABLE_STYLE_PATH'][0];
-
+		$aseco->server->gameinfo->modebase['UseScriptCallbacks']	= true;		// Turn on the script callbacks
+		$aseco->server->gameinfo->modebase['UseLegacyCallbacks']	= false;	// Disable the legacy callbacks (default value: True)
+		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
+		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
+		$aseco->server->gameinfo->modebase['WarmUpDuration']		= (int)$this->settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
+		$aseco->server->gameinfo->modebase['ScoresTableStylePath']	= $this->settings['MODEBASE'][0]['SCORES_TABLE_STYLE_PATH'][0];
 
 		// Rounds +RoundsBase
-		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->rounds['FinishTimeout']		= (int)$settings['MODESETUP'][0]['ROUNDS'][0]['FINISH_TIMEOUT'][0];
-		$aseco->server->gameinfo->rounds['UseAlternateRules']		= $aseco->string2bool($settings['MODESETUP'][0]['ROUNDS'][0]['USE_ALTERNATE_RULES'][0]);
-		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_NUMBER_LAPS'][0];
-		$aseco->server->gameinfo->rounds['DisplayTimeDiff']		= $aseco->string2bool($settings['MODESETUP'][0]['ROUNDS'][0]['DISPLAY_TIME_DIFF'][0]);
-		$aseco->server->gameinfo->rounds['UseTieBreak']			= $aseco->string2bool($settings['MODESETUP'][0]['ROUNDS'][0]['USE_TIE_BREAK'][0]);
-
+		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->rounds['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->rounds['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_ALTERNATE_RULES'][0]);
+		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->rounds['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->rounds['UseTieBreak']			= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_TIE_BREAK'][0]);
 
 		// TimeAttack
-		$aseco->server->gameinfo->time_attack['TimeLimit']		= (int)$settings['MODESETUP'][0]['TIMEATTACK'][0]['TIME_LIMIT'][0];
-
+		$aseco->server->gameinfo->time_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['TIME_LIMIT'][0];
 
 		// Team +RoundsBase
-		$aseco->server->gameinfo->team['PointsLimit']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->team['FinishTimeout']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['FINISH_TIMEOUT'][0];
-		$aseco->server->gameinfo->team['UseAlternateRules']		= $aseco->string2bool($settings['MODESETUP'][0]['TEAM'][0]['USE_ALTERNATE_RULES'][0]);
-		$aseco->server->gameinfo->team['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['FORCE_NUMBER_LAPS'][0];
-		$aseco->server->gameinfo->team['DisplayTimeDiff']		= $aseco->string2bool($settings['MODESETUP'][0]['TEAM'][0]['DISPLAY_TIME_DIFF'][0]);
-		$aseco->server->gameinfo->team['MaxPointsPerRound']		= (int)$settings['MODESETUP'][0]['TEAM'][0]['MAX_POINTS_PER_ROUND'][0];
-		$aseco->server->gameinfo->team['PointsGap']			= (int)$settings['MODESETUP'][0]['TEAM'][0]['POINTS_GAP'][0];
-		$aseco->server->gameinfo->team['UsePlayerClublinks']		= $aseco->string2bool($settings['MODESETUP'][0]['TEAM'][0]['USE_PLAYER_CLUBLINKS'][0]);
-
+		$aseco->server->gameinfo->team['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->team['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->team['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['USE_ALTERNATE_RULES'][0]);
+		$aseco->server->gameinfo->team['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->team['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->team['MaxPointsPerRound']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_POINTS_PER_ROUND'][0];
+		$aseco->server->gameinfo->team['PointsGap']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_GAP'][0];
+		$aseco->server->gameinfo->team['UsePlayerClublinks']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['USE_PLAYER_CLUBLINKS'][0]);
 
 		// Laps
-		$aseco->server->gameinfo->laps['TimeLimit']			= (int)$settings['MODESETUP'][0]['LAPS'][0]['TIME_LIMIT'][0];
-		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
-		$aseco->server->gameinfo->laps['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['LAPS'][0]['FORCE_NUMBER_LAPS'][0];
-
+		$aseco->server->gameinfo->laps['TimeLimit']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->laps['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FORCE_NUMBER_LAPS'][0];
 
 		// Cup +RoundsBase
-		$aseco->server->gameinfo->cup['PointsLimit']			= (int)$settings['MODESETUP'][0]['CUP'][0]['POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->cup['FinishTimeout']			= (int)$settings['MODESETUP'][0]['CUP'][0]['FINISH_TIMEOUT'][0];
-		$aseco->server->gameinfo->cup['UseAlternateRules']		= $aseco->string2bool($settings['MODESETUP'][0]['CUP'][0]['USE_ALTERNATE_RULES'][0]);
-		$aseco->server->gameinfo->cup['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['CUP'][0]['FORCE_NUMBER_LAPS'][0];
-		$aseco->server->gameinfo->cup['DisplayTimeDiff']		= $aseco->string2bool($settings['MODESETUP'][0]['CUP'][0]['DISPLAY_TIME_DIFF'][0]);
-		$aseco->server->gameinfo->cup['RoundsPerMap']			= (int)$settings['MODESETUP'][0]['CUP'][0]['ROUNDS_PER_MAP'][0];
-		$aseco->server->gameinfo->cup['NbOfWinners']			= (int)$settings['MODESETUP'][0]['CUP'][0]['NUMBER_OF_WINNERS'][0];
-		$aseco->server->gameinfo->cup['WarmUpDuration']			= (int)$settings['MODESETUP'][0]['CUP'][0]['WARM_UP_DURATION'][0];
-
+		$aseco->server->gameinfo->cup['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->cup['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->cup['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CUP'][0]['USE_ALTERNATE_RULES'][0]);
+		$aseco->server->gameinfo->cup['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->cup['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CUP'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->cup['RoundsPerMap']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['ROUNDS_PER_MAP'][0];
+		$aseco->server->gameinfo->cup['NbOfWinners']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['NUMBER_OF_WINNERS'][0];
+		$aseco->server->gameinfo->cup['WarmUpDuration']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['WARM_UP_DURATION'][0];
 
 		// TeamAttack
-		$aseco->server->gameinfo->team_attack['TimeLimit']		= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['TIME_LIMIT'][0];
-		$aseco->server->gameinfo->team_attack['MinPlayerPerClan']	= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MIN_PLAYER_PER_CLAN'][0];
-		$aseco->server->gameinfo->team_attack['MaxPlayerPerClan']	= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_PLAYER_PER_CLAN'][0];
-		$aseco->server->gameinfo->team_attack['MaxClanNb']		= (int)$settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_CLAN_NUMBER'][0];
-
+		$aseco->server->gameinfo->team_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TEAMATTACK'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->team_attack['MinPlayerPerClan']	= (int)$this->settings['MODESETUP'][0]['TEAMATTACK'][0]['MIN_PLAYER_PER_CLAN'][0];
+		$aseco->server->gameinfo->team_attack['MaxPlayerPerClan']	= (int)$this->settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_PLAYER_PER_CLAN'][0];
+		$aseco->server->gameinfo->team_attack['MaxClanNb']		= (int)$this->settings['MODESETUP'][0]['TEAMATTACK'][0]['MAX_CLAN_NUMBER'][0];
 
 		// Chase
-		$aseco->server->gameinfo->chase['TimeLimit']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['TIME_LIMIT'][0];
-		$aseco->server->gameinfo->chase['MapPointsLimit']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['MAP_POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->chase['RoundPointsLimit']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['ROUND_POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->chase['RoundPointsGap']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['ROUND_POINTS_GAP'][0];
-		$aseco->server->gameinfo->chase['GiveUpMax']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['GIVE_UP_MAX'][0];
-		$aseco->server->gameinfo->chase['MinPlayersNb']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['MIN_PLAYERS_NUMBER'][0];
-		$aseco->server->gameinfo->chase['ForceLapsNb']			= (int)$settings['MODESETUP'][0]['CHASE'][0]['FORCE_LAPS_NUMBER'][0];
-		$aseco->server->gameinfo->chase['FinishTimeout']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['FINISH_TIMEOUT'][0];
-		$aseco->server->gameinfo->chase['DisplayWarning']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['DISPLAY_WARNING'][0]);
-		$aseco->server->gameinfo->chase['UsePlayerClublinks']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['USE_PLAYER_CLUBLINKS'][0]);
-		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MAX'][0];
-		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MIN'][0];
-		$aseco->server->gameinfo->chase['CompetitiveMode']		= $aseco->string2bool($settings['MODESETUP'][0]['CHASE'][0]['COMPETITIVE_MODE'][0]);
-		$aseco->server->gameinfo->chase['WaypointEventDelay']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['WAYPOINT_EVENT_DELAY'][0];
-		$aseco->server->gameinfo->chase['PauseBetweenRound']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['PAUSE_BETWEEN_ROUND'][0];
-		$aseco->server->gameinfo->chase['WaitingTimeMax']		= (int)$settings['MODESETUP'][0]['CHASE'][0]['WAITING_TIME_MAX'][0];
+		$aseco->server->gameinfo->chase['TimeLimit']			= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->chase['MapPointsLimit']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MAP_POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->chase['RoundPointsLimit']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['ROUND_POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->chase['RoundPointsGap']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['ROUND_POINTS_GAP'][0];
+		$aseco->server->gameinfo->chase['GiveUpMax']			= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['GIVE_UP_MAX'][0];
+		$aseco->server->gameinfo->chase['MinPlayersNb']			= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MIN_PLAYERS_NUMBER'][0];
+		$aseco->server->gameinfo->chase['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['FORCE_LAPS_NUMBER'][0];
+		$aseco->server->gameinfo->chase['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->chase['DisplayWarning']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['DISPLAY_WARNING'][0]);
+		$aseco->server->gameinfo->chase['UsePlayerClublinks']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['USE_PLAYER_CLUBLINKS'][0]);
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MAX'][0];
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MIN'][0];
+		$aseco->server->gameinfo->chase['CompetitiveMode']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['COMPETITIVE_MODE'][0]);
+		$aseco->server->gameinfo->chase['WaypointEventDelay']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WAYPOINT_EVENT_DELAY'][0];
+		$aseco->server->gameinfo->chase['PauseBetweenRound']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['PAUSE_BETWEEN_ROUND'][0];
+		$aseco->server->gameinfo->chase['WaitingTimeMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WAITING_TIME_MAX'][0];
 
 
 
@@ -198,7 +219,7 @@ class PluginModescriptHandler extends Plugin {
 
 
 		// Setup the UI
-		$this->ui_properties = $settings['UI_PROPERTIES'][0];
+		$this->ui_properties = $this->settings['UI_PROPERTIES'][0];
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
 		$this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
@@ -315,14 +336,14 @@ class PluginModescriptHandler extends Plugin {
 				}
 				if ($aseco->string2bool($params[4]) === true || $aseco->string2bool($params[7]) === true) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
-						if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
-							// Store time from Player (finished the Lap)
-							$this->player_finished[$params[0]] = (int)$params[5];
-						}
-						else {
-							// Store time from Player (finished the Map)
-							$this->player_finished[$params[0]] = (int)$params[2];
-						}
+//						if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
+//							// Store time from Player (finished the Lap)
+//							$this->player_finished[$params[0]] = (int)$params[5];
+//						}
+//						else {
+//							// Store time from Player (finished the Map)
+//							$this->player_finished[$params[0]] = (int)$params[2];
+//						}
 
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
 						$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
@@ -349,6 +370,13 @@ class PluginModescriptHandler extends Plugin {
 			// [0]=Login, [1]=StuntPoints, [2]=Combo, [3]=TotalStuntsScore, [4]=StuntFactor, [5]=StuntName, [6]=StuntAngle, [7]=IsStraightStunt, [8]=IsStuntReversed, [9]=IsMasterJump
 			case 'LibXmlRpc_OnStunt':
 				$aseco->releaseEvent('onPlayerStunt', $params);
+		    		break;
+
+
+
+			// [0]=Login, [1]=FinishBlockId, [2]=Time(/Score?)
+			case 'LibXmlRpc_OnPlayerFinish':
+				$aseco->playerFinish($params[0], (int)$params[2]);
 		    		break;
 
 
@@ -623,14 +651,14 @@ $aseco->loadingMap($params[1]);
 								}
 								$aseco->releaseEvent('onPlayerRankingUpdated', null);
 
-								// Finished Map?
-								if (isset($this->player_finished[$params[1]])) {
-									// Player finished the Map or the Lap
-									$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
-
-									// Remove finish status
-									unset($this->player_finished[$params[1]]);
-								}
+//								// Finished Map?
+//								if (isset($this->player_finished[$params[1]])) {
+//									// Player finished the Map or the Lap
+//									$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
+//
+//									// Remove finish status
+//									unset($this->player_finished[$params[1]]);
+//								}
 							}
 						}
 					}
@@ -783,6 +811,44 @@ $aseco->loadingMap($params[1]);
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	private function checkModescriptVersions () {
+		global $aseco;
+
+		$aseco->console('[ModescriptHandler] Checking version from dedicated Server Modescripts...');
+
+		$path = $aseco->settings['dedicated_installation'] .'/UserData/Scripts/';
+		if (!is_dir($path)) {
+			trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
+		}
+		foreach ($this->settings['SCRIPTS'][0]['ENTRY'] as $item) {
+			list($script, $version) = explode('|', $item);
+			$rversion = (int)str_replace('-', '', $version);
+			if ($fh = @fopen($path.$script, 'r')) {
+				while (($line = fgets($fh)) !== false) {
+					if (preg_match('/#Const\s+\w*Version\s+"(\d{4}-\d{2}-\d{2})"/', $line, $matches) === 1) {
+						$mversion = (int)str_replace('-', '', $matches[1]);
+						if ($mversion >= $rversion) {
+							$aseco->console('[ModescriptHandler] » version '. $matches[1] .' from "'. $script .'" ok.');
+						}
+						else if ($mversion < $rversion) {
+							$aseco->console('[ModescriptHandler] » version '. $matches[1] .' from "'. $script .'" to old, please update from "newinstall/dedicated server/" to minimum version "'. $version .'" and restart the dedicated Server!');
+							exit(0);
+						}
+						break;
+					}
+				}
+				fclose($fh);
+			}
+		}
+		$aseco->console('[ModescriptHandler] ...successfully done!');
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function setupUserInterface () {
 		global $aseco;
 
@@ -807,26 +873,26 @@ $aseco->loadingMap($params[1]);
 			$this->ui_properties['CHAT'][0]['LINECOUNT'][0] = 40;
 		}
 
-		$settings  = '<ui_properties>';
-		$settings .= ' <map_info visible="'. $aseco->bool2string($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <opponents_info visible="'. $aseco->bool2string($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'" />';
-		$settings .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <chrono visible="'. $aseco->bool2string($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <speed_and_distance visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <personal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$settings .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'" />';
-		$settings .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'" />';
-		$settings .= '</ui_properties>';
+		$ui  = '<ui_properties>';
+		$ui .= ' <map_info visible="'. $aseco->bool2string($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <opponents_info visible="'. $aseco->bool2string($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'" />';
+		$ui .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <chrono visible="'. $aseco->bool2string($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <speed_and_distance visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <personal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Z'][0]) .'" />';
+		$ui .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'" />';
+		$ui .= '</ui_properties>';
 
-		$aseco->client->query('TriggerModeScriptEvent', 'UI_SetProperties', $settings);
+		$aseco->client->query('TriggerModeScriptEvent', 'UI_SetProperties', $ui);
 	}
 
 	/*
@@ -897,12 +963,12 @@ $aseco->loadingMap($params[1]);
 
 		// ModeBase
 		$modebase = array(
-			'S_UseScriptCallbacks'			=> $aseco->server->gameinfo->options['UseScriptCallbacks'],
-			'S_UseLegacyCallbacks'			=> $aseco->server->gameinfo->options['UseLegacyCallbacks'],
-			'S_ChatTime'				=> $aseco->server->gameinfo->options['ChatTime'],
-			'S_AllowRespawn'			=> $aseco->server->gameinfo->options['AllowRespawn'],
-			'S_WarmUpDuration'			=> $aseco->server->gameinfo->options['WarmUpDuration'],
-			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->options['ScoresTableStylePath'],
+			'S_UseScriptCallbacks'			=> $aseco->server->gameinfo->modebase['UseScriptCallbacks'],
+			'S_UseLegacyCallbacks'			=> $aseco->server->gameinfo->modebase['UseLegacyCallbacks'],
+			'S_ChatTime'				=> $aseco->server->gameinfo->modebase['ChatTime'],
+			'S_AllowRespawn'			=> $aseco->server->gameinfo->modebase['AllowRespawn'],
+			'S_WarmUpDuration'			=> $aseco->server->gameinfo->modebase['WarmUpDuration'],
+			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->modebase['ScoresTableStylePath'],
 		);
 
 		$modesetup = array();
@@ -1028,11 +1094,27 @@ $aseco->loadingMap($params[1]);
 		$xml .= ' <properties>';
 		$xml .= '  <position x="0.0" y="51.0" z="20.0" />';
 		$xml .= '  <headersize x="70.0" y="8.7" />';
-		$xml .= '  <modeicon icon="Icons64x64_1|ToolLeague1" />';
+		$xml .= '  <modeicon icon="Bgs1|BgEmpty" />';
 		$xml .= '  <tablesize x="182.0" y="67.0" />';
 		$xml .= '  <taleformat columns="2" lines="8" />';
 		$xml .= '  <footersize x="180.0" y="17.0" />';
 		$xml .= '</properties>';
+
+		$xml .= ' <settings>';
+		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+			$xml .= '  <setting name="TeamsMode" value="True" />';
+			$xml .= '  <setting name="TeamsScoresVisibility" value="True" />';
+			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False" />';
+		}
+		else {
+			$xml .= '  <setting name="TeamsMode" value="False" />';
+			$xml .= '  <setting name="TeamsScoresVisibility" value="False" />';
+			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False" />';
+		}
+		$xml .= '  <setting name="PlayerDarkening" value="True" />';
+		$xml .= '  <setting name="PlayerInfoVisibility" value="True" />';
+		$xml .= '  <setting name="ServerNameVisibility" value="True" />';
+		$xml .= ' </settings>';
 
 		$xml .= '<images>';
 		$xml .= ' <background>';

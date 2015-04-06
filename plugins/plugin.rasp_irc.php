@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-03-23
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -290,7 +290,6 @@ class PluginRaspIrc extends Plugin {
 				$this->jukebox_permadd		= $aseco->string2bool($xml['RASP']['JUKEBOX_PERMADD'][0]);
 				$this->jukebox_adminadd		= $aseco->string2bool($xml['RASP']['JUKEBOX_ADMINADD'][0]);
 				$this->jukebox_in_window	= $aseco->string2bool($xml['RASP']['JUKEBOX_IN_WINDOW'][0]);
-				$this->reset_cache_start	= $aseco->string2bool($xml['RASP']['RESET_CACHE_START'][0]);
 				$this->autosave_matchsettings	= $xml['RASP']['AUTOSAVE_MATCHSETTINGS'][0];
 				$this->feature_votes		= $aseco->string2bool($xml['RASP']['FEATURE_VOTES'][0]);
 				$this->prune_records_times	= $aseco->string2bool($xml['RASP']['PRUNE_RECORDS_TIMES'][0]);
@@ -317,7 +316,6 @@ class PluginRaspIrc extends Plugin {
 				$this->mxvoteratio		= $xml['RASP']['MX_VOTERATIO'][0];
 				$this->mxdir			= $xml['RASP']['MX_DIR'][0];
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
-				$this->maphistory_file		= $xml['RASP']['MAPHISTORY_FILE'][0];
 
 				$this->jukebox			= array();
 				$this->jb_buffer		= array();

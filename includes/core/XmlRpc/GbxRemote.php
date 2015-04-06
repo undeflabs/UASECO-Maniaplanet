@@ -13,7 +13,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-18
+ * Date:	2015-03-25
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -55,6 +55,8 @@ class GbxRemote {
 	private $lastNetworkActivity	= 0;
 
 	private $ignore_error_messages	= array(
+		'Connection not initialized',					// *ToLogin
+		'Login unknown.',						// *ToLogin, GetDetailedPlayerInfo
 		'Start index out of bound.',					// GetMapList
 	);
 

@@ -4,10 +4,11 @@
 
 #RequireContext CTmMode
 
-#Const	ModeBaseVersion		"2015-02-18"
+#Const	ModeBaseVersion		"2015-02-26"
 #Const	ModeBaseScriptName	"ModeBase.Script.txt"
 
 #Include "Libs/Nadeo/Mode.Script.txt" as Mode
+#Include "Libs/Nadeo/Window.Script.txt" as Window
 #Include "Libs/Nadeo/ScoresTable2.Script.txt" as ST2
 #Include "Libs/Nadeo/Clublink.Script.txt" as Clublink
 #Include "Libs/Nadeo/TrackMania/UI.Script.txt" as UI
@@ -40,6 +41,7 @@ MB_LogVersion(ModeBaseScriptName, ModeBaseVersion);
 MB_LogVersion(UI::GetScriptName(), UI::GetScriptVersion());
 MB_LogVersion(TM2::GetScriptName(), TM2::GetScriptVersion());
 MB_LogVersion(Mode::GetScriptName(), Mode::GetScriptVersion());
+MB_LogVersion(Window::GetScriptName(), Window::GetScriptVersion());
 MB_LogVersion(XmlRpc::GetScriptName(), XmlRpc::GetScriptVersion());
 MB_LogVersion(WarmUp::GetScriptName(), WarmUp::GetScriptVersion());
 MB_LogVersion(Clublink::GetScriptName(), Clublink::GetScriptVersion());
@@ -504,8 +506,15 @@ main() {
 	MB_XmlRpcCheck();
 	MB_AllowRespawnCheck();
 	
+	// Default label visibility
+	UIManager.UIAll.TeamLabelsVisibility = CUIConfig::ELabelsVisibility::WhenInFrustum;
+	UIManager.UIAll.TeamLabelsShowNames = CUIConfig::EVisibility::ForcedVisible;
+	UIManager.UIAll.OpposingTeamLabelsVisibility = CUIConfig::ELabelsVisibility::WhenInFrustum;
+	UIManager.UIAll.OpposingTeamLabelsShowNames = CUIConfig::EVisibility::ForcedVisible;
+	
 	if (MB_UseLogging) MB_Log("StartServer");
 	
+	Window::Load();
 	UI::Load();
 	TM2::Load();
 	WarmUp::Load();
@@ -577,14 +586,10 @@ main() {
 					if (UI != Null) UI.UISequence = CUIConfig::EUISequence::Intro;
 				}
 			}
-			foreach (Player in Players) {
-				Player.IsSpawned = True;
-			}
 			
 			// Load map
-			XmlRpc::LoadingMap(MB_SectionMapNb);
+			XmlRpc::LoadingMap(MB_SectionMapNb, MB_MapRestarted);
 			MB_LoadMap();
-			
 			
 			if (MB_UseLogging) MB_Log("StartMap");
 			
@@ -598,10 +603,6 @@ main() {
 				---MapIntro---
 			}
 			MB_Synchro_DoBarrier();
-			
-			foreach (Player in AllPlayers) {
-				Player.IsSpawned = False;
-			}
 			
 			+++StartMap+++
 			XmlRpc::BeginMapStop(MB_SectionMapNb, MB_MapRestarted);
@@ -838,6 +839,7 @@ main() {
 	TM2::Unload();
 	WarmUp::Unload();
 	UI::Unload();
+	Window::Unload();
 	XmlRpc::EndServerStop();
 	XmlRpc::Unload();
 }

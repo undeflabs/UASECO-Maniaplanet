@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-01-13
+ * Date:	2015-04-04
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -205,6 +205,7 @@ class Player {
 			$this->continent		= '';
 			$this->nation			= 'OTH';
 		}
+		$this->visits				= 0;
 		$this->wins				= 0;
 		$this->newwins				= 0;
 		$this->timeplayed			= 0;
@@ -293,7 +294,7 @@ class Player {
 				}
 			}
 		}
-		$aseco->db->query('COMMIT;');
+		$aseco->db->commit();
 	}
 
 	/*

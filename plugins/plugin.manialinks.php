@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-24
+ * Date:	2015-04-06
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -93,16 +93,6 @@
  *  "6701"-"7200": Authors for /xlist auth:, handled in plugin.rasp_jukebox.php
  *  "7224"-"7230": reserved for future use
  *  "7231"-"7262": Panel backgrounds, handled in plugin.panels.php
- *"-4001"-"-4200": Player numbers for /jfreu badword, handled in chat.jfreu.php
- *"-4201"-"-4400": Player numbers for /jfreu banfor 1H, handled in chat.jfreu.php
- *"-4401"-"-4600": Player numbers for /jfreu banfor 24H, handled in chat.jfreu.php
- *"-4601"-"-4800": Player numbers for /jfreu unban, handled in chat.jfreu.php
- *"-4801"-"-5000": Player numbers for /jfreu addvip, handled in chat.jfreu.php
- *"-5001"-"-5200": Player numbers for /jfreu removevip, handled in chat.jfreu.php
- *"-5201"-"-5400": Player numbers for /jfreu unspec, handled in chat.jfreu.php
- *"-5401"-"-5600": Player numbers for /jfreu listbans, handled in chat.jfreu.php
- *"-5601"-"-5800": Player numbers for /jfreu listvips, handled in chat.jfreu.php
- *"-5801"-"-6000": Team numbers for /jfreu listvipteams, handled in chat.jfreu.php
  *"-6001"-"-7900": Map numbers for /karma, handled in plugin.rasp_jukebox.php
  *"-7901"-"-8100": Player numbers for /admin unbanip, handled in chat.admin.php
  *

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <records_eyepiece>
-	<!-- THIS IS THE CONFIG FILE FOR THE TM2-PORT ONLY -->
+	<!-- THIS IS THE CONFIG FILE FOR UASECO ONLY -->
 
 	<!-- Here you can setup some special features -->
 	<features>
@@ -219,24 +219,24 @@
 		<width>15.76</width>
 
 		<icons>
-			<last_map>
+			<last>
 				<icon_style>Icons128x128_1</icon_style>
 				<icon_substyle>NewTrack</icon_substyle>
-			</last_map>
-			<current_map>
+			</last>
+			<current>
 				<icon_style>Icons128x128_1</icon_style>
 				<icon_substyle>Challenge</icon_substyle>
-			</current_map>
-			<next_map>
+			</current>
+			<next>
 				<icon_style>Icons128x128_1</icon_style>
 				<icon_substyle>LoadTrack</icon_substyle>
-			</next_map>
+			</next>
 		</icons>
-		<title>
-			<last_map>Last Map</last_map>
-			<current_map>Current Map</current_map>
-			<next_map>Next Map</next_map>
-		</title>
+		<titles>
+			<last>Last Map</last>
+			<current>Current Map</current>
+			<next>Next Map</next>
+		</titles>
 
 		<race>
 			<pos_x>48.64</pos_x>
@@ -835,7 +835,7 @@
 		<text_color>FFCC00FF</text_color>
 
 		<pos_x>24.58</pos_x>
-		<pos_y>43.3</pos_y>
+		<pos_y>43.2</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -852,7 +852,7 @@
 		<text_color>FFCC00FF</text_color>
 
 		<pos_x>29.38</pos_x>
-		<pos_y>43.3</pos_y>
+		<pos_y>43.2</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -869,7 +869,7 @@
 		<text_color>FFCC00FF</text_color>
 
 		<pos_x>34.18</pos_x>
-		<pos_y>43.3</pos_y>
+		<pos_y>43.2</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -886,7 +886,7 @@
 		<text_color>FFCC00FF</text_color>
 
 		<pos_x>38.98</pos_x>
-		<pos_y>43.3</pos_y>
+		<pos_y>43.2</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -926,7 +926,7 @@
 
 		<race>
 			<pos_x>43.78</pos_x>
-			<pos_y>43.3</pos_y>
+			<pos_y>43.2</pos_y>
 			<scale>1.0</scale>
 			<background_default>55556699</background_default>
 			<background_focus>004B7D99</background_focus>

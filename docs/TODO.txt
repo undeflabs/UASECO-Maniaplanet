@@ -49,11 +49,11 @@ ManiaKarma
  - Include Debug logging
 
 
+
 Records-Eyepiece
 ~~~~~~~~~~~~~~~~
  - CheckpointWidget: In multilap Maps reset the text "Finished, next Lap!" after about 4-5 sec. to the Checkpoint count
  - Player marker from Players behind current should be "grey" instead of red
- - Check positions of the widgets (small ones are not the same height then the larger ones)
  - Add possibilities for <background_color> at <checkpointcount_widget>, <donation_widget>
  - Remove <ladderlimit_widget>, <gamemode_widget>, <player_spectator_widget>, <current_ranking_widget>
  - Change F7 for toggle widgets
@@ -62,7 +62,9 @@ Records-Eyepiece
 
 
 
-
+VoteManager
+~~~~~~~~~~~
+ - VoteManager should be able to know if the current map was juked from a player and the do not allow a skip vote. (Thanks jaga01)
 
 
 

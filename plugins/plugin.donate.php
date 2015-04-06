@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-24
+ * Date:	2015-04-06
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -63,7 +63,7 @@ class PluginDonate extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onBillUpdated',			'onBillUpdated');
 
-		$this->registerChatCommand('donate',	'chat_donate',	'Donates planets to server',		Player::PLAYERS);
+		$this->registerChatCommand('donate',	'chat_donate',	'Donates Planets to server',		Player::PLAYERS);
 		$this->registerChatCommand('topdons',	'chat_topdons',	'Displays top 100 highest donators',	Player::PLAYERS);
 	}
 
@@ -252,14 +252,14 @@ class PluginDonate extends Plugin {
 		global $aseco;
 
 		// Build manialink
-		$xml = '<manialink id="UASECO-1">';
+		$xml = '<manialink id="DonateConfirmationWindow" name="DonateConfirmationWindow">';
 		$xml .= '<frame pos="0.4 0.15 0">';
-		$xml .= '<quad size="0.8 0.3" style="Bgs1" substyle="BgTitlePage"/>';
+		$xml .= '<quad size="0.8 0.3" style="Bgs1" substyle="BgTitle2"/>';
 		$xml .= '<label pos="-0.04 -0.04 -0.2" textsize="2" text="$i$159Initiating payment from server $fff'. $aseco->server->name .'$z $fff:"/>';
 		$xml .= '<label pos="-0.04 -0.08 -0.2" textsize="2" text="$i$159Label: '. $aseco->formatColors($label) .'"/>';
 		$xml .= '<label pos="-0.04 -0.12 -0.2" textsize="2" text="$159Would you like to pay now?"/>';
-		$xml .= '<label pos="-0.22 -0.19 -0.2" halign="center" style="CardButtonMedium" text="Yes" action="28"/>';
-		$xml .= '<label pos="-0.58 -0.19 -0.2" halign="center" style="CardButtonMedium" text="No" action="29"/>';
+		$xml .= '<label pos="-0.22 -0.19 -0.2" halign="center" style="CardButtonMedium" text="Yes" action="Donate?Action=Payout&Answer=Confirm"/>';
+		$xml .= '<label pos="-0.58 -0.19 -0.2" halign="center" style="CardButtonMedium" text="No" action="Donate?Action=Payout&Answer=Cancel"/>';
 		$xml .= '</frame>';
 		$xml .= '</manialink>';
 
@@ -305,22 +305,19 @@ class PluginDonate extends Plugin {
 			return;
 		}
 
-		$action = (int)$answer[2];
+		// Donate?Action=Payout&Answer=[Confirm|Cancel]
+		if (substr($answer[2], 0, 6) == 'Donate') {
+			// Parse get parameter
+			parse_str(str_replace('Donate?', '', $answer[2]), $param);
 
-		// check player answer
-		switch ($action) {
-			// Payment dialog buttons
-			case 28:
-				// log clicked command
-				$aseco->console('[Player] Player [{1}] confirmed command "/admin pay"', $player->login);
+			if ($param['Action'] == 'Payout' && $param['Answer'] == 'Confirm') {
+				$aseco->console('[Donate] Player [{1}] confirmed command "/admin pay"', $player->login);
 				$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, true);
-				return;
-
-			case 29:
-				// log clicked command
-				$aseco->console('Player [{1}] cancelled command "/admin pay"', $player->login);
+			}
+			else if ($param['Action'] == 'Payout' && $param['Answer'] == 'Cancel') {
+				$aseco->console('[Donate] Player [{1}] cancelled command "/admin pay"', $player->login);
 				$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, false);
-				return;
+			}
 		}
 	}
 
@@ -362,7 +359,7 @@ class PluginDonate extends Plugin {
 							);
 							$aseco->sendChatMessage($message, $login);
 						}
-						$aseco->console('[Donate] Player [{1}] donated {2} planets to this server (TxId {3})', $login, $planets, $txid);
+						$aseco->console('[Donate] Player [{1}] donated {2} Planets to this server (TxId {3})', $login, $planets, $txid);
 						$this->updateDonations($login, $planets);
 
 						// throw 'donation' event
@@ -378,7 +375,7 @@ class PluginDonate extends Plugin {
 							$newplanets
 						);
 						$aseco->sendChatMessage($message, $login);
-						$aseco->console('[Donate] Server paid {1} planets to login "{2}" (TxId {3})', abs($planets), $login, $txid);
+						$aseco->console('[Donate] Server paid {1} Planets to [{2}] (TxId {3})', abs($planets), $login, $txid);
 					}
 					unset($this->bills[$billid]);
 					break;
@@ -386,7 +383,7 @@ class PluginDonate extends Plugin {
 				case 5:  // Refused
 					$message = '{#server}» {#error}Transaction refused!';
 					$aseco->sendChatMessage($message, $login);
-					$aseco->console('[Donate] Refused transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
+					$aseco->console('[Donate] Refused transaction of {1} to [{2}] (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);
 					break;
 
