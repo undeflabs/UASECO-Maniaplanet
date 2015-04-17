@@ -94,8 +94,6 @@
 			<message>Use "/mute" and "/unmute" to mute / unmute other players, and "/mutelist" to list them!</message>
 			<message>Wondering when a player was last online?  Use "/laston LOGIN" to find out!</message>
 			<message>Find the MX info for a map with the "/mxinfo" command!</message>
-			<message>Use the "/style" command to select your personal window style!</message>
-			<message>Use the "/votepanel" command to select your personal vote panel!</message>
 			<message>Check out the UASECO site at $Lhttp://www.UASECO.org !</message>
 		</messages>
 	</info_messages>

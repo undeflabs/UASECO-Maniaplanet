@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-24
+ * Date:	2015-04-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -175,6 +175,10 @@ class PluginDedimania extends Plugin {
 
 
 		// Custom Titles "Stadium"
+		'BaF1@mcrobert'			=> array(			// https://forum.maniaplanet.com/viewtopic.php?f=9&t=29423
+			'supported'		=> true,
+			'packmask'		=> 'Stadium',
+		),
 		'Dirt_World_TM2@bernatf'	=> array(
 			'supported'		=> true,
 			'packmask'		=> 'Stadium',

@@ -8,7 +8,7 @@
 
 
 	<!-- Change the scale factor, 1.0 = 100% -->
-	<scale>1.0</scale>
+	<scale>0.5</scale>
 
 
 	<!-- Change here the speed unit to whatever you want, default = 'KPH' (kilometer per hour) -->
