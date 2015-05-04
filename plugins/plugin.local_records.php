@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -206,6 +206,7 @@ class PluginLocalRecords extends Plugin {
 		LEFT JOIN `%prefix%records` AS `r` ON `r`.`MapId` = `m`.`MapId`
 		LEFT JOIN `%prefix%players` AS `p` ON `r`.`PlayerId` = `p`.`PlayerId`
 		WHERE `m`.`Uid` = ". $aseco->db->quote($map->uid) ."
+		AND `r`.`GamemodeId` = '". $aseco->server->gameinfo->mode ."'
 		ORDER BY `r`.`Score` ". $order .", `r`.`Date` ASC
 		LIMIT ". ($this->records->getMaxRecords() ? $this->records->getMaxRecords() : 50) .";
 		";
@@ -614,6 +615,7 @@ class PluginLocalRecords extends Plugin {
 		INSERT INTO `%prefix%records` (
 			`MapId`,
 			`PlayerId`,
+			`GamemodeId`,
 			`Date`,
 			`Score`,
 			`Checkpoints`
@@ -621,6 +623,7 @@ class PluginLocalRecords extends Plugin {
 		VALUES (
 			". $record->map->id .",
 			". $record->player->id .",
+			". $aseco->server->gameinfo->mode .",
 			". $aseco->db->quote(date('Y-m-d H:i:s', time())) .",
 			". $record->score .",
 			". $aseco->db->quote($cps) ."
@@ -706,6 +709,7 @@ class PluginLocalRecords extends Plugin {
 					INSERT INTO `%prefix%records` (
 						`MapId`,
 						`PlayerId`,
+						`GamemodeId`,
 						`Date`,
 						`Score`,
 						`Checkpoints`
@@ -713,6 +717,7 @@ class PluginLocalRecords extends Plugin {
 					VALUES (
 						". $mapid . ",
 						". $timerow->PlayerId .",
+						". $timerow->GamemodeId .",
 						". $aseco->db->quote($timerow2->Date) .",
 						". $timerow->Score .",
 						". $aseco->db->quote($timerow2->Checkpoints) ."

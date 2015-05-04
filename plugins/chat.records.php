@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-31
- * Copyright:	2014 by undef.de
+ * Date:	2015-05-01
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -444,6 +444,7 @@ class PluginChatRecords extends Plugin {
 			FROM `%prefix%players`, `%prefix%records`
 			WHERE `%prefix%players`.`PlayerId` = `%prefix%records`.`Playerid`
 			AND `MapId` = ". $map->id ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 			ORDER BY `Score` ". $order .", `Date` ASC
 			LIMIT 3;
 			";
@@ -564,6 +565,7 @@ class PluginChatRecords extends Plugin {
 			FROM `%prefix%players`, `%prefix%records`
 			WHERE `%prefix%players`.`PlayerId` = `%prefix%records`.`Playerid`
 			AND `MapId` = ". $map->id ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 			ORDER BY `Score` ". $order .", `Date` ASC
 			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";

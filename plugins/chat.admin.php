@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-06
+ * Date:	2015-05-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -2104,7 +2104,7 @@ class PluginChatAdmin extends Plugin {
 				// log console message
 				$aseco->console('[Admin] {1} [{2}] wrote map list: {3} !', $logtitle, $login, $filename);
 
-				$message = '{#server}» {#highlite}'. $aseco->server->mapdir .'MatchSettings/'. $filename .'{#admin} written';
+				$message = '{#server}» {#admin}Successfully written {#highlite}'. $aseco->server->mapdir .'MatchSettings/'. $filename .'{#admin}!';
 
 				// throw 'maplist changed' event
 				$aseco->releaseEvent('onMapListChanged', array('write', null));

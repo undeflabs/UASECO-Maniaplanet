@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-04
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -349,6 +349,7 @@ class Player {
 		FROM `%prefix%records` AS `r`
 		LEFT JOIN `%prefix%maps` AS `m` ON `r`.`MapId` = `m`.`MapId`
 		WHERE `Uid` IS NOT NULL
+		AND `r`.`GamemodeId` = '". $aseco->server->gameinfo->mode ."'
 		ORDER BY `r`.`MapId` ASC, `Score` ". $order .", `Date` ASC;
 		";
 

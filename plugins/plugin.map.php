@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-05-02
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -60,7 +60,6 @@ class PluginMap extends Plugin {
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onLoadingMap',	'onLoadingMap');
-		$this->registerEvent('onBeginMap',	'onBeginMap');
 		$this->registerEvent('onEndMap',	'onEndMap');
 
 		$this->registerChatCommand('map',	'chat_map',		'Shows info about the current map',		Player::PLAYERS);
@@ -230,20 +229,16 @@ class PluginMap extends Plugin {
 			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name . '$l';
 		}
 
-		// compute map playing time
-		$playtime = time() - $aseco->server->maps->current->starttime;
-		$totaltime = time() - $aseco->server->starttime;
-
 		// show chat message
 		$message = $aseco->formatText($aseco->getChatMessage('PLAYTIME'),
 			$name,
-			$aseco->formatTime($playtime * 1000, false)
+			$aseco->timeString(time() - $aseco->server->maps->current->starttime, true)
 		);
 		if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->replays_total > 0) {
 			$message .= $aseco->formatText($aseco->getChatMessage('PLAYTIME_REPLAY'),
 				$aseco->plugins['PluginRaspJukebox']->replays_total,
 				($aseco->plugins['PluginRaspJukebox']->replays_total == 1 ? '' : 's'),
-				$aseco->formatTime($totaltime * 1000, false)
+				$aseco->timeString(time() - $aseco->server->starttime, true)
 			);
 		}
 
@@ -272,6 +267,9 @@ class PluginMap extends Plugin {
 	*/
 
 	public function onLoadingMap ($aseco, $map) {
+
+		// remember time this map starts playing
+		$aseco->server->maps->current->starttime = time();
 
 		// check for divider message
 		if ($aseco->settings['show_curmap'] > 0) {
@@ -303,18 +301,6 @@ class PluginMap extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $data) {
-
-		// remember time this map starts playing
-		$aseco->server->maps->current->starttime = time();
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onEndMap ($aseco, $data) {
 
 		// Skip if TimeAttack/Stunts mode (always same playing time), or if disabled
@@ -328,10 +314,8 @@ class PluginMap extends Plugin {
 		}
 
 		// Compute map playing time
-		$playtime = time() - $aseco->server->maps->current->starttime;
-		$playtime = $aseco->formatTime($playtime * 1000);
-		$totaltime = time() - $aseco->server->starttime;
-		$totaltime = $aseco->formatTime($totaltime * 1000);
+		$playtime = $aseco->timeString(time() - $aseco->server->maps->current->starttime, true);
+		$totaltime = $aseco->timeString(time() - $aseco->server->starttime, true);
 
 		// Show chat message
 		$message = $aseco->formatText($aseco->getChatMessage('PLAYTIME_FINISH'),

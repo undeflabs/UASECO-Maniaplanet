@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-03-28
+ * Date:	2015-05-04
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -476,7 +476,7 @@ class PluginManiaKarma extends Plugin {
 
 		// Start an async GET request
 		$response = $aseco->webaccess->request($api_url, null, 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
-		if ($response['Code'] == 200) {
+		if (isset($response['Code']) && $response['Code'] == 200) {
 			// Read the response
 			if (!$xml = @simplexml_load_string($response['Message'], null, LIBXML_COMPACT) ) {
 				$this->config['retrytime'] = (time() + $this->config['retrywait']);
@@ -523,7 +523,12 @@ class PluginManiaKarma extends Plugin {
 			// Fake import done to do not ask a MasterAdmin to export
 			$this->config['import_done'] = true;
 
-			$aseco->console('[ManiaKarma] » Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
+			if (isset($response['Code'])) {
+				$aseco->console('[ManiaKarma] » Connection failed with "'. $response['Code'] .'" ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
+			}
+			else {
+				$aseco->console('[ManiaKarma] » Connection failed with "'. $aseco->dump($response) .'" for url ['. $api_url .'], retry again later.');
+			}
 			$aseco->console('[ManiaKarma] ********************************************************');
 		}
 

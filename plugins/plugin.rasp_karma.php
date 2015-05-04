@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-23
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -173,7 +173,8 @@ class PluginRaspKarma extends Plugin {
 				`MapId`
 			FROM `%prefix%times`
 			WHERE `PlayerId` = ". $caller->id ."
-			AND `MapId` = ". $aseco->server->maps->current->id .";
+			AND `MapId` = ". $aseco->server->maps->current->id ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode .";
 			";
 
 			$res = $aseco->db->query($query);

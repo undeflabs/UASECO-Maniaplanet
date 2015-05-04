@@ -1,13 +1,11 @@
-Dedimania
-~~~~~~~~~
- - In Rounds.Script.txt multilap maps are required to run the min. required laps:
-   Rounds final time. And for a multilap challenge only if the number of laps is the main
-   number of laps of the map, and not a different number (forced using RoundForcedLaps for example)!
-   ListMethod: SetRoundForcedLaps(int)
-
-
 UASECO
 ~~~~~~
+	Laps.Script.txt
+	~~~~~~~~~~~~~~~
+	[2015-05-04 19:27:34] [Dedimania] dedimaniaEndMapCallbackHandler() - error(s): Warning in method_helper.php(1254): IGNORE RECORD for undef.de on OVRP0HoRJrR194zgIBHCzPia_Ac,2,1 for undef.de : bad num of checkpoints (20 for 4) ! (4967,7391,9364,11254,13008,14868,16608,18373,20138,21828,23662,25483,27267,29107,30851,32600,34373,36148,37917,39782)
+	If 4 if not the real number of cp then contact the Dedimania maintainer to correct it. (4967,7391,9364,11254,13008,14868,16608,18373,20138,21828,23662,25483,27267,29107,30851,32600,34373,36148,37917,39782)
+	Warning in method_helper.php(1359): VReplay has not the same number of checks as best time (20,4) !
+
  - Include $aseco->server->maps->next (ala $aseco->server->maps->current)
  - Retrieve MX-Infos for PrevMap and NextMap (after restart)
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it

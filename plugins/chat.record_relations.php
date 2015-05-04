@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-05-01
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -215,6 +215,7 @@ class PluginRecordRelations extends Plugin {
 				FROM `%prefix%times`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id ."
+				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				ORDER BY `Score` ". $order ."
 				LIMIT 1;
 				";

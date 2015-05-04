@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-05-04
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -45,6 +45,9 @@
 class PluginCheckpoint extends Plugin {
 	private $manialinkid;
 	private $nbcheckpoints;
+	private $nblaps;
+	private $totalcps;
+	private $forcedlaps;
 	private $position;
 	private $textcolors;
 	private $layout;
@@ -71,13 +74,17 @@ class PluginCheckpoint extends Plugin {
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
 		$this->registerEvent('onPlayerStartCountdown',		'onPlayerStartCountdown');
 		$this->registerEvent('onPlayerCheckpoint',		'onPlayerCheckpoint');
-		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishHandling');
-		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishHandling');
+		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishLap');
+		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
 
 		$this->registerChatCommand('cps', 'chat_cps', 'Sets local/dedimania record checkpoints tracking', Player::PLAYERS);
 
 		$this->manialinkid					= 'PluginCheckpointWidget';
+
 		$this->nbcheckpoints					= 0;
+		$this->totalcps						= 0;
+		$this->nblaps						= 0;
+		$this->forcedlaps					= 0;
 
 		$this->position						= array(
 			'x'						=> -8.5,
@@ -247,8 +254,59 @@ class PluginCheckpoint extends Plugin {
 			}
 		}
 
-		// CP count only for Laps mode
+
+		// At Gamemode 'Laps' store the NbLabs from Dedicated-Server and NOT the
+		// value from the $map_item, because they does not match the reality!
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			$this->nblaps = $aseco->server->gameinfo->laps['ForceLapsNb'];
+		}
+		else {
+			$this->nblaps = $map->nblaps;
+		}
+
+		// Store the amount of Checkpoints from the map
 		$this->nbcheckpoints = $map->nbcheckpoints;
+
+		// Store the amount of Forced Laps
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+			$this->forcedlaps = $aseco->server->gameinfo->rounds['ForceLapsNb'];
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+			$this->forcedlaps = $aseco->server->gameinfo->team['ForceLapsNb'];
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			$this->forcedlaps = $aseco->server->gameinfo->laps['ForceLapsNb'];
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			$this->forcedlaps = $aseco->server->gameinfo->cup['ForceLapsNb'];
+		}
+
+		// Setup the total count of Checkpoints
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			if ($this->forcedlaps > 0) {
+				$this->totalcps = $this->nbcheckpoints * $this->forcedlaps;
+			}
+			else if ($this->nblaps > 0) {
+				$this->totalcps = $this->nbcheckpoints * $this->nblaps;
+			}
+			else {
+				$this->totalcps = $this->nbcheckpoints;
+			}
+		}
+		else if ($this->nblaps > 0 && $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+			// In Laps.Script.txt Maps that are not multilaps are playable too,
+			// in that case do not do a multiplication with 'NbLaps'!
+			if ($aseco->server->maps->current->multilap == true) {
+				$this->totalcps = $this->nbcheckpoints * $this->nblaps;
+			}
+			else {
+				$this->totalcps = $this->nbcheckpoints;
+			}
+		}
+		else {
+			// All other Gamemodes
+			$this->totalcps = $this->nbcheckpoints;
+		}
 	}
 
 	/*
@@ -368,24 +426,14 @@ class PluginCheckpoint extends Plugin {
 			return;
 		}
 
-
-		// Check for Laps mode
+		// Set the Login
 		$login = $param[0];
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
-			// Set the "[4]=CurrentLapTime"
-			$time = $param[4];
 
-			// Use "[5]=LapWaypointNumber"
-			$cpid = $param[5];
-		}
-		else {
-			// Set the "[2]=Time"
-			$time = $param[2];
+		// Set the "[2]=Time"
+		$time = $param[2];
 
-			// Use "[3]=WaypointIndex"
-			$cpid = $param[3];
-		}
-
+		// Use "[3]=WaypointIndex"
+		$cpid = $param[3];
 
 		// check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
@@ -396,13 +444,12 @@ class PluginCheckpoint extends Plugin {
 //			}
 //		}
 
-
 		// Store current checkpoint
 		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
 		ksort($aseco->checkpoints[$login]->current['cps']);
 
 		// Check if displaying for this player, and for best checkpoints
-		$this->checkUpdateCheckpointWidget($login, $cpid);
+		$this->checkUpdateCheckpointWidget($login, $cpid, false);
 	}
 
 	/*
@@ -412,7 +459,7 @@ class PluginCheckpoint extends Plugin {
 	*/
 
 	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
-	public function onPlayerFinishHandling ($aseco, $param) {
+	public function onPlayerFinishLap ($aseco, $param) {
 
 		// If Stunts mode, bail out immediately
 		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
@@ -424,35 +471,60 @@ class PluginCheckpoint extends Plugin {
 			return;
 		}
 
-
-		// Check for Laps mode or multilap Maps
+		// Set the Login
 		$login = $param[0];
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
-			// Set the "[4]=CurrentLapTime"
-			$time = $param[4];
 
-			// Use "[5]=LapWaypointNumber"
-			$cpid = $param[5];
-		}
-		else {
-			// Set the "[2]=Time"
-			$time = $param[2];
+		// Set the "[2]=Time"
+		$time = $param[2];
 
-			// Use "[3]=WaypointIndex"
-			$cpid = $param[3];
-		}
-
-
-		// Store finish as finish time
-		$aseco->checkpoints[$login]->current['finish'] = $time;
-
+		// Use "[3]=WaypointIndex"
+		$cpid = $param[3];
 
 		// Store finish as checkpoint too
 		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
 		ksort($aseco->checkpoints[$login]->current['cps']);
 
 		// Check if displaying for this player, and for best checkpoints
-		$this->checkUpdateCheckpointWidget($login, $cpid);
+		$this->checkUpdateCheckpointWidget($login, $cpid, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
+	public function onPlayerFinishLine ($aseco, $param) {
+
+		// If Stunts mode, bail out immediately
+		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+			return;
+		}
+
+		// If undefined login, bail out too
+		if (!isset($aseco->checkpoints[$param[0]])) {
+			return;
+		}
+
+		// Set the Login
+		$login = $param[0];
+
+		// Set the "[2]=Time"
+		$time = $param[2];
+
+		// Use "[3]=WaypointIndex"
+		$cpid = $param[3];
+
+		// Store finish as finish time
+		$aseco->checkpoints[$login]->current['finish'] = $time;
+
+		// Store finish as checkpoint too
+		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		ksort($aseco->checkpoints[$login]->current['cps']);
+
+		// Check if displaying for this player, and for best checkpoints
+		$this->checkUpdateCheckpointWidget($login, $cpid, true);
 
 		// Check for improvement and update
 		if ($aseco->checkpoints[$login]->current['finish'] < $aseco->checkpoints[$login]->best['finish']) {
@@ -469,7 +541,7 @@ class PluginCheckpoint extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function checkUpdateCheckpointWidget ($login, $cpid) {
+	public function checkUpdateCheckpointWidget ($login, $cpid, $finishline = false) {
 		global $aseco;
 
 		// Check if displaying for this player, and for best checkpoints
@@ -523,7 +595,7 @@ class PluginCheckpoint extends Plugin {
 			}
 
 			// Check for Finish checkpoint
-			if ($cpid == $aseco->server->maps->current->nbcheckpoints) {
+			if ($finishline === true) {
 				$cpid = 'FINISH';
 			}
 			else {

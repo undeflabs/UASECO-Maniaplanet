@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-23
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -2013,6 +2013,7 @@ class PluginRaspJukebox extends Plugin {
 			`MapId`
 		FROM `%prefix%times`
 		WHERE `PlayerId` = ". $player->id ."
+		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		ORDER BY `MapId`;
 		";
 		$result = $aseco->db->query($sql);
@@ -2142,6 +2143,7 @@ class PluginRaspJukebox extends Plugin {
 			`MapId`
 		FROM `%prefix%times`
 		WHERE `PlayerId` = ". $player->id ."
+		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		ORDER BY `MapId`;
 		";
 		$result = $aseco->db->query($sql);
@@ -2187,6 +2189,7 @@ class PluginRaspJukebox extends Plugin {
 				`PlayerId`
 			FROM `%prefix%records`
 			WHERE `MapId` = ". $dbrow[0] ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 			ORDER by `Score` ". $order .", `Date` ASC
 			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";
@@ -2321,6 +2324,7 @@ class PluginRaspJukebox extends Plugin {
 					MIN(`t2`.`Score`)
 				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
+				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
@@ -2441,6 +2445,7 @@ class PluginRaspJukebox extends Plugin {
 					MAX(`t2`.`Score`)
 				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
+				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
@@ -2572,6 +2577,7 @@ class PluginRaspJukebox extends Plugin {
 					MIN(`t2`.`Score`)
 				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
+				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
@@ -2690,6 +2696,7 @@ class PluginRaspJukebox extends Plugin {
 					MAX(`t2`.`Score`)
 				FROM `%prefix%times` AS `t2`
 				WHERE `PlayerId` = ". $player->id ."
+				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				AND `t1`.`MapId` = `t2`.`MapId`
 			));
 			";
@@ -2816,6 +2823,7 @@ class PluginRaspJukebox extends Plugin {
 				MAX(`t2`.`Date`)
 			FROM `%prefix%times` AS `t2`
 			WHERE `PlayerId` = ". $player->id ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 			AND `t1`.`MapId` = `t2`.`MapId`
 		))
 		ORDER BY `t1`.`date`;

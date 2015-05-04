@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-05
+ * Date:	2015-05-04
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -70,9 +70,6 @@ class PluginModescriptHandler extends Plugin {
 
 	// Stores the modescript_settings.xml settings
 	private $settings		= array();
-
-	// Stores the time/points of finished Players
-//	private $player_finished	= array();
 
 	// Stores the <ui_properties>
 	private $ui_properties		= array();
@@ -327,24 +324,24 @@ class PluginModescriptHandler extends Plugin {
 					}
 				}
 				else {
-					if ($aseco->string2bool($params[4]) === true && $aseco->server->maps->current->multilap === false) {
-						$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+					if ($aseco->server->maps->current->multilap === true) {
+						if ($aseco->string2bool($params[4]) === false && $aseco->string2bool($params[7]) === true) {
+							$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+						}
+						else if ($aseco->string2bool($params[4]) === true && $aseco->string2bool($params[7]) === false) {
+							$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+						}
+						else if ($aseco->string2bool($params[4]) === true && $aseco->string2bool($params[7]) === true) {
+							$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+							$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+						}
 					}
-					else if ($aseco->string2bool($params[7]) === true && $aseco->server->maps->current->multilap === true) {
-						$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+					else {
+						$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
 					}
 				}
 				if ($aseco->string2bool($params[4]) === true || $aseco->string2bool($params[7]) === true) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
-//						if ($aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->maps->current->multilap === true) {
-//							// Store time from Player (finished the Lap)
-//							$this->player_finished[$params[0]] = (int)$params[5];
-//						}
-//						else {
-//							// Store time from Player (finished the Map)
-//							$this->player_finished[$params[0]] = (int)$params[2];
-//						}
-
 						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
 						$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
 					}
@@ -631,7 +628,7 @@ $aseco->loadingMap($params[1]);
 							}
 
 							// Check for improved time/score
-							if ($rank->time == 0 || $rank->time > (int)$params[6] || (int)$params[10] > 0) {
+							if ($rank->time == 0 || $rank->time > (int)$params[6] || (int)$params[10] > 0 || count($cps) > count($rank->cps)) {
 								$update = array(
 									'rank'		=> (int)$params[0],
 									'login'		=> $player->login,
@@ -650,15 +647,6 @@ $aseco->loadingMap($params[1]);
 									$aseco->console('[Event] Player Ranking Updated (Player)');
 								}
 								$aseco->releaseEvent('onPlayerRankingUpdated', null);
-
-//								// Finished Map?
-//								if (isset($this->player_finished[$params[1]])) {
-//									// Player finished the Map or the Lap
-//									$aseco->playerFinish($params[1], $this->player_finished[$params[1]]);
-//
-//									// Remove finish status
-//									unset($this->player_finished[$params[1]]);
-//								}
 							}
 						}
 					}

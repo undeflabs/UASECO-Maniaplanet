@@ -1,3 +1,20 @@
+CallVote Ratio Commands from Ingame Menu
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ - AutoTeamBalance
+ - Ban
+ - JumpToMapIndex
+ - Kick
+ - NextMap
+ - RestartMap
+ - SetModeScriptSettingsAndCommands
+ - SetNextMapIndex
+
+-> https://forum.maniaplanet.com/viewtopic.php?p=167020#p167020
+
+
+##############################################################################
+
+
 $this->addDependence('PluginRasp',	Dependence::REQUIRED,	'1.0.0', null);
 $this->addDependence('PluginDonate',	Dependence::REQUIRED,	'1.0.0', null);
 

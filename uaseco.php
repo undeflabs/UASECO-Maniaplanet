@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - April 2015 by undef.de
+ * Copyright:	May 2014 - May 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-04-06');
+	define('UASECO_BUILD',		'2015-05-03');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -406,8 +406,11 @@ class UASECO extends Helper {
 	// and reads all Maps from server.
 	private function serverSync () {
 
-		// Trigger 'LibXmlRpc_PlayersRanking'
+		// Trigger 'LibXmlRpc_PlayersRanking' response
 		$this->client->query('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
+
+		// Trigger 'LibXmlRpc_WarmUp' response
+		$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetWarmUp', '');
 
 		// Get basic server info, server id, login, nickname, zone, name, options, mode, limits...
 		$this->server->getServerSettings();
@@ -598,7 +601,7 @@ class UASECO extends Helper {
 			// Set admin lock password
 			$this->settings['lock_password'] = $settings['LOCK_PASSWORD'][0];
 			if (empty($this->settings['lock_password'])) {
-				$this->console('[WARNING] To increase security you should setup a lock password at <lock_password>!');
+				$this->console('[WARNING] To increase security you should setup a lock password at <lock_password> in [config/UASECO.xml]!');
 			}
 
 			// Set cheater action
@@ -1275,12 +1278,14 @@ class UASECO extends Helper {
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `GamemodeId` tinyint(1) unsigned DEFAULT '0',
 		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
 		  `Score` int(4) unsigned DEFAULT '0',
 		  `Checkpoints` text COLLATE utf8_bin,
-		  PRIMARY KEY (`MapId`,`PlayerId`),
+		  PRIMARY KEY (`MapId`,`PlayerId`,`GamemodeId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
+		  KEY `GamemodeId` (`GamemodeId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -1309,12 +1314,14 @@ class UASECO extends Helper {
 		CREATE TABLE IF NOT EXISTS `%prefix%times` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `GamemodeId` tinyint(1) unsigned DEFAULT '0',
 		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
 		  `Score` int(4) unsigned DEFAULT '0',
 		  `Checkpoints` text COLLATE utf8_bin,
-		  PRIMARY KEY (`MapId`,`PlayerId`,`Score`),
+		  PRIMARY KEY (`MapId`,`PlayerId`,`GamemodeId`,`Score`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
+		  KEY `GamemodeId` (`GamemodeId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

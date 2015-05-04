@@ -557,20 +557,11 @@
 		<gamemode>
 			<rounds>
 				<enabled>true</enabled>
-				<race>
-					<pos_x>48.64</pos_x>
-					<pos_y>23.7</pos_y>
-					<scale>1.0</scale>
-					<entries>14</entries>
-					<topcount>3</topcount>
-				</race>
-				<warmup>
-					<pos_x>48.64</pos_x>
-					<pos_y>23.7</pos_y>
-					<scale>1.0</scale>
-					<entries>2</entries>			<!-- max. 2 -->
-					<topcount>2</topcount>			<!-- max. 2 -->
-				</warmup>
+				<pos_x>48.64</pos_x>
+				<pos_y>23.7</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
 			</rounds>
 
 			<time_attack>						<!-- Unsupported, leave as is! -->
@@ -579,92 +570,47 @@
 
 			<team>
 				<enabled>true</enabled>
-				<race>
-					<pos_x>48.64</pos_x>
-					<pos_y>21.3</pos_y>
-					<scale>1.0</scale>
-					<entries>23</entries>
-					<topcount>3</topcount>
-				</race>
-				<warmup>
-					<pos_x>48.64</pos_x>
-					<pos_y>21.3</pos_y>
-					<scale>1.0</scale>
-					<entries>2</entries>			<!-- max. 2 -->
-					<topcount>2</topcount>			<!-- max. 2 -->
-				</warmup>
+				<pos_x>48.64</pos_x>
+				<pos_y>21.3</pos_y>
+				<scale>1.0</scale>
+				<entries>23</entries>
+				<topcount>3</topcount>
 			</team>
 
 			<laps>
 				<enabled>true</enabled>
-				<race>
-					<pos_x>48.64</pos_x>
-					<pos_y>23.64</pos_y>
-					<scale>1.0</scale>
-					<entries>14</entries>
-					<topcount>3</topcount>
-				</race>
-				<warmup>
-					<pos_x>48.64</pos_x>
-					<pos_y>23.64</pos_y>
-					<scale>1.0</scale>
-					<entries>2</entries>			<!-- max. 2 -->
-					<topcount>2</topcount>			<!-- max. 2 -->
-				</warmup>
+				<pos_x>48.64</pos_x>
+				<pos_y>23.64</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
 			</laps>
 
 			<cup>
 				<enabled>true</enabled>
-				<race>
-					<pos_x>48.64</pos_x>
-					<pos_y>28.3</pos_y>
-					<scale>1.0</scale>
-					<entries>14</entries>
-					<topcount>3</topcount>
-				</race>
-				<warmup>
-					<pos_x>48.64</pos_x>
-					<pos_y>28.3</pos_y>
-					<scale>1.0</scale>
-					<entries>2</entries>			<!-- max. 2 -->
-					<topcount>2</topcount>			<!-- max. 2 -->
-				</warmup>
+				<pos_x>48.64</pos_x>
+				<pos_y>28.3</pos_y>
+				<scale>1.0</scale>
+				<entries>14</entries>
+				<topcount>3</topcount>
 			</cup>
 
 			<team_attack>
 				<enabled>true</enabled>
-				<race>
-					<pos_x>48.64</pos_x>
-					<pos_y>21.3</pos_y>
-					<scale>1.0</scale>
-					<entries>23</entries>
-					<topcount>3</topcount>
-				</race>
-				<warmup>
-					<pos_x>48.64</pos_x>
-					<pos_y>21.3</pos_y>
-					<scale>1.0</scale>
-					<entries>2</entries>			<!-- max. 2 -->
-					<topcount>2</topcount>			<!-- max. 2 -->
-				</warmup>
+				<pos_x>48.64</pos_x>
+				<pos_y>21.3</pos_y>
+				<scale>1.0</scale>
+				<entries>23</entries>
+				<topcount>3</topcount>
 			</team_attack>
 
 			<chase>
 				<enabled>true</enabled>
-				<race>
-					<pos_x>48.64</pos_x>
-					<pos_y>21.3</pos_y>
-					<scale>1.0</scale>
-					<entries>23</entries>
-					<topcount>3</topcount>
-				</race>
-				<warmup>
-					<pos_x>48.64</pos_x>
-					<pos_y>21.3</pos_y>
-					<scale>1.0</scale>
-					<entries>2</entries>			<!-- max. 2 -->
-					<topcount>2</topcount>			<!-- max. 2 -->
-				</warmup>
+				<pos_x>48.64</pos_x>
+				<pos_y>21.3</pos_y>
+				<scale>1.0</scale>
+				<entries>23</entries>
+				<topcount>3</topcount>
 			</chase>
 
 			<stunts>
@@ -672,6 +618,40 @@
 			</stunts>
 		</gamemode>
 	</round_score>
+
+
+
+	<!-- Displays the current status of multilaps -->
+	<multilap_info_widget>
+		<enabled>true</enabled>
+		<text_color>FFCC00FF</text_color>
+
+		<pos_x>39.4</pos_x>
+		<pos_y>-31.0</pos_y>
+		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</multilap_info_widget>
+
+
+
+	<!-- Displays the current status of warm-up -->
+	<warm_up_info_widget>
+		<enabled>true</enabled>
+		<text_color>FFCC00FF</text_color>
+
+		<pos_x>34.6</pos_x>
+		<pos_y>-31.0</pos_y>
+		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</warm_up_info_widget>
 
 
 

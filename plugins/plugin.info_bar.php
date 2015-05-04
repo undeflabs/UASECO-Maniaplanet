@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-04
+ * Date:	2015-05-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -112,6 +112,7 @@ class PluginInfoBar extends Plugin {
 		// Disable parts of the UI
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('map_info', false);
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('position', false);
+		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('personal_best_and_rank', false);
 
 		// Send the UI settings
 		$aseco->plugins['PluginModescriptHandler']->setupUserInterface();

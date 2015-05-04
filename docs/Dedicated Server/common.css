@@ -1,0 +1,101 @@
+@charset "utf-8";
+/* UTF8: äöüß
+ * ----------------------------------------------------------------------------------
+ * Author:	undef.de
+ * Date:	2015-04-14
+ * Copyright:	2015 by undef.de
+ * ----------------------------------------------------------------------------------
+ */
+
+
+/*
+#///////////////////////////////////////////////////////////////////////#
+#									#
+#///////////////////////////////////////////////////////////////////////#
+*/
+
+* {
+	margin:			0px;
+	padding:		0px;
+}
+
+/*
+ Google Chrome: Removes the yellow outline
+ Firefox:	Removes the dotted focus
+*/
+
+*,
+*:focus,
+*:active,
+*:hover {
+	outline:		none !important;
+}
+
+html, body {
+	height:			100%;
+	margin:			0;
+	padding:		0;
+}
+
+body {
+	width:			95%;
+	height:			100%;
+	padding:		10px 10px 10px 10px;
+	font-family:		'Myriad','Arial','Frutiger 45',sans-serif;
+	font-weight:		400;
+	font-size:		9pt;
+	line-height:		12pt;
+	color:			#787D84;
+	background-color:	#FFFFFF;
+}
+
+body::selection {
+	color:			#FFFFFF;
+	background-color:	#787D84;
+}
+
+
+/*
+#///////////////////////////////////////////////////////////////////////#
+#									#
+#///////////////////////////////////////////////////////////////////////#
+*/
+
+h1 {
+	text-transform:		uppercase;
+	margin:			0px 0px 20px 0px;
+}
+
+ul {
+	margin:			0px 0px 20px 0px;
+}
+
+li {
+	margin:			0px 0px 20px 0px;
+	padding:		0px 0px 10px 0px;
+	background-color:	#F7F7F7;
+	list-style-type:	none;
+}
+
+h2 {
+	margin:			0px 0px 10px 0px;
+	padding:		10px 10px 10px 10px;
+	color:			#888888;
+	background-color:	#EFEFEF;
+}
+
+h3 {
+	margin:			0px 10px 5px 10px;
+	font-family:		"Courier New","Courier",Monospace;
+	font-weight:		normal;
+	color:			#555555;
+}
+
+p.note {
+	color:			#FF0000;
+}
+
+p.description {
+	margin:			0px 10px 0px 10px;
+	color:			#888888;
+}

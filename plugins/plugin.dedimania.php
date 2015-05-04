@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-17
+ * Date:	2015-05-02
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -682,6 +682,7 @@ class PluginDedimania extends Plugin {
 				FROM `%prefix%times`
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id ."
+				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				ORDER BY `Score` ". $order ."
 				LIMIT 1;
 				";
@@ -2560,9 +2561,9 @@ class PluginDedimania extends Plugin {
 				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
 				$validation_success = false;
 			}
-			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
+			if ($aseco->server->maps->current->multilap == true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP)) {
 				if ($cpsrace != count($allcps)) {
-					$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+					$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "'. $aseco->server->gameinfo->getModeScriptName() .'".');
 					$validation_success = false;
 				}
 			}
@@ -2655,14 +2656,13 @@ class PluginDedimania extends Plugin {
 			}
 
 			$validation_success = true;
-// 2014-09-20: Disabled because of the "onelap" Bug: http://forum.maniaplanet.com/viewtopic.php?p=217747#p217747
-//			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
-//				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
-//				$validation_success = false;
-//			}
-			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $aseco->server->maps->current->multilap == true) {
+			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+				$validation_success = false;
+			}
+			if ($aseco->server->maps->current->multilap == true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP)) {
 				if ($cpsrace != count($allcps)) {
-					$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "Laps".');
+					$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints difference between calculate ['. $cpsrace .'] and driven ['. count($allcps) .'] in Gamemode "'. $aseco->server->gameinfo->getModeScriptName() .'".');
 					$validation_success = false;
 				}
 			}

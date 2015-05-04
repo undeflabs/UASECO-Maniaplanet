@@ -1,4 +1,10 @@
 /**
+ *	2015-05-01 changed by undef.de:
+ *	- Changed PlayerDarkening from opacity 4 to 8 (id "Quad_PlayerDarkening")
+ *
+ *	2015-04-19 changed by undef.de:
+ *	- Changed PlayerDarkening from grey to black (id "Quad_PlayerDarkening")
+ *
  *	2015-04-05 changed by undef.de:
  *	- Given more space to the Player Nickname ("LibST_Name")
  *	- Moved the Player Avatar more to left (id "Quad_LibST_Avatar")
@@ -1982,7 +1988,7 @@ Void Build(Text _Game, Boolean _Restore) {
 			<quad posn="{{{LineRectanglePosX}}} {{{-ItemSizeY/2.}}} 0" sizen="{{{ItemSizeX-PlayerCardLeftShift+1.}}} {{{ItemSizeY}}}" halign="{{{Private_GetRevert("left", Side)}}}" valign="center" bgcolor="0007" image="{{{PlayerLineRectangleImage}}}" colorize="{{{PlayerLineRectangleColor}}}" id="Quad_PlayerLineRectangle" />
 		</frame>
 		<frame posn="0 0 5">
-			<quad posn="{{{LineRectanglePosX}}} {{{-ItemSizeY/2.}}} 0" sizen="{{{ItemSizeX-PlayerCardLeftShift+1.}}} {{{ItemSizeY}}}" halign="{{{Private_GetRevert("left", Side)}}}" valign="center" image="{{{PlayerLineRectangleImage}}}" colorize="777" opacity="0.7" id="Quad_PlayerDarkening" />
+			<quad posn="{{{LineRectanglePosX}}} {{{-ItemSizeY/2.}}} 0" sizen="{{{ItemSizeX-PlayerCardLeftShift+1.}}} {{{ItemSizeY}}}" halign="{{{Private_GetRevert("left", Side)}}}" valign="center" bgcolor="0008" id="Quad_PlayerDarkening" />
 		</frame>
 		<frame posn="{{{LineSquarePosX}}} {{{-ItemSizeY/2.}}} 1">
 			<label posn="{{{(ItemSizeY/2.)*Revert}}} 0" sizen="{{{ItemSizeY/G_LibST_TextScale}}} {{{ItemSizeY-1.}}}" scale="{{{0.8*G_LibST_TextScale}}}" halign="center" valign="center2" textsize="5" opacity="0.4" textemboss="0" text="0" id="Label_LocalRank" />

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -293,6 +293,7 @@ class PluginPanels extends Plugin {
 				COUNT(`p`.`PlayerId`) AS `Count`
 			FROM `%prefix%players` AS `p`, `%prefix%records` AS `r`
 			WHERE `p`.`PlayerId` = `r`.`PlayerId`
+			AND `r`.`GamemodeId` = ". $aseco->server->gameinfo->mode ."
 			AND `p`.`PlayerId` IN (". implode(',', $onlinelist) .")
 			GROUP BY `p`.`PlayerId`;
 			";

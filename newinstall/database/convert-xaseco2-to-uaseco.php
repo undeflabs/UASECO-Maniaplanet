@@ -4,11 +4,12 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * » Converts a XAseco2 database to a UASECO database
  * » Usage:
- *   /path/to/php -d max_execution_time=0 -d memory_limit=-1 newinstall/database/convert-xaseco2-to-uaseco.php
+ *   cd newinstall/database
+ *   /path/to/php -d max_execution_time=0 -d memory_limit=-1 ./newinstall/database/convert-xaseco2-to-uaseco.php [GAMEMODE]
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-18
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -49,7 +50,7 @@
 
 
 	$config_file = 'config/UASECO.xml';
-	$convert = new Converter($config_file);
+	$convert = new Converter($config_file, (int)$argv[1]);
 
 
 	// Connect to database
@@ -79,6 +80,13 @@ class Converter {
 	public $parser;
 	public $db;
 
+	public $gamemodes = array(
+		1	=> 'Rounds',
+		2	=> 'TimeAttack',
+		3	=> 'Team',
+		4	=> 'Laps',
+		5	=> 'Cup',
+	);
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -86,7 +94,7 @@ class Converter {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct ($config_file) {
+	public function __construct ($config_file, $gamemode) {
 		$this->parser = new XmlParser();
 
 		$this->console('Trying to parse "'. $config_file .'"...');
@@ -104,6 +112,17 @@ class Converter {
 		}
 		else {
 			$this->console('Can not read "'. $config_file .'", make sure this file exists!');
+			exit();
+		}
+
+
+		// Check for given Gamemode
+		if ($gamemode >= 1 && $gamemode <= 5) {
+			$this->console('Using Gamemode "'. $this->gamemodes[$gamemode] .'" for records and times!');
+			$this->settings['gamemode'] = $gamemode;
+		}
+		else {
+			$this->console('No correct Gamemode ID given, please read "readme.txt" first and try again!');
 			exit();
 		}
 	}
@@ -426,6 +445,7 @@ class Converter {
 					INSERT INTO `%prefix%records` (
 						`MapId`,
 						`PlayerId`,
+						`GamemodeId`,
 						`Date`,
 						`Score`,
 						`Checkpoints`
@@ -433,6 +453,7 @@ class Converter {
 					VALUES (
 						". $this->db->quote($row['MapId']) .",
 						". $this->db->quote($row['PlayerId']) .",
+						". $this->db->quote($this->settings['gamemode']) .",
 						". $this->db->quote($row['Date']) .",
 						". $this->db->quote($row['Score']) .",
 						". $this->db->quote($row['Checkpoints']) ."
@@ -597,6 +618,7 @@ class Converter {
 					INSERT INTO `%prefix%times` (
 						`MapId`,
 						`PlayerId`,
+						`GamemodeId`,
 						`Date`,
 						`Score`,
 						`Checkpoints`
@@ -604,6 +626,7 @@ class Converter {
 					VALUES (
 						". $this->db->quote($row['MapId']) .",
 						". $this->db->quote($row['PlayerId']) .",
+						". $this->db->quote($this->settings['gamemode']) .",
 						". $this->db->quote(date('Y-m-d H:i:s', $row['Date'])) .",
 						". $this->db->quote($row['Score']) .",
 						". $this->db->quote($row['Checkpoints']) ."
@@ -792,12 +815,14 @@ class Converter {
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `GamemodeId` tinyint(1) unsigned DEFAULT '0',
 		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
 		  `Score` int(4) unsigned DEFAULT '0',
 		  `Checkpoints` text COLLATE utf8_bin,
-		  PRIMARY KEY (`MapId`,`PlayerId`),
+		  PRIMARY KEY (`MapId`,`PlayerId`,`GamemodeId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
+		  KEY `GamemodeId` (`GamemodeId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -824,12 +849,14 @@ class Converter {
 		CREATE TABLE IF NOT EXISTS `%prefix%times` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `GamemodeId` tinyint(1) unsigned DEFAULT '0',
 		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
 		  `Score` int(4) unsigned DEFAULT '0',
 		  `Checkpoints` text COLLATE utf8_bin,
-		  PRIMARY KEY (`MapId`,`PlayerId`, `Score`),
+		  PRIMARY KEY (`MapId`,`PlayerId`,`GamemodeId`,`Score`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
+		  KEY `GamemodeId` (`GamemodeId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

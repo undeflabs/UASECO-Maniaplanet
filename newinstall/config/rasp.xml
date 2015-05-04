@@ -394,7 +394,7 @@
 
 	<messages>
 		<!-- rank/pb messages -->
-		<rank>{#server}» {#record}Your server rank is {#rank}{1}{#record}/{#highlite}{2}{#record} Average: {#highlite}{3}</rank>
+		<rank>{#server}» {#record}Your server rank is {#rank}{1}{#record} of {#highlite}{2}{#record} Average: {#highlite}{3}</rank>
 		<rank_none>{#server}» {#record}You must have {#highlite}{1}{#record} Local Records on this server before recieving a rank...</rank_none>
 		<nextrank>{#server}» {#record}The next better ranked player is {#highlite}{1}{#record}: {#highlite}{2}</nextrank>
 		<nextrank_rp> $n{#record}[{#highlite}-{1}{#record} RP]</nextrank_rp>

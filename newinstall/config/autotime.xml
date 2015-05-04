@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
 	<!--
-	Set the multiplicator for author time (e.g. 6x author
+	Set the multiplicator for author time (e.g. 6 x author
 	time = new timelimit); set to 0 to disable function
 	// -->
-	<multiplicator>6</multiplicator>
+	<multiplicator>4</multiplicator>
 
 	<!-- Set minimum timelimit in minutes -->
 	<mintime>3.5</mintime>
 
 	<!-- Set maximum timelimit in minutes -->
-	<maxtime>7</maxtime>
+	<maxtime>5</maxtime>
 
 	<!-- Set default timelimit in minutes if any error occurs -->
 	<defaulttime>5</defaulttime>

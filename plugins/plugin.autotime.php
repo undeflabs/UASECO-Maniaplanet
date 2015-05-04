@@ -2,12 +2,12 @@
 /*
  * Plugin: Autotime
  * ~~~~~~~~~~~~~~~~
- * » Changes Timelimit for TimeAttack dynamically depending on the next map's author time.
+ * » Changes Timelimit dynamically depending on the next map's author time.
  * » Based upon plugin.autotime.php from XAseco2/1.03 written by ck|cyrus and Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-12
+ * Date:	2015-05-04
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -54,12 +54,12 @@ class PluginAutotime extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Changes Timelimit for TimeAttack dynamically depending on the next map\'s author time.');
+		$this->setDescription('Changes Timelimit dynamically depending on the next map\'s author time.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onEndMap',	'onEndMap');		// use post event after all join processing
+		$this->registerEvent('onUnloadingMap',	'onUnloadingMap');
 	}
 
 	/*
@@ -92,10 +92,11 @@ class PluginAutotime extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap ($aseco, $data) {
+	public function onUnloadingMap ($aseco, $data) {
 
-		// Check for TimeAttack on next map
-		if ($aseco->server->gameinfo->getNextModeId() == Gameinfo::TIME_ATTACK) {
+		// Check for compatible Gamemode on next map
+		$gamemode = $aseco->server->gameinfo->mode;
+		if ($gamemode == Gameinfo::TIME_ATTACK || $gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::TEAM_ATTACK || $gamemode == Gameinfo::CHASE) {
 			// Check if auto timelimit enabled
 			if ($this->config['MULTIPLICATOR'][0] > 0) {
 				// Check if at least one active player on the server
@@ -132,7 +133,18 @@ class PluginAutotime extends Plugin {
 				}
 
 				// Send new time
-				$aseco->server->gameinfo->time_attack['TimeLimit'] = (int)$newtime;
+				if ($gamemode == Gameinfo::TIME_ATTACK) {
+					$aseco->server->gameinfo->time_attack['TimeLimit'] = (int)$newtime;
+				}
+				else if ($gamemode == Gameinfo::LAPS) {
+					$aseco->server->gameinfo->laps['TimeLimit'] = (int)$newtime;
+				}
+				else if ($gamemode == Gameinfo::TEAM_ATTACK) {
+					$aseco->server->gameinfo->team_attack['TimeLimit'] = (int)$newtime;
+				}
+				else if ($gamemode == Gameinfo::CHASE) {
+					$aseco->server->gameinfo->chase['TimeLimit'] = (int)$newtime;
+				}
 				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 
 				// Set and log timelimit (strip .000 sec)

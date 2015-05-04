@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-23
+ * Date:	2015-05-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -660,6 +660,7 @@ class PluginRasp extends Plugin {
 						`PlayerId`
 					FROM `%prefix%records`
 					WHERE `MapId` = ". $map->id ."
+					AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 					ORDER BY `Score` ". $order .", `Date` ASC
 					LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 					";
@@ -748,6 +749,7 @@ class PluginRasp extends Plugin {
 			FROM `%prefix%times`
 			WHERE `PlayerId` = ". $player->id ."
 			AND `MapId` = ". $map ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 			ORDER BY `Score` ". $order ."
 			LIMIT 1;
 			";
@@ -770,6 +772,7 @@ class PluginRasp extends Plugin {
 		FROM `%prefix%times`
 		WHERE `PlayerId` = ". $player->id ."
 		AND `MapId` = ". $map ."
+		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		ORDER BY `Date` DESC
 		LIMIT ". $this->maxavg .";
 		";
@@ -920,20 +923,22 @@ class PluginRasp extends Plugin {
 			INSERT INTO `%prefix%times` (
 				`MapId`,
 				`PlayerId`,
-				`Score`,
+				`GamemodeId`,
 				`Date`,
+				`Score`,
 				`Checkpoints`
 			)
 			VALUES (
 				". $time->map->id .",
 				". $pid .",
-				". $time->score .",
+				". $aseco->server->gameinfo->mode .",
 				". $aseco->db->quote(date('Y-m-d H:i:s')) .",
+				". $time->score .",
 				". $aseco->db->quote($cps) ."
 			)
 			ON DUPLICATE KEY UPDATE
-				`Score` = VALUES(`Score`),
 				`Date` = VALUES(`Date`),
+				`Score` = VALUES(`Score`),
 				`Checkpoints` = VALUES(`Checkpoints`);
 			";
 			$aseco->db->query($query);

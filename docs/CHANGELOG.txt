@@ -48,6 +48,7 @@ Version 1.0.0
    - Renamed several Plugins
    - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
    - Added new GbxRemote from 2015-01-24 from https://github.com/NewboO/dedicated-server-api/
+   - Distinguish local records between Gamemodes
 
 
    Bugfix (in XAseco2)

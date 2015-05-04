@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-04-06
+ * Date:		2015-05-04
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -60,6 +60,8 @@
  * LocalRecordsWidget				(at all Gamemodes)
  * LiveRankingsWidget				(at all Gamemodes, but not at Score)
  * RoundScoreWidget
+ * MultiLapInfoWidget
+ * WarmUpInfoWidget
  * MapWidget
  * MusicWidget
  * CheckpointCountWidget
@@ -222,6 +224,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerInfoChanged',		'onPlayerInfoChanged');
 		$this->registerEvent('onPlayerRankingUpdated',		'onPlayerRankingUpdated');
+		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
 		$this->registerEvent('onPlayerFinish1',			'onPlayerFinish1');
 		$this->registerEvent('onPlayerWins',			'onPlayerWins');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
@@ -308,6 +311,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['DONATION_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['DONATION_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
 		$this->config['LADDERLIMIT_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['LADDERLIMIT_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
 		$this->config['LADDERLIMIT_WIDGET'][0]['ROC_SERVER'][0]				= ((strtoupper($this->config['LADDERLIMIT_WIDGET'][0]['ROC_SERVER'][0]) == 'TRUE')			? true : false);
+		$this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
+		$this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
 		$this->config['VISITORS_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['VISITORS_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
 		$this->config['FAVORITE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
 		$this->config['TOPLIST_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
@@ -455,17 +460,6 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][Gameinfo::STUNTS][0]['ENABLED'][0]	= false;
 		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TIME_ATTACK][0]['ENABLED'][0]	= false;
 		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::STUNTS][0]['ENABLED'][0]	= false;
-
-
-		// Set max. values for <round_score> Widget
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::ROUNDS][0]['WARMUP'][0]['ENTRIES'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::ROUNDS][0]['WARMUP'][0]['TOPCOUNT'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TEAM][0]['WARMUP'][0]['ENTRIES'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TEAM][0]['WARMUP'][0]['TOPCOUNT'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['WARMUP'][0]['ENTRIES'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['WARMUP'][0]['TOPCOUNT'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CUP][0]['WARMUP'][0]['ENTRIES'][0]	= 2;
-		$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CUP][0]['WARMUP'][0]['TOPCOUNT'][0]	= 2;
 
 
 		// Register /emusic chat command if the MusicWidget is enabled
@@ -787,6 +781,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->scores['TopWinningPayouts']		= array();
 
 		// Init Cache
+		$this->cache['WarmUpInfoWidget']		= false;
+		$this->cache['MultiLapInfoWidget']		= false;
 		$this->cache['MusicWidget']			= false;
 		$this->cache['ToplistWidget']			= false;
 		$this->cache['GamemodeWidget']			= false;
@@ -962,6 +958,7 @@ class PluginRecordsEyepiece extends Plugin {
 					`PlayerId`,
 					COUNT(`Score`) AS `Count`
 				FROM `%prefix%times`
+				WHERE `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				GROUP BY `PlayerId`;
 				";
 				$res = $aseco->db->query($query);
@@ -998,6 +995,7 @@ class PluginRecordsEyepiece extends Plugin {
 					`PlayerId`,
 					COUNT(`Score`) AS `Count`
 				FROM `%prefix%records`
+				WHERE `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 				GROUP BY `PlayerId`;
 				";
 				$res = $aseco->db->query($query);
@@ -1164,7 +1162,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'warmup'
-		if ($this->config['UI_PROPERTIES'][0]['WARMUP'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['WARMUP'][0] == false || $this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('warmup', false);
 		}
 		else {
@@ -1481,6 +1479,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 				// Simulate the event 'onLoadingMap'
 				$this->onLoadingMap($aseco, $aseco->server->maps->current);
+
+				// Simulate the event 'onWarmUpStatusChanged'
+				$this->onWarmUpStatusChanged($aseco, $aseco->warmup_phase);
 
 				// Display the PlacementWidgets at state 'always'
 				if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
@@ -2155,6 +2156,16 @@ class PluginRecordsEyepiece extends Plugin {
 			$widgets .= (($this->cache['VisitorsWidget'] != false) ? $this->cache['VisitorsWidget'] : '');
 		}
 
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['RoundScore']['WarmUpPhase'] == true) {
+			// Display the WarmUpInfoWidget to connecting Player
+			$widgets .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+		}
+
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] == true && $aseco->server->maps->current->multilap == true) {
+			// Display the MultiLapInfoWidget to all Players
+			$widgets .= (($this->cache['MultiLapInfoWidget'] != false) ? $this->cache['MultiLapInfoWidget'] : '');
+		}
+
 		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] == true) {
 			// Display the ManiaExchangeWidget to connecting Player
 			$widgets .= (($this->cache['ManiaExchangeWidget'] != false) ? $this->cache['ManiaExchangeWidget'] : '');
@@ -2272,7 +2283,6 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function onPlayerDisconnect ($aseco, $player) {
 
-
 		// Check if it is time to switch from "normal" to NiceMode or back
 		$this->checkServerLoad();
 
@@ -2303,9 +2313,9 @@ class PluginRecordsEyepiece extends Plugin {
 	public function onPlayerRankingUpdated ($aseco) {
 
 		// Update LiveRankings only
-		$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => true));
 		$this->config['States']['LiveRankings']['NeedUpdate']		= true;
 		$this->config['States']['LiveRankings']['UpdateDisplay']	= true;
+		$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => true));
 
 		// Build and send the CurrentRankingWidget to all Players
 		if ($this->config['CURRENT_RANKING_WIDGET'][0]['ENABLED'][0] == true && $aseco->server->gamestate == Server::RACE) {
@@ -2320,7 +2330,6 @@ class PluginRecordsEyepiece extends Plugin {
 	*/
 
 	public function onPlayerFinish1 ($aseco, $finish_item) {
-
 
 		if ($finish_item->score == 0) {
 			// No actual finish, bail out immediately
@@ -2379,46 +2388,6 @@ class PluginRecordsEyepiece extends Plugin {
 			$aseco->console('[RecordsEyepiece] UPDATE `MostFinished` failed. [for statement "'. $query .'"]!');
 		}
 
-
-		// Store the finish time for the RoundScore and display the RoundScoreWidget
-		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
-
-			if ($gamemode == Gameinfo::LAPS) {
-				// Add the Score
-				$this->scores['RoundScore'][$player->login] = array(
-					'checkpointid'	=> ($aseco->server->maps->current->nbcheckpoints - 1),
-					'playerid'	=> $player->pid,
-					'login'		=> $player->login,
-					'nickname'	=> $this->handleSpecialChars($player->nickname),
-					'score'		=> $aseco->formatTime($finish_item->score),
-					'scoplain'	=> $finish_item->score
-				);
-			}
-			else {
-				// Add the Score
-				$this->scores['RoundScore'][$finish_item->score][] = array(
-					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-					'playerid'	=> $player->pid,
-					'login'		=> $player->login,
-					'nickname'	=> $this->handleSpecialChars($player->nickname),
-					'score'		=> $aseco->formatTime($finish_item->score),
-					'scoplain'	=> $finish_item->score
-				);
-
-				// Store personal best round-score for sorting on equal times of more Players
-				if ( ( isset($this->scores['RoundScorePB'][$player->login]) ) && ($this->scores['RoundScorePB'][$player->login] > $finish_item->score) ) {
-					$this->scores['RoundScorePB'][$player->login] = $finish_item->score;
-				}
-				else {
-					$this->scores['RoundScorePB'][$player->login] = $finish_item->score;
-				}
-			}
-
-			// Display the Widget
-			$this->buildRoundScoreWidget($gamemode, true);
-		}
-
-
 		// Store the $finish_item->score to build the average
 		if ($this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['ENABLED'][0] == true) {
 			$this->scores['TopAverageTimes'][$player->login][] = $finish_item->score;
@@ -2432,7 +2401,6 @@ class PluginRecordsEyepiece extends Plugin {
 	*/
 
 	public function onPlayerWins ($aseco, $player) {
-
 
 		// Look if Player is in Array
 		foreach ($this->scores['TopWinners'] as $item) {
@@ -3357,7 +3325,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Rebuild the Widgets
 			$this->cache['MapWidget']['Window']	= $this->buildLastCurrentNextMapWindow();
-			$this->cache['MapWidget']['Score']		= $this->buildMapWidget('score');
+			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
 		}
 
 		// Check for changed Jukebox and refresh if required
@@ -3382,7 +3350,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Rebuild the Widgets
 			$this->cache['MapWidget']['Window']	= $this->buildLastCurrentNextMapWindow();
-			$this->cache['MapWidget']['Score']		= $this->buildMapWidget('score');
+			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
 
 			// Check if we are at score and refresh the "Next Map" Widget
 			if ($aseco->server->gamestate == Server::SCORE) {
@@ -3516,7 +3484,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
 				// Refresh the MapcountWidget
-				$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
+				$this->cache['MapcountWidget']	= $this->buildMapcountWidget();
 
 				// Display the MapcountWidget to all Player
 				if ($aseco->server->gamestate == Server::RACE) {
@@ -3525,10 +3493,10 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			// Store the Next-Map
-			$this->cache['Map']['Next'] = $this->getNextMap();
+			$this->cache['Map']['Next']		= $this->getNextMap();
 
 			// Rebuild the Widgets
-			$this->cache['MapWidget']['Window'] = $this->buildLastCurrentNextMapWindow();
+			$this->cache['MapWidget']['Window']	= $this->buildLastCurrentNextMapWindow();
 			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
 
 
@@ -3572,7 +3540,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->cache['Map']['Next'] = $this->cache['Map']['Current'];
 
 		// Rebuild the Widgets
-		$this->cache['MapWidget']['Score']		= $this->buildMapWidget('score');
+		$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
 		$this->cache['MapWidget']['Window']	= $this->buildLastCurrentNextMapWindow();
 	}
 
@@ -3646,6 +3614,22 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function onWarmUpStatusChanged ($aseco, $status) {
 		$this->config['States']['RoundScore']['WarmUpPhase'] = $status;
+
+		// Display the RoundScoreWidget
+		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true) {
+			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+		}
+
+		$widget = false;
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['RoundScore']['WarmUpPhase'] == false) {
+			$widget .= '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget"></manialink>';
+		}
+		else if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['RoundScore']['WarmUpPhase'] == true) {
+			$widget .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+		}
+		if ($widget != false) {
+			$this->sendManialink($widget, false, 0);
+		}
 	}
 
 	/*
@@ -3755,6 +3739,16 @@ class PluginRecordsEyepiece extends Plugin {
 				}
 			}
 			unset($item);
+
+			// Unregister (possible registered) 'onPlayerFinishLap' event for Gamemode 'Laps' if this is not 'Laps'
+			foreach ($aseco->registered_events['onPlayerFinishLap'] as &$item) {
+				if ($item[0]->getClassname() == $this->getClassname()) {
+					$aseco->console('[RecordsEyepiece] Unregister event "onPlayerFinishLap", currently not required.');
+					unset($item);
+					break;
+				}
+			}
+			unset($item);
 		}
 		else if ( ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) || ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) ) {
 			// Register event 'onPlayerCheckpoint' in Gamemode 'Laps'
@@ -3771,6 +3765,22 @@ class PluginRecordsEyepiece extends Plugin {
 			if ($found == false) {
 				$aseco->registerEvent('onPlayerCheckpoint', array($this, 'onPlayerCheckpoint'));
 				$aseco->console('[RecordsEyepiece] Register event "onPlayerCheckpoint" to enabled wanted Widgets.');
+			}
+
+			// Register event 'onPlayerFinishLap' in Gamemode 'Laps'
+			// if <live_rankings><laps> is enabled
+			// or when <round_score><gamemode><laps> is enabled
+			$found = false;
+			foreach ($aseco->registered_events['onPlayerFinishLap'] as $item) {
+				if ($item[0]->getClassname() == $this->getClassname()) {
+					$found = true;
+					break;
+				}
+			}
+			unset($item);
+			if ($found == false) {
+				$aseco->registerEvent('onPlayerFinishLap', array($this, 'onPlayerFinishLap'));
+				$aseco->console('[RecordsEyepiece] Register event "onPlayerFinishLap" to enabled wanted Widgets.');
 			}
 		}
 
@@ -3964,6 +3974,18 @@ class PluginRecordsEyepiece extends Plugin {
 			$widgets .= (($this->cache['VisitorsWidget'] != false) ? $this->cache['VisitorsWidget'] : '');
 		}
 
+		$this->cache['WarmUpInfoWidget'] = $this->buildWarmUpInfoWidget();
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['RoundScore']['WarmUpPhase'] == true) {
+			// Display the WarmUpInfoWidget to all Players
+			$widgets .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+		}
+
+		$this->cache['MultiLapInfoWidget'] = $this->buildMultiLapInfoWidget();
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] == true && $aseco->server->maps->current->multilap == true) {
+			// Display the MultiLapInfoWidget to all Players
+			$widgets .= (($this->cache['MultiLapInfoWidget'] != false) ? $this->cache['MultiLapInfoWidget'] : '');
+		}
+
 		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] == true) {
 			// Refresh the ManiaExchangeWidget
 			$this->cache['ManiaExchangeWidget'] = $this->buildManiaExchangeWidget();
@@ -4122,10 +4144,80 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Only work at 'Laps'
-		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true && $this->cache['Map']['NbCheckpoints'] > 0) {
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) {
 			// Let the LiveRankings refresh, when a Player drive through one
-			$this->config['States']['LiveRankings']['NeedUpdate'] = true;
-			$this->config['States']['LiveRankings']['NoRecordsFound'] = false;
+			$this->config['States']['LiveRankings']['NeedUpdate']		= true;
+			$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// $checkpt = [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
+	public function onPlayerFinishLap ($aseco, $checkpt) {
+
+		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) {
+
+			// Get the Player object
+			$player = $aseco->server->players->player_list[$checkpt[0]];
+
+			// Add the Score
+			$this->scores['RoundScore'][$player->login] = array(
+				'checkpointid'	=> ($checkpt[3] - 1),
+				'playerid'	=> $player->pid,
+				'login'		=> $player->login,
+				'nickname'	=> $this->handleSpecialChars($player->nickname),
+				'score'		=> $aseco->formatTime($checkpt[2]),
+				'scoplain'	=> $checkpt[2]
+			);
+
+			// Display the Widget
+			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+		}
+
+		// Only work at 'Laps'
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) {
+			// Let the LiveRankings refresh, when a Player drive through one
+			$this->config['States']['LiveRankings']['NeedUpdate']		= true;
+			$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// $checkpt = [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
+	public function onPlayerFinishLine ($aseco, $checkpt) {
+
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
+
+			// Add the Score
+			$this->scores['RoundScore'][$checkpt[2]][] = array(
+				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+				'playerid'	=> $player->pid,
+				'login'		=> $player->login,
+				'nickname'	=> $this->handleSpecialChars($player->nickname),
+				'score'		=> $aseco->formatTime($checkpt[2]),
+				'scoplain'	=> $checkpt[2]
+			);
+
+			// Store personal best round-score for sorting on equal times of more Players
+			if ( ( isset($this->scores['RoundScorePB'][$player->login]) ) && ($this->scores['RoundScorePB'][$player->login] > $checkpt[2]) ) {
+				$this->scores['RoundScorePB'][$player->login] = $checkpt[2];
+			}
+			else {
+				$this->scores['RoundScorePB'][$player->login] = $checkpt[2];
+			}
+
+			// Display the Widget
+			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
 		}
 	}
 
@@ -4187,6 +4279,16 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] == true) {
 			// Display the Visitors-Widget to all Players
 			$widgets .= (($this->cache['VisitorsWidget'] != false) ? $this->cache['VisitorsWidget'] : '');
+		}
+
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['RoundScore']['WarmUpPhase'] == true) {
+			// Display the WarmUpInfoWidget to all Players
+			$widgets .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+		}
+
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] == true && $aseco->server->maps->current->multilap == true) {
+			// Display the MultiLapInfoWidget to all Players
+			$widgets .= (($this->cache['MultiLapInfoWidget'] != false) ? $this->cache['MultiLapInfoWidget'] : '');
 		}
 
 		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] == true) {
@@ -4848,6 +4950,59 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->scores['Visitors']
 			),
 			$this->templates['VISITORS_WIDGET']['CONTENT']
+		);
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildWarmUpInfoWidget () {
+		return $this->templates['WARM_UP_INFO_WIDGET']['CONTENT'];
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildMultiLapInfoWidget () {
+		global $aseco;
+
+
+		// Get current Gamemode
+		$gamemode = $aseco->server->gameinfo->mode;
+
+		// Setup the total count of Laps
+		$totallaps = 0;
+		if ($gamemode == Gameinfo::ROUNDS || $gamemode == Gameinfo::TEAM || $gamemode == Gameinfo::CUP) {
+			if ($this->cache['Map']['ForcedLaps'] > 0) {
+				$totallaps = $this->cache['Map']['ForcedLaps'];
+			}
+			else if ($this->cache['Map']['NbLaps'] > 0) {
+				$totallaps = $this->cache['Map']['NbLaps'];
+			}
+		}
+		else if ($gamemode == Gameinfo::LAPS && $this->cache['Map']['NbLaps'] > 0) {
+			// In Laps.Script.txt Maps that are not multilaps are playable too,
+			// in that case do not do a multiplication with 'NbLaps'!
+			$totallaps = $this->cache['Map']['NbLaps'];
+		}
+
+		// Build the MultiLapInfoWidget
+		$xml = str_replace(
+			array(
+				'%totallaps%'
+			),
+			array(
+				$totallaps
+			),
+			$this->templates['MULTILAP_INFO_WIDGET']['CONTENT']
 		);
 
 		return $xml;
@@ -5547,12 +5702,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 				// Get current Records
 				$this->getLiveRankings($gamemode);
-
-				// Only set to false if records are loaded and displayed,
-				// but only if there are Players finished the map. If nobody finished this map, do not try again.
-				if ($this->config['States']['LiveRankings']['NoRecordsFound'] == false) {
-					$this->config['States']['LiveRankings']['NeedUpdate'] = false;
-				}
+				$this->config['States']['LiveRankings']['NeedUpdate'] = false;
 
 				// Say yes to build the Widget
 				$buildLiveRankingsWidget = true;
@@ -5791,6 +5941,8 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		else {
 			$ids = array(
+				'WarmUpInfoWidget',
+				'MultiLapInfoWidget',
 				'GamemodeWidget',
 				'VisitorsWidget',
 				'MapCountWidget',
@@ -7312,6 +7464,7 @@ class PluginRecordsEyepiece extends Plugin {
 		FROM `%prefix%records` AS `r`
 		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId` = `r`.`MapId`
 		WHERE `r`.`Score` != ''
+		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		ORDER BY `r`.`MapId` ASC, `Score` ". ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC') .",`Date` ASC;
 		";
 		$result = $aseco->db->query($query);
@@ -7364,6 +7517,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`MapId`
 		FROM `%prefix%times`
 		WHERE `PlayerId` = '". $pid ."'
+		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		GROUP BY `MapId`
 		ORDER BY `MapId`;
 		";
@@ -8821,13 +8975,23 @@ EOL;
 	public function buildRoundScoreWidget ($gamemode, $send_direct = true) {
 		global $aseco;
 
-		if (count($this->scores['RoundScore']) > 0) {
+		if ($this->config['States']['RoundScore']['WarmUpPhase'] == true) {
+			// Add Widget header
+			$xml = $this->cache['RoundScore'][$gamemode]['WarmUp']['WidgetHeader'];
+
+			// WarmUp note
+			$xml .= '<label posn="2.3 -3.2 0.004" sizen="'. sprintf("%.02f", ($this->config['ROUND_SCORE'][0]['WIDTH'][0] / 100 * 62.58 + 5.5)) .' 1.7" scale="0.9" autonewline="1" textcolor="FA0F" text="No Score during'. LF .'Warm-up!"/>';
+
+			// Add Widget footer
+			$xml .= $this->cache['RoundScore'][$gamemode]['WarmUp']['WidgetFooter'];
+		}
+		else if (count($this->scores['RoundScore']) > 0) {
 
 			// Add Widget header
 			$xml = $this->cache['RoundScore'][$gamemode]['Race']['WidgetHeader'];
 
 			// Set the right Icon and Title position
-			$position = (($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['RACE'][0]['POS_X'][0] < 0) ? 'right' : 'left');
+			$position = (($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
 			// Adjust the Points to the connected Player count
 			if ( ($gamemode == Gameinfo::TEAM) && ($aseco->server->gameinfo->team['UseAlternateRules'] == true) ) {
@@ -8903,8 +9067,7 @@ EOL;
 			}
 			// END: Sort the times
 
-
-//	$aseco->dump('RoundScore', $this->config['RoundScore']['Points'], $round_score);
+//	$aseco->dump('RoundScore', $this->scores['RoundScore'], $round_score);
 
 			$line = 0;
 			$offset = 3;
@@ -8935,10 +9098,10 @@ EOL;
 				}
 
 				// Switch Color of Topcount
-				if (($line+1) <= $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['RACE'][0]['TOPCOUNT'][0]) {
+				if (($line+1) <= $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['TOPCOUNT'][0]) {
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['TOP'][0];
 				}
-				else if (($line+1) > $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['RACE'][0]['TOPCOUNT'][0]) {
+				else if (($line+1) > $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['TOPCOUNT'][0]) {
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['WORSE'][0];
 				}
 
@@ -8991,7 +9154,7 @@ EOL;
 
 				$line ++;
 
-				if ($line >= $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['RACE'][0]['ENTRIES'][0]) {
+				if ($line >= $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]) {
 					break;
 				}
 			}
@@ -8999,16 +9162,6 @@ EOL;
 
 			// Add Widget footer
 			$xml .= $this->cache['RoundScore'][$gamemode]['Race']['WidgetFooter'];
-		}
-		else if ($this->config['States']['RoundScore']['WarmUpPhase'] == true) {
-			// Add Widget header
-			$xml = $this->cache['RoundScore'][$gamemode]['WarmUp']['WidgetHeader'];
-
-			// WarmUp note
-			$xml .= '<label posn="2.3 -3.2 0.004" sizen="'. sprintf("%.02f", ($this->config['ROUND_SCORE'][0]['WIDTH'][0] / 100 * 62.58 + 5.5)) .' 1.7" scale="0.9" autonewline="1" textcolor="FA0F" text="No Score during'. LF .'Warm-Up!"/>';
-
-			// Add Widget footer
-			$xml .= $this->cache['RoundScore'][$gamemode]['WarmUp']['WidgetFooter'];
 		}
 		else {
 			// Add Widget header
@@ -9041,13 +9194,13 @@ EOL;
 	public function buildRoundScoreWidgetBody ($gamemode, $operation) {
 
 		// Set the right Icon and Title position
-		$position = (($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['POS_X'][0] < 0) ? 'right' : 'left');
+		$position = (($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
 		// Set the Topcount
-		$topcount = $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['TOPCOUNT'][0];
+		$topcount = $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['TOPCOUNT'][0];
 
 		// Calculate the widget height (+ 3.2 for title)
-		$widget_height = ($this->config['LineHeight'] * $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['ENTRIES'][0] + 3.2);
+		$widget_height = ($this->config['LineHeight'] * $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] + 3.2);
 
 		if ($position == 'right') {
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 15.5));
@@ -9082,9 +9235,9 @@ EOL;
 			),
 			array(
 				'RoundScoreWidget',
-				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['POS_X'][0],
-				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['POS_Y'][0],
-				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['SCALE'][0],
+				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['POS_X'][0],
+				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['POS_Y'][0],
+				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0],
 				$iconx,
 				$this->config['Positions'][$position]['icon']['y'],
 				$this->config['ROUND_SCORE'][0][$operation][0]['ICON_STYLE'][0],
@@ -9116,7 +9269,7 @@ EOL;
 
 		$build['footer'] = str_replace(
 			'%widgetscale%',
-			$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0][$operation][0]['SCALE'][0],
+			$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0],
 			$this->templates['ROUNDSCOWIDGET']['FOOTER']
 		);
 
@@ -12485,7 +12638,7 @@ main() {
 	declare Boolean TimeAttack			= {$timeattack};
 	declare Integer CurrentLap			= 0;			// Using own CurrentLap instead of Player.CurrentNbLaps
 	declare Integer CurrentCheckpoint		= 0;
-	declare Integer RefreshInterval			= 500;
+	declare Integer RefreshInterval			= 250;
 	declare Integer RefreshTime			= CurrentTime;
 
 	declare Text MessageCheckpoint			= "CHECKPOINT";
@@ -12495,7 +12648,7 @@ main() {
 	declare Text MessageFinishNow			= "\$OFinish now!";
 	declare Text MessageFinished			= "\$OFinished";
 	declare Text MessageFinishedNextLap		= "Finished, next Lap!";
-	declare Text MessageWarmUp			= "\$OWarm-Up";
+	declare Text MessageWarmUp			= "\$OWarm-up";
 
 	// Init first view
 	if ((TotalCheckpoints-1) == 0) {
@@ -13154,6 +13307,167 @@ EOL;
 
 	public function loadTemplates () {
 		global $aseco;
+
+
+
+		//--------------------------------------------------------------//
+		// BEGIN: Widget for MultiLapInfo				//
+		//--------------------------------------------------------------//
+		// %totalcps%, %totallaps%
+		$content  = '<manialink id="MultiLapInfoWidget" name="MultiLapInfoWidget">';
+		$content .= '<frame posn="'. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_Y'][0] .' 0" id="MultiLapInfoWidget">';
+		$content .= '<format textsize="1"/>';
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
+		}
+		else {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		}
+		$content .= '<quad posn="0.7 -0.3 0.002" sizen="3.2 3.8" style="BgRaceScore2" substyle="Laps"/>';
+		$content .= '<label posn="2.3 -3.4 0.1" sizen="4 1.4" halign="center" scale="0.9" text="0 of 0" id="Label_MultilapProgression"/>';
+		$content .= '<label posn="2.3 -4.9 0.1" sizen="6.35 0.5" halign="center" textcolor="'. $this->config['MULTILAP_INFO_WIDGET'][0]['TEXT_COLOR'][0] .'" scale="0.6" text="MULTI LAP"/>';
+		$content .= '</frame>';
+$content .= <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * Part of:	Records-Eyepiece
+ * Widget:	<multilap_info_widget>
+ * License:	GPLv3
+ * ----------------------------------
+ */
+main () {
+	declare CMlControl Frame_MultiLapInfoWidget <=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlLabel Label_MultilapProgression <=> (Page.GetFirstChild("Label_MultilapProgression") as CMlLabel);
+
+	Frame_MultiLapInfoWidget.RelativeScale	= {$this->config['MULTILAP_INFO_WIDGET'][0]['SCALE'][0]};
+
+	declare Integer TotalLaps		= %totallaps%;
+	declare Integer RefreshInterval		= 250;
+	declare Integer RefreshTime		= CurrentTime;
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Hide the Widget for Spectators (also temporary one)
+		if (InputPlayer.IsSpawned == False) {
+			Frame_MultiLapInfoWidget.Hide();
+			continue;
+		}
+		else {
+			Frame_MultiLapInfoWidget.Show();
+		}
+
+		if (CurrentTime > RefreshTime) {
+			if ((InputPlayer.CurrentNbLaps + 1) <= TotalLaps) {
+				Label_MultilapProgression.Value = (InputPlayer.CurrentNbLaps + 1) ^" of "^ TotalLaps;
+			}
+
+			// Reset RefreshTime
+			RefreshTime = (CurrentTime + RefreshInterval);
+		}
+	}
+}
+--></script>
+EOL;
+		$content .= '</manialink>';
+
+		$this->templates['MULTILAP_INFO_WIDGET']['CONTENT'] = $content;
+
+		unset($content);
+		//--------------------------------------------------------------//
+		// END: Widget for MultiLapInfo					//
+		//--------------------------------------------------------------//
+
+
+
+		//--------------------------------------------------------------//
+		// BEGIN: Widget for WarmUpInfo					//
+		//--------------------------------------------------------------//
+		$content  = '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget">';
+		$content .= '<frame posn="'. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_Y'][0] .' 0" id="WarmUpInfoWidget">';
+		$content .= '<format textsize="1"/>';
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" bgcolor="'. $this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
+		}
+		else {
+			$content .= '<quad posn="0 0 0.001" sizen="4.6 6.5" style="'. $this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		}
+		$content .= '<quad posn="0.7 -0.3 0.002" sizen="3.2 2.8" style="BgRaceScore2" substyle="Warmup"/>';
+		$content .= '<label posn="2.3 -3.4 0.1" sizen="4 1.4" halign="center" scale="0.9" text="0 of 0" id="Label_WarmUpProgression"/>';
+		$content .= '<label posn="2.3 -4.9 0.1" sizen="6.35 0.5" halign="center" textcolor="'. $this->config['WARM_UP_INFO_WIDGET'][0]['TEXT_COLOR'][0] .'" scale="0.6" text="WARM-UP"/>';
+		$content .= '</frame>';
+$content .= <<<EOL
+<script><!--
+ /*
+ * ----------------------------------
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * Part of:	Records-Eyepiece
+ * Widget:	<warm_up_info_widget>
+ * License:	GPLv3
+ * ----------------------------------
+ */
+main () {
+	declare CMlControl Frame_WarmUpInfoWidget <=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlLabel Label_WarmUpProgression <=> (Page.GetFirstChild("Label_WarmUpProgression") as CMlLabel);
+
+	declare netread Integer Net_LibWU2_WarmUpPlayedNb for Teams[0];
+	declare netread Integer Net_LibWU2_WarmUpDuration for Teams[0];
+
+	Frame_WarmUpInfoWidget.RelativeScale	= {$this->config['WARM_UP_INFO_WIDGET'][0]['SCALE'][0]};
+
+	declare PrevWarmUpPlayedNb		= -1;
+	declare PrevWarmUpDuration		= -1;
+	declare Integer RefreshInterval		= 250;
+	declare Integer RefreshTime		= CurrentTime;
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Hide the Widget for Spectators (also temporary one)
+		if (InputPlayer.IsSpawned == False) {
+			Frame_WarmUpInfoWidget.Hide();
+			continue;
+		}
+		else {
+			Frame_WarmUpInfoWidget.Show();
+		}
+
+
+		if (CurrentTime > RefreshTime) {
+			if (PrevWarmUpPlayedNb != Net_LibWU2_WarmUpPlayedNb || PrevWarmUpDuration != Net_LibWU2_WarmUpDuration) {
+				PrevWarmUpPlayedNb = Net_LibWU2_WarmUpPlayedNb;
+				PrevWarmUpDuration = Net_LibWU2_WarmUpDuration;
+
+				Label_WarmUpProgression.Value = Net_LibWU2_WarmUpPlayedNb ^" of "^ Net_LibWU2_WarmUpDuration;
+			}
+
+			// Reset RefreshTime
+			RefreshTime = (CurrentTime + RefreshInterval);
+		}
+	}
+}
+--></script>
+EOL;
+		$content .= '</manialink>';
+
+		$this->templates['WARM_UP_INFO_WIDGET']['CONTENT'] = $content;
+
+		unset($content);
+		//--------------------------------------------------------------//
+		// END: Widget for WarmUpInfo					//
+		//--------------------------------------------------------------//
+
+
 
 
 		//--------------------------------------------------------------//

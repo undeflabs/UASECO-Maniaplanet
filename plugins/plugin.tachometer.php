@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-03-23
+ * Date:	2015-05-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -150,6 +150,7 @@ class PluginTachometer extends Plugin {
 		// Disable parts of the UI
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('position', false);
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('speed_and_distance', false);
+		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('personal_best_and_rank', false);
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfacePosition('countdown', array(105.0, -76.5, 5.0));
 
 		// Send the UI settings
