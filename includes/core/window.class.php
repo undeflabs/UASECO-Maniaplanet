@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-04
+ * Date:	2015-05-24
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -65,7 +65,7 @@ class Window {
 			'position' => array(
 				'x' => -102.00001,
 				'y' => 57.28125,
-				'z' => 25,
+				'z' => 30,
 			),
 			'main' => array(
 				'background' => array(
@@ -408,7 +408,7 @@ class Window {
 		if ($this->content['page'] > 0) {
 			// First
 			$buttons .= '<frame posn="30.0625 -1.875 0.05">';
-			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="ClassWindowPageFirst" style="Icons64x64_1" substyle="Maximize"/>';
+			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageFirst" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="1.1 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
 			$buttons .= '<quad posn="1.5 -1.05625 0.15" sizen="1 3.1875" bgcolor="CCCF"/>';
@@ -416,7 +416,7 @@ class Window {
 
 			// Previous (-5)
 			$buttons .= '<frame posn="36.0625 -1.875 0.05">';
-			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="ClassWindowPagePrevTwo" style="Icons64x64_1" substyle="Maximize"/>';
+			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPagePrevTwo" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="-0.35 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
 			$buttons .= '<quad posn="1.1 -0.28125 0.15" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
@@ -424,7 +424,7 @@ class Window {
 
 			// Previous (-1)
 			$buttons .= '<frame posn="42.0625 -1.875 0.05">';
-			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="ClassWindowPagePrev" style="Icons64x64_1" substyle="Maximize"/>';
+			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPagePrev" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="0.4 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
 			$buttons .= '</frame>';
@@ -446,14 +446,14 @@ class Window {
 		if (($this->content['page'] + 1) < $this->content['maxpage']) {
 			// Next (+1)
 			$buttons .= '<frame posn="48.0625 -1.875 0.05">';
-			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="ClassWindowPageNext" style="Icons64x64_1" substyle="Maximize"/>';
+			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageNext" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="0.4 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
 			$buttons .= '</frame>';
 
 			// Next (+5)
 			$buttons .= '<frame posn="54.0625 -1.875 0.05">';
-			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="ClassWindowPageNextTwo" style="Icons64x64_1" substyle="Maximize"/>';
+			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageNextTwo" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="-0.35 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
 			$buttons .= '<quad posn="1.1 -0.28125 0.15" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
@@ -461,7 +461,7 @@ class Window {
 
 			// Last
 			$buttons .= '<frame posn="60.0625 -1.875 0.05">';
-			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="ClassWindowPageLast" style="Icons64x64_1" substyle="Maximize"/>';
+			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageLast" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="-0.25 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
 			$buttons .= '<quad posn="3.275 -1.05625 0.15" sizen="1 3.1875" bgcolor="CCCF"/>';
@@ -573,22 +573,23 @@ $maniascript = <<<EOL
  */
 Void WipeOut (Text ChildId) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real EndPosnX = 0.0;
-	declare Real EndPosnY = 0.0;
-	declare Real PosnDistanceX = (EndPosnX - Container.RelativePosition.X);
-	declare Real PosnDistanceY = (EndPosnY - Container.RelativePosition.Y);
+	if (Container != Null) {
+		declare Real EndPosnX = 0.0;
+		declare Real EndPosnY = 0.0;
+		declare Real PosnDistanceX = (EndPosnX - Container.RelativePosition.X);
+		declare Real PosnDistanceY = (EndPosnY - Container.RelativePosition.Y);
 
-	while (Container.RelativeScale > 0.0) {
-		Container.RelativePosition.X += (PosnDistanceX / 20);
-		Container.RelativePosition.Y += (PosnDistanceY / 20);
-		Container.RelativeScale -= 0.05;
-		yield;
+		while (Container.RelativeScale > 0.0) {
+			Container.RelativePosition.X += (PosnDistanceX / 20);
+			Container.RelativePosition.Y += (PosnDistanceY / 20);
+			Container.RelativeScale -= 0.05;
+			yield;
+		}
+		Container.Unload();
+
+//		// Disable catching ESC key
+//		EnableMenuNavigationInputs = False;
 	}
-	Container.Unload();
-
-//	// Reset
-//	EnableMenuNavigationInputs = False;
-//	EnableMenuNavigation(False, False, (Page.GetFirstChild("ClassWindowClose") as CMlFrame), 20);
 }
 Void Minimize (Text ChildId) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
@@ -619,15 +620,15 @@ Void Maximize (Text ChildId) {
 	}
 }
 main () {
-//	EnableMenuNavigationInputs = True;  // to enable pressing escape-key + tab-key
-//	EnableMenuNavigation(True, False, (Page.GetFirstChild("ClassWindowClose") as CMlFrame), 20);
-
 	declare CMlControl Container <=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
 	declare CMlQuad Quad;
 	declare Boolean MoveWindow = False;
 	declare Boolean IsMinimized = False;
 	declare Real MouseDistanceX = 0.0;
 	declare Real MouseDistanceY = 0.0;
+
+//	// Enable catching ESC key
+//	EnableMenuNavigationInputs = True;
 
 	while (True) {
 		yield;
@@ -649,29 +650,26 @@ main () {
 		else {
 			MoveWindow = False;
 		}
-		if (PendingEvents.count > 0) {
-			foreach (Event in PendingEvents) {
-				switch (Event.Type) {
-					case CMlEvent::Type::MouseClick : {
-						if (Event.ControlId == "ClassWindowClose") {
-							WipeOut("ClassWindow");
-						}
-						else if ( (Event.ControlId == "ClassWindowMinimize") && (IsMinimized == False) ) {
-							Minimize("ClassWindow");
-							IsMinimized = True;
-						}
-						else if ( (Event.ControlId == "ClassWindowBody") && (IsMinimized == True) ) {
-							Maximize("ClassWindow");
-							IsMinimized = False;
-						}
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseClick : {
+					if (Event.ControlId == "ClassWindowClose") {
+						WipeOut("ClassWindow");
 					}
-//					case CMlEvent::Type::KeyPress : {
-//						if (Event.KeyCode == 35) {
-//							// ESC pressed
-//							WipeOut("ClassWindow");
-//						}
-//					}
+					else if ( (Event.ControlId == "ClassWindowMinimize") && (IsMinimized == False) ) {
+						Minimize("ClassWindow");
+						IsMinimized = True;
+					}
+					else if ( (Event.ControlId == "ClassWindowBody") && (IsMinimized == True) ) {
+						Maximize("ClassWindow");
+						IsMinimized = False;
+					}
 				}
+//				case CMlEvent::Type::KeyPress : {
+//					if (Event.KeyName == "Escape") {
+//						WipeOut("ClassWindow");
+//					}
+//				}
 			}
 		}
 	}

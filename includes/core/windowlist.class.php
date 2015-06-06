@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-01
- * Copyright:	2014 by undef.de
+ * Date:	2015-05-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -70,15 +70,10 @@ class WindowList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
-
-		// If id = 0, bail out immediately
-		if ($answer[2] === 0) {
-			return;
-		}
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+		if (!$player = $aseco->server->players->getPlayer($login)) {
 			return;
 		}
 
@@ -89,7 +84,7 @@ class WindowList {
 
 
 		$send = false;
-		if ($answer[2] == 'ClassWindowPagePrev') {
+		if ($answer['Action'] == 'ClassWindowPagePrev') {
 
 			$window->content['page'] -= 1;
 			if ($window->content['page'] < 0) {
@@ -98,7 +93,7 @@ class WindowList {
 			$send = true;
 
 		}
-		else if ($answer[2] == 'ClassWindowPagePrevTwo') {
+		else if ($answer['Action'] == 'ClassWindowPagePrevTwo') {
 
 			$window->content['page'] -= 2;
 			if ($window->content['page'] < 0) {
@@ -107,13 +102,13 @@ class WindowList {
 			$send = true;
 
 		}
-		else if ($answer[2] == 'ClassWindowPageFirst') {
+		else if ($answer['Action'] == 'ClassWindowPageFirst') {
 
 			$window->content['page'] = 0;
 			$send = true;
 
 		}
-		else if ($answer[2] == 'ClassWindowPageNext') {
+		else if ($answer['Action'] == 'ClassWindowPageNext') {
 
 			$window->content['page'] += 1;
 			if ($window->content['page'] > $window->content['maxpage']) {
@@ -122,7 +117,7 @@ class WindowList {
 			$send = true;
 
 		}
-		else if ($answer[2] == 'ClassWindowPageNextTwo') {
+		else if ($answer['Action'] == 'ClassWindowPageNextTwo') {
 
 			$window->content['page'] += 2;
 			if ($window->content['page'] > $window->content['maxpage']) {
@@ -131,14 +126,14 @@ class WindowList {
 			$send = true;
 
 		}
-		else if ($answer[2] == 'ClassWindowPageLast') {
+		else if ($answer['Action'] == 'ClassWindowPageLast') {
 
 			$window->content['page'] = $window->content['maxpage'];
 			$send = true;
 
 		}
 
-		else if ($answer[2] == 'ClassWindowRefreshPage') {
+		else if ($answer['Action'] == 'ClassWindowRefreshPage') {
 
 			// Just send the current Page again
 			$send = true;

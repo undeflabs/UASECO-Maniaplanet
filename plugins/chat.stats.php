@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-24
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -142,7 +142,7 @@ class PluginChatStats extends Plugin {
 		$value = '{#black}' . $aseco->formatTime($target->getTimePlayed() * 1000, false);
 		// add clickable button
 		if ($aseco->settings['clickable_lists']) {
-			$value = array($value, -5);  // action id
+			$value = array($value, 'PluginManialinks?Action=-5');  // action id
 		}
 		$stats[] = array('Time Played', $value);
 		$stats[] = array('Last Online', '{#black}' . preg_replace('/:\d\d$/', '', $laston[0]));
@@ -150,20 +150,20 @@ class PluginChatStats extends Plugin {
 			$value = '{#black}' . $aseco->plugins['PluginRasp']->getRank($target->login);
 			// add clickable button
 			if ($aseco->settings['clickable_lists']) {
-				$value = array($value, -6);  // action id
+				$value = array($value, 'PluginManialinks?Action=-6');  // action id
 			}
 			$stats[] = array('Server Rank', $value);
 		}
 		$value = '{#black}' . $records;
 		// add clickable button
 		if ($aseco->settings['clickable_lists']) {
-			$value = array($value, 5);  // action id
+			$value = array($value, 'PluginManialinks?Action=5');  // action id
 		}
 		$stats[] = array('Records', $value);
 		$value = '{#black}' . ($target->getWins() > $target->wins ? $target->getWins() : $target->wins);
 		// add clickable button
 		if ($aseco->settings['clickable_lists']) {
-			$value = array($value, 6);  // action id
+			$value = array($value, 'PluginManialinks?Action=6');  // action id
 		}
 		$stats[] = array('Races Won', $value);
 		$stats[] = array('Ladder Rank', '{#black}' . $frank);

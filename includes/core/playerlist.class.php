@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-16
+ * Date:	2015-05-09
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -123,7 +123,7 @@ class PlayerList {
 	*/
 
 	public function getPlayer ($login) {
-		if (isset($this->player_list[$login])) {
+		if (!empty($login) && isset($this->player_list[$login])) {
 			return $this->player_list[$login];
 		}
 		else {

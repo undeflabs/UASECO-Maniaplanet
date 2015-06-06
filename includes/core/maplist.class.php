@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-28
+ * Date:	2015-05-28
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -766,7 +766,7 @@ class MapList {
 	public function parseMap ($file) {
 		global $aseco;
 
-		$gbx = new GBXChallMapFetcher(true, false, false);
+		$gbx = new GBXChallMapFetcher(true, true, false);
 		try {
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				$file = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $aseco->stripBOM($file));
@@ -780,6 +780,9 @@ class MapList {
 			else {
 				$gbx->processFile($aseco->stripBOM($file));
 			}
+
+			// Store the thumbnail into the cache folder
+			$this->saveThumbnail($gbx);
 		}
 		catch (Exception $e) {
 			trigger_error('[MapList] Could not read Map ['. $aseco->stripBOM($file) .']: '. $e->getMessage(), E_USER_WARNING);
@@ -788,6 +791,52 @@ class MapList {
 			return false;
 		}
 		return $gbx;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getThumbnailByUid ($uid) {
+		global $aseco;
+
+		if (isset($this->map_list[$uid])) {
+			$thumbnail = @file_get_contents($aseco->settings['mapimages_path']. $uid .'.jpg');
+		}
+		else {
+			return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function saveThumbnail ($gbx) {
+		global $aseco;
+
+		if (!is_dir($aseco->settings['mapimages_path'])) {
+			mkdir($aseco->settings['mapimages_path'], 0755, true);
+		}
+
+		if (is_writeable($aseco->settings['mapimages_path'])) {
+			$filename = $gbx->uid .'.jpg';
+			if ($fh = fopen($aseco->settings['mapimages_path'] . $filename, 'wb')) {
+				fwrite($fh, $gbx->thumbnail);
+				fclose($fh);
+			}
+
+			// Free MEM
+			$gbx->thumbnail = null;
+			unset($gbx->thumbnail);
+		}
+		else {
+			trigger_error('[MapList] Configured directory at <mapimages_path> in UASECO.xml ['. $aseco->settings['mapimages_path'] .'] is not writeable!', E_USER_WARNING);
+		}
 	}
 
 	/*

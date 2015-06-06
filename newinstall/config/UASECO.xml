@@ -74,7 +74,7 @@
 	<!--
 	Full path in where the "ManiaPlanetServer" or "ManiaPlanetServer.exe" is located,
 	required for the checking routine of the dedicated server scripts.
-	E.g.: /home/user/bin/GameServer
+	E.g.: /home/user/bin/GameServer/
 	//-->
 	<dedicated_installation>PATH_TO_DEDICATED_SERVER</dedicated_installation>
 
@@ -85,12 +85,17 @@
 	<default_maplist>TMCanyonA.txt</default_maplist>
 	<writemaplist_random>true</writemaplist_random>
 
+	<!--
+	Setup a path into the image from each Map will be stored.
+	//-->
+	<mapimages_path>cache/mapimages/</mapimages_path>
+
 	<auto_admin_addip>false</auto_admin_addip>
 	<adminops_file>config/adminops.xml</adminops_file>
 	<bannedips_file>config/bannedips.xml</bannedips_file>
 
 	<!--
-	Will be stored into "UserData/Config" folder of the dedicated server.
+	Will be stored into "UserData/Config/" folder of the dedicated server.
 	-->
 	<blacklist_file>blacklist.txt</blacklist_file>
 	<guestlist_file>guestlist.txt</guestlist_file>
@@ -292,7 +297,7 @@
 
 		<log_events>
 			<!-- Log events like '[Event] Begin Map' -->
-			<common>true</common>
+			<common>false</common>
 
 			<!--
 			Log events like '[EventType] Releasing "onPlayerConnect"',

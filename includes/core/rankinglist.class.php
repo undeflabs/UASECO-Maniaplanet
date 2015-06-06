@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-05-30
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -94,8 +94,11 @@ class RankingList {
 	public function update ($item) {
 		global $aseco;
 
+		if (!$entry = $aseco->server->rankings->getRankByLogin($item['login'])) {
+			return false;
+		}
+
 		// Update full player entry
-		$entry					= $this->ranking_list[$item['login']];
 		$entry->rank				= $item['rank'];
 		$entry->login				= $item['login'];
 		$entry->nickname			= $item['nickname'];
@@ -107,8 +110,7 @@ class RankingList {
 		$entry->away				= $item['away'];
 		$this->ranking_list[$entry->login]	= $entry;
 
-
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 			$scores = array();
 			$times = array();
 			$pids = array();
@@ -122,6 +124,27 @@ class RankingList {
 			// Sort order: SCORE, PERSONAL_BEST and PID
 			array_multisort(
 				$scores, SORT_NUMERIC, SORT_DESC,
+				$times, SORT_NUMERIC, SORT_ASC,
+				$pids, SORT_NUMERIC, SORT_ASC,
+				$this->ranking_list
+			);
+			unset($scores, $times, $pids);
+
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+			$scores = array();
+			$times = array();
+			$pids = array();
+			foreach ($this->ranking_list as $key => &$row) {
+				$scores[$key] = $row->score;
+				$times[$key] = $row->time;
+				$pids[$key] = $row->pid;
+			}
+			unset($key, $row);
+
+			// Sort order: SCORE, PERSONAL_BEST and PID
+			array_multisort(
+				$scores, SORT_NUMERIC, SORT_ASC,
 				$times, SORT_NUMERIC, SORT_ASC,
 				$pids, SORT_NUMERIC, SORT_ASC,
 				$this->ranking_list
@@ -219,7 +242,7 @@ class RankingList {
 	*/
 
 	public function getRankByLogin ($login) {
-		if (isset($this->ranking_list[$login])) {
+		if (!empty($login) && isset($this->ranking_list[$login])) {
 			return $this->ranking_list[$login];
 		}
 		else {

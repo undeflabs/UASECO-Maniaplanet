@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - May 2015 by undef.de
+ * Copyright:	May 2014 - June 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-05-03');
+	define('UASECO_BUILD',		'2015-06-01');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -61,10 +61,7 @@
 	// Report all
 	error_reporting(-1);
 
-	if (function_exists('date_default_timezone_get') && function_exists('date_default_timezone_set')) {
-		date_default_timezone_set(@date_default_timezone_get());
-	}
-
+	date_default_timezone_set(@date_default_timezone_get());
 	setlocale(LC_NUMERIC, 'C');
 	mb_internal_encoding('UTF-8');
 
@@ -454,6 +451,7 @@ class UASECO extends Helper {
 		$this->console_text('» Title:     {1}', $this->server->title);
 		$this->console_text('» Gamemode:  "{1}" with script {2} version {3}', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
 		$this->console_text('» Dedicated: {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
+		$this->console_text('»            MatchSettings: {1}', $this->settings['default_maplist']);
 		$this->console_text('»            Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»            Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»            Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
@@ -525,6 +523,7 @@ class UASECO extends Helper {
 		$this->console_text('» Title:         {1}', $this->server->title);
 		$this->console_text('» Gamemode:      "{1}" with script {2} version {3}', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
 		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
+		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
@@ -618,6 +617,9 @@ class UASECO extends Helper {
 
 			// Add random filter to /admin writemaplist output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
+
+			// Setup default storing path for the map images
+			$this->settings['mapimages_path'] = $settings['MAPIMAGES_PATH'][0];
 
 			// Set multiple of win count to show global congrats message
 			$this->settings['global_win_multiple'] = ($settings['GLOBAL_WIN_MULTIPLE'][0] > 0 ? $settings['GLOBAL_WIN_MULTIPLE'][0] : 1);
@@ -932,11 +934,21 @@ class UASECO extends Helper {
 
 		// Executes registered event functions, if there are any events for that type
 		if ( !empty($this->registered_events[$event_type]) ) {
-
 			if ( ($this->settings['developer']['log_events']['registered_types'] == true) && ($this->settings['developer']['log_events']['all_types'] == false) ) {
-				if ($event_type != 'onEverySecond' && $event_type != 'onMainLoop' && $event_type != 'onModeScriptCallbackArray' && $event_type != 'onModeScriptCallback') {
+				$skip = array(
+					'onEverySecond',
+					'onMainLoop',
+					'onModeScriptCallbackArray',
+					'onModeScriptCallback',
+				);
+				if (!in_array($event_type, $skip)) {
 					$this->console('[Event] Releasing "'. $event_type .'"');
 				}
+			}
+
+			$caller = false;
+			if ($event_type == 'onPlayerManialinkPageAnswer') {
+				$caller = explode('?', $callback_param[2]);
 			}
 
 			// For each registered function of this type
@@ -953,8 +965,25 @@ class UASECO extends Helper {
 						$this->displayLoadStatus('Event '. $event_type .' calls '. get_class($callback_func[0]) .'...', $ratio);
 					}
 
-					// ... execute it!
-					call_user_func($callback_func, $this, $callback_param);
+					if ($event_type == 'onPlayerManialinkPageAnswer') {
+						$class = get_class($callback_func[0]);
+						if ($class == $caller[0]) {
+							// Parse get parameter and add them...
+							parse_str(str_replace($class.'?', '', $callback_param[2]), $param);
+
+							// Handle <entry> tags and their attributes
+							foreach ($callback_param[3] as $item) {
+								$param[$item['Name']] = $item['Value'];
+							}
+
+							// ...execute only the plugin that handles this answer!
+							call_user_func($callback_func, $this, $callback_param[1], $param);
+						}
+					}
+					else {
+						// ... execute it!
+						call_user_func($callback_func, $this, $callback_param);
+					}
 				}
 			}
 		}

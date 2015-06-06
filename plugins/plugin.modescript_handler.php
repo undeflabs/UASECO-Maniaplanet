@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-04
+ * Date:	2015-05-30
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -63,9 +63,9 @@ class PluginModescriptHandler extends Plugin {
 		'LibXmlRpc_EndMapStop',
 		'LibXmlRpc_EndMatchStop',
 		'LibXmlRpc_EndServerStop',
-		'LibXmlRpc_PlayersTimes',
-		'LibXmlRpc_PlayersScores',
-		'LibXmlRpc_TeamsMode',						// Maybe used later?
+		'LibXmlRpc_PlayersTimes',				// LibXmlRpc_GetPlayersTimes
+		'LibXmlRpc_PlayersScores',				// LibXmlRpc_GetPlayersScores
+		'LibXmlRpc_TeamsMode',					// LibXmlRpc_GetTeamsMode
 	);
 
 	// Stores the modescript_settings.xml settings
@@ -101,9 +101,9 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onSync ($aseco) {
+	public function onSync ($aseco, $restart = false) {
 
-		// Block some callbacks we did not want to use
+		// Block some Callbacks we did not want to use
 		$this->setupBlockCallbacks();
 
 		// Read Configuration
@@ -113,8 +113,10 @@ class PluginModescriptHandler extends Plugin {
 		$this->settings = $this->settings['SETTINGS'];
 
 
-		// Check the installed Scripts from the dedicated Server
-		$this->checkModescriptVersions();
+		if ($restart == false) {
+			// Check the installed Scripts from the dedicated Server
+			$this->checkModescriptVersions();
+		}
 
 
 		// MatchMaking
@@ -130,7 +132,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->matchmaking['LobbyMatchmakerWait']			= (int)$this->settings['MATCHMAKING'][0]['LOBBY_MATCHMAKER_WAIT'][0];
 		$aseco->server->gameinfo->matchmaking['LobbyMatchmakerTime']			= (int)$this->settings['MATCHMAKING'][0]['LOBBY_MATCHMAKER_TIME'][0];
 		$aseco->server->gameinfo->matchmaking['LobbyDisplayMasters']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISPLAY_MASTERS'][0]);
-		$aseco->server->gameinfo->matchmaking['lobby_disable_ui']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISABLE_UI'][0]);
+		$aseco->server->gameinfo->matchmaking['LobbyDisableUi']				= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISABLE_UI'][0]);
 		$aseco->server->gameinfo->matchmaking['MatchmakingErrorMessage']		= $this->settings['MATCHMAKING'][0]['MATCHMAKING_ERROR_MESSAGE'][0];
 		$aseco->server->gameinfo->matchmaking['MatchmakingLogAPIError']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_API_ERROR'][0]);
 		$aseco->server->gameinfo->matchmaking['MatchmakingLogAPIDebug']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_API_DEBUG'][0]);
@@ -150,7 +152,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
 		$aseco->server->gameinfo->rounds['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->rounds['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_ALTERNATE_RULES'][0]);
-		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->rounds['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['DISPLAY_TIME_DIFF'][0]);
 		$aseco->server->gameinfo->rounds['UseTieBreak']			= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_TIE_BREAK'][0]);
 
@@ -161,7 +163,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->team['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_LIMIT'][0];
 		$aseco->server->gameinfo->team['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->team['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['USE_ALTERNATE_RULES'][0]);
-		$aseco->server->gameinfo->team['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->team['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->team['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['DISPLAY_TIME_DIFF'][0]);
 		$aseco->server->gameinfo->team['MaxPointsPerRound']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_POINTS_PER_ROUND'][0];
 		$aseco->server->gameinfo->team['PointsGap']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_GAP'][0];
@@ -170,13 +172,13 @@ class PluginModescriptHandler extends Plugin {
 		// Laps
 		$aseco->server->gameinfo->laps['TimeLimit']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['TIME_LIMIT'][0];
 		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
-		$aseco->server->gameinfo->laps['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->laps['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FORCE_LAPS_NUMBER'][0];
 
 		// Cup +RoundsBase
 		$aseco->server->gameinfo->cup['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['POINTS_LIMIT'][0];
 		$aseco->server->gameinfo->cup['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->cup['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CUP'][0]['USE_ALTERNATE_RULES'][0]);
-		$aseco->server->gameinfo->cup['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['FORCE_NUMBER_LAPS'][0];
+		$aseco->server->gameinfo->cup['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->cup['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CUP'][0]['DISPLAY_TIME_DIFF'][0]);
 		$aseco->server->gameinfo->cup['RoundsPerMap']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['ROUNDS_PER_MAP'][0];
 		$aseco->server->gameinfo->cup['NbOfWinners']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['NUMBER_OF_WINNERS'][0];
@@ -264,7 +266,7 @@ class PluginModescriptHandler extends Plugin {
 
 		if ($aseco->changing_to_gamemode !== false) {
 			// Re-Store the settings at the dedicated Server for the new Modescript
-			$this->onSync($aseco);
+			$this->onSync($aseco, true);
 	}
 	}
 
@@ -324,7 +326,7 @@ class PluginModescriptHandler extends Plugin {
 					}
 				}
 				else {
-					if ($aseco->server->maps->current->multilap === true) {
+					if ($aseco->server->maps->current->multilap === true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE)) {
 						if ($aseco->string2bool($params[4]) === false && $aseco->string2bool($params[7]) === true) {
 							$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
 						}
@@ -614,6 +616,18 @@ $aseco->loadingMap($params[1]);
 
 
 
+			case 'LibXmlRpc_ScoresReady':
+				// Trigger 'LibXmlRpc_PlayersRanking' response
+				$aseco->client->query('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
+
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] Scores ready');
+				}
+				$aseco->releaseEvent('onScoresReady', null);
+				break;
+
+
+
 			// [0]=Rank, [1]=Login, [2]=NickName, [3]=TeamId, [4]=IsSpectator, [5]=IsAway, [6]=BestTime, [7]=Zone, [8]=RoundScore, [9]=BestCheckpoints, [10]=TotalScore
 			case 'LibXmlRpc_PlayerRanking':
 				if ( isset($params[1]) ) {
@@ -778,7 +792,7 @@ $aseco->loadingMap($params[1]);
 
 
 			default:
-				$aseco->console('[onModeScriptCallbackArray] Unsupported callback received: ['. $name .'], please report this at '. UASECO_WEBSITE);
+				$aseco->console('[ModescriptHandler] Unsupported callback at onModeScriptCallbackArray() received: ['. $name .'], please report this at '. UASECO_WEBSITE);
 		    		break;
 		}
 	}
@@ -790,7 +804,7 @@ $aseco->loadingMap($params[1]);
 	*/
 
 	public function onModeScriptCallback ($aseco, $data) {
-		$aseco->console('[onModeScriptCallback] Unsupported callback received: ['. $data[0] .'], please report this at '. UASECO_WEBSITE);
+		$aseco->console('[ModescriptHandler] Unsupported callback at onModeScriptCallback() received: ['. $data[0] .'], please report this at '. UASECO_WEBSITE);
 	}
 
 	/*
@@ -1071,7 +1085,7 @@ $aseco->loadingMap($params[1]);
 	private function setupCustomScoretable () {
 		global $aseco;
 
-//		foreach (range(0,20) as $id) {
+//		foreach (range(0,3) as $id) {
 //			$aseco->client->query('ConnectFakePlayer');
 //		}
 //		$aseco->client->query('DisconnectFakePlayer', '*');
@@ -1089,7 +1103,7 @@ $aseco->loadingMap($params[1]);
 		$xml .= '</properties>';
 
 		$xml .= ' <settings>';
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
 			$xml .= '  <setting name="TeamsMode" value="True" />';
 			$xml .= '  <setting name="TeamsScoresVisibility" value="True" />';
 			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False" />';
@@ -1117,6 +1131,18 @@ $aseco->loadingMap($params[1]);
 ////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds" />';
 //		$xml .= '  </collection>';
 		$xml .= ' </background>';
+		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			$xml .= ' <team1>';
+			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-left.dds" />';
+			$xml .= '  <position x="0.0" y="3.8" />';
+			$xml .= '  <size width="120.0" height="25.0" />';
+			$xml .= ' </team1>';
+			$xml .= ' <team2>';
+			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-right.dds" />';
+			$xml .= '  <position x="0.0" y="3.8" />';
+			$xml .= '  <size width="120.0" height="25.0" />';
+			$xml .= ' </team2>';
+		}
 		$xml .= '</images>';
 
 //		$xml .= '<columns>';

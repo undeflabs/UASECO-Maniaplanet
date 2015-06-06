@@ -1,15 +1,25 @@
-CallVote Ratio Commands from Ingame Menu
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- - AutoTeamBalance
- - Ban
- - JumpToMapIndex
- - Kick
- - NextMap
- - RestartMap
- - SetModeScriptSettingsAndCommands
- - SetNextMapIndex
+onPlayerManialinkPageAnswer ($aseco, $login, $params)
+$params are the splitted Name=Value pairs, like the URL Get parameter.
+Additional all <entry.../> tags are added here too.
 
--> https://forum.maniaplanet.com/viewtopic.php?p=167020#p167020
+Example
+~~~~~~~
+<quad ... action="PluginInfoBar?Action=DonatePlanets&Amount=500" />
+<entry ... name="Firstname"/>
+<entry ... name="Lastname"/>
+
+$params
+~~~~~~~
+array(2) {
+  ["Action"]=>
+  string(13) "DonatePlanets"
+  ["Amount"]=>
+  string(3) "100"
+  ["Firstname"]=>
+  string(3) "Bruce"
+  ["Lastname"]=>
+  string(3) "Willis"
+}
 
 
 ##############################################################################

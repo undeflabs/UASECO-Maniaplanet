@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-03-10
+ * Date:		2015-05-30
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -36,24 +36,6 @@
  *
  */
 
-/* The following manialink id's are used in this plugin (the 921 part of id can be changed on trouble):
- *
- * ManialinkID's
- * ~~~~~~~~~~~~~
- * 92200		id for manialink Widget
- * 92201		id for manialink CountdownWidget
- * 92202		id for manialink VoteStatistics
- * 92203		id for manialink HelpWindow
- * 92204		id for manialink PlayerVoteMarker
- *
- * ActionID's
- * ~~~~~~~~~~
- * 92200		id for action close Window
- * 92201		id for action YES
- * 92202		id for action NO
- *
- */
-
 	// Start the plugin
 	$_PLUGIN = new PluginVoteManager();
 
@@ -77,7 +59,7 @@ class PluginVoteManager extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Provides a Widget and handles Skip/Restart votings.');
+		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
 		$this->addDependence('PluginRaspVotes',			Dependence::DISALLOWED,	null, null);
 		$this->addDependence('PluginRaspJukebox',		Dependence::REQUIRED,	'1.0.0', null);
@@ -101,6 +83,7 @@ class PluginVoteManager extends Plugin {
 		$this->registerChatCommand('next',			'chat_skip',		'Start a vote to skip the current Map',		Player::PLAYERS);
 		$this->registerChatCommand('yes',			'chat_yes',		'Accept the current vote',			Player::PLAYERS);
 		$this->registerChatCommand('no',			'chat_no',		'Reject the current vote',			Player::PLAYERS);
+		$this->registerChatCommand('balance',			'chat_balance',		'Start a vote to balance the teams',		Player::PLAYERS);
 	}
 
 	/*
@@ -126,25 +109,26 @@ class PluginVoteManager extends Plugin {
 			trigger_error('[VoteManager] Could not read/parse config file "config/vote_manager.xml"!', E_USER_ERROR);
 		}
 
-		$this->config = $this->config['VOTE_MANAGER'];
-
-		$this->config['ManialinkId'] = '922';
+		$this->config = $this->config['SETTINGS'];
 
 		// Check/Setup the limits
 		if ($this->config['VOTING'][0]['RATIO'][0] < 0.2) {
 			$this->config['VOTING'][0]['RATIO'][0] = 0.2;
 		}
 
-		$this->config['VOTING'][0]['TIMEOUT_LIMIT'][0]			= (int)$this->config['VOTING'][0]['TIMEOUT_LIMIT'][0];
-		$this->config['VOTING'][0]['COUNTDOWN'][0]			= (int)$this->config['VOTING'][0]['COUNTDOWN'][0];
-		$this->config['VOTING'][0]['MAX_VOTES'][0]			= (int)$this->config['VOTING'][0]['MAX_VOTES'][0];
-		$this->config['VOTING'][0]['MAX_RESTARTS'][0]			= (int)$this->config['VOTING'][0]['MAX_RESTARTS'][0];
-		$this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]	= ((strtoupper($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]) == 'TRUE') ? true : false);
-		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0]	= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0];
-		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0]	= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0];
-		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0]	= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0];
-		$this->config['NUMBER_FORMAT'][0]				= strtolower($this->config['NUMBER_FORMAT'][0]);
-		$this->config['MODE'][0]					= strtolower($this->config['MODE'][0]);
+		$this->config['VOTING'][0]['TIMEOUT_LIMIT'][0]						= (int)$this->config['VOTING'][0]['TIMEOUT_LIMIT'][0];
+		$this->config['VOTING'][0]['COUNTDOWN'][0]						= (int)$this->config['VOTING'][0]['COUNTDOWN'][0];
+		$this->config['VOTING'][0]['MAX_VOTES'][0]						= (int)$this->config['VOTING'][0]['MAX_VOTES'][0];
+		$this->config['VOTING'][0]['MAX_RESTARTS'][0]						= (int)$this->config['VOTING'][0]['MAX_RESTARTS'][0];
+		$this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]				= ((strtoupper($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]) == 'TRUE') ? true : false);
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0]	= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0];
+		$this->config['NUMBER_FORMAT'][0]							= strtolower($this->config['NUMBER_FORMAT'][0]);
+		$this->config['MODE'][0]								= strtolower($this->config['MODE'][0]);
 
 
 		// Preset defaults
@@ -156,6 +140,7 @@ class PluginVoteManager extends Plugin {
 		$this->config['Cache']['LastMap']['Uid']		= false;
 		$this->config['Cache']['LastMap']['Runs']		= 0;
 		$this->config['Cache']['IgnoreLogin']			= array();
+		$this->config['Cache']['AllowLogin']			= array();
 
 
 		// Define the formats for number_format()
@@ -184,6 +169,15 @@ class PluginVoteManager extends Plugin {
 		unset($this->config['IGNORE_LIST']);
 
 
+		// Working on the <allow_list>
+		foreach ($this->config['ALLOW_LIST'][0]['LOGIN'] as $login) {
+			if ( !empty($login) ) {
+				$this->config['Cache']['AllowLogin'][] = trim($login);
+			}
+		}
+		unset($this->config['ALLOW_LIST']);
+
+
 		// Store the original CallVoteRatios and CallVoteTimeOut for restoring at onShutdown
 		$this->config['OriginalCallVoteRatios'] = $aseco->client->query('GetCallVoteRatios');
 		$GetCallVoteTimeOut = $aseco->client->query('GetCallVoteTimeOut');
@@ -191,7 +185,7 @@ class PluginVoteManager extends Plugin {
 		unset($GetCallVoteTimeOut);
 
 
-		// Disable the CallVotes 'RestartMap' and 'NextMap'
+		// Disable the CallVotes 'RestartMap', 'NextMap' and 'AutoTeamBalance'
 		$callvotes = array();
 		$callvotes[] = array(
 			'Command'	=> 'RestartMap',
@@ -201,18 +195,40 @@ class PluginVoteManager extends Plugin {
 			'Command'	=> 'NextMap',
 			'Ratio'		=> (float)-1,
 		);
+		$callvotes[] = array(
+			'Command'	=> 'AutoTeamBalance',
+			'Ratio'		=> (float)-1,
+		);
 
 		// Setup the configured CallVotes
+		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0]) ) {
+			$callvotes[] = array(
+				'Command'	=> 'Ban',
+				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0],
+			);
+		}
+		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0]) ) {
+			$callvotes[] = array(
+				'Command'	=> 'JumpToMapIndex',
+				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0],
+			);
+		}
 		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0]) ) {
 			$callvotes[] = array(
 				'Command'	=> 'Kick',
 				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0],
 			);
 		}
-		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0]) ) {
+		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0]) ) {
 			$callvotes[] = array(
-				'Command'	=> 'Ban',
-				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0],
+				'Command'	=> 'SetModeScriptSettingsAndCommands',
+				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0],
+			);
+		}
+		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0]) ) {
+			$callvotes[] = array(
+				'Command'	=> 'SetNextMapIndex',
+				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0],
 			);
 		}
 		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0]) ) {
@@ -252,31 +268,17 @@ class PluginVoteManager extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $answer = [0]=PlayerUid, [1]=Login, [2]=Answer
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		// If id = 0, bail out immediately
-		if ($answer[2] == 0) {
-			return;
+		if ($answer['Action'] == 'CloseHelpWindow') {
+			$xml = '<manialink id="VoteManagerHelpWindow"></manialink>';
+			$aseco->sendManialink($xml, $login, 0, false);
 		}
-
-		if ($answer[2] == (int)$this->config['ManialinkId'] .'00') {
-			$xml = '<manialink id="'. $this->config['ManialinkId'] .'03"></manialink>';	// HelpWindow
-			$aseco->sendManialink($xml, $answer[1], 0, false);
+		else if ($answer['Action'] == 'VoteYes') {
+			$aseco->releaseChatCommand('/yes', $login);
 		}
-		else if ($answer[2] == (int)$this->config['ManialinkId'] .'01') {
-			$aseco->releaseChatCommand('/yes', $answer[1]);
-		}
-		else if ($answer[2] == (int)$this->config['ManialinkId'] .'02') {
-			$aseco->releaseChatCommand('/no', $answer[1]);
-		}
-		else if ($answer[2] == 25) {
-			// Admin has clicked "Pass" for the current Vote
-			$this->handleAdminAction('pass');
-		}
-		else if ($answer[2] == 26) {
-			// Admin has clicked "Cancel" for the current Vote
-			$this->handleAdminAction('cancel');
+		else if ($answer['Action'] == 'VoteNo') {
+			$aseco->releaseChatCommand('/no', $login);
 		}
 	}
 
@@ -290,7 +292,6 @@ class PluginVoteManager extends Plugin {
 		global $aseco;
 
 		if ($action == 'pass') {
-
 			// Admin "Pass" for the current Vote
 			if ($this->config['RunningVote']['Active'] == true) {
 				if ($this->config['RunningVote']['Mode'] == 'Restart') {
@@ -315,15 +316,22 @@ class PluginVoteManager extends Plugin {
 					// Skip now
 					$this->handleTodo('Skip');
 				}
+				else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+					// Balance passed, send the info message
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_SUCCESS'][0]);
+
+					// Balance now
+					$this->handleTodo('Balance');
+				}
 
 				// Cleanup ended vote
 				$this->config['RunningVote'] = $this->cleanupCurrentVote();
 
 				// Hide all Widgets from all Players
-				$xml = '<manialink id="'. $this->config['ManialinkId'] .'00"></manialink>';	// Widget
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'01"></manialink>';	// CountdownWidget
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'02"></manialink>';	// VoteStatistics
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'04"></manialink>';	// PlayerVoteMarker
+				$xml = '<manialink id="VoteManagerWidget"></manialink>';
+				$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
+				$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
+				$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 				$aseco->sendManialink($xml, false, 0, false);
 			}
 
@@ -340,15 +348,19 @@ class PluginVoteManager extends Plugin {
 					// Skip did not pass, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0]);
 				}
+				else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+					// Balance did not pass, send the info message
+					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_FAILED'][0]);
+				}
 
 				// Cleanup ended vote
 				$this->config['RunningVote'] = $this->cleanupCurrentVote();
 
 				// Hide all Widgets from all Players
-				$xml = '<manialink id="'. $this->config['ManialinkId'] .'00"></manialink>';	// Widget
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'01"></manialink>';	// CountdownWidget
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'02"></manialink>';	// VoteStatistics
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'04"></manialink>';	// PlayerVoteMarker
+				$xml = '<manialink id="VoteManagerWidget"></manialink>';
+				$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
+				$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
+				$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 				$aseco->sendManialink($xml, false, 0, false);
 			}
 
@@ -431,6 +443,13 @@ class PluginVoteManager extends Plugin {
 						// Skip now
 						$this->handleTodo('Skip');
 					}
+					else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+						// Balance passed, send the info message
+						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_SUCCESS'][0]);
+
+						// Balance now
+						$this->handleTodo('Balance');
+					}
 				}
 				else {
 					if ($this->config['RunningVote']['Mode'] == 'Restart') {
@@ -441,16 +460,20 @@ class PluginVoteManager extends Plugin {
 						// Skip did not pass, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0]);
 					}
+					else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+						// Balance did not pass, send the info message
+						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_FAILED'][0]);
+					}
 				}
 
 				// Cleanup ended vote
 				$this->config['RunningVote'] = $this->cleanupCurrentVote();
 
 				// Hide all Widgets from all Players
-				$xml = '<manialink id="'. $this->config['ManialinkId'] .'00"></manialink>';	// Widget
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'01"></manialink>';	// CountdownWidget
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'02"></manialink>';	// VoteStatistics
-				$xml .= '<manialink id="'. $this->config['ManialinkId'] .'04"></manialink>';	// PlayerVoteMarker
+				$xml = '<manialink id="VoteManagerWidget"></manialink>';
+				$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
+				$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
+				$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 				$aseco->sendManialink($xml, false, 0, false);
 			}
 		}
@@ -488,7 +511,7 @@ class PluginVoteManager extends Plugin {
 		$aseco->sendChatMessage($this->config['MESSAGES'][0]['CALLVOTE_DISABLED'][0], $player->login);
 
 		// Preload the Thumbs-Images
-		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'04">';
+		$xml  = '<manialink id="VoteManagerPlayerVoteMarker">';
 		$xml .= '<quad posn="128 128 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_UP'][0] .'"/>';
 		$xml .= '<quad posn="128 128 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_DOWN'][0] .'"/>';
 		$xml .= '</manialink>';
@@ -567,11 +590,11 @@ class PluginVoteManager extends Plugin {
 	public function onEndMap1 ($aseco, $data) {
 
 		// Hide all Widgets from all Players
-		$xml = '<manialink id="'. $this->config['ManialinkId'] .'00"></manialink>';	// Widget
-		$xml .= '<manialink id="'. $this->config['ManialinkId'] .'01"></manialink>';	// CountdownWidget
-		$xml .= '<manialink id="'. $this->config['ManialinkId'] .'02"></manialink>';	// VoteStatistics
-		$xml .= '<manialink id="'. $this->config['ManialinkId'] .'03"></manialink>';	// HelpWindow
-		$xml .= '<manialink id="'. $this->config['ManialinkId'] .'04"></manialink>';	// PlayerVoteMarker
+		$xml = '<manialink id="VoteManagerWidget"></manialink>';
+		$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
+		$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
+		$xml .= '<manialink id="VoteManagerHelpWindow"></manialink>';
+		$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 		$aseco->sendManialink($xml, false, 0, false);
 
 		// Reset all before votings if a running vote was interrupted (by Admin skip/restart)
@@ -605,7 +628,6 @@ class PluginVoteManager extends Plugin {
 		global $aseco;
 
 		if ($mode == 'Restart') {
-
 			// Simulate a onEndMap for Dedimania, otherwise new driven records are lost!
 			if ( isset($aseco->plugins['PluginDedimania']) ) {
 				$aseco->plugins['PluginDedimania']->onEndMap($aseco, $aseco->server->maps->current);
@@ -618,6 +640,7 @@ class PluginVoteManager extends Plugin {
 			else {
 				$aseco->client->query('RestartMap');
 			}
+			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
 		}
 		else if ($mode == 'Replay') {
 			// prepend current map to start of jukebox
@@ -632,6 +655,7 @@ class PluginVoteManager extends Plugin {
 			$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['mx'] = false;
 			$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['uid'] = $uid;
 			$aseco->plugins['PluginRaspJukebox']->jukebox = array_reverse($aseco->plugins['PluginRaspJukebox']->jukebox, true);
+			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
 		}
 		else if ($mode == 'Skip') {
 			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
@@ -641,8 +665,12 @@ class PluginVoteManager extends Plugin {
 			else {
 				$aseco->client->query('NextMap');
 			}
+			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
 		}
-		$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
+		else if ($mode == 'Balance') {
+			$aseco->client->query('AutoTeamBalance');
+			$aseco->console('[VoteManager] "'. $mode .'" the Teams on Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
+		}
 	}
 
 	/*
@@ -730,7 +758,7 @@ class PluginVoteManager extends Plugin {
 	public function buildWidget () {
 
 		// Placeholder: %USERNAME%, %QUESTION%
-		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'00">';
+		$xml  = '<manialink id="VoteManagerWidget">';
 		$xml .= '<frame posn="'. $this->config['WIDGET'][0]['POS_X'][0] .' '. $this->config['WIDGET'][0]['POS_Y'][0] .' 0">';
 		$xml .= '<quad posn="0 0 0" sizen="41.9 11" bgcolor="'. $this->config['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		$xml .= '<quad posn="-0.2 0.3 0.001" sizen="42.3 11.6" style="'. $this->config['WIDGET'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BORDER_SUBSTYLE'][0] .'"/>';
@@ -758,14 +786,14 @@ class PluginVoteManager extends Plugin {
 
 		// BEGIN: YES Button
 		$xml .= '<frame posn="0.8 -7.5 0">';
-		$xml .= '<quad posn="0 0 0.005" sizen="7.1 2.9" action="'. $this->config['ManialinkId'] .'01" actionkey="1" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<quad posn="0 0 0.005" sizen="7.1 2.9" action="PluginVoteManager?Action=VoteYes" actionkey="1" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'"/>';
 		$xml .= '<label posn="3.55 -0.9 0.006" sizen="7.1 0" halign="center" textsize="1" scale="0.8" text="$5B0$OYES / F5"/>';
 		$xml .= '</frame>';
 		// END: YES Button
 
 		// BEGIN: NO Button
 		$xml .= '<frame posn="34.1 -7.5 0">';
-		$xml .= '<quad posn="0 0 0.005" sizen="7.1 2.9" action="'. $this->config['ManialinkId'] .'02" actionkey="2" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<quad posn="0 0 0.005" sizen="7.1 2.9" action="PluginVoteManager?Action=VoteNo" actionkey="2" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'"/>';
 		$xml .= '<label posn="3.55 -0.9 0.006" sizen="7.1 0" halign="center" textsize="1" scale="0.8" text="$C10$ONO / F6"/>';
 		$xml .= '</frame>';
 		// END: NO Button
@@ -785,7 +813,7 @@ class PluginVoteManager extends Plugin {
 	public function buildWidgetCountdown () {
 		global $aseco;
 
-		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'01" name="VoteManagerCountdown">';
+		$xml  = '<manialink id="VoteManagerCountdown" name="VoteManagerCountdown">';
 		$xml .= '<label posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 21) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 5.5) .' 1.01" sizen="40 1.5" halign="center" textsize="1" textcolor="FFFF" text="" id="VoteManagerLabelCountdown"/>';
 
 		$message = $aseco->formatText($this->config['MESSAGES'][0]['TIME_REMAINING'][0], '%1');
@@ -843,7 +871,7 @@ EOL;
 	public function buildWidgetCountdownFinished () {
 		global $aseco;
 
-		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'01" name="VoteManagerCountdown">';
+		$xml  = '<manialink id="VoteManagerCountdown" name="VoteManagerCountdown">';
 		$xml .= '<label posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 21) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 5.5) .' 1.01" sizen="40 1.5" halign="center" textsize="1" textcolor="FFFF" text="'. $this->config['MESSAGES'][0]['VOTE_FINISHED'][0] .'"/>';
 		$xml .= '</manialink>';
 
@@ -859,7 +887,7 @@ EOL;
 	public function buildPlayerVoteMarker ($login, $vote) {
 		global $aseco;
 
-		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'04">';
+		$xml  = '<manialink id="VoteManagerPlayerVoteMarker">';
 		if ($vote == 'Yes') {
 			$xml .= '<quad posn="'. ($this->config['WIDGET'][0]['POS_X'][0] - 1) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 7.3) .' 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_UP'][0] .'"/>';
 		}
@@ -886,7 +914,7 @@ EOL;
 			$totalvotes = 0.0001;
 		}
 
-		$xml  = '<manialink id="'. $this->config['ManialinkId'] .'02">';
+		$xml  = '<manialink id="VoteManagerStatistics">';
 		$xml .= '<frame posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 8.5) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 7.75) .' 0">';
 
 		$percent_yes = ($count_yes / $totalvotes * 100);
@@ -914,7 +942,7 @@ EOL;
 	public function buildHelpWindow ($login) {
 		global $aseco;
 
-		$xml = '<manialink id="'. $this->config['ManialinkId'] .'03">';
+		$xml = '<manialink id="VoteManagerHelpWindow">';
 		$xml .= '<frame posn="-40.8 30.55 18.50">';	// BEGIN: Window Frame
 		$xml .= '<quad posn="-0.2 0.2 0.01" sizen="81.8 59" style="Bgs1InRace" substyle="BgTitle2"/>';
 		$xml .= '<quad posn="1.8 -4.1 0.02" sizen="77.7 49.9" bgcolor="0018"/>';
@@ -929,7 +957,7 @@ EOL;
 
 		// Close Button
 		$xml .= '<frame posn="76.7 -0.15 0.05">';
-		$xml .= '<quad posn="0 0 0.01" sizen="4.5 4.5" action="'. $this->config['ManialinkId'] .'00" style="Icons64x64_1" substyle="ArrowUp"/>';
+		$xml .= '<quad posn="0 0 0.01" sizen="4.5 4.5" action="PluginVoteManager?Action=CloseHelpWindow" style="Icons64x64_1" substyle="ArrowUp"/>';
 		$xml .= '<quad posn="1.2 -1.2 0.02" sizen="2 2" bgcolor="EEEF"/>';
 		$xml .= '<quad posn="0.7 -0.7 0.03" sizen="3.1 3.1" style="Icons64x64_1" substyle="Close"/>';
 		$xml .= '</frame>';
@@ -1089,18 +1117,26 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function checkVotePossibility ($type, $login = false) {
+	public function checkVotePossibility ($type, $login) {
 		global $aseco;
 
-		if ( in_array($login, $this->config['Cache']['IgnoreLogin']) ) {
+		if (in_array($login, $this->config['Cache']['IgnoreLogin'])) {
 			// Login are on the <ignore_list>, skipping
-			$aseco->console('[VoteManager] Skipping vote attempt from "'. $login .'" because player is in the <ignore_list>.');
+			$aseco->console('[VoteManager] Skipping vote attempt from ['. $login .'] because player is in the <ignore_list>.');
 			$message = $aseco->formatText($this->config['MESSAGES'][0]['VOTE_IGNORED'][0]);
 			$aseco->sendChatMessage($message, $login);
 			return false;
 		}
 
-		if ( ($type == 'Restart') && ($this->config['Cache']['LastMap']['Runs'] >= $this->config['VOTING'][0]['MAX_RESTARTS'][0]) ) {
+		if (count($this->config['Cache']['AllowLogin']) > 0 && !in_array($login, $this->config['Cache']['AllowLogin'])) {
+			// <allow_list> is not empty and Login is not in the <allow_list>, skipping
+			$aseco->console('[VoteManager] Skipping vote attempt from ['. $login .'] because player is NOT in the <allow_list>.');
+			$message = $aseco->formatText($this->config['MESSAGES'][0]['VOTE_IGNORED'][0]);
+			$aseco->sendChatMessage($message, $login);
+			return false;
+		}
+
+		if ($type == 'Restart' && $this->config['Cache']['LastMap']['Runs'] >= $this->config['VOTING'][0]['MAX_RESTARTS'][0]) {
 			// Max. restarts reached, cancel this request
 			$message = $aseco->formatText($this->config['MESSAGES'][0]['VOTE_RESTART_LIMITED'][0],
 				$this->config['VOTING'][0]['MAX_RESTARTS'][0],
@@ -1110,8 +1146,14 @@ EOL;
 			return false;
 		}
 
-		if ( ($type == 'Skip') && ($this->config['Cache']['Todo']['onEndMap'] == 'Restart') ) {
+		if ($type == 'Skip' && $this->config['Cache']['Todo']['onEndMap'] == 'Restart') {
 			// There was a successfully restart vote before, cancel this skip request
+			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
+			return false;
+		}
+
+		if ($type == 'Skip' && ($this->config['Cache']['LastMap']['Uid'] == $aseco->server->maps->current->uid)) {
+			// For the current Map was a successfully restart vote before, cancel this skip request
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
 			return false;
 		}
@@ -1122,7 +1164,7 @@ EOL;
 			return false;
 		}
 
-		if ( ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) && ($this->config['TimeAttackTimelimit'] != -1) ) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->config['TimeAttackTimelimit'] != -1) {
 			if ($this->config['TimeAttackTimelimit'] > (time() + $this->config['VOTING'][0]['TIMEOUT_LIMIT'][0])) {
 				return true;
 			}
@@ -1237,6 +1279,23 @@ EOL;
 		}
 		else {
 			$this->handleVote($login, 'No');
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_balance ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if ( $this->checkVotePossibility('Balance', $login) ) {
+			// Get Player object
+			if ($player = $aseco->server->players->getPlayer($login)) {
+				// Setup new vote
+				$this->setupNewVote('Balance', $player->login, $player->nickname, $this->config['MESSAGES'][0]['QUESTION_BALANCE'][0]);
+			}
 		}
 	}
 }

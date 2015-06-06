@@ -43,6 +43,12 @@
 		</songlist>
 
 		<maplist>
+			<!-- What to display from a Map Author:
+				'nickname'	= Author Nickname (default, only if available)
+				'login'		= Author Login
+			//-->
+			<author_display>nickname</author_display>
+
 			<!-- Sorting the Maplist:
 				'author'	= Order by Authorname (default)
 				'map'		= Order by Mapname
@@ -53,28 +59,22 @@
 			<!-- If set to 'true', then display the MaplistWindow after unjuke one Map or clear the entire jukebox. To disable set to 'false' -->
 			<force_maplist>true</force_maplist>
 
-			<!-- This feature is for Maps that are not at mania-exchange.com, but you want to see the map image in the Last/Current/Next-Window -->
+			<!-- This feature is for Maps that are not at mania-exchange.com, but you want to see the map image in the "Last/Current/Next-Window" -->
 			<mapimages>
-				<!-- If set to 'true', then the Images from the Mapfile are extracted and stored. To disable set to 'false' -->
+				<!-- If set to 'true', then the Images from the Mapfile are used in the Window, otherwise set to 'false'. -->
 				<enabled>true</enabled>
 
 				<!--
-				Path where the Images are stored
-
-				Some examples for <storing_path>:
-				 - Linux (local):		<storing_path>/home/user/htdocs/mapimages/</storing_path>
-				 - Windows (local):		<storing_path>C:/server/htdocs/mapimages/</storing_path>
+				Setup in UASECO.xml the <mapimages_path> to a path which are accessible over HTTP for anybody.
+ 				e.g. 'http://www.example.com/mapimages/'
 				//-->
-				<storing_path>/home/midi/public_html/mapimages/</storing_path>
-
-				<!-- URL from <storing_path> to access over HTTP the Images, e.g. 'http://www.example.com/mapimages/' -->
-				<access_url>http://192.168.0.102/mapimages/</access_url>
+				<access_url>http://192.168.0.99/mapimages/</access_url>
 			</mapimages>
 		</maplist>
 
 		<!--
 			Setup the limit of displayed amounts (and memory consumption) of all 'MORE RANKING'* lists,
-			set to '-1' for no limit, or to a wanted amount (e.g. 5000 entries = default)
+			set to '-1' for no limit, or to a wanted amount (e.g. 5000 entries)
 			*) Not used for Dedimania-Records, Local-Records, Live-Rankings and Top-Maps!
 		//-->
 		<toplist_limit>-1</toplist_limit>
@@ -355,13 +355,8 @@
 				<topcount>3</topcount>
 			</team_attack>
 
-			<chase>
-				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
-				<scale>1.0</scale>
-				<entries>15</entries>
-				<topcount>3</topcount>
+			<chase>							<!-- Unsupported by Dedimania, leave as is! -->
+				<enabled>false</enabled>
 			</chase>
 
 			<stunts>						<!-- Unsupported by Dedimania, leave as is! -->
@@ -433,13 +428,8 @@
 				<topcount>3</topcount>
 			</team_attack>
 
-			<chase>
-				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>2.5</pos_y>
-				<scale>1.0</scale>
-				<entries>14</entries>
-				<topcount>3</topcount>
+			<chase>							<!-- No records at all, leave as is! -->
+				<enabled>false</enabled>
 			</chase>
 
 			<stunts>
@@ -520,12 +510,7 @@
 			</team_attack>
 
 			<chase>
-				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>28.3</pos_y>
-				<scale>1.0</scale>
-				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
-				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
+				<enabled>false</enabled>			<!-- No support, leave as is! -->
 			</chase>
 
 			<stunts>
@@ -607,9 +592,9 @@
 			<chase>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>21.3</pos_y>
+				<pos_y>23.7</pos_y>
 				<scale>1.0</scale>
-				<entries>23</entries>
+				<entries>27</entries>
 				<topcount>3</topcount>
 			</chase>
 
@@ -621,13 +606,30 @@
 
 
 
+	<!-- Displays the current status of who is spectating the current Player -->
+	<spectator_info_widget>
+		<enabled>true</enabled>
+		<text_color>FFCC00FF</text_color>
+
+		<pos_x>41.0</pos_x>
+		<pos_y>-30.0</pos_y>
+		<scale>1.0</scale>
+
+		<background_default>55556699</background_default>
+
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>ProgressBar</background_substyle>
+	</spectator_info_widget>
+
+
+
 	<!-- Displays the current status of multilaps -->
 	<multilap_info_widget>
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>39.4</pos_x>
-		<pos_y>-31.0</pos_y>
+		<pos_x>36.2</pos_x>
+		<pos_y>-30.0</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -643,8 +645,8 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>34.6</pos_x>
-		<pos_y>-31.0</pos_y>
+		<pos_x>31.4</pos_x>
+		<pos_y>-30.0</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -1229,7 +1231,7 @@
 			<modulatecolor>[RRGGBBAA]</modulatecolor>			working only in combination with <image>
 			<url>[empty|url]</url>
 			<manialink>[empty|manialink]</manialink>
-			<action_id>[signed/unsigned int]</action_id>			enter here an action id from other Plugins
+			<action_id>[empty|text]</action_id>				enter here an action id from other Plugins, e.g. "PluginManiaKarma?Action=91101" to open the HelpWindow
 			<chat_command>[string]</chat_command>				enter here a chat-command from other Plugins, e.g. "/karma help"
 			<include>[path to a file]</include>				enter here the path to the file you want to include (relative from the xaseco2.php location)
 		</placement>
@@ -1293,11 +1295,6 @@
 
 	<!-- Define the text shown in the chat when you disactivate/activate the display of the record widgets -->
 	<messages>
-		<widgets_disabled>{#server}>> Your record widgets are now hidden, press F7 to reactivate them.</widgets_disabled>
-		<widgets_enabled>{#server}>> Your record widgets are now shown, press F7 to hide them.</widgets_enabled>
-		<widgets_preference_disabled>{#server}>> Your record widgets are now permanent hidden and your preference was saved, type {#highlite}/eyepiece show{#server} to reactivate them.</widgets_preference_disabled>
-		<widgets_preference_enabled>{#server}>> Your record widgets are now permanent shown and your preference was saved, type {#highlite}/eyepiece hide{#server} to hide them.</widgets_preference_enabled>
-		<toggling_disabled>{#server}>> Sorry, you can not toggle the record widgets at the moment. There are too many players on the server, so they are in static mode now.</toggling_disabled>
 		<disallow_windows_at_score>{#server}>> Could not display this window at score! Please try again when the race is started.</disallow_windows_at_score>
 		<winning_mail_body>{#karma}You won several races and won {#highlite}{1} Planets{#karma}!{br}$L[maniaplanet://#addfavourite={2}]Please add {3}{#karma} to favorites!$L</winning_mail_body>
 	</messages>

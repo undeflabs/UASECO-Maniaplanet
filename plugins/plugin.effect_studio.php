@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-03-26
+ * Date:		2015-05-25
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -31,15 +31,6 @@
  *
  * Dependencies:
  *  - plugins/plugin.modescript_handler.php
- *
- */
-
-
-/* The following manialink id's are used in this plugin (the 924 part of id can be changed on trouble):
- *
- * ManialinkID's
- * ~~~~~~~~~~~~~
- * 92400	id for auditive manialinks
  *
  */
 
@@ -74,8 +65,8 @@ class PluginEffectStudio extends Plugin {
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
 
-		$this->registerEvent('onSync',			'onSync');
-		$this->registerEvent('onBeginMap',		'onBeginMap');
+		$this->registerEvent('onSync',				'onSync');
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 
 
 //		$this->registerChatCommand('xxx',		'chat_xxx',	'xxx',			Player::PLAYERS);
@@ -114,13 +105,10 @@ class PluginEffectStudio extends Plugin {
 //		$aseco->plugins['PluginModescriptHandler']->setupUserInterface();
 
 
-		// Static settings
-		$this->config['ManialinkId'] = '924';
-
 		// Listing of currently supported events
 		$valid_events = array(
 			// Event name (XML)		=> realname in UASECO
-			'onNewMap'			=> 'onBeginMap',
+			'onNewMap'			=> 'onLoadingMap',
 			'onBeginRound'			=> 'onBeginRound',
 			'onPlayerCheckpoint'		=> 'onPlayerCheckpoint',
 			'onPlayerConnect'		=> 'onPlayerConnect',
@@ -143,22 +131,21 @@ class PluginEffectStudio extends Plugin {
 //			'onMultilapFinishLap'		=> 'xxx',					// only in Laps (maybe Rounds + Cup?)
 //			'onMultilapEndLap'		=> 'xxx',					// only in Laps (maybe Rounds + Cup?)
 //
-//			'onKarmaChange'			=> 'onKarmaChange',				// Event from plugin.tm-karma-dot-com.php / plugin.rasp_karma.php
+//			'onKarmaChange'			=> 'onKarmaChange',				// Event from plugin.mania_karma.php / plugin.rasp_karma.php
 			'onPlayerWinCurrency'		=> 'onPlayerWinPlanets',			// Event from plugin.records_eyepiece.php
 		);
 
 
 		$aseco->console('[EffectStudio] Setup events and effects...');
 
-		// Event 'onBeginMap' already registered, let skip them
-		$registered_events = array('onBeginMap');
+		// Event 'onLoadingMap' already registered, let skip them
+		$registered_events = array('onLoadingMap');
 
 		// Register related events and build the database
 		$this->config['EventActions'] = array();
 		foreach ($this->config['AUDITIVE'][0]['EFFECT'] as &$item) {
 			if ( array_key_exists($item['EVENT'][0], $valid_events) ) {
 				if (strtoupper($item['ENABLED'][0]) == 'TRUE') {
-
 					// Retrieve the file (max. 1024 bytes) to build a MD5-Hash from
 					$file = @file_get_contents($item['URL'][0], NULL, NULL, 1024);
 					if ($file === false) {
@@ -167,23 +154,23 @@ class PluginEffectStudio extends Plugin {
 						continue;
 					}
 
-					// Add into register and translate e.g. 'onNewMap' to 'onBeginMap'
+					// Add into register and translate e.g. 'onNewMap' to 'onLoadingMap'
 					$this->config['EventActions'][$item['EVENT'][0]] = array(
 						'Url'		=> $item['URL'][0],
 						'ChkSum'	=> md5($file),
 						'Loop'		=> ((strtoupper($item['LOOP'][0]) == 'TRUE') ? 1 : 0),
-						'Timeout'	=> (intval($item['LENGTH'][0]) + 1),
+						'Timeout'	=> (intval($item['LENGTH'][0]) + 2),
 					);
 
 					// Check for already registered events and skip them
 					if ( !in_array($valid_events[$item['EVENT'][0]], $registered_events) ) {
 						$aseco->registerEvent($valid_events[$item['EVENT'][0]], array($this, $valid_events[$item['EVENT'][0]]));
-						$registered_events[] = $item['EVENT'][0];
+						$registered_events[] = $valid_events[$item['EVENT'][0]];
 					}
 				}
 			}
 			else {
-				$aseco->console('[EffectStudio] Found a none valid event "'. $item['EVENT'][0] .'", goint to ignore this.');
+				$aseco->console('[EffectStudio] Found a none valid event "'. $item['EVENT'][0] .'", ignoring...');
 			}
 		}
 		unset($item);
@@ -232,12 +219,12 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $unused) {
-
-		// Close open sounds at all Players
-		$xml = '<manialink id="'. $this->config['ManialinkId'] .'00"></manialink>';
-		$aseco->sendManialink($xml, false, 0);
-
+	public function onLoadingMap ($aseco, $unused) {
+		if (count($this->manialinks) > 0) {
+			foreach ($this->manialinks as $manialink) {
+				$aseco->sendManialink($manialink, false);
+			}
+		}
 		if (isset($this->config['EventActions']['onNewMap'])) {
 			$this->eventHandler('auditive', false, 'onNewMap');
 		}
@@ -285,10 +272,11 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerFinish1 ($aseco, $finish_item) {
-
-		if ( ($finish_item->score > 0) && (isset($this->config['EventActions']['onPlayerFinish'])) ) {
-			$this->eventHandler('auditive', $finish_item->player->login, 'onPlayerFinish');
+	public function onPlayerFinish1 ($aseco, $finish) {
+		if ($finish->score > 0) {
+			if (isset($this->config['EventActions']['onPlayerFinish'])) {
+				$this->eventHandler('auditive', $finish->player->login, 'onPlayerFinish');
+			}
 		}
 	}
 
@@ -358,12 +346,22 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function buildScriptPlayerFinishMapTime () {
+
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function eventHandler ($typ, $login, $event) {
 		global $aseco;
 
-		$xml = '';
+		$xml = false;
 		if (($typ == 'auditive') || ($typ == 'both') ) {
-			$xml .= '<manialink id="'. $this->config['ManialinkId'] .'00">';
+			$xml .= '<manialink name="EffectStudioAuditive'. ucfirst($event) .'" id="EffectStudioAuditive'. ucfirst($event) .'">';
 			$xml .= '<audio posn="140 0 0" sizen="3 3" data="'. $this->config['EventActions'][$event]['Url'] .'?chksum='. $this->config['EventActions'][$event]['ChkSum'] .'.ogg" play="1" looping="'. $this->config['EventActions'][$event]['Loop'] .'" />';
 			$xml .= '</manialink>';
 		}
@@ -372,7 +370,7 @@ class PluginEffectStudio extends Plugin {
 		}
 
 //		$aseco->console('*** Sending to '. $login .' -> '. $xml);
-		if ($xml != '') {
+		if ($xml !== false) {
 			$aseco->sendManialink($xml, $login, $this->config['EventActions'][$event]['Timeout']);
 		}
 	}

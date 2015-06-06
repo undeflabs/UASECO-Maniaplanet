@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-05-04
+ * Date:	2015-05-24
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -1145,54 +1145,49 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
-
-		// If id = 0, bail out immediately
-		if ($answer[2] == 0) {
-			return;
-		}
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// Get Player
-		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+		if (!$player = $aseco->server->players->getPlayer($login)) {
 			return;
 		}
 
-		if ($answer[2] == $this->config['manialink_id'] .'01') {			// Open HelpWindow
+		if ($answer['Action'] == $this->config['manialink_id'] .'01') {			// Open HelpWindow
 			$this->sendHelpAboutWindow($player->login, $this->config['messages']['karma_help']);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'02') {		// Open KarmaDetailWindow
+		else if ($answer['Action'] == $this->config['manialink_id'] .'02') {		// Open KarmaDetailWindow
 			$window = $this->buildKarmaDetailWindow($player->login);
 			$this->sendWindow($player->login, $window);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'03') {		// Open WhoKarmaWindow
+		else if ($answer['Action'] == $this->config['manialink_id'] .'03') {		// Open WhoKarmaWindow
 			$window = $this->buildWhoKarmaWindow($player->login);
 			$this->sendWindow($player->login, $window);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'12') {		// Vote +++
+		else if ($answer['Action'] == $this->config['manialink_id'] .'12') {		// Vote +++
 			$this->handlePlayerVote($player, 3);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'11') {		// Vote ++
+		else if ($answer['Action'] == $this->config['manialink_id'] .'11') {		// Vote ++
 			$this->handlePlayerVote($player, 2);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'10') {		// Vote +
+		else if ($answer['Action'] == $this->config['manialink_id'] .'10') {		// Vote +
 			$this->handlePlayerVote($player, 1);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'13') {		// Vote undecided
+		else if ($answer['Action'] == $this->config['manialink_id'] .'13') {		// Vote undecided
 			$this->showUndecidedMessage($player);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'14') {		// Vote -
+		else if ($answer['Action'] == $this->config['manialink_id'] .'14') {		// Vote -
 			$this->handlePlayerVote($player, -1);
 	}
-		else if ($answer[2] == $this->config['manialink_id'] .'15') {		// Vote --
+		else if ($answer['Action'] == $this->config['manialink_id'] .'15') {		// Vote --
 			$this->handlePlayerVote($player, -2);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'16') {		// Vote ---
+		else if ($answer['Action'] == $this->config['manialink_id'] .'16') {		// Vote ---
 			$this->handlePlayerVote($player, -3);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'17') {		// Vote disabled on <require_finish> >= 1
+		else if ($answer['Action'] == $this->config['manialink_id'] .'17') {		// Vote disabled on <require_finish> >= 1
 			$this->handlePlayerVote($player, 0);
 		}
-		else if ($answer[2] == $this->config['manialink_id'] .'18') {		// No action, just ignore
+		else if ($answer['Action'] == $this->config['manialink_id'] .'18') {		// No action, just ignore
 			// do nothing
 		}
 	}
@@ -1576,7 +1571,7 @@ class PluginManiaKarma extends Plugin {
 			}
 		}
 		else {
-			$xml .= '<label posn="0.1 -0.1 0" sizen="15.56 10.55" action="'. $this->config['manialink_id'] .'02" text=" " focusareacolor1="'. $this->config['widget']['race']['background_color'] .'" focusareacolor2="'. $this->config['widget']['race']['background_focus'] .'"/>';
+			$xml .= '<label posn="0.1 -0.1 0" sizen="15.56 10.55" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'02" text=" " focusareacolor1="'. $this->config['widget']['race']['background_color'] .'" focusareacolor2="'. $this->config['widget']['race']['background_focus'] .'"/>';
 			$xml .= '<quad posn="-0.2 0.3 0.01" sizen="16.16 11.35" style="'. $this->config['widget']['race']['border_style'] .'" substyle="'. $this->config['widget']['race']['border_substyle'] .'"/>';
 			$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" style="'. $this->config['widget']['race']['background_style'] .'" substyle="'. $this->config['widget']['race']['background_substyle'] .'"/>';
 			if ($this->config['widget']['states'][$gamemode]['pos_x'] > 0) {
@@ -1633,42 +1628,42 @@ class PluginManiaKarma extends Plugin {
 
 		// BG for Buttons to prevent flicker of the widget background (clickable too)
 		$xml .= '<frame posn="1.83 -8.3 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.1" sizen="11.8 1.4" action="'. $this->config['manialink_id'] .'18" bgcolor="0000"/>';
+		$xml .= '<quad posn="0.2 -0.08 0.1" sizen="11.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'18" bgcolor="0000"/>';
 		$xml .= '</frame>';
 
 		// Button +++
 		$xml .= '<frame posn="1.83 -8.5 1">';
-		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="'. $this->config['manialink_id'] .'12" focusareacolor1="'. $this->config['widget']['buttons']['bg_positive_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" text=" "/>';
+		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'12" focusareacolor1="'. $this->config['widget']['buttons']['bg_positive_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" text=" "/>';
 		$xml .= '<label posn="1.12 -0.3 0.4" sizen="1.8 0" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="+++"/>';
 		$xml .= '</frame>';
 
 		// Button ++
 		$xml .= '<frame posn="3.83 -8.5 1">';
-		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="'. $this->config['manialink_id'] .'11" focusareacolor1="'. $this->config['widget']['buttons']['bg_positive_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" text=" "/>';
+		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'11" focusareacolor1="'. $this->config['widget']['buttons']['bg_positive_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" text=" "/>';
 		$xml .= '<label posn="1.12 -0.3 0.4" sizen="1.8 0" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="++"/>';
 		$xml .= '</frame>';
 
 		// Button +
 		$xml .= '<frame posn="5.83 -8.5 1">';
-		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="'. $this->config['manialink_id'] .'10" focusareacolor1="'. $this->config['widget']['buttons']['bg_positive_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" text=" "/>';
+		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'10" focusareacolor1="'. $this->config['widget']['buttons']['bg_positive_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" text=" "/>';
 		$xml .= '<label posn="1.12 -0.3 0.4" sizen="1.8 0" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="+"/>';
 		$xml .= '</frame>';
 
 		// Button -
 		$xml .= '<frame posn="7.83 -8.5 1">';
-		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="'. $this->config['manialink_id'] .'14" focusareacolor1="'. $this->config['widget']['buttons']['bg_negative_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" text=" "/>';
+		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'14" focusareacolor1="'. $this->config['widget']['buttons']['bg_negative_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" text=" "/>';
 		$xml .= '<label posn="1.12 -0.2 0.4" sizen="1.8 0" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="-"/>';
 		$xml .= '</frame>';
 
 		// Button --
 		$xml .= '<frame posn="9.83 -8.5 1">';
-		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="'. $this->config['manialink_id'] .'15" focusareacolor1="'. $this->config['widget']['buttons']['bg_negative_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" text=" "/>';
+		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'15" focusareacolor1="'. $this->config['widget']['buttons']['bg_negative_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" text=" "/>';
 		$xml .= '<label posn="1.12 -0.2 0.4" sizen="1.8 0" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="--"/>';
 		$xml .= '</frame>';
 
 		// Button ---
 		$xml .= '<frame posn="11.83 -8.5 1">';
-		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="'. $this->config['manialink_id'] .'16" focusareacolor1="'. $this->config['widget']['buttons']['bg_negative_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" text=" "/>';
+		$xml .= '<label posn="0.2 -0.08 0.2" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'16" focusareacolor1="'. $this->config['widget']['buttons']['bg_negative_default'] .'" focusareacolor2="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" text=" "/>';
 		$xml .= '<label posn="1.12 -0.2 0.4" sizen="1.8 0" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="---"/>';
 		$xml .= '</frame>';
 
@@ -1860,13 +1855,13 @@ EOL;
 		$buttons = '<frame posn="52.05 -53.3 0.04">';
 
 		// Reload button
-		$buttons .= '<quad posn="16.65 -1 0.14" sizen="3 3" action="'. $this->config['manialink_id'] .'02" style="Icons64x64_1" substyle="Refresh"/>';
+		$buttons .= '<quad posn="16.65 -1 0.14" sizen="3 3" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'02" style="Icons64x64_1" substyle="Refresh"/>';
 
 		// Previous button
 		$buttons .= '<quad posn="19.95 -1.15 0.12" sizen="2.8 2.7" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 
 		// Next button
-		$buttons .= '<quad posn="23.25 -1 0.12" sizen="3 3" action="'. $this->config['manialink_id'] .'03" style="Icons64x64_1" substyle="Maximize"/>';
+		$buttons .= '<quad posn="23.25 -1 0.12" sizen="3 3" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'03" style="Icons64x64_1" substyle="Maximize"/>';
 		$buttons .= '<quad posn="23.65 -1.4 0.13" sizen="2.1 2.1" bgcolor="000F"/>';
 		$buttons .= '<quad posn="23.45 -1.2 0.14" sizen="2.5 2.5" style="Icons64x64_1" substyle="ShowRight2"/>';
 		$buttons .= '</frame>';
@@ -2240,10 +2235,10 @@ EOL;
 		$buttons = '<frame posn="52.05 -53.3 0.04">';
 
 		// Reload button
-		$buttons .= '<quad posn="16.65 -1 0.14" sizen="3 3" action="'. $this->config['manialink_id'] .'03" style="Icons64x64_1" substyle="Refresh"/>';
+		$buttons .= '<quad posn="16.65 -1 0.14" sizen="3 3" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'03" style="Icons64x64_1" substyle="Refresh"/>';
 
 		// Previous button
-		$buttons .= '<quad posn="19.95 -1 0.12" sizen="3 3" action="'. $this->config['manialink_id'] .'02" style="Icons64x64_1" substyle="Maximize"/>';
+		$buttons .= '<quad posn="19.95 -1 0.12" sizen="3 3" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'02" style="Icons64x64_1" substyle="Maximize"/>';
 		$buttons .= '<quad posn="20.35 -1.4 0.13" sizen="2.1 2.1" bgcolor="000F"/>';
 		$buttons .= '<quad posn="20.15 -1.2 0.14" sizen="2.5 2.5" style="Icons64x64_1" substyle="ShowLeft2"/>';
 
@@ -2432,7 +2427,7 @@ EOL;
 		if ($preset['fantastic']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame posn="1.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="'. $this->config['manialink_id'] . $preset['fantastic']['action'] .'" bgcolor="'. $preset['fantastic']['bgcolor'] .'"/>';
+			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] . $preset['fantastic']['action'] .'" bgcolor="'. $preset['fantastic']['bgcolor'] .'"/>';
 			$marker .= '</frame>';
 		}
 
@@ -2440,7 +2435,7 @@ EOL;
 		if ($preset['beautiful']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame posn="3.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="'. $this->config['manialink_id'] . $preset['beautiful']['action'] .'" bgcolor="'. $preset['beautiful']['bgcolor'] .'"/>';
+			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] . $preset['beautiful']['action'] .'" bgcolor="'. $preset['beautiful']['bgcolor'] .'"/>';
 			$marker .= '</frame>';
 		}
 
@@ -2448,7 +2443,7 @@ EOL;
 		if ($preset['good']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame posn="5.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="'. $this->config['manialink_id'] . $preset['good']['action'] .'" bgcolor="'. $preset['good']['bgcolor'] .'"/>';
+			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] . $preset['good']['action'] .'" bgcolor="'. $preset['good']['bgcolor'] .'"/>';
 			$marker .= '</frame>';
 		}
 
@@ -2456,7 +2451,7 @@ EOL;
 		if ($preset['bad']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame posn="7.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="'. $this->config['manialink_id'] . $preset['bad']['action'] .'" bgcolor="'. $preset['bad']['bgcolor'] .'"/>';
+			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] . $preset['bad']['action'] .'" bgcolor="'. $preset['bad']['bgcolor'] .'"/>';
 			$marker .= '</frame>';
 		}
 
@@ -2464,7 +2459,7 @@ EOL;
 		if ($preset['poor']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame posn="9.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="'. $this->config['manialink_id'] . $preset['poor']['action'] .'" bgcolor="'. $preset['poor']['bgcolor'] .'"/>';
+			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] . $preset['poor']['action'] .'" bgcolor="'. $preset['poor']['bgcolor'] .'"/>';
 			$marker .= '</frame>';
 		}
 
@@ -2472,7 +2467,7 @@ EOL;
 		if ($preset['waste']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame posn="11.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="'. $this->config['manialink_id'] . $preset['waste']['action'] .'" bgcolor="'. $preset['waste']['bgcolor'] .'"/>';
+			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action='. $this->config['manialink_id'] . $preset['waste']['action'] .'" bgcolor="'. $preset['waste']['bgcolor'] .'"/>';
 			$marker .= '</frame>';
 		}
 
@@ -3113,43 +3108,43 @@ EOL;
 		$content .= '<label posn="16.5 -2.5 1" sizen="18 0.2" textsize="1" scale="0.8" halign="right" text="$555powered by mania-karma.com"/>';
 
 		$content .= '<frame posn="19.2 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'12" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'12" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0.02" sizen="7.5 2.8" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_fantastic']) .'"/>';
 		$content .= '<label posn="4 -1.8 0.02" sizen="10 2.8" halign="center" textsize="1" text="$390+++"/>';
 		$content .= '</frame>';
 
 		$content .= '<frame posn="27.9 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'11" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'11" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_beautiful']) .'"/>';
 		$content .= '<label posn="4 -1.8 0" sizen="10 2.8" halign="center" textsize="1" text="$390++"/>';
 		$content .= '</frame>';
 
 		$content .= '<frame posn="36.6 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'10" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'10" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_good']) .'"/>';
 		$content .= '<label posn="4 -1.8 0" sizen="10 2.8" halign="center" textsize="1" text="$390+"/>';
 		$content .= '</frame>';
 
 		$content .= '<frame posn="45.3 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'13" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'13" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$888'. strtoupper($this->config['messages']['karma_undecided']) .'"/>';
 		$content .= '<label posn="4 -2 0" sizen="10 2.8" halign="center" textsize="1" scale="0.7" text="$888???"/>';
 		$content .= '</frame>';
 
 		$content .= '<frame posn="54 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'14" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'14" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_bad']) .'"/>';
 		$content .= '<label posn="4 -1.7 0" sizen="14 2.8" halign="center" textsize="1" text="$D02-"/>';
 		$content .= '</frame>';
 
 		$content .= '<frame posn="62.7 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'15" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'15" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_poor']) .'"/>';
 		$content .= '<label posn="4 -1.7 0" sizen="14 2.8" halign="center" textsize="1" text="$D02--"/>';
 		$content .= '</frame>';
 
 		$content .= '<frame posn="71.4 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="'. $this->config['manialink_id'] .'16" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
+		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'16" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
 		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_waste']) .'"/>';
 		$content .= '<label posn="4 -1.7 0" sizen="14 2.8" halign="center" textsize="1" text="$D02---"/>';
 		$content .= '</frame>';
@@ -3288,7 +3283,7 @@ EOL;
 		global $aseco;
 
 		$buttons = '';
-		$xml .= str_replace(
+		$xml = str_replace(
 			array(
 				'%window_title%',
 				'%prev_next_buttons%'
@@ -3300,7 +3295,7 @@ EOL;
 			$this->config['Templates']['WINDOW']['HEADER']
 		);
 
-		$xml = '<frame posn="3 -6 0">';
+		$xml .= '<frame posn="3 -6 0">';
 		$xml .= '<quad posn="54 4 0.05" sizen="23 23" image="'. $this->config['images']['maniakarma_logo'] .'" url="http://www.mania-karma.com"/>';
 		$xml .= '<label posn="0 0 0.05" sizen="57 0" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
 		$xml .= '</frame>';
@@ -4389,7 +4384,7 @@ EOL;
 		$header .= '<label posn="2.33 -2.4 0.03" sizen="6 0" halign="center" valign="center" textsize="3" textcolor="000F" text="$O-"/>';
 		$header .= '</frame>';
 
-		$header .= '<label posn="6.8 -55.8 0.04" sizen="14 2" halign="center" valign="center" textsize="1" scale="0.7" action="'. $this->config['manialink_id'] .'01" focusareacolor1="0000" focusareacolor2="FFF5" textcolor="000F" text="MANIAKARMA/'. $this->getVersion() .'"/>';
+		$header .= '<label posn="6.8 -55.8 0.04" sizen="14 2" halign="center" valign="center" textsize="1" scale="0.7" action="PluginManiaKarma?Action='. $this->config['manialink_id'] .'01" focusareacolor1="0000" focusareacolor2="FFF5" textcolor="000F" text="MANIAKARMA/'. $this->getVersion() .'"/>';
 		$header .= '%prev_next_buttons%';
 
 $maniascript = <<<EOL
@@ -4404,18 +4399,23 @@ $maniascript = <<<EOL
  */
 Void WipeOut (Text ChildId) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real EndPosnX = 0.0;
-	declare Real EndPosnY = 0.0;
-	declare Real PosnDistanceX = (EndPosnX - Container.PosnX);
-	declare Real PosnDistanceY = (EndPosnY - Container.PosnY);
+	if (Container != Null) {
+		declare Real EndPosnX = 0.0;
+		declare Real EndPosnY = 0.0;
+		declare Real PosnDistanceX = (EndPosnX - Container.PosnX);
+		declare Real PosnDistanceY = (EndPosnY - Container.PosnY);
 
-	while (Container.RelativeScale > 0.0) {
-		Container.PosnX += (PosnDistanceX / 20);
-		Container.PosnY += (PosnDistanceY / 20);
-		Container.RelativeScale -= 0.05;
-		yield;
+		while (Container.RelativeScale > 0.0) {
+			Container.PosnX += (PosnDistanceX / 20);
+			Container.PosnY += (PosnDistanceY / 20);
+			Container.RelativeScale -= 0.05;
+			yield;
+		}
+		Container.Unload();
+
+//		// Disable catching ESC key
+//		EnableMenuNavigationInputs = False;
 	}
-	Container.Unload();
 }
 Void Minimize (Text ChildId) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
@@ -4453,6 +4453,9 @@ main () {
 	declare Real MouseDistanceX = 0.0;
 	declare Real MouseDistanceY = 0.0;
 
+//	// Enable catching ESC key
+//	EnableMenuNavigationInputs = True;
+
 	while (True) {
 		if (MoveWindow == True) {
 			Container.PosnX = (MouseDistanceX + MouseX);
@@ -4485,6 +4488,11 @@ main () {
 						IsMinimized = False;
 					}
 				}
+//				case CMlEvent::Type::KeyPress : {
+//					if (Event.KeyName == "Escape") {
+//						WipeOut("ManiaKarmaWindow");
+//					}
+//				}
 			}
 		}
 		yield;

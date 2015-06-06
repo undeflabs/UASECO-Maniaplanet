@@ -144,7 +144,7 @@ class PluginLazyButtons extends Plugin {
 		$col = 0;
 		$command_count = 0;
 		foreach ($this->config['COMMANDS'][0]['ENTRY'] as $item) {
-			$xml .= '<quad posn="'. ($col + $offset) .' -0.5 0.2" sizen="4.3 2.5" action="'. $this->config['ManialinkId'] . sprintf('%02d', $command_count) .'" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'" ScriptEvents="1"/>';
+			$xml .= '<quad posn="'. ($col + $offset) .' -0.5 0.2" sizen="4.3 2.5" action="PluginLazyButtons?Action='. $this->config['ManialinkId'] . sprintf('%02d', $command_count) .'" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'" ScriptEvents="1"/>';
 			$xml .= '<label posn="'. (($col + $offset) + 2.15) .' -1.75 0.3" sizen="5.45 3.1" halign="center" valign="center" scale="0.7" autonewline="1" textcolor="'. $item['TEXT_COLOR'][0] .'" text="'. $this->handleSpecialChars($item['TITLE'][0]) .'"/>';
 			$col += 4.3;
 
@@ -244,21 +244,15 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $answer = [0]=PlayerUid, [1]=Login, [2]=Answer
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		// If id = 0, bail out immediately
-		if ($answer[2] == 0) {
-			return;
-		}
-
-		if ( ($answer[2] >= (int)$this->config['ManialinkId'] .'00') && ($answer[2] <= (int)$this->config['ManialinkId'] .'19') ) {
+		if ( ($answer['Action'] >= (int)$this->config['ManialinkId'] .'00') && ($answer['Action'] <= (int)$this->config['ManialinkId'] .'19') ) {
 
 			// Get the Player object
-			$player = $aseco->server->players->player_list[$answer[1]];
+			$player = $aseco->server->players->player_list[$login];
 
 			// Get the wished MessageId
-			$msgid = intval( str_replace($this->config['ManialinkId'], '', abs($answer[2])) );
+			$msgid = intval( str_replace($this->config['ManialinkId'], '', abs($answer['Action'])) );
 
 			if ( isset($this->config['COMMANDS'][0]['ENTRY'][$msgid]['MESSAGE'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$msgid]['MESSAGE'][0] != '') {
 				$aseco->sendChatMessage('$FF0[$Z'. $player->nickname .'$Z$S$FF0] $I'. $this->config['COMMANDS'][0]['ENTRY'][$msgid]['MESSAGE'][0], false);

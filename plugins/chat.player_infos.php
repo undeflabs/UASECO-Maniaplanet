@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-05-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -73,14 +73,13 @@ class PluginPlayerInfos extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// leave actions outside 2001 - 2200 to other handlers
-		$action = (int)$answer[2];
+		$action = (int)$answer['Action'];
 		if ($action >= 2001 && $action <= 2200) {
 			// get player
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$target = $player->playerlist[$action-2001]['login'];
 
 				// close main window because /stats can take a while

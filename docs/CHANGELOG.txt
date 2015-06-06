@@ -21,10 +21,10 @@ Version 1.0.0
    ~~~~~~~
    - Admins are now able to setup the PHP "memory_limit" within the UASECO.xml, default is set to 256 MB
    - Included support for Modescript Gamemodes from the Maniaplanet 3 update, e.g. "TimeAttack.Script.txt", "Rounds.Script.txt"...
-   - Added many new callback events like "onPlayerStartCountdown", "onPlayerStartLine", "onPlayerFinishLine", "onPlayerRespawn", "onBeginPodium"..., see documentation for details
+   - Added many new callback events like "onPlayerStartCountdown", "onPlayerStartLine", "onPlayerFinishLine", "onPlayerRespawn", "onBeginPodium"... (see documentation for details)
    - Included Database support into controller and changed all MySQL statements from "MySQL Extension" to "MySQL Improved Extension"
    - The database default storing engine has been changed from MyISAM to InnoDB with foreign key constraints
-   - The database tablenames can now have a prefix, to have the possibility to use only one database for multiple UASECO installations
+   - The database tablenames now have a prefix, to have the possibility to use only one database for multiple UASECO installations
    - Took some classes/ideas from MPAseco/0.83 and Aseco/2.2.0c
    - Splitted types.inc.php into single file classes
    - Extended class Player
@@ -42,13 +42,14 @@ Version 1.0.0
    - Added class Ranking
    - Added class RankingList
    - Added class Window
-   - Added new RoundsPointSystem "High Score", based upon 'MotoGP' * 10
+   - Added new RoundsPointSystem "High Score", based upon "MotoGP" * 10
    - Rewritten all Plugins into a own class and documented all dependencies
    - Merged several Plugins into one Plugin
    - Renamed several Plugins
    - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
    - Added new GbxRemote from 2015-01-24 from https://github.com/NewboO/dedicated-server-api/
-   - Distinguish local records between Gamemodes
+   - Distinguish local records between Gamemodes, local records made in 'TimeAttack' are not available when the dedicated is now running in 'Rounds'
+   - Event "onPlayerManialinkPageAnswer": Handling of Manialink actions and identificators has been changed, see for details: http://www.uaseco.org/Development/Manialinks.php#Identifications
 
 
    Bugfix (in XAseco2)

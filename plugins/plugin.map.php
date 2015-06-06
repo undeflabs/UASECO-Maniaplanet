@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-02
+ * Date:	2015-05-28
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -60,6 +60,7 @@ class PluginMap extends Plugin {
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onLoadingMap',	'onLoadingMap');
+		$this->registerEvent('onRestartMap',	'onRestartMap');
 		$this->registerEvent('onEndMap',	'onEndMap');
 
 		$this->registerChatCommand('map',	'chat_map',		'Shows info about the current map',		Player::PLAYERS);
@@ -268,10 +269,10 @@ class PluginMap extends Plugin {
 
 	public function onLoadingMap ($aseco, $map) {
 
-		// remember time this map starts playing
+		// Remember time this map starts playing
 		$aseco->server->maps->current->starttime = time();
 
-		// check for divider message
+		// Check for divider message
 		if ($aseco->settings['show_curmap'] > 0) {
 			$name = $aseco->stripColors($map->name);
 			if (isset($map->mx->error) && $map->mx->error == '') {
@@ -293,6 +294,18 @@ class PluginMap extends Plugin {
 				$aseco->sendChatMessage($message);
 			}
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onRestartMap ($aseco, $uid) {
+
+		// Remember time this map starts playing
+		$aseco->server->maps->current->starttime = time();
 	}
 
 	/*

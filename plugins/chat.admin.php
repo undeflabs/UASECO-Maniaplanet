@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-03
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1605,7 +1605,7 @@ class PluginChatAdmin extends Plugin {
 
 				// add clickable button
 				if ($aseco->settings['clickable_lists'] && $pid <= 200) {
-					$ply = array($ply, $pid+4600);  // action id
+					$ply = array($ply, 'PluginChatAdmin?Action='. ($pid+4600));  // action id
 				}
 
 				$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.', $ply);
@@ -1672,7 +1672,7 @@ class PluginChatAdmin extends Plugin {
 					$ply = '{#black}'. $ip;
 					// add clickable button
 					if ($aseco->settings['clickable_lists'] && $pid <= 200) {
-						$ply = array($ply, -7900-$pid);  // action id
+						$ply = array($ply, 'PluginChatAdmin?Action='. (-7900-$pid));  // action id
 					}
 
 					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.', $ply);
@@ -1736,7 +1736,7 @@ class PluginChatAdmin extends Plugin {
 				       .'$z / {#login}'. $player[0];
 				// add clickable button
 				if ($aseco->settings['clickable_lists'] && $pid <= 200) {
-					$ply = array($ply, $pid+4800);  // action id
+					$ply = array($ply, 'PluginChatAdmin?Action='. ($pid+4800));  // action id
 				}
 
 				$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.', $ply);
@@ -1799,7 +1799,7 @@ class PluginChatAdmin extends Plugin {
 				       .'$z / {#login}'. $player[0];
 				// add clickable button
 				if ($aseco->settings['clickable_lists'] && $pid <= 200) {
-					$ply = array($ply, $pid+5000);  // action id
+					$ply = array($ply, 'PluginChatAdmin?Action='. ($pid+5000));  // action id
 				}
 
 				$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.', $ply);
@@ -2378,7 +2378,7 @@ class PluginChatAdmin extends Plugin {
 				       .'$z / {#login}'. $player[0];
 				// add clickable button
 				if ($aseco->settings['clickable_lists'] && $pid <= 200) {
-					$ply = array($ply, $pid+4400);  // action id
+					$ply = array($ply, 'PluginChatAdmin?Action='. ($pid+4400));  // action id
 				}
 
 				$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.', $ply);
@@ -4699,9 +4699,7 @@ class PluginChatAdmin extends Plugin {
 					$admin->playerlist[] = $plarr;
 
 					// format nickname & login
-					$ply = '{#black}'. str_ireplace('$w', '', $pl['nick']) .'$z / '
-					       . ($aseco->isAnyAdminL($pl['login']) ? '{#logina}' : '{#login}' )
-					       . $pl['login'];
+					$ply = '{#black}'. str_ireplace('$w', '', $pl['nick']) .'$z / '. ($aseco->isAnyAdminL($pl['login']) ? '{#logina}' : '{#login}' ) . $pl['login'];
 
 					// define colored column strings
 					$wrn = '$ff3Warn';
@@ -4720,58 +4718,58 @@ class PluginChatAdmin extends Plugin {
 
 					// always add clickable buttons
 					if ($pid <= 200) {
-						$ply = array($ply, $pid + 2000);
+						$ply = array($ply, 'PluginPlayerInfos?Action='. ($pid+2000));
 						if (array_key_exists($lg, $onlinelist)) {
 							// determine online operations
-							$wrn = array($wrn,   $pid+2200);
+							$wrn = array($wrn, 'PluginChatAdmin?Action='. ($pid+2200));
 							if (array_key_exists($lg, $ignores)) {
-								$ign = array($uig, $pid+2600);
+								$ign = array($uig, 'PluginChatAdmin?Action='. ($pid+2600));
 							}
 							else {
-								$ign = array($ign, $pid+2400);
+								$ign = array($ign, 'PluginChatAdmin?Action='. ($pid+2400));
 							}
-							$kck = array($kck,   $pid+2800);
+							$kck = array($kck, 'PluginChatAdmin?Action='. ($pid+2800));
 							if (array_key_exists($lg, $bans)) {
-								$ban = array($ubn, $pid+3200);
+								$ban = array($ubn, 'PluginChatAdmin?Action='. ($pid+3200));
 							}
 							else {
-								$ban = array($ban, $pid+3000);
+								$ban = array($ban, 'PluginChatAdmin?Action='. ($pid+3000));
 							}
 							if (array_key_exists($lg, $blacks)) {
-								$blk = array($ubk, $pid+3600);
+								$blk = array($ubk, 'PluginChatAdmin?Action='. ($pid+3600));
 							}
 							else {
-								$blk = array($blk, $pid+3400);
+								$blk = array($blk, 'PluginChatAdmin?Action='. ($pid+3400));
 							}
 							if (array_key_exists($lg, $guests)) {
-								$gst = array($ugt, $pid+4000);
+								$gst = array($ugt, 'PluginChatAdmin?Action='. ($pid+4000));
 							}
 							else {
-								$gst = array($gst, $pid+3800);
+								$gst = array($gst, 'PluginChatAdmin?Action='. ($pid+3800));
 							}
 							if (!$onlinelist[$lg]['spec']) {
-								$spc = array($frc, $pid+4200);
+								$spc = array($frc, 'PluginChatAdmin?Action='. ($pid+4200));
 							}
 						}
 						else {
 							// determine offline operations
 							if (array_key_exists($lg, $ignores)) {
-								$ign = array($uig, $pid+2600);
+								$ign = array($uig, 'PluginChatAdmin?Action='. ($pid+2600));
 							}
 							if (array_key_exists($lg, $bans)) {
-								$ban = array($ubn, $pid+3200);
+								$ban = array($ubn, 'PluginChatAdmin?Action='. ($pid+3200));
 							}
 							if (array_key_exists($lg, $blacks)) {
-								$blk = array($ubk, $pid+3600);
+								$blk = array($ubk, 'PluginChatAdmin?Action='. ($pid+3600));
 							}
 							else {
-								$blk = array($blk, $pid+3400);
+								$blk = array($blk, 'PluginChatAdmin?Action='. ($pid+3400));
 							}
 							if (array_key_exists($lg, $guests)) {
-								$gst = array($ugt, $pid+4000);
+								$gst = array($ugt, 'PluginChatAdmin?Action='. ($pid+4000));
 							}
 							else {
-								$gst = array($gst, $pid+3800);
+								$gst = array($gst, 'PluginChatAdmin?Action='. ($pid+3800));
 							}
 							$spc = $off;
 						}
@@ -4800,8 +4798,18 @@ class PluginChatAdmin extends Plugin {
 						}
 					}
 
-					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.', $ply,
-					               $wrn, $ign, $kck, $ban, $blk, $gst, $spc);
+					$msg[] = array(
+						str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
+						$ply,
+						$wrn,
+						$ign,
+						$kck,
+						$ban,
+						$blk,
+						$gst,
+						$spc,
+					);
+
 					$pid++;
 					if (++$lines > 14) {
 						$admin->msgs[] = $msg;
@@ -4815,6 +4823,7 @@ class PluginChatAdmin extends Plugin {
 				if (count($msg) > 1) {
 					$admin->msgs[] = $msg;
 				}
+
 
 				// display ManiaLink message
 				if (count($admin->msgs) > 1) {
@@ -5115,17 +5124,16 @@ class PluginChatAdmin extends Plugin {
 	*/
 
 	// Handles ManiaLink admin responses
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// leave actions outside 2201 - 5200 to other handlers
-		$action = (int) $answer[2];
-		if ($action < 2201 && $action > 5200 &&
-		    $action < -8100 && $action > -7901)
+		$action = (int) $answer['Action'];
+		if ($action < 2201 && $action > 5200 && $action < -8100 && $action > -7901) {
 			return;
+		}
 
 		// get player & possible parameter
-		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+		if (!$player = $aseco->server->players->getPlayer($login)) {
 			return;
 		}
 

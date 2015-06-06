@@ -1,4 +1,9 @@
 /**
+ *	2015-05-30 changed by undef.de:
+ *	- Separated change log block from original script documentation block
+ *	- Changed the "Label_MultiRank" and added Continent
+ *	- Moved "Label_MultiRank" a little bit more to left
+ *
  *	2015-05-01 changed by undef.de:
  *	- Changed PlayerDarkening from opacity 4 to 8 (id "Quad_PlayerDarkening")
  *
@@ -12,9 +17,12 @@
  *	- Hidding the "C_Status_Spawned", "C_Status_NotSpawned", and "C_Status_Disconnected" from being displayed and moved this into the Rank box
  *      - The Rank now has different opacities for connected (= 1.0) and disconnected (= 0.4) Players (id "Label_LocalRank")
  *	- The Icons for id "Button_Spec" and id "Button_Profile" for each Player has been changed to more visible ones on night maps
- *	- Replaced Continent with the Nation from the Player to the Zone-/Ladder-String (id "Label_MultiRank")
+ *	- Replaced Continent with the Country from the Player to the Zone-/Ladder-String (id "Label_MultiRank")
  *	- Added CountryFlag before the Zone-/Ladder-String (id "Quad_MultiFlag")
- *
+ */
+
+
+/**
  *	ScoresTable library
  *
  *	The library has a list of default columns ready to use,
@@ -37,7 +45,7 @@
  *	- LibST_SMWithLegends, add a space for columns legends in the header
  */
 
-#Const Version		"2015-04-05"
+#Const Version		"2015-05-30"
 #Const ScriptName	"ScoresTable.Script.txt"
 
 #Include "TextLib" as TL
@@ -2090,7 +2098,7 @@ Void Build(Text _Game, Boolean _Restore) {
 		ML_PlayerCard[Side] ^= """
 			<frame posn="0 {{{-PlayerCardTopSizeY-(PlayerCardBotSizeY/2.)}}}" id="Frame_PlayerCardBot">
 				<quad posn="-8.9 6.0 1" sizen="{{{PlayerCardBotSizeY+1.5}}} {{{PlayerCardBotSizeY+1.5}}}" scale="0.9" halign="{{{Private_GetRevert("left", Side)}}}" valign="center" style="Icons64x64_2" substyle="DisconnectedLight" id="Quad_Status" />
-				<label posn="{{{(PlayerCardBotSizeY+4.5)*Revert}}} 0" sizen="{{{MultiRankSizeX/G_LibST_TextScale}}} {{{PlayerCardBotSizeY}}}" scale="{{{G_LibST_TextScale}}}" halign="{{{Private_GetRevert("left", Side)}}}" valign="center2" style="TextCardSmallScores2Rank" text="Other: -" id="Label_MultiRank" />
+				<label posn="{{{(PlayerCardBotSizeY+3.5)*Revert}}} 0" sizen="{{{MultiRankSizeX/G_LibST_TextScale}}} {{{PlayerCardBotSizeY}}}" scale="{{{G_LibST_TextScale}}}" halign="{{{Private_GetRevert("left", Side)}}}" valign="center2" style="TextCardSmallScores2Rank" text="Other / Other: Not ranked" id="Label_MultiRank" />
 				<quad posn="{{{(PlayerCardBotSizeY-3)*Revert}}} 1.5" sizen="3 3" image="" id="Quad_MultiFlag" />
 				<frame id="Frame_LPGain">
 					<label posn="{{{(PlayerCardBotSizeX-(LPSize.X*1.5)-1.)*Revert}}} 0" sizen="{{{(LadderPointsSizeX-(LPSize.X*1.5))/G_LibST_TextScale}}} {{{PlayerCardBotSizeY}}}" scale="{{{G_LibST_TextScale}}}" halign="{{{Private_GetRevert("right", Side)}}}"  valign="center2" style="TextCardSmallScores2Rank" textcolor="bb8" text="+0.0" id="Label_LPGain" />
@@ -2707,11 +2715,13 @@ Void UpdateSlot(Integer _Slot, CScore _Score) {
 	}
 
 	if (Label_MultiRank != Null) {
-		declare Zone = _("Other");
-		declare ZoneArray = TL::Split("|", _Score.User.ZonePath);
-		if (ZoneArray.existskey(2)) Zone = ZoneArray[2];
-		if (_Score.User.LadderRank > 0) Label_MultiRank.Value = TL::Compose("%1: %2", Zone, TL::FormatInteger(_Score.User.LadderRank, 3));
-		else Label_MultiRank.Value = TL::Compose("%1: %2", Zone, _("Not ranked"));
+		declare Country = _("Other");
+		declare Continent = _("Other");
+		declare Zone = TL::Split("|", _Score.User.ZonePath);
+		if (Zone.existskey(1)) Continent = Zone[1];
+		if (Zone.existskey(2)) Country = Zone[2];
+		if (_Score.User.LadderRank > 0) Label_MultiRank.Value = TL::Compose("%1 / %2: %3", Country, Continent, TL::ToText(_Score.User.LadderRank));
+		else Label_MultiRank.Value = TL::Compose("%1 / %2: %3", Country, Continent, _("Not ranked"));
 		Quad_MultiFlag.ImageUrl = _Score.User.CountryFlagUrl;
 	}
 

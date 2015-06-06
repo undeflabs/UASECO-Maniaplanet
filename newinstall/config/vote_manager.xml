@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<vote_manager>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
 	<!-- THIS IS THE CONFIG FILE FOR THE TM2-PORT ONLY -->
 
 	<widget>
@@ -32,6 +32,11 @@
 		<login></login>
 	</ignore_list>
 
+	<!-- Here you can setup as many <login>s ONLY they are allowed to vote -->
+	<allow_list>
+		<login></login>
+	</allow_list>
+
 	<!-- Setup the formatting of numbers (e.g. Amount of Planets, Won...), pick one of the following:
 		'english'	= 1,234.56
 		'german'	= 1.234,56
@@ -55,40 +60,59 @@
 			With this you can setup the CallVotes without need to restart the Dedicated-Server.
 			Please note:
 			  - Some of this changes need a Map change to get recognized by the Dedicated-Server
-			  - "RestartMap" and "NextMap" are always disabled by this Plugin
+			  - "RestartMap", "NextMap" and "AutoTeamBalance" are always disabled by this Plugin
+
+			CallVote Ratio Commands from Ingame Menu -> https://forum.maniaplanet.com/viewtopic.php?p=167020#p167020
+			~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			 - autoteambalance
+			 - ban
+			 - jumptomapindex
+			 - kick
+			 - nextmap
+			 - restartmap
+			 - setmodescriptsettingsandcommands
+			 - setnextmapindex
 		//-->
 		<disable_callvotes>true</disable_callvotes>	<!-- Set to 'true' to disable all votes like "Ban", "Kick", "RestartMap", "NextMap", otherwise set to 'false' -->
 		<ratio>
 			<!-- [0..1], or -1 to disable, e.g. "0.6" or "-1" -->
-			<default>0.5</default>
-			<kick>-1</kick>
+			<default>0.6</default>
 			<ban>-1</ban>
+			<jumptomapindex>-1</jumptomapindex>
+			<kick>-1</kick>
+			<setmodescriptsettingsandcommands>-1</setmodescriptsettingsandcommands>
+			<setnextmapindex>-1</setnextmapindex>
 		</ratio>
 	</dedicated_server>
 
 	<messages>
 		<!-- Info messages -->
-        	<callvote_disabled>{#server}>$FA0 {#highlite}CallVotes$0AF disabled - see {#highlite}/helpvote$0AF for info on chat-based voting</callvote_disabled>
-		<vote_already_running>{#server}>$FA0 There is {#highlite}already$FA0 a vote! Try it again {#highlite}later$FA0!</vote_already_running>
-		<vote_none_running>{#server}>$FA0 There is {#highlite}not$FA0 a vote! See {#highlite}/helpvote$FA0 for info on chat-based voting</vote_none_running>
-		<vote_limit_reached>{#server}>$FA0 {#highlite}{1}$FA0 vote can only be done {#highlite}{2}$FA0 time{3} per Map!</vote_limit_reached>
-		<vote_too_late>{#server}>$FA0 It is {#highlite}too late$FA0 for a vote - start your vote {#highlite}next time earlier$FA0!</vote_too_late>
-		<vote_no_own_vote>{#server}>$FA0 It is {#highlite}not possible$FA0 to change {#highlite}your own$FA0 vote!</vote_no_own_vote>
-		<vote_ignored>{#server}>$FA0 You are at the {#highlite}ignore list$FA0, your vote attempt {#highlite}are ignored$FA0!</vote_ignored>
+        	<callvote_disabled>{#server}»$FA0 {#highlite}CallVotes$0AF disabled - see {#highlite}/helpvote$0AF for info on chat-based voting</callvote_disabled>
+		<vote_already_running>{#server}»$FA0 There is {#highlite}already$FA0 a vote! Try it again {#highlite}later$FA0!</vote_already_running>
+		<vote_none_running>{#server}»$FA0 There is {#highlite}not$FA0 a vote! See {#highlite}/helpvote$FA0 for info on chat-based voting</vote_none_running>
+		<vote_limit_reached>{#server}»$FA0 {#highlite}{1}$FA0 vote can only be done {#highlite}{2}$FA0 time{3} per Map!</vote_limit_reached>
+		<vote_too_late>{#server}»$FA0 It is {#highlite}too late$FA0 for a vote - start your vote {#highlite}next time earlier$FA0!</vote_too_late>
+		<vote_no_own_vote>{#server}»$FA0 It is {#highlite}not possible$FA0 to change {#highlite}your own$FA0 vote!</vote_no_own_vote>
+		<vote_ignored>{#server}»$FA0 You are {#highlite}not allowed$FA0 to vote, your vote attempt {#highlite}is ignored$FA0!</vote_ignored>
 
 		<!-- Result messages -->
-		<vote_restart_success>{#server}>>$FA0 Vote completed {#highlite}successfully$FA0! Map will be {#highlite}restarted$FA0 at the end of this Race!</vote_restart_success>
-		<vote_restart_failed>{#server}>>$FA0 Vote to {#highlite}restart$FA0 Map {#highlite}did not pass$FA0!</vote_restart_failed>
-		<vote_restart_done>{#server}>>$FA0 Players decided to play the Map again, {#highlite}Have Fun$FA0!</vote_restart_done>
-		<vote_restart_cancel>{#server}>>$FA0 This Map will already be {#highlite}restarted$FA0!</vote_restart_cancel>
-		<vote_restart_limited>{#server}>>$FA0 This Map can not be {#highlite}restarted$FA0 more than {#highlite}{1} time{2}$FA0, no more restarts allowed!</vote_restart_limited>
-		<vote_skip_success>{#server}>>$FA0 Vote completed {#highlite}successfully$FA0! Map {#highlite}skipped$FA0!</vote_skip_success>
-		<vote_skip_failed>{#server}>>$FA0 Vote to {#highlite}skip$FA0 Map {#highlite}did not pass$FA0!</vote_skip_failed>
-            	<vote_skip_cancel>{#server}>>$FA0 This Map {#highlite}can not$FA0 be skipped because Players decided to {#highlite}play it again$FA0!</vote_skip_cancel>
+		<vote_restart_success>{#server}»$FA0 Vote completed {#highlite}successfully$FA0! Map will be {#highlite}restarted$FA0 at the end of this Race!</vote_restart_success>
+		<vote_restart_failed>{#server}»$FA0 Vote to {#highlite}restart$FA0 Map {#highlite}did not pass$FA0!</vote_restart_failed>
+		<vote_restart_done>{#server}»$FA0 Players decided to play the Map again, {#highlite}Have Fun$FA0!</vote_restart_done>
+		<vote_restart_cancel>{#server}»$FA0 This Map will already be {#highlite}restarted$FA0!</vote_restart_cancel>
+		<vote_restart_limited>{#server}»$FA0 This Map can not be {#highlite}restarted$FA0 more than {#highlite}{1} time{2}$FA0, no more restarts allowed!</vote_restart_limited>
+
+		<vote_skip_success>{#server}»$FA0 Vote completed {#highlite}successfully$FA0! Map {#highlite}skipped$FA0!</vote_skip_success>
+		<vote_skip_failed>{#server}»$FA0 Vote to {#highlite}skip$FA0 Map {#highlite}did not pass$FA0!</vote_skip_failed>
+            	<vote_skip_cancel>{#server}»$FA0 This Map {#highlite}can not$FA0 be skipped because Players decided to {#highlite}play it again$FA0!</vote_skip_cancel>
+
+		<vote_balance_success>{#server}»$FA0 Vote completed {#highlite}successfully$FA0! Team will be {#highlite}balanced$FA0 now!</vote_balance_success>
+		<vote_balance_failed>{#server}»$FA0 Vote to {#highlite}balance$FA0 the Teams {#highlite}did not pass$FA0!</vote_balance_failed>
 
 		<!-- Questions -->
 		<question_restart>$S would like to $F93RESTART$FFF this Map, you too?</question_restart>
 		<question_skip>$S would like to $F93SKIP$FFF this Map, you too?</question_skip>
+		<question_balance>$S would like to $F93BALANCE$FFF the Teams, you too?</question_balance>
 
 		<!-- Widget related -->
 		<time_remaining>Time remaining: {1} seconds</time_remaining>
@@ -100,4 +124,4 @@
 		<thumb_up>http://static.undef.name/ingame/vote-manager/thumb-up.png</thumb_up>
 		<thumb_down>http://static.undef.name/ingame/vote-manager/thumb-down.png</thumb_down>
 	</images>
-</vote_manager>
+</settings>

@@ -1,4 +1,4 @@
-<manialink id="3-2-1-GO" name="3-2-1-GO" version="1">
+<manialink id="EffectStudio3-2-1-GO" name="EffectStudio3-2-1-GO" version="1">
 <frame posn="0 17 20" id="AnimationFrame">
 <quad posn="0 0 0.04" sizen="20 20" halign="center" valign="center" style="Icons64x64_1" substyle="Third" id="Quad3" hidden="true" opacity="0.0"/>
 <quad posn="0 0 0.03" sizen="20 20" halign="center" valign="center" style="Icons64x64_1" substyle="Second" id="Quad2" hidden="true" opacity="0.0"/>
@@ -11,7 +11,7 @@
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2015-03-24
+ * Version:	2015-05-25
  * ----------------------------------
  */
 Void Animate321GO () {

@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-11-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-05-10
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ class PluginMessageLog extends Plugin {
 
 		$xml  = '<manialink id="MessageLogButton">';
 		$xml .= '<frame posn="-64.1 -36.6 0">';
-		$xml .= '<quad posn="0 0 0" sizen="2.6 2.6" style="UIConstructionSimple_Buttons" substyle="Text" action="MessageLogShow"/>';
+		$xml .= '<quad posn="0 0 0" sizen="2.6 2.6" style="UIConstructionSimple_Buttons" substyle="Text" action="PluginMessageLog?Action=MessageLogShow"/>';
 		$xml .= '</frame>';
 		$xml .= '</manialink>';
 
@@ -93,12 +93,11 @@ class PluginMessageLog extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ($answer[2] == 'MessageLogShow') {
+		if ($answer['Action'] == 'MessageLogShow') {
 			// Get player
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				// Call /msglog
 				$aseco->releaseChatCommand('/msglog', $player->login);
 			}

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-10
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -95,9 +95,9 @@ class PluginMusicServer extends Plugin {
 	public function onSync ($aseco) {
 
 		// read & parse config file
-		$aseco->console('[MusicServer] Load music server config [config/musicserver.xml]');
-		if (!$settings = $aseco->parser->xmlToArray('config/musicserver.xml', true, true)) {
-			trigger_error('[MusicServer] Could not read/parse Music server config file [config/musicserver.xml]!', E_USER_ERROR);
+		$aseco->console('[MusicServer] Load music server config [config/music_server.xml]');
+		if (!$settings = $aseco->parser->xmlToArray('config/music_server.xml', true, true)) {
+			trigger_error('[MusicServer] Could not read/parse Music server config file [config/music_server.xml]!', E_USER_ERROR);
 		}
 		$settings = $settings['SETTINGS'];
 
@@ -157,14 +157,13 @@ class PluginMusicServer extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// Leave actions outside -4000 - -2101 to other handlers
-		$action = (int) $answer[2];
+		$action = (int) $answer['Action'];
 		if ($action >= -4000 && $action <= -2101) {
 			// Get Player
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				// Jukebox selected song
 				$aseco->releaseChatCommand('/music '. (abs($action) - 2100), $player->login);
 			}
@@ -354,7 +353,7 @@ class PluginMusicServer extends Plugin {
 			                'Shows the current song');
 		if ($aseco->allowAbility($player, 'chat_musicadmin')) {
 			$help[] = array('...', '{#black}reload',
-			                'Reloads musicserver.xml config file');
+			                'Reloads music_server.xml config file');
 			$help[] = array('...', '{#black}next',
 			                'Skips to next song (upon next map)');
 			$help[] = array('...', '{#black}sort',
@@ -478,7 +477,7 @@ class PluginMusicServer extends Plugin {
 					$page[] = array(str_pad($sid, 2, '0', STR_PAD_LEFT) . '.',
 						// add clickable button
 						(($aseco->settings['clickable_lists'] && $sid <= 1900) ?
-						array('{#black}' . $song, -2100-$sid) :  // action id
+						array('{#black}' . $song, 'PluginMusicServer?Action='. (-2100-$sid)) :  // action id
 						'{#black}' . $song)
 					);
 					if ($this->cachetags) {
@@ -551,8 +550,8 @@ class PluginMusicServer extends Plugin {
 			// check for admin ability
 			if ($aseco->allowAbility($player, 'chat_musicadmin')) {
 				// read & parse config file
-				if (!$settings = $aseco->parser->xmlToArray('config/musicserver.xml', true, true)) {
-					trigger_error('[MusicServer] Could not read/parse Music server config file config/musicserver.xml !', E_USER_WARNING);
+				if (!$settings = $aseco->parser->xmlToArray('config/music_server.xml', true, true)) {
+					trigger_error('[MusicServer] Could not read/parse Music server config file config/music_server.xml !', E_USER_WARNING);
 					$message = '{#server}» {#error}Could not read/parse Music server config file!';
 					$aseco->sendChatMessage($message, $player->login);
 					return;
@@ -563,7 +562,7 @@ class PluginMusicServer extends Plugin {
 				}
 
 				// log console message
-				$aseco->console('[MusicServer] {1} [{2}] reloaded config {3} !', $logtitle, $player->login, 'musicserver.xml');
+				$aseco->console('[MusicServer] {1} [{2}] reloaded config {3} !', $logtitle, $player->login, 'music_server.xml');
 
 				// show chat message
 				$message = $aseco->formatText($this->messages['RELOADED'][0],

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-05-03
+ * Date:	2015-06-01
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -497,9 +497,9 @@ EOL;
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'" name="'. $this->config['manialinkid'] .'" version="1">';
 		if ($show == true) {
 
-//			$xml .= '<frame posn="-115 -20 20.01">';
-//			$xml .= '<label posn="0 0 0.05" sizen="60 4" textsize="1" text="" id="LabelSpeedStatistic"/>';
-//			$xml .= '<quad posn="0 25 0.01" sizen="230 75" bgcolor="AAA6"/>';
+//			$xml .= '<frame posn="-115 -15 20.01">';
+//			$xml .= '<label posn="0 -40.3 0.05" sizen="60 4" textsize="1" scale="0.8" text="" id="LabelSpeedStatistic"/>';
+////			$xml .= '<quad posn="0 25 0.01" sizen="230 75" bgcolor="AAA6"/>';
 //			$xml .= '<quad posn="0 -39.2 0.02" sizen="230 0.2" bgcolor="0005"/>';
 //			$xml .= '<graph posn="0 25 2.0" sizen="690 225" scale="'. (1.0 / 3) .'" id="GraphStatistic"/>';
 //			$xml .= '</frame>';

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -402,7 +402,7 @@ class PluginRasp extends Plugin {
 					}
 					$wins[] = array(
 						$i .'.',
-						$aseco->formatNumber($row->Wins),
+						$aseco->formatNumber($row->Wins, 0),
 						$nickname,
 					);
 					$i++;
@@ -1043,7 +1043,7 @@ class PluginRasp extends Plugin {
 					$mapname = '{#black}'. $mapname;
 					// add clickable button
 					if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-						$mapname = array($mapname, $tid+100);  // action id
+						$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 					}
 				}
 
@@ -1052,7 +1052,7 @@ class PluginRasp extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-					$mapauthor = array($mapauthor, -100-$tid);  // action id
+					$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 				}
 
 				// Format env name
@@ -1060,7 +1060,7 @@ class PluginRasp extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists']) {
-					$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+					$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 				}
 
 				// Get corresponding record

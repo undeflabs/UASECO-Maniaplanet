@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-05-30
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -58,7 +58,7 @@ class PluginLocalRecords extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Saves record into a local database.');
 
-		$this->registerEvent('onStartup',		'onStartup');
+		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
 		$this->registerEvent('onEndMapRanking',		'onEndMapRanking');
@@ -74,7 +74,7 @@ class PluginLocalRecords extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onStartup ($aseco) {
+	public function onSync ($aseco) {
 
 		$aseco->console('[LocalRecords] Load config file [config/local_records.xml]');
 		if (!$settings = $aseco->parser->xmlToArray('config/local_records.xml', true, true)) {
@@ -120,6 +120,11 @@ class PluginLocalRecords extends Plugin {
 	*/
 
 	public function onPlayerConnect ($aseco, $player) {
+
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			return;
+		}
 
 		// Show top-8 & records of all online players before map
 		if (($this->settings['show_recs_before'] & 2) == 2) {
@@ -183,6 +188,12 @@ class PluginLocalRecords extends Plugin {
 	*/
 
 	public function onLoadingMap ($aseco, $map) {
+
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			$aseco->console('[LocalRecords] Unsupported gamemode, records ignored!');
+			return;
+		}
 
 		// Reset record list
 		$this->records->clear();
@@ -305,6 +316,11 @@ class PluginLocalRecords extends Plugin {
 
 	public function onBeginMap ($aseco, $map) {
 
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			return;
+		}
+
 		// Show top-8 & records of all online players before map
 		if (($this->settings['show_recs_before'] & 2) == 2) {
 			$this->show_maprecs($aseco, false, 1, $this->settings['show_recs_before']);
@@ -318,6 +334,11 @@ class PluginLocalRecords extends Plugin {
 	*/
 
 	public function onEndMapRanking ($aseco, $map) {
+
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			return;
+		}
 
 		// Show top-8 & all new records after map
 		if (($this->settings['show_recs_after'] & 2) == 2) {
@@ -381,6 +402,11 @@ class PluginLocalRecords extends Plugin {
 	*/
 
 	public function onPlayerFinish ($aseco, $finish_item) {
+
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			return;
+		}
 
 		// If no actual finish, bail out immediately
 		if ($finish_item->score == 0) {
@@ -463,7 +489,7 @@ class PluginLocalRecords extends Plugin {
 							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 							$finish_time,
 							$cur_rank + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : sprintf('-%d.%03d', $sec, $ths))
+							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
 						);
 
 						// show chat message to all or player
@@ -502,7 +528,7 @@ class PluginLocalRecords extends Plugin {
 								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : sprintf('-%d.%03d', $sec, $ths))
+								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
 							);
 						}
 
@@ -586,6 +612,11 @@ class PluginLocalRecords extends Plugin {
 	*/
 
 	public function onPlayerWins ($aseco, $player) {
+
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+			return;
+		}
 
 		$query = "
 		UPDATE `%prefix%players` SET

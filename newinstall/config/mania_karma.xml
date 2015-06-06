@@ -266,10 +266,10 @@
 
 	<messages>
 		<!-- Misc. messages -->
-		<welcome>{#server}*** This Server uses the ManiaKarma world Map vote system at {#highlite}$l[{1}]{2}$l{br}{#server}*** Type {#highlite}/karma help{#server} for more info.</welcome>
-		<uptodate_ok>{#emotic}*** This ManiaKarma plugin version {#highlite}{1}{#emotic} is up to date.</uptodate_ok>
-		<uptodate_new>{#emotic}*** New ManiaKarma plugin version {#highlite}{1}{#emotic} available from {#highlite}{2}</uptodate_new>
-		<uptodate_failed>{#error}*** Could not check plugin version, connection failed.</uptodate_failed>
+		<welcome>{#server}» This Server uses the ManiaKarma world Map vote system at {#highlite}$l[{1}]{2}$l{br}{#server}» Type {#highlite}/karma help{#server} for more info.</welcome>
+		<uptodate_ok>{#emotic}» This ManiaKarma plugin version {#highlite}{1}{#emotic} is up to date.</uptodate_ok>
+		<uptodate_new>{#emotic}» New ManiaKarma plugin version {#highlite}{1}{#emotic} available from {#highlite}{2}</uptodate_new>
+		<uptodate_failed>{#error}» Could not check plugin version, connection failed.</uptodate_failed>
 
 		<!-- Vote messages -->
 		<karma_message>{#server}» {#karma}Karma of {#highlite}{1}{#karma} is {#highlite}{2}</karma_message>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
 
 	<!-- Styling for the complete Bar -->
@@ -52,7 +52,7 @@
 		<icon>http://static.undef.name/ingame/info-bar/icon-player-ranking.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
-		<action>showLiveRankingsWindow</action>
+		<action>PluginRecordsEyepiece?Action=showLiveRankingsWindow</action>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -122,7 +122,7 @@
 		<icon>http://static.undef.name/ingame/info-bar/icon-local-record.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
-		<action>showLocalRecordsWindow</action>
+		<action>PluginRecordsEyepiece?Action=showLocalRecordsWindow</action>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -138,7 +138,7 @@
 		<icon>http://static.undef.name/ingame/info-bar/icon-dedimania-record.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
-		<action>showDedimaniaRecordsWindow</action>
+		<action>PluginRecordsEyepiece?Action=showDedimaniaRecordsWindow</action>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -154,7 +154,7 @@
 		<icon>http://static.undef.name/ingame/info-bar/icon-maniaexchange.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
-		<action>showManiaExchangeMapInfoWindow</action>
+		<action>PluginRecordsEyepiece?Action=showManiaExchangeMapInfoWindow</action>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>

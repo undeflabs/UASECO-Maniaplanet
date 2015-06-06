@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -137,27 +137,26 @@ class PluginRaspJukebox extends Plugin {
 	*/
 
 	// Handles ManiaLink jukebox responses
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// leave actions outside 101 - 2000, -2000 - -101, -2100 - -2001,
 		// -6001 - -7900 & 5201 - 7200 to other handlers
-		$action = (int)$answer[2];
+		$action = (int)$answer['Action'];
 		if ($action >= 101 && $action <= 2000) {
 
 			// jukebox selected map
-			$aseco->releaseChatCommand('/jukebox '. ($action - 100), $answer[1]);
+			$aseco->releaseChatCommand('/jukebox '. ($action - 100), $login);
 
 		}
 		else if ($action >= -7900 && $action <= -6001) {
 
 			// karma selected map
-			$aseco->releaseChatCommand('/karma '. (abs($action) - 6000), $answer[1]);
+			$aseco->releaseChatCommand('/karma '. (abs($action) - 6000), $login);
 
 		}
 		else if ($action >= -2000 && $action <= -101) {
 			// get player
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$author = $player->maplist[abs($action) - 101]['author'];
 
 				// close main window because /list can take a while
@@ -169,7 +168,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= -2100 && $action <= -2001) {
 			// get player
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$login = $player->login;
 
 				// determine admin ability to drop all jukeboxed maps
@@ -206,7 +205,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 5201 && $action <= 5700) {
 			// get player & map ID
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$mxid = $player->maplist[$action - 5201]['id'];
 
 				// /mxinfo selected map
@@ -215,7 +214,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 5701 && $action <= 6200) {
 			// get player & map ID
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$mxid = $player->maplist[$action - 5701]['id'];
 
 				// /add selected map
@@ -224,7 +223,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 6201 && $action <= 6700) {
 			// get player & map ID
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$mxid = $player->maplist[$action - 6201]['id'];
 
 				// /admin add selected map
@@ -233,7 +232,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 6701 && $action <= 7200) {
 			// get player & map author
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$author = $player->maplist[$action - 6701]['author'];
 				// insure multi-word author is single parameter
 				$author = str_replace(' ', '%20', $author);
@@ -865,7 +864,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// add clickable button if admin with 'dropjukebox' ability or map by this player
 						if ($aseco->settings['clickable_lists'] && $tid <= 100 && ($dropall || $item['Login'] == $login)) {
-							$mapname = array('{#black}'. $mapname, -2000-$tid);  // action id
+							$mapname = array('{#black}'. $mapname, 'PluginRaspJukebox?Action='. (-2000-$tid));  // action id
 						}
 						else {
 							$mapname = '{#black}'. $mapname;
@@ -1751,9 +1750,9 @@ class PluginRaspJukebox extends Plugin {
 
 			// add clickable buttons
 			if ($aseco->settings['clickable_lists'] && $tid <= 500) {
-				$mxid = array($mxid, $tid + 5200);  // action ids
-				$name = array($name, $tid + 5700);
-				$author = array($author, $tid + 6700);
+				$mxid = array($mxid, 'PluginRaspJukebox?Action='. ($tid + 5200));  // action ids
+				$name = array($name, 'PluginRaspJukebox?Action='. ($tid + 5700));
+				$author = array($author, 'PluginRaspJukebox?Action='. ($tid + 6700));
 
 				// store map in player object for action buttons
 				$trkarr = array();
@@ -1768,7 +1767,7 @@ class PluginRaspJukebox extends Plugin {
 						str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
 						$mxid,
 						$name,
-						array('Add', $tid + 6200),
+						array('Add', 'PluginRaspJukebox?Action='. ($tid + 6200)),
 						$author,
 						$row->envir
 					);
@@ -1966,14 +1965,14 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, $envids[$mapenv]);
+							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));
 						}
 
 						// Add clickable buttons
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapname = array($mapname, $tid+100);  // action ids
-							$mapauthor = array($mapauthor, -100-$tid);
-							$mapkarma = array($mapkarma, -6000-$tid);
+							$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action ids
+							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));
+							$mapkarma = array($mapkarma, 'PluginRaspJukebox?Action='. (-6000-$tid));
 						}
 
 						$msg[] = array(str_pad($tid, 3, '0', STR_PAD_LEFT) .'.', $mapkarma, $mapname, $mapauthor);
@@ -2081,7 +2080,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapname = '{#black}'. $mapname;
 							// add clickable button
 							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, $tid+100);  // action id
+								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 							}
 						}
 
@@ -2090,7 +2089,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, -100-$tid);  // action id
+							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 						}
 
 						// Format env name
@@ -2098,7 +2097,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 						}
 
 						$msg[] = array(
@@ -2255,7 +2254,7 @@ class PluginRaspJukebox extends Plugin {
 					$mapname = '{#black}'. $mapname;
 					// add clickable button
 					if ($aseco->settings['clickable_lists'] && $tid <= 1900)
-						$mapname = array($mapname, $tid+100);  // action id
+						$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 				}
 
 				// Format author name
@@ -2263,7 +2262,7 @@ class PluginRaspJukebox extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-					$mapauthor = array($mapauthor, -100-$tid);  // action id
+					$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 				}
 
 				// Format env name
@@ -2271,7 +2270,7 @@ class PluginRaspJukebox extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists']) {
-					$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+					$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 				}
 
 				$msg[] = array(
@@ -2378,7 +2377,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapname = '{#black}'. $mapname;
 							// Add clickable button
 							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, $tid+100);  // action id
+								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 							}
 						}
 
@@ -2387,7 +2386,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, -100-$tid);  // action id
+							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 						}
 
 						// Format env name
@@ -2395,7 +2394,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 						}
 
 						// Compute difference to Gold time
@@ -2498,7 +2497,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapname = '{#black}'. $mapname;
 							// add clickable button
 							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, $tid+100);  // action id
+								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 							}
 						}
 
@@ -2507,7 +2506,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, -100-$tid);  // action id
+							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 						}
 
 						// Format env name
@@ -2515,7 +2514,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 						}
 
 						// Compute difference to Gold score
@@ -2630,7 +2629,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapname = '{#black}'. $mapname;
 							// add clickable button
 							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, $tid+100);  // action id
+								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 							}
 						}
 
@@ -2639,7 +2638,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, -100-$tid);  // action id
+							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 						}
 
 						// Format env name
@@ -2647,7 +2646,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 						}
 
 						// Compute difference to Author time
@@ -2747,7 +2746,7 @@ class PluginRaspJukebox extends Plugin {
 							$mapname = '{#black}'. $mapname;
 							// add clickable button
 							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, $tid+100);  // action id
+								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 							}
 						}
 
@@ -2756,7 +2755,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, -100-$tid);  // action id
+							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 						}
 
 						// Format env name
@@ -2764,7 +2763,7 @@ class PluginRaspJukebox extends Plugin {
 
 						// Add clickable button
 						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 						}
 
 						// Compute difference to Author score
@@ -2880,7 +2879,7 @@ class PluginRaspJukebox extends Plugin {
 					$mapname = '{#black}'. $mapname;
 					// add clickable button
 					if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-						$mapname = array($mapname, $tid+100);  // action id
+						$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 					}
 				}
 
@@ -2889,7 +2888,7 @@ class PluginRaspJukebox extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-					$mapauthor = array($mapauthor, -100-$tid);  // action id
+					$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 				}
 
 				// Format env name
@@ -2897,7 +2896,7 @@ class PluginRaspJukebox extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists']) {
-					$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+					$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 				}
 
 				// Get corresponding record
@@ -2995,7 +2994,7 @@ class PluginRaspJukebox extends Plugin {
 				$mapname = '{#black}'. $mapname;
 				// Add clickable button
 				if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-					$mapname = array($mapname, $tid+100);  // action id
+					$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 				}
 			}
 			// Format author name
@@ -3003,7 +3002,7 @@ class PluginRaspJukebox extends Plugin {
 
 			// Add clickable button
 			if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-				$mapauthor = array($mapauthor, -100-$tid);  // action id
+				$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 			}
 
 			// Format env name
@@ -3011,7 +3010,7 @@ class PluginRaspJukebox extends Plugin {
 
 			// add clickable button
 			if ($aseco->settings['clickable_lists']) {
-				$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+				$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 
 				$msg[] = array(
 					str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
@@ -3103,7 +3102,7 @@ class PluginRaspJukebox extends Plugin {
 					$mapname = '{#black}'. $mapname;
 					// add clickable button
 					if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-						$mapname = array($mapname, $tid+100);  // action id
+						$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 					}
 				}
 
@@ -3112,7 +3111,7 @@ class PluginRaspJukebox extends Plugin {
 
 				// Add clickable button
 				if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-					$mapauthor = array($mapauthor, -100-$tid);  // action id
+					$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 				}
 
 				// Format env name
@@ -3120,7 +3119,7 @@ class PluginRaspJukebox extends Plugin {
 
 				// add clickable button
 				if ($aseco->settings['clickable_lists']) {
-					$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+					$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 				}
 
 				$msg[] =  array(
@@ -3224,7 +3223,7 @@ class PluginRaspJukebox extends Plugin {
 				$mapname = '{#black}'. $mapname;
 				// add clickable button
 				if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-					$mapname = array($mapname, $tid+100);  // action id
+					$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 				}
 			}
 
@@ -3233,7 +3232,7 @@ class PluginRaspJukebox extends Plugin {
 
 			// Add clickable button
 			if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-				$mapauthor = array($mapauthor, -100-$tid);  // action id
+				$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
 			}
 
 			// Format env name
@@ -3241,7 +3240,7 @@ class PluginRaspJukebox extends Plugin {
 
 			// add clickable button
 			if ($aseco->settings['clickable_lists']) {
-				$mapenv = array($mapenv, $envids[$mapenv]);  // action id
+				$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
 			}
 
 			// Get corresponding record

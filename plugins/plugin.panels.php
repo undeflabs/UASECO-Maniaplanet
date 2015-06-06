@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -358,13 +358,12 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		$action = (int) $answer[2];
+		$action = (int) $answer['Action'];
 		if ($action >= -48 && $action <= -7) {
 			// get player & admin panel
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$panel = $player->maplist[abs($action)-7]['panel'];
 
 				// select new panel
@@ -373,7 +372,7 @@ class PluginPanels extends Plugin {
 		}
 		else if ($action >= 7231 && $action <= 7262) {
 			// get player & panel background
-			if ($player = $aseco->server->players->getPlayer($answer[1])) {
+			if ($player = $aseco->server->players->getPlayer($login)) {
 				$panel = $player->maplist[abs($action)-7231]['panel'];
 
 				// select new background

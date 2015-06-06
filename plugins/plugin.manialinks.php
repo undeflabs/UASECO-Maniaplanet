@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-06
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -122,7 +122,7 @@ class PluginManialinks extends Plugin {
 		$this->setDescription('Provides simple ManiaLink windows, also handles special panels and custom UI changes.');
 
 		// Register functions for events
-		$this->registerEvent('onPlayerManialinkPageAnswer',	'event_manialink');
+		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onEndMap',			'allwindows_off');
 	}
 
@@ -256,7 +256,7 @@ class PluginManialinks extends Plugin {
 
 		// add button (action "0" = close) & footer
 		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -' . (0.03+$hsize+$lines*$bsize) .
-		        ' -0.2" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="0"/>' . LF;
+		        ' -0.2" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="PluginManialinks?Action=0"/>' . LF;
 		$xml .= '</frame></manialink>';
 		$xml = str_replace('{#black}', $style['WINDOW'][0]['BLACKCOLOR'][0], $xml);
 
@@ -291,7 +291,7 @@ class PluginManialinks extends Plugin {
 		global $aseco;
 
 		// fake current page event
-		$this->event_manialink($aseco, array(0, $player->login, 1));
+		$this->onPlayerManialinkPageAnswer($aseco, $player->login, array('Action' => 1));
 	}
 
 	/*
@@ -303,22 +303,20 @@ class PluginManialinks extends Plugin {
 	// called @ onPlayerManialinkPageAnswer
 	// Handles all ManiaLink main system responses,
 	// as well as multi-page ManiaLink windows
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function event_manialink ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
 
 		// leave actions outside -6 - 36 to other handlers
-		$action = (int)$answer[2];
-		if ($action < -6 || $action > 36) {
+		if ($params['Action'] < -6 || $params['Action'] > 36) {
 			return;
 		}
 
 		// Get Player
-		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+		if (!$player = $aseco->server->players->getPlayer($login)) {
 			return;
 		}
 
 		// check player answer
-		switch ($action) {
+		switch ($params['Action']) {
 			case  0:
 				// close main pop-up window
 				$this->mainwindow_off($aseco, $player->login);
@@ -418,7 +416,7 @@ class PluginManialinks extends Plugin {
 		// Handle multi-page ManiaLink windows in all styles
 		// update page pointer
 		$tot = count($player->msgs) - 1;
-		switch ($action) {
+		switch ($params['Action']) {
 			case -4:  $player->msgs[0][0] = 1; break;
 			case -3:  $player->msgs[0][0] -= 5; break;
 			case -2:  $player->msgs[0][0] -= 1; break;
@@ -533,9 +531,9 @@ class PluginManialinks extends Plugin {
 		$add5 = ($tot > 5);
 		// check for preceding page(s), then First & Prev(5) button(s)
 		if ($ptr > 1) {
-			$first = '"ArrowFirst" action="-4"';
-			$prev5 = '"ArrowFastPrev" action="-3"';
-			$prev1 = '"ArrowPrev" action="-2"';
+			$first = '"ArrowFirst" action="PluginManialinks?Action=-4"';
+			$prev5 = '"ArrowFastPrev" action="PluginManialinks?Action=-3"';
+			$prev1 = '"ArrowPrev" action="PluginManialinks?Action=-2"';
 			$icstl = 'Icons64x64_1';
 			$icsiz = '0.07';
 			$icoff = 0.035;
@@ -558,12 +556,12 @@ class PluginManialinks extends Plugin {
 		        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $prev1 . '/>' . LF;
 		// always a Close button
 		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -' . (0.03+$hsize+$lines*$bsize) .
-		        ' -0.2" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="0"/>' . LF;
+		        ' -0.2" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="PluginManialinks?Action=0"/>' . LF;
 		// check for succeeding page(s), then Next(5) & Last button(s)
 		if ($ptr < $tot) {
-			$next1 = '"ArrowNext" action="2"';
-			$next5 = '"ArrowFastNext" action="3"';
-			$last  = '"ArrowLast" action="4"';
+			$next1 = '"ArrowNext" action="PluginManialinks?Action=2"';
+			$next5 = '"ArrowFastNext" action="PluginManialinks?Action=3"';
+			$last  = '"ArrowLast" action="PluginManialinks?Action=4"';
 			$icstl = 'Icons64x64_1';
 			$icsiz = '0.07';
 			$icoff = 0.035;

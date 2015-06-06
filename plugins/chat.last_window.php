@@ -71,15 +71,15 @@ class PluginLastWindow extends Plugin {
 		}
 
 		// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-		$answer = array(
+		$param = array(
 			$player->pid,
 			$login,
-			'ClassWindowRefreshPage',
+			'WindowList?Action=ClassWindowRefreshPage',
 			false,
 		);
 
 		// Simulate a Player click event
-		$aseco->releaseEvent('onPlayerManialinkPageAnswer', $answer);
+		$aseco->releaseEvent('onPlayerManialinkPageAnswer', $param);
 	}
 }
 

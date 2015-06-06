@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-05-25
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -41,10 +41,7 @@
 
 
 	// Define process settings
-	if (function_exists('date_default_timezone_get') && function_exists('date_default_timezone_set')) {
-		date_default_timezone_set(@date_default_timezone_get());
-	}
-
+	date_default_timezone_set(@date_default_timezone_get());
 	setlocale(LC_NUMERIC, 'C');
 	mb_internal_encoding('UTF-8');
 
@@ -223,7 +220,7 @@ class Converter {
 
 				// Setup the stored settings for each plugin
 				$settings = array(
-					'PluginCheckpoint' => array(
+					'PluginCheckpoints' => array(
 						'LocalCheckpointTracking'	=> $row['Cps'],
 						'DedimaniaCheckpointTracking'	=> $row['DediCps'],
 					),

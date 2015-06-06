@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-06
+ * Date:	2015-05-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -258,8 +258,8 @@ class PluginDonate extends Plugin {
 		$xml .= '<label pos="-0.04 -0.04 -0.2" textsize="2" text="$i$159Initiating payment from server $fff'. $aseco->server->name .'$z $fff:"/>';
 		$xml .= '<label pos="-0.04 -0.08 -0.2" textsize="2" text="$i$159Label: '. $aseco->formatColors($label) .'"/>';
 		$xml .= '<label pos="-0.04 -0.12 -0.2" textsize="2" text="$159Would you like to pay now?"/>';
-		$xml .= '<label pos="-0.22 -0.19 -0.2" halign="center" style="CardButtonMedium" text="Yes" action="Donate?Action=Payout&Answer=Confirm"/>';
-		$xml .= '<label pos="-0.58 -0.19 -0.2" halign="center" style="CardButtonMedium" text="No" action="Donate?Action=Payout&Answer=Cancel"/>';
+		$xml .= '<label pos="-0.22 -0.19 -0.2" halign="center" style="CardButtonMedium" text="Yes" action="PluginDonate?Action=Payout&Answer=Confirm"/>';
+		$xml .= '<label pos="-0.58 -0.19 -0.2" halign="center" style="CardButtonMedium" text="No" action="PluginDonate?Action=Payout&Answer=Cancel"/>';
 		$xml .= '</frame>';
 		$xml .= '</manialink>';
 
@@ -297,27 +297,21 @@ class PluginDonate extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=PlayerUid, [1]=Login, [2]=Answer, [3]=Entries
-	public function onPlayerManialinkPageAnswer ($aseco, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// Get Player
-		if (!$player = $aseco->server->players->getPlayer($answer[1])) {
+		if (!$player = $aseco->server->players->getPlayer($login)) {
 			return;
 		}
 
-		// Donate?Action=Payout&Answer=[Confirm|Cancel]
-		if (substr($answer[2], 0, 6) == 'Donate') {
-			// Parse get parameter
-			parse_str(str_replace('Donate?', '', $answer[2]), $param);
-
-			if ($param['Action'] == 'Payout' && $param['Answer'] == 'Confirm') {
-				$aseco->console('[Donate] Player [{1}] confirmed command "/admin pay"', $player->login);
-				$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, true);
-			}
-			else if ($param['Action'] == 'Payout' && $param['Answer'] == 'Cancel') {
-				$aseco->console('[Donate] Player [{1}] cancelled command "/admin pay"', $player->login);
-				$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, false);
-			}
+		// PluginDonate?Action=Payout&Answer=[Confirm|Cancel]
+		if ($param['Action'] == 'Payout' && $param['Answer'] == 'Confirm') {
+			$aseco->console('[Donate] Player [{1}] confirmed command "/admin pay"', $player->login);
+			$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, true);
+		}
+		else if ($param['Action'] == 'Payout' && $param['Answer'] == 'Cancel') {
+			$aseco->console('[Donate] Player [{1}] cancelled command "/admin pay"', $player->login);
+			$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, false);
 		}
 	}
 

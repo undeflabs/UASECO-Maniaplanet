@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-02
+ * Date:	2015-05-30
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -296,7 +296,7 @@ class PluginDedimania extends Plugin {
 		$this->setDescription('Handles interaction with the Dedimania world database and shows new/online Dedimania world records and their relations on the current track.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginCheckpoint',	Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginCheckpoints',	Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onEverySecond',		'onEverySecond');
@@ -1803,7 +1803,7 @@ class PluginDedimania extends Plugin {
 				'NbLaps'	=> $map->nblaps
 			);
 
-			$callback = array(array($this, 'dedimaniaBeginMapCallbackHandler'), $map);
+			$callback = array(array($this, 'dedimaniaLoadingMapCallbackHandler'), $map);
 			$this->db['XmlrpcDB']->addRequest(
 				$callback,
 				'dedimania.GetChallengeRecords',
@@ -1844,7 +1844,7 @@ class PluginDedimania extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function dedimaniaBeginMapCallbackHandler ($response, $map) {
+	public function dedimaniaLoadingMapCallbackHandler ($response, $map) {
 		global $aseco;
 
 		// Reply a struct {'UId': string, 'ServerMaxRank': int, 'AllowedGameModes': string(-list),
@@ -1860,13 +1860,13 @@ class PluginDedimania extends Plugin {
 		}
 
 		if ($this->debug > 3) {
-			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - response'. CRLF . print_r($response, true));
+			$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - response'. CRLF . print_r($response, true));
 		}
 		else if ($this->debug > 2) {
-			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - response[Data]'. CRLF . print_r($response['Data'], true));
+			$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - response[Data]'. CRLF . print_r($response['Data'], true));
 		}
 		else if (($errors = $this->is_error($response)) !== false) {
-			$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - error(s): '. $errors);
+			$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - error(s): '. $errors);
 		}
 
 		// check response
@@ -1878,7 +1878,7 @@ class PluginDedimania extends Plugin {
 			}
 
 			if ($this->debug > 1) {
-				$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - records'. CRLF . print_r($this->db['Map']['Records'], true));
+				$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - records'. CRLF . print_r($this->db['Map']['Records'], true));
 			}
 
 			// check for records
@@ -1920,7 +1920,7 @@ class PluginDedimania extends Plugin {
 					}
 				}
 				if ($this->debug > 4) {
-					$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - checkpoints'. CRLF . print_r($aseco->checkpoints, true));
+					$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - checkpoints'. CRLF . print_r($aseco->checkpoints, true));
 				}
 			}
 
@@ -1941,7 +1941,7 @@ class PluginDedimania extends Plugin {
 		}
 		else {
 			if ($this->debug > 2) {
-				$aseco->console('[Dedimania] dedimaniaBeginMapCallbackHandler() - bad response or map invalid!');
+				$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - bad response or map invalid!');
 			}
 		}
 	}
@@ -2287,7 +2287,7 @@ class PluginDedimania extends Plugin {
 							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 							$finish_time,
 							$cur_rank + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : sprintf('-%d.%03d', $sec, $ths))
+							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
 						);
 
 						// show chat message to all or player
@@ -2324,7 +2324,7 @@ class PluginDedimania extends Plugin {
 								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : sprintf('-%d.%03d', $sec, $ths))
+								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
 							);
 						}
 

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-20
+ * Date:	2015-05-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -121,7 +121,7 @@ class Gameinfo {
 				break;
 
 			default:
-				$aseco->console('[Gameinfo] Unsupported Modescript "'. $this->script['Name'] .'" loaded, please report this at '. UASECO_WEBSITE);
+				trigger_error('[Gameinfo] Unsupported Modescript "'. $this->script['Name'] .'" loaded, please report this at '. UASECO_WEBSITE, E_USER_ERROR);
 				break;
 		}
 

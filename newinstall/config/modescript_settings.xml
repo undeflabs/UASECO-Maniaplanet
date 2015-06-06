@@ -184,7 +184,7 @@
 			<use_alternate_rules>false</use_alternate_rules>
 
 			<!-- Force number of laps, '-1' to disable -->
-			<force_number_laps>-1</force_number_laps>
+			<force_laps_number>-1</force_laps_number>
 
 			<!-- Set to 'true' to display time difference at each checkpoint, otherwise 'false' -->
 			<display_time_diff>false</display_time_diff>
@@ -215,7 +215,7 @@
 			<use_alternate_rules>false</use_alternate_rules>
 
 			<!-- Force number of laps, '-1' to disable -->
-			<force_number_laps>-1</force_number_laps>
+			<force_laps_number>-1</force_laps_number>
 
 			<!-- Set to 'true' to display time difference at each checkpoint, otherwise 'false' -->
 			<display_time_diff>false</display_time_diff>
@@ -245,7 +245,7 @@
 			<finish_timeout>10</finish_timeout>
 
 			<!-- Force number of laps, '-1' to disable -->
-			<force_number_laps>5</force_number_laps>
+			<force_laps_number>5</force_laps_number>
 		</laps>
 
 
@@ -267,7 +267,7 @@
 			<use_alternate_rules>false</use_alternate_rules>
 
 			<!-- Force number of laps, '-1' to disable -->
-			<force_number_laps>-1</force_number_laps>
+			<force_laps_number>-1</force_laps_number>
 
 			<!-- Set to 'true' to display time difference at each checkpoint, otherwise 'false' -->
 			<display_time_diff>false</display_time_diff>
@@ -454,9 +454,9 @@
 		<entry>Libs/Nadeo/TrackMania/XmlRpc.Script.txt|2015-03-23</entry>
 		<entry>Libs/Nadeo/MatchmakingLobby.Script.txt|2015-03-03</entry>
 		<entry>Libs/Nadeo/MatchmakingMatch.Script.txt|2015-02-24</entry>
-		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-04-05</entry>
+		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-05-30</entry>
 		<entry>Libs/Nadeo/XmlRpcCommon.Script.txt|2015-02-23</entry>
-		<entry>Modes/TrackMania/Chase.Script.txt|2015-03-05</entry>
+		<entry>Modes/TrackMania/Chase.Script.txt|2015-05-30</entry>
 		<entry>Modes/TrackMania/Cup.Script.txt|2015-02-06</entry>
 		<entry>Modes/TrackMania/Laps.Script.txt|2014-10-07</entry>
 		<entry>Modes/TrackMania/ModeBase.Script.txt|2015-02-26</entry>

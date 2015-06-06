@@ -1,8 +1,19 @@
+onPlayerManialinkPageAnswer
+Data:		xxx
+Example:	xxx
+Note:		xxx
+
+
+onScoresReady
+Data:		Nothing
+Example:	[]
+Note:		This callback is sent at the end of the gaming sequence, when the scores are accurate and ready to be used for statistical purpose for example.
+
+
 onModeScriptPauseChanged
 Data:		An boolean value with one value saying if the mode is in pause or not
 Example:	true
 Note:		This callback is sent after using the LibXmlRpc_GetPause method or when the pause status changes.
-Version:	available since XmlRpcCommon.Script.txt_v2015-02-23
 
 
 onPlayerDisconnectPrepare
