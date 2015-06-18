@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-24
+ * Date:	2015-06-16
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,6 +28,7 @@
  *
  * Dependencies:
  *  - includes/core/window.class.php
+ *  - plugins/plugin.modescript_handler.php
  *
  */
 
@@ -41,7 +42,8 @@
 */
 
 class PluginRoundPoints extends Plugin {
-	public $rounds_points = array();
+	public $rounds_points	= array();
+	public $config		= array();
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -55,95 +57,12 @@ class PluginRoundPoints extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
+		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0',	null);
+
 		$this->registerEvent('onSync',			'onSync');
 
 		$this->registerChatCommand('setrpoints',	'chat_setrpoints',	'Sets custom Rounds points (see: /setrpoints help)',	Player::ADMINS);
 		$this->registerChatCommand('rpoints',		'chat_rpoints',		'Shows current Rounds points system.',			Player::PLAYERS);
-
-
-		// Define common points systems, any players finishing beyond the last points entry get
-		// the same number of points (typically 1) as that last entry
-
-		// http://www.formula1.com/inside_f1/rules_and_regulations/sporting_regulations/6833/
-		$this->rounds_points['f1old'] = array(
-			'Formula 1 GP Old',
-			array(10,8,6,5,4,3,2,1)
-		);
-
-
-		// http://www.formula1.com/inside_f1/rules_and_regulations/sporting_regulations/8681/
-		$this->rounds_points['f1new'] = array(
-			'Formula 1 GP New',
-			array(25,18,15,12,10,8,6,4,2,1)
-		);
-
-
-		// http://www.motogp.com/en/about+MotoGP/key+rules
-		$this->rounds_points['motogp'] = array(
-			'MotoGP',
-			array(25,20,16,13,11,10,9,8,7,6,5,4,3,2,1)
-		);
-
-
-		// MotoGP + 5 points
-		$this->rounds_points['motogp5'] = array(
-			'MotoGP + 5',
-			array(30,25,21,18,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1)
-		);
-
-
-		// http://www.et-leagues.com/fet1/rules.php
-		$this->rounds_points['fet1'] = array(
-			'Formula ET Season 1',
-			array(12,10,9,8,7,6,5,4,4,3,3,3,2,2,2,1)
-		);
-
-
-		// http://www.et-leagues.com/fet2/rules.php (fixed: #17-19 = 2, not #17-21)
-		$this->rounds_points['fet2'] = array(
-			'Formula ET Season 2',
-			array(15,12,11,10,9,8,7,6,6,5,5,4,4,3,3,3,2,2,2,1)
-		);
-
-
-		// http://www.et-leagues.com/fet3/rules.php
-		$this->rounds_points['fet3'] = array(
-			'Formula ET Season 3',
-			array(15,12,11,10,9,8,7,6,6,5,5,4,4,3,3,3,2,2,2,2,1)
-		);
-
-
-		// http://www.champcarworldseries.com/News/Article.asp?ID=7499
-		$this->rounds_points['champcar'] = array(
-			'Champ Car World Series',
-			array(31,27,25,23,21,19,17,15,13,11,10,9,8,7,6,5,4,3,2,1)
-		);
-
-
-		// http://www.eurosuperstars.com/eng/regolamenti.asp
-		$this->rounds_points['superstars'] = array(
-			'Superstars',
-			array(20,15,12,10,8,6,4,3,2,1)
-		);
-
-
-		$this->rounds_points['simple5'] = array(
-			'Simple 5',
-			array(5,4,3,2,1)
-		);
-
-
-		$this->rounds_points['simple10']   = array(
-			'Simple 10',
-			array(10,9,8,7,6,5,4,3,2,1)
-		);
-
-
-		// Based upon 'MotoGP' * 10
-		$this->rounds_points['highscore'] = array(
-			'High Score',
-			array(250,200,160,130,110,100,90,80,70,60,50,40,30,20,10)
-		);
 	}
 
 	/*
@@ -154,19 +73,37 @@ class PluginRoundPoints extends Plugin {
 
 	public function onSync ($aseco) {
 
+		// Read Configuration
+		if (!$this->config = $aseco->parser->xmlToArray('config/round_points.xml', true, true)) {
+			trigger_error('[RoundPoints] Could not read/parse config file "config/round_points.xml"!', E_USER_ERROR);
+		}
+		$this->config = $this->config['SETTINGS'];
+
+
+		// Setup points systems
+		foreach ($this->config['POINTS_SYSTEMS'][0]['SYSTEM'] as $system) {
+			$this->rounds_points[$system['ID'][0]] = array(
+				'id'		=> $system['ID'][0],
+				'label'		=> $system['LABEL'][0],
+				'points'	=> array_map('intval', explode(',', $system['POINTS'][0])),
+				'limit'		=> $system['LIMIT'][0],
+			);
+		}
+
+
 		// Setup only if Gamemode is "Rounds", "Team" or "Cup"
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 
 			// Set configured default rounds points system
-			$system = $aseco->settings['default_rpoints'];
+			$system = $this->config['DEFAULT_SYSTEM'][0];
 
 			// Set original points system
 			$points = array('10', '6', '4', '3', '2', '1');
 
-			if (preg_match('/^\d+,[\d,]*\d+$/', $system)) {
+			if (array_key_exists($system, $this->rounds_points)) {
 
 				// Convert int to string
-				$points = explode(',', $system);
+				$points = $this->rounds_points[$system]['points'];
 				foreach ($points as &$num) {
 					settype($num, 'string');
 				}
@@ -175,28 +112,14 @@ class PluginRoundPoints extends Plugin {
 				try {
 					// Set new custom points
 					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
-					$aseco->console('[RoundPoints] Setup default rounds points: {1}', $system);
-				}
-				catch (Exception $exception) {
-					$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $system, $exception->getMessage());
-				}
-			}
-			else if (array_key_exists($system, $this->rounds_points)) {
-
-				// Convert int to string
-				$points = $this->rounds_points[$system][1];
-				foreach ($points as &$num) {
-					settype($num, 'string');
-				}
-				unset($num);
-
-				try {
-					// Set new custom points
-					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
-					$aseco->console('[RoundPoints] Setup default rounds points: {1} - {2}',
-						$this->rounds_points[$system][0],
-						implode(',', $this->rounds_points[$system][1])
+					$aseco->console('[RoundPoints] Setup default rounds points: "{1}" -> {2}',
+						$this->rounds_points[$system]['label'],
+						implode(',', $this->rounds_points[$system]['points'])
 					);
+
+					// Setup limits
+					$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+					$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 				}
 				catch (Exception $exception) {
 					$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $system, $exception->getMessage());
@@ -267,19 +190,19 @@ class PluginRoundPoints extends Plugin {
 		// search for known points system
 		$system = false;
 		foreach ($this->rounds_points as $rpoints) {
-			if ($points == $rpoints[1]) {
-				$system = $rpoints[0];
+			if ($points == $rpoints['points']) {
+				$system = $rpoints['label'];
 				break;
 			}
 		}
 
 		// check for results
 		if (empty($points)) {
-			$message = $aseco->formatText($aseco->getChatMessage('NO_RPOINTS'), '');
+			$message = $aseco->formatText($this->config['MESSAGES'][0]['NO_RPOINTS'][0], '');
 		}
 		else {
-			if ($system) {
-				$message = $aseco->formatText($aseco->getChatMessage('RPOINTS_NAMED'),
+			if ($system !== false) {
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMED'][0],
 					'',
 					$system,
 					'',
@@ -287,7 +210,7 @@ class PluginRoundPoints extends Plugin {
 				);
 			}
 			else {
-				$message = $aseco->formatText($aseco->getChatMessage('RPOINTS_NAMELESS'),
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMELESS'][0],
 					'',
 					implode(',', $points)
 				);
@@ -390,11 +313,11 @@ class PluginRoundPoints extends Plugin {
 
 			// Check for results
 			if (empty($points)) {
-				$message = $aseco->formatText($aseco->getChatMessage('NO_RPOINTS'), '{#admin}');
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['NO_RPOINTS'][0], '{#admin}');
 			}
 			else {
 				if ($system) {
-					$message = $aseco->formatText($aseco->getChatMessage('RPOINTS_NAMED'),
+					$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMED'][0],
 						'{#admin}',
 						$system,
 						'{#admin}',
@@ -402,7 +325,7 @@ class PluginRoundPoints extends Plugin {
 					);
 				}
 				else {
-					$message = $aseco->formatText($aseco->getChatMessage('RPOINTS_NAMELESS'),
+					$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMELESS'][0],
 						'{#admin}',
 						implode(',', $points)
 					);
@@ -411,8 +334,16 @@ class PluginRoundPoints extends Plugin {
 			$aseco->sendChatMessage($message, $login);
 		}
 		else if ($chat_parameter == 'off') {
-			// disable custom points
-			$rtn = $aseco->client->query('SetRoundCustomPoints', array(), false);
+
+			// Set original points system
+			$points = array('10', '6', '4', '3', '2', '1');
+
+			try {
+				$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+			}
+			catch (Exception $exception) {
+				$aseco->console('[RoundPoints] Setting modescript default rounds points: {1} Error: {2}', $points, $exception->getMessage());
+			}
 
 			// log console message
 			$aseco->console('[RoundPoints] [{1}] disabled custom points', $login);
@@ -424,48 +355,60 @@ class PluginRoundPoints extends Plugin {
 			$aseco->sendChatMessage($message);
 		}
 		else if (preg_match('/^\d+,[\d,]*\d+$/', $chat_parameter)) {
-			// set new custom points as array of ints
+			// Set new custom points as array of ints
 			$points = array_map('intval', explode(',', $chat_parameter));
 
 			try {
-				$aseco->client->query('SetRoundCustomPoints', $points, false);
-
-				// log console message
-				$aseco->console('[RoundPoints] [{1}] set new custom points: {2}', $login, $chat_parameter);
-
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets custom rounds points: {#highlite}{2},...',
-					$player->nickname,
-					$chat_parameter
-				);
-				$aseco->sendChatMessage($message);
+				// Set new custom points
+				$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+				$aseco->console('[RoundPoints] [{1}] set new custom points: {2}', $login, $points);
 			}
 			catch (Exception $exception) {
-				$message = '{#server}» {#error}Invalid point distribution! Error: {#highlite}$i '. $exception->getMessage();
-				$aseco->sendChatMessage($message, $login);
+				$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $points, $exception->getMessage());
 			}
+
+			// Show chat message
+			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets custom rounds points: {#highlite}{2},...',
+				$player->nickname,
+				$chat_parameter
+			);
+			$aseco->sendChatMessage($message);
+
 		}
 		else if (array_key_exists(strtolower($chat_parameter), $this->rounds_points)) {
+
+			$system = strtolower($chat_parameter);
+
+			// Convert int to string
+			$points = $this->rounds_points[strtolower($system)]['points'];
+			foreach ($points as &$num) {
+				settype($num, 'string');
+			}
+			unset($num);
+
 			try {
-				$system = strtolower($chat_parameter);
-
 				// Set new custom points
-				$aseco->client->query('SetRoundCustomPoints', $this->rounds_points[$system][1], false);
-
-				// log console message
-				$aseco->console('[RoundPoints] [{1}] set new custom points [{2}]', $login, strtoupper($chat_parameter));
-
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#admin}: {#highlite}{4},...',
-					$player->nickname,
-					$this->rounds_points[$system][0],
-					implode(',', $this->rounds_points[$system][1])
+				$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+				$aseco->console('[RoundPoints] [{1}] set new custom points [{2}]',
+					$login,
+					$this->rounds_points[$system][0]
 				);
-				$aseco->sendChatMessage($message);
+
+				// Setup limits
+				$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 			}
 			catch (Exception $exception) {
-				$aseco->console('[RoundPoints] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SetRoundCustomPoints');
+				$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $system, $exception->getMessage());
 			}
+
+			// Show chat message
+			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#admin}: {#highlite}{3},...',
+				$player->nickname,
+				$this->rounds_points[$system][0],
+				implode(',', $this->rounds_points[$system][1])
+			);
+			$aseco->sendChatMessage($message);
 		}
 		else {
 			$message = '{#server}» {#error}Unknown points system {#highlite}$i '. strtoupper($chat_parameter) .'$z$s {#error}!';

@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-25
- * Copyright:	2014 - 2015 by undef.de
+ * Date:	2015-06-18
+- * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,10 +44,8 @@
 
 class PluginCheckpoints extends Plugin {
 	private $manialinkid;
-	private $position;
-	private $textcolors;
-	private $layout;
 
+	public $config;
 	public $nbcheckpoints;
 	public $totalcps;
 	public $nblaps;
@@ -69,6 +67,7 @@ class PluginCheckpoints extends Plugin {
 		$this->addDependence('PluginLocalRecords', Dependence::REQUIRED, '1.0.0', null);
 
 		// Register functions for events
+		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
@@ -79,24 +78,30 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
 
 		$this->registerChatCommand('cps', 'chat_cps', 'Sets local/dedimania record checkpoints tracking', Player::PLAYERS);
+	}
 
-		$this->manialinkid					= 'PluginCheckpointsWidget';
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
 
-		$this->position						= array(
-			'x'						=> -8.5,
-			'y'						=> -43.9,
-			'z'						=> 0,
-		);
+	public function onSync ($aseco) {
 
-		$this->textcolors['default_checkpoint']			= 'DDDDEEFF';	// RRGGBBAA
-		$this->textcolors['default_besttime']			= 'BBBBBBFF';	// RRGGBBAA
-		$this->textcolors['time_improved']			= '3B3';	// RGB
-		$this->textcolors['time_equal']				= '29F';	// RGB
-		$this->textcolors['time_worse']				= 'F00';	// RGB
+		// Read Configuration
+		if (!$this->config = $aseco->parser->xmlToArray('config/checkpoints.xml', true, true)) {
+			trigger_error('[Checkpoints] Could not read/parse config file "config/checkpoints.xml"!', E_USER_ERROR);
+		}
+		$this->config = $this->config['SETTINGS'];
 
-		$this->layout['background_color']			= '55556699';	// RRGGBBAA
-		$this->layout['style']					= 'BgsPlayerCard';
-		$this->layout['substyle']				= 'BgCardSystem';
+		// Transform 'TRUE' or 'FALSE' from string to boolean
+		$this->config['DISPLAY_CHECKPOINTS'][0]		= ((strtoupper($this->config['DISPLAY_CHECKPOINTS'][0]) == 'TRUE')		? true : false);
+		$this->config['ENABLE_COLORBAR'][0]		= ((strtoupper($this->config['ENABLE_COLORBAR'][0]) == 'TRUE')			? true : false);
+		$this->config['ENABLE_CPSSPEC'][0]		= ((strtoupper($this->config['ENABLE_CPSSPEC'][0]) == 'TRUE')			? true : false);
+		$this->config['AUTO_ENABLE_CPS'][0]		= ((strtoupper($this->config['AUTO_ENABLE_CPS'][0]) == 'TRUE')			? true : false);
+		$this->config['AUTO_ENABLE_DEDICPS'][0]		= ((strtoupper($this->config['AUTO_ENABLE_DEDICPS'][0]) == 'TRUE')		? true : false);
+
+		$this->manialinkid = 'PluginCheckpoints';
 	}
 
 	/*
@@ -118,7 +123,7 @@ class PluginCheckpoints extends Plugin {
 			return;
 		}
 
-		if ($aseco->settings['display_checkpoints']) {
+		if ($this->config['DISPLAY_CHECKPOINTS'][0] == true) {
 			// Set local checkpoints tracking
 			if (strtolower($chat_parameter) == 'off') {
 				$aseco->checkpoints[$login]->tracking['local_records'] = -1;
@@ -142,7 +147,7 @@ class PluginCheckpoints extends Plugin {
 			// Handle checkpoints panel
 			if ($aseco->checkpoints[$login]->tracking['local_records'] == -1) {
 				// Disable CP panel
-//				if ($aseco->settings['enable_cpsspec'] && !empty($aseco->checkpoints[$login]->spectators)) {
+//				if ($this->config['ENABLE_CPSSPEC'][0] == true && !empty($aseco->checkpoints[$login]->spectators)) {
 //					$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
 //					$aseco->sendManialink($xml, $login .','. implode(',', $aseco->checkpoints[$login]->spectators), 0);
 //				}
@@ -154,7 +159,7 @@ class PluginCheckpoints extends Plugin {
 			else {
 				// Enable CP panel unless spectator, Stunts mode, or warm-up
 				if (!$player->isspectator && $aseco->server->gameinfo->mode != Gameinfo::STUNTS && !$aseco->warmup_phase) {
-//					if ($aseco->settings['enable_cpsspec'] && !empty($aseco->checkpoints[$login]->spectators)) {
+//					if ($this->config['ENABLE_CPSSPEC'][0] == true && !empty($aseco->checkpoints[$login]->spectators)) {
 //						$this->checkUpdateCheckpointWidget($aseco, $login . ',' . implode(',', $aseco->checkpoints[$login]->spectators), 0, '$00f -.--');
 //					}
 //					else {
@@ -209,7 +214,7 @@ class PluginCheckpoints extends Plugin {
 
 
 		// Set local checkpoint references
-		if ($aseco->settings['display_checkpoints']) {
+		if ($this->config['DISPLAY_CHECKPOINTS'][0] == true) {
 			foreach ($aseco->checkpoints as $login => $cp) {
 				$lrec = $aseco->checkpoints[$login]->tracking['local_records'] - 1;
 
@@ -341,17 +346,17 @@ class PluginCheckpoints extends Plugin {
 		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 			$aseco->checkpoints[$player->login]->current['finish'] = 0;
 		}
-		if ($aseco->settings['display_checkpoints']) {
+		if ($this->config['DISPLAY_CHECKPOINTS'][0] == true) {
 			// Set personal or default CPs
 			if ($setup = $this->getCheckpointSettings($player)) {
 				$aseco->checkpoints[$player->login]->tracking['local_records'] = $setup['LocalCheckpointTracking'];
 				$aseco->checkpoints[$player->login]->tracking['dedimania_records'] = $setup['DedimaniaCheckpointTracking'];
 			}
 			else {
-				if ($aseco->settings['auto_enable_cps']) {
+				if ($this->config['AUTO_ENABLE_CPS'][0] == true) {
 					$aseco->checkpoints[$player->login]->tracking['local_records'] = 0;
 				}
-				if ($aseco->settings['auto_enable_dedicps']) {
+				if ($this->config['AUTO_ENABLE_DEDICPS'][0] == true) {
 					$aseco->checkpoints[$player->login]->tracking['dedimania_records'] = 0;
 				}
 			}
@@ -436,7 +441,7 @@ class PluginCheckpoints extends Plugin {
 		$login = $param[0];
 
 		// Check for multilap Maps and unsupported Gamemodes
-		if ($aseco->server->gameinfo->mode != Gameinfo::LAPS && $aseco->server->maps->current->multilap === true) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
 			$time = $param[4];
 
@@ -454,6 +459,7 @@ class PluginCheckpoints extends Plugin {
 		// Store current checkpoint
 		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
 		ksort($aseco->checkpoints[$login]->current['cps']);
+
 
 		// check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
@@ -491,7 +497,7 @@ class PluginCheckpoints extends Plugin {
 		$login = $param[0];
 
 		// Check for multilap Maps and unsupported Gamemodes
-		if ($aseco->server->gameinfo->mode != Gameinfo::LAPS && $aseco->server->maps->current->multilap === true) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
 			$time = $param[4];
 
@@ -537,7 +543,7 @@ class PluginCheckpoints extends Plugin {
 		$login = $param[0];
 
 		// Check for multilap Maps and unsupported Gamemodes
-		if ($aseco->server->gameinfo->mode != Gameinfo::LAPS && $aseco->server->maps->current->multilap === true) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
 			$time = $param[4];
 
@@ -588,14 +594,14 @@ class PluginCheckpoints extends Plugin {
 				$diff = $aseco->checkpoints[$login]->current['cps'][($cpid-1)] - $aseco->checkpoints[$login]->best['cps'][($cpid-1)];
 				if ($diff < 0) {
 					$diff = abs($diff);
-					$sign = '$'. $this->textcolors['time_improved'] .'-';
+					$sign = '$'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_IMPROVED'][0] .'-';
 				}
 				else if ($diff == 0) {
-					$sign = '$'. $this->textcolors['time_equal'];
+					$sign = '$'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_EQUAL'][0];
 				}
 				else {
 					// $diff > 0
-					$sign = '$'. $this->textcolors['time_worse'] .'+';
+					$sign = '$'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_WORSE'][0] .'+';
 				}
 				$sec = floor($diff / 1000);
 				$ths = $diff - ($sec * 1000);
@@ -639,7 +645,7 @@ class PluginCheckpoints extends Plugin {
 			}
 
 			// Update CheckpointWidget
-			if ($aseco->settings['enable_cpsspec'] && !empty($aseco->checkpoints[$login]->spectators)) {
+			if ($this->config['ENABLE_CPSSPEC'][0] == true && !empty($aseco->checkpoints[$login]->spectators)) {
 				$this->buildCheckpointWidget($login .','. implode(',', $aseco->checkpoints[$login]->spectators), $cpid, $sign . $current_checkpoint_time, $best_checkpoint_time);
 			}
 			else {
@@ -657,11 +663,47 @@ class PluginCheckpoints extends Plugin {
 	public function buildCheckpointWidget ($logins, $cp, $diff, $besttime) {
 		global $aseco;
 
+		// Bail out, if the Widget should not be displayed
+		if ($this->config['DISPLAY_CHECKPOINTS'][0] === false) {
+			return;
+		}
+
+		if ($this->config['ENABLE_COLORBAR'][0] == true) {
+			$color = substr($diff, 1, 3);
+			if ($color == $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_IMPROVED'][0]) {
+				$colorize = '<0.0, 0.85, 0.0>';
+			}
+			else if ($color == $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_EQUAL'][0]) {
+				$colorize = '<0.1, 0.1, 1.0>';
+			}
+			else if ($color == $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_WORSE'][0]) {
+				$colorize = '<0.9, 0.0, 0.0>';
+			}
+			else {
+				$colorize = '<0.0, 0.0, 0.0>';
+			}
+		}
+		else {
+			$colorize = '<0.0, 0.0, 0.0>';
+		}
+
 $maniascript = <<<EOL
 <script><!--
 main() {
 	// Declarations
 	declare CMlFrame Container <=> (Page.GetFirstChild("CheckpointWidget") as CMlFrame);
+	declare CMlQuad Colorbar <=> (Page.GetFirstChild("Colorbar") as CMlQuad);
+
+	Colorbar.RelativeRotation	= 180.0;
+	Colorbar.Opacity		= 0.7;
+
+	declare Vec3 Colorize = {$colorize};
+	if (Colorize == <0.0, 0.0, 0.0>) {
+		Colorbar.Visible = False;
+	}
+	else {
+		Colorbar.Colorize = Colorize;
+	}
 	while (True) {
 		yield;
 		if (!PageIsVisible || InputPlayer == Null) {
@@ -682,15 +724,20 @@ EOL;
 
 		// Build Manialink
 		$xml = '<manialink id="'. $this->manialinkid .'" name="CheckpointWidget">';
-		$xml .= '<frame posn="'. $this->position['x'] .' '. $this->position['y'] .' '. $this->position['z'] .'" id="CheckpointWidget">';
-		if ($this->layout['background_color'] != '') {
-			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->layout['background_color'] .'"/>';
+
+		$xml .= '<frame posn="70 -48 -40">';
+		$xml .= '<quad posn="0 0 0" sizen="140 15" style="BgsPlayerCard" substyle="BgRacePlayerLine" id="Colorbar"/>';
+		$xml .= '</frame>';
+
+		$xml .= '<frame posn="'. $this->config['CHECKPOINT_WIDGET'][0]['POS_X'][0] .' '. $this->config['CHECKPOINT_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointWidget">';
+		if ($this->config['CHECKPOINT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->config['CHECKPOINT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->layout['style'] .'" substyle="'. $this->layout['substyle'] .'"/>';
+			$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->config['CHECKPOINT_WIDGET'][0]['STYLE'][0] .'" substyle="'. $this->config['CHECKPOINT_WIDGET'][0]['SUBSTYLE'][0] .'"/>';
 		}
-		$xml .= '<label posn="8 -0.65 0.02" sizen="16 2.2" textsize="2" scale="0.8" halign="center" textcolor="'. $this->textcolors['default_checkpoint'] .'" text="$O'. $cp .': '. $diff .'"/>';
-		$xml .= '<label posn="8 -2.5 0.02" sizen="16 2.2" textsize="1" scale="0.8" halign="center" textcolor="'. $this->textcolors['default_besttime'] .'" text="BEST '. $besttime .'"/>';
+		$xml .= '<label posn="8 -0.65 0.02" sizen="16 2.2" textsize="2" scale="0.8" halign="center" textcolor="'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_CHECKPOINT'][0] .'" text="$O'. $cp .': '. $diff .'"/>';
+		$xml .= '<label posn="8 -2.5 0.02" sizen="16 2.2" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_BESTTIME'][0] .'" text="BEST '. $besttime .'"/>';
 		$xml .= '</frame>';
 		$xml .= $maniascript;
 		$xml .= '</manialink>';
@@ -719,8 +766,8 @@ EOL;
 		else {
 			// Setup defaults
 			$settings = array(
-				'LocalCheckpointTracking'	=> ($aseco->settings['auto_enable_cps'] ? 0 : -1),
-				'DedimaniaCheckpointTracking'	=> ($aseco->settings['auto_enable_dedicps'] ? 0 : -1)
+				'LocalCheckpointTracking'	=> (($this->config['AUTO_ENABLE_CPS'][0] == true) ? 0 : -1),
+				'DedimaniaCheckpointTracking'	=> (($this->config['AUTO_ENABLE_DEDICPS'][0] == true) ? 0 : -1)
 			);
 			return $settings;
 		}
@@ -768,7 +815,7 @@ EOL;
 			return;
 		}
 
-		switch ($aseco->settings['cheater_action']) {
+		switch ((int)$this->config['CHEATER_ACTION'][0]) {
 
 			case 1:  // set to spec
 				try {

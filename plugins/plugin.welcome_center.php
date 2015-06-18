@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-10
+ * Date:	2015-06-12
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -119,52 +119,64 @@ class PluginWelcomeCenter extends Plugin {
 
 		if ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] == true && $aseco->startup_phase == false) {
 
-			// Define Admin/Player title
-			$title = 'New Player';
-			if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] == true) {
-				$title = $aseco->isMasterAdmin($player) ? '{#logina}'. $aseco->titles['MASTERADMIN'][0] :
-					($aseco->isAdmin($player) ? '{#logina}'. $aseco->titles['ADMIN'][0] :
-					($aseco->isOperator($player) ? '{#logina}'. $aseco->titles['OPERATOR'][0] :
-					'New Player')
-				);
+			$show = true;
+			if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) == 'operators' && (!$aseco->isOperator($player) && !$aseco->isAdmin($player) && !$aseco->isMasterAdmin($player))) {
+				$show = false;
 			}
-
-			// Setup Ladderrank, Serverrank, Nation and Zone
-			$ladderrank = $aseco->formatNumber($player->ladderrank, 0);
-			$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
-			$zone = $player->zone;
-			array_shift($zone);		// Remove continent from $zone array
-
-			// Show new Player joins message to all Players
-			$message = str_replace(
-				array(
-					'{title}',
-					'{nickname}',
-					'{continent}',
-					'{nation}',
-					'{zone}',
-					'{visits}',
-					'{ladderrank}',
-					'{serverrank}',
-				),
-				array(
-					$title,
-					$aseco->stripColors($player->nickname),
-					$player->continent,
-					$aseco->country->iocToCountry($player->nation),
-					implode(', ', $zone),
-					$player->visits,
-					$ladderrank,
-					$serverrank,
-				),
-				$this->config['JOIN_LEAVE_INFO'][0]['JOIN_MESSAGE'][0]
-			);
-			if (!empty($message)) {
-				if ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] == true && function_exists('send_window_message')) {
-					send_window_message($aseco, $message, false);
+			else if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) == 'admins' && (!$aseco->isAdmin($player) && !$aseco->isMasterAdmin($player))) {
+				$show = false;
+			}
+			else if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) == 'masteradmins' && !$aseco->isMasterAdmin($player)) {
+				$show = false;
+			}
+			if ($show === true) {
+				// Define Admin/Player title
+				$title = 'New Player';
+				if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] == true) {
+					$title = $aseco->isMasterAdmin($player) ? '{#logina}'. $aseco->titles['MASTERADMIN'][0] :
+						($aseco->isAdmin($player) ? '{#logina}'. $aseco->titles['ADMIN'][0] :
+						($aseco->isOperator($player) ? '{#logina}'. $aseco->titles['OPERATOR'][0] :
+						'New Player')
+					);
 				}
-				else {
-					$aseco->sendChatMessage($message);
+
+				// Setup Ladderrank, Serverrank, Nation and Zone
+				$ladderrank = $aseco->formatNumber($player->ladderrank, 0);
+				$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
+				$zone = $player->zone;
+				array_shift($zone);		// Remove continent from $zone array
+
+				// Show new Player joins message to all Players
+				$message = str_replace(
+					array(
+						'{title}',
+						'{nickname}',
+						'{continent}',
+						'{nation}',
+						'{zone}',
+						'{visits}',
+						'{ladderrank}',
+						'{serverrank}',
+					),
+					array(
+						$title,
+						$aseco->stripColors($player->nickname),
+						$player->continent,
+						$aseco->country->iocToCountry($player->nation),
+						implode(', ', $zone),
+						$player->visits,
+						$ladderrank,
+						$serverrank,
+					),
+					$this->config['JOIN_LEAVE_INFO'][0]['JOIN_MESSAGE'][0]
+				);
+				if (!empty($message)) {
+					if ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] == true && function_exists('send_window_message')) {
+						send_window_message($aseco, $message, false);
+					}
+					else {
+						$aseco->sendChatMessage($message);
+					}
 				}
 			}
 		}

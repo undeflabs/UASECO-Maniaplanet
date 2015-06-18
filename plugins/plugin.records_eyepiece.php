@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-06-01
+ * Date:		2015-06-17
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -458,14 +458,18 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Register /emusic chat command if the MusicWidget is enabled
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true && $reload !== true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
 			if (!isset($aseco->plugins['PluginMusicServer'])) {
-				$aseco->console('[RecordsEyepiece] » Plugin MusicServer is not available, hide <music_widget>.');
+				if ($reload !== true) {
+					$aseco->console('[RecordsEyepiece] » Plugin MusicServer is not available, hide <music_widget>.');
+				}
 				$this->config['MUSIC_WIDGET'][0]['ENABLED'][0] = false;
 			}
 			else {
-				$aseco->console('[RecordsEyepiece] » Registering chat command "/emusic", because <music_widget> is enabled too.');
-				$aseco->registerChatCommand('emusic', array($this, 'chat_emusic'), 'Lists musics currently on the server (see: /eyepiece)', Player::PLAYERS);
+				if ($reload !== true) {
+					$aseco->console('[RecordsEyepiece] » Registering chat command "/emusic", because <music_widget> is enabled too.');
+					$aseco->registerChatCommand('emusic', array($this, 'chat_emusic'), 'Lists musics currently on the server (see: /eyepiece)', Player::PLAYERS);
+				}
 			}
 		}
 
@@ -3549,7 +3553,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Setup the RoundScorePoints for the current Gamemodes
 		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
-			if ($gamemode == Gameinfo::ROUNDS || $gamemode == Gameinfo::CUP) {
+			if ($gamemode == Gameinfo::ROUNDS) {
 				if ($aseco->server->gameinfo->rounds['UseAlternateRules'] == true) {
 					// Only the first wins, no draw!
 					$this->config['RoundScore']['Points'][Gameinfo::ROUNDS] = array(1,0);
@@ -3557,9 +3561,15 @@ class PluginRecordsEyepiece extends Plugin {
 				else {
 					$this->config['RoundScore']['Points'][Gameinfo::ROUNDS] = $aseco->server->gameinfo->rounds['PointsRepartition'];
 				}
-
-				// Copy 'Rounds' to 'Cup', always the same, also with "new rules" enabled
-				$this->config['RoundScore']['Points'][Gameinfo::CUP] = $this->config['RoundScore']['Points'][Gameinfo::ROUNDS];
+			}
+			else if ($gamemode == Gameinfo::CUP) {
+				if ($aseco->server->gameinfo->cup['UseAlternateRules'] == true) {
+					// Only the first wins, no draw!
+					$this->config['RoundScore']['Points'][Gameinfo::CUP] = array(1,0);
+				}
+				else {
+					$this->config['RoundScore']['Points'][Gameinfo::CUP] = $aseco->server->gameinfo->cup['PointsRepartition'];
+				}
 			}
 			else if ($gamemode == Gameinfo::TEAM) {
 				$this->config['RoundScore']['Points'][Gameinfo::TEAM] = array(1);
@@ -3960,7 +3970,7 @@ class PluginRecordsEyepiece extends Plugin {
 	// $checkpt = [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
 	public function onPlayerFinishLine ($aseco, $checkpt) {
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
 			// Get Player object
 			$player = $aseco->server->players->getPlayer($checkpt[0]);
 
@@ -8571,7 +8581,6 @@ EOL;
 				$digest = $this->buildCloseToYouDigest($records);
 				if ($this->cache['PlayerStates'][$login]['LiveRankings'] != false) {
 					if ($this->cache['PlayerStates'][$login]['LiveRankings'] != $digest) {
-
 						// Widget is different as before, store them and build the new Widget
 						$this->cache['PlayerStates'][$login]['LiveRankings'] = $digest;
 					}
@@ -8900,7 +8909,7 @@ EOL;
 
 				if ($position == 'left') {
 					if ($gamemode == Gameinfo::TEAM) {
-						$xml .= '<quad posn="-3.9 -'. ($this->config['LineHeight'] * $line + $offset - 0.14) .' 0.004" sizen="3.4 1.68" bgcolor="'. (($item['team'] == 0) ? '03DF' : 'D30F') .'"/>';
+						$xml .= '<quad posn="-3.5 -'. ($this->config['LineHeight'] * $line + $offset - 0.14) .' 0.004" sizen="3.4 1.68" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label posn="-0.6 -'. ($this->config['LineHeight'] * $line + $offset) .' 0.005" sizen="3 2" halign="right" scale="0.9" textcolor="FFFF" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $points .'"/>';
 					}
 					else if ($gamemode == Gameinfo::LAPS) {
@@ -8914,7 +8923,7 @@ EOL;
 						$xml .= '<label posn="-0.4 -'. ($this->config['LineHeight'] * $line + $offset) .' 0.004" sizen="1.3 2" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score[0]['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
 					else if ($gamemode == Gameinfo::CHASE) {
-						$xml .= '<quad posn="-7.1 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.003" sizen="7 1.9" bgcolor="'. (($item['team'] == 0) ? '03D5' : 'D305') .'"/>';
+						$xml .= '<quad posn="-7.1 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.003" sizen="7 1.9" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label posn="-2.4 -'. ($this->config['LineHeight'] * $line + $offset) .' 0.004" sizen="4.8 2" halign="right" scale="0.9" textcolor="FFFF" text="+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score[0]['score_plain'])) .'"/>';
 						$xml .= '<label posn="-0.4 -'. ($this->config['LineHeight'] * $line + $offset) .' 0.004" sizen="1.3 2" halign="right" scale="0.9" textcolor="FFFF" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
@@ -8931,7 +8940,7 @@ EOL;
 				}
 				else {
 					if ($gamemode == Gameinfo::TEAM) {
-						$xml .= '<quad posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.5) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.14) .' 0.004" sizen="3.4 1.68" bgcolor="'. (($item['team'] == 0) ? '03DF' : 'D30F') .'"/>';
+						$xml .= '<quad posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.5) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.14) .' 0.004" sizen="3.4 1.68" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 3.6) .' -'. ($this->config['LineHeight'] * $line + $offset) .' 0.005" sizen="3 2" halign="right" scale="0.9" textcolor="FFFF" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $points .'"/>';
 					}
 					else if ($gamemode == Gameinfo::LAPS) {
@@ -8945,7 +8954,7 @@ EOL;
 						$xml .= '<label posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 7) .' -'. ($this->config['LineHeight'] * $line + $offset) .' 0.004" sizen="1.3 1.9" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score[0]['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
 					else if ($gamemode == Gameinfo::CHASE) {
-						$xml .= '<quad posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.1) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.003" sizen="7 1.9" bgcolor="'. (($item['team'] == 0) ? '03D5' : 'D305') .'"/>';
+						$xml .= '<quad posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.1) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.003" sizen="7 1.9" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 4.6) .' -'. ($this->config['LineHeight'] * $line + $offset) .' 0.004" sizen="4.8 2" halign="right" scale="0.9" textcolor="FFFF" text="+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score[0]['score_plain'])) .'"/>';
 						$xml .= '<label posn="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 7) .' -'. ($this->config['LineHeight'] * $line + $offset) .' 0.004" sizen="1.3 2" halign="right" scale="0.9" textcolor="FFFF" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
@@ -9228,7 +9237,6 @@ EOL;
 
 		$result = '';
 		for ($i = 0; $i < count($array); $i ++) {
-
 			// When Player leaves, then (in some situation) this could be incomplete, just ignore in this case
 			if ( !isset($array[$i]) ) {
 				continue;
@@ -9297,16 +9305,17 @@ EOL;
 				}
 			}
 			else {
-				$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SELF'][0];
-
-				// Add a background for this Player with an record here
-				if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
-					$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
-				}
-				else {
-					$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
-				}
 				if ($item['rank'] != false) {
+					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SELF'][0];
+
+					// Add a background for this Player with an record here
+					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
+						$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
+					}
+					else {
+						$xml .= '<quad posn="0.4 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="'. ($widgetwidth - 0.8) .' 1.8" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_SUBSTYLE'][0] .'"/>';
+					}
+
 					// $item['rank'] is set 'false' in Team to skip the highlite here in $this->buildLiveRankingsWidget()
 					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
 						$xml .= '<quad posn="-2 -'. ($this->config['LineHeight'] * $line + $offset - 0.3) .' 0.005" sizen="2 1.8" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-06-01
+ * Date:	2015-06-18
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -355,7 +355,6 @@ main() {
 		if (InputPlayer.DisplaySpeed >= 1200.0) {
 			NeedleRotation = 299.2;
 		}
-
 
 //		// Store TopSpeed
 //		if (InputPlayer.DisplaySpeed > MeasuredTopSpeed) {

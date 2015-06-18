@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-05-24
+ * Date:	2015-06-17
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)

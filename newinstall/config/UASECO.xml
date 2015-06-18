@@ -100,20 +100,8 @@
 	<blacklist_file>blacklist.txt</blacklist_file>
 	<guestlist_file>guestlist.txt</guestlist_file>
 
-
 	<log_all_chat>false</log_all_chat>
 	<chatpmlog_times>true</chatpmlog_times>
-
-	<!--
-	How to handle cheating player:
-	0 = do nothing
-	1 = set to spec
-	2 = kick
-	3 = ban (& kick)
-	4 = blacklist & kick
-	5 = blacklist & ban
-	//-->
-	<cheater_action>0</cheater_action>
 
 	<!--
 	2 = in message window, 1 = in chat, 0 = none
@@ -129,20 +117,8 @@
 	<lists_colormaps>true</lists_colormaps>
 	<global_win_multiple>50</global_win_multiple>
 
-	<display_checkpoints>true</display_checkpoints>
-	<enable_cpsspec>false</enable_cpsspec>
-
-	<!-- Checkpoint tracking for local or dedimania records -->
-	<auto_enable_cps>true</auto_enable_cps>
-	<auto_enable_dedicps>false</auto_enable_dedicps>
-
 	<admin_client_version></admin_client_version>
 	<player_client_version></player_client_version>
-
-	<!--
-	Setup own round points system, this require plugin.round_points.php to be included.
-	//-->
-	<default_rpoints>motogp</default_rpoints>
 
 	<afk_force_spec>true</afk_force_spec>
 	<clickable_lists>true</clickable_lists>
@@ -214,19 +190,6 @@
 		<unmute>{#server}» Player {#highlite}{1}$z$s{#server} is unmuted!</unmute>
 		<muted>{#server}» {#highlite}{1}{#error} disabled because you are on the global mute list!</muted>
 
-		<!-- donate/pay messages -->
-		<donation>{#donate} Donate {#highlite}{1}{#donate} planets to {#highlite}{2}$z</donation>
-		<thanks_all>{#server}» {#highlite}{1}$z$s{#donate} received a donation of {#highlite}{2}{#donate} planets from {#highlite}{3}$z$s{#donate}.  Thank You!</thanks_all>
-		<thanks_you>{#server}» {#donate}You made a donation of {#highlite}{1}{#donate} planets.  Thank You!</thanks_you>
-		<donate_minimum>{#server}» {#error}Minimum donation amount is {#highlite}$i {1}{#error} planets!</donate_minimum>
-		<donate_help>{#server}» {#error}Use {#highlite}$i /donate &lt;number&gt;{#error} to donate planets to the server</donate_help>
-		<payment>{#donate} Send {#highlite}{1}{#donate} planets to {#highlite}{2}$z</payment>
-		<pay_insuff>{#server}» {#error}Insufficient server planets: {#highlite}$i {1}{#error}!</pay_insuff>
-		<pay_server>{#server}» {#error}Cannot pay this server itself!</pay_server>
-		<pay_confirm>{#server}» {#donate}Payment of {#highlite}{1}{#donate} planets to {#highlite}{2}{#donate} confirmed! Remaining planets: {#highlite}{3}</pay_confirm>
-		<pay_cancel>{#server}» {#donate}Payment to {#highlite}{1}{#donate} cancelled!</pay_cancel>
-		<pay_help>{#server}» {#error}Use {#highlite}$i /admin pay &lt;login&gt; $m&lt;number&gt;{#error} to send server planets to a login</pay_help>
-
 		<!-- playtime/map messages -->
 		<playtime>{#server}» Current map {#highlite}{1}{#server} has been played for {#highlite}{2}</playtime>
 		<playtime_finish>{#server}» Current map {#highlite}{1}{#server} finished after {#highlite}{2}</playtime_finish>
@@ -234,11 +197,6 @@
 		<map>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3} {#server}Gold: {#highlite}{4} {#server}Silver: {#highlite}{5} {#server}Bronze: {#highlite}{6} {#server}Cost: {#highlite}{7}</map>
 		<current_map>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3}</current_map>
 		<next_map>{#server}» The next Map will be: {#timelite}[{1}] {#highlite}{2}</next_map>
-
-		<!-- rounds points messages -->
-		<rpoints_named>{#server}» {1}Custom points system set to {#highlite}{2}{3}: {#highlite}{4},...</rpoints_named>
-		<rpoints_nameless>{#server}» {1}Custom points system set to: {#highlite}{2},...</rpoints_nameless>
-		<no_rpoints>{#server}» {1}No custom Rounds points system defined!</no_rpoints>
 
 		<!-- relay messages -->
 		<no_relays>{#server}» {#error}No relay servers connected</no_relays>
@@ -262,8 +220,7 @@
 		<mod>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</mod>
 		<planets>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets!</planets>
 		<time>{#server}» {#interact}Current Server Time: {#highlite}$i {1}{#interact} on {#highlite}$i {2}</time>
-		<round>$n{#message}Round {#highlite}{1}{#message}: </round>
-		<no_cpsspec>{#server}» {#highlite}/cpsspec{#server} is not currently enabled on this server.</no_cpsspec>
+		<round>{#server}» $n{#message}Round {#highlite}{1}{#message}: </round>
 		<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>
 	</messages>
 

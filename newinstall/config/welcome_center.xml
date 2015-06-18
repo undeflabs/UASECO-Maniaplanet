@@ -34,6 +34,14 @@
 		<!-- Set to 'true' if you want this messages diverted to the message window, otherwise set 'false' -->
 		<messages_in_window>false</messages_in_window>
 
+		<!-- Setup what connections should be send:
+		'players'	= show all Player connections
+		'operators'	= show only connections from Operators (and up)
+		'admins'	= show only connections from Admins (and up)
+		'masteradmins'	= show only connections from MasterAdmins
+		//-->
+		<show_connect>players</show_connect>
+
 		<!-- Set to 'true' if you want to add Rights (MasterAdmin...) of the Player, otherwise set to 'false' -->
 		<add_rights>true</add_rights>
 

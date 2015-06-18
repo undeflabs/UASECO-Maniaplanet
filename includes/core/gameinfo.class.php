@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-23
+ * Date:	2015-06-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -148,12 +148,11 @@ class Gameinfo {
 			}
 			if ($modescript['settings']['S_UseAlternateRules'] == true) {
 				$this->rounds['UseAlternateRules']	= true;
-				$this->rounds['PointsLimit']		= $modescript['settings']['S_PointsLimit'];
 			}
 			else {
 				$this->rounds['UseAlternateRules']	= false;
-				$this->rounds['PointsLimit']		= $modescript['settings']['S_PointsLimit'];
 			}
+			$this->rounds['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
 			$this->rounds['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->rounds['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
 			$this->rounds['DisplayTimeDiff']		= false;
@@ -174,12 +173,11 @@ class Gameinfo {
 			}
 			if ($modescript['settings']['S_UseAlternateRules'] == true) {
 				$this->team['UseAlternateRules']	= true;
-				$this->team['PointsLimit']		= $modescript['settings']['S_PointsLimit'];
 			}
 			else {
 				$this->team['UseAlternateRules']	= false;
-				$this->team['PointsLimit']		= $modescript['settings']['S_PointsLimit'];
 			}
+			$this->team['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
 			$this->team['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->team['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
 			$this->team['DisplayTimeDiff']			= false;
@@ -202,12 +200,20 @@ class Gameinfo {
 			else {
 				$this->cup['PointsRepartition']		= array(10, 6, 4, 3, 2, 1);		// Refreshed every 'onLoadingMap' event
 			}
+			if ($modescript['settings']['S_UseAlternateRules'] == true) {
+				$this->cup['UseAlternateRules']		= true;
+			}
+			else {
+				$this->cup['UseAlternateRules']		= false;
+			}
 			$this->cup['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
 			$this->cup['DisplayTimeDiff']			= false;
-
+			$this->cup['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->cup['RoundsPerMap']			= $modescript['settings']['S_RoundsPerMap'];
 			$this->cup['NbOfWinners']			= $modescript['settings']['S_NbOfWinners'];
 			$this->cup['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
+			$this->cup['NbOfPlayersMax']			= $modescript['settings']['S_NbOfPlayersMax'];
+			$this->cup['NbOfPlayersMin']			= $modescript['settings']['S_NbOfPlayersMin'];
 		}
 		else if ($this->mode == self::TEAM_ATTACK) {
 			// TeamAttack

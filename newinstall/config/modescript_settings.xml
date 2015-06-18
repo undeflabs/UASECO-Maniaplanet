@@ -65,7 +65,7 @@
 		<chrono>
 			<visible>true</visible>
 			<position>
-				<x>97.3</x>
+				<x>110.3</x>
 				<y>-80.5</y>
 				<z>5.0</z>
 			</position>
@@ -203,7 +203,7 @@
 		//-->
 		<team>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
-			<points_limit>99</points_limit>
+			<points_limit>5</points_limit>
 
 			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' for automatic (based on author time) -->
 			<finish_timeout>10</finish_timeout>
@@ -228,6 +228,12 @@
 
 			<!-- Set to 'true' to use the Players clublinks, or otherwise use the default teams, otherwise 'false' -->
 			<use_player_clublinks>false</use_player_clublinks>
+
+			<!-- Maximum number of players per team in matchmaking -->
+			<max_players_per_team>5</max_players_per_team>
+
+			<!-- Minimum number of players per team in matchmaking -->
+			<min_players_per_team>2</min_players_per_team>
 		</team>
 
 
@@ -280,6 +286,12 @@
 
 			<!-- Duration of the warm up phase in rounds (e.g. '2' for two warm up rounds), set to '-1' to disable warm up -->
 			<warm_up_duration>2</warm_up_duration>
+
+			<!-- Maximum number of players in matchmaking -->
+			<max_players_number>4</max_players_number>
+
+			<!-- Minimum number of players in matchmaking -->
+			<min_players_number>4</min_players_number>
 		</cup>
 
 
@@ -342,10 +354,10 @@
 			<use_player_clublinks>false</use_player_clublinks>
 
 			<!-- Maximum number of players per team in matchmaking -->
-			<number_players_per_team_max>3</number_players_per_team_max>
+			<max_number_players_per_team>3</max_number_players_per_team>
 
 			<!-- Minimum number of players per team in matchmaking -->
-			<number_players_per_team_min>3</number_players_per_team_min>
+			<min_number_players_per_team>3</min_number_players_per_team>
 
 			<!-- In this mode only players that take a slot in a team during the warm up can play, the others will have to spec until they can get a free slot in a team. -->
 			<competitive_mode>false</competitive_mode>
@@ -444,27 +456,9 @@
 	DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING!
 	//-->
 	<scripts>
-		<entry>Libs/Nadeo/TrackMania/UI/TeamModes.Script.txt|2014-04-04</entry>
-		<entry>Libs/Nadeo/TrackMania/Map.Script.txt|2013-12-17</entry>
-		<entry>Libs/Nadeo/TrackMania/MultiClans.Script.txt|2014-01-08</entry>
-		<entry>Libs/Nadeo/TrackMania/TM2.Script.txt|2015-02-17</entry>
-		<entry>Libs/Nadeo/TrackMania/UI.Script.txt|2015-02-16</entry>
-		<entry>Libs/Nadeo/TrackMania/WarmUp.Script.txt|2014-11-26</entry>
-		<entry>Libs/Nadeo/TrackMania/WarmUp2.Script.txt|2015-02-23</entry>
+		<entry>Libs/Nadeo/TrackMania/UI.Script.txt|2015-06-18</entry>
 		<entry>Libs/Nadeo/TrackMania/XmlRpc.Script.txt|2015-03-23</entry>
-		<entry>Libs/Nadeo/MatchmakingLobby.Script.txt|2015-03-03</entry>
-		<entry>Libs/Nadeo/MatchmakingMatch.Script.txt|2015-02-24</entry>
 		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-05-30</entry>
-		<entry>Libs/Nadeo/XmlRpcCommon.Script.txt|2015-02-23</entry>
 		<entry>Modes/TrackMania/Chase.Script.txt|2015-05-30</entry>
-		<entry>Modes/TrackMania/Cup.Script.txt|2015-02-06</entry>
-		<entry>Modes/TrackMania/Laps.Script.txt|2014-10-07</entry>
-		<entry>Modes/TrackMania/ModeBase.Script.txt|2015-02-26</entry>
-		<entry>Modes/TrackMania/ModeMatchmaking.Script.txt|2015-03-11</entry>
-		<entry>Modes/TrackMania/Rounds.Script.txt|2014-10-07</entry>
-		<entry>Modes/TrackMania/RoundsBase.Script.txt|2014-12-31</entry>
-		<entry>Modes/TrackMania/Team.Script.txt|2014-12-31</entry>
-		<entry>Modes/TrackMania/TeamAttack.Script.txt|2014-10-07</entry>
-		<entry>Modes/TrackMania/TimeAttack.Script.txt|2014-10-07</entry>
 	</scripts>
 </settings>

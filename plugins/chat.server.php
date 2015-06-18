@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-11
+ * Date:	2015-06-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -111,7 +111,7 @@ class PluginChatServer extends Plugin {
 		// get more server settings in one go
 		$comment = $aseco->server->comment;
 		$planets = $aseco->server->amount_planets;
-		$cuprpc = $aseco->server->gameinfo->cup['rounts_per_map'];
+		$cuprpc = $aseco->server->gameinfo->cup['RoundsPerMap'];
 
 		$header = 'Welcome to: ' . $aseco->server->name;
 		$stats = array();

@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-30
+ * Date:	2015-06-18
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -93,195 +93,6 @@ class PluginDedimania extends Plugin {
 	private $config_file		= 'config/dedimania.xml';
 	private $greplay_dir		= 'GReplays';
 	private $vreplay_dir		= 'VReplays';
-
-	// Title to Packmask list
-	private $title_packmask		= array(
-		// Official Nadeo Titles
-		'TMCanyon'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'TMStadium'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'TMValley'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'Trackmania_2@nadeolabs'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Trackmania_2@nadeolabs',
-		),
-		'Platform@nadeolive'	=> array(
-			'supported'		=> false,
-			'packmask'		=> 'Canyon',
-		),
-
-
-		// Custom Titles "Canyon"
-		'Acrobatic@mr.dvd'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'_f00Canyon_00fStar@mcmart1'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'CanyonCity@darkpuddle_'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'Canyon_Inverted_edk@edk'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'DD_RailwaySystem@divingduck'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'Glide@darmaya'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'LEGO_Racing@macio6'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'POLSO@darmaya'			=> array(			// THUMBLER.Title.Pack.Gbx
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'Raid@meuh21'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'TM2_Canyon_Sparkstedition@sparkster'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'Mr.DvDCanyon_dvd@mr.dvd'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'Wastelands@mpmandark'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-		'wtc@woutre'			=> array(			// http://worldtrialclub.com/
-			'supported'		=> true,
-			'packmask'		=> 'Canyon',
-		),
-
-
-		// Custom Titles "Stadium"
-		'BaF1@mcrobert'			=> array(			// https://forum.maniaplanet.com/viewtopic.php?f=9&t=29423
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'Dirt_World_TM2@bernatf'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'Dirt_@mr.dvd'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'edenia@nexxusdrako'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'ESLTitlePack@nilakite2'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'Nations_Forever@citiroller'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'Nations_ESWC@tm-jinzo'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'Minimalize@mvv0105'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'only_stadium_car@adamkooo'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'RPG@tmrpg'			=> array(			// manialink:///:TrackmaniaRPG
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'SRE@tm-nascar'			=> array(			// http://cms.tm-nascar.com/
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'StadiumPlatform@darkpuddle_'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-		'Ultimate_Challenge_2@mr.dvd'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Stadium',
-		),
-
-
-		// Custom Titles "Valley"
-		'adrenalin@flighthigh'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'endless_Valley@flighthigh'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'F1_Abu_Dhabi@darkpuddle_'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'miniahoy3@kaeptniglu'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'RaidValley@meuh21'		=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'ValleyCity@darkpuddle_'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-		'Valley_Extensions@dag_bert'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Valley',
-		),
-
-
-		// Custom Titles multi environment
-		'Stunts@spaii'			=> array(
-			'supported'		=> false,
-			'packmask'		=> 'Trackmania_2@nadeolabs',
-		),
-		'Raid2@meuh21'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Trackmania_2@nadeolabs',
-		),
-		'Maximum_30_Seconds@kata78'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Trackmania_2@nadeolabs',
-		),
-		'MrLag_s_Pack@yo12cool__tmstunt'	=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Trackmania_2@nadeolabs',
-		),
-		'PMC@redix'			=> array(
-			'supported'		=> true,
-			'packmask'		=> 'Trackmania_2@nadeolabs',
-		),
-	);
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -868,7 +679,7 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedicps ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if ($aseco->settings['display_checkpoints']) {
+		if ($aseco->plugins['PluginCheckpoints']->config['DISPLAY_CHECKPOINTS'][0] == true) {
 			if (isset($aseco->checkpoints[$login]) && $aseco->checkpoints[$login]->tracking['local_records'] != -1) {
 				// set Dedimania checkpoints tracking
 				$param = $chat_parameter;
@@ -1422,27 +1233,6 @@ class PluginDedimania extends Plugin {
 		if (!isset($this->db['XmlrpcDB']) && (!isset($this->db['XmlrpcDBbadTime']) || ($time - $this->db['XmlrpcDBbadTime']) > $this->timeout)) {
 
 			$aseco->console('[Dedimania] ********************************************************');
-			if ( !isset($this->title_packmask[$aseco->server->title]) ) {
-				$aseco->console('[Dedimania] Unknown Title "'. $aseco->server->title .'", please report this at '. UASECO_WEBSITE);
-				$aseco->console('[Dedimania] ********************************************************');
-
-				// Prevent from retrying in short time
-				$this->timeout = (60 * 60 * 24 * 365);
-				$this->db['XmlrpcDBbadTime'] = $time;
-				return;
-			}
-			else if (isset($this->title_packmask[$aseco->server->title]) && $this->title_packmask[$aseco->server->title]['supported'] == false) {
-				$aseco->console('[Dedimania] Unsupported Title "'. $aseco->server->title .'", no dedimania records available!');
-				$aseco->console('[Dedimania] ********************************************************');
-
-				// Prevent from retrying in short time
-				$this->timeout = (60 * 60 * 24 * 365);
-				$this->db['XmlrpcDBbadTime'] = $time;
-				return;
-			}
-			else {
-				$aseco->console('[Dedimania] Using Packmask "'. $this->title_packmask[$aseco->server->title]['packmask'] .'" for Title "'. $aseco->server->title .'".');
-			}
 			$aseco->console('[Dedimania] Dataserver connection on '. $this->db['Name'] .'...');
 			$aseco->console('[Dedimania] Try connection on '. $this->db['Url'] .'...');
 
@@ -1455,7 +1245,7 @@ class PluginDedimania extends Plugin {
 					'Login'		=> $this->db['Login'],
 					'Code'		=> $this->db['DediCode'],
 					'Path'		=> implode('|', array_merge(array('World'), $aseco->server->zone)),
-					'Packmask'	=> $this->title_packmask[$aseco->server->title]['packmask'],
+					'Packmask'	=> 'United',
 					'ServerVersion'	=> $aseco->server->version,
 					'ServerBuild'	=> $aseco->server->build,
 					'Tool'		=> UASECO_NAME,
@@ -1825,9 +1615,17 @@ class PluginDedimania extends Plugin {
 			// check for map without actual checkpoints
 			$aseco->console('[Dedimania] Map\'s NbCheckpoints < 2: records ignored');
 		}
-		else if (($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) && $map->multilap && $aseco->server->gameinfo->rounds['ForceLapsNb'] > 0) {
-			// check for multilap map in Rounds/Team/Cup modes
-			$aseco->console('[Dedimania] RoundForcedLaps > 0: records ignored');
+		else if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $map->multilap && $aseco->server->gameinfo->rounds['ForceLapsNb'] > 0) {
+			// check for multilap map in Rounds modes
+			$aseco->console('[Dedimania] ForceLapsNb > 0: records ignored');
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM && $map->multilap && $aseco->server->gameinfo->team['ForceLapsNb'] > 0) {
+			// check for multilap map in Team modes
+			$aseco->console('[Dedimania] ForceLapsNb > 0: records ignored');
+		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP && $map->multilap && $aseco->server->gameinfo->cup['ForceLapsNb'] > 0) {
+			// check for multilap map in Cup modes
+			$aseco->console('[Dedimania] ForceLapsNb > 0: records ignored');
 		}
 		else if ($map->author_time < $this->min_author_time) {
 			// check for minimum author time
@@ -1890,7 +1688,7 @@ class PluginDedimania extends Plugin {
 				}
 
 				// set Dedimania record/checkpoints references
-				if ($aseco->settings['display_checkpoints']) {
+				if ($aseco->plugins['PluginCheckpoints']->config['DISPLAY_CHECKPOINTS'][0] == true) {
 					foreach ($aseco->checkpoints as $login => $cp) {
 						$drec = $aseco->checkpoints[$login]->tracking['dedimania_records'] - 1;
 
@@ -2558,7 +2356,7 @@ class PluginDedimania extends Plugin {
 
 			$validation_success = true;
 			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
-				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times ['. $entry['Checks'] .']');
 				$validation_success = false;
 			}
 			if ($aseco->server->maps->current->multilap == true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP)) {
@@ -2574,11 +2372,11 @@ class PluginDedimania extends Plugin {
 				}
 			}
 			if ($parser->cpsCur != count($allcps)) {
-				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times ['. $entry['Checks'] .']');
 				$validation_success = false;
 			}
 			if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
+				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time ['. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
 				$validation_success = false;
 			}
 
@@ -2657,7 +2455,7 @@ class PluginDedimania extends Plugin {
 
 			$validation_success = true;
 			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
-				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times '. $entry['Checks'] .']');
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times ['. $entry['Checks'] .']');
 				$validation_success = false;
 			}
 			if ($aseco->server->maps->current->multilap == true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP)) {
@@ -2673,11 +2471,11 @@ class PluginDedimania extends Plugin {
 				}
 			}
 			if ($parser->cpsCur != count($allcps)) {
-				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times '. $entry['Checks'] .']');
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at race difference between validation replay ['. $parser->cpsCur .'] and record ['. count($allcps) .'], all checkpoint times ['. $entry['Checks'] .']');
 				$validation_success = false;
 			}
 			if ($parser->replay != ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best'])) {
-				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time '. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
+				$aseco->console('[Dedimania] Ghost replay inconsistent for Player ['. $entry['Login'] .'] skipped: Finish-Time difference between validation replay ['. $parser->replay .'] and best time ['. ($aseco->server->gameinfo->mode == Gameinfo::LAPS ? end($allcps) : $entry['Best']) .']');
 				$validation_success = false;
 			}
 

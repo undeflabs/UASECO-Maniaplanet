@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-30
+ * Date:	2015-06-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -94,21 +94,33 @@ class RankingList {
 	public function update ($item) {
 		global $aseco;
 
-		if (!$entry = $aseco->server->rankings->getRankByLogin($item['login'])) {
-			return false;
+		if ($entry = $aseco->server->rankings->getRankByLogin($item['login'])) {
+			// Update full player entry
+			$entry->rank				= $item['rank'];
+			$entry->login				= $item['login'];
+			$entry->nickname			= $item['nickname'];
+			$entry->time				= $item['time'];
+			$entry->score				= $item['score'];
+			$entry->cps				= $item['cps'];
+			$entry->team				= $item['team'];
+			$entry->spectator			= $item['spectator'];
+			$entry->away				= $item['away'];
+			$this->ranking_list[$entry->login]	= $entry;
 		}
-
-		// Update full player entry
-		$entry->rank				= $item['rank'];
-		$entry->login				= $item['login'];
-		$entry->nickname			= $item['nickname'];
-		$entry->time				= $item['time'];
-		$entry->score				= $item['score'];
-		$entry->cps				= $item['cps'];
-		$entry->team				= $item['team'];
-		$entry->spectator			= $item['spectator'];
-		$entry->away				= $item['away'];
-		$this->ranking_list[$entry->login]	= $entry;
+		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+			// Update team entry
+			$entry = new Ranking();
+			$entry->rank				= $item['rank'];
+			$entry->login				= $item['login'];
+			$entry->nickname			= $item['nickname'];
+			$entry->time				= $item['time'];
+			$entry->score				= $item['score'];
+			$entry->cps				= $item['cps'];
+			$entry->team				= $item['team'];
+			$entry->spectator			= $item['spectator'];
+			$entry->away				= $item['away'];
+			$this->ranking_list[$entry->login]	= $entry;
+		}
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 			$scores = array();

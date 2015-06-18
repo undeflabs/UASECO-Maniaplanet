@@ -1,4 +1,7 @@
 /**
+ *	Based upon original version 2015-03-05
+ *	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
  *	2015-05-30 changed by undef.de:
  *	- Changed position of id "Frame_NextCheckpoint" from "-76" to "-65"
  * 	- Changed Font from id "Label_NextPlayer" from "TextValueSmallSm" to "TextRaceMessage"

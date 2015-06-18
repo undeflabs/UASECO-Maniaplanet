@@ -1,4 +1,7 @@
 /**
+ *	Based upon original version 2014-11-05
+ *	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
  *	2015-05-30 changed by undef.de:
  *	- Separated change log block from original script documentation block
  *	- Changed the "Label_MultiRank" and added Continent

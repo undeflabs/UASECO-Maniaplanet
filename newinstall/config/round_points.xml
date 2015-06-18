@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+
+	<!-- Setup own round points system, see list below at <id> -->
+	<default_system>motogp</default_system>
+
+	<!--
+	Define points systems, any Players finishing beyond the last points entry get
+	the same number of points (typically 1) as that last entry.
+	//-->
+	<points_systems>
+		<system>
+			<!-- http://www.formula1.com/inside_f1/rules_and_regulations/sporting_regulations/6833/ -->
+			<id>f1old</id>
+			<label>Formula 1 GP Old</label>
+			<points>10,8,6,5,4,3,2,1</points>
+			<limit>39</limit>
+		</system>
+
+		<system>
+			<!-- http://www.formula1.com/inside_f1/rules_and_regulations/sporting_regulations/8681/ -->
+			<id>f1new</id>
+			<label>Formula 1 GP New</label>
+			<points>25,18,15,12,10,8,6,4,2,1</points>
+			<limit>99</limit>
+		</system>
+
+		<system>
+			<!-- http://www.motogp.com/en/about+MotoGP/key+rules -->
+			<id>motogp</id>
+			<label>MotoGP</label>
+			<points>25,20,16,13,11,10,9,8,7,6,5,4,3,2,1</points>
+			<limit>99</limit>
+		</system>
+
+		<system>
+			<!-- MotoGP + 5 points -->
+			<id>motogp5</id>
+			<label>MotoGP + 5</label>
+			<points>30,25,21,18,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1</points>
+			<limit>119</limit>
+		</system>
+
+		<system>
+			<!-- http://www.et-leagues.com/fet1/rules.php -->
+			<id>fet1</id>
+			<label>Formula ET Season 1</label>
+			<points>12,10,9,8,7,6,5,4,4,3,3,3,2,2,2,1</points>
+			<limit>47</limit>
+		</system>
+
+		<system>
+			<!-- http://www.et-leagues.com/fet2/rules.php (fixed: #17-19 = 2, not #17-21) -->
+			<id>fet2</id>
+			<label>Formula ET Season 2</label>
+			<points>15,12,11,10,9,8,7,6,6,5,5,4,4,3,3,3,2,2,2,1</points>
+			<limit>59</limit>
+		</system>
+
+		<system>
+			<!-- http://www.et-leagues.com/fet3/rules.php -->
+			<id>fet3</id>
+			<label>Formula ET Season 3</label>
+			<points>15,12,11,10,9,8,7,6,6,5,5,4,4,3,3,3,2,2,2,2,1</points>
+			<limit>59</limit>
+		</system>
+
+		<system>
+			<!-- http://www.champcarworldseries.com/News/Article.asp?ID=7499 -->
+			<id>champcar</id>
+			<label>Champ Car World Series</label>
+			<points>31,27,25,23,21,19,17,15,13,11,10,9,8,7,6,5,4,3,2,1</points>
+			<limit>123</limit>
+		</system>
+
+		<system>
+			<!-- http://www.eurosuperstars.com/eng/regolamenti.asp -->
+			<id>superstars</id>
+			<label>Superstars</label>
+			<points>20,15,12,10,8,6,4,3,2,1</points>
+			<limit>79</limit>
+		</system>
+
+		<system>
+			<!-- Simple 5 -->
+			<id>simple5</id>
+			<label>Simple 5</label>
+			<points>5,4,3,2,1</points>
+			<limit>19</limit>
+		</system>
+
+		<system>
+			<!-- Simple 10 -->
+			<id>simple10</id>
+			<label>Simple 10</label>
+			<points>10,9,8,7,6,5,4,3,2,1</points>
+			<limit>39</limit>
+		</system>
+
+		<system>
+			<!-- Based upon 'MotoGP' * 10 -->
+			<id>highscore</id>
+			<label>High Score</label>
+			<points>250,200,160,130,110,100,90,80,70,60,50,40,30,20,10</points>
+			<limit>990</limit>
+		</system>
+	</points_systems>
+
+	<messages>
+		<rpoints_named>{#server}» {1}Custom points system set to {#highlite}{2}{3}: {#highlite}{4},...</rpoints_named>
+		<rpoints_nameless>{#server}» {1}Custom points system set to: {#highlite}{2},...</rpoints_nameless>
+		<no_rpoints>{#server}» {1}No custom Rounds points system defined!</no_rpoints>
+	</messages>
+</settings>

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-30
+ * Date:	2015-06-16
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -380,7 +380,6 @@ class PluginInfoBar extends Plugin {
 		if ($logins == false) {
 			foreach ($aseco->server->players->player_list as $player) {
 				$mls = $xml;
-				$mls .= $this->buildPersonalBest($this->players[$player->login]['personal_best'], $show);
 				$mls .= $this->buildPersonalBest($this->players[$player->login]['personal_best'], $show);
 				$mls .= $this->buildLocalRecord($this->players[$player->login]['local_record'], $show);
 				$mls .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], $show);

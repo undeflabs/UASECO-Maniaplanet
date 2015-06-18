@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-06-12
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -104,7 +104,7 @@ class PluginDonate extends Plugin {
 			// check for minimum donation
 			if ($planets >= $this->mindonation) {
 				// start the transaction
-				$message = $aseco->formatText($aseco->getChatMessage('DONATION'),
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['DONATION'][0],
 					$planets,
 					$aseco->server->name
 				);
@@ -113,14 +113,14 @@ class PluginDonate extends Plugin {
 				$this->bills[$billid] = array($player->login, $player->nickname, $planets);
 			}
 			else {
-				$message = $aseco->formatText($aseco->getChatMessage('DONATE_MINIMUM'),
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['DONATE_MINIMUM'][0],
 					$this->mindonation
 				);
 				$aseco->sendChatMessage($message, $player->login);
 			}
 		}
 		else {
-			$message = $aseco->getChatMessage('DONATE_HELP');
+			$message = $this->config['MESSAGES'][0]['DONATE_HELP'][0];
 			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
@@ -216,22 +216,22 @@ class PluginDonate extends Plugin {
 				// check for sufficient balance, including Nadeo tax (2 + 5%)
 				if ($amount <= $planets - 2 - floor($amount * 0.05)) {
 					// remember payment to be made
-					$label = $aseco->formatText($aseco->getChatMessage('PAYMENT'), $amount, $target);
+					$label = $aseco->formatText($this->config['MESSAGES'][0]['PAYMENT'][0], $amount, $target);
 					$this->payments[$login] = array($target, (int) $amount, $label);
 					$this->display_payment($login, $label);
 				}
 				else {
-					$message = $aseco->formatText($aseco->getChatMessage('PAY_INSUFF'), $planets);
+					$message = $aseco->formatText($this->config['MESSAGES'][0]['PAY_INSUFF'][0], $planets);
 					$aseco->sendChatMessage($message, $login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('PAY_SERVER');
+				$message = $this->config['MESSAGES'][0]['PAY_SERVER'][0];
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
 		else {
-			$message = $aseco->getChatMessage('PAY_HELP');
+			$message = $this->config['MESSAGES'][0]['PAY_HELP'][0];
 			$aseco->sendChatMessage($message, $login);
 		}
 	}
@@ -284,7 +284,7 @@ class PluginDonate extends Plugin {
 			$this->bills[$billid] = array($login, $this->payments[$login][0], -$this->payments[$login][1]);
 		}
 		else {
-			$message = $aseco->formatText($aseco->getChatMessage('PAY_CANCEL'),
+			$message = $aseco->formatText($this->config['MESSAGES'][0]['PAY_CANCEL'][0],
 				$this->payments[$login][0]
 			);
 			$aseco->sendChatMessage($message, $login);
@@ -340,7 +340,7 @@ class PluginDonate extends Plugin {
 					if ($planets > 0) {
 						// check for public appreciation threshold
 						if ($planets >= $this->publicappr) {
-							$message = $aseco->formatText($aseco->getChatMessage('THANKS_ALL'),
+							$message = $aseco->formatText($this->config['MESSAGES'][0]['THANKS_ALL'][0],
 								$aseco->server->name,
 								$planets,
 								$nickname
@@ -348,7 +348,7 @@ class PluginDonate extends Plugin {
 							$aseco->sendChatMessage($message);
 						}
 						else {
-							$message = $aseco->formatText($aseco->getChatMessage('THANKS_YOU'),
+							$message = $aseco->formatText($this->config['MESSAGES'][0]['THANKS_YOU'][0],
 								$planets
 							);
 							$aseco->sendChatMessage($message, $login);
@@ -363,7 +363,7 @@ class PluginDonate extends Plugin {
 						// $planets < 0, get new server planets
 						$newplanets = $aseco->client->query('GetServerPlanets');
 
-						$message = $aseco->formatText($aseco->getChatMessage('PAY_CONFIRM'),
+						$message = $aseco->formatText($this->config['MESSAGES'][0]['PAY_CONFIRM'][0],
 							abs($planets),
 							$nickname,
 							$newplanets

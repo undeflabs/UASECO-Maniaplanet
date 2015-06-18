@@ -13,7 +13,7 @@ Version 1.0.0
    ~~~~~~~~~~~~
    - Requires PHP/5.2.1 or higher
    - Requires MySQL/5.x or higher
-   - Requires a Maniaplanet dedicated Server build 2015-03-09_18_00 or higher
+   - Requires a Maniaplanet dedicated Server build 2015-06-16_18_00 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
 
 
@@ -145,9 +145,11 @@ Version 1.0.0
      - Moved `PanelBG` to `settings` table and get stored into serialized `Value`
    - Table `records`:
      - Removed `Id`
+     - Added `GamemodeId`
    - Table `rs_karma` renamed to `ratings`
      - Removed `Id`
    - Table `rs_rank` renamed to `rankings`
      - Renamed `Avg` to `Average`
    - Table `rs_times` renamed to `times`
      - Removed `Id`
+     - Added `GamemodeId`

@@ -42,11 +42,11 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-06-01');
+	define('UASECO_BUILD',		'2015-06-18');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2015-03-09_18_00');
+	define('MANIAPLANET_BUILD',	'2015-06-16_18_00');
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.2.1');
 
@@ -412,6 +412,11 @@ class UASECO extends Helper {
 		// Get basic server info, server id, login, nickname, zone, name, options, mode, limits...
 		$this->server->getServerSettings();
 
+		// Add 'POWERED BY UASECO' to server comment
+		if (strpos($this->stripColors($this->server->comment, true), 'POWERED BY UASECO') === false) {
+			$this->client->query('SetServerComment', $this->server->comment ."\n". '$OPOWERED BY $0AF$L[http://www.UASECO.org/]UASECO$l');
+		}
+
 		// Check server build
 		if (strlen($this->server->build) == 0 || ($this->server->game == 'ManiaPlanet' && strcmp($this->server->build, MANIAPLANET_BUILD) < 0)) {
 			trigger_error("Obsolete server build '". $this->server->build ."' - must be at least '". MANIAPLANET_BUILD ."'!", E_USER_ERROR);
@@ -603,9 +608,6 @@ class UASECO extends Helper {
 				$this->console('[WARNING] To increase security you should setup a lock password at <lock_password> in [config/UASECO.xml]!');
 			}
 
-			// Set cheater action
-			$this->settings['cheater_action'] = $settings['CHEATER_ACTION'][0];
-
 			// Show played time at end of map?
 			$this->settings['show_playtime'] = $settings['SHOW_PLAYTIME'][0];
 
@@ -648,9 +650,6 @@ class UASECO extends Helper {
 			// Set minimum player client version
 			$this->settings['player_client'] = $settings['PLAYER_CLIENT_VERSION'][0];
 
-			// Set default rounds points system
-			$this->settings['default_rpoints'] = $settings['DEFAULT_RPOINTS'][0];
-
 			// Log all chat, not just chat commands ?
 			$this->settings['log_all_chat'] = $this->string2bool($settings['LOG_ALL_CHAT'][0]);
 
@@ -665,18 +664,6 @@ class UASECO extends Helper {
 
 			// Color mapnames in the various /lists... lists?
 			$this->settings['lists_colormaps'] = $this->string2bool($settings['LISTS_COLORMAPS'][0]);
-
-			// Display checkpoints panel?
-			$this->settings['display_checkpoints'] = $this->string2bool($settings['DISPLAY_CHECKPOINTS'][0]);
-
-			// Enable /cpsspec command?
-			$this->settings['enable_cpsspec'] = $this->string2bool($settings['ENABLE_CPSSPEC'][0]);
-
-			// Automatically enable /cps for new players?
-			$this->settings['auto_enable_cps'] = $this->string2bool($settings['AUTO_ENABLE_CPS'][0]);
-
-			// Automatically enable /dedicps for new players?
-			$this->settings['auto_enable_dedicps'] = $this->string2bool($settings['AUTO_ENABLE_DEDICPS'][0]);
 
 			// Automatically add IP for new admins/operators?
 			$this->settings['auto_admin_addip'] = $this->string2bool($settings['AUTO_ADMIN_ADDIP'][0]);

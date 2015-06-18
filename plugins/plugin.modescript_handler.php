@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-30
+ * Date:	2015-06-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -168,6 +168,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->team['MaxPointsPerRound']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_POINTS_PER_ROUND'][0];
 		$aseco->server->gameinfo->team['PointsGap']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_GAP'][0];
 		$aseco->server->gameinfo->team['UsePlayerClublinks']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['USE_PLAYER_CLUBLINKS'][0]);
+		$aseco->server->gameinfo->team['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_PLAYERS_PER_TEAM'][0];
+		$aseco->server->gameinfo->team['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MIN_PLAYERS_PER_TEAM'][0];
 
 		// Laps
 		$aseco->server->gameinfo->laps['TimeLimit']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['TIME_LIMIT'][0];
@@ -183,6 +185,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->cup['RoundsPerMap']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['ROUNDS_PER_MAP'][0];
 		$aseco->server->gameinfo->cup['NbOfWinners']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['NUMBER_OF_WINNERS'][0];
 		$aseco->server->gameinfo->cup['WarmUpDuration']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['WARM_UP_DURATION'][0];
+		$aseco->server->gameinfo->cup['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MAX_PLAYERS_NUMBER'][0];
+		$aseco->server->gameinfo->cup['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MIN_PLAYERS_NUMBER'][0];
 
 		// TeamAttack
 		$aseco->server->gameinfo->team_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TEAMATTACK'][0]['TIME_LIMIT'][0];
@@ -201,8 +205,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->chase['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->chase['DisplayWarning']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['DISPLAY_WARNING'][0]);
 		$aseco->server->gameinfo->chase['UsePlayerClublinks']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['USE_PLAYER_CLUBLINKS'][0]);
-		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MAX'][0];
-		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['NUMBER_PLAYERS_PER_TEAM_MIN'][0];
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MAX_NUMBER_PLAYERS_PER_TEAM'][0];
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MIN_NUMBER_PLAYERS_PER_TEAM'][0];
 		$aseco->server->gameinfo->chase['CompetitiveMode']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['COMPETITIVE_MODE'][0]);
 		$aseco->server->gameinfo->chase['WaypointEventDelay']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WAYPOINT_EVENT_DELAY'][0];
 		$aseco->server->gameinfo->chase['PauseBetweenRound']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['PAUSE_BETWEEN_ROUND'][0];
@@ -493,6 +497,12 @@ else {
 }
 $aseco->loadingMap($params[1]);
 ///END
+
+				if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+					// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
+					$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
+				}
+
 				// Reset
 				$aseco->changing_to_gamemode = false;
 
@@ -671,7 +681,7 @@ $aseco->loadingMap($params[1]);
 
 			// [0]=Login, [1]=Rank, [2]=BestCheckpoints, [3]=TeamId, [4]=IsSpectator, [5]=IsAway, [6]=BestTime, [7]=Zone, [8]=RoundScore, [9]=TotalScore
 			case 'LibXmlRpc_PlayersRanking':
-				if (count($params) > 0) {
+				if ($aseco->server->gameinfo->mode != Gameinfo::TEAM && count($params) > 0) {
 					foreach ($params as $item) {
 						$rank = explode(':', $item);
 						if ($player = $aseco->server->players->getPlayer($rank[0])) {
@@ -710,7 +720,6 @@ $aseco->loadingMap($params[1]);
 			// [0]=TeamBlueRoundScore, [1]=TeamRedRoundScore, [2]=TeamBlueTotalScore, [3]=TeamRedTotalScore
 			case 'LibXmlRpc_TeamsScores':
 				if ( isset($params) ) {
-
 					$rank_blue = PHP_INT_MAX;
 					$rank_red = PHP_INT_MAX;
 
@@ -1008,6 +1017,9 @@ $aseco->loadingMap($params[1]);
 				'S_MaxPointsPerRound'		=> $aseco->server->gameinfo->team['MaxPointsPerRound'],
 				'S_PointsGap'			=> $aseco->server->gameinfo->team['PointsGap'],
 				'S_UsePlayerClublinks'		=> $aseco->server->gameinfo->team['UsePlayerClublinks'],
+				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->team['NbPlayersPerTeamMax'],
+				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->team['NbPlayersPerTeamMin'],
+
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
@@ -1032,6 +1044,8 @@ $aseco->loadingMap($params[1]);
 				'S_RoundsPerMap'		=> $aseco->server->gameinfo->cup['RoundsPerMap'],
 				'S_NbOfWinners'			=> $aseco->server->gameinfo->cup['NbOfWinners'],
 				'S_WarmUpDuration'		=> $aseco->server->gameinfo->cup['WarmUpDuration'],
+				'S_NbOfPlayersMax'		=> $aseco->server->gameinfo->cup['NbOfPlayersMax'],
+				'S_NbOfPlayersMin'		=> $aseco->server->gameinfo->cup['NbOfPlayersMin'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {

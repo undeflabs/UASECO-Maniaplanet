@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+	<display_checkpoints>true</display_checkpoints>
+
+	<checkpoint_widget>
+		<pos_x>-8.5</pos_x>
+		<pos_y>-43.9</pos_y>
+
+		<!-- If <background_color> is not empty then the style/substyle are ignored -->
+		<background_color>55556699</background_color>
+		<style>BgsPlayerCard</style>
+		<substyle>BgCardSystem</substyle>
+
+		<textcolors>
+			<!-- RRGGBBAA -->
+			<default_checkpoint>DDDDEEFF</default_checkpoint>
+			<default_besttime>BBBBBBFF</default_besttime>
+
+			<!-- RGB only! -->
+			<time_improved>3B3</time_improved>
+			<time_equal>29F</time_equal>
+			<time_worse>F00</time_worse>
+		</textcolors>
+	</checkpoint_widget>
+
+	<!-- Add a colorized bar which indicates the differences of your Checkpoint times -->
+	<enable_colorbar>true</enable_colorbar>
+
+	<!-- 2015-06-18 Not fully supported yet -->
+	<enable_cpsspec>false</enable_cpsspec>
+
+	<!-- Checkpoint tracking for local records, automatically enable /cps for new players? -->
+	<auto_enable_cps>true</auto_enable_cps>
+
+	<!-- Checkpoint tracking for dedimania records, automatically enable /dedicps for new players? -->
+	<auto_enable_dedicps>false</auto_enable_dedicps>
+
+	<!--
+	How to handle cheating player:
+	0 = do nothing
+	1 = set to spec
+	2 = kick
+	3 = ban (& kick)
+	4 = blacklist & kick
+	5 = blacklist & ban
+	//-->
+	<cheater_action>0</cheater_action>
+</settings>

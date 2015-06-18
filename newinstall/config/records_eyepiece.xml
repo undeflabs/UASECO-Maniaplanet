@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <records_eyepiece>
 	<!-- THIS IS THE CONFIG FILE FOR UASECO ONLY -->
 
@@ -457,7 +457,7 @@
 				<display_type>scores</display_type>		<!-- Display 'score' or 'time' in the LiveRankings? -->
 				<format>{score} ({remaining})</format>		<!-- Placeholder '{score}', '{remaining}' and '{pointlimit}' are replaced with e.g. "25 (74)" -->
 				<pos_x>48.64</pos_x>
-				<pos_y>-4.9</pos_y>
+				<pos_y>-5.1</pos_y>
 				<scale>1.0</scale>
 				<entries>11</entries>
 				<topcount>3</topcount>
@@ -475,7 +475,7 @@
 			<team>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>28.3</pos_y>
+				<pos_y>-21.3</pos_y>
 				<scale>1.0</scale>
 				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
 				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
@@ -494,7 +494,7 @@
 			<cup>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>-0.3</pos_y>
+				<pos_y>-5.1</pos_y>
 				<scale>1.0</scale>
 				<entries>11</entries>
 				<topcount>3</topcount>
@@ -556,7 +556,7 @@
 			<team>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>21.3</pos_y>
+				<pos_y>23.7</pos_y>
 				<scale>1.0</scale>
 				<entries>23</entries>
 				<topcount>3</topcount>
@@ -574,7 +574,7 @@
 			<cup>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>28.3</pos_y>
+				<pos_y>23.7</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
