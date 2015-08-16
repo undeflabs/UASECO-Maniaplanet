@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-06
+ * Date:	2015-07-31
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -52,7 +52,7 @@ class Helper {
 		$xml = '<manialink id="UASECO-LoadStatus" version="1">';
 		if ($message !== false && $this->startup_phase === true) {
 			$xml .= '<frame posn="-44.375 60.75 0.01">';
-			$xml .= '<quad posn="0 0 0.01" sizen="91.8 22.4" url="'. UASECO_WEBSITE .'" image="http://www.uaseco.org/media/uaseco/logo-uaseco.png"/>';
+			$xml .= '<quad posn="0 0 0.01" sizen="91.8 22.4" url="'. UASECO_WEBSITE .'" image="'. UASECO_WEBSITE .'/media/uaseco/logo-uaseco.png"/>';
 			$xml .= '<label posn="1.8 -22 0.02" sizen="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
 			$xml .= '<gauge posn="0 -24 0.03" sizen="91.8 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
 			$xml .= '</frame>';
@@ -143,7 +143,7 @@ class Helper {
 		$amount_players = $this->server->players->count();
 		$amount_spectators = 0;
 		foreach ($this->server->players->player_list as $player) {
-				if ($player->isspectator == 1) {
+				if ($player->is_spectator) {
 					$amount_spectators++;
 				}
 		}
@@ -196,10 +196,10 @@ class Helper {
 		$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
 		$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
 		$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
-		$xml .= '   <authortime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->author_score	: $this->server->maps->current->author_time) .'</authortime>'.LF;
-		$xml .= '   <goldtime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->goldtime	: $this->server->maps->current->goldtime) .'</goldtime>'.LF;
-		$xml .= '   <silvertime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->silvertime	: $this->server->maps->current->silvertime) .'</silvertime>'.LF;
-		$xml .= '   <bronzetime>'. (($this->server->gameinfo->mode == Gameinfo::STUNTS)	? $this->server->maps->current->bronzetime	: $this->server->maps->current->bronzetime) .'</bronzetime>'.LF;
+		$xml .= '   <authortime>'. $this->server->maps->current->author_time .'</authortime>'.LF;
+		$xml .= '   <goldtime>'. $this->server->maps->current->goldtime .'</goldtime>'.LF;
+		$xml .= '   <silvertime>'. $this->server->maps->current->silvertime .'</silvertime>'.LF;
+		$xml .= '   <bronzetime>'. $this->server->maps->current->bronzetime .'</bronzetime>'.LF;
 		$xml .= '   <mxurl>'. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .'</mxurl>'.LF;
 		$xml .= '  </map>'.LF;
 		$xml .= '  <players>'.LF;
@@ -209,7 +209,7 @@ class Helper {
 				$xml .= '     <login>'. $player->login .'</login>'.LF;
 				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
 				$xml .= '     <ladder>'. $player->ladderrank .'</ladder>'.LF;
-				$xml .= '     <spectator>'. $this->bool2string($player->isspectator) .'</spectator>'.LF;
+				$xml .= '     <spectator>'. $this->bool2string($player->is_spectator) .'</spectator>'.LF;
 				$xml .= '   </player>'.LF;
 		}
 		$xml .= '  </players>'.LF;
@@ -223,7 +223,7 @@ class Helper {
 
 		// Send and ignore response
 		$this->webaccess->request(
-			UASECO_WEBSITE .'usagereport.php',				// URL
+			UASECO_WEBSITE .'/usagereport.php',				// URL
 			null,								// Callback
 			$xml,								// POST data
 			false,								// IsXmlRpc
@@ -244,7 +244,7 @@ class Helper {
 	// $width is the width of the first column in the ManiaLink window
 	public function showHelp ($aseco, $login, $chat_commands, $head, $showadmin = false, $dispall = false, $width = 0.3) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		if ($dispall) {
@@ -519,7 +519,7 @@ class Helper {
 
 	// Created by Xymph: Case-insensitive file_exists replacement function.
 	// Returns matching path, otherwise false.
-	public function file_exists_nocase ($filepath) {
+	public function fileExistsNoCase ($filepath) {
 
 		// try case-sensitive path first
 		if (file_exists($filepath)) {
@@ -678,15 +678,15 @@ class Helper {
 	*/
 
 	// Formats a text, replaces parameters in the text which are marked with {n}
-	public function formatText ($text) {
+	public function formatText ($unused) {
 
-		// get all function's parameters
+		// Get all function's parameters
 		$args = func_get_args();
 
-		// first parameter is the text to format
+		// First parameter is the text to format
 		$text = array_shift($args);
 
-		// further parameters will be replaced in the text
+		// Further parameters will be replaced in the text
 		$i = 1;
 		foreach ($args as $param) {
 			$text = str_replace('{'. $i++ .'}', $param, $text);
@@ -706,7 +706,7 @@ class Helper {
 	public function formatTime ($MwTime, $tsec = true) {
 
 		if ($MwTime > 0) {
-			$tseconds = substr($MwTime, strlen($MwTime)-3);
+			$tseconds = ((strlen($MwTime) > 3) ? substr($MwTime, strlen($MwTime)-3) : $MwTime);
 			$MwTime = floor($MwTime / 1000);
 			$hours = floor($MwTime / 3600);
 			$MwTime = $MwTime - ($hours * 3600);

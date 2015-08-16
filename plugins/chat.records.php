@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -30,7 +30,6 @@
  * Dependencies:
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.local_records.php
- *  - plugins/plugin.rasp_jukebox.php
  *
  */
 
@@ -60,7 +59,6 @@ class PluginChatRecords extends Plugin {
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerChatCommand('recs',	'chat_recs',		'Displays all records on current map',		Player::PLAYERS);
 		$this->registerChatCommand('newrecs',	'chat_newrecs',		'Shows newly driven records',			Player::PLAYERS);
@@ -80,7 +78,7 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_recs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -187,16 +185,14 @@ class PluginChatRecords extends Plugin {
 					'{#black}' . $nick,
 					'{#login}' . $cur_record->player->login,
 					($cur_record->new ? '{#black}' : '') .
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ?
-					$cur_record->score : $aseco->formatTime($cur_record->score))
+					$aseco->formatTime($cur_record->score)
 				);
 			}
 			else {
 				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) . '.',
 					'{#black}' . $nick,
 					($cur_record->new ? '{#black}' : '') .
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ?
-					$cur_record->score : $aseco->formatTime($cur_record->score))
+					$aseco->formatTime($cur_record->score)
 				);
 			}
 			if (++$lines > 14) {
@@ -269,7 +265,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// display player records, best first
-		if ($player = $aseco->server->players->getPlayer($login)) {
+		if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 			$command = array();
 			$command['author'] = $player;
 			$command['params'] = $chat_parameter;
@@ -293,7 +289,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// display player records, worst first
-		if ($player = $aseco->server->players->getPlayer($login)) {
+		if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 			$command = array();
 			$command['author'] = $player;
 			$command['params'] = $chat_parameter;
@@ -309,7 +305,7 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_summary ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$target = $aseco->server->players->getPlayer($login)) {
+		if (!$target = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -422,7 +418,7 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_topsums ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -435,7 +431,6 @@ class PluginChatRecords extends Plugin {
 
 		// collect top-3 records
 		$recs = array();
-		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 		foreach ($aseco->server->maps->map_list as $map) {
 			// get top-3 ranked records on this map
 			$query = "
@@ -445,7 +440,7 @@ class PluginChatRecords extends Plugin {
 			WHERE `%prefix%players`.`PlayerId` = `%prefix%records`.`Playerid`
 			AND `MapId` = ". $map->id ."
 			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-			ORDER BY `Score` ". $order .", `Date` ASC
+			ORDER BY `Score` ASC, `Date` ASC
 			LIMIT 3;
 			";
 			$result = $aseco->db->query($query);
@@ -543,7 +538,7 @@ class PluginChatRecords extends Plugin {
 
 	public function chat_toprecs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -556,7 +551,6 @@ class PluginChatRecords extends Plugin {
 
 		// collect record totals
 		$recs = array();
-		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 		foreach ($aseco->server->maps->map_list as $map) {
 			// get ranked records on this map
 			$query = "
@@ -566,7 +560,7 @@ class PluginChatRecords extends Plugin {
 			WHERE `%prefix%players`.`PlayerId` = `%prefix%records`.`Playerid`
 			AND `MapId` = ". $map->id ."
 			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-			ORDER BY `Score` ". $order .", `Date` ASC
+			ORDER BY `Score` ASC, `Date` ASC
 			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";
 			$result = $aseco->db->query($query);
@@ -696,7 +690,7 @@ class PluginChatRecords extends Plugin {
 					}
 
 					// grey out if in history
-					if ((isset($aseco->plugins['PluginRaspJukebox'])) && (in_array($map->uid, $aseco->plugins['PluginRaspJukebox']->jb_buffer)) ) {
+					if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 						$mapname = '{#grey}' . $aseco->stripColors($mapname);
 					}
 					else {

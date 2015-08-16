@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-05-30
+ * Date:		2015-07-03
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -1224,7 +1224,7 @@ EOL;
 
 		if ( $this->checkVotePossibility('Restart', $login) ) {
 			// Get Player object
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				// Setup new vote
 				$this->setupNewVote('Restart', $player->login, $player->nickname, $this->config['MESSAGES'][0]['QUESTION_RESTART'][0]);
 			}
@@ -1241,7 +1241,7 @@ EOL;
 
 		if ( $this->checkVotePossibility('Skip', $login) ) {
 			// Get Player object
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				// Setup new vote
 				$this->setupNewVote('Skip', $player->login, $player->nickname, $this->config['MESSAGES'][0]['QUESTION_SKIP'][0]);
 			}
@@ -1292,7 +1292,7 @@ EOL;
 
 		if ( $this->checkVotePossibility('Balance', $login) ) {
 			// Get Player object
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				// Setup new vote
 				$this->setupNewVote('Balance', $player->login, $player->nickname, $this->config['MESSAGES'][0]['QUESTION_BALANCE'][0]);
 			}

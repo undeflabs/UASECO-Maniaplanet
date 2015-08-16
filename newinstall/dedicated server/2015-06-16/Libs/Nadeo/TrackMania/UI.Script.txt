@@ -1,8 +1,10 @@
 /**
  *	Based upon original version 2015-02-16
  *	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *	2015-07-03 changed by undef.de:
+ *	- Hide/Show "Lib_UI:Countdown" on changing InputPlayer.RequestsSpectate states
  *
- *	2015-06-18 changed by undef.de:
+ *	2015-07-01 changed by undef.de:
  *	- Changed the id "Label_Chrono" from halign="center" to halign="right"
  *	- Changed Time string from "--:--.--" to "0:00.000"
  */
@@ -15,7 +17,7 @@
  *	- SmallScoresTable -> display the player ranking at the end of the round
  *	- Chrono -> display a chrono at the bottom of the screen
  */
-#Const	Version		"2015-06-18"
+#Const	Version		"2015-07-03"
 #Const	ScriptName	"UI.Script.txt"
 
 #Include "TextLib" as TL
@@ -584,18 +586,7 @@ Text FormatTime (Integer MwTime) {
 	declare Text FormatedTime = "0:00.000";
 
 	if (MwTime > 0) {
-		// Format "246656" to "4:06.65"
-		FormatedTime = TL::TimeToText(MwTime, True);
-
-		// Strip TSeconds "656" from "246656"
-		declare Text MwTimeText = TL::ToText(MwTime);
-		declare Text TSeconds = TL::SubString(MwTimeText, TL::Length(MwTimeText)-3, 3);
-
-		// Split "4:06.65" to "4:06" and "65"
-		declare Text[] TimeParts = TL::Split(".", FormatedTime);
-
-		// Add long TSecond ("656")
-		FormatedTime = TimeParts[0] ^ "." ^ TSeconds;
+		FormatedTime = TL::TimeToText(MwTime, True) ^ MwTime % 10;
 	}
 	return FormatedTime;
 }
@@ -603,7 +594,7 @@ Text FormatTimeFake (Integer MwTime) {
 	declare Text FormatedTime = "0:00.000";
 
 	if (MwTime > 0) {
-		// Format "246656" to "4:06.65"
+		// Format "246656" to "4:06.65" and add a random number
 		FormatedTime = TL::TimeToText(MwTime, True) ^ TL::ToText(ML::Rand(0, 9));
 	}
 	return FormatedTime;
@@ -1201,6 +1192,15 @@ main() {
 					}
 				}
 			}
+		}
+
+		if (InputPlayer.RequestsSpectate == True) {
+			PrevCountdownVisible = False;
+			Frame_Global.Visible = False;
+		}
+		else {
+			PrevCountdownVisible = True;
+			Frame_Global.Visible = True;
 		}
 
 		if (PrevCountdownVisible) {

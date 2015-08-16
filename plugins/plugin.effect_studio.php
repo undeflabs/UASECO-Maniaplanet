@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-05-25
+ * Date:		2015-07-22
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -95,14 +95,6 @@ class PluginEffectStudio extends Plugin {
 			trigger_error('[EffectStudio] Could not read/parse config file "config/effect_studio.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
-
-
-
-//		// Disable parts of the UI
-//		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('go', false);
-//
-//		// Send the UI settings
-//		$aseco->plugins['PluginModescriptHandler']->setupUserInterface();
 
 
 		// Listing of currently supported events

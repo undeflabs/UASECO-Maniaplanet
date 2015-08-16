@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -67,7 +67,7 @@ class PluginChatRaspNextrank extends Plugin {
 
 	public function chat_nextrank ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

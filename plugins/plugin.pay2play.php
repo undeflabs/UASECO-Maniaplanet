@@ -21,7 +21,7 @@ class PluginPay2Play extends Plugin {
 
 		$this->addDependence('PluginRaspJukebox', Dependence::REQUIRED, '1.0.0', null);
 
-		$this->registerEvent('onStartup',			'setup');
+		$this->registerEvent('onSync',				'setup');
 		$this->registerEvent('onPlayerConnect',			'connect');
 		$this->registerEvent('onLoadingMap',			'check');
 		$this->registerEvent('onRestartMap',			'check');
@@ -285,7 +285,7 @@ class PluginPay2Play extends Plugin {
 	// Deal with button clicks
 	public function click($aseco, $login, $command) {
 
-		$player = $aseco->server->players->getPlayer($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
 		if ($command['Action'] == 'replay') {
 			$nextmap = $aseco->client->query('GetNextMapInfo');
 			if ($this->p2p['thismap'] != $nextmap['FileName']) {

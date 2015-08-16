@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -73,7 +73,7 @@ class WindowList {
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

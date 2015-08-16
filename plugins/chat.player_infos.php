@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -79,7 +79,7 @@ class PluginPlayerInfos extends Plugin {
 		$action = (int)$answer['Action'];
 		if ($action >= 2001 && $action <= 2200) {
 			// get player
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$target = $player->playerlist[$action-2001]['login'];
 
 				// close main window because /stats can take a while
@@ -101,7 +101,7 @@ class PluginPlayerInfos extends Plugin {
 
 		// use only first parameter
 		$command['params'] = explode(' ', $chat_parameter, 2);
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$player->playerlist = array();
@@ -173,7 +173,7 @@ class PluginPlayerInfos extends Plugin {
 
 	public function chat_ranks ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$ranks = array();
@@ -192,7 +192,7 @@ class PluginPlayerInfos extends Plugin {
 		$player->msgs = array();
 		$player->msgs[0] = array(1, $head, array(0.8, 0.15, 0.65), array('Icons128x128_1', 'Buddies'));
 		foreach ($ranks as $pl => $rk) {
-			if ($play = $aseco->server->players->getPlayer($pl)) {
+			if ($play = $aseco->server->players->getPlayerByLogin($pl)) {
 				$msg[] = array('{#login}'. ($rk != PHP_INT_MAX ? $rk : '{#grey}<none>'),
 					'{#black}'. $play->nickname
 				);

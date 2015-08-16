@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-17
+ * Date:	2015-07-22
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -52,7 +52,8 @@ class Gameinfo {
 	public $cup		= array();
 	public $team_attack	= array();
 	public $chase		= array();
-//	public $stunts		= array();					// currently unused
+	public $knockout	= array();
+	public $doppler		= array();
 
 	const ROUNDS		= 1;
 	const TIME_ATTACK	= 2;
@@ -61,7 +62,8 @@ class Gameinfo {
 	const CUP		= 5;
 	const TEAM_ATTACK	= 6;
 	const CHASE		= 7;
-	const STUNTS		= 8;
+	const KNOCKOUT		= 101;
+	const DOPPLER		= 102;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -116,8 +118,12 @@ class Gameinfo {
 				$this->mode = self::CHASE;
 				break;
 
-			case 'Stunts':
-				$this->mode = self::STUNTS;
+			case 'Knockout':
+				$this->mode = self::KNOCKOUT;
+				break;
+
+			case 'Doppler':
+				$this->mode = self::DOPPLER;
 				break;
 
 			default:
@@ -241,6 +247,23 @@ class Gameinfo {
 			$this->chase['PauseBetweenRound']		= $modescript['settings']['S_PauseBetweenRound'];
 			$this->chase['WaitingTimeMax']			= $modescript['settings']['S_WaitingTimeMax'];
 		}
+		else if ($this->mode == self::KNOCKOUT) {
+			// Knockout
+			$this->knockout['FinishTimeout']		= $modescript['settings']['S_FinishTimeout'];
+			$this->knockout['RoundsPerMap']			= $modescript['settings']['S_RoundsPerMap'];
+			$this->knockout['DoubleKnockUntil']		= $modescript['settings']['S_DoubleKnockUntil'];
+			$this->knockout['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
+			$this->knockout['ShowMultilapInfo']		= $modescript['settings']['S_ShowMultilapInfo'];
+		}
+		else if ($this->mode == self::DOPPLER) {
+			// Doppler
+			$this->doppler['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
+			$this->doppler['LapsSpeedMode']			= $modescript['settings']['S_LapsSpeedMode'];
+			$this->doppler['DumpSpeedOnReset']		= $modescript['settings']['S_DumpSpeedOnReset'];
+			$this->doppler['VelocityUnit']			= (($modescript['settings']['S_KPH'] === true) ? 'KPH' : 'MPH');
+			$this->doppler['ModuleBestPlayersShow']		= $modescript['settings']['S_HideModule'];
+			$this->doppler['ModuleBestPlayersPosition']	= $modescript['settings']['S_ModulePosDX'] .','. $modescript['settings']['S_ModulePosDY'];
+		}
 	}
 
 	/*
@@ -287,8 +310,11 @@ class Gameinfo {
 			case self::CHASE:
 				return 'Chase.Script.txt';
 
-			case self::STUNTS:
-				return 'Stunts.Script.txt';
+			case self::KNOCKOUT:
+				return 'Knockout.Script.txt';
+
+			case self::DOPPLER:
+				return 'Doppler.Script.txt';
 
 			default:
 				return false;
@@ -329,8 +355,11 @@ class Gameinfo {
 			case self::CHASE:
 				return 'Chase';
 
-			case self::STUNTS:
-				return 'Stunts';
+			case self::KNOCKOUT:
+				return 'Knockout';
+
+			case self::DOPPLER:
+				return 'Doppler';
 
 			default:
 				return 'Undefined';
@@ -344,7 +373,7 @@ class Gameinfo {
 	*/
 
 	// Returns current or given Gamemode as Id
-	public function getGamemodeId ($name = false) {
+	public function getModeId ($name = false) {
 
 		if ($name === false) {
 			$name = $this->getModeName();
@@ -371,8 +400,11 @@ class Gameinfo {
 			case 'chase':
 				return self::CHASE;
 
-			case 'stunts':
-				return self::STUNTS;
+			case 'knockout':
+				return self::KNOCKOUT;
+
+			case 'doppler':
+				return self::DOPPLER;
 
 			default:
 				return false;
@@ -412,8 +444,11 @@ class Gameinfo {
 			case 'Chase':
 				return $this->getModeName(self::CHASE);
 
-			case 'Stunts':
-				return $this->getModeName(self::STUNTS);
+			case 'Knockout':
+				return $this->getModeName(self::KNOCKOUT);
+
+			case 'Doppler':
+				return $this->getModeName(self::DOPPLER);
 
 			default:
 				return false;
@@ -428,38 +463,10 @@ class Gameinfo {
 
 	// Returns next Gamemode as Id
 	public function getNextModeId () {
-
 		global $aseco;
 
 		$info = $aseco->client->query('GetGameInfos');
-		switch (str_replace('.Script.txt', '', $info['NextGameInfos']['ScriptName'])) {
-			case 'Rounds':
-				return self::ROUNDS;
-
-			case 'TimeAttack':
-				return self::TIME_ATTACK;
-
-			case 'Team':
-				return self::TEAM;
-
-			case 'Laps':
-				return self::LAPS;
-
-			case 'Cup':
-				return self::CUP;
-
-			case 'TeamAttack':
-				return self::TEAM_ATTACK;
-
-			case 'Chase':
-				return self::CHASE;
-
-			case 'Stunts':
-				return self::STUNTS;
-
-			default:
-				return false;
-		}
+		return $this->getModeId(str_replace('.Script.txt', '', $info['NextGameInfos']['ScriptName']));
 	}
 }
 

@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-31
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -107,27 +107,8 @@ class PluginRaspJukebox extends Plugin {
 	*/
 
 	public function onSync ($aseco, $data) {
-
 		// Get settings
 		$this->readSettings();
-
-		// read map history from file in case of UASECO restart
-		$this->jb_buffer = array();
-		if ($fp = @fopen($this->maphistory_file, 'rb')) {
-			while (!feof($fp)) {
-				$uid = rtrim(fgets($fp));
-				if ($uid != '') {
-					$this->jb_buffer[] = $uid;
-				}
-			}
-			fclose($fp);
-
-			// keep only most recent $this->buffersize entries
-			$this->jb_buffer = array_slice($this->jb_buffer, -$this->buffersize);
-
-			// drop current (last) map as onLoadingMap() will add it back
-			array_pop($this->jb_buffer);
-		}
 	}
 
 	/*
@@ -156,7 +137,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= -2000 && $action <= -101) {
 			// get player
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$author = $player->maplist[abs($action) - 101]['author'];
 
 				// close main window because /list can take a while
@@ -168,7 +149,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= -2100 && $action <= -2001) {
 			// get player
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$login = $player->login;
 
 				// determine admin ability to drop all jukeboxed maps
@@ -205,7 +186,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 5201 && $action <= 5700) {
 			// get player & map ID
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$mxid = $player->maplist[$action - 5201]['id'];
 
 				// /mxinfo selected map
@@ -214,7 +195,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 5701 && $action <= 6200) {
 			// get player & map ID
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$mxid = $player->maplist[$action - 5701]['id'];
 
 				// /add selected map
@@ -223,7 +204,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 6201 && $action <= 6700) {
 			// get player & map ID
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$mxid = $player->maplist[$action - 6201]['id'];
 
 				// /admin add selected map
@@ -232,7 +213,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 		else if ($action >= 6701 && $action <= 7200) {
 			// get player & map author
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$author = $player->maplist[$action - 6701]['author'];
 				// insure multi-word author is single parameter
 				$author = str_replace(' ', '%20', $author);
@@ -254,33 +235,6 @@ class PluginRaspJukebox extends Plugin {
 		// check for relay server
 		if ($aseco->server->isrelay) {
 			return;
-		}
-
-		// don't duplicate replayed map in history
-		if (!empty($this->jb_buffer)) {
-			$previous = array_pop($this->jb_buffer);
-			// put back previous map if different
-			if ($previous != $map->uid) {
-				$this->jb_buffer[] = $previous;
-			}
-		}
-		// remember current map in history
-		if (count($this->jb_buffer) >= $this->buffersize) {
-			// drop oldest map if buffer full
-			array_shift($this->jb_buffer);
-		}
-		// append current map to history
-		$this->jb_buffer[] = $map->uid;
-
-		// write map history to file in case of UASECO restart
-		if ($fp = @fopen($this->maphistory_file, 'wb')) {
-			foreach ($this->jb_buffer as $uid) {
-				fwrite($fp, $uid . CRLF);
-			}
-			fclose($fp);
-		}
-		else {
-			trigger_error('Could not write map history file ['. $this->maphistory_file .']!', E_USER_WARNING);
 		}
 
 		// process jukebox
@@ -580,7 +534,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_list ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$command['author'] = $player;
@@ -607,19 +561,15 @@ class PluginRaspJukebox extends Plugin {
 			$help[] = array('...', '{#black}norank',
 			                'Shows maps you don\'t have a rank on');
 			$help[] = array('...', '{#black}nogold',
-			                'Shows maps you didn\'t beat gold '.
-			                 ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'score on' : 'time on'));
+			                'Shows maps you didn\'t beat gold time on');
 			$help[] = array('...', '{#black}noauthor',
-			                'Shows maps you didn\'t beat author '.
-			                 ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'score on' : 'time on'));
+			                'Shows maps you didn\'t beat author time on');
 			$help[] = array('...', '{#black}norecent',
 			                'Shows maps you didn\'t play recently');
 			$help[] = array('...', '{#black}best$g/{#black}worst',
 			                'Shows maps with your best/worst records');
-			if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-				$help[] = array('...', '{#black}longest$g/{#black}shortest',
-				                'Shows the longest/shortest maps');
-			}
+			$help[] = array('...', '{#black}longest$g/{#black}shortest',
+			                'Shows the longest/shortest maps');
 			$help[] = array('...', '{#black}newest$g/{#black}oldest #',
 			                'Shows newest/oldest # maps (def: 50)');
 			$help[] = array('...', '{#black}xxx',
@@ -721,7 +671,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_jukebox ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -763,7 +713,7 @@ class PluginRaspJukebox extends Plugin {
 						$aseco->sendChatMessage($message, $login);
 						return;
 					}
-					else if (in_array($uid, $this->jb_buffer)) {
+					else if ($aseco->server->playlist->isMapInHistoryByUid($uid) === true) {
 
 						// if not an admin with this ability, bail out
 						if (!$aseco->allowAbility($player, 'chat_jb_recent')) {
@@ -980,7 +930,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_autojuke ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1005,19 +955,15 @@ class PluginRaspJukebox extends Plugin {
 			$help[] = array('...', '{#black}norank',
 			                'Selects maps you don\'t have a rank on');
 			$help[] = array('...', '{#black}nogold',
-			                'Selects maps you didn\'t beat gold '.
-			                 ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'score on' : 'time on'));
+			                'Selects maps you didn\'t beat gold time on');
 			$help[] = array('...', '{#black}noauthor',
-			                'Selects maps you didn\'t beat author '.
-			                 ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'score on' : 'time on'));
+			                'Selects maps you didn\'t beat author time on');
 			$help[] = array('...', '{#black}norecent',
 			                'Selects maps you didn\'t play recently');
-			if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-				$help[] = array('...', '{#black}longest$g/{#black}shortest',
-				                'Selects the longest/shortest maps');
-			}
-			$help[] = array('...', '{#black}newest$g/{#black}oldest',
-			                'Selects the newest/oldest maps');
+			$help[] = array('...', '{#black}longest$g/{#black}shortest',
+			                'Selects the longest/shortest maps');
+//			$help[] = array('...', '{#black}newest$g/{#black}oldest',
+//			                'Selects the newest/oldest maps');
 			if ($this->feature_karma) {
 				$help[] = array('...', '{#black}novote',
 				                'Selects maps you didn\'t karma vote for');
@@ -1050,12 +996,12 @@ class PluginRaspJukebox extends Plugin {
 		else if ($cmdcount == 1 && $chat_parameter[0] == 'shortest') {
 			$this->getMapsByLength($player, true);
 		}
-		else if ($cmdcount == 1 && $chat_parameter[0] == 'newest') {
-			$this->getMapsByAdd($player, true, $this->buffersize+1);
-		}
-		else if ($cmdcount == 1 && $chat_parameter[0] == 'oldest') {
-			$this->getMapsByAdd($player, false, $this->buffersize+1);
-		}
+//		else if ($cmdcount == 1 && $chat_parameter[0] == 'newest') {
+//			$this->getMapsByAdd($player, true, $this->buffersize+1);
+//		}
+//		else if ($cmdcount == 1 && $chat_parameter[0] == 'oldest') {
+//			$this->getMapsByAdd($player, false, $this->buffersize+1);
+//		}
 		else if ($cmdcount == 1 && $chat_parameter[0] == 'novote' && $this->feature_karma) {
 			$this->getMapsNoVote($player);
 		}
@@ -1075,7 +1021,7 @@ class PluginRaspJukebox extends Plugin {
 		$ctr = 1;
 		$found = false;
 		foreach ($player->maplist as $key) {
-			if (!array_key_exists($key['uid'], $this->jukebox) && !in_array($key['uid'], $this->jb_buffer)) {
+			if (!array_key_exists($key['uid'], $this->jukebox) && $aseco->server->playlist->isMapInHistoryByUid($key['uid']) === false) {
 				$found = true;
 				break;
 			}
@@ -1099,7 +1045,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_add ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1113,7 +1059,7 @@ class PluginRaspJukebox extends Plugin {
 		// check whether jukebox & /add are enabled
 		if ($this->feature_jukebox && $this->feature_mxadd && isset($aseco->plugins['PluginRaspVotes'])) {
 			// check whether this player is spectator
-			if (!$this->allow_spec_startvote && $player->isspectator) {
+			if (!$this->allow_spec_startvote && $player->is_spectator) {
 				$message = $this->messages['NO_SPECTATORS'][0];
 				$aseco->sendChatMessage($message, $login);
 				return;
@@ -1167,7 +1113,7 @@ class PluginRaspJukebox extends Plugin {
 						$aseco->console_text('/add - path + filename='. $partialdir);
 						$aseco->console_text('/add - aseco->server->mapdir = '. $aseco->server->mapdir);
 					}
-					if ($nocasepath = $aseco->file_exists_nocase($localfile)) {
+					if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
 						if (!unlink($nocasepath)) {
 							$message = '{#server}» {#error}Error erasing old file. Please contact admin.';
 							$aseco->sendChatMessage($message, $login);
@@ -1225,7 +1171,7 @@ class PluginRaspJukebox extends Plugin {
 					// if not a duplicate map
 					$i = 1;
 					$dupl = false;
-					while ($nocasepath = $aseco->file_exists_nocase($aseco->server->mapdir . $partialdir)) {
+					while ($nocasepath = $aseco->fileExistsNoCase($aseco->server->mapdir . $partialdir)) {
 						$md5old = md5_file($nocasepath);
 						if ($md5old == $md5new) {
 							$dupl = true;
@@ -1324,7 +1270,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_y ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1336,7 +1282,7 @@ class PluginRaspJukebox extends Plugin {
 		}
 
 		// check whether this player is spectator but not any admin
-		if (!$this->allow_spec_voting && $player->isspectator && !$aseco->isAnyAdmin($player)) {
+		if (!$this->allow_spec_voting && $player->is_spectator && !$aseco->isAnyAdmin($player)) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $login);
 			return;
@@ -1612,7 +1558,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_history ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1623,16 +1569,19 @@ class PluginRaspJukebox extends Plugin {
 			return;
 		}
 
-		if (!empty($this->jb_buffer)) {
+		if (!empty($aseco->server->playlist->history)) {
 			$message = $this->messages['HISTORY'][0];
+
 			// Loop over last 10 (max) entries in buffer
-			for ($i = 1, $j = count($this->jb_buffer)-1; $i <= 10 && $j >= 0; $i++, $j--) {
-				if ( isset($this->jb_buffer[$j]) ) {
-					$map = $aseco->server->maps->getMapByUid($this->jb_buffer[$j]);
-					$message .= '{#highlite}'. $i .'{#emotic}.[{#highlite}'. $aseco->stripColors($map->name) .'{#emotic}], ';
+			$count = 0;
+			foreach ($aseco->server->playlist->history as $item) {
+				$map = $aseco->server->maps->getMapByUid($item['uid']);
+				$message .= '{#highlite}'. $i .'{#emotic}.[{#highlite}'. $aseco->stripColors($map->name) .'{#emotic}], ';
+				$count += 1;
+				if ($count >= 11) {
+					break;
 				}
 			}
-
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -1652,7 +1601,7 @@ class PluginRaspJukebox extends Plugin {
 
 	public function chat_xlist ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1947,7 +1896,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 
 						// Grey out if in history
-						if (in_array($map->uid, $this->jb_buffer)) {
+						if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 							$mapname = '{#grey}'. $map->name_stripped;
 						}
 						else {
@@ -2073,7 +2022,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 
 						// Grey out if in history
-						if (in_array($map->uid, $this->jb_buffer)) {
+						if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 							$mapname = '{#grey}'. $map->name_stripped;
 						}
 						else {
@@ -2177,7 +2126,6 @@ class PluginRaspJukebox extends Plugin {
 			}
 		}
 
-		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 		$unranked = array();
 		$i = 0;
 		// Check if player not in top $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() on each map
@@ -2189,7 +2137,7 @@ class PluginRaspJukebox extends Plugin {
 			FROM `%prefix%records`
 			WHERE `MapId` = ". $dbrow[0] ."
 			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-			ORDER by `Score` ". $order .", `Date` ASC
+			ORDER by `Score` ASC, `Date` ASC
 			LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 			";
 			$result2 = $aseco->db->query($sql2);
@@ -2247,7 +2195,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				// Grey out if in history
-				if (in_array($map->uid, $this->jb_buffer)) {
+				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -2307,245 +2255,122 @@ class PluginRaspJukebox extends Plugin {
 
 		$player->maplist = array();
 
-		// Check for Stunts mode
-		if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-
-			// Get list of finished maps with their best (minimum) times
-			$sql = "
-			SELECT DISTINCT
-				`m`.`Uid`,
-				`t1`.`Score`
-			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
-			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`MapId`
-			AND `Score` = (
-				SELECT
-					MIN(`t2`.`Score`)
-				FROM `%prefix%times` AS `t2`
-				WHERE `PlayerId` = ". $player->id ."
-				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-				AND `t1`.`MapId` = `t2`.`MapId`
-			));
-			";
-			$result = $aseco->db->query($sql);
-			if ($result) {
-				if ($result->num_rows == 0) {
-					$result->free_result();
-					return;
-				}
-			}
-
-			$envids = array('Canyon' => 11, 'Stadium' => 12, 'Valley' => 13);
-			$head = 'Maps you did not beat gold time on:';
-			$msg = array();
-			$msg[] = array('Id', 'Name', 'Author', 'Time');
-
-			$tid = 1;
-			$lines = 0;
-			$player->msgs = array();
-
-			// Reserve extra width for $w tags
-			$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
-			$player->msgs[0] = array(1, $head, array(1.27+$extra, 0.12, 0.6+$extra, 0.4, 0.15), array('Icons128x128_1', 'NewTrack', 0.02));
-
-			while ($row = $result->fetch_object()) {
-				// Does the uid exist in the current server map list?
-				$map = $aseco->server->maps->getMapByUid($row->Uid);
-				if ($row->Uid == $map->uid) {
-					// does best time beat map's Gold time?
-					if ($row->Score > $map->goldtime) {
-						// Store map in player object for jukeboxing
-						$trkarr = array();
-						$trkarr['uid']		= $map->uid;
-						$trkarr['name']		= $map->name;
-						$trkarr['author']	= $map->author;
-						$trkarr['environment']	= $map->environment;
-						$trkarr['filename']	= $map->filename;
-						$player->maplist[] = $trkarr;
-
-						// Format map name
-						$mapname = $map->name;
-						if (!$aseco->settings['lists_colormaps']) {
-							$mapname = $map->name_stripped;
-						}
-
-						// Grey out if in history
-						if (in_array($map->uid, $this->jb_buffer)) {
-							$mapname = '{#grey}'. $map->name_stripped;
-						}
-						else {
-							$mapname = '{#black}'. $mapname;
-							// Add clickable button
-							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
-							}
-						}
-
-						// Format author name
-						$mapauthor = $map->author;
-
-						// Add clickable button
-						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
-						}
-
-						// Format env name
-						$mapenv = $map->environment;
-
-						// Add clickable button
-						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
-						}
-
-						// Compute difference to Gold time
-						$diff = $row->Score - $map->goldtime;
-						$sec = floor($diff/1000);
-						$hun = ($diff - ($sec * 1000)) / 10;
-
-						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
-							$mapname,
-							$mapauthor,
-							'+'. sprintf("%d.%02d", $sec, $hun)
-						);
-						$tid++;
-						if (++$lines > 14) {
-							$player->msgs[] = $msg;
-							$lines = 0;
-							$msg = array();
-							$msg[] = array('Id', 'Name', 'Author', 'Time');
-						}
-					}
-				}
-			}
-
-			// Add if last batch exists
-			if (count($msg) > 1) {
-				$player->msgs[] = $msg;
-			}
-
-			if ($result) {
+		// Get list of finished maps with their best (minimum) times
+		$sql = "
+		SELECT DISTINCT
+			`m`.`Uid`,
+			`t1`.`Score`
+		FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
+		WHERE (`PlayerId` = ". $player->id ."
+		AND `t1`.`MapId` = `m`.`MapId`
+		AND `Score` = (
+			SELECT
+				MIN(`t2`.`Score`)
+			FROM `%prefix%times` AS `t2`
+			WHERE `PlayerId` = ". $player->id ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
+			AND `t1`.`MapId` = `t2`.`MapId`
+		));
+		";
+		$result = $aseco->db->query($sql);
+		if ($result) {
+			if ($result->num_rows == 0) {
 				$result->free_result();
+				return;
 			}
-
 		}
-		else { // Stunts mode
 
-			// Get list of finished maps with their best (maximum) scores
-			$sql = "
-			SELECT DISTINCT
-				`m`.`Uid`,
-				`t1`.`Score`
-			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
-			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`MapId`
-			AND `Score` = (
-				SELECT
-					MAX(`t2`.`Score`)
-				FROM `%prefix%times` AS `t2`
-				WHERE `PlayerId` = ". $player->id ."
-				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-				AND `t1`.`MapId` = `t2`.`MapId`
-			));
-			";
-			$result = $aseco->db->query($sql);
-			if ($result) {
-				if ($result->num_rows == 0) {
-					$result->free_result();
-					return;
-				}
-			}
+		$envids = array('Canyon' => 11, 'Stadium' => 12, 'Valley' => 13);
+		$head = 'Maps you did not beat gold time on:';
+		$msg = array();
+		$msg[] = array('Id', 'Name', 'Author', 'Time');
 
-			$head = 'Maps you did not beat gold score on:';
-			$msg = array();
-			$msg[] = array('Id', 'Name', 'Author', 'Env', 'Score');
-			$tid = 1;
-			$lines = 0;
-			$player->msgs = array();
+		$tid = 1;
+		$lines = 0;
+		$player->msgs = array();
 
-			// reserve extra width for $w tags
-			$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
-			$player->msgs[0] = array(1, $head, array(1.42+$extra, 0.12, 0.6+$extra, 0.4, 0.15, 0.15), array('Icons128x128_1', 'NewTrack', 0.02));
+		// Reserve extra width for $w tags
+		$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
+		$player->msgs[0] = array(1, $head, array(1.27+$extra, 0.12, 0.6+$extra, 0.4, 0.15), array('Icons128x128_1', 'NewTrack', 0.02));
 
+		while ($row = $result->fetch_object()) {
+			// Does the uid exist in the current server map list?
+			$map = $aseco->server->maps->getMapByUid($row->Uid);
+			if ($row->Uid == $map->uid) {
+				// does best time beat map's Gold time?
+				if ($row->Score > $map->goldtime) {
+					// Store map in player object for jukeboxing
+					$trkarr = array();
+					$trkarr['uid']		= $map->uid;
+					$trkarr['name']		= $map->name;
+					$trkarr['author']	= $map->author;
+					$trkarr['environment']	= $map->environment;
+					$trkarr['filename']	= $map->filename;
+					$player->maplist[] = $trkarr;
 
-			while ($row = $result->fetch_object()) {
-				// Does the uid exist in the current server map list?
-				$map = $aseco->server->maps->getMapByUid($row->Uid);
-				if ($row->Uid == $map->uid) {
-					// does best time beat map's Gold time?
-					if ($row->Score < $map->goldtime) {
-						// Store map in player object for jukeboxing
-						$trkarr = array();
-						$trkarr['uid']		= $map->uid;
-						$trkarr['name']		= $map->name;
-						$trkarr['author']	= $map->author;
-						$trkarr['environment']	= $map->environment;
-						$trkarr['filename']	= $map->filename;
-						$player->maplist[] = $trkarr;
+					// Format map name
+					$mapname = $map->name;
+					if (!$aseco->settings['lists_colormaps']) {
+						$mapname = $map->name_stripped;
+					}
 
-						// Format map name
-						$mapname = $map->name;
-						if (!$aseco->settings['lists_colormaps']) {
-							$mapname = $map->name_stripped;
-						}
-
-						// Grey out if in history
-						if (in_array($map->uid, $this->jb_buffer)) {
-							$mapname = '{#grey}'. $map->name_stripped;
-						}
-						else {
-							$mapname = '{#black}'. $mapname;
-							// add clickable button
-							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
-							}
-						}
-
-						// Format author name
-						$mapauthor = $map->author;
-
+					// Grey out if in history
+					if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+						$mapname = '{#grey}'. $map->name_stripped;
+					}
+					else {
+						$mapname = '{#black}'. $mapname;
 						// Add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
+							$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 						}
+					}
 
-						// Format env name
-						$mapenv = $map->environment;
+					// Format author name
+					$mapauthor = $map->author;
 
-						// Add clickable button
-						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
-						}
+					// Add clickable button
+					if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
+						$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
+					}
 
-						// Compute difference to Gold score
-						$diff = $map->goldtime - $row->Score;
+					// Format env name
+					$mapenv = $map->environment;
 
-						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
-							$mapname,
-							$mapauthor,
-							$mapenv,
-							'-'. $diff
-						);
-						$tid++;
-						if (++$lines > 14) {
-							$player->msgs[] = $msg;
-							$lines = 0;
-							$msg = array();
-							$msg[] = array('Id', 'Name', 'Author', 'Env', 'Score');
-						}
+					// Add clickable button
+					if ($aseco->settings['clickable_lists']) {
+						$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
+					}
+
+					// Compute difference to Gold time
+					$diff = $row->Score - $map->goldtime;
+					$sec = floor($diff/1000);
+					$hun = ($diff - ($sec * 1000)) / 10;
+
+					$msg[] = array(
+						str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
+						$mapname,
+						$mapauthor,
+						'+'. sprintf("%d.%02d", $sec, $hun)
+					);
+					$tid++;
+					if (++$lines > 14) {
+						$player->msgs[] = $msg;
+						$lines = 0;
+						$msg = array();
+						$msg[] = array('Id', 'Name', 'Author', 'Time');
 					}
 				}
 			}
+		}
 
-			// Add if last batch exists
-			if (count($msg) > 1) {
-				$player->msgs[] = $msg;
-			}
+		// Add if last batch exists
+		if (count($msg) > 1) {
+			$player->msgs[] = $msg;
+		}
 
-			if ($result) {
-				$result->free_result();
-			}
+		if ($result) {
+			$result->free_result();
 		}
 	}
 
@@ -2560,241 +2385,121 @@ class PluginRaspJukebox extends Plugin {
 
 		$player->maplist = array();
 
-		// Check for Stunts mode
-		if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-
-			// Get list of finished maps with their best (minimum) times
-			$sql = "
-			SELECT DISTINCT
-				`m`.`Uid`,
-				`t1`.`Score`
-			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
-			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`MapId`
-			AND `Score` = (
-				SELECT
-					MIN(`t2`.`Score`)
-				FROM `%prefix%times` AS `t2`
-				WHERE `PlayerId` = ". $player->id ."
-				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-				AND `t1`.`MapId` = `t2`.`MapId`
-			));
-			";
-			$result = $aseco->db->query($sql);
-			if ($result) {
-				if ($result->num_rows == 0) {
-					$result->free_result();
-					return;
-				}
-			}
-
-			$envids = array('Canyon' => 11, 'Stadium' => 12, 'Valley' => 13);
-			$head = 'Maps you did not beat author time on:';
-			$msg = array();
-			$msg[] = array('Id', 'Name', 'Author', 'Time');
-
-			$tid = 1;
-			$lines = 0;
-			$player->msgs = array();
-			// reserve extra width for $w tags
-			$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
-			$player->msgs[0] = array(1, $head, array(1.27+$extra, 0.12, 0.6+$extra, 0.4, 0.15), array('Icons128x128_1', 'NewTrack', 0.02));
-
-			while ($row = $result->fetch_object()) {
-				// Does the uid exist in the current server map list?
-				$map = $aseco->server->maps->getMapByUid($row->Uid);
-				if ($row->Uid == $map->uid) {
-					// does best time beat map's Gold time?
-					if ($row->Score > $map->author_time) {
-						// Store map in player object for jukeboxing
-						$trkarr = array();
-						$trkarr['uid']		= $map->uid;
-						$trkarr['name']		= $map->name;
-						$trkarr['author']	= $map->author;
-						$trkarr['environment']	= $map->environment;
-						$trkarr['filename']	= $map->filename;
-						$player->maplist[] = $trkarr;
-
-						// Format map name
-						$mapname = $map->name;
-						if (!$aseco->settings['lists_colormaps']) {
-							$mapname = $map->name_stripped;
-						}
-
-						// Grey out if in history
-						if (in_array($map->uid, $this->jb_buffer)) {
-							$mapname = '{#grey}'. $map->name_stripped;
-						}
-						else {
-							$mapname = '{#black}'. $mapname;
-							// add clickable button
-							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
-							}
-						}
-
-						// Format author name
-						$mapauthor = $map->author;
-
-						// Add clickable button
-						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
-						}
-
-						// Format env name
-						$mapenv = $map->environment;
-
-						// Add clickable button
-						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
-						}
-
-						// Compute difference to Author time
-						$diff = $row->Score - $map->author_time;
-						$sec = floor($diff/1000);
-						$hun = ($diff - ($sec * 1000)) / 10;
-
-						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
-							$mapname,
-							$mapauthor,
-							'+'. sprintf("%d.%02d", $sec, $hun)
-						);
-						$tid++;
-						if (++$lines > 14) {
-							$player->msgs[] = $msg;
-							$lines = 0;
-							$msg = array();
-							$msg[] = array('Id', 'Name', 'Author', 'Time');
-						}
-					}
-				}
-			}
-
-			// add if last batch exists
-			if (count($msg) > 1) {
-				$player->msgs[] = $msg;
-			}
-
-			if ($result) {
+		// Get list of finished maps with their best (minimum) times
+		$sql = "
+		SELECT DISTINCT
+			`m`.`Uid`,
+			`t1`.`Score`
+		FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
+		WHERE (`PlayerId` = ". $player->id ."
+		AND `t1`.`MapId` = `m`.`MapId`
+		AND `Score` = (
+			SELECT
+				MIN(`t2`.`Score`)
+			FROM `%prefix%times` AS `t2`
+			WHERE `PlayerId` = ". $player->id ."
+			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
+			AND `t1`.`MapId` = `t2`.`MapId`
+		));
+		";
+		$result = $aseco->db->query($sql);
+		if ($result) {
+			if ($result->num_rows == 0) {
 				$result->free_result();
+				return;
 			}
 		}
-		else {  // Stunts mode
 
-			// get list of finished maps with their best (maximum) scores
-			$sql = "
-			SELECT DISTINCT
-				`m`.`Uid`,
-				`t1`.`Score`
-			FROM `%prefix%times` AS `t1`, `%prefix%maps` AS `m`
-			WHERE (`PlayerId` = ". $player->id ."
-			AND `t1`.`MapId` = `m`.`MapId`
-			AND `Score` = (
-				SELECT
-					MAX(`t2`.`Score`)
-				FROM `%prefix%times` AS `t2`
-				WHERE `PlayerId` = ". $player->id ."
-				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-				AND `t1`.`MapId` = `t2`.`MapId`
-			));
-			";
-			$result = $aseco->db->query($sql);
-			if ($result) {
-				if ($result->num_rows == 0) {
-					$result->free_result();
-					return;
-				}
-			}
+		$envids = array('Canyon' => 11, 'Stadium' => 12, 'Valley' => 13);
+		$head = 'Maps you did not beat author time on:';
+		$msg = array();
+		$msg[] = array('Id', 'Name', 'Author', 'Time');
 
-			$head = 'Maps you did not beat author score on:';
-			$msg = array();
-			$msg[] = array('Id', 'Name', 'Author', 'Env', 'Score');
-			$tid = 1;
-			$lines = 0;
-			$player->msgs = array();
-			// reserve extra width for $w tags
-			$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
-			$player->msgs[0] = array(1, $head, array(1.42+$extra, 0.12, 0.6+$extra, 0.4, 0.15, 0.15), array('Icons128x128_1', 'NewTrack', 0.02));
+		$tid = 1;
+		$lines = 0;
+		$player->msgs = array();
+		// reserve extra width for $w tags
+		$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
+		$player->msgs[0] = array(1, $head, array(1.27+$extra, 0.12, 0.6+$extra, 0.4, 0.15), array('Icons128x128_1', 'NewTrack', 0.02));
 
-			while ($row = $result->fetch_object()) {
-				// Does the uid exist in the current server map list?
-				$map = $aseco->server->maps->getMapByUid($row->Uid);
-				if ($row->Uid == $map->uid) {
-					// does best time beat map's Gold time?
-					if ($row->Score < $map->author_score) {
-						// Store map in player object for jukeboxing
-						$trkarr = array();
-						$trkarr['uid']		= $map->uid;
-						$trkarr['name']		= $map->name;
-						$trkarr['author']	= $map->author;
-						$trkarr['environment']	= $map->environment;
-						$trkarr['filename']	= $map->filename;
-						$player->maplist[] = $trkarr;
+		while ($row = $result->fetch_object()) {
+			// Does the uid exist in the current server map list?
+			$map = $aseco->server->maps->getMapByUid($row->Uid);
+			if ($row->Uid == $map->uid) {
+				// does best time beat map's Gold time?
+				if ($row->Score > $map->author_time) {
+					// Store map in player object for jukeboxing
+					$trkarr = array();
+					$trkarr['uid']		= $map->uid;
+					$trkarr['name']		= $map->name;
+					$trkarr['author']	= $map->author;
+					$trkarr['environment']	= $map->environment;
+					$trkarr['filename']	= $map->filename;
+					$player->maplist[] = $trkarr;
 
-						// Format map name
-						$mapname = $map->name;
-						if (!$aseco->settings['lists_colormaps']) {
-							$mapname = $map->name_stripped;
-						}
+					// Format map name
+					$mapname = $map->name;
+					if (!$aseco->settings['lists_colormaps']) {
+						$mapname = $map->name_stripped;
+					}
 
-						// Grey out if in history
-						if (in_array($map->uid, $this->jb_buffer)) {
-							$mapname = '{#grey}'. $map->name_stripped;
-						}
-						else {
-							$mapname = '{#black}'. $mapname;
-							// add clickable button
-							if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-								$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
-							}
-						}
-
-						// Format author name
-						$mapauthor = $map->author;
-
-						// Add clickable button
+					// Grey out if in history
+					if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+						$mapname = '{#grey}'. $map->name_stripped;
+					}
+					else {
+						$mapname = '{#black}'. $mapname;
+						// add clickable button
 						if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
-							$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
+							$mapname = array($mapname, 'PluginRaspJukebox?Action='. ($tid+100));  // action id
 						}
+					}
 
-						// Format env name
-						$mapenv = $map->environment;
+					// Format author name
+					$mapauthor = $map->author;
 
-						// Add clickable button
-						if ($aseco->settings['clickable_lists']) {
-							$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
-						}
+					// Add clickable button
+					if ($aseco->settings['clickable_lists'] && $tid <= 1900) {
+						$mapauthor = array($mapauthor, 'PluginRaspJukebox?Action='. (-100-$tid));  // action id
+					}
 
-						// Compute difference to Author score
-						$diff = $map->author_score - $row->Score;
+					// Format env name
+					$mapenv = $map->environment;
 
-						$msg[] = array(
-							str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
-							$mapname,
-							$mapauthor,
-							$mapenv,
-							'-'. $diff
-						);
-						$tid++;
-						if (++$lines > 14) {
-							$player->msgs[] = $msg;
-							$lines = 0;
-							$msg = array();
-							$msg[] = array('Id', 'Name', 'Author', 'Env', 'Score');
-						}
+					// Add clickable button
+					if ($aseco->settings['clickable_lists']) {
+						$mapenv = array($mapenv, 'PluginRaspJukebox?Action='. ($envids[$mapenv]));  // action id
+					}
+
+					// Compute difference to Author time
+					$diff = $row->Score - $map->author_time;
+					$sec = floor($diff/1000);
+					$hun = ($diff - ($sec * 1000)) / 10;
+
+					$msg[] = array(
+						str_pad($tid, 3, '0', STR_PAD_LEFT) .'.',
+						$mapname,
+						$mapauthor,
+						'+'. sprintf("%d.%02d", $sec, $hun)
+					);
+					$tid++;
+					if (++$lines > 14) {
+						$player->msgs[] = $msg;
+						$lines = 0;
+						$msg = array();
+						$msg[] = array('Id', 'Name', 'Author', 'Time');
 					}
 				}
 			}
+		}
 
-			// Add if last batch exists
-			if (count($msg) > 1) {
-				$player->msgs[] = $msg;
-			}
+		// add if last batch exists
+		if (count($msg) > 1) {
+			$player->msgs[] = $msg;
+		}
 
-			if ($result) {
-				$result->free_result();
-			}
+		if ($result) {
+			$result->free_result();
 		}
 	}
 
@@ -2872,7 +2577,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				// Grey out if in history
-				if (in_array($map->uid, $this->jb_buffer)) {
+				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -2941,11 +2646,6 @@ class PluginRaspJukebox extends Plugin {
 
 		$player->maplist = array();
 
-		// If Stunts mode, bail out immediately
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			return;
-		}
-
 		// Build list of author times
 		$times = array();
 		foreach ($aseco->server->maps->map_list as $map) {
@@ -2987,7 +2687,7 @@ class PluginRaspJukebox extends Plugin {
 			}
 
 			// grey out if in history
-			if (in_array($map->uid, $this->jb_buffer)) {
+			if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 				$mapname = '{#grey}'. $map->name_stripped;
 			}
 			else {
@@ -3095,7 +2795,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				// Grey out if in history
-				if (in_array($map->uid, $this->jb_buffer)) {
+				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -3216,7 +2916,7 @@ class PluginRaspJukebox extends Plugin {
 			}
 
 			// Grey out if in history
-			if (in_array($map->uid, $this->jb_buffer)) {
+			if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 				$mapname = '{#grey}'. $map->name_stripped;
 			}
 			else {
@@ -3326,14 +3026,11 @@ class PluginRaspJukebox extends Plugin {
 
 
 				/***************************** JUKEBOX VARIABLES *******************************/
-				$this->buffersize		= $xml['RASP']['BUFFER_SIZE'][0];
 				$this->mxvoteratio		= $xml['RASP']['MX_VOTERATIO'][0];
 				$this->mxdir			= $xml['RASP']['MX_DIR'][0];
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
-				$this->maphistory_file		= $xml['RASP']['MAPHISTORY_FILE'][0];
 
 				$this->jukebox			= array();
-				$this->jb_buffer		= array();
 				$this->mxadd			= array();
 				$this->mxplaying		= false;
 				$this->mxplayed			= false;

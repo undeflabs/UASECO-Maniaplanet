@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-24
+ * Date:	2015-08-02
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -258,9 +258,6 @@ class Window {
 		);
 		shuffle($pool);
 
-		list($usec, $sec) = explode(' ', microtime());
-		mt_srand((float) $sec + ((float) $usec * 100000));
-
 		$id = array();
 		for ($i = 1; $i <= 32; $i++) {
 			$id[] = $pool[mt_rand(0, count($pool)-1)];
@@ -404,10 +401,10 @@ class Window {
 		$this->content['maxpage']	= ceil($totalentries / ($this->settings['columns'] * 25));
 
 		// Previous button
-		$buttons = '';
+		$buttons = '<frame posn="160.1875 -101.8125 0.04">';
 		if ($this->content['page'] > 0) {
 			// First
-			$buttons .= '<frame posn="30.0625 -1.875 0.05">';
+			$buttons .= '<frame posn="0 0 0.05">';
 			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageFirst" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="1.1 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
@@ -415,7 +412,7 @@ class Window {
 			$buttons .= '</frame>';
 
 			// Previous (-5)
-			$buttons .= '<frame posn="36.0625 -1.875 0.05">';
+			$buttons .= '<frame posn="6.0625 0 0.05">';
 			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPagePrevTwo" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="-0.35 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
@@ -423,7 +420,7 @@ class Window {
 			$buttons .= '</frame>';
 
 			// Previous (-1)
-			$buttons .= '<frame posn="42.0625 -1.875 0.05">';
+			$buttons .= '<frame posn="12.0625 0 0.05">';
 			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPagePrev" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="0.4 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
@@ -431,28 +428,28 @@ class Window {
 		}
 		else {
 			// First
-			$buttons .= '<quad posn="30.2 -2.156 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
+			$buttons .= '<quad posn="0.1375 -0.281 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 
 			// Previous (-5)
-			$buttons .= '<quad posn="36.2 -2.156 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
+			$buttons .= '<quad posn="6.1375 -0.281 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 
 			// Previous (-1)
-			$buttons .= '<quad posn="42.2 -2.156 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
+			$buttons .= '<quad posn="12.1375 -0.281 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 		}
 		$buttons .= '</frame>';
 
 		// Next button (display only if more pages to display)
-		$buttons .= '<frame posn="130.125 -99.9375 0.04">';
+		$buttons .= '<frame posn="160.1875 -101.8125 0.04">';
 		if (($this->content['page'] + 1) < $this->content['maxpage']) {
 			// Next (+1)
-			$buttons .= '<frame posn="48.0625 -1.875 0.05">';
+			$buttons .= '<frame posn="18.0625 0 0.05">';
 			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageNext" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="0.4 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
 			$buttons .= '</frame>';
 
 			// Next (+5)
-			$buttons .= '<frame posn="54.0625 -1.875 0.05">';
+			$buttons .= '<frame posn="24.0625 0 0.05">';
 			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageNextTwo" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="-0.35 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
@@ -460,7 +457,7 @@ class Window {
 			$buttons .= '</frame>';
 
 			// Last
-			$buttons .= '<frame posn="60.0625 -1.875 0.05">';
+			$buttons .= '<frame posn="30.0625 0 0.05">';
 			$buttons .= '<quad posn="0 0 0.12" sizen="5.625 5.625" action="WindowList?Action=ClassWindowPageLast" style="Icons64x64_1" substyle="Maximize"/>';
 			$buttons .= '<quad posn="0.85 -0.8 0.13" sizen="3.94 3.94" bgcolor="000F"/>';
 			$buttons .= '<quad posn="-0.25 -0.28125 0.14" sizen="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
@@ -469,14 +466,15 @@ class Window {
 		}
 		else {
 			// Next (+1)
-			$buttons .= '<quad posn="48.2 -2.156 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
+			$buttons .= '<quad posn="18.1375 -0.281 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 
 			// Next (+5)
-			$buttons .= '<quad posn="54.2 -2.156 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
+			$buttons .= '<quad posn="24.1375 -0.281 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 
 			// Last
-			$buttons .= '<quad posn="60.2 -2.156 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
+			$buttons .= '<quad posn="30.1375 -0.281 0.12" sizen="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
 		}
+		$buttons .= '</frame>';
 
 		return $buttons;
 	}
@@ -488,6 +486,9 @@ class Window {
 	*/
 
 	public function buildPageinfo () {
+//		$xml  = '<frame posn="110.125 -101.8125 0.04">';
+//		$xml .= '</frame>';
+//		return $xml;
 		return '';
 	}
 
@@ -516,8 +517,8 @@ class Window {
 		$xml .= '<quad posn="-1.5 1.125 0.03" sizen="206.5 11.25" style="'. $this->layout['title']['background']['style'] .'" substyle="'. $this->layout['title']['background']['substyle'] .'" id="ClassWindowTitle" ScriptEvents="1"/>';
 
 		// Title
-		$xml .= '<quad posn="4.5 -1.3125 0.04" sizen="6 6" style="'. $this->layout['title']['icon']['style'] .'" substyle="'. $this->layout['title']['icon']['substyle'] .'"/>';
-		$xml .= '<label posn="11.75 -3.1875 0.04" sizen="188.5 0" textsize="2" scale="0.9" textcolor="'. $this->layout['title']['textcolor'] .'" text="'. $this->content['title'] .'"/>';
+		$xml .= '<quad posn="2.5 -1.7 0.04" sizen="5.5 5.5" style="'. $this->layout['title']['icon']['style'] .'" substyle="'. $this->layout['title']['icon']['substyle'] .'"/>';
+		$xml .= '<label posn="9.75 -3.1 0.04" sizen="188.5 5" textsize="2" scale="0.9" textcolor="'. $this->layout['title']['textcolor'] .'" text="'. $this->content['title'] .'"/>';
 
 		// Minimize Button
 		$xml .= '<frame posn="187.5 -0.28125 0.05">';
@@ -537,14 +538,10 @@ class Window {
 		$xml .= '%content%';
 
 		// Page info
-		$xml .= '<frame posn="110.125 -99.9375 0.04">';
 		$xml .= '%page%';
-		$xml .= '</frame>';
 
 		// Navigation Buttons
-		$xml .= '<frame posn="130.125 -99.9375 0.04">';
 		$xml .= '%buttons%';
-		$xml .= '</frame>';
 
 		// Footer
 		$xml .= '</frame>';				// END: Window Frame

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-13
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -163,7 +163,7 @@ class PluginMusicServer extends Plugin {
 		$action = (int) $answer['Action'];
 		if ($action >= -4000 && $action <= -2101) {
 			// Get Player
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				// Jukebox selected song
 				$aseco->releaseChatCommand('/music '. (abs($action) - 2100), $player->login);
 			}
@@ -178,8 +178,8 @@ class PluginMusicServer extends Plugin {
 
 	public function onShutdown ($aseco) {
 
-		// disable music
-		$aseco->client->query('SetForcedMusic', $this->override, '');
+		// Disable music
+		$aseco->client->query('SetForcedMusic', false, '');
 	}
 
 	/*
@@ -309,7 +309,7 @@ class PluginMusicServer extends Plugin {
 
 	public function chat_music ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1004,9 +1004,15 @@ class PluginMusicServer extends Plugin {
 
 		$stream_context = stream_context_create(
 			array(
-				'http' => array(
-					'method' => 'HEAD'
-				)
+				'http'		=> array(
+					'ignore_errors'		=> false,
+					'method'		=> 'HEAD',
+					'timeout'		=> 5,
+					'follow_location'	=> true,
+					'max_redirects'		=> 20,
+					'protocol_version'	=> 1.0,
+					'user_agent'		=> USER_AGENT .' plugin.music_server.php/'. $this->getVersion(),
+				),
 			)
 		);
 

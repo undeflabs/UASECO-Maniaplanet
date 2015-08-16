@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-12
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -93,7 +93,7 @@ class PluginDonate extends Plugin {
 
 	public function chat_donate ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$planets = $chat_parameter;
@@ -134,7 +134,7 @@ class PluginDonate extends Plugin {
 	public function chat_topdons ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -300,7 +300,7 @@ class PluginDonate extends Plugin {
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
 		// Get Player
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

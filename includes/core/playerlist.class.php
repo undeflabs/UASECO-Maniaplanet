@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-09
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -42,6 +42,8 @@
 class PlayerList {
 	public $player_list;
 
+	private $debug		= false;
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -49,7 +51,9 @@ class PlayerList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct () {
+	public function __construct ($debug) {
+		$this->debug = $debug;
+
 		$this->player_list = array();
 	}
 
@@ -72,7 +76,7 @@ class PlayerList {
 	public function getSpectatorCount () {
 		$count = 0;
 		foreach ($this->player_list as $player) {
-			if ($player->isspectator == true) {
+			if ($player->is_spectator == true) {
 				$count += 1;
 			}
 		}
@@ -122,9 +126,47 @@ class PlayerList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getPlayer ($login) {
+	public function getPlayerByLogin ($login) {
 		if (!empty($login) && isset($this->player_list[$login])) {
 			return $this->player_list[$login];
+		}
+		else {
+			return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getPlayerById ($id) {
+		if (!empty($id)) {
+			foreach ($this->player_list as $player) {
+				if ($player->id == $id) {
+					return $player;
+				}
+			}
+		}
+		else {
+			return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getPlayerByPid ($pid) {
+		if (!empty($pid)) {
+			foreach ($this->player_list as $player) {
+				if ($player->pid == $pid) {
+					return $player;
+				}
+			}
 		}
 		else {
 			return false;

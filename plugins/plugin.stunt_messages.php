@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-04-05
+ * Date:	2015-08-02
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -61,6 +61,7 @@ class PluginStuntMessages extends Plugin {
 		$this->setDescription('Displays Stunt messages at the top of the screen like "Free Style 360!!"...');
 
 		// Register functions for events
+		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onPlayerStunt',		'onPlayerStunt');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
@@ -70,13 +71,8 @@ class PluginStuntMessages extends Plugin {
 //		$this->registerEvent('onPlayerRespawn',		'onPlayerRespawn');
 		$this->registerEvent('onPlayerGiveUp',		'onPlayerGiveUp');
 
-		$this->manialinkid				= 'PluginStuntsMessage';
-
+		$this->manialinkid				= 'StuntsMessage';
 		$this->db					= array();
-		$this->text_colors['stunts']			= 'EEEF';
-		$this->text_colors['points']			= 'FA0F';
-		$this->text_colors['bonus']			= 'FA0F';
-		$this->text_colors['penalty']			= 'F30F';
 
 		// http://en.tm-wiki.org/wiki/Stunt_Mode
 		$this->stunt_events = array(
@@ -222,10 +218,30 @@ class PluginStuntMessages extends Plugin {
 				'Screwy',
 			),
 		);
+	}
 
-		// Init random generator
-		list($usec, $sec) = explode(' ', microtime());
-		mt_srand((float) $sec + ((float) $usec * 100000));
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+
+		// Read Configuration
+		if (!$config = $aseco->parser->xmlToArray('config/stunt_messages.xml', true, true)) {
+			trigger_error('[StuntMessages] Could not read/parse config file "config/stunt_messages.xml"!', E_USER_ERROR);
+		}
+		$config = $config['SETTINGS'];
+
+		$this->position['x']		= $config['POSITION'][0]['X'][0];
+		$this->position['y']		= $config['POSITION'][0]['Y'][0];
+		$this->position['z']		= $config['POSITION'][0]['Z'][0];
+
+		$this->text_colors['stunts']	= $config['TEXT_COLORS'][0]['STUNTS'][0];
+		$this->text_colors['points']	= $config['TEXT_COLORS'][0]['POINTS'][0];
+		$this->text_colors['bonus']	= $config['TEXT_COLORS'][0]['BONUS'][0];
+		$this->text_colors['penalty']	= $config['TEXT_COLORS'][0]['PENALTY'][0];
 	}
 
 	/*
@@ -419,7 +435,7 @@ class PluginStuntMessages extends Plugin {
 		$points = array();
 		$bonus = '';
 		$xml = '<manialink id="'. $this->manialinkid .'" name="'. $this->manialinkid .'">';
-		$xml .= '<frame posn="0 37 20" id="'. $this->manialinkid .'Frame">';
+		$xml .= '<frame posn="'. $this->position['x'] .' '. $this->position['y'] .' '. $this->position['z'] .'" id="'. $this->manialinkid .'Frame">';
 		$xml .= '<label posn="0 0 0.01" sizen="60 2.2" textsize="3" style="TextButtonBig" scale="0.9" halign="center" textcolor="'. $this->text_colors['stunts'] .'" text="$S$O'. implode(' ', $stunt) .'!!" id="'. $this->manialinkid .'Name" hidden="true" opacity="0.0"/>';
 		if ($params[1] > 0) {
 			if ($positive_points == true) {
@@ -562,7 +578,7 @@ EOL;
 	public function hideWidget ($login) {
 		global $aseco;
 
-		$xml = '<manialink id="'. $this->manialinkid .'" name="'. $this->manialinkid .'"></manialink>';
+		$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
 		$aseco->sendManialink($xml, $login, 0);
 	}
 

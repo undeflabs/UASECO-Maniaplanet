@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -66,7 +66,6 @@ class PluginRasp extends Plugin {
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
 
-		$this->registerEvent('onStartup',		'onStartup');
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onUnloadingMap',		'onUnloadingMap');
@@ -87,7 +86,7 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onStartup ($aseco) {
+	public function onSync ($aseco, $data) {
 
 		// Get settings
 		$this->readSettings();
@@ -134,15 +133,6 @@ class PluginRasp extends Plugin {
 			}
 			$aseco->console('[Rasp] ...successfully done!');
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onSync ($aseco, $data) {
 
 		$sepchar = substr($aseco->server->mapdir, -1, 1);
 		if ($sepchar == '\\') {
@@ -281,7 +271,7 @@ class PluginRasp extends Plugin {
 		}
 
 		if ($this->feature_stats) {
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$this->showPb($player, $aseco->server->maps->current->id, true);
 			}
 		}
@@ -309,7 +299,7 @@ class PluginRasp extends Plugin {
 	public function chat_top100 ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -376,7 +366,7 @@ class PluginRasp extends Plugin {
 	public function chat_topwins ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -438,7 +428,7 @@ class PluginRasp extends Plugin {
 	public function chat_active ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -634,7 +624,7 @@ class PluginRasp extends Plugin {
 		$aseco->db->query('TRUNCATE TABLE `%prefix%rankings`;');
 
 		// Get list of players with at least $minrecs records (possibly unranked)
-		$aseco->db->query('START TRANSACTION;');
+		$aseco->db->begin_transaction();
 		$query = "
 		SELECT
 			`PlayerId`,
@@ -653,7 +643,6 @@ class PluginRasp extends Plugin {
 
 			if (!empty($players)) {
 				// Get ranked records for all maps
-				$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 				foreach ($maps as $map) {
 					$query = "
 					SELECT
@@ -661,7 +650,7 @@ class PluginRasp extends Plugin {
 					FROM `%prefix%records`
 					WHERE `MapId` = ". $map->id ."
 					AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-					ORDER BY `Score` ". $order .", `Date` ASC
+					ORDER BY `Score` ASC, `Date` ASC
 					LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
 					";
 
@@ -742,7 +731,6 @@ class PluginRasp extends Plugin {
 
 		if (!$found) {
 			// find unranked time/score
-			$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 			$query2 = "
 			SELECT
 				`Score`
@@ -750,7 +738,7 @@ class PluginRasp extends Plugin {
 			WHERE `PlayerId` = ". $player->id ."
 			AND `MapId` = ". $map ."
 			AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-			ORDER BY `Score` ". $order ."
+			ORDER BY `Score` ASC
 			LIMIT 1;
 			";
 			$res2 = $aseco->db->query($query2);
@@ -786,9 +774,7 @@ class PluginRasp extends Plugin {
 					$total += $row->Score;
 				}
 				$avg = floor($total / $size);
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$avg = $aseco->formatTime($avg);
-				}
+				$avg = $aseco->formatTime($avg);
 			}
 			else {
 				$avg = 'No Average';
@@ -798,7 +784,7 @@ class PluginRasp extends Plugin {
 
 		if ($found) {
 			$message = $aseco->formatText($this->messages['PB'][0],
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $ret['time'] : $aseco->formatTime($ret['time'])),
+				$aseco->formatTime($ret['time']),
 				$ret['rank'],
 				$avg
 			);
@@ -932,7 +918,7 @@ class PluginRasp extends Plugin {
 				". $time->map->id .",
 				". $pid .",
 				". $aseco->server->gameinfo->mode .",
-				". $aseco->db->quote(date('Y-m-d H:i:s')) .",
+				". $aseco->db->quote(date('Y-m-d H:i:s', time() - date('Z'))) .",
 				". $time->score .",
 				". $aseco->db->quote($cps) ."
 			)
@@ -1036,7 +1022,7 @@ class PluginRasp extends Plugin {
 				}
 
 				// Grey out if in history
-				if (isset($aseco->plugins['PluginRaspJukebox']) && in_array($map->uid, $aseco->plugins['PluginRaspJukebox']->jb_buffer)) {
+				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -1193,13 +1179,11 @@ class PluginRasp extends Plugin {
 
 
 				/***************************** JUKEBOX VARIABLES *******************************/
-				$this->buffersize		= $xml['RASP']['BUFFER_SIZE'][0];
 				$this->mxvoteratio		= $xml['RASP']['MX_VOTERATIO'][0];
 				$this->mxdir			= $xml['RASP']['MX_DIR'][0];
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
 
 				$this->jukebox			= array();
-				$this->jb_buffer		= array();
 				$this->mxadd			= array();
 				$this->mxplaying		= false;
 				$this->mxplayed			= false;

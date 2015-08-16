@@ -371,6 +371,53 @@
 			<!--  Allow the players who are waiting for a match to play on different maps, default are 600 sec. -->
 			<waiting_time_max>600</waiting_time_max>
 		</chase>
+
+
+		<!--
+		Settings for Knockout.Script.txt
+		https://forum.maniaplanet.com/viewtopic.php?p=247611
+		//-->
+		<knockout>
+			<!-- Default finish timout -->
+			<finish_timeout>20</finish_timeout>
+
+			<!-- Amount of maps on each map. If set 0 or below rounds are infinite. Otherwise map is played n rounds and after that Knockout continues on the next map. -->
+			<rounds_per_map>3</rounds_per_map>
+
+			<!-- DoubleKO mode - knock 2 players until setting value is reached (default: 20) -->
+			<double_knockout_until>20</double_knockout_until>
+
+			<!-- Set number of laps. If set 0 or below laps are infinite. Otherwise players can drive n amount of laps, then Knockout continues on the next map. Players that do not finish after timeout are not KO. -->
+			<force_laps_number>-1</force_laps_number>
+
+			<!-- Ability to hide multilap info when at least <force_laps_number> is set to > 0 -->
+			<show_multilap_info>false</show_multilap_info>
+		</knockout>
+
+
+		<!--
+		Settings for Doppler.Script.txt
+		https://forum.maniaplanet.com/viewtopic.php?f=9&t=30463
+		//-->
+		<doppler>
+			<!-- Time limit in seconds, until the next Map is loaded -->
+			<time_limit>300</time_limit>
+
+			<!-- Switch between Laps and Speed mode (needs a script reload to take effect) -->
+			<laps_speed_mode>true</laps_speed_mode>
+
+			<!-- If a player press the restart button, his current lap speed summary will be dumped (prevents using the same CP again and again) -->
+			<dump_speed_on_reset>true</dump_speed_on_reset>
+
+			<!-- Set to 'KPH' or 'MPH' -->
+			<velocity_unit>KPH</velocity_unit>
+
+			<!-- Setup to 'false' to prevent the best players module to be shown, otherwise to 'true'. -->
+			<module_best_players_show>false</module_best_players_show>
+
+			<!-- Adds this integer to the modules "X,Y" coordinates, X default value is "140". -->
+			<module_best_players_position>0,0</module_best_players_position>
+		</doppler>
 	</modesetup>
 
 
@@ -456,9 +503,16 @@
 	DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING!
 	//-->
 	<scripts>
-		<entry>Libs/Nadeo/TrackMania/UI.Script.txt|2015-06-18</entry>
+		<entry>Libs/domino54/SentenceBank.Script.txt|2015-06-27</entry>
+		<entry>Libs/domino54/Translations.Script.txt|2015-06-27</entry>
+		<entry>Libs/domino54/UpdateChecker.Script.txt|2015-06-27</entry>
+		<entry>Libs/Nadeo/TrackMania/UI.Script.txt|2015-07-03</entry>
 		<entry>Libs/Nadeo/TrackMania/XmlRpc.Script.txt|2015-03-23</entry>
-		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-05-30</entry>
+		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-06-26</entry>
 		<entry>Modes/TrackMania/Chase.Script.txt|2015-05-30</entry>
+		<entry>Modes/TrackMania/Doppler.Script.txt|2015-07-22</entry>
+		<entry>Modes/TrackMania/Knockout.Script.txt|2015-06-27</entry>
+		<entry>Modes/TrackMania/ModeBase.Script.txt|2015-02-26</entry>
+		<entry>Modes/TrackMania/ModeMatchmaking.Script.txt|2015-03-11</entry>
 	</scripts>
 </settings>

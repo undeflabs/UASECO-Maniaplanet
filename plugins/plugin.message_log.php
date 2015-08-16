@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -97,7 +97,7 @@ class PluginMessageLog extends Plugin {
 
 		if ($answer['Action'] == 'MessageLogShow') {
 			// Get player
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				// Call /msglog
 				$aseco->releaseChatCommand('/msglog', $player->login);
 			}

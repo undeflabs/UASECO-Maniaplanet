@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-23
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -229,9 +229,9 @@ class PluginRaspVotes extends Plugin {
 
 	public function onEndRound ($aseco) {
 
-		// in TimeAttack/Laps/Stunts modes, bail out immediately
+		// in TimeAttack/Laps modes, bail out immediately
 		// (ignoring the 1 EndRound event that happens at the end of the map)
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 			return;
 		}
 
@@ -488,7 +488,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_endround ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -506,7 +506,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether this player is spectator
-		if (!$this->allow_spec_startvote && $player->isspectator) {
+		if (!$this->allow_spec_startvote && $player->is_spectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -526,8 +526,8 @@ class PluginRaspVotes extends Plugin {
 			return;
 		}
 
-		// check for TimeAttack/Laps/Stunts modes
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		// check for TimeAttack/Laps modes
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 			$message = '{#server}» {#error}Running {#highlite}$i ' .
 			           str_replace('_', ' ', $aseco->server->gameinfo->getModeName()) .
 			           '{#error} mode - end round disabled!';
@@ -574,7 +574,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_ladder ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -592,7 +592,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether this player is spectator
-		if (!$this->allow_spec_startvote && $player->isspectator) {
+		if (!$this->allow_spec_startvote && $player->is_spectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -705,7 +705,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_replay ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -723,7 +723,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether this player is spectator
-		if (!$this->allow_spec_startvote && $player->isspectator) {
+		if (!$this->allow_spec_startvote && $player->is_spectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -853,7 +853,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_skip ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -871,7 +871,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether this player is spectator
-		if (!$this->allow_spec_startvote && $player->isspectator) {
+		if (!$this->allow_spec_startvote && $player->is_spectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -984,7 +984,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_ignore ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1002,7 +1002,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether this player is spectator
-		if (!$this->allow_spec_startvote && $player->isspectator) {
+		if (!$this->allow_spec_startvote && $player->is_spectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -1085,7 +1085,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_kick ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1103,7 +1103,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether this player is spectator
-		if (!$this->allow_spec_startvote && $player->isspectator) {
+		if (!$this->allow_spec_startvote && $player->is_spectator) {
 			$message = $this->messages['NO_SPECTATORS'][0];
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -1186,7 +1186,7 @@ class PluginRaspVotes extends Plugin {
 
 	public function chat_cancel ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -1291,7 +1291,7 @@ class PluginRaspVotes extends Plugin {
 		// check all connected players
 		foreach ($aseco->server->players->player_list as $player) {
 			// get current player status
-			if ($this->allow_spec_voting || !$player->isspectator) {
+			if ($this->allow_spec_voting || !$player->is_spectator) {
 				$total++;
 			}
 		}
@@ -1382,7 +1382,6 @@ class PluginRaspVotes extends Plugin {
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
 
 				$this->jukebox			= array();
-				$this->jb_buffer		= array();
 				$this->mxadd			= array();
 				$this->mxplaying		= false;
 				$this->mxplayed			= false;

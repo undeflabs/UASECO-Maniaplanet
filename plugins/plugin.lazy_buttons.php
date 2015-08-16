@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-02-28
+ * Date:		2015-07-19
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -136,9 +136,9 @@ class PluginLazyButtons extends Plugin {
 
 		$xml .= '<format textsize="1"/>';
 		$xml .= '<quad posn="0 0 0.001" sizen="'. (($command_amount * 4.3) + 10) .' 3.4" style="'. $this->config['WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'" ScriptEvents="1"/>';
-		$xml .= '<quad posn="'. (($command_amount * 4.3) + 6.3) .' -0.3 0.002" sizen="3.2 2.7" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<quad posn="'. (($command_amount * 4.3) + 6.6) .' -0.3 0.002" sizen="2.7 2.7" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
 		$xml .= '<label posn="'. (($command_amount * 4.3) + 5.7) .' -3.7 0.1" sizen="15 0" halign="right" textcolor="FC0F" scale="0.8" text="LAZY-BUTTONS/'. $this->getVersion() .'" url="http://www.undef.name/UASECO/Lazy-Buttons.php"/>';
-		$xml .= '<quad posn="1.5 0 0.2" sizen="4 3.5" style="Icons128x128_1" substyle="BackFocusable" ScriptEvents="1"/>';
+		$xml .= '<quad posn="1.5 0 0.2" sizen="3.5 3.5" style="Icons128x128_1" substyle="BackFocusable" ScriptEvents="1"/>';
 
 		$offset = 5.8;
 		$col = 0;

@@ -1,3 +1,9 @@
+onPlayerInfoChanged
+Data:		A string with the Login from the Player
+Example:	['undef.de']
+Note:		This callback is sent when the information of a Player has been changed.
+
+
 onPlayerManialinkPageAnswer
 Data:		xxx
 Example:	xxx

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-12
+ * Date:	2015-08-02
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -64,10 +64,6 @@ class PluginWelcomeCenter extends Plugin {
 		$this->registerEvent('onEndMap',		'onEndMap');
 
 		$this->registerChatCommand('message', 'chat_message', 'Shows random informational message', Player::PLAYERS);
-
-		// Init random generator
-		list($usec, $sec) = explode(' ', microtime());
-		mt_srand((float) $sec + ((float) $usec * 100000));
 	}
 
 	/*

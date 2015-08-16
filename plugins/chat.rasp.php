@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ class PluginChatRasp extends Plugin {
 
 		$command['params'] = explode(' ', $chat_parameter, 2);
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$target = $player;
@@ -166,7 +166,7 @@ class PluginChatRasp extends Plugin {
 
 		$command['params'] = explode(' ', $chat_parameter, 2);
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$target = $player;
@@ -256,7 +256,7 @@ class PluginChatRasp extends Plugin {
 			$lnlen = $aseco->plugins['PluginChatAdmin']->lnlen;
 		}
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$target = $player;
@@ -305,7 +305,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_hi ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -333,7 +333,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_bye ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -361,7 +361,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_thx ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -389,7 +389,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_lol ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -412,7 +412,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_lool ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -435,7 +435,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_brb ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -458,7 +458,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_afk ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -474,7 +474,7 @@ class PluginChatRasp extends Plugin {
 
 		// check for auto force spectator
 		if ($aseco->settings['afk_force_spec']) {
-			if (!$player->isspectator) {
+			if (!$player->is_spectator) {
 				try {
 					// force player into spectator
 					$aseco->client->query('ForceSpectator', $player->login, 1);
@@ -513,7 +513,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_gg ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -541,7 +541,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_gr ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -569,7 +569,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_n1 ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -597,7 +597,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_bgm ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -632,7 +632,7 @@ class PluginChatRasp extends Plugin {
 
 	public function chat_bootme ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

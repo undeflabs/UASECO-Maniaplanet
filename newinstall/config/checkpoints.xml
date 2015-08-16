@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
-	<display_checkpoints>true</display_checkpoints>
 
-	<checkpoint_widget>
+	<!-- Displays the time differences between the current race and local record or dedimania record... -->
+	<time_diff_widget>
+		<enabled>true</enabled>
+
 		<pos_x>-8.5</pos_x>
 		<pos_y>-43.9</pos_y>
 
@@ -21,13 +23,25 @@
 			<time_equal>29F</time_equal>
 			<time_worse>F00</time_worse>
 		</textcolors>
-	</checkpoint_widget>
 
-	<!-- Add a colorized bar which indicates the differences of your Checkpoint times -->
-	<enable_colorbar>true</enable_colorbar>
+		<!-- Add a colorized bar which indicates the differences of your Checkpoint times -->
+		<enable_colorbar>true</enable_colorbar>
+	</time_diff_widget>
 
-	<!-- 2015-06-18 Not fully supported yet -->
-	<enable_cpsspec>false</enable_cpsspec>
+	<!-- Displays the current Checkpoint count, useful for RPG-Server. -->
+	<count_widget>
+		<enabled>true</enabled>
+		<text_color>DDDDEEFF</text_color>
+
+		<pos_x>-8.5</pos_x>
+		<pos_y>-39.7</pos_y>
+		<scale>1.0</scale>
+
+		<!-- If <background_color> is not empty then the style/substyle are ignored -->
+		<background_color>55556699</background_color>
+		<background_style>BgsPlayerCard</background_style>
+		<background_substyle>BgCardSystem</background_substyle>
+	</count_widget>
 
 	<!-- Checkpoint tracking for local records, automatically enable /cps for new players? -->
 	<auto_enable_cps>true</auto_enable_cps>
@@ -45,4 +59,30 @@
 	5 = blacklist & ban
 	//-->
 	<cheater_action>0</cheater_action>
+
+	<messages>
+		<tracking_disabled>{#server}» {#error}Checkpoints tracking permanently disabled by server!</tracking_disabled>
+		<not_on_relay>{#server}» {#error}Command unavailable on relay server!</not_on_relay>
+
+		<local_records>
+			<tracking_off>{#server}» Checkpoints tracking on local records turned {#highlite}OFF</tracking_off>
+			<tracking_on>{#server}» Checkpoints tracking on local records turned {#highlite}ON {#server}(your own or the last local record)</tracking_on>
+			<tracking_record>{#server}» Checkpoints tracking on local record {#highlite}No. {1} {#server}(or the last available local record)</tracking_record>
+			<no_record_found>{#server}» {#error}No such local record {#highlite}$I{1}</no_record_found>
+		</local_records>
+
+		<dedimania_records>
+			<tracking_off>{#server}» Checkpoints tracking on dedimania records turned {#highlite}OFF</tracking_off>
+			<tracking_on>{#server}» Checkpoints tracking on dedimania records turned {#highlite}ON {#server}(your own or the last dedimania record)</tracking_on>
+			<tracking_record>{#server}» Checkpoints tracking on dedimania record {#highlite}No. {1} {#server}(or the last available dedimania record)</tracking_record>
+			<no_record_found>{#server}» {#error}No such dedimania record {#highlite}$I{1}</no_record_found>
+		</dedimania_records>
+
+		<!-- Cheater handling -->
+		<forced_into_spectator>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} forced into spectator!</forced_into_spectator>
+		<cheater_kicked>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} kicked!</cheater_kicked>
+		<cheater_banned>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} banned!</cheater_banned>
+		<cheater_blacklisted>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} blacklisted!</cheater_blacklisted>
+		<cheater_blacklisted_and_banned>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} blacklisted & banned!</cheater_blacklisted_and_banned>
+	</messages>
 </settings>

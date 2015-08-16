@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-04
+ * Date:	2015-07-24
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -104,7 +104,6 @@ class PluginAutotime extends Plugin {
 					// Get next map object
 					$map = $aseco->server->maps->getNextMap();
 					$newtime = substr((int)$map->author_time, 0, -3);
-
 				}
 				else {
 					// Server already switched so get current map name
@@ -186,7 +185,7 @@ class PluginAutotime extends Plugin {
 		// Check all connected players
 		foreach ($aseco->server->players->player_list as $player) {
 			// Get current player status
-			if (!$player->isspectator) {
+			if (!$player->is_spectator) {
 				return true;
 			}
 		}

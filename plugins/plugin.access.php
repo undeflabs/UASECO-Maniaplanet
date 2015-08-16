@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ class PluginAccessControl extends Plugin {
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
-		$this->registerEvent('onStartup',		'onStartup');
+		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onPlayerConnect1',	'onPlayerConnect1');  // use post event after all join processing
 	}
 
@@ -73,7 +73,7 @@ class PluginAccessControl extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onStartup ($aseco, $reload = false) {
+	public function onSync ($aseco, $reload = false) {
 
 		// initialize access control
 		$this->access_control = array();
@@ -355,7 +355,7 @@ class PluginAccessControl extends Plugin {
 
 	public function admin_access ($aseco, $login, $param) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -438,7 +438,7 @@ class PluginAccessControl extends Plugin {
 		}
 		else if ($param == 'reload') {
 			// reload/check access control
-			if ($this->onStartup($aseco, true)) {
+			if ($this->onSync($aseco, true)) {
 				$message = $this->access_control['messages']['reload'];
 			}
 			else {

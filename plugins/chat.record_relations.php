@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -88,7 +88,7 @@ class PluginRecordRelations extends Plugin {
 			         . $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 				1,
 				$aseco->stripColors($record->player->nickname),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record->score : $aseco->formatTime($record->score))
+				$aseco->formatTime($record->score)
 			);
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 
@@ -123,7 +123,7 @@ class PluginRecordRelations extends Plugin {
 			         . $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 				$total,
 				$aseco->stripColors($record->player->nickname),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record->score : $aseco->formatTime($record->score))
+				$aseco->formatTime($record->score)
 			);
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 
@@ -142,7 +142,7 @@ class PluginRecordRelations extends Plugin {
 
 	public function chat_nextrec ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -173,42 +173,35 @@ class PluginRecordRelations extends Plugin {
 				$next = $aseco->plugins['PluginLocalRecords']->records->getRecord($nextrank);
 
 				// compute difference to next record
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$diff = $record->score - $next->score;
-					$sec = floor($diff / 1000);
-					$ths = $diff - ($sec * 1000);
-				}
-				else {
-					// Stunts mode
-					$diff = $next->score - $record->score;
-				}
+				$diff = $record->score - $next->score;
+				$sec = floor($diff / 1000);
+				$ths = $diff - ($sec * 1000);
 
 				// show chat message
 				$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 					$rank + 1,
 					$aseco->stripColors($record->player->nickname),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record->score : $aseco->formatTime($record->score))
+					$aseco->formatTime($record->score)
 				);
 				$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
 
 				$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 					$nextrank + 1,
 					$aseco->stripColors($next->player->nickname),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record->score : $aseco->formatTime($next->score))
+					$aseco->formatTime($next->score)
 				);
 				$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 
 				$message = $aseco->formatText($aseco->getChatMessage('DIFF_RECORD'),
 					$message1,
 					$message2,
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+					sprintf("%d.%03d", $sec, $ths)
 				);
 
 				$aseco->sendChatMessage($message, $player->login);
 			}
 			else {
 				// look for unranked time instead
-				$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 				$query = "
 				SELECT
 					`score`
@@ -216,7 +209,7 @@ class PluginRecordRelations extends Plugin {
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id ."
 				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-				ORDER BY `Score` ". $order ."
+				ORDER BY `Score` ASC
 				LIMIT 1;
 				";
 
@@ -234,35 +227,29 @@ class PluginRecordRelations extends Plugin {
 					$last = $aseco->plugins['PluginLocalRecords']->records->getRecord($total-1);
 
 					// compute difference to next record
-					if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-						$diff = $unranked->Score - $last->score;
-						$sec = floor($diff/1000);
-						$ths = $diff - ($sec * 1000);
-					}
-					else {
-						// Stunts mode
-						$diff = $last->score - $unranked->Score;
-					}
+					$diff = $unranked->Score - $last->score;
+					$sec = floor($diff/1000);
+					$ths = $diff - ($sec * 1000);
 
 					// show chat message
 					$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 						'PB',
 						$aseco->stripColors($command['author']->nickname),
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $unranked->Score : $aseco->formatTime($unranked->Score))
+						$aseco->formatTime($unranked->Score)
 					);
 					$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
 
 					$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 						$total,
 						$aseco->stripColors($last->player->nickname),
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $last->score : $aseco->formatTime($last->score))
+						$aseco->formatTime($last->score)
 					);
 					$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 
 					$message = $aseco->formatText($aseco->getChatMessage('DIFF_RECORD'),
 						$message1,
 						$message2,
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+						sprintf("%d.%03d", $sec, $ths)
 					);
 
 					$aseco->sendChatMessage($message, $player->login);
@@ -311,35 +298,29 @@ class PluginRecordRelations extends Plugin {
 				$first = $aseco->plugins['PluginLocalRecords']->records->getRecord(0);
 
 				// compute difference to first record
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$diff = $record->score - $first->score;
-					$sec = floor($diff/1000);
-					$ths = $diff - ($sec * 1000);
-				}
-				else {
-					// Stunts mode
-					$diff = $first->score - $record->score;
-				}
+				$diff = $record->score - $first->score;
+				$sec = floor($diff/1000);
+				$ths = $diff - ($sec * 1000);
 
 				// show chat message
 				$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 					$rank + 1,
 					$aseco->stripColors($record->player->nickname),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record->score : $aseco->formatTime($record->score))
+					$aseco->formatTime($record->score)
 				);
 				$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
 
 				$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 					1,
 					$aseco->stripColors($first->player->nickname),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $first->score : $aseco->formatTime($first->score))
+					$aseco->formatTime($first->score)
 				);
 				$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 
 				$message = $aseco->formatText($aseco->getChatMessage('DIFF_RECORD'),
 					$message1,
 					$message2,
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+					sprintf("%d.%03d", $sec, $ths)
 				);
 
 				$aseco->sendChatMessage($message, $login);
@@ -375,35 +356,29 @@ class PluginRecordRelations extends Plugin {
 			$last = $aseco->plugins['PluginLocalRecords']->records->getRecord($total-1);
 
 			// compute difference between records
-			if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-				$diff = $last->score - $first->score;
-				$sec = floor($diff/1000);
-				$ths = $diff - ($sec * 1000);
-			}
-			else {
-				// Stunts mode
-				$diff = $first->score - $last->score;
-			}
+			$diff = $last->score - $first->score;
+			$sec = floor($diff/1000);
+			$ths = $diff - ($sec * 1000);
 
 			// show chat message
 			$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 				1,
 				$aseco->stripColors($first->player->nickname),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $first->score : $aseco->formatTime($first->score))
+				$aseco->formatTime($first->score)
 			);
 			$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
 
 			$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 				$total,
 				$aseco->stripColors($last->player->nickname),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $last->score : $aseco->formatTime($last->score))
+				$aseco->formatTime($last->score)
 			);
 			$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 
 			$message = $aseco->formatText($aseco->getChatMessage('DIFF_RECORD'),
 				$message1,
 				$message2,
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+				sprintf("%d.%03d", $sec, $ths)
 			);
 
 			$aseco->sendChatMessage($message, $login);

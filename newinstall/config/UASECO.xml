@@ -86,6 +86,11 @@
 	<writemaplist_random>true</writemaplist_random>
 
 	<!--
+	Specifies how large the Map(List) history buffer is.
+	//-->
+	<max_history_entries>20</max_history_entries>
+
+	<!--
 	Setup a path into the image from each Map will be stored.
 	//-->
 	<mapimages_path>cache/mapimages/</mapimages_path>

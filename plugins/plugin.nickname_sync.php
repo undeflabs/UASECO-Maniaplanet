@@ -8,7 +8,7 @@
  * Author:		undef.de
  * Original Author:	.anDy
  * Version:		1.2.1
- * Date:		2015-01-20
+ * Date:		2015-06-26
  * Copyright:		2011 - 2015 by .anDy and undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -93,8 +93,8 @@ class PluginNicknameSync extends Plugin {
 
 	public function onDedimaniaRecordsLoaded ($aseco, $records) {
 
-		// Sync Nicknames, but NOT in Gamemode 'Stunts'
-		if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS && count($records) > 0) {
+		// Sync Nicknames
+		if (count($records) > 0) {
 			$this->comparePlayers($records, 'Dedimania', 'Login', 'NickName');
 		}
 	}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<records_eyepiece>
+<settings>
 	<!-- THIS IS THE CONFIG FILE FOR UASECO ONLY -->
 
 	<!-- Here you can setup some special features -->
@@ -261,7 +261,7 @@
 	<!-- Required plugin.musicserver.php in the plugins.xml and <cache_tags> in musicserver.xml set to 'True' -->
 	<music_widget>
 		<enabled>true</enabled>
-		<advertise>true</advertise>
+
 		<title>Current Song</title>
 		<width>15.76</width>
 
@@ -274,22 +274,7 @@
 	</music_widget>
 
 
-	<!-- Displays the current Checkpoint count, useful for RPG-Server. -->
-	<checkpointcount_widget>
-		<enabled>true</enabled>
-		<text_color>DDDDEEFF</text_color>
-
-		<pos_x>-8.5</pos_x>
-		<pos_y>-39.7</pos_y>
-		<scale>1.0</scale>
-
-		<background_color>55556699</background_color>
-		<background_style>BgsPlayerCard</background_style>
-		<background_substyle>BgCardSystem</background_substyle>
-	</checkpointcount_widget>
-
-
-	<!-- Dedimania supports the Gamemodes Rounds, Time Attack, Team, Laps and Cup (Stunts currently not supported) -->
+	<!-- Dedimania Records Widget -->
 	<dedimania_records>
 		<title>Dedimania Records</title>
 		<width>15.76</width>
@@ -359,9 +344,23 @@
 				<enabled>false</enabled>
 			</chase>
 
-			<stunts>						<!-- Unsupported by Dedimania, leave as is! -->
-				<enabled>false</enabled>
-			</stunts>
+			<knockout>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>34.6</pos_y>
+				<scale>1.0</scale>
+				<entries>30</entries>
+				<topcount>3</topcount>
+			</knockout>
+
+			<doppler>
+				<enabled>true</enabled>
+				<pos_x>-64.54</pos_x>
+				<pos_y>34.6</pos_y>
+				<scale>1.0</scale>
+				<entries>30</entries>
+				<topcount>3</topcount>
+			</doppler>
 		</gamemode>
 	</dedimania_records>
 
@@ -428,18 +427,27 @@
 				<topcount>3</topcount>
 			</team_attack>
 
-			<chase>							<!-- No records at all, leave as is! -->
-				<enabled>false</enabled>
+			<chase>
+				<enabled>false</enabled>			<!-- No records at all, leave as is! -->
 			</chase>
 
-			<stunts>
+			<knockout>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>6.6</pos_y>
+				<pos_y>23.5</pos_y>
 				<scale>1.0</scale>
-				<entries>10</entries>
+				<entries>16</entries>
 				<topcount>3</topcount>
-			</stunts>
+			</knockout>
+
+			<doppler>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>23.5</pos_y>
+				<scale>1.0</scale>
+				<entries>16</entries>
+				<topcount>3</topcount>
+			</doppler>
 		</gamemode>
 	</local_records>
 
@@ -513,14 +521,23 @@
 				<enabled>false</enabled>			<!-- No support, leave as is! -->
 			</chase>
 
-			<stunts>
+			<knockout>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
-				<pos_y>-14.8</pos_y>
+				<pos_y>-8.7</pos_y>
 				<scale>1.0</scale>
-				<entries>6</entries>
+				<entries>9</entries>
 				<topcount>3</topcount>
-			</stunts>
+			</knockout>
+
+			<doppler>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>-8.7</pos_y>
+				<scale>1.0</scale>
+				<entries>9</entries>
+				<topcount>3</topcount>
+			</doppler>
 		</gamemode>
 	</live_rankings>
 
@@ -598,9 +615,13 @@
 				<topcount>3</topcount>
 			</chase>
 
-			<stunts>
+			<knockout>
 				<enabled>false</enabled>			<!-- Unsupported, leave as is! -->
-			</stunts>
+			</knockout>
+
+			<doppler>
+				<enabled>false</enabled>			<!-- Unsupported, leave as is! -->
+			</doppler>
 		</gamemode>
 	</round_score>
 
@@ -611,7 +632,7 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>41.0</pos_x>
+		<pos_x>39.5</pos_x>
 		<pos_y>-30.0</pos_y>
 		<scale>1.0</scale>
 
@@ -628,7 +649,7 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>36.2</pos_x>
+		<pos_x>34.7</pos_x>
 		<pos_y>-30.0</pos_y>
 		<scale>1.0</scale>
 
@@ -645,7 +666,7 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>31.4</pos_x>
+		<pos_x>29.9</pos_x>
 		<pos_y>-30.0</pos_y>
 		<scale>1.0</scale>
 
@@ -733,9 +754,7 @@
 			<pos_y>26.5</pos_y>
 			<scale>1.0</scale>
 
-			<icon_style>Icons128x128_1</icon_style>
-			<icon_substyle>Coppers</icon_substyle>
-
+			<background_color>222233BB</background_color>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 
@@ -746,69 +765,6 @@
 			<button_color>000000FF</button_color>
 		</widget>
 	</donation_widget>
-
-
-	<!-- Displays the current LadderLimits like "40-80k" -->
-	<ladderlimit_widget>
-		<enabled>false</enabled>
-		<text_color>FFCC00FF</text_color>
-
-		<!--
-                     If your Server is an RoC-Ladder (Races of Champions), then you have to set this to 'true',
-		     otherwise this Widget display the wrong LadderLimits when Nadeo change it to 80-100k.
-		     The check are always run at Sunday at each Map change. All other Server have set this to 'false'.
-		-->
-		<roc_server>false</roc_server>
-
-		<pos_x>-63.85</pos_x>
-		<pos_y>43.3</pos_y>
-		<scale>1.0</scale>
-
-		<background_style>BgsPlayerCard</background_style>
-		<background_substyle>ProgressBar</background_substyle>
-	</ladderlimit_widget>
-
-
-	<!-- Displays the current Gamemode -->
-	<gamemode_widget>
-		<enabled>false</enabled>
-		<text_color>FFCC00FF</text_color>
-
-		<pos_x>-59.05</pos_x>
-		<pos_y>43.3</pos_y>
-		<scale>1.0</scale>
-
-		<background_style>BgsPlayerCard</background_style>
-		<background_substyle>ProgressBar</background_substyle>
-	</gamemode_widget>
-
-
-	<!-- Displays the current Player- and Spectator-Count and also the max. values of them -->
-	<player_spectator_widget>
-		<enabled>false</enabled>
-		<text_color>FFCC00FF</text_color>
-
-		<pos_x>-54.25</pos_x>
-		<pos_y>43.3</pos_y>
-		<scale>1.0</scale>
-
-		<background_style>BgsPlayerCard</background_style>
-		<background_substyle>ProgressBar</background_substyle>
-	</player_spectator_widget>
-
-
-	<!-- Displays the current Rankings -->
-	<current_ranking_widget>
-		<enabled>false</enabled>
-		<text_color>FFCC00FF</text_color>
-
-		<pos_x>-49.45</pos_x>
-		<pos_y>43.3</pos_y>
-		<scale>1.0</scale>
-
-		<background_style>BgsPlayerCard</background_style>
-		<background_substyle>ProgressBar</background_substyle>
-	</current_ranking_widget>
 
 
 	<!-- Displays a button for ManiaExchange -->
@@ -881,20 +837,25 @@
 
 	<!-- Just a clock where the Player can adjust her/his own timezone to display the localtime -->
 	<clock_widget>
-		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
 		<race>
+			<enabled>false</enabled>
 			<pos_x>43.78</pos_x>
-			<pos_y>100</pos_y>
+			<pos_y>36.38</pos_y>
 			<scale>1.0</scale>
+			<background_default>55556699</background_default>
+			<background_focus>004B7D99</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</race>
 		<score>
+			<enabled>true</enabled>
 			<pos_x>43</pos_x>
 			<pos_y>33.2</pos_y>
 			<scale>1.0</scale>
+			<background_default>222233BB</background_default>
+			<background_focus>004B7D99</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</score>
@@ -936,6 +897,7 @@
 		<pos_y>33.2</pos_y>
 		<scale>1.0</scale>
 
+		<background_color>222233BB</background_color>
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
 	</next_environment_widget>
@@ -950,30 +912,10 @@
 		<pos_y>33.2</pos_y>
 		<scale>1.0</scale>
 
+		<background_color>222233BB</background_color>
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
 	</next_gamemode_widget>
-
-
-	<!-- Displays the Eyepiece-Logo -->
-	<eyepiece_widget>
-		<text_color>FFCC00FF</text_color>
-
-		<race>
-			<enabled>false</enabled>
-			<pos_x>-62</pos_x>
-			<pos_y>47</pos_y>
-			<scale>1.0</scale>
-		</race>
-		<score>
-			<enabled>true</enabled>
-			<pos_x>43</pos_x>
-			<pos_y>26.5</pos_y>
-			<scale>1.0</scale>
-			<background_style>BgsPlayerCard</background_style>
-			<background_substyle>ProgressBar</background_substyle>
-		</score>
-	</eyepiece_widget>
 
 
 	<!-- This Lists are only displayed at Scoretable -->
@@ -989,7 +931,7 @@
 			<icon_substyle>ScoreLink</icon_substyle>
 		</top_average_times>
 
-		<dedimania_records>				<!-- Disabled in Gamemode 'Stunts' -->
+		<dedimania_records>
 			<enabled>true</enabled>
 			<title>Dedimania Records</title>
 			<pos_x>-63.7</pos_x>
@@ -1203,18 +1145,20 @@
 		//-->
 
 		<!--	All possible supported entries and values for a <placement>
-			If you set <url>, <manialink>, <action_id> and <chat_command> together, only <url> will be used
-			Min. required are (without <include>): <enabled>, <display>, <pos_x>, <pos_y>, <width> and <height>
-			Min. required are (with <include>): <enabled>, <display> and <include> (all other are ignored)
+			- If you set <url>, <manialink>, <action_id> and <chat_command> together, only <url> will be used
+			- If you set <background_color> and <background_style> together, only <background_color> will be used
+			- Min. required are (without <include>): <enabled>, <display>, <pos_x>, <pos_y>, <width> and <height>
+			- Min. required are (with <include>): <enabled>, <display> and <include> (all other are ignored)
 		<placement>
 			<enabled>[true|false]</enabled>
 			<description>enter here whatever you want as an description (this is just for you to remember what this is)</description>
-			<display>[rounds|time_attack|team|laps|cup|team_attack|chase|stunts|race|score|always]</display>
+			<display>[rounds|time_attack|team|laps|cup|team_attack|chase|knockout|doppler|race|score|always]</display>
 			<pos_x>[signed/unsigned float]</pos_x>
 			<pos_y>[signed/unsigned float]</pos_y>
 			<layer>[signed/unsigned float]</layer>				from "-3" till "20"
 			<width>[unsigned float]</width>
 			<height>[unsigned float]</height>
+			<background_color>[empty|RGBA]</background_color>
 			<background_style>[empty|style]</background_style>
 			<background_substyle>[empty|substyle]</background_substyle>
 			<icon_style>[empty|style]</icon_style>
@@ -1265,6 +1209,21 @@
 			<chat_command>/karma help</chat_command>
 		</placement>
 
+		<placement>
+			<enabled>false</enabled>
+			<description>Sample entry for in-game graphics (displayed only at Race)</description>
+			<display>race</display>
+			<pos_x>0.0</pos_x>
+			<pos_y>0.0</pos_y>
+			<width>16</width>
+			<height>16</height>
+			<background_style>Bgs1InRace</background_style>
+			<background_substyle>NavButton</background_substyle>
+			<image>file://Skins/Avatars/Flags/GER.dds</image>
+			<imagefocus>file://Skins/Avatars/Flags/USA.dds</imagefocus>
+			<action_id>PluginManiaKarma?Action=91101</action_id>
+		</placement>
+
 	</placement_widget>
 
 
@@ -1303,7 +1262,6 @@
 	<!-- URLs of the Images, you can use this locations or just copy the images to your Server -->
 	<images>
 		<widget_open_left>http://static.undef.name/ingame/records-eyepiece/edge-open-ld-dark.png</widget_open_left>
-		<widget_close_left>http://static.undef.name/ingame/records-eyepiece/edge-close-lu-dark.png</widget_close_left>
 		<widget_open_right>http://static.undef.name/ingame/records-eyepiece/edge-open-rd-dark.png</widget_open_right>
 		<widget_open_small>http://static.undef.name/ingame/records-eyepiece/edge-open-ld-light.png</widget_open_small>
 
@@ -1314,10 +1272,15 @@
 		<widget_ok_normal>http://static.undef.name/ingame/records-eyepiece/button-ok-normal.png</widget_ok_normal>
 		<widget_ok_focus>http://static.undef.name/ingame/records-eyepiece/button-ok-focus.png</widget_ok_focus>
 
-		<mx_logo_normal>http://static.undef.name/ingame/records-eyepiece/logo-maniaexchange-normal.png</mx_logo_normal>
-		<mx_logo_focus>http://static.undef.name/ingame/records-eyepiece/logo-maniaexchange-focus.png</mx_logo_focus>
+		<icon_mania_exchange>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-mania-exchange.png</icon_mania_exchange>
+		<icon_rankings>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-ranking.png</icon_rankings>
+		<icon_maps>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-maps.png</icon_maps>
+		<icon_visitors>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-visitors.png</icon_visitors>
+		<icon_favorites>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-favorites.png</icon_favorites>
+		<icon_clock>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-clock.png</icon_clock>
+		<icon_donate>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-donate.png</icon_donate>
+		<icon_spectator>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-spectator.png</icon_spectator>
 
-		<clock_icon>http://static.undef.name/ingame/records-eyepiece/clock-icon.png</clock_icon>
 		<worldmap>http://static.undef.name/ingame/records-eyepiece/worldmap-pure.png</worldmap>
 		<no_screenshot>http://static.undef.name/ingame/records-eyepiece/no-screenshot-tm2.jpg</no_screenshot>
 		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.webm</progress_indicator>
@@ -1366,4 +1329,4 @@
 		</continents>
 	</images>
 
-</records_eyepiece>
+</settings>

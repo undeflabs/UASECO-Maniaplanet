@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -93,7 +93,7 @@ class PluginMuting extends Plugin {
 	public function onPlayerChat ($aseco, $chat) {
 
 		// check if not a registered (== hidden) chat command
-		if ($chatter = $aseco->server->players->getPlayer($chat[1])) {
+		if ($chatter = $aseco->server->players->getPlayerByLogin($chat[1])) {
 
 			// check each player's mute list and global mute list
 			foreach ($aseco->server->players->player_list as $player) {
@@ -149,7 +149,7 @@ class PluginMuting extends Plugin {
 
 	public function chat_mute ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$target = $player;
@@ -200,7 +200,7 @@ class PluginMuting extends Plugin {
 
 	public function chat_unmute ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$target = $player;
@@ -235,7 +235,7 @@ class PluginMuting extends Plugin {
 
 	public function chat_mutelist ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -297,7 +297,7 @@ class PluginMuting extends Plugin {
 
 	public function chat_refresh ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

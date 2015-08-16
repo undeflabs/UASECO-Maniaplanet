@@ -8,8 +8,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-20
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-28
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -39,10 +39,9 @@
 */
 
 class Checkpoint {
-	public $tracking;
-	public $spectators;
-	public $best;
-	public $current;
+	public $tracking	= array();
+	public $best		= array();
+	public $current		= array();
 
 
 	/*
@@ -54,7 +53,6 @@ class Checkpoint {
 	public function __construct () {
 		$this->tracking['local_records']	= -1;			// -1 = off, 0 = own/last rec, 1-max = rec #1-max
 		$this->tracking['dedimania_records']	= -1;			// -1 = off, 0 = own/last rec, 1-30 = rec #1-30
-		$this->spectators 			= array();
 		$this->best['timestamp']		= 0;
 		$this->best['finish']			= PHP_INT_MAX;
 		$this->best['cps']			= array();

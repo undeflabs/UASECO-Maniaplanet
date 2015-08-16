@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -177,7 +177,7 @@ class PluginManialinks extends Plugin {
 	public function display_manialink ($login, $header, $icon, $data, $widths, $button) {
 		global $aseco;
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$style = $this->getStyle();
@@ -311,7 +311,7 @@ class PluginManialinks extends Plugin {
 		}
 
 		// Get Player
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

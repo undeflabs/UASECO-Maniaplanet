@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - June 2015 by undef.de
+ * Copyright:	May 2014 - August 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,11 +42,11 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-06-18');
-	define('UASECO_WEBSITE',	'http://www.UASECO.org/');
+	define('UASECO_BUILD',		'2015-08-16');
+	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2015-06-16_18_00');
+	define('MANIAPLANET_BUILD',	'2015-06-16_16_53');
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.2.1');
 
@@ -64,6 +64,10 @@
 	date_default_timezone_set(@date_default_timezone_get());
 	setlocale(LC_NUMERIC, 'C');
 	mb_internal_encoding('UTF-8');
+
+	// Init random generator
+	list($usec, $sec) = explode(' ', microtime());
+	mt_srand((float) $sec + ((float) $usec * 100000));
 
 
 	// Include required classes
@@ -84,6 +88,7 @@
 	require_once('includes/core/windowlist.class.php');
 	require_once('includes/core/player.class.php');
 	require_once('includes/core/playerlist.class.php');
+	require_once('includes/core/playlist.class.php');		// Holds the Playlist (aka Jukebox) for Maps
 	require_once('includes/core/checkpoint.class.php');
 	require_once('includes/core/record.class.php');
 	require_once('includes/core/recordlist.class.php');
@@ -129,9 +134,8 @@ class UASECO extends Helper {
 	public $warmup_phase;					// warm-up phase
 	public $restarting;					// restarting map (true or false)
 	public $changing_to_gamemode;
-	public $checkpoints;
+	public $current_status;					// server status changes
 
-	private $current_status;				// server status changes
 	private $next_second;
 	private $next_tenth;
 	private $next_quarter;
@@ -185,10 +189,6 @@ class UASECO extends Helper {
 		$this->country			= new Country();
 		$this->windows			= new WindowList($this);
 		$this->server			= new Server('127.0.0.1', 5000, 'SuperAdmin', 'SuperAdmin');
-		$this->server->maps		= new MapList();
-		$this->server->players		= new PlayerList();
-		$this->server->rankings		= new RankingList();
-		$this->server->mutelist		= array();
 		$this->plugins			= array();
 		$this->titles			= array();
 		$this->masteradmin_list		= array();
@@ -203,7 +203,6 @@ class UASECO extends Helper {
 		$this->restarting		= false;
 		$this->changing_to_gamemode	= false;
 		$this->current_status		= 0;
-		$this->checkpoints		= array();
 
 		// Setup config file
 		$config_file = 'config/UASECO.xml';
@@ -211,6 +210,13 @@ class UASECO extends Helper {
 		// Load new settings, if available
 		$this->console('[Config] Load settings [{1}]', $config_file);
 		$this->loadSettings($config_file);
+
+		// Initialize further
+		$this->server->maps		= new MapList($this->debug);
+		$this->server->playlist		= new Playlist($this->debug, $this->settings['max_history_entries']);
+		$this->server->players		= new PlayerList($this->debug);
+		$this->server->rankings		= new RankingList($this->debug);
+		$this->server->mutelist		= array();
 
 		// Load admin/operator/ability lists, if available
 		$this->console('[Config] Load admin and operator lists [{1}]', $this->settings['adminops_file']);
@@ -414,7 +420,7 @@ class UASECO extends Helper {
 
 		// Add 'POWERED BY UASECO' to server comment
 		if (strpos($this->stripColors($this->server->comment, true), 'POWERED BY UASECO') === false) {
-			$this->client->query('SetServerComment', $this->server->comment ."\n". '$OPOWERED BY $0AF$L[http://www.UASECO.org/]UASECO$l');
+			$this->client->query('SetServerComment', $this->server->comment ."\n". '$<$Z$O$FFFPOWERED BY $0AF$L[http://www.UASECO.org/]UASECO$L$>');
 		}
 
 		// Check server build
@@ -432,6 +438,11 @@ class UASECO extends Helper {
 		$this->server->maps->readMapList();
 		$count = count($this->server->maps->map_list);
 		$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count == 1 ? '' : 's') .' which matches server settings.');
+
+		// Load MapHistory
+		$this->console('[Playlist] Reading map history...');
+		$this->server->playlist->readMapHistory();
+		$this->console('[Playlist] ...successfully done!');
 
 		// Throw 'synchronisation' event
 		$this->releaseEvent('onSync', null);
@@ -599,7 +610,7 @@ class UASECO extends Helper {
 			// Set admin contact
 			$this->settings['admin_contact'] = $settings['ADMIN_CONTACT'][0];
 			if (strtolower($this->settings['admin_contact']) == 'your@email.com') {
-				$this->console('[WARNING] You should setup a working mail to concact you at <admin_contact>!');
+				$this->console('[WARNING] You should setup a working mail to be able to contact you, change it in config.xml at <admin_contact>!');
 			}
 
 			// Set admin lock password
@@ -619,6 +630,9 @@ class UASECO extends Helper {
 
 			// Add random filter to /admin writemaplist output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
+
+			// Specifies how large the Map(List) history buffer is.
+			$this->settings['max_history_entries'] = (int)$settings['MAX_HISTORY_ENTRIES'][0];
 
 			// Setup default storing path for the map images
 			$this->settings['mapimages_path'] = $settings['MAPIMAGES_PATH'][0];
@@ -1026,7 +1040,7 @@ class UASECO extends Helper {
 	// Release a chat command from a plugin
 	public function releaseChatCommand ($command, $login) {
 
-		if ($player = $this->server->players->getPlayer($login)) {
+		if ($player = $this->server->players->getPlayerByLogin($login)) {
 			$chat = array(
 				$player->pid,
 				$player->login,
@@ -1098,71 +1112,86 @@ class UASECO extends Helper {
 		}
 
 
-		$check = array();
-		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
-		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
-		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
-		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
-		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
-		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
-		$check[8] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
-		if ($check[1]) {
+		$check_step1 = array();
+		$check_step1['authors']		= in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
+		$check_step1['maphistory']	= in_array($this->settings['mysql']['table_prefix'] .'maphistory', $tables);
+		$check_step1['maps']		= in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check_step1['players']		= in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check_step1['playlist']	= in_array($this->settings['mysql']['table_prefix'] .'playlist', $tables);
+		$check_step1['rankings']	= in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
+		$check_step1['ratings']		= in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
+		$check_step1['records']		= in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
+		$check_step1['settings']	= in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
+		$check_step1['times']		= in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		if ($check_step1['authors']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'authors`');
 		}
-		if ($check[2]) {
+		if ($check_step1['maphistory']) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'maphistory`');
+		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'maphistory`');
+		}
+		if ($check_step1['maps']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'maps`');
 		}
-		if ($check[3]) {
+		if ($check_step1['players']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'players`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'players`');
 		}
-		if ($check[4]) {
+		if ($check_step1['playlist']) {
+			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
+		}
+		else {
+			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
+		}
+		if ($check_step1['rankings']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
 		}
-		if ($check[5]) {
+		if ($check_step1['ratings']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
 		}
-		if ($check[6]) {
+		if ($check_step1['records']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'records`');
 		}
-		if ($check[7]) {
+		if ($check_step1['settings']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'settings`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'settings`');
 		}
-		if ($check[8]) {
+		if ($check_step1['times']) {
 			$this->console('[Database] » Found table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		}
 		else {
 			$this->console('[Database] » Missing table `'. $this->settings['mysql']['table_prefix'] .'times`');
 		}
-		if ($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8]) {
+		if ($check_step1['authors'] && $check_step1['maphistory'] && $check_step1['maps'] && $check_step1['players'] && $check_step1['playlist'] && $check_step1['rankings'] && $check_step1['ratings'] && $check_step1['records'] && $check_step1['settings'] && $check_step1['times']) {
 			$this->console('[Database] ...successfully done!');
 			return;
 		}
 
 
 		// Create tables
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`', 0.2);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%authors` (
 		  `AuthorId` mediumint(3) unsigned AUTO_INCREMENT,
@@ -1178,10 +1207,23 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.2);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'maphistory`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'maphistory`', 0.25);
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%maphistory` (
+		  `MapId` mediumint(3) unsigned NOT NULL,
+		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  KEY `MapId` (`MapId`),
+		  KEY `Date` (`Date`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+
+
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`', 0.3);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%maps` (
 		  `MapId` mediumint(3) UNSIGNED AUTO_INCREMENT,
@@ -1199,7 +1241,7 @@ class UASECO extends Helper {
 		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE utf8_bin NOT NULL,
 		  `Cost` mediumint(3) unsigned DEFAULT '0',
 		  `Type` varchar(32) COLLATE utf8_bin DEFAULT '',
-		  `Style` varchar(16) COLLATE utf8_bin DEFAULT '',
+		  `Style` varchar(32) COLLATE utf8_bin DEFAULT '',
 		  `MultiLap` enum('false','true') COLLATE utf8_bin NOT NULL,
 		  `NbLaps` tinyint(1) unsigned DEFAULT '0',
 		  `NbCheckpoints` tinyint(1) unsigned DEFAULT '0',
@@ -1227,10 +1269,10 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.3);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'players`', 0.35);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%players` (
 		  `PlayerId` mediumint(3) unsigned AUTO_INCREMENT,
@@ -1256,10 +1298,26 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.35);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'playlist`', 0.4);
+		$query = "
+		CREATE TABLE IF NOT EXISTS `%prefix%playlist` (
+		  `MapId` mediumint(3) unsigned  DEFAULT '0',
+		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
+		  `Method` enum('select','vote','pay') COLLATE utf8_bin DEFAULT 'select',
+		  KEY `MapId` (`MapId`),
+		  KEY `Date` (`Date`),
+		  KEY `PlayerId` (`PlayerId`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		";
+		$this->db->query($query);
+
+
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`', 0.45);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%rankings` (
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
@@ -1268,10 +1326,10 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.4);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`', 0.5);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
@@ -1286,10 +1344,10 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.5);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'records`', 0.6);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
@@ -1307,10 +1365,10 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.6);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`', 0.7);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%settings` (
 		  `Plugin` varchar(64) COLLATE utf8_bin NOT NULL,
@@ -1322,10 +1380,10 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.7);
 
 
-		$this->console(' » Checking table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'times`', 0.8);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%times` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
@@ -1343,10 +1401,10 @@ class UASECO extends Helper {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
-		$this->displayLoadStatus('Checking database structure...', 0.8);
 
 
 		// Check for tables
+		$percentage_done = 0.8;
 		$tables = array();
 		$result = $this->db->query('SHOW TABLES;');
 		if ($result) {
@@ -1356,102 +1414,139 @@ class UASECO extends Helper {
 			$result->free_result();
 		}
 
-		$check = array();
-		$check[1] = in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
-		$check[2] = in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
-		$check[3] = in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check[4] = in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
-		$check[5] = in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
-		$check[6] = in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
-		$check[7] = in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
-		$check[8] = in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
-		if (!($check[1] && $check[2] && $check[3] && $check[4] && $check[5] && $check[6] && $check[7] && $check[8])) {
+		$check_step2 = array();
+		$check_step2['authors']		= in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
+		$check_step2['maphistory']	= in_array($this->settings['mysql']['table_prefix'] .'maphistory', $tables);
+		$check_step2['maps']		= in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
+		$check_step2['players']		= in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
+		$check_step2['playlist']	= in_array($this->settings['mysql']['table_prefix'] .'playlist', $tables);
+		$check_step2['rankings']	= in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
+		$check_step2['ratings']		= in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
+		$check_step2['records']		= in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
+		$check_step2['settings']	= in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
+		$check_step2['times']		= in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
+		if ($check_step1['authors'] && $check_step1['maphistory'] && $check_step1['maps'] && $check_step1['players'] && $check_step1['playlist'] && $check_step1['rankings'] && $check_step1['ratings'] && $check_step1['records'] && $check_step1['settings'] && $check_step1['times']) {
 			trigger_error('[Database] Table structure incorrect, automatic setup failed!', E_USER_ERROR);
 		}
 
 
-		$this->displayLoadStatus('Checking database structure...', 0.9);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps`');
-		$query = "
-		ALTER TABLE `%prefix%maps`
-		  ADD CONSTRAINT `%prefix%maps_ibfk_1` FOREIGN KEY (`AuthorId`) REFERENCES `%prefix%authors` (`AuthorId`);
-		";
-		$result = $this->db->query($query);
-		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps` '. $this->db->errmsg(), E_USER_ERROR);
+		if ($check_step1['maphistory'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maphistory`');
+			$query = "
+			ALTER TABLE `%prefix%maphistory`
+			  ADD CONSTRAINT `%prefix%maphistory_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maphistory` '. $this->db->errmsg(), E_USER_ERROR);
+			}
 		}
 
-
-
-		$this->displayLoadStatus('Checking database structure...', 0.93);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
-		$query = "
-		ALTER TABLE `%prefix%rankings`
-		  ADD CONSTRAINT `%prefix%ranks_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
-		";
-		$result = $this->db->query($query);
-		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
+		if ($check_step1['maps'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+			$query = "
+			ALTER TABLE `%prefix%maps`
+			  ADD CONSTRAINT `%prefix%maps_ibfk_1` FOREIGN KEY (`AuthorId`) REFERENCES `%prefix%authors` (`AuthorId`);
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps` '. $this->db->errmsg(), E_USER_ERROR);
+			}
 		}
 
-
-
-		$this->displayLoadStatus('Checking database structure...', 0.94);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
-		$query = "
-		ALTER TABLE `%prefix%ratings`
-		  ADD CONSTRAINT `%prefix%ratings_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
-		  ADD CONSTRAINT `%prefix%ratings_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
-		";
-		$result = $this->db->query($query);
-		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+		if ($check_step1['playlist'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
+			$query = "
+			ALTER TABLE `%prefix%playlist`
+			  ADD CONSTRAINT `%prefix%playlist_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+			  ADD CONSTRAINT `%prefix%playlist_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'playlist` '. $this->db->errmsg(), E_USER_ERROR);
+			}
 		}
 
+		if ($check_step1['rankings'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
+			$query = "
+			ALTER TABLE `%prefix%rankings`
+			  ADD CONSTRAINT `%prefix%ranks_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
+			}
+		}
 
+		if ($check_step1['ratings'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+			$query = "
+			ALTER TABLE `%prefix%ratings`
+			  ADD CONSTRAINT `%prefix%ratings_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+			  ADD CONSTRAINT `%prefix%ratings_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+			}
+		}
+
+		if ($check_step1['records'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'records`');
+			$query = "
+			ALTER TABLE `%prefix%records`
+			  ADD CONSTRAINT `%prefix%records_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+			  ADD CONSTRAINT `%prefix%records_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+			}
+		}
+
+		if ($check_step1['settings'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+			$query = "
+			ALTER TABLE `%prefix%settings`
+			  ADD CONSTRAINT `%prefix%settings_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
+			}
+		}
+
+		if ($check_step1['times'] === false) {
+			$percentage_done += 0.1;
+			$this->displayLoadStatus('Adding foreign key constraints...', $percentage_done);
+			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times`');
+			$query = "
+			ALTER TABLE `%prefix%times`
+			  ADD CONSTRAINT `%prefix%times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+			  ADD CONSTRAINT `%prefix%times_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			";
+			$result = $this->db->query($query);
+			if (!$result) {
+				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times` '. $this->db->errmsg(), E_USER_ERROR);
+			}
+		}
 
 		$this->displayLoadStatus('Checking database structure...', 0.95);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'records`');
-		$query = "
-		ALTER TABLE `%prefix%records`
-		  ADD CONSTRAINT `%prefix%records_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
-		  ADD CONSTRAINT `%prefix%records_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
-		";
-		$result = $this->db->query($query);
-		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
-		}
-
-
-
-		$this->displayLoadStatus('Checking database structure...', 0.96);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings`');
-		$query = "
-		ALTER TABLE `%prefix%settings`
-		  ADD CONSTRAINT `%prefix%settings_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
-		";
-		$result = $this->db->query($query);
-		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
-		}
-
-
-
-		$this->displayLoadStatus('Checking database structure...', 0.97);
-		$this->console(' » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times`');
-		$query = "
-		ALTER TABLE `%prefix%times`
-		  ADD CONSTRAINT `%prefix%times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
-		  ADD CONSTRAINT `%prefix%times_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
-		";
-		$result = $this->db->query($query);
-		if (!$result) {
-			trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times` '. $this->db->errmsg(), E_USER_ERROR);
-		}
-
-
-
-		$this->displayLoadStatus('Checking database structure...', 0.98);
 		$query = "
 		SET FOREIGN_KEY_CHECKS=1;
 		";
@@ -1748,32 +1843,52 @@ class UASECO extends Helper {
 			$this->releaseEvent('onRestartMap', $map->uid);
 
 			// Reset status
-			$this->restarting == false;
-
+			$this->restarting = false;
 			return;
 		}
 
-		// Setup previous map
-		$this->server->maps->previous = $this->server->maps->current;
+		// Setup previous Map
+		if ($this->startup_phase == false) {
+			$this->server->playlist->setPreviousMap($this->server->maps->current);
+		}
+
+		// Setup next Map
+		$this->server->maps->next = $this->server->maps->getNextMap();
 
 		// Refresh the current round point system (only Rounds, Team and Cup)
 		if ($this->server->gameinfo->mode == Gameinfo::ROUNDS || $this->server->gameinfo->mode == Gameinfo::TEAM || $this->server->gameinfo->mode == Gameinfo::CUP) {
 			$this->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
 		}
 
-		// Search MX for map
-		if ( ($map->mx == false) || (time() > ($map->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) ) {
+		// Search MX for current Map
+		if ($map->mx === false || time() > ($map->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
 			$response = new MXInfoFetcher('TM2', $map->uid, true);
-			if ($response->error == '') {
+			if (empty($response->error)) {
 				$map->mx = $response;
-				$this->releaseEvent('onManiaExchangeBestLoaded', ($this->server->gameinfo->mode == Gameinfo::STUNTS ? (isset($map->mx->recordlist[0]['stuntscore']) ? $map->mx->recordlist[0]['stuntscore'] : 0) : (isset($map->mx->recordlist[0]['replaytime']) ? $map->mx->recordlist[0]['replaytime'] : 0)));
+				$this->releaseEvent('onManiaExchangeBestLoaded', (isset($map->mx->recordlist[0]['replaytime']) ? $map->mx->recordlist[0]['replaytime'] : 0));
 			}
 			else {
-				$this->releaseEvent('onManiaExchangeBestLoaded', ($this->server->gameinfo->mode == Gameinfo::STUNTS ? 0 : 0));
+				$this->releaseEvent('onManiaExchangeBestLoaded', 0);
 			}
 		}
 		else if ($this->debug) {
 			$this->console('[Map] MX infos cached, last fetched at '. date('Y-m-d H:i:s', $map->mx->timestamp_fetched));
+		}
+
+		// Search MX for previous Map
+		if ($this->server->maps->previous->mx === false || time() > ($this->server->maps->previous->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
+			$response = new MXInfoFetcher('TM2', $this->server->maps->previous->uid, true);
+			if (empty($response->error)) {
+				$this->server->maps->previous->mx = $response;
+			}
+		}
+
+		// Search MX for next Map
+		if ($this->server->maps->next->mx === false || time() > ($this->server->maps->next->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
+			$response = new MXInfoFetcher('TM2', $this->server->maps->next->uid, true);
+			if (empty($response->error)) {
+				$this->server->maps->next->mx = $response;
+			}
 		}
 
 		// Report usage back to home website and store file for the "stripling.php"
@@ -1813,6 +1928,11 @@ class UASECO extends Helper {
 		// Update the field which contains current map
 		$this->server->maps->current = $map;
 
+		// Add new Map into MapHistory
+		if ($this->startup_phase == false) {
+			$this->server->playlist->addMapToHistory($this->server->maps->current);
+		}
+
 		// Throw main 'loading map' event
 		if ($this->settings['developer']['log_events']['common'] == true) {
 			$this->console('[Event] Loading Map');
@@ -1842,9 +1962,9 @@ class UASECO extends Helper {
 					$rank = $data;
 					break;
 				}
-				if (($player = $this->server->players->getPlayer($rank->login)) !== false) {
+				if (($player = $this->server->players->getPlayerByLogin($rank->login)) !== false) {
 					// Check for winner if there's more than one player
-					if ( ($this->server->gameinfo->mode == Gameinfo::STUNTS ? ($rank->score > 0) : ($rank->time > 0)) ) {
+					if ($rank->time > 0) {
 						// Increase the player's wins
 						$player->newwins++;
 
@@ -1950,7 +2070,9 @@ class UASECO extends Helper {
 			else {
 				// client version checking, extract version number
 				$version = str_replace(')', '', preg_replace('/.*\(/', '', $data['ClientVersion']));
-				if ($version == '') $version = '2.11.11';
+				if ($version == '') {
+					$version = '2.11.11';
+				}
 				$message = str_replace('{br}', LF, $this->getChatMessage('CLIENT_ERROR'));
 
 				// if invalid version, notify & kick the player
@@ -2051,7 +2173,7 @@ class UASECO extends Helper {
 		}
 
 		// Get Player object, if available. Otherwise bail out.
-		if (!$player = $this->server->players->getPlayer($login)) {
+		if (!$player = $this->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -2078,47 +2200,6 @@ class UASECO extends Helper {
 
 		// Throw 'player disconnects' event
 		$this->releaseEvent('onPlayerDisconnect', $player);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Player reaches finish.
-	public function playerFinish ($login, $score) {
-
-		// If no Map info bail out immediately
-		if ($this->server->maps->current->id === 0) {
-			return;
-		}
-
-		// If relay server or not in Play status, bail out immediately
-		if ($this->server->isrelay || $this->current_status != 4) {
-			return;
-		}
-
-		// Check for valid player
-		if (!$player = $this->server->players->getPlayer($login)) {
-			return;
-		}
-
-		// Build a record object with the current finish information
-		$finish			= new Record();
-		$finish->player		= $player;
-		$finish->score		= $score;
-		$finish->checkpoints	= (isset($this->checkpoints[$player->login]) ? $this->checkpoints[$player->login]->current['cps'] : array());
-		$finish->date		= strftime('%Y-%m-%d %H:%M:%S');
-		$finish->new		= false;
-		$finish->map		= clone $this->server->maps->current;
-		unset($finish->map->mx);	// reduce memory usage
-
-		// Throw prefix 'player finishes' event (checkpoints)
-		$this->releaseEvent('onPlayerFinish1', $finish);
-
-		// Throw main 'player finishes' event
-		$this->releaseEvent('onPlayerFinish', $finish);
 	}
 
 	/*
@@ -2165,7 +2246,7 @@ class UASECO extends Helper {
 			$command = strtolower(trim($params[0]));
 
 			// Get & verify player object
-			if ($caller = $this->server->players->getPlayer($chat[1])) {
+			if ($caller = $this->server->players->getPlayerByLogin($chat[1])) {
 				if (!empty($this->registered_chatcmds[$command])) {
 					$allowed = false;
 					if ($this->registered_chatcmds[$command]['rights'] & Player::PLAYERS) {
@@ -2273,7 +2354,7 @@ class UASECO extends Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// When a player's info changed, signal the event. Fields:  Login, NickName, PlayerId, TeamId, SpectatorStatus, LadderRanking, Flags
+	// When a player's info changed, signal the event. Fields: Login, NickName, PlayerId, TeamId, SpectatorStatus, LadderRanking, Flags
 	public function playerInfoChanged ($playerinfo) {
 
 		// On relay, check for player from master server
@@ -2282,29 +2363,14 @@ class UASECO extends Helper {
 		}
 
 		// Check for valid player
-		if (!$player = $this->server->players->getPlayer($playerinfo['Login'])) {
+		if (!$player = $this->server->players->getPlayerByLogin($playerinfo['Login'])) {
 			return;
 		}
 
-		// Check ladder ranking
-		if ($playerinfo['LadderRanking'] > 0) {
-			$player->ladderrank = $playerinfo['LadderRanking'];
-			$player->isofficial = true;
-		}
-		else {
-			$player->isofficial = false;
-		}
+		// Update Player object
+		$player->updateInfo($playerinfo);
 
-		// Check spectator status (ignoring temporary changes)
-		$player->previous_status = $player->isspectator;
-		if (($playerinfo['SpectatorStatus'] % 10) != 0) {
-			$player->isspectator = true;
-		}
-		else {
-			$player->isspectator = false;
-		}
-
-		$this->releaseEvent('onPlayerInfoChanged', $playerinfo);
+		$this->releaseEvent('onPlayerInfoChanged', $playerinfo['Login']);
 	}
 }
 

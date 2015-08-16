@@ -255,12 +255,18 @@
 				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
 			</chase>
-			<stunts>
+			<knockout>
 				<enabled>true</enabled>
 				<pos_x>48.64</pos_x>
 				<pos_y>34.6</pos_y>
 				<scale>1.0</scale>
-			</stunts>
+			</knockout>
+			<doppler>
+				<enabled>true</enabled>
+				<pos_x>48.64</pos_x>
+				<pos_y>34.6</pos_y>
+				<scale>1.0</scale>
+			</doppler>
 		</gamemode>
 	</karma_widget>
 

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-31
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -111,17 +111,17 @@ class PluginChatAdmin extends Plugin {
 			'setrefpwd'			=> 'Changes the referee password',
 			'setmaxplayers'			=> 'Sets a new maximum of players',
 			'setmaxspecs'			=> 'Sets a new maximum of spectators',
-			'setgamemode'			=> 'Sets next mode {ta,rounds,team,laps,stunts,cup}',
+			'setgamemode'			=> 'Sets next mode {timeattack, rounds, team, laps, cup, teamattack, knockout, doppler}',
 			'setrefmode'			=> 'Sets referee mode {0=top3,1=all}',
 			'nextmap/next'			=> 'Forces server to load next map',
 			'skipmap/skip'			=> 'Forces server to load next map',
 			'previous/prev'			=> 'Forces server to load previous map',
 			'nextenv'			=> 'Loads next map in same environment',
-			'restartmap/res'		=> 'Restarts currently running map',
+			'restartmap/restart/res'	=> 'Restarts currently running map',
 			'replaymap/replay'		=> 'Replays current map (via jukebox)',
 			'dropjukebox/djb'		=> 'Drops a map from the jukebox',
 			'clearjukebox/cjb'		=> 'Clears the entire jukebox',
-			'clearhist'			=> 'Clears (part of) map history',
+//			'clearhist'			=> 'Clears (part of) map history',
 			'add'				=> 'Adds maps directly from MX (<ID> ...)',
 			'addthis'			=> 'Adds current /add-ed map permanently',
 			'addlocal'			=> 'Adds a local map (<filename>)',
@@ -226,7 +226,7 @@ class PluginChatAdmin extends Plugin {
 
 	public function chat_admin ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$admin = $aseco->server->players->getPlayer($login)) {
+		if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 		$command['params'] = $chat_parameter;
@@ -556,10 +556,15 @@ class PluginChatAdmin extends Plugin {
 					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::CHASE);
 					break;
 
-//				case 'stunts':
-//					$modeId = Gameinfo::STUNTS;
-//					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::STUNTS);
-//					break;
+				case 'knockout':
+					$modeId = Gameinfo::KNOCKOUT;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::KNOCKOUT);
+					break;
+
+				case 'doppler':
+					$modeId = Gameinfo::DOPPLER;
+					$modeScript = $aseco->server->gameinfo->getModeScriptName(Gameinfo::DOPPLER);
+					break;
 
 				default:
 					$modeId = false;
@@ -797,7 +802,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'restartmap' || $command['params'][0] == 'res') {
+		else if ($command['params'][0] == 'restartmap' || $command['params'][0] == 'restart' || $command['params'][0] == 'res') {
 			/**
 			 * Restarts the currently running map.
 			 */
@@ -956,81 +961,80 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'clearhist') {
-			if (isset($aseco->plugins['PluginRaspJukebox'])) {
-				/**
-				 * Clears (part of) map history.
-				 */
-
-				// check for optional portion (pos = newest, neg = oldest)
-				if ($command['params'][1] != '' && is_numeric($command['params'][1]) && $command['params'][1] != 0) {
-					$clear = intval($command['params'][1]);
-
-					// log console message
-					$aseco->console('[Admin] {1} [{2}] clears {3} map{4} from history!', $logtitle, $login,
-						($clear > 0 ? 'newest ' : 'oldest ') . abs($clear),
-						(abs($clear) == 1 ? '' : 's')
-					);
-
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} clears {3}{#admin} map{4} from history!',
-						$chattitle,
-						$admin->nickname,
-						($clear > 0 ? 'newest {#highlite}' : 'oldest {#highlite}') . abs($clear),
-						(abs($clear) == 1 ? '' : 's')
-					);
-					$aseco->sendChatMessage($message);
-				}
-				else if (strtolower($command['params'][1]) == 'all') {  // entire history
-					$clear = $aseco->plugins['PluginRaspJukebox']->buffersize;
-
-					// log console message
-					$aseco->console('[Admin] {1} [{2}] clears entire map history!', $logtitle, $login);
-
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} clears entire map history!',
-						$chattitle,
-						$admin->nickname
-					);
-					$aseco->sendChatMessage($message);
-				}
-				else {
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}The map history contains {#highlite}{3}{#admin} map{4}',
-						$chattitle,
-						$admin->nickname,
-						count($aseco->plugins['PluginRaspJukebox']->jb_buffer),
-						(count($aseco->plugins['PluginRaspJukebox']->jb_buffer) == 1 ? '' : 's')
-					);
-					$aseco->sendChatMessage($message, $login);
-					return;
-				}
-
-				// clear map history (portion)
-				$i = 0;
-				if ($clear > 0) {
-					if ($clear > $aseco->plugins['PluginRaspJukebox']->buffersize) {
-						$clear = $aseco->plugins['PluginRaspJukebox']->buffersize;
-					}
-					while ($i++ < $clear) {
-						array_pop($aseco->plugins['PluginRaspJukebox']->jb_buffer);
-					}
-				}
-				else {
-					if ($clear < -$aseco->plugins['PluginRaspJukebox']->buffersize) {
-						$clear = -$aseco->plugins['PluginRaspJukebox']->buffersize;
-					}
-					while ($i-- > $clear) {
-						array_shift($aseco->plugins['PluginRaspJukebox']->jb_buffer);
-					}
-				}
-			}
-			else {
-				// show chat message
-				$message = '{#server}» {#admin}Clear history unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]';
-				$aseco->sendChatMessage($message, $login);
-			}
-		}
+//		else if ($command['params'][0] == 'clearhist') {
+//			if (isset($aseco->plugins['PluginRaspJukebox'])) {
+//				/**
+//				 * Clears (part of) map history.
+//				 */
+//
+//				// check for optional portion (pos = newest, neg = oldest)
+//				if ($command['params'][1] != '' && is_numeric($command['params'][1]) && $command['params'][1] != 0) {
+//					$clear = intval($command['params'][1]);
+//
+//					// log console message
+//					$aseco->console('[Admin] {1} [{2}] clears {3} map{4} from history!', $logtitle, $login,
+//						($clear > 0 ? 'newest ' : 'oldest ') . abs($clear),
+//						(abs($clear) == 1 ? '' : 's')
+//					);
+//
+//					// show chat message
+//					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} clears {3}{#admin} map{4} from history!',
+//						$chattitle,
+//						$admin->nickname,
+//						($clear > 0 ? 'newest {#highlite}' : 'oldest {#highlite}') . abs($clear),
+//						(abs($clear) == 1 ? '' : 's')
+//					);
+//					$aseco->sendChatMessage($message);
+//				}
+//				else if (strtolower($command['params'][1]) == 'all') {  // entire history
+//					$clear = $aseco->plugins['PluginRaspJukebox']->buffersize;
+//
+//					// log console message
+//					$aseco->console('[Admin] {1} [{2}] clears entire map history!', $logtitle, $login);
+//
+//					// show chat message
+//					$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} clears entire map history!',
+//						$chattitle,
+//						$admin->nickname
+//					);
+//					$aseco->sendChatMessage($message);
+//				}
+//				else {
+//					// show chat message
+//					$message = $aseco->formatText('{#server}» {#admin}The map history contains {#highlite}{3}{#admin} map{4}',
+//						$chattitle,
+//						$admin->nickname,
+//						count($aseco->plugins['PluginRaspJukebox']->jb_buffer), (count($aseco->plugins['PluginRaspJukebox']->jb_buffer) == 1 ? '' : 's')
+//					);
+//					$aseco->sendChatMessage($message, $login);
+//					return;
+//				}
+//
+//				// clear map history (portion)
+//				$i = 0;
+//				if ($clear > 0) {
+//					if ($clear > $aseco->plugins['PluginRaspJukebox']->buffersize) {
+//						$clear = $aseco->plugins['PluginRaspJukebox']->buffersize;
+//					}
+//					while ($i++ < $clear) {
+//						array_pop($aseco->plugins['PluginRaspJukebox']->jb_buffer);
+//					}
+//				}
+//				else {
+//					if ($clear < -$aseco->plugins['PluginRaspJukebox']->buffersize) {
+//						$clear = -$aseco->plugins['PluginRaspJukebox']->buffersize;
+//					}
+//					while ($i-- > $clear) {
+//						array_shift($aseco->plugins['PluginRaspJukebox']->jb_buffer);
+//					}
+//				}
+//			}
+//			else {
+//				// show chat message
+//				$message = '{#server}» {#admin}Clear history unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]';
+//				$aseco->sendChatMessage($message, $login);
+//			}
+//		}
 		else if ($command['params'][0] == 'add') {
 			/**
 			 * Adds MX maps to the map rotation.
@@ -2954,7 +2958,7 @@ class PluginChatAdmin extends Plugin {
 			$window->setLayoutHeading($settings_heading);
 			$window->setColumns($settings_columns);
 			$window->setContent($header, $help);
-			$window->send($aseco->server->players->getPlayer($login), 0, false);
+			$window->send($aseco->server->players->getPlayerByLogin($login), 0, false);
 		}
 		else if ($command['params'][0] == 'writeabilities') {
 			/**
@@ -3366,7 +3370,7 @@ class PluginChatAdmin extends Plugin {
 
 			// get player information
 			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
-				if (!$target->isspectator) {
+				if (!$target->is_spectator) {
 					try {
 						// force player into free spectator
 						$aseco->client->query('ForceSpectator', $target->login, 1);
@@ -3420,7 +3424,7 @@ class PluginChatAdmin extends Plugin {
 
 			// get player information
 			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
-				if ($target->isspectator) {
+				if ($target->is_spectator) {
 					try {
 						// force free camera mode on spectator
 						$aseco->client->query('ForceSpectatorTarget', $target->login, '', 2);
@@ -4137,7 +4141,7 @@ class PluginChatAdmin extends Plugin {
 			return;
 		}
 
-		if (!$admin = $aseco->server->players->getPlayer($login)) {
+		if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -4162,7 +4166,7 @@ class PluginChatAdmin extends Plugin {
 					$sepchar = substr($aseco->server->mapdir, -1, 1);
 					$partialdir = $aseco->plugins['PluginRasp']->mxdir . $sepchar . $trkid .'.Map.gbx';
 					$localfile = $aseco->server->mapdir . $partialdir;
-					if ($nocasepath = $aseco->file_exists_nocase($localfile)) {
+					if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
 						if (!unlink($nocasepath)) {
 							$message = '{#server}» {#error}Error erasing old file - unable to erase {#highlite}$i '. $localfile;
 							$aseco->sendChatMessage($message, $login);
@@ -4208,7 +4212,7 @@ class PluginChatAdmin extends Plugin {
 					// if not a duplicate map
 					$i = 1;
 					$dupl = false;
-					while ($nocasepath = $aseco->file_exists_nocase($aseco->server->mapdir . $partialdir)) {
+					while ($nocasepath = $aseco->fileExistsNoCase($aseco->server->mapdir . $partialdir)) {
 						$md5old = md5_file($nocasepath);
 						if ($md5old == $md5new) {
 							$dupl = true;
@@ -4414,7 +4418,7 @@ class PluginChatAdmin extends Plugin {
 				$partialdir .= '.Map.gbx';
 			}
 			$localfile = $aseco->server->mapdir . $partialdir;
-			if ($nocasepath = $aseco->file_exists_nocase($localfile)) {
+			if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
 				// check for maximum online map size (1024 KB)
 				if (filesize($nocasepath) >= 1024 * 1024) {
 					$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['MAP_TOO_LARGE'][0],
@@ -4565,7 +4569,7 @@ class PluginChatAdmin extends Plugin {
 			if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings) {
 				if (file_exists($aseco->server->mapdir .'MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings)) {
 					try {
-						if (!$admin = $aseco->server->players->getPlayer($login)) {
+						if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
 							return;
 						}
 
@@ -4617,7 +4621,7 @@ class PluginChatAdmin extends Plugin {
 	private function admin_players ($login, $command, $arglist, $logtitle, $chattitle) {
 		global $aseco;
 
-		if (!$admin = $aseco->server->players->getPlayer($login)) {
+		if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -5133,7 +5137,7 @@ class PluginChatAdmin extends Plugin {
 		}
 
 		// get player & possible parameter
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

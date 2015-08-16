@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -53,10 +53,24 @@ class Player {
 	public $downloadrate;
 	public $uploadrate;
 
-	public $prevstatus;
-	public $isspectator;
-	public $isofficial;
-	public $isreferee;
+	public $is_official;
+	public $is_referee;
+	public $is_podium_ready;
+	public $is_using_stereoscopy;
+	public $is_managed_by_other_server;
+	public $is_server;
+	public $is_broadcasting;
+
+	public $has_joined_game;
+	public $has_player_slot;
+
+	public $is_spectator;
+	public $forced_spectator;
+	public $temporary_spectator;
+	public $pure_spectator;
+
+	public $target_autoselect;
+	public $target_spectating;
 
 	public $teamid;
 	public $allies;
@@ -128,10 +142,9 @@ class Player {
 			$this->downloadrate		= $data['DownloadRate'];
 			$this->uploadrate		= $data['UploadRate'];
 
-			$this->prevstatus		= false;
-			$this->isspectator		= $data['IsSpectator'];
-			$this->isofficial		= $data['IsInOfficialMode'];
-			$this->isreferee		= $data['IsReferee'];
+			$this->is_spectator		= $data['IsSpectator'];
+			$this->is_official		= $data['IsInOfficialMode'];
+			$this->is_referee		= $data['IsReferee'];
 
 			$this->teamid			= $data['TeamId'];
 			$this->allies			= $data['Allies'];
@@ -169,6 +182,9 @@ class Player {
 				$this->continent = '';
 				$this->nation = 'OTH';
 			}
+
+			// Work on Player flags...
+			$this->updateInfo($data);
 		}
 		else {
 			// Set empty defaults
@@ -184,10 +200,9 @@ class Player {
 			$this->downloadrate		= 0;
 			$this->uploadrate		= 0;
 
-			$this->prevstatus		= false;
-			$this->isspectator		= false;
-			$this->isofficial		= false;
-			$this->isreferee		= false;
+			$this->is_spectator		= false;
+			$this->is_official		= false;
+			$this->is_referee		= false;
 
 			$this->teamid			= -1;
 			$this->allies			= array();
@@ -204,6 +219,11 @@ class Player {
 			$this->zone			= array();
 			$this->continent		= '';
 			$this->nation			= 'OTH';
+
+			// Work on Player flags...
+			$info['Flags'] = 0;
+			$info['SpectatorStatus'] = 0;
+			$this->updateInfo($data);
 		}
 		$this->visits				= 0;
 		$this->wins				= 0;
@@ -269,7 +289,12 @@ class Player {
 	public function storeDatabasePlayerSettings () {
 		global $aseco;
 
-		$aseco->db->query('START TRANSACTION;');
+		// Bail out on *fakeplayer[N]*
+		if ($this->id === 0) {
+			return;
+		}
+
+		$aseco->db->begin_transaction();
 		foreach ($this->data as $plugin => $entries) {
 			foreach ($entries as $key => $value) {
 				$query = "
@@ -295,6 +320,71 @@ class Player {
 			}
 		}
 		$aseco->db->commit();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function updateInfo ($info) {
+		global $aseco;
+
+		// Updates without required handlings
+		$this->nickname	= $info['NickName'];
+		$this->teamid	= $info['TeamId'];
+
+		// Check LadderRanking
+		if ($info['LadderRanking'] > 0) {
+			$this->ladderrank = $info['LadderRanking'];
+			$this->is_official = true;
+		}
+		else {
+			$this->is_official = false;
+		}
+
+		// Based upon https://github.com/NewboO/dedicated-server-api/blob/master/libraries/Maniaplanet/DedicatedServer/Structures/PlayerInfo.php
+		$this->is_referee			= (bool)(intval($info['Flags'] / 10) % 10);
+		$this->is_podium_ready			= (bool)(intval($info['Flags'] / 100) % 10);
+		$this->is_using_stereoscopy		= (bool)(intval($info['Flags'] / 1000) % 10);
+		$this->is_managed_by_other_server	= (bool)(intval($info['Flags'] / 10000) % 10);
+		$this->is_server			= (bool)(intval($info['Flags'] / 100000) % 10);
+		$this->has_player_slot			= (bool)(intval($info['Flags'] / 1000000) % 10);
+		$this->is_broadcasting			= (bool)(intval($info['Flags'] / 10000000) % 10);
+		$this->has_joined_game			= (bool)(intval($info['Flags'] / 100000000) % 10);
+
+		$this->is_spectator			= (bool)($info['SpectatorStatus'] % 10);
+		$this->forced_spectator			= $info['Flags'] % 10;					// 0, 1 or 2
+		$this->temporary_spectator		= (bool)(intval($info['SpectatorStatus'] / 10) % 10);
+		$this->pure_spectator			= (bool)(intval($info['SpectatorStatus'] / 100) % 10);
+
+		$this->target_autoselect		= (bool)(intval($info['SpectatorStatus'] / 1000) % 10);
+		$target					= $aseco->server->players->getPlayerByPid(intval($info['SpectatorStatus'] / 10000));
+		$this->target_spectating		= ((!$target) ? false : $target->login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getSpectatorStatus () {
+		$status = false;
+		if ($this->is_spectator == true) {
+			$status = true;
+		}
+		if ($this->forced_spectator > 0) {
+			$status = true;
+		}
+		if ($this->temporary_spectator == true) {
+			$status = true;
+		}
+		if ($this->pure_spectator == true) {
+			$status = true;
+		}
+		return $status;
 	}
 
 	/*
@@ -339,7 +429,6 @@ class Player {
 
 		// get player's record for each map
 		$list = array();
-		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 
 		$last = false;
 		$query = "
@@ -350,7 +439,7 @@ class Player {
 		LEFT JOIN `%prefix%maps` AS `m` ON `r`.`MapId` = `m`.`MapId`
 		WHERE `Uid` IS NOT NULL
 		AND `r`.`GamemodeId` = '". $aseco->server->gameinfo->mode ."'
-		ORDER BY `r`.`MapId` ASC, `Score` ". $order .", `Date` ASC;
+		ORDER BY `r`.`MapId` ASC, `Score` ASC, `Date` ASC;
 		";
 
 		$result = $aseco->db->query($query);

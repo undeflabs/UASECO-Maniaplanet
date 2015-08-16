@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-16
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -91,8 +91,8 @@ class PluginRoundPoints extends Plugin {
 		}
 
 
-		// Setup only if Gamemode is "Rounds", "Team" or "Cup"
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		// Setup only if Gamemode is "Rounds" or "Cup"
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 
 			// Set configured default rounds points system
 			$system = $this->config['DEFAULT_SYSTEM'][0];
@@ -118,7 +118,12 @@ class PluginRoundPoints extends Plugin {
 					);
 
 					// Setup limits
-					$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+					if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+						$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+					}
+					else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+						$aseco->server->gameinfo->cup['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+					}
 					$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 				}
 				catch (Exception $exception) {
@@ -150,13 +155,6 @@ class PluginRoundPoints extends Plugin {
 				}
 				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
 			}
-			else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-				$aseco->server->gameinfo->team['PointsRepartition'] = $points;
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Points Repartition Loaded');
-				}
-				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
-			}
 			else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
 				$aseco->server->gameinfo->cup['PointsRepartition'] = $points;
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
@@ -179,9 +177,6 @@ class PluginRoundPoints extends Plugin {
 		$points = array();
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			$points = $aseco->server->gameinfo->rounds['PointsRepartition'];
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-			$points = $aseco->server->gameinfo->team['PointsRepartition'];
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
 			$points = $aseco->server->gameinfo->cup['PointsRepartition'];
@@ -228,7 +223,7 @@ class PluginRoundPoints extends Plugin {
 	public function chat_setrpoints ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get Player object
-		$player = $aseco->server->players->getPlayer($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
 
 		if ($chat_parameter == 'help') {
 			$data = array();
@@ -294,9 +289,6 @@ class PluginRoundPoints extends Plugin {
 			$points = array();
 			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 				$points = $aseco->server->gameinfo->rounds['PointsRepartition'];
-			}
-			else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-				$points = $aseco->server->gameinfo->team['PointsRepartition'];
 			}
 			else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
 				$points = $aseco->server->gameinfo->cup['PointsRepartition'];
@@ -395,7 +387,12 @@ class PluginRoundPoints extends Plugin {
 				);
 
 				// Setup limits
-				$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+					$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+				}
+				else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+					$aseco->server->gameinfo->cup['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
+				}
 				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 			}
 			catch (Exception $exception) {

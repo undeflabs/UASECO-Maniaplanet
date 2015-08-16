@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ class PluginChatWins extends Plugin {
 	public function chat_wins ($aseco, $login, $chat_command, $chat_parameter) {
 
 		if ($chat_parameter != '') {
-			if (!$player = $aseco->server->players->getPlayer($chat_parameter)) {
+			if (!$player = $aseco->server->players->getPlayerByLogin($chat_parameter)) {
 				$message = '{#server}» {#error}Given player login {#highlite}'. $chat_parameter .'{#error} not found!';
 				$aseco->sendChatMessage($message, $login);
 				return;
@@ -81,7 +81,7 @@ class PluginChatWins extends Plugin {
 			);
 		}
 		else {
-			if (!$player = $aseco->server->players->getPlayer($login)) {
+			if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 				$wins = $player->getWins();
 
 				// use plural unless 1, and add ! for 2 or more

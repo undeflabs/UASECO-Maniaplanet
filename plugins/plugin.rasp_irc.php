@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-23
+ * Date:	2015-06-28
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -318,7 +318,6 @@ class PluginRaspIrc extends Plugin {
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
 
 				$this->jukebox			= array();
-				$this->jb_buffer		= array();
 				$this->mxadd			= array();
 				$this->mxplaying		= false;
 				$this->mxplayed			= false;

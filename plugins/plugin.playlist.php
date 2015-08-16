@@ -1,14 +1,13 @@
 <?php
 /*
- * Plugin: Mania Exchange
- * ~~~~~~~~~~~~~~~~~~~~~~
- * » Provides world record message at start of each map.
- * » Based upon plugin.mxinfo.php from XAseco2/1.03 written by Xymph
+ * Plugin: Playlist
+ * ~~~~~~~~~~~~~~~~
+ * » Provides and handles a Playlist for Maps.
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
+ * Date:	2015-07-07
+ * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -27,12 +26,12 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - none
+ *  - includes/core/playlist.class.php
  *
  */
 
 	// Start the plugin
-	$_PLUGIN = new PluginManiaExchange();
+	$_PLUGIN = new PluginPlaylist();
 
 /*
 #///////////////////////////////////////////////////////////////////////#
@@ -40,8 +39,8 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class PluginManiaExchange extends Plugin {
-	public $config;
+class PluginPlaylist extends Plugin {
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -53,12 +52,12 @@ class PluginManiaExchange extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Provides world record message at start of each map.');
+		$this->setDescription('Provides and handles a Playlist for Maps.');
 
-		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onLoadingMap',	'onLoadingMap');
-
-		$this->registerChatCommand('mx', 'chat_mx', 'xxxxx', Player::MASTERADMINS);
+		// Register functions for events
+		$this->registerEvent('onLoadingMap',			'onLoadingMap');
+		$this->registerEvent('onEndMap',			'onEndMap');
+//		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 	}
 
 	/*
@@ -66,53 +65,53 @@ class PluginManiaExchange extends Plugin {
 	#									#
 	#///////////////////////////////////////////////////////////////////////#
 	*/
-	public function onSync ($aseco) {
 
-		if (!$settings = $aseco->parser->xmlToArray('config/mania_exchange.xml', true, true)) {
-			trigger_error('[ManiaExchange] Could not read/parse config file [config/mania_exchange.xml]!', E_USER_ERROR);
+	public function onLoadingMap ($aseco, $map) {
+
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onEndMap ($aseco, $map) {
+
+	}
+
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
+//		if ($params['Action'] == 'AddMapToPlaylist') {
+//			$aseco->dump('AddMapToPlaylist', $login, $params);
+//		}
+//		else if ($params['Action'] == 'RemoveMapFromPlaylist') {
+//			$aseco->dump('RemoveMapFromPlaylist', $login, $params);
+//		}
+//	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function addMapToPlaylist ($uid, $login, $method, $first_position = false) {
+		global $aseco;
+
+		$map = $aseco->server->maps->getMapByUid($uid);
+
+		try {
+			// Set the next Map
+			$aseco->client->query('ChooseNextMap', $map->filename);
 		}
-		$settings = $settings['SETTINGS'];
-
-		$this->config['show_records']		= (int)$settings['SHOW_RECORDS'][0];
-
-		$this->config['messages']['records']	= $settings['MESSAGES'][0]['RECORDS'][0];
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-	public function onLoadingMap ($aseco, $data) {
-
-		// Obtain MX records
-		if ($aseco->server->maps->current->mx && !empty($aseco->server->maps->current->mx->recordlist)) {
-			// check whether to show MX record at start of map
-			if ($this->config['show_records'] > 0) {
-				$message = $aseco->formatText($this->config['messages']['records'],
-					$aseco->formatTime($aseco->server->maps->current->mx->recordlist[0]['replaytime']),
-					$aseco->server->maps->current->mx->recordlist[0]['username']
-				);
-				if ($this->config['show_records'] == 2) {
-					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
-				}
-				else {
-					$aseco->sendChatMessage($message);
-				}
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_mx ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-			return;
+		catch (Exception $exception) {
+			$aseco->console('[Playlist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ChooseNextMap');
 		}
 
 	}

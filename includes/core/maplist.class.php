@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-28
+ * Date:	2015-06-28
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -41,11 +41,12 @@
 
 class MapList {
 	public $map_list;						// Holds the whole map list with all installed maps
-	public $current;						// Holds the current map object
 	public $previous;						// Holds the previous map object
+	public $current;						// Holds the current map object
+	public $next;							// Holds the next map object
 
 	public $max_age_mxinfo	= 86400;				// Age max. 86400 = 1 day
-	public $size_limit	= 2097152;				// 2048 kB: Changed map size limit to 2MB: http://forum.maniaplanet.com/viewtopic.php?p=212999#p212999
+	public $size_limit	= 2097152;				// 2014-04-29: 2048 kB: Changed map size limit to 2MB: http://forum.maniaplanet.com/viewtopic.php?p=212999#p212999
 
 	public $moods		= array(
 		'Sunrise',
@@ -54,6 +55,8 @@ class MapList {
 		'Night',
 	);
 
+	private $debug		= false;
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -61,10 +64,13 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct () {
+	public function __construct ($debug) {
+		$this->debug = $debug;
+
 		$this->map_list = array();
-		$this->current = false;
 		$this->previous = false;
+		$this->current = false;
+		$this->next = false;
 	}
 
 	/*
@@ -78,7 +84,9 @@ class MapList {
 			return $this->map_list[$uid];
 		}
 		else {
-//			trigger_error('[MapList] getMapByUid(): Can not find map with uid "'. $uid .'" in map_list[]', E_USER_WARNING);
+			if ($this->debug) {
+				trigger_error('[MapList] getMapByUid(): Can not find map with uid "'. $uid .'" in map_list[]', E_USER_WARNING);
+			}
 			return new Map(null, null);
 		}
 	}
@@ -111,7 +119,9 @@ class MapList {
 				return $map;
 			}
 		}
-//		trigger_error('[MapList] getMapByFilename(): Can not find map with ID "'. $id .'" in map_list[]', E_USER_WARNING);
+		if ($this->debug) {
+			trigger_error('[MapList] getMapByFilename(): Can not find map with ID "'. $id .'" in map_list[]', E_USER_WARNING);
+		}
 		return new Map(null, null);
 	}
 
@@ -127,7 +137,9 @@ class MapList {
 				return $map;
 			}
 		}
-//		trigger_error('[MapList] getMapByFilename(): Can not find map with filename "'. $filename .'" in map_list[]', E_USER_WARNING);
+		if ($this->debug) {
+			trigger_error('[MapList] getMapByFilename(): Can not find map with filename "'. $filename .'" in map_list[]', E_USER_WARNING);
+		}
 		return new Map(null, null);
 	}
 
@@ -192,7 +204,8 @@ class MapList {
 			unset($response);
 		}
 
-		return $this->getMapByUid($uid);
+		$this->next = $this->getMapByUid($uid);
+		return $this->next;
 	}
 
 	/*
@@ -355,7 +368,7 @@ class MapList {
 
 
 		// Add Maps that are not yet stored in the database
-		$aseco->db->query('START TRANSACTION;');
+		$aseco->db->begin_transaction();
 		foreach ($database['insert'] as $map) {
 			$new = $this->insertMapIntoDatabase($map);
 
@@ -562,7 +575,9 @@ class MapList {
 
 		$aseco->db->query($query);
 		if ($aseco->db->affected_rows === -1) {
-//			trigger_error('[MapList] Could not insert map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+			if ($this->debug) {
+				trigger_error('[MapList] Could not insert map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+			}
 			return new Map(null, null);
 		}
 		else {
@@ -622,7 +637,9 @@ class MapList {
 
 		$result = $aseco->db->query($query);
 		if ($aseco->db->affected_rows === -1) {
-//			trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+			if ($this->debug) {
+				trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+			}
 			return false;
 		}
 		else {
@@ -649,9 +666,9 @@ class MapList {
 			";
 
 			$result = $aseco->db->query($query);
-//			if (!$result) {
-//				trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
-//			}
+			if (!$result && $this->debug) {
+				trigger_error('[MapList] Could not update map in database: ('. $aseco->db->errmsg() .')'. CRLF .' with statement ['. $query .']', E_USER_WARNING);
+			}
 		}
 	}
 
@@ -747,7 +764,7 @@ class MapList {
 			}
 			$res->free_result();
 		}
-		else {
+		else if ($this->debug) {
 			trigger_error('[MapList] Could not query map datas: ('. $aseco->db->errmsg() .')'. CRLF .' for statement ['. $query .']', E_USER_WARNING);
 		}
 		return $data;
@@ -773,7 +790,7 @@ class MapList {
 				if ($file !== false) {
 					$gbx->processFile($file);
 				}
-				else {
+				else if ($this->debug) {
 					trigger_error('[MapList] Could not read Map ['. $file .'] because iconv() returned "false".', E_USER_WARNING);
 				}
 			}

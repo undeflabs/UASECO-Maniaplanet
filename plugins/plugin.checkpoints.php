@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-18
+ * Date:	2015-07-21
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -30,6 +30,7 @@
  * Dependencies:
  *  - includes/core/checkpoint.class.php
  *  - plugins/plugin.local_records.php
+ *  - plugins/plugin.dedimania.php
  *
  */
 
@@ -43,13 +44,13 @@
 */
 
 class PluginCheckpoints extends Plugin {
-	private $manialinkid;
-
 	public $config;
-	public $nbcheckpoints;
-	public $totalcps;
-	public $nblaps;
-	public $forcedlaps;
+
+	public $checkpoints	= array();
+	public $nbcheckpoints	= 0;
+	public $totalcps	= 0;
+	public $nblaps		= 0;
+	public $forcedlaps	= 0;
 
 
 	/*
@@ -64,11 +65,13 @@ class PluginCheckpoints extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
-		$this->addDependence('PluginLocalRecords', Dependence::REQUIRED, '1.0.0', null);
+		$this->addDependence('PluginLocalRecords',		Dependence::WANTED,	'1.0.0',	null);
+		$this->addDependence('PluginDedimania',			Dependence::WANTED,	'1.0.0',	null);
 
 		// Register functions for events
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
+		$this->registerEvent('onRestartMap',			'onRestartMap');
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
@@ -76,8 +79,10 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onPlayerCheckpoint',		'onPlayerCheckpoint');
 		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishLap');
 		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
+		$this->registerEvent('onLocalRecordsLoaded',		'onLocalRecordsLoaded');
+		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 
-		$this->registerChatCommand('cps', 'chat_cps', 'Sets local/dedimania record checkpoints tracking', Player::PLAYERS);
+		$this->registerChatCommand('cps', 			'chat_cps', 		'Sets local record checkpoints tracking', 	Player::PLAYERS);
 	}
 
 	/*
@@ -95,13 +100,23 @@ class PluginCheckpoints extends Plugin {
 		$this->config = $this->config['SETTINGS'];
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
-		$this->config['DISPLAY_CHECKPOINTS'][0]		= ((strtoupper($this->config['DISPLAY_CHECKPOINTS'][0]) == 'TRUE')		? true : false);
-		$this->config['ENABLE_COLORBAR'][0]		= ((strtoupper($this->config['ENABLE_COLORBAR'][0]) == 'TRUE')			? true : false);
-		$this->config['ENABLE_CPSSPEC'][0]		= ((strtoupper($this->config['ENABLE_CPSSPEC'][0]) == 'TRUE')			? true : false);
-		$this->config['AUTO_ENABLE_CPS'][0]		= ((strtoupper($this->config['AUTO_ENABLE_CPS'][0]) == 'TRUE')			? true : false);
-		$this->config['AUTO_ENABLE_DEDICPS'][0]		= ((strtoupper($this->config['AUTO_ENABLE_DEDICPS'][0]) == 'TRUE')		? true : false);
+		$this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0]		= ((strtoupper($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0]) == 'TRUE')		? true : false);
+		$this->config['COUNT_WIDGET'][0]['ENABLED'][0]			= ((strtoupper($this->config['COUNT_WIDGET'][0]['ENABLED'][0]) == 'TRUE')		? true : false);
+		$this->config['TIME_DIFF_WIDGET'][0]['ENABLE_COLORBAR'][0]	= ((strtoupper($this->config['TIME_DIFF_WIDGET'][0]['ENABLE_COLORBAR'][0]) == 'TRUE')	? true : false);
+		$this->config['AUTO_ENABLE_CPS'][0]				= ((strtoupper($this->config['AUTO_ENABLE_CPS'][0]) == 'TRUE')				? true : false);
+		$this->config['AUTO_ENABLE_DEDICPS'][0]				= ((strtoupper($this->config['AUTO_ENABLE_DEDICPS'][0]) == 'TRUE')			? true : false);
 
-		$this->manialinkid = 'PluginCheckpoints';
+		$this->config['CHEATER_ACTION'][0]				= (int)$this->config['CHEATER_ACTION'][0];
+
+		$this->checkpoints	= array();
+		$this->nbcheckpoints	= 0;
+		$this->totalcps		= 0;
+		$this->nblaps		= 0;
+		$this->forcedlaps	= 0;
+
+		if (isset($aseco->plugins['PluginDedimania'])) {
+			$this->registerChatCommand('dedicps', 'chat_dedicps', 'Sets dedimania record checkspoints tracking', Player::PLAYERS);
+		}
 	}
 
 	/*
@@ -112,73 +127,120 @@ class PluginCheckpoints extends Plugin {
 
 	public function chat_cps ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
 		// Check for relay server
 		if ($aseco->server->isrelay) {
-			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->sendChatMessage($message, $login);
+			$message = $this->config['MESSAGES'][0]['NOT_ON_RELAY'][0];
+			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
-		if ($this->config['DISPLAY_CHECKPOINTS'][0] == true) {
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
 			// Set local checkpoints tracking
 			if (strtolower($chat_parameter) == 'off') {
-				$aseco->checkpoints[$login]->tracking['local_records'] = -1;
-				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
-				$message = '{#server}> Checkpoints tracking: {#highlite}OFF';
+				$this->checkpoints[$player->login]->tracking['local_records'] = -1;
+				$this->checkpoints[$player->login]->tracking['dedimania_records'] = -1;
+
+				$message = $this->config['MESSAGES'][0]['LOCAL_RECORDS'][0]['TRACKING_OFF'][0];
 			}
 			else if ($chat_parameter == '') {
-				$aseco->checkpoints[$login]->tracking['local_records'] = 0;
-				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
-				$message = '{#server}> Checkpoints tracking: {#highlite}ON {#server}(your own or the last record)';
+				$this->checkpoints[$player->login]->tracking['local_records'] = 0;
+				$this->checkpoints[$player->login]->tracking['dedimania_records'] = -1;
+
+				$message = $this->config['MESSAGES'][0]['LOCAL_RECORDS'][0]['TRACKING_ON'][0];
 			}
-			else if (is_numeric($chat_parameter) && $chat_parameter > 0 && $chat_parameter <= $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) {
-				$aseco->checkpoints[$login]->tracking['local_records'] = intval($chat_parameter);
-				$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
-				$message = '{#server}> Checkpoints tracking record: {#highlite}' . $aseco->checkpoints[$login]->tracking['local_records'];
+			else if (is_numeric($chat_parameter) && $chat_parameter > 0) {
+				$this->checkpoints[$player->login]->tracking['local_records'] = intval($chat_parameter);
+				$this->checkpoints[$player->login]->tracking['dedimania_records'] = -1;
+
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['LOCAL_RECORDS'][0]['TRACKING_RECORD'][0],
+					$this->checkpoints[$player->login]->tracking['local_records']
+				);
 			}
 			else {
-				$message = '{#server}> {#error}No such local record {#highlite}$i ' . $chat_parameter;
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['LOCAL_RECORDS'][0]['NO_RECORD_FOUND'][0],
+					$chat_parameter
+				);
 			}
 
-			// Handle checkpoints panel
-			if ($aseco->checkpoints[$login]->tracking['local_records'] == -1) {
-				// Disable CP panel
-//				if ($this->config['ENABLE_CPSSPEC'][0] == true && !empty($aseco->checkpoints[$login]->spectators)) {
-//					$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
-//					$aseco->sendManialink($xml, $login .','. implode(',', $aseco->checkpoints[$login]->spectators), 0);
-//				}
-//				else {
-					$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
-					$aseco->sendManialink($xml, $login, 0);
-//				}
-			}
-			else {
-				// Enable CP panel unless spectator, Stunts mode, or warm-up
-				if (!$player->isspectator && $aseco->server->gameinfo->mode != Gameinfo::STUNTS && !$aseco->warmup_phase) {
-//					if ($this->config['ENABLE_CPSSPEC'][0] == true && !empty($aseco->checkpoints[$login]->spectators)) {
-//						$this->checkUpdateCheckpointWidget($aseco, $login . ',' . implode(',', $aseco->checkpoints[$login]->spectators), 0, '$00f -.--');
-//					}
-//					else {
-						$cpid = 'START';
-						if (isset($aseco->checkpoints[$login]) && count($aseco->checkpoints[$login]->best['cps']) > 0) {
-							$diff = '0.000';
-							$best = $aseco->formatTime($aseco->checkpoints[$login]->best['finish']);
-						}
-						else {
-							$diff = '-.---';
-							$best = '-.---';
-						}
-						$this->buildCheckpointWidget($login, $cpid, $diff, $best);
-//					}
-				}
-			}
+			// Store settings into database
+			$this->setCheckpointSettings(
+				$player,
+				$this->checkpoints[$player->login]->tracking['local_records'],
+				$this->checkpoints[$player->login]->tracking['dedimania_records']
+			);
+
+			// Refresh Widget
+			$this->handleCheckpointTracking($player->login);
 		}
 		else {
-			$message = '{#server}> {#error}Checkpoints tracking permanently disabled by server';
+			$message = $this->config['MESSAGES'][0]['TRACKING_DISABLED'][0];
+		}
+		$aseco->sendChatMessage($message, $login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_dedicps ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
+		// Check for relay server
+		if ($aseco->server->isrelay) {
+			$message = $this->config['MESSAGES'][0]['NOT_ON_RELAY'][0];
+			$aseco->sendChatMessage($message, $player->login);
+			return;
+		}
+
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			// Set local checkpoints tracking
+			if (strtolower($chat_parameter) == 'off') {
+				$this->checkpoints[$player->login]->tracking['local_records'] = -1;
+				$this->checkpoints[$player->login]->tracking['dedimania_records'] = -1;
+
+				$message = $this->config['MESSAGES'][0]['DEDIMANIA_RECORDS'][0]['TRACKING_OFF'][0];
+			}
+			else if ($chat_parameter == '') {
+				$this->checkpoints[$player->login]->tracking['local_records'] = -1;
+				$this->checkpoints[$player->login]->tracking['dedimania_records'] = 0;
+
+				$message = $this->config['MESSAGES'][0]['DEDIMANIA_RECORDS'][0]['TRACKING_ON'][0];
+			}
+			else if (is_numeric($chat_parameter) && $chat_parameter > 0) {
+				$this->checkpoints[$player->login]->tracking['local_records'] = -1;
+				$this->checkpoints[$player->login]->tracking['dedimania_records'] = intval($chat_parameter);
+
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['DEDIMANIA_RECORDS'][0]['TRACKING_RECORD'][0],
+					$this->checkpoints[$player->login]->tracking['dedimania_records']
+				);
+			}
+			else {
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['DEDIMANIA_RECORDS'][0]['NO_RECORD_FOUND'][0],
+					$chat_parameter
+				);
+			}
+
+			// Store settings into database
+			$this->setCheckpointSettings(
+				$player,
+				$this->checkpoints[$player->login]->tracking['local_records'],
+				$this->checkpoints[$player->login]->tracking['dedimania_records']
+			);
+
+			// Refresh Widget
+			$this->handleCheckpointTracking($player->login);
+		}
+		else {
+			$message = $this->config['MESSAGES'][0]['TRACKING_DISABLED'][0];
 		}
 		$aseco->sendChatMessage($message, $login);
 	}
@@ -191,17 +253,17 @@ class PluginCheckpoints extends Plugin {
 
 	public function onLoadingMap ($aseco, $map) {
 
-		// Clear all checkpoints
-		foreach ($aseco->checkpoints as $login => $cp) {
-			$aseco->checkpoints[$login]->best['finish'] = PHP_INT_MAX;
-			$aseco->checkpoints[$login]->best['cps'] = array();
-			$aseco->checkpoints[$login]->current['cps'] = array();
+		// Clear all Checkpoints
+		foreach ($aseco->server->players->player_list as $player) {
+			$this->checkpoints[$player->login]->best['finish'] = PHP_INT_MAX;
+			$this->checkpoints[$player->login]->best['cps'] = array();
 
+			$this->checkpoints[$player->login]->current['cps'] = array();
 			if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-				$aseco->checkpoints[$login]->current['finish'] = 0;
+				$this->checkpoints[$player->login]->current['finish'] = 0;
 			}
 			else {
-				$aseco->checkpoints[$login]->current['finish'] = PHP_INT_MAX;
+				$this->checkpoints[$player->login]->current['finish'] = PHP_INT_MAX;
 			}
 		}
 
@@ -211,56 +273,6 @@ class PluginCheckpoints extends Plugin {
 		$this->totalcps		= 0;
 		$this->nblaps		= 0;
 		$this->forcedlaps	= 0;
-
-
-		// Set local checkpoint references
-		if ($this->config['DISPLAY_CHECKPOINTS'][0] == true) {
-			foreach ($aseco->checkpoints as $login => $cp) {
-				$lrec = $aseco->checkpoints[$login]->tracking['local_records'] - 1;
-
-				// Check for specific record
-				if ($lrec + 1 > 0) {
-					// If specific record unavailable, use last one
-					if ($lrec > $aseco->plugins['PluginLocalRecords']->records->count() - 1) {
-						$lrec = $aseco->plugins['PluginLocalRecords']->records->count() - 1;
-					}
-					$curr = $aseco->plugins['PluginLocalRecords']->records->getRecord($lrec);
-
-					// Check for valid checkpoints
-					if (!empty($curr->checkpoints) && $curr->score == end($curr->checkpoints)) {
-						$aseco->checkpoints[$login]->best['finish'] = $curr->score;
-						$aseco->checkpoints[$login]->best['cps'] = $curr->checkpoints;
-					}
-				}
-				else if ($lrec + 1 == 0) {
-					// Search for own/last record
-					$lrec = 0;
-					while ($lrec < $aseco->plugins['PluginLocalRecords']->records->count()) {
-						$curr = $aseco->plugins['PluginLocalRecords']->records->getRecord($lrec++);
-						if ($curr->player->login == $login) {
-							break;
-						}
-					}
-
-					// check for valid checkpoints
-					if (!empty($curr->checkpoints) && $curr->score == end($curr->checkpoints)) {
-						$aseco->checkpoints[$login]->best['finish'] = $curr->score;
-						$aseco->checkpoints[$login]->best['cps'] = $curr->checkpoints;
-					}
-				}  // else = -1
-
-				$cpid = 'START';
-				if (isset($aseco->checkpoints[$login]) && count($aseco->checkpoints[$login]->best['cps']) > 0) {
-					$diff = '0.000';
-					$best = $aseco->formatTime($aseco->checkpoints[$login]->best['finish']);
-				}
-				else {
-					$diff = '-.---';
-					$best = '-.---';
-				}
-				$this->buildCheckpointWidget($login, $cpid, $diff, $best);
-			}
-		}
 
 
 		// At Gamemode 'Laps' store the NbLabs from Dedicated-Server and NOT the
@@ -291,9 +303,12 @@ class PluginCheckpoints extends Plugin {
 		else if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
 			$this->forcedlaps = $aseco->server->gameinfo->chase['ForceLapsNb'];
 		}
+		else if ($aseco->server->gameinfo->mode == Gameinfo::KNOCKOUT) {
+			$this->forcedlaps = $aseco->server->gameinfo->knockout['ForceLapsNb'];
+		}
 
 		// Setup the total count of Checkpoints
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE || $aseco->server->gameinfo->mode == Gameinfo::KNOCKOUT) {
 			if ($this->forcedlaps > 0) {
 				$this->totalcps = $this->nbcheckpoints * $this->forcedlaps;
 			}
@@ -318,6 +333,27 @@ class PluginCheckpoints extends Plugin {
 			// All other Gamemodes
 			$this->totalcps = $this->nbcheckpoints;
 		}
+
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			foreach ($aseco->server->players->player_list as $player) {
+				if (isset($this->checkpoints[$player->login]->tracking)) {
+					if ($this->checkpoints[$player->login]->tracking['local_records'] != -1) {
+						$this->handleCheckpointTracking($player->login);
+					}
+					else if ($this->checkpoints[$player->login]->tracking['dedimania_records'] != -1) {
+						$this->handleCheckpointTracking($player->login);
+					}
+				}
+			}
+		}
+
+		if ($this->config['COUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			$logins = array();
+			foreach ($aseco->server->players->player_list as $player) {
+				$logins[] = $player->login;
+			}
+			$this->buildCounterWidget(-1, implode(',', $logins));
+		}
 	}
 
 	/*
@@ -327,8 +363,23 @@ class PluginCheckpoints extends Plugin {
 	*/
 
 	public function onEndMap ($aseco, $map) {
-		$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
+		$xml = '<manialink id="CheckpointTimeDiff"></manialink>';
+		$xml .= '<manialink id="CheckpointCounter"></manialink>';
 		$aseco->sendManialink($xml, false, 0);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onRestartMap ($aseco, $map) {
+
+		// Simple reset for each Player
+		foreach ($aseco->server->players->player_list as $player) {
+			$this->onPlayerConnect($aseco, $player);
+		}
 	}
 
 	/*
@@ -340,38 +391,20 @@ class PluginCheckpoints extends Plugin {
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Init
-		$aseco->checkpoints[$player->login] = new Checkpoint();
+		$this->checkpoints[$player->login] = new Checkpoint();
 
 		// Set first lap reference in Laps mode
 		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			$aseco->checkpoints[$player->login]->current['finish'] = 0;
-		}
-		if ($this->config['DISPLAY_CHECKPOINTS'][0] == true) {
-			// Set personal or default CPs
-			if ($setup = $this->getCheckpointSettings($player)) {
-				$aseco->checkpoints[$player->login]->tracking['local_records'] = $setup['LocalCheckpointTracking'];
-				$aseco->checkpoints[$player->login]->tracking['dedimania_records'] = $setup['DedimaniaCheckpointTracking'];
-			}
-			else {
-				if ($this->config['AUTO_ENABLE_CPS'][0] == true) {
-					$aseco->checkpoints[$player->login]->tracking['local_records'] = 0;
-				}
-				if ($this->config['AUTO_ENABLE_DEDICPS'][0] == true) {
-					$aseco->checkpoints[$player->login]->tracking['dedimania_records'] = 0;
-				}
-			}
+			$this->checkpoints[$player->login]->current['finish'] = 0;
 		}
 
-		$cpid = 'START';
-		if (count($aseco->checkpoints[$player->login]->best['cps']) > 0) {
-			$diff = '0.000';
-			$best = $aseco->formatTime($aseco->checkpoints[$player->login]->best['finish']);
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			$this->handleCheckpointTracking($player->login);
 		}
-		else {
-			$diff = '-.---';
-			$best = '-.---';
+
+		if ($this->config['COUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			$this->buildCounterWidget(-1, $player->login);
 		}
-		$this->buildCheckpointWidget($player->login, $cpid, $diff, $best);
 	}
 
 	/*
@@ -385,12 +418,12 @@ class PluginCheckpoints extends Plugin {
 		// Store current settings from Player
 		$this->setCheckpointSettings(
 			$player,
-			$aseco->checkpoints[$player->login]->tracking['local_records'],
-			$aseco->checkpoints[$player->login]->tracking['dedimania_records']
+			$this->checkpoints[$player->login]->tracking['local_records'],
+			$this->checkpoints[$player->login]->tracking['dedimania_records']
 		);
 
 		// free up memory
-		unset($aseco->checkpoints[$player->login]);
+		unset($this->checkpoints[$player->login]);
 	}
 
 	/*
@@ -403,19 +436,8 @@ class PluginCheckpoints extends Plugin {
 
 		// Reset for next run in TimeAttack mode
 		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
-			$aseco->checkpoints[$login]->current['cps'] = array();
+			$this->checkpoints[$login]->current['cps'] = array();
 		}
-
-		$cpid = 'START';
-		if (count($aseco->checkpoints[$login]->best['cps']) > 0) {
-			$diff = '0.000';
-			$best = $aseco->formatTime($aseco->checkpoints[$login]->best['finish']);
-		}
-		else {
-			$diff = '-.---';
-			$best = '-.---';
-		}
-		$this->buildCheckpointWidget($login, $cpid, $diff, $best);
 	}
 
 	/*
@@ -427,13 +449,8 @@ class PluginCheckpoints extends Plugin {
 	// $param = [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 	public function onPlayerCheckpoint ($aseco, $param) {
 
-		// If Stunts mode, bail out immediately
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			return;
-		}
-
 		// If undefined login, bail out too
-		if (!isset($aseco->checkpoints[$param[0]])) {
+		if (!isset($this->checkpoints[$param[0]])) {
 			return;
 		}
 
@@ -443,35 +460,32 @@ class PluginCheckpoints extends Plugin {
 		// Check for multilap Maps and unsupported Gamemodes
 		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
-			$time = $param[4];
+			$time = (int)$param[4];
 
 			// Use "[5]=LapWaypointNumber"
-			$cpid = $param[5];
+			$cpid = (int)$param[5];
+
+			// Reset
+			$this->checkpoints[$login]->current['cps'] = array_slice($this->checkpoints[$login]->current['cps'], 0, $cpid, false);
+			$this->checkpoints[$login]->current['finish'] = PHP_INT_MAX;
 		}
 		else {
 			// Set the "[2]=Time"
-			$time = $param[2];
+			$time = (int)$param[2];
 
 			// Use "[3]=WaypointIndex"
-			$cpid = $param[3];
+			$cpid = (int)$param[3];
 		}
 
 		// Store current checkpoint
-		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
-		ksort($aseco->checkpoints[$login]->current['cps']);
+		$this->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		ksort($this->checkpoints[$login]->current['cps']);
 
-
-		// check for cheated checkpoints:
+		// Check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
-//		if ($time <= 0 || $cpid != count($aseco->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($aseco->checkpoints[$login]->current['cps']))) {
-//			if ($checkpoint_tests) {
-//				$this->processCheater($login, $aseco->checkpoints[$login]->current['cps'], $param, -1);
-//				return;
-//			}
-//		}
-
-		// Check if displaying for this player, and for best checkpoints
-		$this->checkUpdateCheckpointWidget($login, $cpid, false);
+		if ($time <= 0 || $cpid != count($this->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($this->checkpoints[$login]->current['cps']))) {
+			$this->processCheater($login, $cpid, $time, false);
+		}
 	}
 
 	/*
@@ -483,13 +497,8 @@ class PluginCheckpoints extends Plugin {
 	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 	public function onPlayerFinishLap ($aseco, $param) {
 
-		// Bail out on unsupported modes
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			return;
-		}
-
 		// If undefined login, bail out too
-		if (!isset($aseco->checkpoints[$param[0]])) {
+		if (!isset($this->checkpoints[$param[0]])) {
 			return;
 		}
 
@@ -499,25 +508,22 @@ class PluginCheckpoints extends Plugin {
 		// Check for multilap Maps and unsupported Gamemodes
 		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
-			$time = $param[4];
+			$time = (int)$param[4];
 
 			// Use "[5]=LapWaypointNumber"
-			$cpid = $param[5];
+			$cpid = (int)$param[5];
 		}
 		else {
 			// Set the "[2]=Time"
-			$time = $param[2];
+			$time = (int)$param[2];
 
 			// Use "[3]=WaypointIndex"
-			$cpid = $param[3];
+			$cpid = (int)$param[3];
 		}
 
 		// Store finish as checkpoint too
-		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
-		ksort($aseco->checkpoints[$login]->current['cps']);
-
-		// Check if displaying for this player, and for best checkpoints
-		$this->checkUpdateCheckpointWidget($login, $cpid, false);
+		$this->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		ksort($this->checkpoints[$login]->current['cps']);
 	}
 
 	/*
@@ -529,13 +535,8 @@ class PluginCheckpoints extends Plugin {
 	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 	public function onPlayerFinishLine ($aseco, $param) {
 
-		// If Stunts mode, bail out immediately
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			return;
-		}
-
 		// If undefined login, bail out too
-		if (!isset($aseco->checkpoints[$param[0]])) {
+		if (!isset($this->checkpoints[$param[0]])) {
 			return;
 		}
 
@@ -545,35 +546,38 @@ class PluginCheckpoints extends Plugin {
 		// Check for multilap Maps and unsupported Gamemodes
 		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
 			// Set the "[4]=CurrentLapTime"
-			$time = $param[4];
+			$time = (int)$param[4];
 
 			// Use "[5]=LapWaypointNumber"
-			$cpid = $param[5];
+			$cpid = (int)$param[5];
 		}
 		else {
 			// Set the "[2]=Time"
-			$time = $param[2];
+			$time = (int)$param[2];
 
 			// Use "[3]=WaypointIndex"
-			$cpid = $param[3];
+			$cpid = (int)$param[3];
 		}
 
 		// Store finish as finish time
-		$aseco->checkpoints[$login]->current['finish'] = $time;
+		$this->checkpoints[$login]->current['finish'] = $time;
 
 		// Store finish as checkpoint too
-		$aseco->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
-		ksort($aseco->checkpoints[$login]->current['cps']);
-
-		// Check if displaying for this player, and for best checkpoints
-		$this->checkUpdateCheckpointWidget($login, $cpid, true);
+		$this->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		ksort($this->checkpoints[$login]->current['cps']);
 
 		// Check for improvement and update
-		if ($aseco->checkpoints[$login]->current['finish'] < $aseco->checkpoints[$login]->best['finish']) {
-			$aseco->checkpoints[$login]->best['finish'] = $aseco->checkpoints[$login]->current['finish'];
-			$aseco->checkpoints[$login]->best['cps'] = $aseco->checkpoints[$login]->current['cps'];
+		if ($this->checkpoints[$login]->current['finish'] < $this->checkpoints[$login]->best['finish']) {
+			$this->checkpoints[$login]->best['finish'] = $this->checkpoints[$login]->current['finish'];
+			$this->checkpoints[$login]->best['cps'] = $this->checkpoints[$login]->current['cps'];
 			// store timestamp for sorting in case of equal bests
-			$aseco->checkpoints[$login]->best['timestamp'] = microtime(true);
+			$this->checkpoints[$login]->best['timestamp'] = microtime(true);
+		}
+
+		// Check for cheated checkpoints:
+		// non-positive time, wrong index, or time less than preceding one
+		if ($time <= 0 || $cpid != count($this->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($this->checkpoints[$login]->current['cps']))) {
+			$this->processCheater($login, $cpid, $time, true);
 		}
 	}
 
@@ -583,73 +587,13 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function checkUpdateCheckpointWidget ($login, $cpid, $finishline = false) {
-		global $aseco;
-
-		// Check if displaying for this player, and for best checkpoints
-		if ($aseco->checkpoints[$login]->tracking['local_records'] != -1) {
-
-			if ( isset($aseco->checkpoints[$login]->best['cps'][($cpid-1)]) ) {
-				// Check for improvement
-				$diff = $aseco->checkpoints[$login]->current['cps'][($cpid-1)] - $aseco->checkpoints[$login]->best['cps'][($cpid-1)];
-				if ($diff < 0) {
-					$diff = abs($diff);
-					$sign = '$'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_IMPROVED'][0] .'-';
+	public function onLocalRecordsLoaded ($aseco, $records) {
+		if (count($records->record_list) > 0 && $this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			// Set local checkpoint references
+			foreach ($aseco->server->players->player_list as $player) {
+				if (isset($this->checkpoints[$player->login]) && $this->checkpoints[$player->login]->tracking['local_records'] != -1) {
+					$this->handleCheckpointTracking($player->login);
 				}
-				else if ($diff == 0) {
-					$sign = '$'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_EQUAL'][0];
-				}
-				else {
-					// $diff > 0
-					$sign = '$'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_WORSE'][0] .'+';
-				}
-				$sec = floor($diff / 1000);
-				$ths = $diff - ($sec * 1000);
-
-				// Setup format of the time
-				if ($sec >= 60) {
-					$current_checkpoint_time = $aseco->formatTime($diff);
-				}
-				else {
-					$current_checkpoint_time = sprintf('%d.%03d', $sec, $ths);
-				}
-
-				// Setup the best time for this CP
-				$best_checkpoint_time = $aseco->formatTime($aseco->checkpoints[$login]->best['cps'][($cpid-1)]);
-
-			}
-			else {
-				$sign = '';
-
-				$sec = floor($aseco->checkpoints[$login]->current['cps'][($cpid-1)] / 1000);
-				$ths = $aseco->checkpoints[$login]->current['cps'][($cpid-1)] - ($sec * 1000);
-
-				// Setup format of the time
-				if ($sec >= 60) {
-					$current_checkpoint_time = $aseco->formatTime($aseco->checkpoints[$login]->current['cps'][($cpid-1)]);
-				}
-				else {
-					$current_checkpoint_time = sprintf('%d.%03d', $sec, $ths);
-				}
-
-				// Setup the best time for this CP
-				$best_checkpoint_time = '-.---';
-			}
-
-			// Check for Finish checkpoint
-			if ($finishline === true) {
-				$cpid = 'FINISH';
-			}
-			else {
-				$cpid = 'CP'. $cpid;
-			}
-
-			// Update CheckpointWidget
-			if ($this->config['ENABLE_CPSSPEC'][0] == true && !empty($aseco->checkpoints[$login]->spectators)) {
-				$this->buildCheckpointWidget($login .','. implode(',', $aseco->checkpoints[$login]->spectators), $cpid, $sign . $current_checkpoint_time, $best_checkpoint_time);
-			}
-			else {
-				$this->buildCheckpointWidget($login, $cpid, $sign . $current_checkpoint_time, $best_checkpoint_time);
 			}
 		}
 	}
@@ -660,49 +604,113 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildCheckpointWidget ($logins, $cp, $diff, $besttime) {
+	public function onDedimaniaRecordsLoaded ($aseco, $records) {
+		if (count($records) > 0 && $this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			// Set dedimania checkpoint references
+			foreach ($aseco->server->players->player_list as $player) {
+				if (isset($this->checkpoints[$player->login]) && $this->checkpoints[$player->login]->tracking['dedimania_records'] != -1) {
+					$this->handleCheckpointTracking($player->login);
+				}
+			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildTimeDiffWidget ($login, $label, $replace_time = false) {
 		global $aseco;
 
-		// Bail out, if the Widget should not be displayed
-		if ($this->config['DISPLAY_CHECKPOINTS'][0] === false) {
-			return;
-		}
-
-		if ($this->config['ENABLE_COLORBAR'][0] == true) {
-			$color = substr($diff, 1, 3);
-			if ($color == $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_IMPROVED'][0]) {
-				$colorize = '<0.0, 0.85, 0.0>';
-			}
-			else if ($color == $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_EQUAL'][0]) {
-				$colorize = '<0.1, 0.1, 1.0>';
-			}
-			else if ($color == $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['TIME_WORSE'][0]) {
-				$colorize = '<0.9, 0.0, 0.0>';
-			}
-			else {
-				$colorize = '<0.0, 0.0, 0.0>';
-			}
+		$cp_times = '';
+		if (count($this->checkpoints[$login]->best['cps']) > 0) {
+			$cp_times = implode(',', $this->checkpoints[$login]->best['cps']);
 		}
 		else {
-			$colorize = '<0.0, 0.0, 0.0>';
+			foreach (range(1,$this->totalcps) as $i) {
+				$cp_times .= '0,';
+			}
+			$cp_times = substr($cp_times, 0, strlen($cp_times)-1);	// strip trailing ','
 		}
+
+		$colorbar_status	= (($this->config['TIME_DIFF_WIDGET'][0]['ENABLE_COLORBAR'][0] == true) ? 'True' : 'False');
+		$multilapmap		= (($aseco->server->maps->current->multilap == true) ? 'True' : 'False');
+		$replace_time		= (($replace_time == true) ? 'True' : 'False');
 
 $maniascript = <<<EOL
 <script><!--
-main() {
-	// Declarations
-	declare CMlFrame Container <=> (Page.GetFirstChild("CheckpointWidget") as CMlFrame);
-	declare CMlQuad Colorbar <=> (Page.GetFirstChild("Colorbar") as CMlQuad);
+#Include "TextLib" as TextLib
+#Include "MathLib" as MathLib
+Text FormatTime (Integer MwTime) {
+	declare Text FormatedTime = "0:00.000";
 
-	Colorbar.RelativeRotation	= 180.0;
-	Colorbar.Opacity		= 0.7;
+	if (MwTime > 0) {
+		FormatedTime = TextLib::TimeToText(MwTime, True) ^ MwTime % 10;
+	}
+	return FormatedTime;
+}
+Text TimeToTextDiff (Integer _Time) {
+	declare InputTime	= MathLib::Abs(_Time);
+	declare Seconds		= (InputTime / 1000) % 60;
+	declare Minutes		= (InputTime / 60000) % 60;
+	declare Hours		= (InputTime / 3600000);
 
-	declare Vec3 Colorize = {$colorize};
-	if (Colorize == <0.0, 0.0, 0.0>) {
-		Colorbar.Visible = False;
+	declare Time = "";
+	if (Hours > 0) {
+		Time = Hours ^":"^ TextLib::FormatInteger(Minutes, 2) ^":"^ TextLib::FormatInteger(Seconds, 2);
+	}
+	else if (Minutes > 0) {
+		Time = Minutes ^":"^ TextLib::FormatInteger(Seconds, 2);
 	}
 	else {
-		Colorbar.Colorize = Colorize;
+		Time = ""^ Seconds;
+	}
+	Time ^= "."^ TextLib::FormatInteger(InputTime % 1000, 3);
+
+	if (Time != "") {
+		return ""^ Time;
+	}
+	return "0.000";
+}
+main() {
+	// Declarations
+	declare CMlFrame FrameCheckpointTimeDiff	<=> (Page.GetFirstChild("CheckpointTimeDiff") as CMlFrame);
+	declare CMlQuad QuadColorbar			<=> (Page.GetFirstChild("Colorbar") as CMlQuad);
+	declare CMlLabel LabelCheckpointTimeDiff	<=> (Page.GetFirstChild("LabelCheckpointTimeDiff") as CMlLabel);
+	declare CMlLabel LabelBestTime			<=> (Page.GetFirstChild("LabelBestTime") as CMlLabel);
+
+	declare Integer TotalCheckpoints		= {$this->totalcps};		// Incl. Finish
+	declare Boolean MultilapMap			= {$multilapmap};
+	declare Integer CurrentCheckpoint		= 0;
+	declare Integer LastCheckpointCount		= 0;
+	declare Integer TimeDifference			= 0;
+	declare Integer[] CheckpointTimes		= [{$cp_times}];
+	declare Boolean EnableColorBar			= {$colorbar_status};
+	declare Boolean ReplaceTime			= {$replace_time};
+	declare Integer RefreshInterval			= 250;
+	declare Integer RefreshTime			= CurrentTime;
+	declare Text TrackingLabel			= "{$label}";
+	declare Text TextColor				= "";
+
+	declare LabelColors = [
+		"Improved"	=> "\${$this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['TIME_IMPROVED'][0]}",
+		"Equal"		=> "\${$this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['TIME_EQUAL'][0]}",
+		"Worst"		=> "\${$this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['TIME_WORSE'][0]}"
+	];
+	declare ColorBarColors = [
+		"Improved"	=> TextLib::ToColor("{$this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['TIME_IMPROVED'][0]}"),
+		"Equal"		=> TextLib::ToColor("{$this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['TIME_EQUAL'][0]}"),
+		"Worst"		=> TextLib::ToColor("{$this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['TIME_WORSE'][0]}")
+	];
+
+	if (EnableColorBar == True) {
+		QuadColorbar.RelativeRotation		= 180.0;
+		QuadColorbar.Opacity			= 0.75;
+	}
+	else {
+		QuadColorbar.Visible			= False;
 	}
 	while (True) {
 		yield;
@@ -712,10 +720,103 @@ main() {
 
 		// Hide the Widget for Spectators (also temporary one)
 		if (InputPlayer.IsSpawned == False) {
-			Container.Hide();
+			FrameCheckpointTimeDiff.Hide();
 		}
 		else {
-			Container.Show();
+			FrameCheckpointTimeDiff.Show();
+		}
+
+		if (CurrentTime > RefreshTime) {
+			if (LastCheckpointCount != InputPlayer.CurRace.Checkpoints.count) {
+				LastCheckpointCount = InputPlayer.CurRace.Checkpoints.count;
+				if (MultilapMap == True) {
+					CurrentCheckpoint = LastCheckpointCount - (InputPlayer.CurrentNbLaps * TotalCheckpoints);
+				}
+				else {
+					CurrentCheckpoint = LastCheckpointCount;
+				}
+			}
+//			log(Now ^" LR: " ^ InputPlayer.Login ^ ": Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ InputPlayer.CurrentNbLaps ^", CP-Times: "^ InputPlayer.CurRace.Checkpoints ^" MultiLap: "^ MultilapMap);
+
+			declare Integer CurrentRaceTime = 0;
+			if (MultilapMap == True) {
+				CurrentRaceTime = InputPlayer.CurCheckpointLapTime;
+			}
+			else {
+				CurrentRaceTime = InputPlayer.CurCheckpointRaceTime;
+			}
+
+			if (CurrentRaceTime > 0) {
+				if (CheckpointTimes.existskey(CurrentCheckpoint - 1) && CheckpointTimes[CurrentCheckpoint - 1] != 0) {
+					// Setup text colors
+					TimeDifference = (CheckpointTimes[CurrentCheckpoint - 1] - CurrentRaceTime);
+					if (TimeDifference < 0) {
+						TextColor = LabelColors["Worst"] ^"+";
+						if (EnableColorBar == True) {
+							QuadColorbar.Visible = True;
+							QuadColorbar.Colorize = ColorBarColors["Worst"];
+						}
+					}
+					else if (TimeDifference == 0) {
+						TextColor = LabelColors["Equal"];
+						if (EnableColorBar == True) {
+							QuadColorbar.Visible = True;
+							QuadColorbar.Colorize = ColorBarColors["Equal"];
+						}
+					}
+					else if (TimeDifference > 0) {
+						TextColor = LabelColors["Improved"] ^"-";
+						if (EnableColorBar == True) {
+							QuadColorbar.Visible = True;
+							QuadColorbar.Colorize = ColorBarColors["Improved"];
+						}
+					}
+				}
+				else {
+					TimeDifference = CurrentRaceTime;
+					TextColor = "";
+					if (EnableColorBar == True) {
+						QuadColorbar.Visible = False;
+					}
+				}
+			}
+			else {
+				TimeDifference = 0;
+				TextColor = "";
+				if (EnableColorBar == True) {
+					QuadColorbar.Visible = False;
+				}
+			}
+
+			// Change Labels
+			if (CurrentCheckpoint == 0) {
+				LabelCheckpointTimeDiff.Value = "\$OSTART: "^ TimeToTextDiff(0);
+				if (CheckpointTimes.count == TotalCheckpoints) {
+					LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[TotalCheckpoints - 1]);
+				}
+			}
+			else if (CurrentCheckpoint > 0 && CurrentCheckpoint < TotalCheckpoints) {
+				LabelCheckpointTimeDiff.Value = "\$OCP"^ CurrentCheckpoint ^": "^ TextColor ^ TimeToTextDiff(MathLib::Abs(TimeDifference));
+				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CurrentCheckpoint - 1]);
+			}
+			else if (CurrentCheckpoint == TotalCheckpoints) {
+				LabelCheckpointTimeDiff.Value = "\$OFINISH: "^ TextColor ^ TimeToTextDiff(MathLib::Abs(TimeDifference));
+				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CheckpointTimes.count - 1]);
+			}
+
+
+			// Check for a time improvement
+			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart || InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
+				if (InputPlayer != Null && InputPlayer.Score.BestRace.Time != -1 && TotalCheckpoints > 0 && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0)) {
+					CheckpointTimes.clear();
+					foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
+						CheckpointTimes.add(CpTime);
+					}
+				}
+			}
+
+			// Reset RefreshTime
+			RefreshTime = (CurrentTime + RefreshInterval);
 		}
 	}
 }
@@ -723,27 +824,26 @@ main() {
 EOL;
 
 		// Build Manialink
-		$xml = '<manialink id="'. $this->manialinkid .'" name="CheckpointWidget">';
+		$xml = '<manialink id="CheckpointTimeDiff" name="CheckpointTimeDiff">';
 
 		$xml .= '<frame posn="70 -48 -40">';
-		$xml .= '<quad posn="0 0 0" sizen="140 15" style="BgsPlayerCard" substyle="BgRacePlayerLine" id="Colorbar"/>';
+		$xml .= '<quad posn="0 0 0" sizen="140 15" style="BgsPlayerCard" substyle="BgRacePlayerLine" id="Colorbar" hidden="true"/>';
 		$xml .= '</frame>';
 
-		$xml .= '<frame posn="'. $this->config['CHECKPOINT_WIDGET'][0]['POS_X'][0] .' '. $this->config['CHECKPOINT_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointWidget">';
-		if ($this->config['CHECKPOINT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
-			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->config['CHECKPOINT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
+		$xml .= '<frame posn="'. $this->config['TIME_DIFF_WIDGET'][0]['POS_X'][0] .' '. $this->config['TIME_DIFF_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointTimeDiff">';
+		if ($this->config['TIME_DIFF_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->config['CHECKPOINT_WIDGET'][0]['STYLE'][0] .'" substyle="'. $this->config['CHECKPOINT_WIDGET'][0]['SUBSTYLE'][0] .'"/>';
+			$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->config['TIME_DIFF_WIDGET'][0]['STYLE'][0] .'" substyle="'. $this->config['TIME_DIFF_WIDGET'][0]['SUBSTYLE'][0] .'"/>';
 		}
-		$xml .= '<label posn="8 -0.65 0.02" sizen="16 2.2" textsize="2" scale="0.8" halign="center" textcolor="'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_CHECKPOINT'][0] .'" text="$O'. $cp .': '. $diff .'"/>';
-		$xml .= '<label posn="8 -2.5 0.02" sizen="16 2.2" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['CHECKPOINT_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_BESTTIME'][0] .'" text="BEST '. $besttime .'"/>';
+		$xml .= '<label posn="8 -0.65 0.02" sizen="20 2.0" textsize="2" scale="0.8" halign="center" textprefix="$T" textcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_CHECKPOINT'][0] .'" text="" id ="LabelCheckpointTimeDiff"/>';
+		$xml .= '<label posn="8 -2.5 0.02" sizen="20 1.4" textsize="1" scale="0.8" halign="center" textprefix="$T" textcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_BESTTIME'][0] .'" text="" id="LabelBestTime"/>';
 		$xml .= '</frame>';
 		$xml .= $maniascript;
 		$xml .= '</manialink>';
-		$aseco->sendManialink($xml, $logins, 0);
+		$aseco->sendManialink($xml, $login, 0);
 	}
-
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -751,13 +851,182 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getCheckpointSettings ($player) {
+	public function buildCounterWidget ($checkpoint = -1, $login = false) {
 		global $aseco;
+
+		$xml = '<manialink id="CheckpointCounter" name="CheckpointCounter">';
+		$xml .= '<frame posn="'. $this->config['COUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['COUNT_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointCounter">';
+		if ($this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+			$xml .= '<quad posn="0 0 0.001" sizen="16 4" bgcolor="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
+		}
+		else {
+			$xml .= '<quad posn="0 0 0.001" sizen="16 4" style="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		}
+		$xml .= '<label posn="8 -0.65 0.01" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="" id="CheckpointLine1"/>';
+		$xml .= '<label posn="8 -1.8 0.01" halign="center" textsize="2" scale="0.9" textcolor="'. $this->config['COUNT_WIDGET'][0]['TEXT_COLOR'][0] .'" text="" id="CheckpointLine2"/>';
+		$xml .= '<label posn="8 -1.8 0.01" halign="center" style="TextTitle2Blink" textsize="2" scale="0.9" textcolor="'. $this->config['COUNT_WIDGET'][0]['TEXT_COLOR'][0] .'" text="" id="CheckpointLine2Blink" ScriptEvents="1" hidden="true"/>';
+
+		$multilapmap = (($aseco->server->maps->current->multilap == true) ? 'True' : 'False');
+		$timeattack = (($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) ? 'True' : 'False');
+
+$maniascript = <<<EOL
+<script><!--
+main() {
+	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	Container.RelativeScale				= {$this->config['COUNT_WIDGET'][0]['SCALE'][0]};
+
+	declare LabelCheckpointLine1			<=> (Page.GetFirstChild("CheckpointLine1") as CMlLabel);
+	declare LabelCheckpointLine2			<=> (Page.GetFirstChild("CheckpointLine2") as CMlLabel);
+	declare LabelCheckpointLine2Blink		<=> (Page.GetFirstChild("CheckpointLine2Blink") as CMlLabel);
+
+	declare Integer TotalCheckpoints		= {$this->totalcps};	// Incl. Finish
+	declare Boolean MultilapMap			= {$multilapmap};
+	declare Boolean TimeAttack			= {$timeattack};
+	declare Integer CurrentLap			= 0;			// Using own CurrentLap instead of Player.CurrentNbLaps
+	declare Integer CurrentCheckpoint		= 0;
+	declare Integer RefreshInterval			= 250;
+	declare Integer RefreshTime			= CurrentTime;
+	declare Integer BlinkEndTime			= -1;
+
+	declare Text MessageCheckpoint			= "CHECKPOINT";
+	declare Text MessageWithoutCheckpoints		= "WITHOUT CHECKPOINTS";
+	declare Text MessageAllCheckpointsReached	= "ALL CHECKPOINTS REACHED";
+	declare Text MessageMapSuccessfully		= "MAP SUCCESSFULLY";
+	declare Text MessageFinishNow			= "\$OFinish now!";
+	declare Text MessageFinished			= "\$OFinished";
+	declare Text MessageFinishedNextLap		= "Finished, next Lap!";
+	declare Text MessageWarmUp			= "\$OWarm-up";
+
+	// Init first view
+	if ((TotalCheckpoints-1) == 0) {
+		LabelCheckpointLine1.SetText(MessageWithoutCheckpoints);
+		LabelCheckpointLine2.Visible = False;
+		LabelCheckpointLine2Blink.Visible = True;
+		LabelCheckpointLine2Blink.SetText(MessageFinishNow);
+	}
+	else {
+		LabelCheckpointLine1.SetText(MessageCheckpoint);
+		LabelCheckpointLine2.SetText("\$O0 \$Zof\$O "^ (TotalCheckpoints - 1));
+	}
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		// Hide the Widget for Spectators (also temporary one)
+		if (InputPlayer.IsSpawned == False) {
+			Container.Hide();
+			continue;
+		}
+		else {
+			Container.Show();
+		}
+
+		if (BlinkEndTime != -1 && BlinkEndTime < CurrentTime) {
+			BlinkEndTime = -1;
+			LabelCheckpointLine2.Visible = True;
+			LabelCheckpointLine2Blink.Visible = False;
+			LabelCheckpointLine1.SetText(MessageCheckpoint);
+			LabelCheckpointLine2.SetText("\$O0 \$Zof\$O "^ (TotalCheckpoints - 1));
+		}
+
+		if (CurrentTime > RefreshTime) {
+			foreach (Player in Players) {
+				if (Player.Login != InputPlayer.Login) {
+					continue;
+				}
+
+				declare CheckpointCounter_LastCheckpointCount for Player = -1;
+				if (CheckpointCounter_LastCheckpointCount != Player.CurRace.Checkpoints.count) {
+					CheckpointCounter_LastCheckpointCount = Player.CurRace.Checkpoints.count;
+
+					if (MultilapMap == True) {
+						if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
+							CurrentLap += 1;
+						}
+						CurrentCheckpoint = CheckpointCounter_LastCheckpointCount - (CurrentLap * TotalCheckpoints);
+					}
+					else {
+						CurrentCheckpoint = CheckpointCounter_LastCheckpointCount;
+					}
+
+					// Check for respawn and reset count of current Checkpoint and Laps
+					if (CurrentCheckpoint < 0 && Player.CurRace.Checkpoints.count == 0) {
+						CurrentCheckpoint = 0;
+						CurrentLap = 0;
+					}
+//					log("CPC: Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ CurrentLap ^", Time: "^ Player.CurCheckpointRaceTime ^", CP-Times: "^ Player.CurRace.Checkpoints);
+
+					// Reset blinking
+					if (BlinkEndTime != -1) {
+						BlinkEndTime = -1;
+					}
+
+					if ((CurrentCheckpoint + 1) == TotalCheckpoints) {
+						if ((TotalCheckpoints - 1) == 0) {
+							LabelCheckpointLine1.SetText(MessageWithoutCheckpoints);
+						}
+						else {
+							LabelCheckpointLine1.SetText(MessageAllCheckpointsReached);
+						}
+						LabelCheckpointLine2.Visible = False;
+						LabelCheckpointLine2Blink.Visible = True;
+						LabelCheckpointLine2Blink.SetText(MessageFinishNow);
+					}
+					else if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
+						LabelCheckpointLine1.SetText(MessageMapSuccessfully);
+						if ( (MultilapMap == True) && (TimeAttack == True) ) {
+							LabelCheckpointLine2.Visible = False;
+							LabelCheckpointLine2Blink.Visible = True;
+							LabelCheckpointLine2Blink.SetText(MessageFinishedNextLap);
+							BlinkEndTime = (CurrentTime + 2500);
+						}
+						else {
+							LabelCheckpointLine2.Visible = True;
+							LabelCheckpointLine2Blink.Visible = False;
+							LabelCheckpointLine2.SetText(MessageFinished);
+						}
+					}
+					else {
+						LabelCheckpointLine2.Visible = True;
+						LabelCheckpointLine2Blink.Visible = False;
+						LabelCheckpointLine1.SetText(MessageCheckpoint);
+						LabelCheckpointLine2.SetText("\$O"^ CurrentCheckpoint ^" \$Zof\$O "^ (TotalCheckpoints - 1));
+					}
+				}
+			}
+
+			// Reset RefreshTime
+			RefreshTime = (CurrentTime + RefreshInterval);
+		}
+	}
+}
+--></script>
+EOL;
+		$xml .= $maniascript;
+		$xml .= '</frame>';
+		$xml .= '</manialink>';
+
+		$aseco->sendManialink($xml, $login, 0);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getCheckpointSettings ($login) {
+		global $aseco;
+
+		$player = $aseco->server->players->getPlayerByLogin($login);
 
 		$lcp = $this->getPlayerData($player, 'LocalCheckpointTracking');
 		$dcp = $this->getPlayerData($player, 'DedimaniaCheckpointTracking');
 		if (isset($lcp) && isset($dcp)) {
-			// Setup defaults
+			// Setup custom settings
 			$settings = array(
 				'LocalCheckpointTracking'	=> $lcp,
 				'DedimaniaCheckpointTracking'	=> $dcp
@@ -769,8 +1038,8 @@ EOL;
 				'LocalCheckpointTracking'	=> (($this->config['AUTO_ENABLE_CPS'][0] == true) ? 0 : -1),
 				'DedimaniaCheckpointTracking'	=> (($this->config['AUTO_ENABLE_DEDICPS'][0] == true) ? 0 : -1)
 			);
-			return $settings;
 		}
+		return $settings;
 	}
 
 	/*
@@ -790,38 +1059,163 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Handles cheating player.
-	public function processCheater ($login, $checkpoints, $chkpt, $finish) {
+	public function handleCheckpointTracking ($login) {
 		global $aseco;
 
-		// Collect checkpoints
-		$cps = '';
-		foreach ($checkpoints as $cp) {
-			$cps .= $aseco->formatTime($cp) . '/';
-		}
-		$cps = substr($cps, 0, strlen($cps)-1);  // strip trailing '/'
-
-		// report cheat
-		if ($finish == -1) {
-			trigger_error('Cheat by ['. $login . '] detected! CPs: '. $cps .' Last: '. $aseco->formatTime($chkpt[2]) .' index: '. $chkpt[4], E_USER_WARNING);
+		// Set personal or default Checkpoint tracking
+		if ($setup = $this->getCheckpointSettings($login)) {
+			$this->checkpoints[$login]->tracking['local_records'] = $setup['LocalCheckpointTracking'];
+			$this->checkpoints[$login]->tracking['dedimania_records'] = $setup['DedimaniaCheckpointTracking'];
 		}
 		else {
-			trigger_error('Cheat by ['. $login .'] detected! CPs: '. $cps .' Finish: '. $aseco->formatTime($finish), E_USER_WARNING);
+			if ($this->config['AUTO_ENABLE_CPS'][0] == true) {
+				$this->checkpoints[$login]->tracking['local_records'] = 0;
+			}
+			if ($this->config['AUTO_ENABLE_DEDICPS'][0] == true) {
+				$this->checkpoints[$login]->tracking['dedimania_records'] = 0;
+			}
 		}
 
-		// check for valid player
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			$aseco->console('[Player] Player object for ['. $login .'] not found!');
+		// Check for specific record
+		if ($this->checkpoints[$login]->tracking['local_records'] > 0 && isset($aseco->plugins['PluginLocalRecords']) && $aseco->plugins['PluginLocalRecords']->records->count() > 0) {
+			// If specific record unavailable, use last one
+			$record = $this->checkpoints[$login]->tracking['local_records'];
+			if ($record > $aseco->plugins['PluginLocalRecords']->records->count()) {
+				$record = $aseco->plugins['PluginLocalRecords']->records->count();
+			}
+			$current = $aseco->plugins['PluginLocalRecords']->records->getRecord($record - 1);
+
+			// Check for valid checkpoints
+			if (!empty($current->checkpoints) && $current->score == end($current->checkpoints)) {
+				$this->checkpoints[$login]->best['finish'] = (int)$current->score;
+				$this->checkpoints[$login]->best['cps'] = $current->checkpoints;
+			}
+
+			// Send Widget
+			if ($current->player->login == $login) {
+				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+			}
+			else {
+				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
+			}
+		}
+		else if ($this->checkpoints[$login]->tracking['local_records'] == 0 && isset($aseco->plugins['PluginLocalRecords']) && $aseco->plugins['PluginLocalRecords']->records->count() > 0) {
+			// Search for own/last record
+			$record = 0;
+			$current = false;
+			while ($record < $aseco->plugins['PluginLocalRecords']->records->count()) {
+				$current = $aseco->plugins['PluginLocalRecords']->records->getRecord($record++);
+				if ($current->player->login == $login) {
+					break;
+				}
+			}
+
+			// Check for valid checkpoints
+			if (!empty($current->checkpoints) && $current->score == end($current->checkpoints)) {
+				$this->checkpoints[$login]->best['finish'] = (int)$current->score;
+				$this->checkpoints[$login]->best['cps'] = $current->checkpoints;
+			}
+
+			// Send Widget
+			if ($current->player->login == $login) {
+				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+			}
+			else {
+				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
+			}
+		}
+		else if ($this->checkpoints[$login]->tracking['dedimania_records'] > 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map'])) {
+			// If specific record unavailable, use last one
+			$record = $this->checkpoints[$login]->tracking['dedimania_records'];
+			if ($record > count($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
+				$record = count($aseco->plugins['PluginDedimania']->db['Map']['Records']);
+			}
+			$current = $aseco->plugins['PluginDedimania']->db['Map']['Records'][$record - 1];
+
+			// Check for valid checkpoints
+			$current['Checks'] = explode(',', $current['Checks']);
+			if (!empty($current['Checks']) && $current['Best'] == end($current['Checks'])) {
+				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
+				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
+			}
+
+			// Send Widget
+			if ($current['Login'] == $login) {
+				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+			}
+			else {
+				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Dedimania Record$>', false);
+			}
+		}
+		else if ($this->checkpoints[$login]->tracking['dedimania_records'] == 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map'])) {
+			// Search for own/last record
+			$record = 0;
+			$current = false;
+			while ($record < count($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
+				$current = $aseco->plugins['PluginDedimania']->db['Map']['Records'][$record++];
+				if ($current['Login'] == $login) {
+					break;
+				}
+			}
+
+			// Check for valid checkpoints
+			$current['Checks'] = explode(',', $current['Checks']);
+			if (!empty($current['Checks']) && $current['Best'] == end($current['Checks'])) {
+				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
+				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
+			}
+
+			// Send Widget
+			if ($current['Login'] == $login) {
+				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+			}
+			else {
+				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Dedimania Record$>', false);
+			}
+		}
+		else {
+			// Send Widget
+			$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Handles cheating player.
+	public function processCheater ($login, $cpid, $time, $finish = false) {
+		global $aseco;
+
+		// Collect checkpoint times
+		$cps = '';
+		foreach ($this->checkpoints[$login]->current['cps'] as $cp) {
+			$cps .= $aseco->formatTime($cp) .'|';
+		}
+		$cps = substr($cps, 0, strlen($cps)-1);  // strip trailing '|'
+
+		// Report cheat
+		if ($finish == false) {
+			$aseco->console('[Checkpoints] Cheat by ['. $login . '] detected! [CheckpointTimes: ('. $cps .'), LastTime: '. $aseco->formatTime($time) .', CheckpointId: '. $cpid .']');
+		}
+		else {
+			$aseco->console('[Checkpoints] Cheat by ['. $login .'] detected! [CheckpointTimes: ('. $cps .'), FinishTime: '. $aseco->formatTime($this->checkpoints[$login]->current['finish']) .']');
+		}
+
+		// Check for valid Player
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			$aseco->console('[Checkpoints] processCheater(): Player object for ['. $login .'] not found, can not handle cheater!');
 			return;
 		}
 
-		switch ((int)$this->config['CHEATER_ACTION'][0]) {
-
+		switch ($this->config['CHEATER_ACTION'][0]) {
 			case 1:  // set to spec
 				try {
 					$aseco->client->query('ForceSpectator', $login, 1);
 
-					// allow spectator to switch back to player
+					// Allow spectator to switch back to player
 					$rtn = $aseco->client->query('ForceSpectator', $login, 0);
 				}
 				catch (Exception $exception) {
@@ -829,7 +1223,7 @@ EOL;
 				}
 
 				try {
-					// force free camera mode on spectator
+					// Force free camera mode on spectator
 					$aseco->client->query('ForceSpectatorTarget', $login, '', 2);
 				}
 				catch (Exception $exception) {
@@ -837,15 +1231,22 @@ EOL;
 				}
 
 				try {
-					// free up player slot
+					// Free up player slot
 					$aseco->client->query('SpectatorReleasePlayerSlot', $login);
 
-					// log console message
-					$aseco->console('Cheater [{1} : {2}] forced into free spectator!', $login, $aseco->stripColors($player->nickname, false));
+					// Log console message
+					$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} forced into free spectator! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
+						$player->login,
+						$aseco->country->iocToCountry($player->nation),
+						$aseco->stripColors($player->nickname),
+						$player->ip,
+						$player->ladderrank,
+						$player->id
+					);
 
-					// show chat message
-					$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} forced into spectator!',
-						str_ireplace('$w', '', $player->nickname)
+					// Show chat message
+					$message = $aseco->formatText($this->config['MESSAGES'][0]['FORCED_INTO_SPECTATOR'][0],
+						str_ireplace('$W', '', $player->nickname)
 					);
 					$aseco->sendChatMessage($message);
 				}
@@ -855,17 +1256,24 @@ EOL;
 				break;
 
 			case 2:  // kick
-				// log console message
-				$aseco->console('Cheater [{1} : {2}] kicked!', $login, $aseco->stripColors($player->nickname, false));
+				// Log console message
+				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} kicked! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
+					$player->login,
+					$aseco->country->iocToCountry($player->nation),
+					$aseco->stripColors($player->nickname),
+					$player->ip,
+					$player->ladderrank,
+					$player->id
+				);
 
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} kicked!',
-					str_ireplace('$w', '', $player->nickname)
+				// Show chat message
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['CHEATER_KICKED'][0],
+					str_ireplace('$W', '', $player->nickname)
 				);
 				$aseco->sendChatMessage($message);
 
 				try {
-					// kick the cheater
+					// Kick the cheater
 					$aseco->client->query('Kick', $login);
 				}
 				catch (Exception $exception) {
@@ -874,16 +1282,23 @@ EOL;
 				break;
 
 			case 3:  // ban (& kick)
-				// log console message
-				$aseco->console('Cheater [{1} : {2}] banned!', $login, $aseco->stripColors($player->nickname, false));
+				// Log console message
+				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} banned! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
+					$player->login,
+					$aseco->country->iocToCountry($player->nation),
+					$aseco->stripColors($player->nickname),
+					$player->ip,
+					$player->ladderrank,
+					$player->id
+				);
 
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} banned!',
-					str_ireplace('$w', '', $player->nickname)
+				// Show chat message
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['CHEATER_BANNED'][0],
+					str_ireplace('$W', '', $player->nickname)
 				);
 				$aseco->sendChatMessage($message);
 
-				// update banned IPs file
+				// Update banned IPs file
 				$aseco->banned_ips[] = $player->ip;
 				$aseco->writeIPs();
 
@@ -897,17 +1312,24 @@ EOL;
 				break;
 
 			case 4:  // blacklist & kick
-				// log console message
-				$aseco->console('Cheater [{1} : {2}] blacklisted!', $login, $aseco->stripColors($player->nickname, false));
+				// Log console message
+				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} blacklisted! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
+					$player->login,
+					$aseco->country->iocToCountry($player->nation),
+					$aseco->stripColors($player->nickname),
+					$player->ip,
+					$player->ladderrank,
+					$player->id
+				);
 
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} blacklisted!',
-					str_ireplace('$w', '', $player->nickname)
+				// Show chat message
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['CHEATER_BLACKLISTED'][0],
+					str_ireplace('$W', '', $player->nickname)
 				);
 				$aseco->sendChatMessage($message);
 
 				try {
-					// blacklist the cheater...
+					// Blacklist the cheater...
 					$aseco->client->query('BlackList', $player->login);
 				}
 				catch (Exception $exception) {
@@ -923,7 +1345,7 @@ EOL;
 				}
 
 				try {
-					// update blacklist file
+					// Update blacklist file
 					$filename = $aseco->settings['blacklist_file'];
 					$aseco->client->query('SaveBlackList', $filename);
 				}
@@ -933,21 +1355,28 @@ EOL;
 				break;
 
 			case 5:  // blacklist & ban
-				// log console message
-				$aseco->console('Cheater [{1} : {2}] blacklisted & banned!', $login, $aseco->stripColors($player->nickname, false));
+				// Log console message
+				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} blacklisted & banned! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
+					$player->login,
+					$aseco->country->iocToCountry($player->nation),
+					$aseco->stripColors($player->nickname),
+					$player->ip,
+					$player->ladderrank,
+					$player->id
+				);
 
-				// show chat message
-				$message = $aseco->formatText('{#server}» {#admin}Cheater {#highlite}{1}$z$s{#admin} blacklisted & banned!',
-					str_ireplace('$w', '', $player->nickname)
+				// Show chat message
+				$message = $aseco->formatText($this->config['MESSAGES'][0]['CHEATER_BLACKLISTED_AND_BANNED'][0],
+					str_ireplace('$W', '', $player->nickname)
 				);
 				$aseco->sendChatMessage($message);
 
-				// update banned IPs file
+				// Update banned IPs file
 				$aseco->banned_ips[] = $player->ip;
 				$aseco->writeIPs();
 
 				try {
-					// blacklist cheater...
+					// Blacklist cheater...
 					$aseco->client->query('BlackList', $player->login);
 				}
 				catch (Exception $exception) {
@@ -955,7 +1384,7 @@ EOL;
 				}
 
 				try {
-					// and ban
+					// And ban
 					$aseco->client->query('Ban', $player->login);
 				}
 				catch (Exception $exception) {
@@ -963,7 +1392,7 @@ EOL;
 				}
 
 				try {
-					// update blacklist file
+					// Update blacklist file
 					$filename = $aseco->settings['blacklist_file'];
 					$aseco->client->query('SaveBlackList', $filename);
 				}

@@ -1,0 +1,196 @@
+<manialink id="OnStartCountdownAnimation" name="OnStartCountdownAnimation" version="1">
+<frame posn="0 0 20" id="Frame_Animation">
+<quad posn="0 0 0.01" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-3.png" id="Quad_Countdown3" opacity="0.0"/>
+<quad posn="0 0 0.02" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-2.png" id="Quad_Countdown2" opacity="0.0"/>
+<quad posn="0 0 0.03" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-1.png" id="Quad_Countdown1" opacity="0.0"/>
+<quad posn="0 0 0.04" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-go.png" id="Quad_CountdownGo" opacity="0.0"/>
+</frame>
+<script><!--
+ /*
+ * ----------------------------------
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * Version:	2015-07-22
+ * ----------------------------------
+ */
+#Include "AnimLib" as AnimLib
+main() {
+	declare Frame_Animation			<=> (Page.GetFirstChild("Frame_Animation") as CMlFrame);
+	declare Quad_Countdown3			<=> (Page.GetFirstChild("Quad_Countdown3") as CMlQuad);
+	declare Quad_Countdown2			<=> (Page.GetFirstChild("Quad_Countdown2") as CMlQuad);
+	declare Quad_Countdown1			<=> (Page.GetFirstChild("Quad_Countdown1") as CMlQuad);
+	declare Quad_CountdownGo		<=> (Page.GetFirstChild("Quad_CountdownGo") as CMlQuad);
+
+//	declare SoundCountdown3			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/count-03-v02.ogg", 1.0, False, False, False);
+//	declare SoundCountdown2			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/count-02-v02.ogg", 1.0, False, False, False);
+//	declare SoundCountdown1			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/count-01-v02.ogg", 1.0, False, False, False);
+	declare SoundCountdownGo		= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/race-go.ogg", 1.0, False, False, False);
+	declare SoundCountdown3			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/laser-3.ogg", 1.0, False, False, False);
+	declare SoundCountdown2			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/laser-2.ogg", 1.0, False, False, False);
+	declare SoundCountdown1			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/laser-1.ogg", 1.0, False, False, False);
+//	declare SoundCountdownGo		= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/shoot-go.ogg", 1.0, False, False, False);
+
+	declare Integer Counter			= 0;
+	declare Integer PrevCount		= 0;
+	declare Integer StartTime		= 0;		// Animation start time
+
+	// Turn off the original 3-2-1-GO! animation!
+	ClientUI.OverlayHide321Go		= True;
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		Counter = (InputPlayer.RaceStartTime - GameTime + 1000) / 900;
+		if (PrevCount != Counter) {
+			PrevCount = Counter;
+			StartTime = CurrentTime;
+			if (Counter == 3) {
+				SoundCountdown3.Play();
+			}
+			else if (Counter == 2) {
+				SoundCountdown2.Play();
+			}
+			else if (Counter == 1) {
+				SoundCountdown1.Play();
+			}
+			else if (Counter == 0) {
+				SoundCountdownGo.Play();
+			}
+		}
+
+		if (InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart) {
+			declare Integer OperationalTime = CurrentTime - StartTime;
+			if (Counter == 3) {
+				Quad_Countdown2.RelativePosition = <0.0, 0.0, 0.02>;
+				Quad_Countdown1.RelativePosition = <0.0, 0.0, 0.03>;
+				Quad_CountdownGo.RelativePosition = <0.0, 0.0, 0.04>;
+
+				Quad_Countdown2.Opacity = 0.0;
+				Quad_Countdown1.Opacity = 0.0;
+				Quad_CountdownGo.Opacity = 0.0;
+
+				Quad_Countdown2.Scale = 1.0;
+				Quad_Countdown1.Scale = 1.0;
+				Quad_CountdownGo.Scale = 1.0;
+
+				Quad_Countdown3.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
+				Quad_Countdown3.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+//				Quad_Countdown3.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
+			}
+			else if (Counter == 2) {
+				Quad_Countdown3.RelativePosition = <0.0, 0.0, 0.01>;
+				Quad_Countdown1.RelativePosition = <0.0, 0.0, 0.03>;
+				Quad_CountdownGo.RelativePosition = <0.0, 0.0, 0.04>;
+
+				Quad_Countdown3.Opacity = 0.0;
+				Quad_Countdown1.Opacity = 0.0;
+				Quad_CountdownGo.Opacity = 0.0;
+
+				Quad_Countdown3.Scale = 1.0;
+				Quad_Countdown1.Scale = 1.0;
+				Quad_CountdownGo.Scale = 1.0;
+
+				Quad_Countdown3.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_Countdown3.RelativePosition.Z>;
+				Quad_Countdown3.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_Countdown3.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
+
+				Quad_Countdown2.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
+				Quad_Countdown2.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+//				Quad_Countdown2.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
+			}
+			else if (Counter == 1) {
+				Quad_Countdown3.RelativePosition = <0.0, 0.0, 0.01>;
+				Quad_Countdown2.RelativePosition = <0.0, 0.0, 0.02>;
+				Quad_CountdownGo.RelativePosition = <0.0, 0.0, 0.04>;
+
+				Quad_Countdown3.Opacity = 0.0;
+				Quad_Countdown2.Opacity = 0.0;
+				Quad_CountdownGo.Opacity = 0.0;
+
+				Quad_Countdown3.Scale = 1.0;
+				Quad_Countdown2.Scale = 1.0;
+				Quad_CountdownGo.Scale = 1.0;
+
+				Quad_Countdown2.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_Countdown2.RelativePosition.Z>;
+				Quad_Countdown2.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_Countdown2.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
+
+				Quad_Countdown1.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
+				Quad_Countdown1.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+//				Quad_Countdown1.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
+			}
+		}
+		else if (InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
+			declare Integer OperationalTime = GameTime - InputPlayer.RaceStartTime;
+			if (OperationalTime < 750) {
+				Quad_Countdown3.RelativePosition = <0.0, 0.0, 0.01>;
+				Quad_Countdown2.RelativePosition = <0.0, 0.0, 0.02>;
+				Quad_Countdown1.RelativePosition = <0.0, 0.0, 0.03>;
+
+				Quad_Countdown3.Opacity = 0.0;
+				Quad_Countdown2.Opacity = 0.0;
+				Quad_Countdown1.Opacity = 0.0;
+
+				Quad_Countdown3.Scale = 1.0;
+				Quad_Countdown2.Scale = 1.0;
+				Quad_Countdown1.Scale = 1.0;
+
+				Quad_Countdown1.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_Countdown1.RelativePosition.Z>;
+				Quad_Countdown1.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_Countdown1.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
+
+				Quad_CountdownGo.Size = <AnimLib::EaseOutElastic2(OperationalTime, 0.0, 100.0, 750), AnimLib::EaseOutElastic2(OperationalTime, 0.0, 100.0, 750)>;
+				Quad_CountdownGo.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+//				Quad_CountdownGo.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
+			}
+			else if (OperationalTime < 1500) {
+				OperationalTime -= 750;
+				Quad_Countdown1.Opacity = 0.0;
+
+				Quad_CountdownGo.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_CountdownGo.RelativePosition.Z>;
+				Quad_CountdownGo.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_CountdownGo.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
+			}
+			else if (OperationalTime < 2250) {
+				Quad_Countdown3.RelativePosition = <0.0, 0.0, 0.01>;
+				Quad_Countdown2.RelativePosition = <0.0, 0.0, 0.02>;
+				Quad_Countdown1.RelativePosition = <0.0, 0.0, 0.03>;
+				Quad_CountdownGo.RelativePosition = <0.0, 0.0, 0.04>;
+
+				Quad_Countdown3.Opacity = 0.0;
+				Quad_Countdown2.Opacity = 0.0;
+				Quad_Countdown1.Opacity = 0.0;
+				Quad_CountdownGo.Opacity = 0.0;
+
+				Quad_Countdown3.Scale = 1.0;
+				Quad_Countdown2.Scale = 1.0;
+				Quad_Countdown1.Scale = 1.0;
+				Quad_CountdownGo.Scale = 1.0;
+
+				Counter = 0;
+			}
+		}
+		else {
+			Quad_Countdown3.RelativePosition = <0.0, 0.0, 0.01>;
+			Quad_Countdown2.RelativePosition = <0.0, 0.0, 0.02>;
+			Quad_Countdown1.RelativePosition = <0.0, 0.0, 0.03>;
+			Quad_CountdownGo.RelativePosition = <0.0, 0.0, 0.04>;
+
+			Quad_Countdown3.Opacity = 0.0;
+			Quad_Countdown2.Opacity = 0.0;
+			Quad_Countdown1.Opacity = 0.0;
+			Quad_CountdownGo.Opacity = 0.0;
+
+			Quad_Countdown3.Scale = 1.0;
+			Quad_Countdown2.Scale = 1.0;
+			Quad_Countdown1.Scale = 1.0;
+			Quad_CountdownGo.Scale = 1.0;
+		}
+	}
+}
+--></script>
+</manialink>

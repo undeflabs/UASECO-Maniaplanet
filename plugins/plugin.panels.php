@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-10
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -87,7 +87,7 @@ class PluginPanels extends Plugin {
 
 	public function chat_panelbg ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -363,7 +363,7 @@ class PluginPanels extends Plugin {
 		$action = (int) $answer['Action'];
 		if ($action >= -48 && $action <= -7) {
 			// get player & admin panel
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$panel = $player->maplist[abs($action)-7]['panel'];
 
 				// select new panel
@@ -372,7 +372,7 @@ class PluginPanels extends Plugin {
 		}
 		else if ($action >= 7231 && $action <= 7262) {
 			// get player & panel background
-			if ($player = $aseco->server->players->getPlayer($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$panel = $player->maplist[abs($action)-7231]['panel'];
 
 				// select new background
@@ -437,7 +437,7 @@ class PluginPanels extends Plugin {
 
 	public function admin_panel ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -567,7 +567,7 @@ class PluginPanels extends Plugin {
 		global $aseco;
 
 		// Get panels from player
-		$player = $aseco->server->players->getPlayer($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
 		$panels = $this->getPlayerData($player, 'Panels');
 
 		if (isset($panels)) {
@@ -605,7 +605,7 @@ class PluginPanels extends Plugin {
 
 		$settings = $panels['admin'] .'///';
 
-		$player = $aseco->server->players->getPlayer($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
 		$this->storePlayerData($player, 'Panels', $settings);
 	}
 
@@ -618,7 +618,7 @@ class PluginPanels extends Plugin {
 	public function getPanelBG ($login) {
 		global $aseco;
 
-		$player = $aseco->server->players->getPlayer($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
 		$panelbg = $this->getPlayerData($player, 'PanelBG');
 
 		if (isset($panelbg)) {
@@ -641,7 +641,7 @@ class PluginPanels extends Plugin {
 		global $aseco;
 
 		// Update Player's panel background
-		$player = $aseco->server->players->getPlayer($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
 		$this->storePlayerData($player, 'PanelBG', $panelbg);
 	}
 

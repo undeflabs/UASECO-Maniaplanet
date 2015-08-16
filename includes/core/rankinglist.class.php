@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-17
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -41,6 +41,8 @@
 class RankingList {
 	public $ranking_list;
 
+	private $debug		= false;
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -48,7 +50,9 @@ class RankingList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct () {
+	public function __construct ($debug) {
+		$this->debug = $debug;
+
 		$this->ranking_list = array();
 	}
 
@@ -72,7 +76,7 @@ class RankingList {
 			$entry->score		= 0;
 			$entry->cps		= array();
 			$entry->team		= $player->teamid;
-			$entry->spectator	= $player->isspectator;
+			$entry->spectator	= $player->is_spectator;
 			$entry->away		= false;
 
 			// Insert
@@ -136,27 +140,6 @@ class RankingList {
 			// Sort order: SCORE, PERSONAL_BEST and PID
 			array_multisort(
 				$scores, SORT_NUMERIC, SORT_DESC,
-				$times, SORT_NUMERIC, SORT_ASC,
-				$pids, SORT_NUMERIC, SORT_ASC,
-				$this->ranking_list
-			);
-			unset($scores, $times, $pids);
-
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			$scores = array();
-			$times = array();
-			$pids = array();
-			foreach ($this->ranking_list as $key => &$row) {
-				$scores[$key] = $row->score;
-				$times[$key] = $row->time;
-				$pids[$key] = $row->pid;
-			}
-			unset($key, $row);
-
-			// Sort order: SCORE, PERSONAL_BEST and PID
-			array_multisort(
-				$scores, SORT_NUMERIC, SORT_ASC,
 				$times, SORT_NUMERIC, SORT_ASC,
 				$pids, SORT_NUMERIC, SORT_ASC,
 				$this->ranking_list

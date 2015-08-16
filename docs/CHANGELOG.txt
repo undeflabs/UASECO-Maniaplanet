@@ -6,14 +6,15 @@ Version 1.0.0
    - A database from XAseco2/1.03 is NOT compatible with UASECO, convert a XAseco2 database with newinstall/database/convert-xaseco2-to-uaseco.php!
    - Plugin "plugin.manialinks.php" (formerly "manialinks.inc.php") are deprecated and get removed in the near future!
      Use Class Window instead: http://www.uaseco.org/Development/Classes/Window.php
-   - Plugin "plugin.panels.php" and related files in the folder "config/panels" are deprecated and get removed in the near future!
+   - Plugin "plugin.panels.php" and related files in the folder "config/panels" (or "newinstall/config/panels") are deprecated and get removed in the near future!
+   - All RASP Plugins will be replaced and removed in the near future!
 
 
    Requirements
    ~~~~~~~~~~~~
    - Requires PHP/5.2.1 or higher
    - Requires MySQL/5.x or higher
-   - Requires a Maniaplanet dedicated Server build 2015-06-16_18_00 or higher
+   - Requires a Maniaplanet dedicated Server build 2015-06-16_16_53 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
 
 
@@ -39,6 +40,7 @@ Version 1.0.0
    - Added class MapList
    - Added class Database (mysqli)
    - Added class Plugin
+   - Added class Playlist
    - Added class Ranking
    - Added class RankingList
    - Added class Window
@@ -47,9 +49,12 @@ Version 1.0.0
    - Merged several Plugins into one Plugin
    - Renamed several Plugins
    - Included the updated "GBX Data Fetcher module" v2.8 from 2014-07-12 created by Xymph
-   - Added new GbxRemote from 2015-01-24 from https://github.com/NewboO/dedicated-server-api/
+   - Added new GbxRemote version from 2015-01-24 from https://github.com/NewboO/dedicated-server-api/
    - Distinguish local records between Gamemodes, local records made in 'TimeAttack' are not available when the dedicated is now running in 'Rounds'
-   - Event "onPlayerManialinkPageAnswer": Handling of Manialink actions and identificators has been changed, see for details: http://www.uaseco.org/Development/Manialinks.php#Identifications
+   - Moved the content of the Map history file from RASP into the Database table `maphistory` (and removed functions... from the Plugins)
+   - Added Support for the following Gamemodes:
+     - Knockout.Script.txt (https://forum.maniaplanet.com/viewtopic.php?f=9&t=31243)
+     - Doppler.Script.txt (https://forum.maniaplanet.com/viewtopic.php?f=9&t=30463)
 
 
    Bugfix (in XAseco2)
@@ -65,7 +70,8 @@ Version 1.0.0
    - The folder "panels" has been moved into the "config" folder
    - The folder "styles" has been moved into the "config" folder
    - All "mysql_*()" does not work anymore, use "$aseco->db->*" instead (e.g. "$res = "$aseco->db->query($sql)"), see http://www.php.net/manual/en/class.mysqli.php and http://www.uaseco.org/Development/Classes/Database.php
-   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIME_ATTACK", "Gameinfo::STNT" to "Gameinfo::STUNTS"
+   - Renamed constants "Gameinfo::RNDS" to "Gameinfo::ROUNDS", "Gameinfo::TA" to "Gameinfo::TIME_ATTACK"
+   - Remove constant "Gameinfo::STNT" and support for the related Gamemode
    - Added constants "Gameinfo::TEAM_ATTACK" and "Gameinfo::CHASE"
    - Renamed "config/config.xml" to "config/UASECO.xml"
    - Removed "manialinks.inc.php", moved parts from it into the related Plugins and replaced the "Window" with the new class "window.class.php"
@@ -84,6 +90,9 @@ Version 1.0.0
    - Moved "$aseco->getPlayerId()" to "$aseco->server->players->getPlayerId()"
    - Moved "$aseco->getPlayerNick()" to "$aseco->server->players->getPlayerNickname()"
    - Moved "$aseco->getPlayerParam()" to "$aseco->server->players->getPlayerParam()"
+   - Renamed "$aseco->server->players->getPlayer()" to "$aseco->server->players->getPlayerByLogin()"
+   - Added "$aseco->server->players->getPlayerById()"
+   - Added "$aseco->server->players->getPlayerByPid()"
    - Renamed "$aseco->ip_match()" to "$aseco->matchIP()"
    - Renamed "$aseco->server->serverlogin" to "$aseco->server->login"
    - Changed "quotedString()" to "$aseco->db->quote()"
@@ -99,7 +108,10 @@ Version 1.0.0
    - Changed "cid2continent()" to "$aseco->continent->abbrToContinent()"
    - Merged "formatTime()" and "formatTimeH()" to only "$aseco->formatTime()"
    - Removed "$aseco->server->getGame()", because in Maniaplanet it was useless
-   - Removed "$aseco->isSpectator($player)", use "$player->isspectator" instead
+   - Removed "$aseco->isSpectator($player)", use "$player->getSpectatorStatus()" instead
+   - Renamed "$player->isspectator" to "$player->is_spectator"
+   - Renamed "$player->isofficial" to "$player->is_official"
+   - Renamed "$player->isreferee" to "$player->is_referee"
    - Event parameters has been changed for many events, see documentation for details: http://www.uaseco.org/Development/Events.php
    - Event "onCheckpoint" renamed to "onPlayerCheckpoint"
    - Event "onChat" splitted into "onServerChat" and "onPlayerChat" (no need to check for a Server message at "onPlayerChat")
@@ -110,6 +122,8 @@ Version 1.0.0
    - Event "onDediRecsLoaded" renamed to "onDedimaniaRecordsLoaded"
    - Event "onMaplistChanged" renamed to "onMapListChanged" (uppercase "L")
    - Event "onPlayerConnect2" renamed to "onPlayerConnect1"
+   - Event "onPlayerManialinkPageAnswer": Handling of Manialink actions and identificators has been changed, see for details: http://www.uaseco.org/Development/Manialinks.php#Identifications
+   - Event "onPlayerInfoChanged" does not send anymore the struct from the dedicated as parameter, now only send the login of that Player (the struct is changed at the Player object)
    - Removed <custom_ui> handling (deprecated) and replaced by <ui_properties> from modescript_settings.xml (Details: http://forum.maniaplanet.com/viewtopic.php?p=228997#p228997)
    - Removed chat command "/admin listdupes", because the Database column has unique key
    - Remamed "$map->authorscore" to "$map->author_score" ($map = includes/core/map.class.php)
@@ -119,7 +133,8 @@ Version 1.0.0
    - Removed all vote panels ("Vote*.xml") from "config/panels"
    - Removed "http_get_file()", use "$aseco->webaccess->request()" instead
    - Removed chat command "/top10" from plugin.rasp.php, use "/top100" instead
-   - Removed chat command "/clans" and "/topclans" from chat.player_info.php
+   - Removed chat command "/clans" and "/topclans" from chat.player_infos.php
+   - Changed F7 (to hide some Widgets) to F9, because Nadeo uses F7 for the Buddy list now
    - PLEASE NOTE: I only hope that this list are all differences, but i'm not really sure about this. I was starting too late to write this list, sorry!
 
 
@@ -153,3 +168,5 @@ Version 1.0.0
    - Table `rs_times` renamed to `times`
      - Removed `Id`
      - Added `GamemodeId`
+   - Added Table `maphistory`
+   - Added Table `playlist`

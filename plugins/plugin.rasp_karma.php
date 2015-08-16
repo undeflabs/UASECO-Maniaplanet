@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-01
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -89,7 +89,7 @@ class PluginRaspKarma extends Plugin {
 			return;
 		}
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -155,7 +155,7 @@ class PluginRaspKarma extends Plugin {
 			$vote = -1;
 		}
 
-		if (!$caller = $aseco->server->players->getPlayer($login)) {
+		if (!$caller = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -361,7 +361,7 @@ class PluginRaspKarma extends Plugin {
 		// check all connected players
 		foreach ($aseco->server->players->player_list as $player) {
 			// get current player status
-			if (!$player->isspectator) {
+			if (!$player->is_spectator) {
 				// check whether player already voted
 				$query = "
 				SELECT
@@ -598,7 +598,6 @@ class PluginRaspKarma extends Plugin {
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];
 
 				$this->jukebox			= array();
-				$this->jb_buffer		= array();
 				$this->mxadd			= array();
 				$this->mxplaying		= false;
 				$this->mxplayed			= false;

@@ -40,10 +40,10 @@
 
 	<messages>
 		<!-- record messages -->
-		<record_new>{#server}» {#highlite}{1}{#record} secured his/her {#rank}{2}{#record}. Local Record!  {3}: {#highlite}{4}{#record} $n({#rank}{5}{#highlite}{6}{#record})</record_new>
-		<record_equal>{#server}» {#highlite}{1}{#record} equaled his/her {#rank}{2}{#record}. Local Record!  {3}: {#highlite}{4}</record_equal>
-		<record_new_rank>{#server}» {#highlite}{1}{#record} gained the {#rank}{2}{#record}. Local Record!  {3}: {#highlite}{4}{#record} $n({#rank}{5}{#highlite}{6}{#record})</record_new_rank>
-		<record_first>{#server}» {#highlite}{1}{#record} claimed the {#rank}{2}{#record}. Local Record!  {3}: {#highlite}{4}</record_first>
+		<record_new>{#server}» {#highlite}{1}{#record} secured his/her {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new>
+		<record_equal>{#server}» {#highlite}{1}{#record} equaled his/her {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}</record_equal>
+		<record_new_rank>{#server}» {#highlite}{1}{#record} gained the {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new_rank>
+		<record_first>{#server}» {#highlite}{1}{#record} claimed the {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}</record_first>
 		<record_current>{#server}» {#message}Current record on {#highlite}{1}{#message} is {#highlite}{2}{#message} by {#highlite}{3}</record_current>
 		<record_none>{#server}» {#message}Currently no record on [{#highlite}{1}{#message}] ...</record_none>
 

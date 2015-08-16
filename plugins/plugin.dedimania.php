@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-18
+ * Date:	2015-07-26
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -128,10 +128,9 @@ class PluginDedimania extends Plugin {
 		$this->registerChatCommand('dedinext',		'chat_dedinext',	'Shows next better Dedimania record to beat',		Player::PLAYERS);
 		$this->registerChatCommand('dedidiff',		'chat_dedidiff',	'Shows your difference to first Dedimania record',	Player::PLAYERS);
 		$this->registerChatCommand('dedirange',		'chat_dedirange',	'Shows difference first to last Dedimania record',	Player::PLAYERS);
-		$this->registerChatCommand('dedicps',		'chat_dedicps',		'Sets Dedimania record checkspoints tracking',		Player::PLAYERS);
 		$this->registerChatCommand('dedistats',		'chat_dedistats',	'Displays Dedimania track statistics',			Player::PLAYERS);
-		$this->registerChatCommand('dedicptms',		'chat_dedicptms',	'Displays all Dedimania records\' checkpoint times',	Player::PLAYERS);
-		$this->registerChatCommand('dedisectms',	'chat_dedisectms',	'Displays all Dedimania records\' sector times',	Player::PLAYERS);
+//		$this->registerChatCommand('dedicptms',		'chat_dedicptms',	'Displays all Dedimania records\' checkpoint times',	Player::PLAYERS);
+//		$this->registerChatCommand('dedisectms',	'chat_dedisectms',	'Displays all Dedimania records\' sector times',	Player::PLAYERS);
 	}
 
 	/*
@@ -173,10 +172,14 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedirecs ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 
 		// split params into array
@@ -276,16 +279,14 @@ class PluginDedimania extends Plugin {
 					'{#black}'. $nick,
 					'{#login}'. $cur_record['Login'],
 					((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}': '') .
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ?
-					$cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
+					$aseco->formatTime($cur_record['Best'])
 				);
 			}
 			else {
 				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) .'.',
 					'{#black}'. $nick,
 					((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}': '') .
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ?
-					$cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
+					$aseco->formatTime($cur_record['Best'])
 				);
 			}
 			if (++$lines > 14) {
@@ -336,6 +337,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedipb ($aseco, $login, $chat_command, $chat_parameter) {
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 
 		$found = false;
@@ -352,7 +357,7 @@ class PluginDedimania extends Plugin {
 
 		if ($found) {
 			$message = $aseco->formatText($this->db['Messages']['PB'][0],
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $score : $aseco->formatTime($score)),
+				$aseco->formatTime($score),
 				$rank + 1
 			);
 			$aseco->sendChatMessage($message, $login);
@@ -371,6 +376,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedifirst ($aseco, $login, $chat_command, $chat_parameter) {
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 		if (!empty($dedi_recs)) {
 			// get the first Dedimania record
@@ -378,10 +387,10 @@ class PluginDedimania extends Plugin {
 
 			// show chat message
 			$message = $aseco->formatText($this->db['Messages']['FIRST_RECORD'][0]);
-			$message .= $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+			$message .= $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 				1,
 				$aseco->stripColors($record['NickName']),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record['Best'] : $aseco->formatTime($record['Best']))
+				$aseco->formatTime($record['Best'])
 			);
 
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
@@ -400,6 +409,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedilast ($aseco, $login, $chat_command, $chat_parameter) {
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 		if ($total = count($dedi_recs)) {
 			// get the last Dedimania record
@@ -407,10 +420,10 @@ class PluginDedimania extends Plugin {
 
 			// show chat message
 			$message = $aseco->formatText($this->db['Messages']['LAST_RECORD'][0]);
-			$message .= $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+			$message .= $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 				$total,
 				$aseco->stripColors($record['NickName']),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record['Best'] : $aseco->formatTime($record['Best']))
+				$aseco->formatTime($record['Best'])
 			);
 
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
@@ -429,10 +442,14 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedinext ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 		if ($total = count($dedi_recs)) {
 			$found = false;
@@ -453,32 +470,27 @@ class PluginDedimania extends Plugin {
 				$next = $dedi_recs[$nextrank];
 
 				// compute difference to next record
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$diff = $record['Best'] - $next['Best'];
-					$sec = floor($diff/1000);
-					$ths = $diff - ($sec * 1000);
-				}
-				else {  // Stunts mode
-					$diff = $next['Best'] - $record['Best'];
-				}
+				$diff = $record['Best'] - $next['Best'];
+				$sec = floor($diff/1000);
+				$ths = $diff - ($sec * 1000);
 
 				// show chat message
-				$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+				$message1 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 					$rank + 1,
 					$aseco->stripColors($record['NickName']),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record['Best'] : $aseco->formatTime($record['Best']))
+					$aseco->formatTime($record['Best'])
 				);
 				$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
-				$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+				$message2 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 					$nextrank + 1,
 					$aseco->stripColors($next['NickName']),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $next['Best'] : $aseco->formatTime($next['Best']))
+					$aseco->formatTime($next['Best'])
 				);
 				$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 				$message = $aseco->formatText($this->db['Messages']['DIFF_RECORD'][0],
 					$message1,
 					$message2,
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+					sprintf("%d.%03d", $sec, $ths)
 				);
 
 				$aseco->sendChatMessage($message, $player->login);
@@ -486,7 +498,6 @@ class PluginDedimania extends Plugin {
 			else {
 				// look for unranked time instead
 				$found = false;
-				$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 				$query = "
 				SELECT
 					`Score`
@@ -494,7 +505,7 @@ class PluginDedimania extends Plugin {
 				WHERE `PlayerId` = ". $player->id ."
 				AND `MapId` = ". $aseco->server->maps->current->id ."
 				AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-				ORDER BY `Score` ". $order ."
+				ORDER BY `Score` ASC
 				LIMIT 1;
 				";
 
@@ -512,33 +523,28 @@ class PluginDedimania extends Plugin {
 					$last = $dedi_recs[$total-1];
 
 					// compute difference to next record
-					if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-						$sign = ($unranked->Score < $last['Best'] ? '-' : '');
-						$diff = abs($unranked->Score - $last['Best']);
-						$sec = floor($diff/1000);
-						$ths = $diff - ($sec * 1000);
-					}
-					else {  // Stunts mode
-						$diff = $last['Best'] - $unranked->Score;
-					}
+					$sign = ($unranked->Score < $last['Best'] ? '-' : '');
+					$diff = abs($unranked->Score - $last['Best']);
+					$sec = floor($diff/1000);
+					$ths = $diff - ($sec * 1000);
 
 					// show chat message
-					$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+					$message1 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 						'PB',
 						$aseco->stripColors($player->nickname),
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $unranked->Score : $aseco->formatTime($unranked->Score))
+						$aseco->formatTime($unranked->Score)
 					);
 					$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
-					$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+					$message2 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 						$total,
 						$aseco->stripColors($last['NickName']),
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $last['Best'] : $aseco->formatTime($last['Best']))
+						$aseco->formatTime($last['Best'])
 					);
 					$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 					$message = $aseco->formatText($this->db['Messages']['DIFF_RECORD'][0],
 						$message1,
 						$message2,
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%s%d.%03d", $sign, $sec, $ths))
+						sprintf("%s%d.%03d", $sign, $sec, $ths)
 					);
 
 					$aseco->sendChatMessage($message, $player->login);
@@ -562,6 +568,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedidiff ($aseco, $login, $chat_command, $chat_parameter) {
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 		if ($total = count($dedi_recs)) {
 			$found = false;
@@ -581,32 +591,27 @@ class PluginDedimania extends Plugin {
 				$first = $dedi_recs[0];
 
 				// compute difference to first record
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$diff = $record['Best'] - $first['Best'];
-					$sec = floor($diff/1000);
-					$ths = $diff - ($sec * 1000);
-				}
-				else {  // Stunts mode
-					$diff = $first['Best'] - $record['Best'];
-				}
+				$diff = $record['Best'] - $first['Best'];
+				$sec = floor($diff/1000);
+				$ths = $diff - ($sec * 1000);
 
 				// show chat message
-				$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+				$message1 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 					$rank + 1,
 					$aseco->stripColors($record['NickName']),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $record['Best'] : $aseco->formatTime($record['Best']))
+					$aseco->formatTime($record['Best'])
 				);
 				$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
-				$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+				$message2 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 					1,
 					$aseco->stripColors($first['NickName']),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $first['Best'] : $aseco->formatTime($first['Best']))
+					$aseco->formatTime($first['Best'])
 				);
 				$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 				$message = $aseco->formatText($this->db['Messages']['DIFF_RECORD'][0],
 					$message1,
 					$message2,
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+					sprintf("%d.%03d", $sec, $ths)
 				);
 
 				$aseco->sendChatMessage($message, $login);
@@ -629,6 +634,10 @@ class PluginDedimania extends Plugin {
 
 	public function chat_dedirange ($aseco, $login, $chat_command, $chat_parameter) {
 
+		if (!isset($this->db['Map']['Records'])) {
+			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+			return;
+		}
 		$dedi_recs = $this->db['Map']['Records'];
 		if ($total = count($dedi_recs)) {
 			// get the first & last Dedimania records
@@ -636,32 +645,27 @@ class PluginDedimania extends Plugin {
 			$last = $dedi_recs[$total-1];
 
 			// compute difference between records
-			if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-				$diff = $last['Best'] - $first['Best'];
-				$sec = floor($diff/1000);
-				$ths = $diff - ($sec * 1000);
-			}
-			else {  // Stunts mode
-				$diff = $first['Best'] - $last['Best'];
-			}
+			$diff = $last['Best'] - $first['Best'];
+			$sec = floor($diff/1000);
+			$ths = $diff - ($sec * 1000);
 
 			// show chat message
-			$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+			$message1 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 				1,
 				$aseco->stripColors($first['NickName']),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $first['Best'] : $aseco->formatTime($first['Best']))
+				$aseco->formatTime($first['Best'])
 			);
 			$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
-			$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+			$message2 = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW'][0],
 				$total,
 				$aseco->stripColors($last['NickName']),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $last['Best'] : $aseco->formatTime($last['Best']))
+				$aseco->formatTime($last['Best'])
 			);
 			$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
 			$message = $aseco->formatText($this->db['Messages']['DIFF_RECORD'][0],
 				$message1,
 				$message2,
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+				sprintf("%d.%03d", $sec, $ths)
 			);
 
 			$aseco->sendChatMessage($message, $login);
@@ -677,48 +681,9 @@ class PluginDedimania extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function chat_dedicps ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if ($aseco->plugins['PluginCheckpoints']->config['DISPLAY_CHECKPOINTS'][0] == true) {
-			if (isset($aseco->checkpoints[$login]) && $aseco->checkpoints[$login]->tracking['local_records'] != -1) {
-				// set Dedimania checkpoints tracking
-				$param = $chat_parameter;
-				if (strtolower($param) == 'off') {
-					$aseco->checkpoints[$login]->tracking['dedimania_records'] = -1;
-					$message = '{#server}» {#dedimsg}Dedimania checkpoints tracking: {#highlite}OFF';
-				}
-				else if ($param == '') {
-					$aseco->checkpoints[$login]->tracking['dedimania_records'] = 0;
-					$message = '{#server}» {#dedimsg}Dedimania checkpoints tracking: {#highlite}ON {#dedimsg}(your own or the last record)';
-				}
-				else if (is_numeric($param) && $param > 0 && $param <= $this->db['MaxRecords']) {
-					$aseco->checkpoints[$login]->tracking['dedimania_records'] = intval($param);
-					$message = '{#server}» {#dedimsg}Dedimania checkpoints tracking record: {#highlite}'. $aseco->checkpoints[$login]->tracking['dedimania_records'];
-				}
-				else {
-					$message = '{#server}» {#error}No such Dedimania record {#highlite}$i '. $param;
-				}
-			}
-			else {
-				$message = '{#server}» {#error}You must first enable checkpoints tracking with {#highlite}$i /cps';
-			}
-		}
-		else {
-			$message = '{#server}» {#error}Dedimania checkpoints tracking permanently disabled by server';
-		}
-		// show chat message
-		$aseco->sendChatMessage($message, $login);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function chat_dedistats ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -739,98 +704,102 @@ class PluginDedimania extends Plugin {
 		$aseco->plugins['PluginManialinks']->display_manialink($player->login, $header, array('Icons64x64_1', 'Maximize', -0.01), $stats, array(1.0, 0.3, 0.7), 'OK');
 	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_dedicptms ($aseco, $login, $chat_command, $chat_parameter) {
-		$this->chat_dedisectms($aseco, $login, $chat_command, $chat_parameter, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_dedisectms ($aseco, $login, $chat_command, $chat_parameter, $diff = true) {
-
-		if (!$player = $aseco->server->players->getPlayer($login)) {
-			return;
-		}
-
-		$dedi_recs = $this->db['Map']['Records'];
-
-		if (!$total = count($dedi_recs)) {
-			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $player->login);
-			return;
-		}
-		$maxrank = max($this->db['ServerMaxRank'], $player->dedirank);
-		$cpscnt = count(explode(',', $dedi_recs[0]['Checks']));
-
-		// display ManiaLink window
-		$head = 'Current TOP '. $maxrank .' Dedimania '. ($diff ? 'Sector' : 'CP') .' Times ('. $cpscnt .'):';
-		$cpsmax = 12;
-
-		// compute widths
-		$width = 0.1 + 0.18 + min($cpscnt, $cpsmax) * 0.1 + ($cpscnt > $cpsmax ? 0.06 : 0.0);
-		if ($width < 1.0) {
-			$width = 1.0;
-		}
-		$widths = array($width, 0.1, 0.18);
-		for ($i = 0; $i < min($cpscnt, $cpsmax); $i++) {
-			$widths[] = 0.1; // cp
-		}
-		if ($cpscnt > $cpsmax) {
-			$widths[] = 0.06;
-		}
-
-		$msg = array();
-		$lines = 0;
-		$player->msgs = array();
-		$player->msgs[0] = array(1, $head, $widths, array('BgRaceScore2', 'Podium'));
-
-		// create list of records
-		for ($i = 0; $i < $total; $i++) {
-			$cur_record = $dedi_recs[$i];
-			$cpsrec = explode(',', $cur_record['Checks']);
-			$line = array();
-			$line[] = str_pad($i+1, 2, '0', STR_PAD_LEFT) .'.';
-			$line[] = ((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}' : '') . $aseco->formatTime($cur_record['Best']);
-
-			// append up to $cpsmax sector/CP times
-			if (!empty($cpsrec)) {
-				$j = 1;
-				$pr = 0;
-				foreach ($cpsrec as $cp) {
-					$line[] = '$n'. $aseco->formatTime($cp - $pr);
-					if ($diff) {
-						$pr = $cp;
-					}
-					if (++$j > $cpsmax) {
-						if ($cpscnt > $cpsmax) $line[] = '+';
-						break;
-					}
-				}
-			}
-			$msg[] = $line;
-			if (++$lines > 14) {
-				$player->msgs[] = $msg;
-				$lines = 0;
-				$msg = array();
-			}
-		}
-
-		// add if last batch exists
-		if (!empty($msg)) {
-			$player->msgs[] = $msg;
-		}
-
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-	}
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function chat_dedicptms ($aseco, $login, $chat_command, $chat_parameter) {
+//		$this->chat_dedisectms($aseco, $login, $chat_command, $chat_parameter, false);
+//	}
+//
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function chat_dedisectms ($aseco, $login, $chat_command, $chat_parameter, $diff = true) {
+//
+//		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+//			return;
+//		}
+//
+//		if (!isset($this->db['Map']['Records'])) {
+//			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $login);
+//			return;
+//		}
+//		$dedi_recs = $this->db['Map']['Records'];
+//
+//		if (!$total = count($dedi_recs)) {
+//			$aseco->sendChatMessage('{#server}» {#error}No Dedimania records found!', $player->login);
+//			return;
+//		}
+//		$maxrank = max($this->db['ServerMaxRank'], $player->dedirank);
+//		$cpscnt = count(explode(',', $dedi_recs[0]['Checks']));
+//
+//		// display ManiaLink window
+//		$head = 'Current TOP '. $maxrank .' Dedimania '. ($diff ? 'Sector' : 'CP') .' Times ('. $cpscnt .'):';
+//		$cpsmax = 12;
+//
+//		// compute widths
+//		$width = 0.1 + 0.18 + min($cpscnt, $cpsmax) * 0.1 + ($cpscnt > $cpsmax ? 0.06 : 0.0);
+//		if ($width < 1.0) {
+//			$width = 1.0;
+//		}
+//		$widths = array($width, 0.1, 0.18);
+//		for ($i = 0; $i < min($cpscnt, $cpsmax); $i++) {
+//			$widths[] = 0.1; // cp
+//		}
+//		if ($cpscnt > $cpsmax) {
+//			$widths[] = 0.06;
+//		}
+//
+//		$msg = array();
+//		$lines = 0;
+//		$player->msgs = array();
+//		$player->msgs[0] = array(1, $head, $widths, array('BgRaceScore2', 'Podium'));
+//
+//		// create list of records
+//		for ($i = 0; $i < $total; $i++) {
+//			$cur_record = $dedi_recs[$i];
+//			$cpsrec = explode(',', $cur_record['Checks']);
+//			$line = array();
+//			$line[] = str_pad($i+1, 2, '0', STR_PAD_LEFT) .'.';
+//			$line[] = ((isset($cur_record['NewBest']) && $cur_record['NewBest']) ? '{#black}' : '') . $aseco->formatTime($cur_record['Best']);
+//
+//			// append up to $cpsmax sector/CP times
+//			if (!empty($cpsrec)) {
+//				$j = 1;
+//				$pr = 0;
+//				foreach ($cpsrec as $cp) {
+//					$line[] = '$n'. $aseco->formatTime($cp - $pr);
+//					if ($diff) {
+//						$pr = $cp;
+//					}
+//					if (++$j > $cpsmax) {
+//						if ($cpscnt > $cpsmax) $line[] = '+';
+//						break;
+//					}
+//				}
+//			}
+//			$msg[] = $line;
+//			if (++$lines > 14) {
+//				$player->msgs[] = $msg;
+//				$lines = 0;
+//				$msg = array();
+//			}
+//		}
+//
+//		// add if last batch exists
+//		if (!empty($msg)) {
+//			$player->msgs[] = $msg;
+//		}
+//
+//		// display ManiaLink message
+//		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -865,16 +834,11 @@ class PluginDedimania extends Plugin {
 				// get the first & last Dedimania records
 				$first = $dedi_recs[0];
 				$last = $dedi_recs[$total-1];
+
 				// compute difference between records
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$diff = $last['Best'] - $first['Best'];
-					$sec = floor($diff/1000);
-					$ths = $diff - ($sec * 1000);
-				}
-				else {
-					// Stunts
-					$diff = $first['Best'] - $last['Best'];
-				}
+				$diff = $last['Best'] - $first['Best'];
+				$sec = floor($diff/1000);
+				$ths = $diff - ($sec * 1000);
 			}
 
 			// get list of online players
@@ -896,7 +860,7 @@ class PluginDedimania extends Plugin {
 					$record_msg = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW_ON'),
 						$i + 1,
 						$aseco->stripColors($cur_record['NickName']),
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
+						$aseco->formatTime($cur_record['Best'])
 					);
 					// always show new record
 					$records .= $record_msg;
@@ -907,7 +871,7 @@ class PluginDedimania extends Plugin {
 						$record_msg = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_ON'),
 							$i + 1,
 							$aseco->stripColors($cur_record['NickName']),
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
+							$aseco->formatTime($cur_record['Best'])
 						);
 
 						// check if last Dedimania record
@@ -929,7 +893,7 @@ class PluginDedimania extends Plugin {
 						$record_msg = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD'),
 							$i + 1,
 							$aseco->stripColors($cur_record['NickName']),
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record['Best'] : $aseco->formatTime($cur_record['Best']))
+							$aseco->formatTime($cur_record['Best'])
 						);
 
 						// check if last Dedimania record
@@ -980,7 +944,7 @@ class PluginDedimania extends Plugin {
 				$message = $aseco->formatText($this->db['Messages']['RANKING_RANGE'][0],
 					$name,
 					$timing,
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+					sprintf("%d.%03d", $sec, $ths)
 				);
 			}
 			else {
@@ -1193,9 +1157,10 @@ class PluginDedimania extends Plugin {
 					$this->db['ModeList'][Gameinfo::TEAM]		= 'Rounds';
 					$this->db['ModeList'][Gameinfo::LAPS]		= 'TA';
 					$this->db['ModeList'][Gameinfo::CUP]		= 'Rounds';
-					$this->db['ModeList'][Gameinfo::TEAM_ATTACK]	= 'Rounds';	// 2014-07-01: UNTESTED!!!
-					$this->db['ModeList'][Gameinfo::CHASE]		= false;	// 2015-02-11: unsupported mode
-					$this->db['ModeList'][Gameinfo::STUNTS]		= false;
+					$this->db['ModeList'][Gameinfo::TEAM_ATTACK]	= false;	// 2015-06-20: unsupported mode
+					$this->db['ModeList'][Gameinfo::CHASE]		= false;	// 2015-06-20: unsupported mode
+					$this->db['ModeList'][Gameinfo::KNOCKOUT]	= 'Rounds';
+					$this->db['ModeList'][Gameinfo::DOPPLER]	= 'TA';
 				}
 				else {
 					trigger_error('No URL specified in your Dedimania config file!', E_USER_ERROR);
@@ -1314,6 +1279,12 @@ class PluginDedimania extends Plugin {
 
 	public function dedimaniaAnnounce () {
 		global $aseco;
+
+		// Bail out on unsupported gamemodes
+		if (!isset($this->db['ModeList'][$aseco->server->gameinfo->mode]) || $this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+			$aseco->console('[Dedimania] Unsupported gamemode, records ignored!');
+			return;
+		}
 
 		// check for valid map
 		if (isset($aseco->server->maps->current->uid)) {
@@ -1470,7 +1441,7 @@ class PluginDedimania extends Plugin {
 		}
 
 		// check response
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			if ($this->debug > 0) {
 				$aseco->console('[Dedimania] dedimaniaPlayerConnectCallbackHandler() - '. $login .' does not exist!');
 			}
@@ -1573,7 +1544,7 @@ class PluginDedimania extends Plugin {
 		}
 
 		// Bail out on unsupported gamemodes
-		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+		if (!isset($this->db['ModeList'][$aseco->server->gameinfo->mode]) || $this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			$aseco->console('[Dedimania] Unsupported gamemode, records ignored!');
 			return;
 		}
@@ -1653,7 +1624,7 @@ class PluginDedimania extends Plugin {
 		//                 'TotalRaces': int, 'TotalPlayers': int}
 
 		// Bail out on unsupported gamemodes
-		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+		if (!isset($this->db['ModeList'][$aseco->server->gameinfo->mode]) || $this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			return;
 		}
 
@@ -1687,10 +1658,10 @@ class PluginDedimania extends Plugin {
 					$rec['NickName'] = str_replace("\n", '', $rec['NickName']);
 				}
 
-				// set Dedimania record/checkpoints references
-				if ($aseco->plugins['PluginCheckpoints']->config['DISPLAY_CHECKPOINTS'][0] == true) {
-					foreach ($aseco->checkpoints as $login => $cp) {
-						$drec = $aseco->checkpoints[$login]->tracking['dedimania_records'] - 1;
+				// Set Dedimania record/checkpoints references
+				if ($aseco->plugins['PluginCheckpoints']->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+					foreach ($aseco->plugins['PluginCheckpoints']->checkpoints as $login => $cp) {
+						$drec = $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->tracking['dedimania_records'] - 1;
 
 						// check for specific record
 						if ($drec+1 > 0) {
@@ -1699,8 +1670,8 @@ class PluginDedimania extends Plugin {
 								$drec = count($this->db['Map']['Records']) - 1;
 							}
 							// store record/checkpoints reference
-							$aseco->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
-							$aseco->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
+							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
+							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
 						}
 						else if ($drec+1 == 0) {
 							// search for own/last record
@@ -1712,13 +1683,13 @@ class PluginDedimania extends Plugin {
 							}
 							$drec--;
 							// store record/checkpoints reference
-							$aseco->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
-							$aseco->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
+							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
+							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
 						}  // else -1
 					}
 				}
 				if ($this->debug > 4) {
-					$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - checkpoints'. CRLF . print_r($aseco->checkpoints, true));
+					$aseco->console('[Dedimania] dedimaniaLoadingMapCallbackHandler() - checkpoints'. CRLF . print_r($aseco->plugins['PluginCheckpoints']->checkpoints, true));
 				}
 			}
 
@@ -1753,7 +1724,7 @@ class PluginDedimania extends Plugin {
 	public function onEndMap ($aseco, $map) {
 
 		// Bail out on unsupported gamemodes
-		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+		if (!isset($this->db['ModeList'][$aseco->server->gameinfo->mode]) || $this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			return;
 		}
 
@@ -1964,7 +1935,7 @@ class PluginDedimania extends Plugin {
 		}
 
 		// Bail out on unsupported gamemodes
-		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+		if (!isset($this->db['ModeList'][$aseco->server->gameinfo->mode]) || $this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
 			return;
 		}
 
@@ -1994,27 +1965,27 @@ class PluginDedimania extends Plugin {
 		}
 
 		if ($this->debug > 4) {
-			$aseco->console('[Dedimania] onPlayerFinish - checkpoints '. $login . CRLF . print_r($aseco->checkpoints[$login], true));
+			$aseco->console('[Dedimania] onPlayerFinish - checkpoints '. $login . CRLF . print_r($aseco->plugins['PluginCheckpoints']->checkpoints[$login], true));
 		}
 
 
 		// check finish/checkpoints consistency, only for supported gamemodes
 		// Bail out on unsupported gamemodes
-		if ($this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
-			if ($aseco->checkpoints[$login]->current['finish'] == PHP_INT_MAX) {
+		if (!isset($this->db['ModeList'][$aseco->server->gameinfo->mode]) || $this->db['ModeList'][$aseco->server->gameinfo->mode] === false) {
+			if ($aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['finish'] == PHP_INT_MAX) {
 				// Skip if no checkpoint times are stored
 				return;
 			}
-			if (count($aseco->checkpoints[$login]->current['cps']) < 2 && $aseco->server->maps->current->author != 'Nadeo') {
+			if (count($aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['cps']) < 2 && $aseco->server->maps->current->author != 'Nadeo') {
 				$aseco->console('[Dedimania] Player ['. $login .'] checks < 2, finish ignored: '. $aseco->formatTime($finish_item->score));
 				return;
 			}
-			if ($aseco->server->gameinfo->mode != Gameinfo::LAPS && $finish_item->score != $aseco->checkpoints[$login]->current['finish']) {
-				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish time and checkpoint finish time, ignored time ['. $finish_item->score .'] != ['. $aseco->checkpoints[$login]->current['finish'] .']');
+			if ($aseco->server->gameinfo->mode != Gameinfo::LAPS && $finish_item->score != $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['finish']) {
+				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish time and checkpoint finish time, ignored time ['. $finish_item->score .'] != ['. $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['finish'] .']');
 				return;
 			}
-			if ($finish_item->score != end($aseco->checkpoints[$login]->current['cps'])) {
-				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish time and last checkpoint time, ignored time ['. $finish_item->score .'] != ['. end($aseco->checkpoints[$login]->current['cps']) .']');
+			if ($finish_item->score != end($aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['cps'])) {
+				$aseco->console('[Dedimania] Player ['. $login .'] inconsistent finish time and last checkpoint time, ignored time ['. $finish_item->score .'] != ['. end($aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['cps']) .']');
 				return;
 			}
 		}
@@ -2026,7 +1997,7 @@ class PluginDedimania extends Plugin {
 		// go through all records
 		for ($i = 0; $i < $maxrank; $i++) {
 			// check if no record, or player's time/score is better
-			if (!isset($dedi_recs[$i]) || ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $finish_item->score > $dedi_recs[$i]['Best'] : $finish_item->score < $dedi_recs[$i]['Best'])) {
+			if (!isset($dedi_recs[$i]) || $finish_item->score < $dedi_recs[$i]['Best']) {
 				// does player have a record already?
 				$cur_rank = -1;
 				$cur_score = 0;
@@ -2034,7 +2005,7 @@ class PluginDedimania extends Plugin {
 					$rec = $dedi_recs[$rank];
 
 					if ($login == $rec['Login']) {
-						if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $finish_item->score < $rec['Best'] : $finish_item->score > $rec['Best']) {
+						if ($finish_item->score > $rec['Best']) {
 							// new record worse than old one
 							return;
 						}
@@ -2047,28 +2018,19 @@ class PluginDedimania extends Plugin {
 					}
 				}
 
-				$finish_time = $finish_item->score;
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$finish_time = $aseco->formatTime($finish_time);
-				}
+				$finish_time = $aseco->formatTime($finish_item->score);
 
 				if ($cur_rank != -1) {  // player has a record in topXX already
 					// Compute difference to old record
-					if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-						$diff = $cur_score - $finish_item->score;
-						$sec = floor($diff/1000);
-						$ths = $diff - ($sec * 1000);
-					}
-					else {
-						// Stunts
-						$diff = $finish_item->score - $cur_score;
-					}
+					$diff = $cur_score - $finish_item->score;
+					$sec = floor($diff/1000);
+					$ths = $diff - ($sec * 1000);
 
 					// Update the record if improved
 					if ($diff > 0) {
 						// Ignore 'Rank' field - not used in /dedi* commands
 						$dedi_recs[$cur_rank]['Best'] = $finish_item->score;
-						$dedi_recs[$cur_rank]['Checks'] = $aseco->checkpoints[$login]->current['cps'];
+						$dedi_recs[$cur_rank]['Checks'] = $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['cps'];
 						$dedi_recs[$cur_rank]['NewBest'] = true;
 					}
 
@@ -2082,10 +2044,9 @@ class PluginDedimania extends Plugin {
 						$message = $aseco->formatText($this->db['Messages']['RECORD_NEW_RANK'][0],
 							$nickname,
 							$i + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 							$finish_time,
 							$cur_rank + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
+							'-'. $aseco->formatTime($diff)
 						);
 
 						// show chat message to all or player
@@ -2110,7 +2071,6 @@ class PluginDedimania extends Plugin {
 							$message = $aseco->formatText($this->db['Messages']['RECORD_EQUAL'][0],
 								$nickname,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time
 							);
 						}
@@ -2119,10 +2079,9 @@ class PluginDedimania extends Plugin {
 							$message = $aseco->formatText($this->db['Messages']['RECORD_NEW'][0],
 								$nickname,
 								$i + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
+								'-'. $aseco->formatTime($diff)
 							);
 						}
 
@@ -2153,7 +2112,7 @@ class PluginDedimania extends Plugin {
 						'Login'		=> $login,
 						'NickName'	=> $finish_item->player->nickname,
 						'Best'		=> $finish_item->score,
-						'Checks'	=> $aseco->checkpoints[$login]->current['cps'],
+						'Checks'	=> $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['cps'],
 						'NewBest'	=> true
 					);
 					$aseco->insertArrayElement($dedi_recs, $record, $i);
@@ -2162,7 +2121,6 @@ class PluginDedimania extends Plugin {
 					$message = $aseco->formatText($this->db['Messages']['RECORD_FIRST'][0],
 						$nickname,
 						$i + 1,
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 						$finish_time
 					);
 
@@ -2186,9 +2144,9 @@ class PluginDedimania extends Plugin {
 				// log a new Dedimania record (not an equalled one)
 				if (isset($dedi_recs[$i]['NewBest']) && $dedi_recs[$i]['NewBest']) {
 					// log record message in console
-					$aseco->console('[Dedimania] Player [{1}] finished with {2} and took the {3}. WR place!',
+					$aseco->console('[Dedimania] Player [{1}] finished with {2} and took the {3}. Dedimania Record!',
 						$login,
-						(($aseco->server->gameinfo->mode == Gameinfo::STUNTS) ? $finish_item->score : $aseco->formatTime($finish_item->score)),
+						$aseco->formatTime($finish_item->score),
 						$i + 1
 					);
 
@@ -2281,7 +2239,7 @@ class PluginDedimania extends Plugin {
 		$numplayers = 0;
 		$numspecs = 0;
 		foreach ($aseco->server->players->player_list as $player) {
-			if ($player->isspectator) {
+			if ($player->is_spectator) {
 				$numspecs++;
 			}
 			else {
@@ -2354,6 +2312,9 @@ class PluginDedimania extends Plugin {
 				$cpsrace = $aseco->server->maps->current->nbcheckpoints * ($aseco->server->maps->current->nblaps > 0 ? $aseco->server->maps->current->nblaps : 1);
 			}
 
+if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+	$aseco->dump($parser, $uid, $entry, $allcps, $cpsrace);
+}
 			$validation_success = true;
 			if ($parser->cpsLap != $aseco->server->maps->current->nbcheckpoints) {
 				$aseco->console('[Dedimania] Validation replay inconsistent for Player ['. $entry['Login'] .'] skipped: Amount of checkpoints at lap difference between validation replay ['. $cpsrace .'] and map ['. $aseco->server->maps->current->nbcheckpoints .'], all checkpoint times ['. $entry['Checks'] .']');
@@ -2538,7 +2499,7 @@ class PluginDedimania extends Plugin {
 		}
 		else {
 			// same best, use timestamp
-			return ($aseco->checkpoints[$a['Login']]->best['timestamp'] < $aseco->checkpoints[$b['Login']]->best['timestamp']) ? -1 : 1;
+			return ($aseco->plugins['PluginCheckpoints']->checkpoints[$a['Login']]->best['timestamp'] < $aseco->plugins['PluginCheckpoints']->checkpoints[$b['Login']]->best['timestamp']) ? -1 : 1;
 		}
 	}
 }

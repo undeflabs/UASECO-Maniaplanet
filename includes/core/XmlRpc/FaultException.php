@@ -83,6 +83,7 @@ class FaultException extends Exception
 			case 'Not in Team mode.':
 			case 'Not in Rounds or Laps mode.':
 			case 'The scores must be decreasing.':
+			case 'No current script.':
 				return new GameModeException($faultString, $faultCode);
 			case 'Unable to write the black list file.':
 			case 'Unable to write the guest list file.':

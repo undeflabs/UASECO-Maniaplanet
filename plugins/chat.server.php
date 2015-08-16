@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-17
+ * Date:	2015-07-18
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -74,7 +74,7 @@ class PluginChatServer extends Plugin {
 
 	public function chat_server ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -111,7 +111,6 @@ class PluginChatServer extends Plugin {
 		// get more server settings in one go
 		$comment = $aseco->server->comment;
 		$planets = $aseco->server->amount_planets;
-		$cuprpc = $aseco->server->gameinfo->cup['RoundsPerMap'];
 
 		$header = 'Welcome to: ' . $aseco->server->name;
 		$stats = array();
@@ -156,12 +155,8 @@ class PluginChatServer extends Plugin {
 				break;
 
 			case Gameinfo::CUP:
-				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->cup['PointsLimit'] . '$g   R/C: {#black}' . $cuprpc);
+				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->cup['PointsLimit'] .'$g   R/C: {#black}'. $aseco->server->gameinfo->cup['RoundsPerMap']);
 				break;
-
-//			case Gameinfo::STUNTS:
-//				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(5 * 60 * 1000, false) .' min.');  // always 5 minutes?
-//				break;
 		}
 		$stats[] = array('Max Players', '{#black}' . $aseco->server->options['CurrentMaxPlayers']);
 		$stats[] = array('Max Specs', '{#black}' . $aseco->server->options['CurrentMaxSpectators']);
@@ -199,7 +194,7 @@ class PluginChatServer extends Plugin {
 
 	public function chat_uaseco ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -265,7 +260,7 @@ class PluginChatServer extends Plugin {
 
 	public function chat_plugins ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

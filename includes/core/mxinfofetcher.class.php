@@ -10,7 +10,12 @@
  *   http://tm.mania-exchange.com/threads/view/218
  *   Derived from TMXInfoFetcher
  *
- *   v1.7a: Added $timestamp_fetched for cache functions by undef.de
+ *   v1.7b: Changes made by undef.de
+ *          - Added USER_AGENT constant and "X-ManiaPlanet-ServerLogin" for MX "Who downloaded?" function
+ *          - Changed the records limit from 15 to 25
+ *          - Added $original_acomment (which contains the unchanged author comment)
+ *   v1.7a: Changes made by undef.de
+ *          - Added $timestamp_fetched for caching functions
  *   v1.7:  Added $titlepack (TM2/SM)
  *   v1.6:  Allowed 24-char UIDs too
  *   v1.5:  Added $maptype (TM2/SM)
@@ -24,8 +29,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-03
- * Copyright:	2014 by undef.de
+ * Date:	2015-08-02
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -90,6 +95,7 @@ class MXInfoFetcher {
 	public $replayid;
 	public $replaycnt;
 	public $acomment;
+	public $original_acomment;
 	public $awards;
 	public $comments;
 	public $rating;
@@ -199,6 +205,7 @@ class MXInfoFetcher {
 		$mx->replayid		= (int)$import['replayid'];
 		$mx->replaycnt		= (int)$import['replaycnt'];
 		$mx->acomment		= $import['acomment'];
+		$mx->original_acomment	= $import['acomment'];
 		$mx->awards		= (int)$import['awards'];
 		$mx->comments		= (int)$import['comments'];
 		$mx->rating		= isset($import['rating']) ? (float)$import['rating'] : 0.0;
@@ -240,7 +247,7 @@ class MXInfoFetcher {
 		}
 
 		$url = 'http://api.mania-exchange.com/' . $this->prefix . '/' . $dir . '/' . ($isuid ? $this->uid : $this->id);
-		$file = $this->get_file($url);
+		$file = $this->getFile($url);
 		if ($file === false) {
 			$this->error = '[MXInfoFetcher] Connection or response error on '. $url;
 			return;
@@ -297,6 +304,7 @@ class MXInfoFetcher {
 		$this->replayid			= isset($mx->ReplayWRID) ? $mx->ReplayWRID : 0;
 		$this->replaycnt		= isset($mx->ReplayCount) ? $mx->ReplayCount : 0;
 		$this->acomment			= $mx->Comments;
+		$this->original_acomment	= $mx->Comments;
 		$this->awards			= isset($mx->AwardCount) ? $mx->AwardCount : 0;
 		$this->comments			= $mx->CommentCount;
 		$this->rating			= isset($mx->Rating) ? $mx->Rating : 0.0;
@@ -331,9 +339,9 @@ class MXInfoFetcher {
 		// fetch records too?
 		$this->recordlist = array();
 		if ($this->prefix == 'tm' && $this->records) {
-			$limit = 15;
+			$limit = 25;
 			$url = 'http://api.mania-exchange.com/' . $this->prefix . '/replays/' . $this->id . '/' . $limit . '/';
-			$file = $this->get_file($url);
+			$file = $this->getFile($url);
 			if ($file === false) {
 				$this->error = '[MXInfoFetcher] Connection or response error on ' . $url;
 				return;
@@ -380,10 +388,10 @@ class MXInfoFetcher {
 	#									#
 	#///////////////////////////////////////////////////////////////////////#
 	*/
-
 	// Simple HTTP Get function with timeout
 	// ok: return string || error: return false || timeout: return -1
-	private function get_file ($url) {
+	private function getFile ($url) {
+		global $aseco;
 
 		$url = parse_url($url);
 		$port = isset($url['port']) ? $url['port'] : 80;
@@ -394,12 +402,12 @@ class MXInfoFetcher {
 			return false;
 		}
 
-		fwrite($fp,
-			'GET ' . $url['path'] . $query . " HTTP/1.0\r\n" .
-			'Host: ' . $url['host'] . "\r\n" .
-			'Content-Type: application/json' . "\r\n" .
-			'User-Agent: MXInfoFetcher (' . PHP_OS . ")\r\n\r\n"
-		);
+		$request  = "GET ". $url['path'].$query ." HTTP/1.0\r\n";
+		$request .= "Host: ". $url['host'] ."\r\n";
+		$request .= "Content-Type: application/json\r\n";
+		$request .= "X-ManiaPlanet-ServerLogin: ". $aseco->server->login ."\r\n";
+		$request .= "User-Agent: ". USER_AGENT ." ". get_class($this) ."/1.7b\r\n\r\n";
+		fwrite($fp, $request);
 
 		stream_set_timeout($fp, 8);
 

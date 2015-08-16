@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-16
+ * Date:	2015-07-26
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -141,7 +141,7 @@ class PluginLocalRecords extends Plugin {
 			// set message to the current record
 			$message = $aseco->formatText($this->settings['messages']['RECORD_CURRENT'][0],
 				$aseco->stripColors($aseco->server->maps->current->name),
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score)),
+				$aseco->formatTime($cur_record->score),
 				$aseco->stripColors($cur_record->player->nickname)
 			);
 		}
@@ -204,7 +204,6 @@ class PluginLocalRecords extends Plugin {
 		}
 
 		// Load all current local records for current Map
-		$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 		$query = "
 		SELECT
 			`m`.`MapId`,
@@ -218,7 +217,7 @@ class PluginLocalRecords extends Plugin {
 		LEFT JOIN `%prefix%players` AS `p` ON `r`.`PlayerId` = `p`.`PlayerId`
 		WHERE `m`.`Uid` = ". $aseco->db->quote($map->uid) ."
 		AND `r`.`GamemodeId` = '". $aseco->server->gameinfo->mode ."'
-		ORDER BY `r`.`Score` ". $order .", `r`.`Date` ASC
+		ORDER BY `r`.`Score` ASC, `r`.`Date` ASC
 		LIMIT ". ($this->records->getMaxRecords() ? $this->records->getMaxRecords() : 50) .";
 		";
 
@@ -269,14 +268,14 @@ class PluginLocalRecords extends Plugin {
 				// Log console message of current record
 				$aseco->console('[LocalRecords] Current record on [{1}] is {2} and held by [{3}]',
 					$aseco->stripColors($map->name, false),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score)),
+					$aseco->formatTime($cur_record->score),
 					$aseco->stripColors($cur_record->player->login, false)
 				);
 
 				// Replace parameters
 				$message = $aseco->formatText($this->settings['messages']['RECORD_CURRENT'][0],
 					$aseco->stripColors($map->name),
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score)),
+					$aseco->formatTime($cur_record->score),
 					$aseco->stripColors($cur_record->player->nickname)
 				);
 			}
@@ -372,7 +371,7 @@ class PluginLocalRecords extends Plugin {
 						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_NEW'][0],
 							$i+1,
 							$aseco->stripColors($cur_record->player->nickname),
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score))
+							$aseco->formatTime($cur_record->score)
 						);
 						$records .= $record_msg;
 					}
@@ -430,7 +429,7 @@ class PluginLocalRecords extends Plugin {
 			$cur_record = $this->records->getRecord($i);
 
 			// if player's time/score is better, or record isn't set (thanks eyez)
-			if ($cur_record === false || ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $finish_item->score > $cur_record->score : $finish_item->score < $cur_record->score)) {
+			if ($cur_record === false || $finish_item->score < $cur_record->score) {
 
 				// does player have a record already?
 				$cur_rank = -1;
@@ -441,7 +440,7 @@ class PluginLocalRecords extends Plugin {
 					if ($rec->player->login == $login) {
 
 						// new record worse than old one
-						if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $finish_item->score < $rec->score : $finish_item->score > $rec->score) {
+						if ($finish_item->score > $rec->score) {
 							return;
 						}
 						else {
@@ -453,22 +452,15 @@ class PluginLocalRecords extends Plugin {
 					}
 				}
 
-				$finish_time = $finish_item->score;
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$finish_time = $aseco->formatTime($finish_time);
-				}
+				$finish_time = $aseco->formatTime($finish_item->score);
 
 				if ($cur_rank != -1) {  // player has a record in topXX already
 
 					// compute difference to old record
-					if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-						$diff = $cur_score - $finish_item->score;
-						$sec = floor($diff/1000);
-						$ths = $diff - ($sec * 1000);
-					}
-					else {  // Stunts
-						$diff = $finish_item->score - $cur_score;
-					}
+					$diff = $cur_score - $finish_item->score;
+					$sec = floor($diff/1000);
+					$ths = $diff - ($sec * 1000);
+
 
 					// update record if improved
 					if ($diff > 0) {
@@ -486,10 +478,9 @@ class PluginLocalRecords extends Plugin {
 						$message = $aseco->formatText($this->settings['messages']['RECORD_NEW_RANK'][0],
 							$nickname,
 							$i + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 							$finish_time,
 							$cur_rank + 1,
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
+							'-'. $aseco->formatTime($diff)
 						);
 
 						// show chat message to all or player
@@ -516,7 +507,6 @@ class PluginLocalRecords extends Plugin {
 							$message = $aseco->formatText($this->settings['messages']['RECORD_EQUAL'][0],
 								$nickname,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time
 							);
 						}
@@ -525,10 +515,9 @@ class PluginLocalRecords extends Plugin {
 							$message = $aseco->formatText($this->settings['messages']['RECORD_NEW'][0],
 								$nickname,
 								$i + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 								$finish_time,
 								$cur_rank + 1,
-								($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? '+'. $diff : '-'. $aseco->formatTime($diff))
+								'-'. $aseco->formatTime($diff)
 							);
 						}
 
@@ -559,7 +548,6 @@ class PluginLocalRecords extends Plugin {
 					$message = $aseco->formatText($this->settings['messages']['RECORD_FIRST'][0],
 						$nickname,
 						$i + 1,
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'Score' : 'Time'),
 						$finish_time
 					);
 
@@ -588,9 +576,9 @@ class PluginLocalRecords extends Plugin {
 					$this->insertRecord($finish_item);
 
 					// Log record message in console
-					$aseco->console('[LocalRecords] Player [{1}] finished with {2} and took the {3}. LR place!',
+					$aseco->console('[LocalRecords] Player [{1}] finished with {2} and took the {3}. Local Record!',
 						$login,
-						(($aseco->server->gameinfo->mode == Gameinfo::STUNTS) ? $finish_item->score : $aseco->formatTime($finish_item->score)),
+						$aseco->formatTime($finish_item->score),
 						$i+1
 					);
 
@@ -655,7 +643,7 @@ class PluginLocalRecords extends Plugin {
 			". $record->map->id .",
 			". $record->player->id .",
 			". $aseco->server->gameinfo->mode .",
-			". $aseco->db->quote(date('Y-m-d H:i:s', time())) .",
+			". $aseco->db->quote(date('Y-m-d H:i:s', time() - date('Z'))) .",
 			". $record->score .",
 			". $aseco->db->quote($cps) ."
 		)
@@ -829,7 +817,6 @@ class PluginLocalRecords extends Plugin {
 		if (!$found) {
 
 			// find unranked time/score
-			$order = ($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? 'DESC' : 'ASC');
 			$query = "
 			SELECT
 				`Score`
@@ -837,7 +824,7 @@ class PluginLocalRecords extends Plugin {
 			WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) ."
 			AND `MapId` = ". $mapid ."
 			AND `GamemodeId` = '". $aseco->server->gameinfo->mode ."'
-			ORDER BY `Score` ". $order ."
+			ORDER BY `Score` ASC
 			LIMIT 1;
 			";
 
@@ -889,15 +876,9 @@ class PluginLocalRecords extends Plugin {
 				$last	= $this->records->getRecord($total-1);
 
 				// compute difference between records
-				if ($aseco->server->gameinfo->mode != Gameinfo::STUNTS) {
-					$diff = $last->score - $first->score;
-					$sec = floor($diff/1000);
-					$ths = $diff - ($sec * 1000);
-				}
-				else {
-					// Stunts
-					$diff = $first->score - $last->score;
-				}
+				$diff = $last->score - $first->score;
+				$sec = floor($diff/1000);
+				$ths = $diff - ($sec * 1000);
 			}
 
 			// get list of online players
@@ -919,7 +900,7 @@ class PluginLocalRecords extends Plugin {
 					$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_NEW_ON'][0],
 						$i + 1,
 						$aseco->stripColors($cur_record->player->nickname),
-						($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score))
+						$aseco->formatTime($cur_record->score)
 					);
 
 					// always show new record
@@ -931,7 +912,7 @@ class PluginLocalRecords extends Plugin {
 						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_ON'][0],
 							$i + 1,
 							$aseco->stripColors($cur_record->player->nickname),
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score))
+							$aseco->formatTime($cur_record->score)
 						);
 
 						if ($mode != 0 && $i == $total-1) {
@@ -953,7 +934,7 @@ class PluginLocalRecords extends Plugin {
 						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD'][0],
 							$i + 1,
 							$aseco->stripColors($cur_record->player->nickname),
-							($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $cur_record->score : $aseco->formatTime($cur_record->score))
+							$aseco->formatTime($cur_record->score)
 						);
 
 						if ($mode != 0 && $i == $total-1) {
@@ -1007,7 +988,7 @@ class PluginLocalRecords extends Plugin {
 				$message = $aseco->formatText($this->settings['messages']['RANKING_RANGE'][0],
 					$name,
 					$timing,
-					($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $diff : sprintf("%d.%03d", $sec, $ths))
+					sprintf("%d.%03d", $sec, $ths)
 				);
 			}
 			else {

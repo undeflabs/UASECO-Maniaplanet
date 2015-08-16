@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-10-07
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -81,7 +81,7 @@ class PluginChatlog extends Plugin {
 			}
 
 			// append timestamp, player nickname (but strip wide font) & chat line to history
-			if ($player = $aseco->server->players->getPlayer($chat[1])) {
+			if ($player = $aseco->server->players->getPlayerByLogin($chat[1])) {
 				$this->chat_history_buffer[] = array(date('H:i:s'), str_ireplace('$w', '', $player->nickname), $chat[2]);
 			}
 		}
@@ -95,7 +95,7 @@ class PluginChatlog extends Plugin {
 
 	public function chat_chatlog ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 

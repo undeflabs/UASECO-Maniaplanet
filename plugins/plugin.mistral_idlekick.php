@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-28
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -140,7 +140,7 @@ class PluginMistralIdlekick extends Plugin {
 			return;
 		}
 
-		if ($player = $aseco->server->players->getPlayer($chat[1])) {
+		if ($player = $aseco->server->players->getPlayerByLogin($chat[1])) {
 			$this->storePlayerData($player, 'IdleCount', 0);
 			if ($this->debug) {
 				$aseco->console('[MistralIdlekick] Player [{1}] reset on chat.', $player->login);
@@ -162,7 +162,7 @@ class PluginMistralIdlekick extends Plugin {
 			return;
 		}
 
-		if ($player = $aseco->server->players->getPlayer($checkpt[0])) {
+		if ($player = $aseco->server->players->getPlayerByLogin($checkpt[0])) {
 			$this->storePlayerData($player, 'IdleCount', 0);
 			if ($this->debug) {
 				$aseco->console('[MistralIdlekick] Player [{1}] reset on checkpoint.', $player->login);
@@ -200,12 +200,12 @@ class PluginMistralIdlekick extends Plugin {
 
 		foreach ($aseco->server->players->player_list as $player) {
 			// Check for admin immunity
-			if ($player->isspectator ? $aseco->allowAbility($player, 'noidlekick_spec') : $aseco->allowAbility($player, 'noidlekick_play')) {
+			if ($player->is_spectator ? $aseco->allowAbility($player, 'noidlekick_spec') : $aseco->allowAbility($player, 'noidlekick_play')) {
 				continue;  // Go check next player
 			}
 
 			// Check for spectator kicking
-			if ($this->kick_spectators || !$player->isspectator) {
+			if ($this->kick_spectators || !$player->is_spectator) {
 				$this->storePlayerData($player, 'IdleCount', ($this->getPlayerData($player, 'IdleCount') + 1));
 			}
 			if ($this->debug) {
@@ -224,9 +224,9 @@ class PluginMistralIdlekick extends Plugin {
 
 		foreach ($aseco->server->players->player_list as $player) {
 			// Check for spectator or player map counts
-			if ($this->getPlayerData($player, 'IdleCount') == ($player->isspectator ? $this->kick_spectator_after : $this->kick_player_after)) {
+			if ($this->getPlayerData($player, 'IdleCount') == ($player->is_spectator ? $this->kick_spectator_after : $this->kick_player_after)) {
 				$dokick = false;
-				if ($player->isspectator) {
+				if ($player->is_spectator) {
 					$dokick = true;
 					// Log console message
 					$aseco->console('[MistralIdlekick] Spectator [{1}] after "{2}" map(s) without action.', $player->login, $this->kick_spectator_after);

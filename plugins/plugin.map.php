@@ -9,7 +9,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-05-28
+ * Date:	2015-07-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -83,28 +83,15 @@ class PluginMap extends Plugin {
 			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
-			$message = $aseco->formatText($aseco->getChatMessage('MAP'),
-				$name,
-				$aseco->server->maps->current->author,
-				$aseco->server->maps->current->author_score,
-				$aseco->server->maps->current->goldtime,
-				$aseco->server->maps->current->silvertime,
-				$aseco->server->maps->current->bronzetime,
-				$aseco->server->maps->current->cost
-			);
-		}
-		else {
-			$message = $aseco->formatText($aseco->getChatMessage('MAP'),
-				$name,
-				$aseco->server->maps->current->author,
-				$aseco->formatTime($aseco->server->maps->current->author_time),
-				$aseco->formatTime($aseco->server->maps->current->goldtime),
-				$aseco->formatTime($aseco->server->maps->current->silvertime),
-				$aseco->formatTime($aseco->server->maps->current->bronzetime),
-				$aseco->server->maps->current->cost
-			);
-		}
+		$message = $aseco->formatText($aseco->getChatMessage('MAP'),
+			$name,
+			$aseco->server->maps->current->author,
+			$aseco->formatTime($aseco->server->maps->current->author_time),
+			$aseco->formatTime($aseco->server->maps->current->goldtime),
+			$aseco->formatTime($aseco->server->maps->current->silvertime),
+			$aseco->formatTime($aseco->server->maps->current->bronzetime),
+			$aseco->server->maps->current->cost
+		);
 
 		// show chat message
 		$aseco->sendChatMessage($message, $login);
@@ -118,7 +105,7 @@ class PluginMap extends Plugin {
 
 	public function chat_song ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -154,7 +141,7 @@ class PluginMap extends Plugin {
 
 	public function chat_mod ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if (!$player = $aseco->server->players->getPlayer($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
@@ -283,7 +270,7 @@ class PluginMap extends Plugin {
 			$message = $aseco->formatText($aseco->getChatMessage('CURRENT_MAP'),
 				$name,
 				$map->author,
-				($aseco->server->gameinfo->mode == Gameinfo::STUNTS ? $map->author_score : $aseco->formatTime($map->author_time))
+				$aseco->formatTime($map->author_time)
 			);
 
 			// show chat message
@@ -316,8 +303,8 @@ class PluginMap extends Plugin {
 
 	public function onEndMap ($aseco, $data) {
 
-		// Skip if TimeAttack/Stunts mode (always same playing time), or if disabled
-		if ($aseco->settings['show_playtime'] == 0 || $aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::STUNTS) {
+		// Skip if TimeAttack mode (always same playing time), or if disabled
+		if ($aseco->settings['show_playtime'] == 0 || $aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 			return;
 		}
 

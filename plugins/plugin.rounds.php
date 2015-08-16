@@ -7,8 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2014-09-26
- * Copyright:	2014 by undef.de
+ * Date:	2015-07-03
+ * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -125,7 +125,7 @@ class PluginRounds extends Plugin {
 			// Report all new records, first 'show_min_recs' w/ time, rest w/o
 			foreach ($round_scores as $tm) {
 				// Check if player still online
-				if ($player = $aseco->server->players->getPlayer($tm['login'])) {
+				if ($player = $aseco->server->players->getPlayerByLogin($tm['login'])) {
 					$nick = $aseco->stripColors($player->nickname);
 				}
 				else {  // fall back on login
@@ -170,7 +170,7 @@ class PluginRounds extends Plugin {
 			// Show chat message
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 			$message = $aseco->formatColors($message);
-			$aseco->console('[Rounds] '. $aseco->stripColors($message, false));
+//			$aseco->console('[Rounds] '. $aseco->stripColors($message, false));
 
 			if ($aseco->settings['rounds_in_window']) {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));

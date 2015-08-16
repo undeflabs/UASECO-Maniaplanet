@@ -11,6 +11,7 @@
 //            » 2014-07-14: Included file "urlsafebase64.php" into class WebaccessUrl
 //            » 2014-09-09: Bugfix for [PHP Notice] Undefined offset: 0 on line 1188 till 1194
 //            » 2014-10-04: Changed default UserAgent string
+//            » 2015-07-31: Added "X-ManiaPlanet-ServerLogin" for MX "Who downloaded?" function
 //
 ////////////////////////////////////////////////////////////////
 
@@ -361,7 +362,7 @@ class WebaccessUrl {
 	// Methods
 	//-----------------------------
 
-	function WebaccessUrl(&$wa, $host, $port, $keepalive = true, $keepalive_timeout = 600, $keepalive_max = 300, $agent = 'XMLaccess') {
+	function WebaccessUrl(&$wa, $host, $port, $keepalive = true, $keepalive_timeout = 600, $keepalive_max = 300, $agent = USER_AGENT) {
 		global $_web_access_compress_xmlrpc_request, $_web_access_retry_timeout;
 
 		$this->wa = &$wa;
@@ -495,6 +496,7 @@ class WebaccessUrl {
 			if (is_string($query['QueryData']) && strlen($query['QueryData']) > 0) {
 				$msg = "POST " . $query['Path'] . " HTTP/1.1\r\n";
 				$msg .= "Host: " . $this->_host . "\r\n";
+				$msg .= "X-ManiaPlanet-ServerLogin: ". $aseco->server->login  ."\r\n";
 				$msg .= "User-Agent: " . $this->_agent . "\r\n";
 				$msg .= "Cache-Control: no-cache\r\n";
 

@@ -1,13 +1,16 @@
+plugin.music_server.php
+~~~~~~~~~~~~~~~~~~~~~~~
+[2015-07-07 19:58:43] [Chat] Player [truffeltje] used command "/admin nextmap"
+[2015-07-07 19:58:43] [Admin] MasterAdmin [truffeltje] skips map!
+[PHP Warning] get_headers(http://static.undef.name/servers/music/Trackmania2-Canyon1b.ogg): failed to open stream: HTTP request failed!  on line 1017 in file /home/tmserver/servers/mp_00337/uaseco/plugins/plugin.music_server.php
+[UASECO Warning] [MusicServer] Could not access song [http://static.undef.name/servers/music/Trackmania2-Canyon1b.ogg]
+[2015-07-07 20:00:45] [Rasp] Calculating ranks...
+[2015-07-07 20:00:45] [Rasp] ...successfully done!
+
+
+
 UASECO
 ~~~~~~
-	Laps.Script.txt
-	~~~~~~~~~~~~~~~
-	[2015-05-04 19:27:34] [Dedimania] dedimaniaEndMapCallbackHandler() - error(s): Warning in method_helper.php(1254): IGNORE RECORD for undef.de on OVRP0HoRJrR194zgIBHCzPia_Ac,2,1 for undef.de : bad num of checkpoints (20 for 4) ! (4967,7391,9364,11254,13008,14868,16608,18373,20138,21828,23662,25483,27267,29107,30851,32600,34373,36148,37917,39782)
-	If 4 if not the real number of cp then contact the Dedimania maintainer to correct it. (4967,7391,9364,11254,13008,14868,16608,18373,20138,21828,23662,25483,27267,29107,30851,32600,34373,36148,37917,39782)
-	Warning in method_helper.php(1359): VReplay has not the same number of checks as best time (20,4) !
-
- - Include $aseco->server->maps->next (ala $aseco->server->maps->current)
- - Retrieve MX-Infos for PrevMap and NextMap (after restart)
  - Split plugin.manialinks.php into the related plugins and change all old fashioned Windows to the window.class.php, after that remove it
  - Split plugin.panels.php into the related plugins and remove it
 
@@ -40,33 +43,13 @@ TriggerPageAction("maniaplanet:quitserver")
 
 
 
-ManiaKarma
-~~~~~~~~~~
- - Include Debug logging
-
-
 
 Records-Eyepiece
 ~~~~~~~~~~~~~~~~
- - SpectatorInfoWidget
-  -> https://forum.maniaplanet.com/viewtopic.php?f=279&t=30986
-  -> https://forum.maniaplanet.com/viewtopic.php?f=279&t=29227
-
  - Player marker from Players behind current should be "grey" instead of red
- - Add possibilities for <background_color> at <checkpointcount_widget>
- - Remove <ladderlimit_widget>, <gamemode_widget>, <player_spectator_widget>, <current_ranking_widget>
 
 
 
-
-Linux
-~~~~~
-Starting ManiaPlanet Date=2015-02-18_12_00 Svn=607465 GameVersion=3.3.0...
-Initializing...
-Configuration file : dedicated_tm2mixed.cfg
-Loading system configuration...
-...system configuration loaded
-Loading cache...
-...OK
-Listening for xml-rpc commands on port 5001.
-ManiaPlanet server daemon started with pid=1416 (parent=1415).
+Tachometer
+~~~~~~~~~~
+ - Let the Player decide which distance he want to see: "trip" (reset every restart) or "day" (count the complete online session)... store them into the DB and add Widget in RE (MostDistance)?

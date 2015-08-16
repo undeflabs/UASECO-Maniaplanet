@@ -4,7 +4,7 @@
  * ~~~~~~~~~~~~~~~~
  * » ManiaPlanet dedicated server Xml-RPC client.
  * » Based upon GbxRemote.php from 'https://github.com/NewboO/dedicated-server-api/',
- *   version from 2015-01-24 and changed to UASECO requirements.
+ *   version from 2015-06-18 and changed to UASECO requirements.
  *
  *   2014-10-03: Renamed query() into singlequery(), changed parameter for addCall() and query()
  *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
@@ -13,7 +13,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-25
+ * Date:	2015-07-13
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -55,6 +55,7 @@ class GbxRemote {
 	private $lastNetworkActivity	= 0;
 
 	private $ignore_error_messages	= array(
+		'Not in script mode.',						// TriggerModeScriptEvent, TriggerModeScriptEventArray
 		'Connection not initialized',					// *ToLogin
 		'Login unknown.',						// *ToLogin, GetDetailedPlayerInfo
 		'Start index out of bound.',					// GetMapList
@@ -183,18 +184,23 @@ class GbxRemote {
 		$args = func_get_args();
 		$method = array_shift($args);
 
-		try {
-			return $this->singlequery($method, $args);
+		if (isset($aseco->server->gameinfo->mode) && $aseco->server->gameinfo->mode == Gameinfo::CUP && ($method == 'RestartMap' || $method == 'NextMap')) {
+			$aseco->console('[GbxRemote] Method [{1}] does not work while running Modescript "Cup.Script.txt"!', $method);
 		}
-		catch (Exception $exception) {
-			$message = $exception->getMessage();
-			if (!in_array($message, $this->ignore_error_messages)) {
-				if ($aseco->debug) {
-					$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
-					$aseco->dump($args);
-				}
-				else {
-					$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
+		else {
+			try {
+				return $this->singlequery($method, $args);
+			}
+			catch (Exception $exception) {
+				$message = $exception->getMessage();
+				if (!in_array($message, $this->ignore_error_messages)) {
+					if ($aseco->debug) {
+						$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
+						$aseco->dump($args);
+					}
+					else {
+						$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
+					}
 				}
 			}
 		}

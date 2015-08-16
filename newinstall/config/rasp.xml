@@ -109,11 +109,6 @@
 	<jukebox_in_window>false</jukebox_in_window>
 
 	<!--
-	Path to a file where the map history can be stored, used in jukebox
-	//-->
-	<maphistory_file>cache/maphistory.txt</maphistory_file>
-
-	<!--
 	Set to filename to enable autosaving matchsettings upon every map switch,
 	e.g. 'autosave_matchsettings.txt'.
 	Gets stored at "UserData/Maps/MatchSettings/" directory.
@@ -161,12 +156,6 @@
 	#  These variables are used by the jukebox.                      #
 	##################################################################
 	//-->
-
-	<!--
-	Specifies how large the map history buffer is.
-	If a map that is in the buffer gets requested, it won't be jukeboxed.
-	//-->
-	<buffer_size>20</buffer_size>
 
 	<!--
 	Specifies the required vote ratio for a MX /add request to be successful.
@@ -266,7 +255,7 @@
 	not enough players agree, and thus block players from starting a
 	different type of vote;
 	therefore limits can be set how long a vote runs in Rounds/Team and
-	TimeAttack/Laps/Stunts modes, expiring it after a certain number of
+	TimeAttack/Laps modes, expiring it after a certain number of
 	rounds or a certain amount of time, respectively;
 	in TA this uses Checkpoint events as a trigger, so it depends on
 	players regularly crossing them;
