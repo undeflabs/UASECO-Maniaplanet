@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-06-30
+ * Date:	2015-08-17
  * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -144,7 +144,6 @@ class Playlist {
 		global $aseco;
 
 		if (isset($map->id) && $map->id > 0 && isset($aseco->server->maps->map_list[$map->uid])) {
-			$aseco->server->maps->previous = $map;
 
 			// Update MapHistory in DB
 			$query = "
@@ -203,20 +202,6 @@ class Playlist {
 			}
 		}
 		return false;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function setPreviousMap ($map) {
-		global $aseco;
-
-		if (isset($map->id) && $map->id > 0 && isset($aseco->server->maps->map_list[$map->uid])) {
-			$aseco->server->maps->previous = $map;
-		}
 	}
 }
 

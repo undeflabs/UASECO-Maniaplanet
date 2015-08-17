@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -33,6 +33,7 @@
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.rasp_votes.php
  *  - plugins/plugin.rasp_jukebox.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -65,6 +66,7 @@ class PluginRasp extends Plugin {
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
@@ -162,6 +164,10 @@ class PluginRasp extends Plugin {
 				$aseco->console_text('[Rasp] ERROR: MXtmp Directory (' . $aseco->server->mapdir . $this->mxtmpdir . ') cannot be written to');
 				$this->feature_mxadd = false;
 			}
+		}
+
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Who is the most victorious player? Use "/topwins" to find out!');
 		}
 	}
 

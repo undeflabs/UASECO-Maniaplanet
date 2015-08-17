@@ -84,25 +84,11 @@
 
 		<!-- Define your Info Messages here, just add as many "<message>YOUR MESSAGE HERE</message>" entries as you want -->
 		<messages>
-			<message>Information about and download of this UASECO on $Lhttp://www.UASECO.org</message>
-			<message>Use "/list" -> "/jukebox ##" to add a map in the jukebox.</message>
+			<message>Information about and download of this UASECO on $L[http://www.UASECO.org]http://www.UASECO.org$L</message>
 			<message>Please do not sound your horn throughout the entire map.</message>
 			<message>When going AFK, please set your character to Spectator mode.</message>
-			<message>Do not use Enter to skip intros - instead use Space & Enter</message>
-			<message>For player & server info use the "/stats" and "/server" commands.</message>
-			<message>Looking for the name of this server?  Use the "/server" command.</message>
-			<message>Wondering which maps you haven't played recently?  Use "/list norecent" to find out!</message>
-			<message>Who is the most victorious player?  Use "/topwins" to find out!</message>
-			<message>Wondering what maps were played recently?  Use the "/history" command.</message>
-			<message>Jukeboxed the wrong map?  Use "/jukebox drop" to remove it!</message>
-			<message>Forgot what someone said?  Use "/chatlog" to check the chat history!</message>
-			<message>Forgot what someone pm-ed you?  Use "/pmlog" to check your PM history!</message>
-			<message>Looking for the next better ranked player to beat?  Use "/nextrank"!</message>
-			<message>Use "/list newest" to find the newest maps added to the server, then /jukebox them!</message>
-			<message>Use "/mute" and "/unmute" to mute / unmute other players, and "/mutelist" to list them!</message>
-			<message>Wondering when a player was last online?  Use "/laston LOGIN" to find out!</message>
-			<message>Find the MX info for a map with the "/mxinfo" command!</message>
-			<message>Check out the UASECO site at $Lhttp://www.UASECO.org !</message>
+			<message>Do not use Enter to skip intros, instead use Space & Enter</message>
+			<message>Check out the UASECO site at $L[http://www.UASECO.org]http://www.UASECO.org$L!</message>
 		</messages>
 	</info_messages>
 

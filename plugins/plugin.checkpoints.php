@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-21
+ * Date:	2015-08-17
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -804,10 +804,9 @@ main() {
 				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CheckpointTimes.count - 1]);
 			}
 
-
 			// Check for a time improvement
 			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart || InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
-				if (InputPlayer != Null && InputPlayer.Score.BestRace.Time != -1 && TotalCheckpoints > 0 && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0)) {
+				if (InputPlayer != Null && InputPlayer.Score.BestRace.Time != -1 && TotalCheckpoints > 0 && (CheckpointTimes.count == TotalCheckpoints && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0))) {
 					CheckpointTimes.clear();
 					foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
 						CheckpointTimes.add(CpTime);

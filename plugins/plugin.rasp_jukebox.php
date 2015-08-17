@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-31
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -38,6 +38,7 @@
  *  - plugins/plugin.dedimania.php
  *  - plugins/chat.records.php
  *  - plugins/plugin.rasp_votes.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -76,6 +77,7 @@ class PluginRaspJukebox extends Plugin {
 		$this->addDependence('PluginChatRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDedimania',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		// handles action id's "101"-"2000" for jukeboxing max. 1900 maps
 		// handles action id's "-101"-"-2000" for listing max. 1900 authors
@@ -109,6 +111,14 @@ class PluginRaspJukebox extends Plugin {
 	public function onSync ($aseco, $data) {
 		// Get settings
 		$this->readSettings();
+
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Wondering which maps you have not played recently? Use "/list norecent" to find out!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Use "/list newest" to find the newest maps added to the server, then /jukebox them!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Use "/list" -> "/jukebox ##" to add a map in the jukebox.');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Jukeboxed the wrong map?  Use "/jukebox drop" to remove it!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Wondering what maps were played recently? Use the "/history" command.');
+		}
 	}
 
 	/*

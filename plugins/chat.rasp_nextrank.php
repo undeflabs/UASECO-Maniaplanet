@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,6 +28,7 @@
  *
  * Dependencies:
  *  - plugins/plugin.rasp.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -54,9 +55,24 @@ class PluginChatRaspNextrank extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Shows the next better ranked player.');
 
-		$this->addDependence('PluginRasp', Dependence::REQUIRED, '1.0.0', null);
+		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
+
+		$this->registerEvent('onSync',			'onSync');
 
 		$this->registerChatCommand('nextrank', 'chat_nextrank', 'Shows the next better ranked player.', Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Looking for the next better ranked player to beat?  Use "/nextrank"!');
+		}
 	}
 
 	/*

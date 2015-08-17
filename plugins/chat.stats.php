@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -31,6 +31,7 @@
  *  - plugins/plugin.rasp.php
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.panels.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -62,9 +63,24 @@ class PluginChatStats extends Plugin {
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
+
+		$this->registerEvent('onSync',			'onSync');
 
 		$this->registerChatCommand('stats',	'chat_stats',		'Displays statistics of current player',	Player::PLAYERS);
 		$this->registerChatCommand('settings',	'chat_settings',	'Displays your personal settings',		Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('For player info use the "/stats" command.');
+		}
 	}
 
 	/*

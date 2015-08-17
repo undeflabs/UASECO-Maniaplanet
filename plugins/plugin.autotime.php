@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-24
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -59,7 +59,7 @@ class PluginAutotime extends Plugin {
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onUnloadingMap',	'onUnloadingMap');
+		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 	}
 
 	/*
@@ -92,24 +92,16 @@ class PluginAutotime extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $data) {
+	public function onLoadingMap ($aseco, $data) {
 
 		// Check for compatible Gamemode on next map
 		$gamemode = $aseco->server->gameinfo->mode;
 		if ($gamemode == Gameinfo::TIME_ATTACK || $gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::TEAM_ATTACK || $gamemode == Gameinfo::CHASE) {
 			// Check if auto timelimit enabled
 			if ($this->config['MULTIPLICATOR'][0] > 0) {
-				// Check if at least one active player on the server
-				if ( $this->checkForActivePlayer() ) {
-					// Get next map object
-					$map = $aseco->server->maps->getNextMap();
-					$newtime = substr((int)$map->author_time, 0, -3);
-				}
-				else {
-					// Server already switched so get current map name
-					$newtime = 0;  // force default
-					$newtime = substr((int)$aseco->server->maps->current->author_time, 0, -3);
-				}
+				// Get map object
+				$map = $aseco->server->maps->getCurrentMap();
+				$newtime = substr((int)$map->author_time, 0, -3);
 
 				// Compute new timelimit
 				if ($newtime <= 0) {
@@ -170,26 +162,6 @@ class PluginAutotime extends Plugin {
 				}
 			}
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Check for at least one active player
-	public function checkForActivePlayer () {
-		global $aseco;
-
-		// Check all connected players
-		foreach ($aseco->server->players->player_list as $player) {
-			// Get current player status
-			if (!$player->is_spectator) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
 

@@ -46,7 +46,8 @@
 
 	<images>
 		<background>http://static.undef.name/ingame/tachometer/2015/tachometer-background.png</background>
-		<needle>http://static.undef.name/ingame/tachometer/2015/needle-light.png</needle>
+<!--		<needle>http://static.undef.name/ingame/tachometer/2015/needle-light.png</needle>			-->
+		<needle>http://static.undef.name/ingame/tachometer/2015/needle-light-cutted.png</needle>
 
 		<scale>
 			<colorscale>http://static.undef.name/ingame/tachometer/2015/tachometer-colorscale.png</colorscale>

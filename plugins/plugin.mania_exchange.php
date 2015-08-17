@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - none
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -55,10 +55,12 @@ class PluginManiaExchange extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Provides world record message at start of each map.');
 
-		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onLoadingMap',	'onLoadingMap');
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
-		$this->registerChatCommand('mx', 'chat_mx', 'xxxxx', Player::MASTERADMINS);
+		$this->registerEvent('onSync',			'onSync');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
+
+//		$this->registerChatCommand('mx', 'chat_mx', 'xxxxx', Player::MASTERADMINS);
 	}
 
 	/*
@@ -76,6 +78,10 @@ class PluginManiaExchange extends Plugin {
 		$this->config['show_records']		= (int)$settings['SHOW_RECORDS'][0];
 
 		$this->config['messages']['records']	= $settings['MESSAGES'][0]['RECORDS'][0];
+
+//		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+//			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Find the MX info for a map with the "/mxinfo" command!');
+//		}
 	}
 
 	/*
@@ -103,19 +109,19 @@ class PluginManiaExchange extends Plugin {
 		}
 	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_mx ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-			return;
-		}
-
-	}
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function chat_mx ($aseco, $login, $chat_command, $chat_parameter) {
+//
+//		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+//			return;
+//		}
+//
+//	}
 }
 
 ?>

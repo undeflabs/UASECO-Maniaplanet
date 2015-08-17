@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -31,6 +31,7 @@
  *  - plugins/chat.admin.php
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.muting.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -57,10 +58,13 @@ class PluginChatRasp extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Provides private messages and a wide variety of shout-outs.');
 
-		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0',	null);
-		$this->addDependence('PluginChatAdmin',		Dependence::REQUIRED,	'1.0.0',	null);
-		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0',	null);
-		$this->addDependence('PluginMuting',		Dependence::WANTED,	'1.0.0',	null);
+		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginChatAdmin',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginMuting',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
+
+		$this->registerEvent('onSync',			'onSync');
 
 		$this->registerChatCommand('pm',	'chat_pm',		'Sends a private message to login or PlayerId',		Player::PLAYERS);
 		$this->registerChatCommand('pma',	'chat_pma',		'Sends a private message to player and admins',		Player::PLAYERS);
@@ -78,6 +82,18 @@ class PluginChatRasp extends Plugin {
 		$this->registerChatCommand('bgm',	'chat_bgm',		'Sends a Bad Game message to everyone',			Player::PLAYERS);
 		$this->registerChatCommand('official',	'chat_official',	'Shows a helpful message ;-)',				Player::PLAYERS);
 		$this->registerChatCommand('bootme',	'chat_bootme',		'Boot yourself from the server',			Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Forgot what someone pm-ed you? Use "/pmlog" to check your PM history!');
+		}
 	}
 
 	/*

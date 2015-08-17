@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,6 +28,7 @@
  *
  * Dependencies:
  *  - plugins/plugin.manialinks.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -58,11 +59,25 @@ class PluginChatlog extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Keeps log of player chat, and displays the chat log.');
 
-		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
+		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
-		$this->registerEvent('onPlayerChat',	'onPlayerChat');
+		$this->registerEvent('onSync',			'onSync');
+		$this->registerEvent('onPlayerChat',		'onPlayerChat');
 
-		$this->registerChatCommand('chatlog',	'chat_chatlog', 'Displays log of recent chat messages', Player::PLAYERS);
+		$this->registerChatCommand('chatlog',		'chat_chatlog', 'Displays log of recent chat messages', Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Forgot what someone said? Use "/chatlog" to check the chat history!');
+		}
 	}
 
 	/*

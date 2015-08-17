@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-18
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -30,6 +30,7 @@
  *  - plugins/plugin.manialinks.php
  *  - plugins/plugin.local_records.php
  *  - plugins/plugin.rasp_votes.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -59,11 +60,27 @@ class PluginChatServer extends Plugin {
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
+
+		$this->registerEvent('onSync',			'onSync');
 
 		$this->registerChatCommand('server',	'chat_server',	'Displays info about this server',		Player::PLAYERS);
 		$this->registerChatCommand('uaseco',	'chat_uaseco',	'Displays info about this UASECO',		Player::PLAYERS);
 		$this->registerChatCommand('plugins',	'chat_plugins',	'Displays list of active plugins',		Player::PLAYERS);
 		$this->registerChatCommand('time',	'chat_time',	'Shows current server time and date',		Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('For server info use the "/server" command.');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Looking for the name of this server? Use the "/server" command.');
+		}
 	}
 
 	/*

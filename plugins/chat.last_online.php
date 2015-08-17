@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - none
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -54,7 +54,23 @@ class PluginLastOnline extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Shows when a player was last online...');
 
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
+
+		$this->registerEvent('onSync',			'onSync');
+
 		$this->registerChatCommand('laston', 'chat_laston', 'Shows when a player was last online', Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onSync ($aseco) {
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Wondering when a player was last online? Use "/laston LOGIN" to find out!');
+		}
 	}
 
 	/*

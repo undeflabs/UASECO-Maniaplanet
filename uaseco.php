@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-08-16');
+	define('UASECO_BUILD',		'2015-08-17');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1847,9 +1847,12 @@ class UASECO extends Helper {
 			return;
 		}
 
-		// Setup previous Map
-		if ($this->startup_phase == false) {
-			$this->server->playlist->setPreviousMap($this->server->maps->current);
+		if ($this->startup_phase === false) {
+			// Add new Map into MapHistory
+			$this->server->playlist->addMapToHistory($this->server->maps->current);
+
+			// Setup previous Map
+			$this->server->maps->previous = $this->server->maps->current;
 		}
 
 		// Setup next Map
@@ -1863,7 +1866,7 @@ class UASECO extends Helper {
 		// Search MX for current Map
 		if ($map->mx === false || time() > ($map->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
 			$response = new MXInfoFetcher('TM2', $map->uid, true);
-			if (empty($response->error)) {
+			if ($response !== null && empty($response->error)) {
 				$map->mx = $response;
 				$this->releaseEvent('onManiaExchangeBestLoaded', (isset($map->mx->recordlist[0]['replaytime']) ? $map->mx->recordlist[0]['replaytime'] : 0));
 			}
@@ -1878,7 +1881,7 @@ class UASECO extends Helper {
 		// Search MX for previous Map
 		if ($this->server->maps->previous->mx === false || time() > ($this->server->maps->previous->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
 			$response = new MXInfoFetcher('TM2', $this->server->maps->previous->uid, true);
-			if (empty($response->error)) {
+			if ($response !== null && empty($response->error)) {
 				$this->server->maps->previous->mx = $response;
 			}
 		}
@@ -1886,7 +1889,7 @@ class UASECO extends Helper {
 		// Search MX for next Map
 		if ($this->server->maps->next->mx === false || time() > ($this->server->maps->next->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
 			$response = new MXInfoFetcher('TM2', $this->server->maps->next->uid, true);
-			if (empty($response->error)) {
+			if ($response !== null && empty($response->error)) {
 				$this->server->maps->next->mx = $response;
 			}
 		}
@@ -1908,8 +1911,8 @@ class UASECO extends Helper {
 		// Log console message
 		if ($this->server->maps->current->uid == $map->uid) {
 			$this->console("[Map] Running on [{1}] made by [{2}] [Env: '{3}', Uid: '{4}', Id: {5}]",
-				$this->stripColors($map->name, false),
-				$this->stripColors($map->author, false),
+				$map->name_stripped,
+				$map->author,
 				$map->environment,
 				$map->uid,
 				$map->id
@@ -1917,8 +1920,8 @@ class UASECO extends Helper {
 		}
 		else {
 			$this->console("[Map] Changing from [{1}] to [{2}] [Env: '{3}', Uid: '{4}', Id: {5}]",
-				$this->stripColors($this->server->maps->current->name, false),
-				$this->stripColors($map->name, false),
+				$this->server->maps->current->name_stripped,
+				$map->name_stripped,
 				$map->environment,
 				$map->uid,
 				$map->id
@@ -1927,11 +1930,6 @@ class UASECO extends Helper {
 
 		// Update the field which contains current map
 		$this->server->maps->current = $map;
-
-		// Add new Map into MapHistory
-		if ($this->startup_phase == false) {
-			$this->server->playlist->addMapToHistory($this->server->maps->current);
-		}
 
 		// Throw main 'loading map' event
 		if ($this->settings['developer']['log_events']['common'] == true) {

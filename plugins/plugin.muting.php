@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -28,6 +28,7 @@
  *
  * Dependencies:
  *  - plugins/plugin.manialinks.php
+ *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -56,12 +57,12 @@ class PluginMuting extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Handles individual and global player muting');
 
-		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
+		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onPlayerChat',	'onPlayerChat');
 		$this->registerEvent('onServerChat',	'onServerChat');
-
 
 		$this->registerChatCommand('mute',	'chat_mute',		'Mute another player\'s chat messages',		Player::PLAYERS);
 		$this->registerChatCommand('unmute',	'chat_unmute',		'UnMute another player\'s chat messages',	Player::PLAYERS);
@@ -82,6 +83,10 @@ class PluginMuting extends Plugin {
 		             .'|'. $aseco->formatColors('$z$s{#server}» ')
 		             .'|'. $aseco->formatColors('{#server}» ') .'/A';		// anchor at start
 		$this->global_pattern = str_replace('$', '\$', $this->global_pattern);	// escape dollars
+
+		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Use "/mute" and "/unmute" to mute / unmute other players, and "/mutelist" to list them!');
+		}
 	}
 
 	/*

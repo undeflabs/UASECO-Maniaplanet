@@ -137,7 +137,7 @@
 	<!-- Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html -->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
-		<chat_time>15</chat_time>
+		<chat_time>20</chat_time>
 
 		<!-- Allow the players to respawn ('true') or not ('false') -->
 		<allow_respawn>true</allow_respawn>

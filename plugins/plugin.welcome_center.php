@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-02
+ * Date:	2015-08-17
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -42,6 +42,7 @@
 
 class PluginWelcomeCenter extends Plugin {
 	public $config = array();
+	private $messages = array();
 
 
 	/*
@@ -87,6 +88,11 @@ class PluginWelcomeCenter extends Plugin {
 		$this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]		= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]) == 'TRUE')		? true : false);
 		$this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]			= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]) == 'TRUE')			? true : false);
 		$this->config['INFO_MESSAGES'][0]['ENABLED'][0]				= ((strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
+
+		foreach ($this->config['INFO_MESSAGES'][0]['MESSAGES'][0] as $msg) {
+			$this->messages[] = $msg[0];
+		}
+		unset($this->config['INFO_MESSAGES'][0]['MESSAGES'][0]);
 	}
 
 	/*
@@ -98,11 +104,22 @@ class PluginWelcomeCenter extends Plugin {
 	public function chat_message ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Get random message
-		$i = mt_rand(0, count($this->config['INFO_MESSAGES'][0]['MESSAGES'][0]['MESSAGE']) - 1);
-		$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->config['INFO_MESSAGES'][0]['MESSAGES'][0]['MESSAGE'][$i]);
+		$i = mt_rand(0, count($this->messages) - 1);
+		$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
 
 		// Send the message
 		$aseco->sendChatMessage($message, $login);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function addInfoMessage ($message) {
+		$this->messages[] = $message;
+		$this->messages = array_unique($this->messages);
 	}
 
 	/*
@@ -137,7 +154,7 @@ class PluginWelcomeCenter extends Plugin {
 				}
 
 				// Setup Ladderrank, Serverrank, Nation and Zone
-				$ladderrank = $aseco->formatNumber($player->ladderrank, 0);
+				$ladderrank = (($player->ladderrank >= 0) ? $aseco->formatNumber($player->ladderrank, 0) : 0);
 				$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
 				$zone = $player->zone;
 				array_shift($zone);		// Remove continent from $zone array
@@ -259,13 +276,13 @@ class PluginWelcomeCenter extends Plugin {
 		}
 
 		// If no info messages, bail out immediately
-		if (count($this->config['INFO_MESSAGES'][0]['MESSAGES'][0]['MESSAGE']) == 0) {
+		if (count($this->messages) == 0) {
 			return;
 		}
 
 		// Get random message
-		$i = mt_rand(0, count($this->config['INFO_MESSAGES'][0]['MESSAGES'][0]['MESSAGE']) - 1);
-		$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->config['INFO_MESSAGES'][0]['MESSAGES'][0]['MESSAGE'][$i]);
+		$i = mt_rand(0, count($this->messages) - 1);
+		$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
 
 
 		// Send the Message to all connected Players...
