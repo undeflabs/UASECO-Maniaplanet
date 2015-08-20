@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-08-17
+ * Date:		2015-08-19
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -7313,10 +7313,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<dedimania_records> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<dedimania_records>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -7479,10 +7478,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<local_records> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<local_records>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -7701,10 +7699,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<live_rankings> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<live_rankings> (ManiaScriptBeta)
  * License:	GPLv3
  * ----------------------------------
  */
@@ -8304,10 +8301,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<live_rankings> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<live_rankings>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -9647,7 +9643,7 @@ EOL;
 		$xml .= '<quad posn="29.7 -6.75 0.03" sizen="42.2 31" halign="center" bgcolor="FFF9"/>';
 		$xml .= '<label posn="29.7 -20.625 0.04" sizen="35 3.75" halign="center" class="labels" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="29.7 -7.25 0.50" sizen="41.2 30" halign="center" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->previous->uid) .'?.jpg') .'"/>';
-		$xml .= '<label posn="3.5 -39.375 0.02" sizen="52.5 5.625" class="labels" textsize="2" text="$S'. $aseco->server->maps->previous->name .'"/>';
+		$xml .= '<label posn="3.5 -39.375 0.02" sizen="52.5 5.625" class="labels" textsize="2" text="'. $this->handleSpecialChars($aseco->server->maps->previous->name) .'"/>';
 		$xml .= '<quad posn="3.75 -43.125 0.04" sizen="3.75 3.75" image="file://Skins/Avatars/Flags/'. (strtoupper($aseco->server->maps->previous->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->previous->author_nation) .'.dds"/>';
 		$xml .= '<label posn="8.65 -43.6875 0.02" sizen="46 5.625" class="labels" text="by '. $this->getMapAuthor($aseco->server->maps->previous) .'"/>';
 		$xml .= '<frame posn="7.4 -61.875 0">';	// BEGIN: Times frame
@@ -9713,7 +9709,7 @@ EOL;
 		$xml .= '<quad posn="29.7 -6.75 0.03" sizen="42.2 31" halign="center" bgcolor="FFF9"/>';
 		$xml .= '<label posn="29.7 -20.625 0.04" sizen="35 3.75" halign="center" class="labels" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="29.7 -7.25 0.50" sizen="41.2 30" halign="center" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->current->uid) .'?.jpg') .'"/>';
-		$xml .= '<label posn="3.5 -39.375 0.02" sizen="52.5 5.625" class="labels" textsize="2" text="$S'. $aseco->server->maps->current->name .'"/>';
+		$xml .= '<label posn="3.5 -39.375 0.02" sizen="52.5 5.625" class="labels" textsize="2" text="'. $this->handleSpecialChars($aseco->server->maps->current->name) .'"/>';
 		$xml .= '<quad posn="3.75 -43.125 0.04" sizen="3.75 3.75" image="file://Skins/Avatars/Flags/'. (strtoupper($aseco->server->maps->current->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->current->author_nation) .'.dds"/>';
 		$xml .= '<label posn="8.65 -43.6875 0.02" sizen="46 5.625" class="labels" text="by '. $this->getMapAuthor($aseco->server->maps->current) .'"/>';
 		$xml .= '<frame posn="7.4 -61.875 0">';	// BEGIN: Times frame
@@ -9779,7 +9775,7 @@ EOL;
 		$xml .= '<quad posn="29.7 -6.75 0.03" sizen="42.2 31" halign="center" bgcolor="FFF9"/>';
 		$xml .= '<label posn="29.7 -20.625 0.04" sizen="35 3.75" halign="center" class="labels" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="29.7 -7.25 0.50" sizen="41.2 30" halign="center" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->next->uid) .'?.jpg') .'"/>';
-		$xml .= '<label posn="3.5 -39.375 0.02" sizen="52.5 5.625" class="labels" textsize="2" text="$S'. $aseco->server->maps->next->name .'"/>';
+		$xml .= '<label posn="3.5 -39.375 0.02" sizen="52.5 5.625" class="labels" textsize="2" text="'. $this->handleSpecialChars($aseco->server->maps->next->name) .'"/>';
 		$xml .= '<quad posn="3.75 -43.125 0.04" sizen="3.75 3.75" image="file://Skins/Avatars/Flags/'. (strtoupper($aseco->server->maps->next->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->next->author_nation) .'.dds"/>';
 		$xml .= '<label posn="8.65 -43.6875 0.02" sizen="46 5.625" class="labels" text="by '. $this->getMapAuthor($aseco->server->maps->next) .'"/>';
 		$xml .= '<frame posn="7.4 -61.875 0">';	// BEGIN: Times frame
@@ -10496,7 +10492,7 @@ EOL;
 					$xml .= '<quad posn="0.5 -0.5 0.04" sizen="43.375 3.75" bgcolor="0099FFDD"/>';
 					$xml .= '<label posn="15 -1.21875 0.05" sizen="18.25 0" class="labels" textsize="1" text="#'. ($i+1) .'"/>';
 					$xml .= '<quad posn="1.5 -0.9375 0.05" sizen="12.5 2.8125" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
-					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" text="'. $map->name .'"/>';
+					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
@@ -10509,7 +10505,7 @@ EOL;
 					$xml .= '<quad posn="0.5 -0.5 0.04" sizen="43.375 3.75" bgcolor="0099FFDD"/>';
 					$xml .= '<label posn="15 -1.21875 0.05" sizen="18.25 0" class="labels" textsize="1" text="#'. ($i+1) .'"/>';
 					$xml .= '<quad posn="1.5 -0.9375 0.05" sizen="12.5 2.8125" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
-					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" text="'. $map->name .'"/>';
+					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
@@ -10524,7 +10520,7 @@ EOL;
 					$xml .= '<quad posn="0.5 -0.5 0.04" sizen="43.375 3.75" bgcolor="00DD00FF"/>';
 					$xml .= '<label posn="15 -1.21875 0.05" sizen="18.25 0" class="labels" textsize="1" textcolor="000F" text="#'. ($i+1) .'"/>';
 					$xml .= '<quad posn="1.5 -0.9375 0.05" sizen="12.5 2.8125" modulatecolor="000" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
-					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" textcolor="FFF8" text="'. $aseco->stripColors($map->name, true) .'"/>';
+					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" textcolor="FFF8" text="'. $map->name_stripped .'"/>';
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
@@ -10539,7 +10535,7 @@ EOL;
 					$xml .= '<quad posn="0.5 -0.5 0.04" sizen="43.375 3.75" bgcolor="0099FF55"/>';
 					$xml .= '<label posn="15 -1.21875 0.05" sizen="18.25 0" class="labels" textsize="1" textcolor="FFF8" text="#'. ($i+1) .'"/>';
 					$xml .= '<quad posn="1.5 -0.9375 0.05" sizen="12.5 2.8125" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'" opacity="0.3"/>';
-					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" textcolor="FFF8" text="'. $aseco->stripColors($map->name, true) .'"/>';
+					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" textcolor="FFF8" text="'. $map->name_stripped .'"/>';
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
@@ -10559,7 +10555,7 @@ EOL;
 					$xml .= '<quad posn="0.5 -0.5 0.04" sizen="43.375 3.75" bgcolor="00DD00FF"/>';
 					$xml .= '<label posn="15 -1.21875 0.05" sizen="18.25 0" class="labels" textcolor="000F" textsize="1" text="#'. ($i+1) .'"/>';
 					$xml .= '<quad posn="1.5 -0.9375 0.05" sizen="12.5 2.8125" modulatecolor="000" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
-					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" text="'. $map->name .'"/>';
+					$xml .= '<label posn="1.5 -5.0625 0.04" sizen="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
@@ -11679,9 +11675,9 @@ EOL;
 		$xml .= '<quad posn="6.25 -10.6875 0.02" sizen="139.625 87.9" bgcolor="FFFFFF55"/>';
 
 		$xml .= '<quad posn="9.25 -13.625 0.03" sizen="62.5 45.5" bgcolor="FFF9"/>';
-		$xml .= '<label posn="21.75 -33.9375 0.04" sizen="62.5 3.75" class="labels" text="Press DEL if can not see an Image here!"/>';
+		$xml .= '<label posn="40.5 -33.9375 0.04" sizen="62 3.75" class="labels" halign="center" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad posn="9.5 -13.875 0.50" sizen="62 45" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->current->uid) .'?.jpg') .'"/>';
-		$xml .= '<label posn="9.25 -61.125 0.04" sizen="80 5.625" class="labels" textsize="3" text="$S'. $aseco->server->maps->current->name .'"/>';
+		$xml .= '<label posn="9.25 -61.125 0.04" sizen="80 5.625" class="labels" textsize="3" text="'. $this->handleSpecialChars($aseco->server->maps->current->name) .'"/>';
 		$xml .= '<quad posn="9.25 -65.8125 0.04" sizen="4.125 4.125" image="file://Skins/Avatars/Flags/'. (strtoupper($aseco->server->maps->current->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->current->author_nation) .'.dds"/>';
 		$xml .= '<label posn="15.5 -66.3749 0.04" sizen="80 3.75" class="labels" textsize="2" scale="0.9" text="by '. $aseco->server->maps->current->author .'"/>';
 
@@ -12063,7 +12059,7 @@ EOL;
 						$titlex,
 						$this->config['Positions'][$position]['title']['y'],
 						$this->config['Positions'][$position]['title']['halign'],
-						$aseco->server->maps->current->name,
+						$this->handleSpecialChars($aseco->server->maps->current->name),
 						$aseco->formatTime($aseco->server->maps->current->author_time),
 						$this->getMapAuthor($aseco->server->maps->current),
 						(strtoupper($aseco->server->maps->current->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->current->author_nation)
@@ -12144,7 +12140,7 @@ EOL;
 						$icon[0],
 						$icon[1],
 						$title,
-						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $map->name,
+						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($map->name),
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime($map->author_time),
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->getMapAuthor($map),
 						(strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation),
@@ -12712,10 +12708,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<spectator_info_widget> (getter) @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<spectator_info_widget> (getter)
  * License:	GPLv3
  * ----------------------------------
  */
@@ -12780,10 +12775,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<spectator_info_widget> (widget) @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<spectator_info_widget> (widget)
  * License:	GPLv3
  * ----------------------------------
  */
@@ -12851,10 +12845,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<multilap_info_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<multilap_info_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -12949,10 +12942,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<warm_up_info_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<warm_up_info_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13049,10 +13041,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<donation_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<donation_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13108,10 +13099,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<winning_payout> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<winning_payout>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13171,10 +13161,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<scoretable_lists> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<scoretable_lists>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13235,10 +13224,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<map_widget><race> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<map_widget><race>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13323,10 +13311,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<map_widget><score> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<map_widget><score>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13370,10 +13357,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<clock_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<clock_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13433,10 +13419,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<toplist_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<toplist_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13496,10 +13481,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<next_environment_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<next_environment_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13541,10 +13525,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<next_gamemode_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<next_gamemode_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13587,10 +13570,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<visitors_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<visitors_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13646,10 +13628,9 @@ $footer .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<maniaexchange_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<maniaexchange_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13711,10 +13692,9 @@ $content .= <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<mapcount_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<mapcount_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13774,10 +13754,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<favorite_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<favorite_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -13874,10 +13853,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<music_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<music_widget>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -14043,10 +14021,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	<round_score> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
- * Widget:	<round_score>
  * License:	GPLv3
  * ----------------------------------
  */
@@ -14122,9 +14099,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	Window @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
  * License:	GPLv3
  * ----------------------------------
  */
@@ -14290,9 +14267,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	SubWindow @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Records-Eyepiece
  * License:	GPLv3
  * ----------------------------------
  */

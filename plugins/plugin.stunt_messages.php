@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-02
+ * Date:	2015-08-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -470,7 +470,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Widget:	StuntsMessage
+ * Widget:	StuntsMessage @ plugin.stunt_messages.php
  * License:	GPLv3
  * ----------------------------------
  */

@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-07-03
+ * Date:		2015-08-19
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -821,10 +821,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	Countdown @ plugin.vote_manager.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Vote-Manager
- * Widget:	Countdown
  * License:	GPLv3
  * ----------------------------------
  */

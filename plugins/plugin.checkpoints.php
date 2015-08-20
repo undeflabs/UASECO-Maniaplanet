@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-08-19
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -641,6 +641,14 @@ class PluginCheckpoints extends Plugin {
 
 $maniascript = <<<EOL
 <script><!--
+ /*
+ * ----------------------------------
+ * Function:	<time_diff_widget> @ plugin.checkpoints.php
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
 Text FormatTime (Integer MwTime) {
@@ -806,10 +814,12 @@ main() {
 
 			// Check for a time improvement
 			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart || InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
-				if (InputPlayer != Null && InputPlayer.Score.BestRace.Time != -1 && TotalCheckpoints > 0 && (CheckpointTimes.count == TotalCheckpoints && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0))) {
-					CheckpointTimes.clear();
-					foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
-						CheckpointTimes.add(CpTime);
+				if (InputPlayer != Null && InputPlayer.Score != Null && InputPlayer.Score.BestRace != Null) {
+					if (TotalCheckpoints > 0 && InputPlayer.Score.BestRace.Time != -1 && (CheckpointTimes.count == TotalCheckpoints && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0))) {
+						CheckpointTimes.clear();
+						foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
+							CheckpointTimes.add(CpTime);
+						}
 					}
 				}
 			}
@@ -870,6 +880,14 @@ EOL;
 
 $maniascript = <<<EOL
 <script><!--
+ /*
+ * ----------------------------------
+ * Function:	<count_widget> @ plugin.checkpoints.php
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
 main() {
 	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale				= {$this->config['COUNT_WIDGET'][0]['SCALE'][0]};

@@ -1,11 +1,11 @@
-<manialink id="EffectStudioPersonalMedalSound" name="EffectStudioPersonalMedalSound" version="1">
+<manialink id="EffectStudioPersonalMedalSound" name="EffectStudioPersonalMedalSound" version="2">
 <script><!--
  /*
  * ----------------------------------
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2015-05-30
+ * Version:	2015-08-18
  * ----------------------------------
  */
 Void USleep (Integer _Wait) {

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-26
+ * Date:	2015-08-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -266,7 +266,7 @@ class PluginLocalRecords extends Plugin {
 				$score = $cur_record->score;
 
 				// Log console message of current record
-				$aseco->console('[LocalRecords] Current record on [{1}] is {2} and held by [{3}]',
+				$aseco->console('[LocalRecords] Current record on Map [{1}] is [{2}] and held by Player [{3}]',
 					$aseco->stripColors($map->name, false),
 					$aseco->formatTime($cur_record->score),
 					$aseco->stripColors($cur_record->player->login, false)
@@ -576,7 +576,7 @@ class PluginLocalRecords extends Plugin {
 					$this->insertRecord($finish_item);
 
 					// Log record message in console
-					$aseco->console('[LocalRecords] Player [{1}] finished with {2} and took the {3}. Local Record!',
+					$aseco->console('[LocalRecords] Player [{1}] finished with [{2}] and took the {3}. Local Record!',
 						$login,
 						$aseco->formatTime($finish_item->score),
 						$i+1

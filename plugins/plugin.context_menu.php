@@ -8,8 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-05-24
- * Copyright:		2015 by undef.de
+ * Date:		2015-08-19
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
  * ----------------------------------------------------------------------------------
@@ -268,7 +267,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	Context Menu
+ * Function:	ContextMenu @ plugin.context_menu.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3

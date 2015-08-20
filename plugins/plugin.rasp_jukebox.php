@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-08-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -410,7 +410,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 					}
 					// player offline, so report skip
-					$message = '[RaspJukebox] Skipping Next Map '. $aseco->stripColors($next['Name'], false) .' because requester '. $aseco->stripColors($next['Nick'], false) .' left';
+					$message = '[RaspJukebox] Skipping next Map ['. $aseco->stripColors($next['Name'], false) .'] because requester ['. $aseco->stripColors($next['Nick'], false) .'] left';
 					$aseco->console($message);
 					$message = $aseco->formatText($this->messages['JUKEBOX_SKIPLEFT'][0],
 						$aseco->stripColors($next['Name']),

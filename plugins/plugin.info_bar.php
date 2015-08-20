@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-26
+ * Date:	2015-08-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -411,7 +411,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	Clock
+ * Function:	<clock> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -492,7 +492,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	GamemodeInfo
+ * Function:	<gamemode> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -608,7 +608,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	PlayerSpectatorCount
+ * Function:	<player_count> and <spectator_count> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -722,7 +722,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	Donation
+ * Function:	<donation> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -861,7 +861,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	CurrentPlayerRanking
+ * Function:	<current_ranking> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -957,7 +957,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	PlayerLastBestTime
+ * Function:	<best_time> and <last_time> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -1068,7 +1068,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	PersonalBest
+ * Function:	<personal_best> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -1190,7 +1190,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	LocalRecord
+ * Function:	<local_record> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -1311,7 +1311,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	DedimaniaRecord
+ * Function:	<dedimania_record> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
@@ -1426,7 +1426,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	ManiaExchange
+ * Function:	<mania_exchange> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3

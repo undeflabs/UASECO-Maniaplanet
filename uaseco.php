@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-08-17');
+	define('UASECO_BUILD',		'2015-08-20');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -473,7 +473,7 @@ class UASECO extends Helper {
 		$this->console_text('»            Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» UASECO:    Version {1} build {2}, running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
-    		$this->console_text('»            based upon work of the authors and projects of:');
+    		$this->console_text('»            based upon the work of the authors and projects of:');
     		$this->console_text('»            - Xymph (XAseco2),');
     		$this->console_text('»            - Florian Schnell, AssemblerManiac and many others (ASECO),');
     		$this->console_text('»            - Kremsy (MPASECO)');
@@ -1910,7 +1910,7 @@ class UASECO extends Helper {
 
 		// Log console message
 		if ($this->server->maps->current->uid == $map->uid) {
-			$this->console("[Map] Running on [{1}] made by [{2}] [Env: '{3}', Uid: '{4}', Id: {5}]",
+			$this->console("[Map] Running on Map [{1}] made by [{2}] [Env: '{3}', Uid: '{4}', Id: {5}]",
 				$map->name_stripped,
 				$map->author,
 				$map->environment,
@@ -1919,7 +1919,7 @@ class UASECO extends Helper {
 			);
 		}
 		else {
-			$this->console("[Map] Changing from [{1}] to [{2}] [Env: '{3}', Uid: '{4}', Id: {5}]",
+			$this->console("[Map] Changing from Map [{1}] to [{2}] [Env: '{3}', Uid: '{4}', Id: {5}]",
 				$this->server->maps->current->name_stripped,
 				$map->name_stripped,
 				$map->environment,

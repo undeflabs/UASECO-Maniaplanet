@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-20
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -271,11 +271,11 @@ class PlayerList {
 			if (array_key_exists($pid, $player->playerlist)) {
 				$param = $player->playerlist[$pid]['login'];
 				// check online players list
-				$target = $this->getPlayer($param);
+				$target = $this->getPlayerByLogin($param);
 			}
 			else {
 				// Try param as login string as yet
-				if (!$target = $this->getPlayer($param)) {
+				if (!$target = $this->getPlayerByLogin($param)) {
 					$message = '{#server}» {#error}PlayerId not found! Type {#highlite}$i/players {#error}to see all players.';
 					$aseco->sendChatMessage($message, $player->login);
 					return false;
@@ -284,7 +284,7 @@ class PlayerList {
 		}
 		else {
 			// Otherwise login string, check online players list
-			$target = $this->getPlayer($param);
+			$target = $this->getPlayerByLogin($param);
 		}
 
 		// Not found and offline allowed?

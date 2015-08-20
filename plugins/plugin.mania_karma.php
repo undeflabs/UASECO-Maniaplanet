@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-07-26
+ * Date:	2015-08-19
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -1684,9 +1684,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	KarmaWidget @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Mania-Karma
  * License:	GPLv3
  * ----------------------------------
  */
@@ -1841,9 +1841,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	KarmaCupsValue @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Mania-Karma
  * License:	GPLv3
  * ----------------------------------
  */
@@ -2512,9 +2512,9 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	PlayerVoteMarker @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Mania-Karma
  * License:	GPLv3
  * ----------------------------------
  */
@@ -2553,10 +2553,10 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	ConnectionStatus @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Mania-Karma
- * License:	GPL3
+ * License:	GPLv3
  * ----------------------------------
  */
 main () {
@@ -2615,10 +2615,10 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	LoadingIndicator @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Mania-Karma
- * License:	GPL3
+ * License:	GPLv3
  * ----------------------------------
  */
 main () {
@@ -4419,10 +4419,10 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
+ * Function:	Window @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Part of:	Mania-Karma
- * License:	GPL3
+ * License:	GPLv3
  * ----------------------------------
  */
 Void WipeOut (Text ChildId) {

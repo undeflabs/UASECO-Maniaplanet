@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-08-18
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - none, but must be after plugin.rasp_jukebox.php in config/plugins.xml
+ *  - plugins/plugin.modescript_handler.php
  *
  */
 
@@ -59,7 +59,7 @@ class PluginAutotime extends Plugin {
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onLoadingMap',	'onLoadingMap');
+		$this->registerEvent('onUnloadingMap',	'onUnloadingMap');
 	}
 
 	/*
@@ -92,7 +92,7 @@ class PluginAutotime extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onLoadingMap ($aseco, $data) {
+	public function onUnloadingMap ($aseco, $data) {
 
 		// Check for compatible Gamemode on next map
 		$gamemode = $aseco->server->gameinfo->mode;
@@ -100,7 +100,7 @@ class PluginAutotime extends Plugin {
 			// Check if auto timelimit enabled
 			if ($this->config['MULTIPLICATOR'][0] > 0) {
 				// Get map object
-				$map = $aseco->server->maps->getCurrentMap();
+				$map = $aseco->server->maps->getNextMap();
 				$newtime = substr((int)$map->author_time, 0, -3);
 
 				// Compute new timelimit

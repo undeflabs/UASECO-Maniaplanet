@@ -1,4 +1,4 @@
-<manialink id="EffectStudioCheckpointFlashing" name="EffectStudioCheckpointFlashing" version="1">
+<manialink id="EffectStudioCheckpointFlashing" name="EffectStudioCheckpointFlashing" version="2">
 <quad posn="-160 90 20" sizen="320 180" bgcolor="F00F" hidden="true" opacity="0.5" id="QuadFlash"/>
 <script><!--
  /*
@@ -6,7 +6,7 @@
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2015-05-25
+ * Version:	2015-08-18
  * ----------------------------------
  */
 Void Flashlight () {

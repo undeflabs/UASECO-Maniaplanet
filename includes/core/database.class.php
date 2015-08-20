@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-03-18
+ * Date:	2015-08-20
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -88,6 +88,29 @@ class Database extends mysqli {
 
 	public function __destruct () {
 		$this->disconnect();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function begin_transaction ($flags = null, $name = null) {
+		if (version_compare(phpversion(), '5.5.0', '<')) {
+			return parent::query('START TRANSACTION;');
+		}
+		else {
+			if ($flags !== null && $name !== null) {
+				return parent::begin_transaction($flags, $name);
+			}
+			else if ($flags === null && $name !== null) {
+				return parent::begin_transaction($flags, $name);
+			}
+			else if ($flags !== null && $name === null) {
+				return parent::begin_transaction($flags);
+			}
+		}
 	}
 
 	/*

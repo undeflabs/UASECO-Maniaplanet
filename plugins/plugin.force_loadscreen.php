@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-02
+ * Date:	2015-08-19
  * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -131,6 +131,14 @@ class PluginForceLoadscreen extends Plugin {
 		$xml .= '<manialink id="'. $this->config['manialinkid'] .'Preload" name="'. $this->config['manialinkid'] .'Preload" version="2">';
 $maniascript = <<<EOL
 <script><!--
+/*
+ * ----------------------------------
+ * Function:	Preload @ plugin.force_loadscreen.php
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
 PreloadImage("{$this->next_image_url}");
 --></script>
 EOL;
@@ -161,9 +169,9 @@ $maniascript = <<<EOL
 <script><!--
 /*
  * ----------------------------------
+ * Function:	ForceLoadscreen @ plugin.force_loadscreen.php
  * Author:	undef.de
  * Website:	http://www.undef.name
- * Widget:	ForceLoadscreen
  * License:	GPLv3
  * ----------------------------------
  */

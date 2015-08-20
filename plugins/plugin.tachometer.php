@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-08-02
+ * Date:	2015-08-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -223,7 +223,7 @@ $maniascript = <<<EOL
 <script><!--
  /*
  * ----------------------------------
- * Function:	Tachometer
+ * Function:	Tachmeter @ plugin.tachometer.php
  * Authors:	undef.de, reaby
  * Website:	http://www.undef.name
  * License:	GPLv3

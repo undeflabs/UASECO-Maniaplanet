@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-07-19
+ * Date:		2015-08-19
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -159,6 +159,14 @@ class PluginLazyButtons extends Plugin {
 
 $xml .= <<<EOL
 <script><!--
+ /*
+ * ----------------------------------
+ * Function:	Widget @ plugin.lazy_buttons.php
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * ----------------------------------
+ */
 Void Scrolling(Text ChildId, Boolean Direction) {
 	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
 	declare Real PositionClosed = {$posx} * 2.5;
