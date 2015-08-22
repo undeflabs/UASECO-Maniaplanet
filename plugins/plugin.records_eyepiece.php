@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-08-19
+ * Date:		2015-08-21
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -901,7 +901,6 @@ class PluginRecordsEyepiece extends Plugin {
 				$aseco->console('[RecordsEyepiece] » Found column `WinningPayout`.');
 			}
 
-
 			if ($this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0]['ENABLED'][0] == true) {
 				// Update own `MostFinished`
 				$aseco->console('[RecordsEyepiece] Updating `MostFinished` counts for all Players...');
@@ -920,7 +919,8 @@ class PluginRecordsEyepiece extends Plugin {
 						while ($row = $res->fetch_object()) {
 							$mostfinished[$row->PlayerId] = $row->Count;
 						}
-						$aseco->db->begin_transaction();
+//						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
+						$aseco->db->query('START TRANSACTION;');
 						foreach ($mostfinished as $id => $count) {
 							$res1 = $aseco->db->query("
 								UPDATE `%prefix%players`
@@ -957,7 +957,8 @@ class PluginRecordsEyepiece extends Plugin {
 						while ($row = $res->fetch_object()) {
 							$mostrecords[$row->PlayerId] = $row->Count;
 						}
-						$aseco->db->begin_transaction();
+//						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
+						$aseco->db->query('START TRANSACTION;');
 						foreach ($mostrecords as $id => $count) {
 							$res1 = $aseco->db->query("
 								UPDATE `%prefix%players`

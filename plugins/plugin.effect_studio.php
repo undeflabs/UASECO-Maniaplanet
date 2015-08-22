@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-07-22
+ * Date:		2015-08-21
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -63,11 +63,11 @@ class PluginEffectStudio extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 
-		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
 
-		$this->registerEvent('onSync',				'onSync');
-		$this->registerEvent('onLoadingMap',			'onLoadingMap');
-
+		$this->registerEvent('onSync',			'onSync');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
+		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 
 //		$this->registerChatCommand('xxx',		'chat_xxx',	'xxx',			Player::PLAYERS);
 	}
@@ -103,7 +103,7 @@ class PluginEffectStudio extends Plugin {
 			'onNewMap'			=> 'onLoadingMap',
 			'onBeginRound'			=> 'onBeginRound',
 			'onPlayerCheckpoint'		=> 'onPlayerCheckpoint',
-			'onPlayerConnect'		=> 'onPlayerConnect',
+			'onPlayerConnect'		=> 'onPlayerConnect1',
 			'onPlayerStartCountdown'	=> 'onPlayerStartCountdown',
 			'onPlayerStartLine'		=> 'onPlayerStartLine',
 			'onPlayerFinish'		=> 'onPlayerFinish1',
@@ -251,10 +251,17 @@ class PluginEffectStudio extends Plugin {
 
 	public function onPlayerConnect ($aseco, $player) {
 		if (count($this->manialinks) > 0) {
-			foreach ($this->manialinks as $manialink) {
-				$aseco->sendManialink($manialink, $player->login);
-			}
+			$aseco->sendManialink(implode('', $this->manialinks), $player->login);
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerConnect1 ($aseco, $player) {
 		$this->eventHandler('auditive', $player->login, 'onPlayerConnect');
 	}
 

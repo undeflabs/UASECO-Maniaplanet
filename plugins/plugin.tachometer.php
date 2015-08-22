@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-08-19
+ * Date:	2015-08-21
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -587,13 +587,30 @@ main() {
 				case CMlEvent::Type::MouseOver : {
 					if (Event.ControlId == "QuadIconSounds") {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+						QuadIconSounds.ModulateColor = TextLib::ToColor("00AA00");
 					}
 					else if (Event.ControlId == "LabelVelocityUnit") {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+						LabelVelocityUnit.TextColor = TextLib::ToColor("00AA00");
+						LabelVelocityUnit.Opacity = 1.0;
 					}
 //					else if (Event.ControlId == "QuadTachoscale") {
 //						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 //					}
+				}
+				case CMlEvent::Type::MouseOut : {
+					if (Event.ControlId == "QuadIconSounds") {
+						if (PersistentStorage_TachometerSoundStatus == True) {
+							QuadIconSounds.ModulateColor = TextLib::ToColor("FFFFFF");
+						}
+						else {
+							QuadIconSounds.ModulateColor = TextLib::ToColor("FF0000");
+						}
+					}
+					else if (Event.ControlId == "LabelVelocityUnit") {
+						LabelVelocityUnit.TextColor = TextLib::ToColor("FFFFFF");
+						LabelVelocityUnit.Opacity = 0.65;
+					}
 				}
 				case CMlEvent::Type::MouseClick : {
 					if (Event.ControlId == "QuadIconSounds") {
@@ -647,6 +664,7 @@ EOL;
 //			$xml .= '</frame>';
 
 			$xml .= '<frame posn="'. $this->config['tachometer']['position']['x'] .' '. $this->config['tachometer']['position']['y'] .' '. $this->config['tachometer']['position']['z'] .'" id="FrameTachometer">';
+//			$xml .= '<quad posn="0 1.6 0.01" sizen="'. ($this->config['tachometer']['sizes']['background']['x'] + 8.5) .' '. ($this->config['tachometer']['sizes']['background']['y'] + 8.5) .'" halign="center" valign="center" image="'. $this->config['tachometer']['images']['background'] .'" id="QuadTachometer"/>';
 			$xml .= '<quad posn="0 0 0.01" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" image="'. $this->config['tachometer']['images']['background'] .'" id="QuadTachometer"/>';
 			$xml .= '<quad posn="0 -2.2 0.10" sizen="'. $this->config['tachometer']['sizes']['needle']['x'] .' '. $this->config['tachometer']['sizes']['needle']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['needle'] .'" image="'. $this->config['tachometer']['images']['needle'] .'" id="QuadTachoneedle"/>';
 			$xml .= '<quad posn="0 0 0.03" sizen="'. $this->config['tachometer']['sizes']['background']['x'] .' '. $this->config['tachometer']['sizes']['background']['y'] .'" halign="center" valign="center" modulatecolor="'. $this->config['tachometer']['modulation']['colorscale'] .'" image="'. $this->config['tachometer']['images']['scale']['colorscale'] .'" id="QuadTachoscale" scriptevents="1"/>';

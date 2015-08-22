@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-19
+ * Date:	2015-08-21
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -796,6 +796,18 @@ main() {
 				}
 			}
 
+			// Check for a time improvement
+			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart || InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
+				if (InputPlayer != Null && InputPlayer.Score != Null && InputPlayer.Score.BestRace != Null) {
+					if (TotalCheckpoints > 0 && InputPlayer.Score.BestRace.Time != -1 && (CheckpointTimes.count == TotalCheckpoints && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0))) {
+						CheckpointTimes.clear();
+						foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
+							CheckpointTimes.add(CpTime);
+						}
+					}
+				}
+			}
+
 			// Change Labels
 			if (CurrentCheckpoint == 0) {
 				LabelCheckpointTimeDiff.Value = "\$OSTART: "^ TimeToTextDiff(0);
@@ -810,18 +822,6 @@ main() {
 			else if (CurrentCheckpoint == TotalCheckpoints) {
 				LabelCheckpointTimeDiff.Value = "\$OFINISH: "^ TextColor ^ TimeToTextDiff(MathLib::Abs(TimeDifference));
 				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CheckpointTimes.count - 1]);
-			}
-
-			// Check for a time improvement
-			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart || InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
-				if (InputPlayer != Null && InputPlayer.Score != Null && InputPlayer.Score.BestRace != Null) {
-					if (TotalCheckpoints > 0 && InputPlayer.Score.BestRace.Time != -1 && (CheckpointTimes.count == TotalCheckpoints && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0))) {
-						CheckpointTimes.clear();
-						foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
-							CheckpointTimes.add(CpTime);
-						}
-					}
-				}
 			}
 
 			// Reset RefreshTime

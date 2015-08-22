@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-21
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -294,7 +294,8 @@ class Player {
 			return;
 		}
 
-		$aseco->db->begin_transaction();
+//		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
+		$aseco->db->query('START TRANSACTION;');
 		foreach ($this->data as $plugin => $entries) {
 			foreach ($entries as $key => $value) {
 				$query = "

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-08-21
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -630,7 +630,8 @@ class PluginRasp extends Plugin {
 		$aseco->db->query('TRUNCATE TABLE `%prefix%rankings`;');
 
 		// Get list of players with at least $minrecs records (possibly unranked)
-		$aseco->db->begin_transaction();
+//		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
+		$aseco->db->query('START TRANSACTION;');
 		$query = "
 		SELECT
 			`PlayerId`,

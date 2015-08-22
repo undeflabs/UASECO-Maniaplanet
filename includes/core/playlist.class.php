@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-08-21
  * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -96,7 +96,8 @@ class Playlist {
 				}
 
 				// Clean up the MapHistory table
-				$aseco->db->begin_transaction();
+//				$aseco->db->begin_transaction();		// Require PHP >= 5.5.0
+				$aseco->db->query('START TRANSACTION;');
 				$query = "TRUNCATE TABLE `%prefix%maphistory`;";
 
 				$aseco->db->query($query);

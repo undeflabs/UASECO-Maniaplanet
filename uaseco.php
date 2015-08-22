@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-08-20');
+	define('UASECO_BUILD',		'2015-08-21');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1868,15 +1868,12 @@ class UASECO extends Helper {
 			$response = new MXInfoFetcher('TM2', $map->uid, true);
 			if ($response !== null && empty($response->error)) {
 				$map->mx = $response;
-				$this->releaseEvent('onManiaExchangeBestLoaded', (isset($map->mx->recordlist[0]['replaytime']) ? $map->mx->recordlist[0]['replaytime'] : 0));
-			}
-			else {
-				$this->releaseEvent('onManiaExchangeBestLoaded', 0);
 			}
 		}
 		else if ($this->debug) {
 			$this->console('[Map] MX infos cached, last fetched at '. date('Y-m-d H:i:s', $map->mx->timestamp_fetched));
 		}
+		$this->releaseEvent('onManiaExchangeBestLoaded', (isset($map->mx->recordlist[0]['replaytime']) ? $map->mx->recordlist[0]['replaytime'] : 0));
 
 		// Search MX for previous Map
 		if ($this->server->maps->previous->mx === false || time() > ($this->server->maps->previous->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {

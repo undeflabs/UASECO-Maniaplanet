@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-19
+ * Date:	2015-08-21
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -64,10 +64,9 @@ class PluginInfoBar extends Plugin {
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDonate',			Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',		Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginDedimania',			Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',				'onSync');
-		$this->registerEvent('onEveryTenSeconds',		'onEveryTenSeconds');
+		$this->registerEvent('onEverySecond',			'onEverySecond');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
@@ -124,7 +123,7 @@ class PluginInfoBar extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEveryTenSeconds ($aseco) {
+	public function onEverySecond ($aseco) {
 
 		// Check for required updates
 		if ($aseco->server->gamestate != Server::SCORE) {
@@ -295,7 +294,7 @@ class PluginInfoBar extends Plugin {
 
 	// Event from plugin.dedimania.php
 	public function onDedimaniaRecordsLoaded ($aseco, $records) {
-;
+
 		if (count($records) > 0) {
 			// Store global for new Player connections
 			$this->records['dedimania_record'] = $records[0]['Best'];
@@ -342,21 +341,28 @@ class PluginInfoBar extends Plugin {
 		foreach ($aseco->server->players->player_list as $player) {
 			$xml = false;
 			if ($this->update['local_record'] == true) {
-				$this->update['local_record'] = false;
 				$xml .= $this->buildLocalRecord($this->players[$player->login]['local_record'], true);
 			}
 			if ($this->update['dedimania_record'] == true) {
-				$this->update['dedimania_record'] = false;
 				$xml .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], true);
 			}
 			if ($this->update['mania_exchange'] == true) {
-				$this->update['mania_exchange'] = false;
 				$xml .= $this->buildManiaExchange($this->players[$player->login]['mania_exchange'], true);
 			}
 			if ($xml !== false) {
 				// Send Records
 				$aseco->sendManiaLink($xml, $player->login);
 			}
+		}
+
+		if ($this->update['local_record'] == true) {
+			$this->update['local_record'] = false;
+		}
+		if ($this->update['dedimania_record'] == true) {
+			$this->update['dedimania_record'] = false;
+		}
+		if ($this->update['mania_exchange'] == true) {
+			$this->update['mania_exchange'] = false;
 		}
 	}
 
