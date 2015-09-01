@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-19
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -81,6 +81,7 @@ class PluginLocalRecords extends Plugin {
 			trigger_error('[LocalRecords] Could not read/parse config file [config/local_records.xml]!', E_USER_ERROR);
 		}
 		$settings = $settings['SETTINGS'];
+		unset($settings['SETTINGS']);
 
 		// Store messages
 		$this->settings['messages'] = $settings['MESSAGES'][0];

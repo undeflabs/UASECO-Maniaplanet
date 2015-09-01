@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-08-19
+ * Date:		2015-08-23
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -110,6 +110,7 @@ class PluginVoteManager extends Plugin {
 		}
 
 		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 		// Check/Setup the limits
 		if ($this->config['VOTING'][0]['RATIO'][0] < 0.2) {

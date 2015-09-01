@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-22
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -119,6 +119,7 @@ class PluginModescriptHandler extends Plugin {
 			trigger_error('[ModescriptHandler] Could not read/parse config file "config/modescript_settings.xml"!', E_USER_ERROR);
 		}
 		$this->settings = $this->settings['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 
 		if ($restart == false) {

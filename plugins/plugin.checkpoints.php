@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-09-01
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -98,6 +98,7 @@ class PluginCheckpoints extends Plugin {
 			trigger_error('[Checkpoints] Could not read/parse config file "config/checkpoints.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
 		$this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0]		= ((strtoupper($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0]) == 'TRUE')		? true : false);
@@ -108,7 +109,6 @@ class PluginCheckpoints extends Plugin {
 
 		$this->config['CHEATER_ACTION'][0]				= (int)$this->config['CHEATER_ACTION'][0];
 
-		$this->checkpoints	= array();
 		$this->nbcheckpoints	= 0;
 		$this->totalcps		= 0;
 		$this->nblaps		= 0;
@@ -483,7 +483,7 @@ class PluginCheckpoints extends Plugin {
 
 		// Check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
-		if ($time <= 0 || $cpid != count($this->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($this->checkpoints[$login]->current['cps']))) {
+		if ($time <= 0 || ($cpid > 1 && $time < $this->checkpoints[$login]->current['cps'][$cpid-2])) {
 			$this->processCheater($login, $cpid, $time, false);
 		}
 	}
@@ -796,18 +796,6 @@ main() {
 				}
 			}
 
-			// Check for a time improvement
-			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart || InputPlayer.RaceState == CTmMlPlayer::ERaceState::Running) {
-				if (InputPlayer != Null && InputPlayer.Score != Null && InputPlayer.Score.BestRace != Null) {
-					if (TotalCheckpoints > 0 && InputPlayer.Score.BestRace.Time != -1 && (CheckpointTimes.count == TotalCheckpoints && (InputPlayer.Score.BestRace.Time < CheckpointTimes[TotalCheckpoints - 1] || CheckpointTimes[TotalCheckpoints - 1] == 0))) {
-						CheckpointTimes.clear();
-						foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
-							CheckpointTimes.add(CpTime);
-						}
-					}
-				}
-			}
-
 			// Change Labels
 			if (CurrentCheckpoint == 0) {
 				LabelCheckpointTimeDiff.Value = "\$OSTART: "^ TimeToTextDiff(0);
@@ -822,6 +810,19 @@ main() {
 			else if (CurrentCheckpoint == TotalCheckpoints) {
 				LabelCheckpointTimeDiff.Value = "\$OFINISH: "^ TextColor ^ TimeToTextDiff(MathLib::Abs(TimeDifference));
 				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CheckpointTimes.count - 1]);
+			}
+
+			// Check for a time improvement
+			if (ReplaceTime == True && InputPlayer.RaceState == CTmMlPlayer::ERaceState::BeforeStart) {
+				if (CurrentCheckpoint != -1 && InputPlayer != Null && InputPlayer.Score != Null && InputPlayer.Score.BestRace != Null) {
+					declare CpCount = 0;
+					foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
+						if (CheckpointTimes[CpCount] == 0 || CheckpointTimes[CpCount] > CpTime) {
+							CheckpointTimes[CpCount] = CpTime;
+						}
+						CpCount += 1;
+					}
+				}
 			}
 
 			// Reset RefreshTime

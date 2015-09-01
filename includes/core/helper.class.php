@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1745,6 +1745,7 @@ class Helper {
 
 				// Make sure the Dedicated-Server have the control
 				$this->client->query('ManualFlowControlEnable', false);
+				$this->client->query('ManualFlowControlProceed');
 
 				try {
 					// Clear all ManiaLinks

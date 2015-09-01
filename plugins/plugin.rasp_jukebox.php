@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-19
+ * Date:	2015-08-29
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -723,7 +723,7 @@ class PluginRaspJukebox extends Plugin {
 						$aseco->sendChatMessage($message, $login);
 						return;
 					}
-					else if ($aseco->server->playlist->isMapInHistoryByUid($uid) === true) {
+					else if ($aseco->server->maps->history->isMapInHistoryByUid($uid) === true) {
 
 						// if not an admin with this ability, bail out
 						if (!$aseco->allowAbility($player, 'chat_jb_recent')) {
@@ -1031,7 +1031,7 @@ class PluginRaspJukebox extends Plugin {
 		$ctr = 1;
 		$found = false;
 		foreach ($player->maplist as $key) {
-			if (!array_key_exists($key['uid'], $this->jukebox) && $aseco->server->playlist->isMapInHistoryByUid($key['uid']) === false) {
+			if (!array_key_exists($key['uid'], $this->jukebox) && $aseco->server->maps->history->isMapInHistoryByUid($key['uid']) === false) {
 				$found = true;
 				break;
 			}
@@ -1579,12 +1579,12 @@ class PluginRaspJukebox extends Plugin {
 			return;
 		}
 
-		if (!empty($aseco->server->playlist->history)) {
+		if (!empty($aseco->server->maps->history->map_list)) {
 			$message = $this->messages['HISTORY'][0];
 
 			// Loop over last 10 (max) entries in buffer
 			$count = 0;
-			foreach ($aseco->server->playlist->history as $item) {
+			foreach ($aseco->server->maps->history->map_list as $item) {
 				$map = $aseco->server->maps->getMapByUid($item['uid']);
 				$message .= '{#highlite}'. $i .'{#emotic}.[{#highlite}'. $aseco->stripColors($map->name) .'{#emotic}], ';
 				$count += 1;
@@ -1906,7 +1906,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 
 						// Grey out if in history
-						if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+						if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 							$mapname = '{#grey}'. $map->name_stripped;
 						}
 						else {
@@ -2032,7 +2032,7 @@ class PluginRaspJukebox extends Plugin {
 						}
 
 						// Grey out if in history
-						if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+						if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 							$mapname = '{#grey}'. $map->name_stripped;
 						}
 						else {
@@ -2205,7 +2205,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				// Grey out if in history
-				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -2325,7 +2325,7 @@ class PluginRaspJukebox extends Plugin {
 					}
 
 					// Grey out if in history
-					if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+					if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 						$mapname = '{#grey}'. $map->name_stripped;
 					}
 					else {
@@ -2454,7 +2454,7 @@ class PluginRaspJukebox extends Plugin {
 					}
 
 					// Grey out if in history
-					if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+					if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 						$mapname = '{#grey}'. $map->name_stripped;
 					}
 					else {
@@ -2587,7 +2587,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				// Grey out if in history
-				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -2697,7 +2697,7 @@ class PluginRaspJukebox extends Plugin {
 			}
 
 			// grey out if in history
-			if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+			if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 				$mapname = '{#grey}'. $map->name_stripped;
 			}
 			else {
@@ -2805,7 +2805,7 @@ class PluginRaspJukebox extends Plugin {
 				}
 
 				// Grey out if in history
-				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {
@@ -2926,7 +2926,7 @@ class PluginRaspJukebox extends Plugin {
 			}
 
 			// Grey out if in history
-			if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+			if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 				$mapname = '{#grey}'. $map->name_stripped;
 			}
 			else {

@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-08-19
+ * Date:		2015-08-23
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -103,6 +103,7 @@ class PluginLazyButtons extends Plugin {
 			trigger_error('[LazyButtons] Could not read/parse config file "config/lazy_buttons.xml"!', E_USER_ERROR);
 		}
 		$this->config = $xml['SETTINGS'];
+		unset($xml);
 
 		$this->config['ManialinkId'] = '925';
 

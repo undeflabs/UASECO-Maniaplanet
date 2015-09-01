@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - August 2015 by undef.de
+ * Copyright:	May 2014 - September 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-08-21');
+	define('UASECO_BUILD',		'2015-09-01');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -96,6 +96,7 @@
 	require_once('includes/core/rankinglist.class.php');
 	require_once('includes/core/map.class.php');			// Required by includes/core/maplist.class.php
 	require_once('includes/core/maplist.class.php');
+	require_once('includes/core/maphistory.class.php');		// Holds the Maphistory
 
 
 /*
@@ -213,7 +214,8 @@ class UASECO extends Helper {
 
 		// Initialize further
 		$this->server->maps		= new MapList($this->debug);
-		$this->server->playlist		= new Playlist($this->debug, $this->settings['max_history_entries']);
+		$this->server->maps->history	= new MapHistory($this->debug, $this->settings['max_history_entries']);
+		$this->server->maps->playlist	= new PlayList($this->debug);
 		$this->server->players		= new PlayerList($this->debug);
 		$this->server->rankings		= new RankingList($this->debug);
 		$this->server->mutelist		= array();
@@ -433,7 +435,7 @@ class UASECO extends Helper {
 		$this->current_status = $status['Code'];
 		unset($status);
 
-		// Get all maps from server
+		// Get all Maps from server
 		$this->console('[MapList] Reading complete map list from server...');
 		$this->server->maps->readMapList();
 		$count = count($this->server->maps->map_list);
@@ -441,7 +443,7 @@ class UASECO extends Helper {
 
 		// Load MapHistory
 		$this->console('[Playlist] Reading map history...');
-		$this->server->playlist->readMapHistory();
+		$this->server->maps->history->readMapHistory();
 		$this->console('[Playlist] ...successfully done!');
 
 		// Throw 'synchronisation' event
@@ -1849,10 +1851,17 @@ class UASECO extends Helper {
 
 		if ($this->startup_phase === false) {
 			// Add new Map into MapHistory
-			$this->server->playlist->addMapToHistory($this->server->maps->current);
+			$this->server->maps->history->addMapToHistory($this->server->maps->current);
+
+			// (Re-)read MapHistory
+			$this->server->maps->history->readMapHistory();
 
 			// Setup previous Map
 			$this->server->maps->previous = $this->server->maps->current;
+		}
+		else {
+			// Setup previous Map (from history)
+			$this->server->maps->previous = $this->server->maps->history->getPreviousMapFromHistory();
 		}
 
 		// Setup next Map

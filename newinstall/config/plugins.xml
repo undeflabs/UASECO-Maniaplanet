@@ -13,7 +13,6 @@
 	<!-- Optional plugins -->
 	<plugin>plugin.checkpoints.php</plugin>
 	<plugin>plugin.dedimania.php</plugin>
-	<plugin>plugin.playlist.php</plugin>
 	<plugin>plugin.welcome_center.php</plugin>
 	<plugin>plugin.tachometer.php</plugin>
 	<plugin>plugin.info_bar.php</plugin>
@@ -49,6 +48,7 @@
 
 	<!-- Add here third-party plugins -->
 	<plugin>plugin.pay2play.php</plugin>
+	<plugin>plugin.customize_quit_dialog.php</plugin>
 	<plugin>plugin.effect_studio.php</plugin>
 	<plugin>plugin.records_eyepiece.php</plugin>
 	<plugin>plugin.mania_karma.php</plugin>

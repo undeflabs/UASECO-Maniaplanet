@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -93,6 +93,7 @@ class PluginInfoBar extends Plugin {
 			trigger_error('[WelcomeCenter] Could not read/parse config file "config/info_bar.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 		$this->config['manialinkid']					= 'InfoBar';
 

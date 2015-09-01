@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-19
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -233,6 +233,7 @@ class PluginStuntMessages extends Plugin {
 			trigger_error('[StuntMessages] Could not read/parse config file "config/stunt_messages.xml"!', E_USER_ERROR);
 		}
 		$config = $config['SETTINGS'];
+		unset($config['SETTINGS']);
 
 		$this->position['x']		= $config['POSITION'][0]['X'][0];
 		$this->position['y']		= $config['POSITION'][0]['Y'][0];

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-08-21
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -73,10 +73,11 @@ class PluginTachometer extends Plugin {
 	public function onSync ($aseco) {
 
 		// Read Configuration
-		if (!$this->config = $aseco->parser->xmlToArray('config/tachometer.xml', true, true)) {
+		if (!$config = $aseco->parser->xmlToArray('config/tachometer.xml', true, true)) {
 			trigger_error('[WelcomeCenter] Could not read/parse config file "config/tachometer.xml"!', E_USER_ERROR);
 		}
-		$settings = $this->config['SETTINGS'];
+		$settings = $config['SETTINGS'];
+		unset($config);
 
 		$this->config['tachometer'] = array(
 			'position' => array(

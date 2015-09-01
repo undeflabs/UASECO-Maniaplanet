@@ -1,12 +1,12 @@
 <?php
 /*
- * Class: Playlist
+ * Class: PlayList
  * ~~~~~~~~~~~~~~~
- * » Structure for a Map Playlist.
+ * » Provides and handles a Playlist for Maps.
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-08-30
  * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -37,12 +37,9 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Playlist {
-	public $settings	= array();
-	public $history		= array();
-	public $playlist	= array();
-
+class PlayList {
 	private $debug		= false;
+	private $playlist	= array();
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -50,11 +47,123 @@ class Playlist {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct ($debug, $max_history_entries) {
+	public function __construct ($debug) {
 		$this->debug = $debug;
-
-		$this->settings['max_history_entries'] = $max_history_entries;
 	}
+
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function readMapHistory () {
+//		global $aseco;
+//
+//		// Read MapHistory
+//		$query = "
+//		SELECT
+//			`MapId`,
+//			`Date`
+//		FROM `%prefix%maphistory`
+//		ORDER BY `Date` DESC;
+//		";
+//
+//		$result = $aseco->db->query($query);
+//		if ($result) {
+//			if ($result->num_rows > 0) {
+//				$this->history = array();
+//
+//				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+//					$map = $aseco->server->maps->getMapById($row['MapId']);
+//					if (isset($map->id) && $map->id > 0) {
+//						$this->history[$map->id] = array(
+//							'played'	=> $row['Date'],
+//							'id'		=> $map->id,
+//							'uid'		=> $map->uid,
+//						);
+//					}
+//
+//					if (count($this->history) >= $this->settings['max_history_entries']) {
+//						break;
+//					}
+//				}
+//
+//				// Clean up the MapHistory table
+////				$aseco->db->begin_transaction();		// Require PHP >= 5.5.0
+//				$aseco->db->query('START TRANSACTION;');
+//				$query = "TRUNCATE TABLE `%prefix%maphistory`;";
+//
+//				$aseco->db->query($query);
+//				if ($aseco->db->affected_rows === 0) {
+//					$values = array();
+//					foreach ($this->history as $item) {
+//						$values[] = "(". $item['id'] .", ". $aseco->db->quote($item['played']) .")";
+//					}
+//					if (count($values) > 0) {
+//						$query = "
+//						INSERT INTO `%prefix%maphistory` (
+//							`MapId`,
+//							`Date`
+//						)
+//						VALUES ". implode(',', $values) .";
+//						";
+//
+//						$result2 = $aseco->db->query($query);
+//						if ($aseco->db->affected_rows === -1) {
+//							if ($aseco->debug) {
+//								trigger_error('[MapHistory] readMapHistory(): Could not clean up table "maphistory": ('. $aseco->db->errmsg() .') for statement ['. $query .']', E_USER_WARNING);
+//							}
+//							$aseco->db->rollback();
+//						}
+//						else {
+//							$aseco->db->commit();
+//						}
+//					}
+//					else {
+//						$aseco->db->commit();
+//					}
+//				}
+//			}
+//			$result->free_result();
+//		}
+//	}
+//
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function addMapToHistory ($map) {
+//		global $aseco;
+//
+//		if (isset($map->id) && $map->id > 0 && isset($aseco->server->maps->map_list[$map->uid])) {
+//
+//			// Update MapHistory in DB
+//			$query = "
+//			INSERT INTO `%prefix%maphistory` (
+//				`MapId`,
+//				`Date`
+//			)
+//			VALUES (
+//				". $map->id .",
+//				". $aseco->db->quote(date('Y-m-d H:i:s', time())) ."
+//			);
+//			";
+//
+//			$aseco->db->query($query);
+//			if ($aseco->db->affected_rows === -1) {
+//				if ($aseco->debug) {
+//					trigger_error('[MapHistory] addMapToHistory(): Could not add Map into table "maphistory": ('. $aseco->db->errmsg() .') for statement ['. $query .']', E_USER_WARNING);
+//				}
+//				return false;
+//			}
+//			else {
+//				return true;
+//			}
+//		}
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -62,76 +171,27 @@ class Playlist {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function readMapHistory () {
+//	public function addMapToPlaylist ($uid, $login, $skippable = true, $first_position = false) {
+	public function addMapToPlaylist ($uid, $login) {
 		global $aseco;
 
-		// Read MapHistory
-		$query = "
-		SELECT
-			`MapId`,
-			MAX(`Date`) as `Time`
-		FROM `%prefix%maphistory`
-		GROUP BY `MapId`
-		ORDER BY `Date` DESC
-		LIMIT ". $this->settings['max_history_entries'] .";
-		";
+//		Test "SetNextMapIdent" instead of "ChooseNextMap"
+//		Test "JumpToMapIdent"
 
-		$result = $aseco->db->query($query);
-		if ($result) {
-			if ($result->num_rows > 0) {
-				$count = 0;
-				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-					if ($count == 0) {
-						$aseco->server->maps->previous = $aseco->server->maps->getMapById($row['MapId']);
-					}
-
-					$map = $aseco->server->maps->getMapById($row['MapId']);
-					$this->history[] = array(
-						'played'	=> $row['Time'],
-						'id'		=> $map->id,
-						'uid'		=> $map->uid,
-					);
-
-					$count += 1;
+		// Check for a Map which has to be "present in the selection" of the dedicated server
+		$map = $aseco->server->maps->getMapByUid($uid);
+		if ($map->id > 0) {
+			// If Playlist is empty, setup the next Map at the dedicated server
+			if (count($this->playlist) == 0) {
+				try {
+					// Set the next Map
+					$result = $aseco->client->query('SetNextMapIdent', $map->uid);
+					$aseco->dump($result, $uid, $login);
 				}
-
-				// Clean up the MapHistory table
-//				$aseco->db->begin_transaction();		// Require PHP >= 5.5.0
-				$aseco->db->query('START TRANSACTION;');
-				$query = "TRUNCATE TABLE `%prefix%maphistory`;";
-
-				$aseco->db->query($query);
-				if ($aseco->db->affected_rows === 0) {
-					$values = array();
-					foreach ($this->history as $item) {
-						$values[] = "(". $item['id'] .", ". $aseco->db->quote($item['played']) .")";
-					}
-					if (count($values) > 0) {
-						$query = "
-						INSERT INTO `%prefix%maphistory` (
-							`MapId`,
-							`Date`
-						)
-						VALUES ". implode(',', $values) .";
-						";
-
-						$aseco->db->query($query);
-						if ($aseco->db->affected_rows === -1) {
-							if ($aseco->debug) {
-								trigger_error('[Playlist] readMapHistory(): Could not clean up table "maphistory": ('. $aseco->db->errmsg() .') for statement ['. $query .']', E_USER_WARNING);
-							}
-							$aseco->db->rollback();
-						}
-						else {
-							$aseco->db->commit();
-						}
-					}
-					else {
-						$aseco->db->commit();
-					}
+				catch (Exception $exception) {
+					$aseco->console('[Playlist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ChooseNextMap');
 				}
 			}
-			$result->free_result();
 		}
 	}
 
@@ -141,45 +201,9 @@ class Playlist {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function addMapToHistory ($map) {
-		global $aseco;
-
-		if (isset($map->id) && $map->id > 0 && isset($aseco->server->maps->map_list[$map->uid])) {
-
-			// Update MapHistory in DB
-			$query = "
-			INSERT INTO `%prefix%maphistory` (
-				`MapId`,
-				`Date`
-			)
-			VALUES (
-				". $map->id .",
-				". $aseco->db->quote(date('Y-m-d H:i:s', time() - date('Z'))) ."
-			);
-			";
-
-			$aseco->db->query($query);
-			if ($aseco->db->affected_rows === -1) {
-				if ($aseco->debug) {
-					trigger_error('[Playlist] addMapToHistory(): Could not add Map into table "maphistory": ('. $aseco->db->errmsg() .') for statement ['. $query .']', E_USER_WARNING);
-				}
-				return false;
-			}
-			else {
-				return true;
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function isMapInHistoryById ($id) {
-		if (!empty($uid)) {
-			foreach ($this->history as $item) {
+	public function isMapInPlaylistById ($id) {
+		if (!empty($id)) {
+			foreach ($this->playlist as $item) {
 				if ($item['id'] == $id) {
 					return true;
 				}
@@ -194,9 +218,9 @@ class Playlist {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function isMapInHistoryByUid ($uid) {
+	public function isMapInPlaylistByUid ($uid) {
 		if (!empty($uid)) {
-			foreach ($this->history as $item) {
+			foreach ($this->playlist as $item) {
 				if ($item['uid'] == $uid) {
 					return true;
 				}

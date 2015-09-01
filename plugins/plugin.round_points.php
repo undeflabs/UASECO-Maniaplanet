@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -78,6 +78,7 @@ class PluginRoundPoints extends Plugin {
 			trigger_error('[RoundPoints] Could not read/parse config file "config/round_points.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 
 		// Setup points systems

@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-13
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -100,6 +100,7 @@ class PluginMusicServer extends Plugin {
 			trigger_error('[MusicServer] Could not read/parse Music server config file [config/music_server.xml]!', E_USER_ERROR);
 		}
 		$settings = $settings['SETTINGS'];
+		unset($settings['SETTINGS']);
 
 		$this->override		= $aseco->string2bool($settings['OVERRIDE_MAP'][0]);
 		$this->autonext		= $aseco->string2bool($settings['AUTO_NEXTSONG'][0]);

@@ -38,9 +38,10 @@ Version 1.0.0
    - Added class Country
    - Added class Helper (which holds the most UASECO Methods)
    - Added class MapList
+   - Added class MapHistory
    - Added class Database (mysqli)
    - Added class Plugin
-   - Added class Playlist
+   - Added class PlayList
    - Added class Ranking
    - Added class RankingList
    - Added class Window
@@ -53,8 +54,8 @@ Version 1.0.0
    - Distinguish local records between Gamemodes, local records made in 'TimeAttack' are not available when the dedicated is now running in 'Rounds'
    - Moved the content of the Map history file from RASP into the Database table `maphistory` (and removed functions... from the Plugins)
    - Added Support for the following Gamemodes:
-     - Knockout.Script.txt (https://forum.maniaplanet.com/viewtopic.php?f=9&t=31243)
-     - Doppler.Script.txt (https://forum.maniaplanet.com/viewtopic.php?f=9&t=30463)
+     - Knockout.Script.txt: https://forum.maniaplanet.com/viewtopic.php?f=9&t=31243
+     - Doppler.Script.txt: https://forum.maniaplanet.com/viewtopic.php?f=9&t=30463
 
 
    Bugfix (in XAseco2)
@@ -112,7 +113,7 @@ Version 1.0.0
    - Renamed "$player->isspectator" to "$player->is_spectator"
    - Renamed "$player->isofficial" to "$player->is_official"
    - Renamed "$player->isreferee" to "$player->is_referee"
-   - Event parameters has been changed for many events, see documentation for details: http://www.uaseco.org/Development/Events.php
+   - Event parameters has been changed for many events, more details: http://www.uaseco.org/Development/Events.php
    - Event "onCheckpoint" renamed to "onPlayerCheckpoint"
    - Event "onChat" splitted into "onServerChat" and "onPlayerChat" (no need to check for a Server message at "onPlayerChat")
    - Event "onRestartMap" removed and renamed "onRestartMap2" to "onRestartMap" (there is no more a difference between the restarts)
@@ -122,9 +123,9 @@ Version 1.0.0
    - Event "onDediRecsLoaded" renamed to "onDedimaniaRecordsLoaded"
    - Event "onMaplistChanged" renamed to "onMapListChanged" (uppercase "L")
    - Event "onPlayerConnect2" renamed to "onPlayerConnect1"
-   - Event "onPlayerManialinkPageAnswer": Handling of Manialink actions and identificators has been changed, see for details: http://www.uaseco.org/Development/Manialinks.php#Identifications
+   - Event "onPlayerManialinkPageAnswer": Handling of Manialink actions and identificators has been changed, more details: http://www.uaseco.org/Development/Manialinks.php#Identifications
    - Event "onPlayerInfoChanged" does not send anymore the struct from the dedicated as parameter, now only send the login of that Player (the struct is changed at the Player object)
-   - Removed <custom_ui> handling (deprecated) and replaced by <ui_properties> from modescript_settings.xml (Details: http://forum.maniaplanet.com/viewtopic.php?p=228997#p228997)
+   - Removed <custom_ui> handling (deprecated) and replaced by <ui_properties> from modescript_settings.xml, more details: http://forum.maniaplanet.com/viewtopic.php?p=228997#p228997
    - Removed chat command "/admin listdupes", because the Database column has unique key
    - Remamed "$map->authorscore" to "$map->author_score" ($map = includes/core/map.class.php)
    - Remamed "$map->authortime" to "$map->author_time" ($map = includes/core/map.class.php)
@@ -142,7 +143,7 @@ Version 1.0.0
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    - PLUGIN AUTHORS NOTE:
      - For each SQL-Query you have to add %prefix% before all tablenames, e.g. to access `players` you have to write `%prefix%players`
-     - The connection has enabled autocommit, if you need to insert a bulk of data you can disable autocommit, see http://dev.mysql.com/doc/refman/5.7/en/commit.html for details.
+     - The connection has enabled autocommit, if you need to insert a bulk of data you can disable autocommit, more details: http://dev.mysql.com/doc/refman/5.7/en/commit.html
    - Table `maps`:
      - Renamed `Id` to `MapId`
    - Table `players`:

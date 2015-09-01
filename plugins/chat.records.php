@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-29
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -690,7 +690,7 @@ class PluginChatRecords extends Plugin {
 					}
 
 					// grey out if in history
-					if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+					if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 						$mapname = '{#grey}' . $aseco->stripColors($mapname);
 					}
 					else {

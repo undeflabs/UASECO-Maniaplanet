@@ -2,7 +2,7 @@
 <settings>
 	<auditive>
 		<effect>
-			<enabled>true</enabled>
+			<enabled>false</enabled>
 			<event>onPlayerStartCountdown</event>
 			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerStartCountdown.ogg</url>
 			<loop>false</loop>
@@ -110,12 +110,20 @@
 
 	<scripts>
 		<script>
-			<enabled>false</enabled>
-			<path>includes/effectstudio/checkpoint-flashing.xml</path>
+			<enabled>true</enabled>
+			<path>config/effect_studio/countdown-3-2-1-GO!.xml</path>
 		</script>
 		<script>
 			<enabled>false</enabled>
-			<path>includes/effectstudio/3-2-1-GO!.xml</path>
+			<path>config/effect_studio/checkpoint-flashing.xml</path>
+		</script>
+		<script>
+			<enabled>false</enabled>
+			<path>config/effect_studio/personal-medal-sound.xml</path>
+		</script>
+		<script>
+			<enabled>false</enabled>
+			<path>config/effect_studio/clipping-test.xml</path>
 		</script>
 	</scripts>
 </settings>

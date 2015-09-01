@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-08-21
+ * Date:		2015-09-01
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -268,6 +268,7 @@ class PluginRecordsEyepiece extends Plugin {
 			trigger_error('[RecordsEyepiece] Could not read/parse config file "config/records_eyepiece.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 		// Static settings
 		$this->config['LineHeight'] = 1.8;
@@ -9981,14 +9982,14 @@ EOL;
 				}
 				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORECENT') {
 					foreach ($aseco->server->maps->map_list as $map) {
-						if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) !== true) {
+						if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) !== true) {
 							$maplist[] = $map->uid;
 						}
 					}
 					$listoptions = '(Filter: No Recent)';
 				}
 				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRECENT') {
-					foreach ($aseco->server->playlist->history as $item) {
+					foreach ($aseco->server->maps->history->map_list as $item) {
 						foreach ($aseco->server->maps->map_list as $map) {
 							if ($map->uid == $item['uid']) {
 								$maplist[] = $map->uid;
@@ -10497,7 +10498,7 @@ EOL;
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->playlist->isMapInHistoryByUid($map->uid) === false && $juked == 0) {
+				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === false && $juked == 0) {
 					// Default (not current, not recent, not juked)
 //					$xml .= '<quad posn="0 0 0.02" sizen="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad posn="1 -0.6749 0.04" sizen="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
@@ -10510,7 +10511,7 @@ EOL;
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->playlist->isMapInHistoryByUid($map->uid) === true && $juked > 0) {
+				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true && $juked > 0) {
 					// This is a recent but juked Map
 //					$xml .= '<quad posn="0 0 0.02" sizen="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad posn="0.675 -0.6375 0.04" sizen="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
@@ -10525,7 +10526,7 @@ EOL;
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					// This is a recent Map
 //					$xml .= '<quad posn="0 0 0.02" sizen="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad posn="1 -0.6749 0.04" sizen="42.375 3.75" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
@@ -10561,7 +10562,7 @@ EOL;
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
 
-				if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					// This is a recent Map
 
 					// Authortime

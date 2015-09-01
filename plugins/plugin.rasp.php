@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-08-29
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -622,7 +622,7 @@ class PluginRasp extends Plugin {
 	public function resetRanks ($aseco) {
 
 		$players = array();
-		$aseco->console('[Rasp] Calculating ranks...');
+		$aseco->console('[Rasp] Calculating ranks for each Player');
 		$maps = $aseco->server->maps->map_list;
 		$total = count($maps);
 
@@ -699,7 +699,6 @@ class PluginRasp extends Plugin {
 			}
 		}
 		$aseco->db->commit();
-		$aseco->console('[Rasp] ...successfully done!');
 	}
 
 	/*
@@ -1029,7 +1028,7 @@ class PluginRasp extends Plugin {
 				}
 
 				// Grey out if in history
-				if ($aseco->server->playlist->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					$mapname = '{#grey}'. $map->name_stripped;
 				}
 				else {

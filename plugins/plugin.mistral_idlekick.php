@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -73,6 +73,7 @@ class PluginMistralIdlekick extends Plugin {
 			trigger_error('[MistralIdlekick] Could not read/parse config file [config/mistral_idlekick.xml]!', E_USER_ERROR);
 		}
 		$settings = $settings['SETTINGS'];
+		unset($settings['SETTINGS']);
 
 		$this->kick_player_after		= (int)$settings['KICK_PLAYER_AFTER'][0];
 		$this->kick_spectator_after		= (int)$settings['KICK_SPECTATOR_AFTER'][0];

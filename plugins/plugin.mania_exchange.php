@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -74,6 +74,7 @@ class PluginManiaExchange extends Plugin {
 			trigger_error('[ManiaExchange] Could not read/parse config file [config/mania_exchange.xml]!', E_USER_ERROR);
 		}
 		$settings = $settings['SETTINGS'];
+		unset($settings['SETTINGS']);
 
 		$this->config['show_records']		= (int)$settings['SHOW_RECORDS'][0];
 

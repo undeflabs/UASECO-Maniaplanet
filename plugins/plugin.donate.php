@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -80,6 +80,7 @@ class PluginDonate extends Plugin {
 			trigger_error('[Donate] Could not read/parse config file "config/donate.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
 
 		$this->mindonation	= (int)$this->config['MINIMUM_DONATION'][0];
 		$this->publicappr	= (int)$this->config['PUBLIC_APPRECIATION_THRESHOLD'][0];

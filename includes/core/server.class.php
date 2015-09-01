@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-02-16
+ * Date:	2015-08-29
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -88,12 +88,7 @@ class Server {
 	// Misc.
 	public $starttime;			// Timestamp when the server was started
 	public $timeout;			// For <dedicated_server><timeout> from "config/UASECO.xml"
-
 	public $xmlrpc;				// An array wich holds 'ip', 'port', 'login' and 'pass' for XML-RPC connection
-	public $maps;				// Used by class MapList
-	public $records;			// Used by class RecordList
-	public $players;			// Used by class PlayerList
-	public $mutelist;			// Server wide mutelist
 
 	public $gamestate;			// Holds actual gamestate: Server::RACE or Server::SCORE
 	public $state_names;			// Server status Id to Names (used to translate 'GetStatus')

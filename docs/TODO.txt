@@ -16,8 +16,9 @@ UASECO
 
 
 
-RMB-Menu
-~~~~~~~~
+
+Context-Menu
+~~~~~~~~~~~~
 	Admin Buttons
 	~~~~~~~~~~~~~
 	"/admin restartmap"
@@ -27,6 +28,7 @@ RMB-Menu
 	"/admin pass"
 	"/admin cancel"
 	"/admin players live"
+
 + AddFavorite
 
 http://doc.maniaplanet.com/creation/manialink/actions.html
@@ -53,3 +55,4 @@ Records-Eyepiece
 Tachometer
 ~~~~~~~~~~
  - Let the Player decide which distance he want to see: "trip" (reset every restart) or "day" (count the complete online session)... store them into the DB and add Widget in RE (MostDistance)?
+ - Add a button to hide/show the tachometer

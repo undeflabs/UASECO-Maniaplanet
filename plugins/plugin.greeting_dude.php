@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-01-20
+ * Date:		2015-08-23
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -88,6 +88,7 @@ class PluginGreetingDude extends Plugin {
 			trigger_error('[LazyButtons] Could not read/parse config file "config/greeting_dude.xml"!', E_USER_ERROR);
 		}
 		$this->config = $xml['SETTINGS'];
+		unset($xml);
 
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean

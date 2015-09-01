@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-08-23
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -67,10 +67,10 @@ class MapList {
 	public function __construct ($debug) {
 		$this->debug = $debug;
 
-		$this->map_list = array();
-		$this->previous = false;
-		$this->current = false;
-		$this->next = false;
+		$this->map_list	= array();
+		$this->previous	= new Map(null, null);
+		$this->current	= new Map(null, null);
+		$this->next	= new Map(null, null);
 	}
 
 	/*
