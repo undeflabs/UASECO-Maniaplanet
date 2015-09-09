@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-08-19
+ * Date:	2015-09-03
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -3443,7 +3443,7 @@ EOL;
 				$values = array();
 				foreach ($this->karma['new']['players'] as $login => $vote) {
 					if ( !isset($updated[$login]) ) {
-						$playerid = $aseco->server->players->getPlayerId($login);
+						$playerid = $aseco->server->players->getPlayerIdByLogin($login);
 						if ($playerid > 0) {
 							// Add only Players with an PlayerId
 							$values[] = "('". $vote ."', '". $playerid ."', '". $this->karma['data']['id'] ."')";

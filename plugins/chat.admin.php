@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-31
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -3042,7 +3042,7 @@ class PluginChatAdmin extends Plugin {
 
 					// Get record info
 					$record = $aseco->plugins['PluginLocalRecords']->records->getRecord($param);
-					$pid = $aseco->server->players->getPlayerId($record->player->login);
+					$pid = $aseco->server->players->getPlayerIdByLogin($record->player->login);
 
 					// Remove times before record
 					$aseco->plugins['PluginRasp']->deleteTime($aseco->server->maps->current->id, $pid);

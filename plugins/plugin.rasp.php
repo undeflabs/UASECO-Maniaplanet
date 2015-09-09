@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-29
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -811,7 +811,7 @@ class PluginRasp extends Plugin {
 	public function showRank ($login) {
 		global $aseco;
 
-		$pid = $aseco->server->players->getPlayerId($login);
+		$pid = $aseco->server->players->getPlayerIdByLogin($login);
 		$query = "
 		SELECT
 			`Average`
@@ -858,7 +858,7 @@ class PluginRasp extends Plugin {
 	public function getRank ($login) {
 		global $aseco;
 
-		$pid = $aseco->server->players->getPlayerId($login);
+		$pid = $aseco->server->players->getPlayerIdByLogin($login);
 		$query = "
 		SELECT
 			`Average`

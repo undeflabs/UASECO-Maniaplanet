@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-20
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -180,7 +180,7 @@ class PlayerList {
 	*/
 
 	// Finds a player ID from its login.
-	public function getPlayerId ($login, $forcequery = false) {
+	public function getPlayerIdByLogin ($login, $forcequery = false) {
 		global $aseco;
 
 		if (isset($this->server->players->player_list[$login]) && $this->server->players->player_list[$login]->id > 0 && !$forcequery) {

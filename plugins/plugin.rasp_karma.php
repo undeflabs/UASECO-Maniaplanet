@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -504,7 +504,7 @@ class PluginRaspKarma extends Plugin {
 
 		// optionally add player's actual vote
 		if ($this->karma_show_votes) {
-			$playerid = $aseco->server->players->getPlayerId($login);
+			$playerid = $aseco->server->players->getPlayerIdByLogin($login);
 			if ($playerid != 0) {
 				$query3 = "
 				SELECT

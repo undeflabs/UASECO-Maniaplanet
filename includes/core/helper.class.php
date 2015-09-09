@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -49,18 +49,20 @@ class Helper {
 
 	public function displayLoadStatus ($message, $ratio = 0.0) {
 
-		$xml = '<manialink id="UASECO:LoadStatus" version="2">';
-		if ($message !== false && $this->startup_phase === true) {
-			$xml .= '<frame posn="-44.375 60.75 0.01">';
-			$xml .= '<quad posn="0 0 0.01" sizen="91.8 22.4" url="'. UASECO_WEBSITE .'" image="'. UASECO_WEBSITE .'/media/uaseco/logo-uaseco.png"/>';
-			$xml .= '<label posn="1.8 -22 0.02" sizen="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
-			$xml .= '<gauge posn="0 -24 0.03" sizen="91.8 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
-			$xml .= '</frame>';
-		}
-		$xml .= '</manialink>';
+		if ($this->settings['developer']['show_load_status'] == true) {
+			$xml = '<manialink id="UASECO:LoadStatus" version="2">';
+			if ($message !== false && $this->startup_phase === true) {
+				$xml .= '<frame posn="-44.375 60.75 0.01">';
+				$xml .= '<quad posn="0 0 0.01" sizen="91.8 22.4" url="'. UASECO_WEBSITE .'" image="'. UASECO_WEBSITE .'/media/uaseco/logo-uaseco.png"/>';
+				$xml .= '<label posn="1.8 -22 0.02" sizen="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
+				$xml .= '<gauge posn="0 -24 0.03" sizen="91.8 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
+				$xml .= '</frame>';
+			}
+			$xml .= '</manialink>';
 
-		// Send to all connected Players
-		$this->sendManialink($xml, false, 0, false);
+			// Send to all connected Players
+			$this->sendManialink($xml, false, 0, false);
+		}
 	}
 
 	/*
@@ -153,15 +155,17 @@ class Helper {
 		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'.LF;
 		$xml .= '<info>'.LF;
 		$xml .= ' <timestamp>'. time() .'</timestamp>'.LF;
+		$xml .= ' <date>'. date('Y-m-d H:i:s', time()) .'</date>'.LF;
 		$xml .= ' <system>'.LF;
-		$xml .= '  <os>'. php_uname('s') .'</os>'.LF;
-		$xml .= '  <release>'. php_uname('r') .'</release>'.LF;
-		$xml .= '  <version>'. php_uname('v') .'</version>'.LF;
-		$xml .= '  <machine>'. php_uname('m') .'</machine>'.LF;
+		$xml .= '  <os>'.LF;
+		$xml .= '   <name>'. php_uname('s') .'</name>'.LF;
+		$xml .= '   <release>'. php_uname('r') .'</release>'.LF;
+		$xml .= '   <version>'. php_uname('v') .'</version>'.LF;
+		$xml .= '   <machine>'. php_uname('m') .'</machine>'.LF;
+		$xml .= '  </os>'.LF;
+		$xml .= '  <php>PHP/'. phpversion() .'</php>'.LF;
+		$xml .= '  <mysql>'. $this->db->server_version() .'</mysql>'.LF;
 		$xml .= ' </system>'.LF;
-		$xml .= ' <php>'.LF;
-		$xml .= '  <version>'. phpversion() .'</version>'.LF;
-		$xml .= ' </php>'.LF;
 		$xml .= ' <uaseco>'.LF;
 		$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
 		$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;

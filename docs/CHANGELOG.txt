@@ -12,7 +12,7 @@ Version 1.0.0
 
    Requirements
    ~~~~~~~~~~~~
-   - Requires PHP/5.2.1 or higher
+   - Requires PHP/5.4.0 or higher (5.6.x recommended)
    - Requires MySQL/5.x or higher
    - Requires a Maniaplanet dedicated Server build 2015-06-16_16_53 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
@@ -88,7 +88,7 @@ Version 1.0.0
    - Moved "$aseco->server->map" to "$aseco->server->maps->current"
    - Moved "$aseco->records" from controller into Local Records Plugin
    - Moved "$aseco->rasp" from controller into the RASP Plugins
-   - Moved "$aseco->getPlayerId()" to "$aseco->server->players->getPlayerId()"
+   - Moved "$aseco->getPlayerId()" to "$aseco->server->players->getPlayerIdByLogin()"
    - Moved "$aseco->getPlayerNick()" to "$aseco->server->players->getPlayerNickname()"
    - Moved "$aseco->getPlayerParam()" to "$aseco->server->players->getPlayerParam()"
    - Renamed "$aseco->server->players->getPlayer()" to "$aseco->server->players->getPlayerByLogin()"

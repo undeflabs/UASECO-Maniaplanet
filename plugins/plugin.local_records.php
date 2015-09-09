@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -822,7 +822,7 @@ class PluginLocalRecords extends Plugin {
 			SELECT
 				`Score`
 			FROM `%prefix%times`
-			WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) ."
+			WHERE `PlayerId` = ". $aseco->server->players->getPlayerIdByLogin($login) ."
 			AND `MapId` = ". $mapid ."
 			AND `GamemodeId` = '". $aseco->server->gameinfo->mode ."'
 			ORDER BY `Score` ASC

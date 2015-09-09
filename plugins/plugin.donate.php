@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-09-09
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -298,7 +298,7 @@ class PluginDonate extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $param) {
 
 		// Get Player
 		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
@@ -417,7 +417,7 @@ class PluginDonate extends Plugin {
 		SELECT
 			`Donations`
 		FROM `%prefix%players`
-		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
+		WHERE `PlayerId` = ". $aseco->server->players->getPlayerIdByLogin($login) .";
 		";
 
 		$result = $aseco->db->query($query);
@@ -445,7 +445,7 @@ class PluginDonate extends Plugin {
 		$query = "
 		UPDATE `%prefix%players` SET
 			`Donations` = `Donations` + ". $donation ."
-		WHERE `PlayerId` = ". $aseco->server->players->getPlayerId($login) .";
+		WHERE `PlayerId` = ". $aseco->server->players->getPlayerIdByLogin($login) .";
 		";
 
 		$result = $aseco->db->query($query);

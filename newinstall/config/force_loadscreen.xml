@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+	<!--
+	Setup as many images you want...
+	 - supported formats are: JPEG and PNG (JPEG = better)
+	 - aspect ratio 16:9 and should be min. 1920 x 1080 pixel (larger = better)
+
+	For env="" you can use every combinations you want:
+	 - env=""			to show that image in all (future) environments
+	 - env="stadium,valley"		to show that image in only "stadium" and "valley"
+	 - env="canyon,stadium,valley"	to show that image in only "canyon", "stadium" and "valley" (no future environments)
+	//-->
+	<images>
+		<image enabled="true" env="stadium" url="http://static.undef.name/test/force_loadscreen/maniaplanet-stadium-1920x1080.jpg"/>
+		<image enabled="true" env="valley" url="http://static.undef.name/test/force_loadscreen/maniaplanet-valley-1920x1080.jpg"/>
+		<image enabled="true" env="canyon" url="http://static.undef.name/test/force_loadscreen/maniaplanet-canyon-1920x1080.jpg"/>
+
+		<image enabled="true" env="canyon,stadium,valley" url="http://static.undef.name/test/force_loadscreen/turbo-lagoon1-1920x1080.jpg"/>
+		<image enabled="true" env="canyon,stadium,valley" url="http://static.undef.name/test/force_loadscreen/turbo-lagoon2-1920x1080.jpg"/>
+
+		<image enabled="true" env="" url="http://static.undef.name/test/force_loadscreen/turbo-stadium1-1920x1080.jpg"/>
+		<image enabled="true" env="" url="http://static.undef.name/test/force_loadscreen/turbo-stadium2-1920x1080.jpg"/>
+	</images>
+</settings>

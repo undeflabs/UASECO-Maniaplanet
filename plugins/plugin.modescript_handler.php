@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1184,7 +1184,7 @@ class PluginModescriptHandler extends Plugin {
 	private function setupCustomScoretable () {
 		global $aseco;
 
-//		foreach (range(0,3) as $id) {
+//		foreach (range(0,253) as $id) {
 //			$aseco->client->query('ConnectFakePlayer');
 //		}
 //		$aseco->client->query('DisconnectFakePlayer', '*');

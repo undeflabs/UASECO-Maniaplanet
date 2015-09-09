@@ -257,6 +257,9 @@
 	<developer_options>
 		<debug>false</debug>
 
+		<!-- Show or hide the load status widget while UASECO startup -->
+		<show_load_status>true</show_load_status>
+
 		<log_events>
 			<!-- Log events like '[Event] Begin Map' -->
 			<common>false</common>

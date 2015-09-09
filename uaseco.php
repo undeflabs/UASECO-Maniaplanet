@@ -42,13 +42,13 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-09-01');
+	define('UASECO_BUILD',		'2015-09-09');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
 	define('MANIAPLANET_BUILD',	'2015-06-16_16_53');
 	define('API_VERSION',		'2013-04-16');
-	define('MIN_PHP_VERSION',	'5.2.1');
+	define('MIN_PHP_VERSION',	'5.4.0');
 
 	// Setup misc.
 	define('USER_AGENT',		UASECO_NAME .'/'. UASECO_VERSION .' build '. UASECO_BUILD);	// Used by includes/core/webaccess.class.php
@@ -586,6 +586,7 @@ class UASECO extends Helper {
 
 			// Read <developer_options> settings and apply them
 			$this->debug = $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['DEBUG'][0]);
+			$this->settings['developer']['show_load_status']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['SHOW_LOAD_STATUS'][0]);
 			$this->settings['developer']['log_events']['common']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['LOG_EVENTS'][0]['COMMON'][0]);
 			$this->settings['developer']['log_events']['registered_types']	= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['LOG_EVENTS'][0]['REGISTERED_TYPES'][0]);
 			$this->settings['developer']['log_events']['all_types']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['LOG_EVENTS'][0]['ALL_TYPES'][0]);

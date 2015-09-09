@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -227,7 +227,14 @@ class WindowList {
 			$aseco->sendManialink($xml, $player->login, $timeout, $hideclick);
 		}
 		else {
-			$aseco->console('[ClassWindowList] Given Player does not exists in the current PlayerList.');
+			if ($aseco->debug) {
+				if ($player->id == 0) {
+					$aseco->console('[ClassWindowList] Ignoring the given Fakeplayer.');
+				}
+				else {
+					$aseco->console('[ClassWindowList] Given Player does not exists in the current PlayerList.');
+				}
+			}
 		}
 	}
 

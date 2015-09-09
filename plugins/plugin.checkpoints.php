@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-01
+ * Date:	2015-09-03
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -732,6 +732,11 @@ main() {
 		}
 		else {
 			FrameCheckpointTimeDiff.Show();
+		}
+
+		// On UASECO start-up TotalCheckpoints is 0, skip in that case
+		if (TotalCheckpoints == 0) {
+			continue;
 		}
 
 		if (CurrentTime > RefreshTime) {

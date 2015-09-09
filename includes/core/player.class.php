@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
+ * Date:	2015-09-03
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -129,7 +129,7 @@ class Player {
 		global $aseco;
 
 		if ($data) {
-			$this->id			= $aseco->server->players->getPlayerId($data['Login'], true);
+			$this->id			= $aseco->server->players->getPlayerIdByLogin($data['Login'], true);
 			$this->pid			= $data['PlayerId'];
 			$this->login			= $data['Login'];
 			$this->nickname			= $data['NickName'];
