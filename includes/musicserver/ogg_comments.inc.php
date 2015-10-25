@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » No changes made for UASECO */
+
+// 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 
 /**
  * Ogg_Comments - Extract comments (ID3 tags) from .ogg files
@@ -30,7 +31,7 @@ class Ogg_Comments {
 	 * @return Ogg_Comments
 	 *        If $comments is empty, no .ogg file
 	 */
-	public function Ogg_Comments($path, $utf8 = false) {
+	public function __construct($path, $utf8 = false) {
 
 		// check for local file or URL
 		if (strpos($path, '://') === false) {

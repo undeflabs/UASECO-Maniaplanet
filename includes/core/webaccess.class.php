@@ -12,6 +12,7 @@
 //            » 2014-09-09: Bugfix for [PHP Notice] Undefined offset: 0 on line 1188 till 1194
 //            » 2014-10-04: Changed default UserAgent string
 //            » 2015-07-31: Added "X-ManiaPlanet-ServerLogin" for MX "Who downloaded?" function
+//            » 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 //
 ////////////////////////////////////////////////////////////////
 
@@ -125,7 +126,7 @@ class Webaccess {
 
 	var $_WebaccessList;
 
-	function Webaccess() {
+	function __construct() {
 		$this->_WebaccessList = array();
 	}
 
@@ -362,7 +363,7 @@ class WebaccessUrl {
 	// Methods
 	//-----------------------------
 
-	function WebaccessUrl(&$wa, $host, $port, $keepalive = true, $keepalive_timeout = 600, $keepalive_max = 300, $agent = USER_AGENT) {
+	function __construct (&$wa, $host, $port, $keepalive = true, $keepalive_timeout = 600, $keepalive_max = 300, $agent = USER_AGENT) {
 		global $_web_access_compress_xmlrpc_request, $_web_access_retry_timeout;
 
 		$this->wa = &$wa;

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-30
+ * Date:	2015-09-10
  * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -171,8 +171,10 @@ class PlayList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	// Possible values for $method are ('select', 'vote', 'pay', 'add')
+
 //	public function addMapToPlaylist ($uid, $login, $skippable = true, $first_position = false) {
-	public function addMapToPlaylist ($uid, $login) {
+	public function addMapToPlaylist ($uid, $login, $method = 'select') {
 		global $aseco;
 
 //		Test "SetNextMapIdent" instead of "ChooseNextMap"
@@ -181,6 +183,37 @@ class PlayList {
 		// Check for a Map which has to be "present in the selection" of the dedicated server
 		$map = $aseco->server->maps->getMapByUid($uid);
 		if ($map->id > 0) {
+
+			$player = $aseco->server->players->getPlayerByLogin($login);
+
+			// Add Map to Playlist array
+			$this->playlist[] = array(
+				'timestamp'	=> microtime(true),
+				'map'		=> $map->id,
+				'player'	=> $player->id,
+				'method'	=> $method,
+			);
+
+			// Update Playlist in DB
+			$query = "
+			INSERT INTO `%prefix%playlist` (
+				`Timestamp`,
+				`MapId`,
+				`PlayerId`,
+				`Method`
+			)
+			VALUES (
+				". microtime(true) .",
+				". $map->id .",
+				". $player->id .",
+				". $aseco->db->quote($method) ."
+			);
+			";
+			$aseco->db->query($query);
+			if ($aseco->db->affected_rows === -1 && $aseco->debug) {
+				trigger_error('[Playlist] addMapToPlaylist(): Could not add Map into table "playlist": ('. $aseco->db->errmsg() .') for statement ['. $query .']', E_USER_WARNING);
+			}
+
 			// If Playlist is empty, setup the next Map at the dedicated server
 			if (count($this->playlist) == 0) {
 				try {
@@ -189,7 +222,7 @@ class PlayList {
 					$aseco->dump($result, $uid, $login);
 				}
 				catch (Exception $exception) {
-					$aseco->console('[Playlist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - ChooseNextMap');
+					$aseco->console('[Playlist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SetNextMapIdent');
 				}
 			}
 		}
@@ -204,7 +237,7 @@ class PlayList {
 	public function isMapInPlaylistById ($id) {
 		if (!empty($id)) {
 			foreach ($this->playlist as $item) {
-				if ($item['id'] == $id) {
+				if ($item['map'] == $id) {
 					return true;
 				}
 			}
@@ -218,11 +251,11 @@ class PlayList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function isMapInPlaylistByUid ($uid) {
-		if (!empty($uid)) {
+	public function getPlaylistEntryById ($id) {
+		if (!empty($id)) {
 			foreach ($this->playlist as $item) {
-				if ($item['uid'] == $uid) {
-					return true;
+				if ($item['map'] == $id) {
+					return $item;
 				}
 			}
 		}

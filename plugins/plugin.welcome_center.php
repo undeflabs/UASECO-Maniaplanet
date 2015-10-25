@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-09-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -198,18 +198,20 @@ class PluginWelcomeCenter extends Plugin {
 		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] == true) {
 			$skip = false;
 			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == true) {
-				$query = "SELECT
+				$query = "
+				SELECT
 					`Average`
 				FROM `%prefix%rankings`
 				WHERE `PlayerId` = ". $aseco->db->quote($player->id) ."
 				LIMIT 1;
 				";
-				$res = $aseco->db->query($query);
-				if ($res) {
-					if ($res->num_rows > 0) {
+
+				$result = $aseco->db->query($query);
+				if ($result) {
+					if ($result->num_rows > 0) {
 						$skip = true;
 					}
-					$res->free_result();
+					$result->free_result();
 				}
 			}
 			if ($skip == false) {

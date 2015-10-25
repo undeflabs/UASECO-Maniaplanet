@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-09-01
+ * Date:		2015-09-20
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -920,8 +920,7 @@ class PluginRecordsEyepiece extends Plugin {
 						while ($row = $res->fetch_object()) {
 							$mostfinished[$row->PlayerId] = $row->Count;
 						}
-//						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
-						$aseco->db->query('START TRANSACTION;');
+						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
 						foreach ($mostfinished as $id => $count) {
 							$res1 = $aseco->db->query("
 								UPDATE `%prefix%players`
@@ -958,8 +957,7 @@ class PluginRecordsEyepiece extends Plugin {
 						while ($row = $res->fetch_object()) {
 							$mostrecords[$row->PlayerId] = $row->Count;
 						}
-//						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
-						$aseco->db->query('START TRANSACTION;');
+						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
 						foreach ($mostrecords as $id => $count) {
 							$res1 = $aseco->db->query("
 								UPDATE `%prefix%players`
@@ -2252,6 +2250,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Juke the selected Map
 			$aseco->releaseChatCommand('/jukebox 1', $player->login);
+//			$aseco->server->maps->playlist->addMapToPlaylist($params['uid'], $player->login, 'select');
 
 			// Refresh on juke'd map
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
@@ -10484,8 +10483,16 @@ EOL;
 				}
 				unset($item);
 
+//				// Find the Player who has juked this Map
+//				$login = false;
+//				$juked = false;
+//				if ($playlist = $aseco->server->maps->playlist->getPlaylistEntryById($map->id) !== false) {
+//					$login = $playlist['login'];
+//					$juked = true;
+//				}
+
 				$xml .= '<frame posn="'. $offset .' -'. (17.71875 * $line) .' 1">';
-				if ($aseco->server->maps->current->uid == $map->uid && $juked == 0) {
+				if ($aseco->server->maps->current->uid == $map->uid && $juked == false) {
 					// Current map
 //					$xml .= '<quad posn="0 0 0.02" sizen="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad posn="1 -0.6749 0.04" sizen="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
@@ -10498,7 +10505,7 @@ EOL;
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === false && $juked == 0) {
+				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === false && $juked == false) {
 					// Default (not current, not recent, not juked)
 //					$xml .= '<quad posn="0 0 0.02" sizen="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad posn="1 -0.6749 0.04" sizen="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
@@ -10511,7 +10518,7 @@ EOL;
 					$xml .= '<quad posn="1.5 -7.975 0.04" sizen="3.375 3.375" image="file://Skins/Avatars/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label posn="6.125 -8.4375 0.04" sizen="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripColors($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true && $juked > 0) {
+				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true && $juked == true) {
 					// This is a recent but juked Map
 //					$xml .= '<quad posn="0 0 0.02" sizen="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad posn="0.675 -0.6375 0.04" sizen="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
@@ -14634,7 +14641,7 @@ EOL;
 			foreach ($aseco->server->rankings->ranking_list as $login => $data) {
 				if ($data->score > 0) {
 					$ranks[] = array(
-						'pid'	=> $aseco->server->players->getPlayerId($login),
+						'pid'	=> $aseco->server->players->getPlayerIdByLogin($login),
 						'score'	=> $data->score,
 					);
 				}

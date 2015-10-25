@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!--
+	Language file for all chatcommand descriptions
+	(except 3rd party plugins)
+--> 
+<locales>
+	<HELP>
+		<en>Shows all available /admin commands (chat)</en>
+		<de>Zeigt verfügbare /admin Kommandos (Chat)</de>
+	</HELP>
+	<HELPALL>
+		<en>Displays help for available /admin commands (Fenster)</en>
+		<de>Zeigt die Hilfe für verfügbare /admin Kommandos (Fenster)</de>
+	</HELPALL>
+	<SETSERVERNAME>
+		<en>Changes the name of the server</en>
+		<de>Ändert den Namen des Servers</de>
+	</SETSERVERNAME>
+</locales> 

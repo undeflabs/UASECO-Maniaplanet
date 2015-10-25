@@ -2,6 +2,9 @@
  *	Based upon original version 2014-11-05
  *	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
+ *	2015-09-20 changed by undef.de:
+ *	- Changed the country and continent to "Continent / Country" instead of "Country / Continent" at id "Label_MultiRank"
+ *
  *	2015-06-26 changed by undef.de:
  *	- Replaced in-game graphics for id "Button_Spec" and id "Button_Profile" with custom made images and hover effect
  *
@@ -51,7 +54,7 @@
  *	- LibST_SMWithLegends, add a space for columns legends in the header
  */
 
-#Const Version		"2015-06-26"
+#Const Version		"2015-09-20"
 #Const ScriptName	"ScoresTable.Script.txt"
 
 #Include "TextLib" as TL
@@ -2728,8 +2731,8 @@ Void UpdateSlot(Integer _Slot, CScore _Score) {
 		declare Zone = TL::Split("|", _Score.User.ZonePath);
 		if (Zone.existskey(1)) Continent = Zone[1];
 		if (Zone.existskey(2)) Country = Zone[2];
-		if (_Score.User.LadderRank > 0) Label_MultiRank.Value = TL::Compose("%1 / %2: %3", Country, Continent, TL::ToText(_Score.User.LadderRank));
-		else Label_MultiRank.Value = TL::Compose("%1 / %2: %3", Country, Continent, _("Not ranked"));
+		if (_Score.User.LadderRank > 0) Label_MultiRank.Value = TL::Compose("%1 / %2: %3", Continent, Country, TL::ToText(_Score.User.LadderRank));
+		else Label_MultiRank.Value = TL::Compose("%1 / %2: %3", Continent, Country, _("Not ranked"));
 		Quad_MultiFlag.ImageUrl = _Score.User.CountryFlagUrl;
 	}
 

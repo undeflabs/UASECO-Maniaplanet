@@ -12,7 +12,7 @@ Version 1.0.0
 
    Requirements
    ~~~~~~~~~~~~
-   - Requires PHP/5.4.0 or higher (5.6.x recommended)
+   - Requires PHP/5.5.0 or higher (7.x.x recommended for performance gain)
    - Requires MySQL/5.x or higher
    - Requires a Maniaplanet dedicated Server build 2015-06-16_16_53 or higher
    - Requires dedicated Server API-Version 2013-04-16 or higher
@@ -36,6 +36,7 @@ Version 1.0.0
    - Added class Dependence
    - Added class Continent
    - Added class Country
+   - Added class Locales (thanks to askuri)
    - Added class Helper (which holds the most UASECO Methods)
    - Added class MapList
    - Added class MapHistory
@@ -56,6 +57,7 @@ Version 1.0.0
    - Added Support for the following Gamemodes:
      - Knockout.Script.txt: https://forum.maniaplanet.com/viewtopic.php?f=9&t=31243
      - Doppler.Script.txt: https://forum.maniaplanet.com/viewtopic.php?f=9&t=30463
+   - Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 
 
    Bugfix (in XAseco2)

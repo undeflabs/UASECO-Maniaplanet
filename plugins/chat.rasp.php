@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
+ * Date:	2015-10-25
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -80,8 +80,9 @@ class PluginChatRasp extends Plugin {
 		$this->registerChatCommand('gr',	'chat_gr',		'Sends a Good Race message to everyone',		Player::PLAYERS);
 		$this->registerChatCommand('n1',	'chat_n1',		'Sends a Nice One message to everyone',			Player::PLAYERS);
 		$this->registerChatCommand('bgm',	'chat_bgm',		'Sends a Bad Game message to everyone',			Player::PLAYERS);
-		$this->registerChatCommand('official',	'chat_official',	'Shows a helpful message ;-)',				Player::PLAYERS);
+		$this->registerChatCommand('dammit',	'chat_dammit',		'Sends a Dammit message to everyone',			Player::PLAYERS);
 		$this->registerChatCommand('bootme',	'chat_bootme',		'Boot yourself from the server',			Player::PLAYERS);
+		$this->registerChatCommand('ragequit',	'chat_ragequit',	'Gets you away from this server in rage!',		Player::PLAYERS);
 	}
 
 	/*
@@ -634,10 +635,21 @@ class PluginChatRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function chat_official ($aseco, $login, $chat_command, $chat_parameter) {
+	public function chat_dammit ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$msg = $aseco->plugins['PluginRasp']->messages['OFFICIAL'][0];
-		$aseco->sendChatMessage($msg, $login);
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
+		// check if on global mute list
+		if (in_array($player->login, $aseco->server->mutelist)) {
+			$message = $aseco->formatText($aseco->getChatMessage('MUTED'), '/dammit');
+			$aseco->sendChatMessage($message, $player->login);
+			return;
+		}
+
+		$msg = '$g['. $player->nickname .'$z$s] {#interact}Failed Again! DAMMIT!!!';
+		$aseco->sendChatMessage($msg);
 	}
 
 	/*
@@ -663,6 +675,40 @@ class PluginChatRasp extends Plugin {
 				$aseco->client->addCall('Kick',
 					$player->login,
 					$aseco->formatColors($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] .'$z')
+				);
+			}
+			else {
+				$aseco->client->addCall('Kick', $player->login);
+			}
+		}
+		catch (Exception $exception) {
+			$aseco->console('[ChatRasp] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - Kick: ['. $player->login .']');
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_ragequit ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
+		// show departure message and kick player
+		$msg = $aseco->formatText($aseco->plugins['PluginRasp']->messages['RAGEQUIT'][0],
+			$player->nickname
+		);
+		$aseco->sendChatMessage($msg);
+
+		try {
+			if (isset($aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0] != '') {
+				$aseco->client->addCall('Kick',
+					$player->login,
+					$aseco->formatColors($aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0] .'$z')
 				);
 			}
 			else {

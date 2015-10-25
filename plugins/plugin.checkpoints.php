@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-03
+ * Date:	2015-10-22
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -822,7 +822,10 @@ main() {
 				if (CurrentCheckpoint != -1 && InputPlayer != Null && InputPlayer.Score != Null && InputPlayer.Score.BestRace != Null) {
 					declare CpCount = 0;
 					foreach (CpTime in InputPlayer.Score.BestRace.Checkpoints) {
-						if (CheckpointTimes[CpCount] == 0 || CheckpointTimes[CpCount] > CpTime) {
+						if (CheckpointTimes.existskey(CpCount) && (CheckpointTimes[CpCount] == 0 || CheckpointTimes[CpCount] > CpTime)) {
+							CheckpointTimes[CpCount] = CpTime;
+						}
+						else {
 							CheckpointTimes[CpCount] = CpTime;
 						}
 						CpCount += 1;

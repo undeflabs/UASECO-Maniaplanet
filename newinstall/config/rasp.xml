@@ -453,8 +453,9 @@
 		<karma_nopublic>{#server}» {#error}Public karma votes disabled, use $i{#highlite}/++{#error} or $i{#highlite}/--{#error} instead!</karma_nopublic>
 
 		<!-- misc. messages -->
-		<official>{#server}» {#highlite}That is not a valid command on ANY server - just wait until the next map to become official.</official>
 		<bootme>{#server}» {#highlite}{1}$z$s{#message} chooses to boot back to the real world.</bootme>
 		<bootme_dialog>{#message}Thanks for playing, please come back soon!</bootme_dialog>
+		<ragequit>{#server}» {#highlite}{1}$z$s{#message} said: "@"#!" and ragequitted!</ragequit>
+		<ragequit_dialog>{#message}Thanks for playing, please come back soon!</ragequit_dialog>
 	</messages>
 </rasp>

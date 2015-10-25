@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:		undef.de
  * Version:		1.0.0
- * Date:		2015-08-23
+ * Date:		2015-10-22
  * Copyright:		2012 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -138,7 +138,6 @@ class PluginVoteManager extends Plugin {
 		$this->config['RunningVote']['Votes']['Skip']		= 0;
 		$this->config['RunningVote']				= $this->cleanupCurrentVote();
 		$this->config['Cache']['Todo']['onEndMap']		= false;
-		$this->config['Cache']['LastMap']['Uid']		= false;
 		$this->config['Cache']['LastMap']['Runs']		= 0;
 		$this->config['Cache']['IgnoreLogin']			= array();
 		$this->config['Cache']['AllowLogin']			= array();
@@ -550,13 +549,12 @@ class PluginVoteManager extends Plugin {
 		}
 
 		// Find Uid and count the restarts or reset
-		if ($this->config['Cache']['LastMap']['Uid'] == $aseco->server->maps->current->uid) {
+		if ($aseco->server->maps->previous->uid == $aseco->server->maps->current->uid) {
 			// Count the restarts
 			$this->config['Cache']['LastMap']['Runs'] ++;
 		}
 		else {
 			// Reset
-			$this->config['Cache']['LastMap']['Uid'] = $aseco->server->maps->current->uid;
 			$this->config['Cache']['LastMap']['Runs'] = 0;
 		}
 	}
@@ -1152,7 +1150,7 @@ EOL;
 			return false;
 		}
 
-		if ($type == 'Skip' && ($this->config['Cache']['LastMap']['Uid'] == $aseco->server->maps->current->uid)) {
+		if ($type == 'Skip' && ($aseco->server->maps->previous->uid == $aseco->server->maps->current->uid)) {
 			// For the current Map was a successfully restart vote before, cancel this skip request
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
 			return false;

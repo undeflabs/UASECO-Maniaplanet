@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » No changes made for UASECO */
+
+// 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 
 ////////////////////////////////////////////////////////////////
 //
@@ -168,7 +169,7 @@ class IXR_RequestStd {
 	var $xml;
 
 	// see xmlrpc_request
-	function IXR_RequestStd($method, $params = null) {
+	function __construct($method, $params = null) {
 
 		$this->method = $method;
 		// in case the first level array was forgotten in a multicall then add it...
@@ -200,7 +201,7 @@ class IXR_ResponseStd {
 	var $xml;
 
 	// see xmlrpc_response
-	function IXR_ResponseStd($args) {
+	function __construct($args) {
 
 		$this->args = $args;
 		$this->xml = xmlrpc_response($this->args);

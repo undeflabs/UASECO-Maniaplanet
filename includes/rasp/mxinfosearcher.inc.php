@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » No changes made for UASECO */
+
+// 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 
 /**
  * MXInfoSearcher - Search info for TM2/SM/QM maps from ManiaExchange
@@ -250,7 +251,7 @@ class MXInfo {
 	 *        The MX map data from MXInfoSearcher
 	 * @return MXInfo
 	 */
-	public function MXInfo($section, $prefix, $mx) {
+	public function __construct($section, $prefix, $mx) {
 
 		$this->section  = $section;
 		$this->prefix   = $prefix;

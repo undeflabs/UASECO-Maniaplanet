@@ -1,3 +1,14 @@
+plugin.rasp.php showRank() / plugin.welcome_center.php onPlayerConnect()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ - For more speed onPlayerConnect, remove this from the above Plugins and place it into includes/core/player.class.php (?)
+	SELECT
+		`Average`
+	FROM `%prefix%rankings`
+	WHERE `PlayerId` = ". $aseco->db->quote($player->id) ."
+	LIMIT 1;
+
+
+
 plugin.music_server.php
 ~~~~~~~~~~~~~~~~~~~~~~~
 [2015-07-07 19:58:43] [Chat] Player [truffeltje] used command "/admin nextmap"

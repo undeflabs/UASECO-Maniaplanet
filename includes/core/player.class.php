@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-03
+ * Date:	2015-09-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -185,6 +185,8 @@ class Player {
 
 			// Work on Player flags...
 			$this->updateInfo($data);
+
+			$this->data			= $this->getDatabasePlayerSettings();
 		}
 		else {
 			// Set empty defaults
@@ -224,14 +226,14 @@ class Player {
 			$info['Flags'] = 0;
 			$info['SpectatorStatus'] = 0;
 			$this->updateInfo($data);
+
+			$this->data			= array();
 		}
 		$this->visits				= 0;
 		$this->wins				= 0;
 		$this->newwins				= 0;
 		$this->timeplayed			= 0;
 		$this->donations			= 0;
-
-		$this->data				= $this->getDatabasePlayerSettings();
 
 		$this->unlocked				= false;
 		$this->pmbuf				= array();
@@ -294,8 +296,7 @@ class Player {
 			return;
 		}
 
-//		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
-		$aseco->db->query('START TRANSACTION;');
+		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
 		foreach ($this->data as $plugin => $entries) {
 			foreach ($entries as $key => $value) {
 				$query = "

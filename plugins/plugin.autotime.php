@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-18
+ * Date:	2015-09-20
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -139,7 +139,7 @@ class PluginAutotime extends Plugin {
 				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 
 				// Set and log timelimit (strip .000 sec)
-				$aseco->console('[AutoTime] Set {1} timelimit for [{2}] to {3} (Author time: {4})',
+				$aseco->console('[AutoTime] Set [{1}] timelimit for [{2}] to [{3}], author time: [{4}]',
 					$tag,
 					$aseco->stripColors($map->name, false),
 					substr($aseco->formatTime($newtime * 1000), 0, -4),

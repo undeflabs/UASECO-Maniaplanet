@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-09-03
+ * Date:	2015-09-24
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -906,22 +906,22 @@ class PluginManiaKarma extends Plugin {
 	public function chat_votes ($aseco, $login, $chat_command, $chat_parameter) {
 
 		if ($player = $aseco->server->players->getPlayerByLogin($login)) {
-			if ($chat_parameter == '+++') {
+			if ($chat_command == '+++') {
 				$this->handlePlayerVote($player, 3);
 			}
-			else if ($chat_parameter == '++') {
+			else if ($chat_command == '++') {
 				$this->handlePlayerVote($player, 2);
 			}
-			else if ($chat_parameter == '+') {
+			else if ($chat_command == '+') {
 				$this->handlePlayerVote($player, 1);
 			}
-			else if ($chat_parameter == '-') {
+			else if ($chat_command == '-') {
 				$this->handlePlayerVote($player, -1);
 			}
-			else if ($chat_parameter == '--') {
+			else if ($chat_command == '--') {
 				$this->handlePlayerVote($player, -2);
 			}
-			else if ($chat_parameter == '---') {
+			else if ($chat_command == '---') {
 				$this->handlePlayerVote($player, -3);
 			}
 		}

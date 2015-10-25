@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-09-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -368,8 +368,7 @@ class MapList {
 
 
 		// Add Maps that are not yet stored in the database
-//		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
-		$aseco->db->query('START TRANSACTION;');
+		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
 		foreach ($database['insert'] as $map) {
 			$new = $this->insertMapIntoDatabase($map);
 

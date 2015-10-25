@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-03
+ * Date:	2015-10-25
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -99,7 +99,6 @@ class PluginRasp extends Plugin {
 		// prune records and times entries for maps deleted from server
 		if ($this->prune_records_times) {
 			$aseco->console('[Rasp] Pruning `%prefix%records`, `%prefix%ratings` and `%prefix%times` for deleted maps:');
-			$maps = $aseco->server->maps->map_list;
 
 			// Get list of maps IDs with records in the database
 			$query = "
@@ -112,19 +111,12 @@ class PluginRasp extends Plugin {
 			if ($res) {
 				if ($res->num_rows > 0) {
 					$removed = array();
-					while ($row = $res->fetch_row()) {
-						$map = $row[0];
-						// Delete records, ratings and times if is not in the maps list from Server
-						if (!in_array($map, $maps)) {
-							$removed[] = $map;
-							$query = 'DELETE FROM `%prefix%records` WHERE `MapId` = '. $map .';';
-							$aseco->db->query($query);
-
-							$query = 'DELETE FROM `%prefix%ratings` WHERE `MapId` = '. $map .';';
-							$aseco->db->query($query);
-
-							$query = 'DELETE FROM `%prefix%times` WHERE `MapId` = '. $map .';';
-							$aseco->db->query($query);
+					while ($row = $res->fetch_object()) {
+						// Delete maps, records, ratings and times if the map is not in the maps list from Server
+						$map = $aseco->server->maps->getMapById($row->MapId);
+						if ($map->uid === false) {
+							$removed[] = $row->MapId;
+							$aseco->db->query('DELETE FROM `%prefix%maps` WHERE `MapId` = '. $row->MapId .';');
 						}
 					}
 					$res->free_result();
@@ -630,8 +622,7 @@ class PluginRasp extends Plugin {
 		$aseco->db->query('TRUNCATE TABLE `%prefix%rankings`;');
 
 		// Get list of players with at least $minrecs records (possibly unranked)
-//		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
-		$aseco->db->query('START TRANSACTION;');
+		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
 		$query = "
 		SELECT
 			`PlayerId`,

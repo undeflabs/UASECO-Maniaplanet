@@ -19,7 +19,7 @@
  * ----------------------------------------------------------------------------------
  * Requires:	PHP/5.2.1 (or higher), MySQL/5.x (or higher)
  * Author:	undef.de
- * Copyright:	May 2014 - September 2015 by undef.de
+ * Copyright:	May 2014 - October 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,13 +42,13 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-09-09');
+	define('UASECO_BUILD',		'2015-10-25');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
 	define('MANIAPLANET_BUILD',	'2015-06-16_16_53');
 	define('API_VERSION',		'2013-04-16');
-	define('MIN_PHP_VERSION',	'5.4.0');
+	define('MIN_PHP_VERSION',	'5.5.0');
 
 	// Setup misc.
 	define('USER_AGENT',		UASECO_NAME .'/'. UASECO_VERSION .' build '. UASECO_BUILD);	// Used by includes/core/webaccess.class.php
@@ -80,6 +80,7 @@
 	require_once('includes/core/continent.class.php');
 	require_once('includes/core/country.class.php');
 	require_once('includes/core/database.class.php');
+	require_once('includes/core/locales.class.php');
 	require_once('includes/core/gameinfo.class.php');		// Required by includes/core/server.class.php
 	require_once('includes/core/server.class.php');
 	require_once('includes/core/dependence.class.php');		// Required by includes/core/plugin.class.php
@@ -112,6 +113,7 @@ class UASECO extends Helper {
 	public $parser;
 	public $webaccess;
 	public $db;
+	public $locales;
 	public $continent;
 	public $country;
 	public $windows;
@@ -190,6 +192,7 @@ class UASECO extends Helper {
 		$this->country			= new Country();
 		$this->windows			= new WindowList($this);
 		$this->server			= new Server('127.0.0.1', 5000, 'SuperAdmin', 'SuperAdmin');
+		$this->locales			= new Locales();
 		$this->plugins			= array();
 		$this->titles			= array();
 		$this->masteradmin_list		= array();
@@ -319,9 +322,9 @@ class UASECO extends Helper {
 		// Update players/relays lists
 		if (!empty($playerlist)) {
 			foreach ($playerlist as $player) {
-				// fake it into thinking it's a connecting player:
-				// it gets team & ladder info this way & will also throw an
-				// onPlayerConnect event for players (not relays) to all plugins
+				// Fake it into thinking it's a connecting Player:
+				// It gets team and ladder info this way and will also throw an
+				// onPlayerConnect event for Players (not relays) to all Plugins
 				$this->playerConnect($player['Login'], false);
 			}
 		}
@@ -422,7 +425,7 @@ class UASECO extends Helper {
 
 		// Add 'POWERED BY UASECO' to server comment
 		if (strpos($this->stripColors($this->server->comment, true), 'POWERED BY UASECO') === false) {
-			$this->client->query('SetServerComment', $this->server->comment ."\n". '$<$Z$O$FFFPOWERED BY $0AF$L[http://www.UASECO.org/]UASECO$L$>');
+			$this->client->query('SetServerComment', $this->server->comment ."\n". '$Z$O$FFFPOWERED BY $0AF$L[http://www.UASECO.org/]UASECO$L');
 		}
 
 		// Check server build
@@ -1302,18 +1305,18 @@ class UASECO extends Helper {
 		";
 		$this->db->query($query);
 
-
 		$this->console('[Database] » Checking table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
 		$this->displayLoadStatus('Checking table `'. $this->settings['mysql']['table_prefix'] .'playlist`', 0.4);
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%playlist` (
-		  `MapId` mediumint(3) unsigned  DEFAULT '0',
-		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Timestamp` decimal(17,3) unsigned DEFAULT '0.000',
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
-		  `Method` enum('select','vote','pay') COLLATE utf8_bin DEFAULT 'select',
+		  `Method` enum('select','vote','pay','add') COLLATE utf8_bin DEFAULT 'select',
+		  KEY `Timestamp` (`Timestamp`),
 		  KEY `MapId` (`MapId`),
-		  KEY `Date` (`Date`),
-		  KEY `PlayerId` (`PlayerId`)
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Method` (`Method`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
@@ -1467,8 +1470,8 @@ class UASECO extends Helper {
 			$this->console('[Database] » Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
 			$query = "
 			ALTER TABLE `%prefix%playlist`
-			  ADD CONSTRAINT `%prefix%playlist_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
-			  ADD CONSTRAINT `%prefix%playlist_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+			  ADD CONSTRAINT `%prefix%playlist_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE,
+			  ADD CONSTRAINT `%prefix%playlist_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
@@ -2029,7 +2032,7 @@ class UASECO extends Helper {
 		// Request information about the new player
 		$details = $this->client->query('GetDetailedPlayerInfo', $login);
 		$info = $this->client->query('GetPlayerInfo', $login, 1);
-		$data = array_merge($details, $info);
+		$data = @array_merge($details, $info);
 		unset($details, $info);
 
 		// Check for Server
@@ -2076,7 +2079,7 @@ class UASECO extends Helper {
 				// client version checking, extract version number
 				$version = str_replace(')', '', preg_replace('/.*\(/', '', $data['ClientVersion']));
 				if ($version == '') {
-					$version = '2.11.11';
+					$version = '3.3.0';
 				}
 				$message = str_replace('{br}', LF, $this->getChatMessage('CLIENT_ERROR'));
 
@@ -2114,8 +2117,10 @@ class UASECO extends Helper {
 				// Add to ranking list
 				$this->server->rankings->addPlayer($player);
 
-				// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
-				$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $player->login);
+				if ($this->startup_phase == false) {
+					// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
+					$this->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $player->login);
+				}
 			}
 
 			// Log console message

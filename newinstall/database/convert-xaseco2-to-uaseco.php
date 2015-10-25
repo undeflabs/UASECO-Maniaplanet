@@ -14,7 +14,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-14
+ * Date:	2015-09-20
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -800,13 +800,14 @@ class Converter {
 		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%playlist` (
-		  `MapId` mediumint(3) unsigned  DEFAULT '0',
-		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Timestamp` decimal(17,3) unsigned DEFAULT '0.000',
+		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
-		  `Method` enum('select','vote','pay') COLLATE utf8_bin DEFAULT 'select',
+		  `Method` enum('select','vote','pay','add') COLLATE utf8_bin DEFAULT 'select',
+		  KEY `Timestamp` (`Timestamp`),
 		  KEY `MapId` (`MapId`),
-		  KEY `Date` (`Date`),
-		  KEY `PlayerId` (`PlayerId`)
+		  KEY `PlayerId` (`PlayerId`),
+		  KEY `Method` (`Method`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 		";
 		$this->db->query($query);
@@ -945,8 +946,8 @@ class Converter {
 		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
 		$query = "
 		ALTER TABLE `%prefix%playlist`
-		  ADD CONSTRAINT `%prefix%playlist_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
-		  ADD CONSTRAINT `%prefix%playlist_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
+		  ADD CONSTRAINT `%prefix%playlist_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE,
+		  ADD CONSTRAINT `%prefix%playlist_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
 		";
 		$result = $this->db->query($query);
 		if (!$result) {

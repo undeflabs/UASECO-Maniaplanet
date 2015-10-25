@@ -18,5 +18,5 @@
 	<!-- 2 = in message window, 1 = in chat, 0 = none -->
 	<display>1</display>
 
-	<message>{#server}» Set {1} timelimit for Map [{#highlite}{2}{#server}] to [{#highlite}{3}{#server}], calculation based upon the author time of [{#highlite}{4}{#server}]</message>
+	<message>{#server}» Set {1} timelimit for Map {#highlite}{2}{#server} to {#highlite}{3}{#server}, calculation based upon the author time of {#highlite}{4}{#server}</message>
 </settings>

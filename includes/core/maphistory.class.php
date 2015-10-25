@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-30
+ * Date:	2015-09-19
  * Copyright:	2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -95,8 +95,7 @@ class MapHistory {
 				}
 
 				// Clean up the MapHistory table
-//				$aseco->db->begin_transaction();		// Require PHP >= 5.5.0
-				$aseco->db->query('START TRANSACTION;');
+				$aseco->db->begin_transaction();		// Require PHP >= 5.5.0
 				$query = "TRUNCATE TABLE `%prefix%maphistory`;";
 
 				$aseco->db->query($query);

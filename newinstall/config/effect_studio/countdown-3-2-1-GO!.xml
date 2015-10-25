@@ -11,7 +11,7 @@
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2015-08-18
+ * Version:	2015-10-25
  * ----------------------------------
  */
 #Include "AnimLib" as AnimLib
@@ -35,7 +35,7 @@ main() {
 	declare Integer PrevCount		= 0;
 	declare Integer StartTime		= 0;		// Animation start time
 
-	// Turn off the original 3-2-1-GO! animation!
+	// Turn off the original 3-2-1-GO! animation
 	ClientUI.OverlayHide321Go		= True;
 
 	while (True) {
@@ -78,7 +78,7 @@ main() {
 				Quad_CountdownGo.Scale = 1.0;
 
 				Quad_Countdown3.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
-				Quad_Countdown3.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+				Quad_Countdown3.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_Countdown3.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
 			else if (Counter == 2) {
@@ -95,11 +95,11 @@ main() {
 				Quad_CountdownGo.Scale = 1.0;
 
 				Quad_Countdown3.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_Countdown3.RelativePosition.Z>;
-				Quad_Countdown3.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_Countdown3.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_Countdown3.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 
 				Quad_Countdown2.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
-				Quad_Countdown2.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+				Quad_Countdown2.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_Countdown2.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
 			else if (Counter == 1) {
@@ -116,11 +116,11 @@ main() {
 				Quad_CountdownGo.Scale = 1.0;
 
 				Quad_Countdown2.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_Countdown2.RelativePosition.Z>;
-				Quad_Countdown2.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_Countdown2.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_Countdown2.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 
 				Quad_Countdown1.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
-				Quad_Countdown1.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+				Quad_Countdown1.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_Countdown1.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
 		}
@@ -140,22 +140,22 @@ main() {
 				Quad_Countdown1.Scale = 1.0;
 
 				Quad_Countdown1.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_Countdown1.RelativePosition.Z>;
-				Quad_Countdown1.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_Countdown1.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_Countdown1.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 
 				Quad_CountdownGo.Size = <AnimLib::EaseOutElastic2(OperationalTime, 0.0, 100.0, 750), AnimLib::EaseOutElastic2(OperationalTime, 0.0, 100.0, 750)>;
-				Quad_CountdownGo.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.9, 250);
+				Quad_CountdownGo.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_CountdownGo.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
-			else if (OperationalTime < 1500) {
+			else if (OperationalTime < 1350) {
 				OperationalTime -= 750;
 				Quad_Countdown1.Opacity = 0.0;
 
 				Quad_CountdownGo.RelativePosition = <0.0, AnimLib::EaseInSine(OperationalTime, 0.0, -90.0, 750), Quad_CountdownGo.RelativePosition.Z>;
-				Quad_CountdownGo.Opacity = AnimLib::EaseInSine(OperationalTime, 0.9, -1.0, 750);
+				Quad_CountdownGo.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_CountdownGo.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 			}
-			else if (OperationalTime < 2250) {
+			else if (OperationalTime < 2100) {
 				Quad_Countdown3.RelativePosition = <0.0, 0.0, 0.01>;
 				Quad_Countdown2.RelativePosition = <0.0, 0.0, 0.02>;
 				Quad_Countdown1.RelativePosition = <0.0, 0.0, 0.03>;

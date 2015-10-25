@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-10-22
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1376,7 +1376,6 @@ class PluginRaspVotes extends Plugin {
 
 
 				/***************************** JUKEBOX VARIABLES *******************************/
-				$this->buffersize		= $xml['RASP']['BUFFER_SIZE'][0];
 				$this->mxvoteratio		= $xml['RASP']['MX_VOTERATIO'][0];
 				$this->mxdir			= $xml['RASP']['MX_DIR'][0];
 				$this->mxtmpdir			= $xml['RASP']['MX_TMPDIR'][0];

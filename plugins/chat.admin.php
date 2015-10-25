@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-03
+ * Date:	2015-09-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -102,9 +102,9 @@ class PluginChatAdmin extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer', 'onPlayerManialinkPageAnswer');
 
 		$params = array(
-			'help'				=> 'Shows all available /admin commands',
-			'helpall'			=> 'Displays help for available /admin commands',
-			'setservername'			=> 'Changes the name of the server',
+			'help'				=> '#locales:chat.admin:help',
+			'helpall'			=> '#locales:chat.admin:helpall',
+			'setservername'			=> '#locales:chat.admin:setservername',
 			'setcomment'			=> 'Changes the server comment',
 			'setpwd'			=> 'Changes the player password',
 			'setspecpwd'			=> 'Changes the spectator password',

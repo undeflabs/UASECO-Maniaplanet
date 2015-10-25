@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-03
+ * Date:	2015-09-19
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -290,7 +290,8 @@ class Helper {
 						}
 						if ($allowed == true) {
 							foreach ($cc['params'] as $cmd => $description) {
-								$help[] = array($pad . $cmd, $description);
+//								$help[] = array($pad . $cmd, Locales::_($description, $login));
+								$help[] = array($pad . $cmd, $aseco->locales->getMessage($description, $login));
 								if (++$lines > 14) {
 									$player->msgs[] = $help;
 									$lines = 0;
@@ -305,7 +306,8 @@ class Helper {
 							$allowed = true;
 						}
 						if ($allowed == true) {
-							$help[] = array($pad . $name, $cc['help']);
+//							$help[] = array($pad . $name, Locales::_($cc['help'], $login));
+							$help[] = array($pad . $name, $aseco->locales->getMessage($cc['help'], $login));
 							if (++$lines > 14) {
 								$player->msgs[] = $help;
 								$lines = 0;

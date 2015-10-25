@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » No changes made for UASECO */
+
+// 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 
 ////////////////////////////////////////////////////////////////
 //
@@ -29,7 +30,7 @@ class XmlrpcDB {
 	// Methods
 	//-----------------------------
 
-	function XmlrpcDB($webaccess, $url) {
+	function __construct($webaccess, $url) {
 
 		$this->_debug = 0;  // max debug level = 3
 		$this->_webaccess = $webaccess;

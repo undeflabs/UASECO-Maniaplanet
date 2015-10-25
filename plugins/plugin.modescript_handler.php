@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-03
+ * Date:	2015-09-10
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1184,10 +1184,10 @@ class PluginModescriptHandler extends Plugin {
 	private function setupCustomScoretable () {
 		global $aseco;
 
-//		foreach (range(0,253) as $id) {
+//		$aseco->client->query('DisconnectFakePlayer', '*');
+//		foreach (range(0,50) as $id) {
 //			$aseco->client->query('ConnectFakePlayer');
 //		}
-//		$aseco->client->query('DisconnectFakePlayer', '*');
 
 		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
 		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';

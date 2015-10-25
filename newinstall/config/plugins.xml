@@ -23,8 +23,8 @@
 	<plugin>plugin.mania_exchange.php</plugin>
 	<plugin>plugin.mistral_idlekick.php</plugin>
 	<plugin>plugin.rasp_jukebox.php</plugin>
-<!--	<plugin>plugin.rasp_karma.php</plugin>		-->
-<!--	<plugin>plugin.rasp_votes.php</plugin>		-->
+<!--	<plugin>plugin.rasp_karma.php</plugin>			-->
+<!--	<plugin>plugin.rasp_votes.php</plugin>			-->
 	<plugin>plugin.music_server.php</plugin>
 	<plugin>plugin.autotime.php</plugin>
 	<plugin>plugin.access.php</plugin>
@@ -47,6 +47,8 @@
 	<plugin>chat.rasp_nextrank.php</plugin>
 
 	<!-- Add here third-party plugins -->
+<!--	<plugin>plugin.force_loadscreen.php</plugin>		-->
+<!--	<plugin>plugin.force_mod.php</plugin>			-->
 	<plugin>plugin.pay2play.php</plugin>
 	<plugin>plugin.customize_quit_dialog.php</plugin>
 	<plugin>plugin.effect_studio.php</plugin>
