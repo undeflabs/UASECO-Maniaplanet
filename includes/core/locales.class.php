@@ -34,8 +34,9 @@
 */
 
 class Locales {
-	private static $playerlang_cache = array();
-	private static $translations;
+	private $aseco;
+	private $playerlang_cache = array(); // stores which player speaks which language | struct: [login => language, login2 => language2, ...]
+	private $locales;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -51,7 +52,7 @@ class Locales {
 
 		foreach (glob('locales/*.xml') as $filename) {
 			$plugin = basename($filename, '.xml'); // filename without .xml is the plugin identification
-			self::$translations[$plugin] = $aseco->parser->xmlToArray($filename, true, true);
+			$this->locales[$plugin] = json_decode(json_encode(simplexml_load_file($filename)), true); // read with simplexml and use a trick to convert it to an array
 		}
 	}
 
@@ -63,7 +64,7 @@ class Locales {
 
 	// Is also called on startup. Needed to use this event, because on onSync $aseco->server->players->player_list is still empty (grrr!!)
 	public function onPlayerConnect ($aseco, $player) {
-		self::$playerlang_cache[$player->login] = $player->language;
+		$this->playerlang_cache[$player->login] = strtolower($player->language);
 	}
 
 	/*
@@ -86,45 +87,46 @@ class Locales {
 	public function getMessage ($msg, $login) {
 		return $this->_($msg, $login);
 	}
-
+	
 	/*
 	#///////////////////////////////////////////////////////////////////////#
 	#									#
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	/**
-	 * Translate a string
-	 * $msg must be formatted this way: #locales:your_file_with_translations:id_that_identifies_your_message_in_xml
-	 * .xml is automatically added
-	 */
-	public static function _ ($msg, $login) {
-		@list($locales_check, $msg_file, $msg_id) = explode(':', $msg, 3);
+	// Returns an array of all languages, spoken by current players on the server
+	public function getOnlinePlayerLanguages () {
+		return array_values($this->locales->playerlang_cache);
+	}
+	
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
 
-		$locales_check	= strtoupper($locales_check);
-		$msg_file	= strtolower($msg_file);
-		$msg_id		= strtoupper($msg_id);
+	public function getSingleTranslation ($sourcefile, $id, $lang) {
+		return $this->locales[$sourcefile][$id][$lang];
+	}
+	
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
 
-		if ($locales_check == '#LOCALES') {
-			$msg_file_array = self::$translations[$msg_file]['LOCALES'];
-
-			if ($msg_file_array[$msg_id][0]['EN'][0]) {
-				$lang = self::$playerlang_cache[$login];
-				$lang = 'DE';
-				$translation = $msg_file_array[$msg_id][0][strtoupper($lang)][0];
-				if ($translation) {
-					return $translation;
-				}
-				else {
-					return $msg_file_array[$msg_id][0]['EN'][0];
-				}
-			}
-			else {
-				trigger_error('[LOCALES] No text/translation found for '. $msg_id .' in '. $msg_file .'.xml!', E_USER_WARNING);
-			}
-		}
-
-		return $msg; // no translation requested, return original message
+	public function getAllTranslations ($sourcefile, $id) {
+		return $this->locales[$sourcefile][strtoupper($id)];
+	}
+	
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+	
+	public function getPlayerLanguage ($login) {
+		return $this->playerlang_cache[$login];
 	}
 }
 
