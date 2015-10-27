@@ -81,6 +81,7 @@
 	require_once('includes/core/country.class.php');
 	require_once('includes/core/database.class.php');
 	require_once('includes/core/locales.class.php');
+	require_once('includes/core/message.class.php');
 	require_once('includes/core/gameinfo.class.php');		// Required by includes/core/server.class.php
 	require_once('includes/core/server.class.php');
 	require_once('includes/core/dependence.class.php');		// Required by includes/core/plugin.class.php
