@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!--
+	Language file for common translations
+--> 
+
+<locales>
+	<YES>
+		<en>yes</en>
+		<de>ja</de>
+	</YES>
+	
+	<NO>
+		<en>no</en>
+		<de>nein</de>
+	</NO>
+	
+	<INSUFFICIENT_RIGHTS>
+		<en>{#error}You dont have the required admin rights to do that!</en>
+		<de>nein</de>
+	</INSUFFICIENT_RIGHTS>
+	
+	
+</locales>
