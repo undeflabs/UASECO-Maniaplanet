@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-19
+ * Date:	2015-10-29
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -290,8 +290,9 @@ class Helper {
 						}
 						if ($allowed == true) {
 							foreach ($cc['params'] as $cmd => $description) {
-//								$help[] = array($pad . $cmd, Locales::_($description, $login));
-								$help[] = array($pad . $cmd, $aseco->locales->getMessage($description, $login));
+								// if is object, finish the message and output its result.
+								// if not, it should be a normal string. this is a fallback for old plugins
+								$help[] = array($pad . $cmd, ($description instanceof Message) ? $description->finish($login) : $description);
 								if (++$lines > 14) {
 									$player->msgs[] = $help;
 									$lines = 0;
@@ -306,8 +307,9 @@ class Helper {
 							$allowed = true;
 						}
 						if ($allowed == true) {
-//							$help[] = array($pad . $name, Locales::_($cc['help'], $login));
-							$help[] = array($pad . $name, $aseco->locales->getMessage($cc['help'], $login));
+//							// if is object), finish the message and output its result.
+							// if not, it should be a normal string. this is a fallback for old plugins
+							$help[] = array($pad . $cmd, ($cc['help'] instanceof Message) ? $cc['help']->finish($login) : $cc['help']);
 							if (++$lines > 14) {
 								$player->msgs[] = $help;
 								$lines = 0;
@@ -458,34 +460,16 @@ class Helper {
 	*/
 
 	// Sends a chat message to the given $logins, or all Players
+	// OBSOLETE!!! Use the Message class please!
 	public function sendChatMessage ($message, $logins = false) {
-
 		if ($message != '') {
-
 			// Replace all entities back to normal for chat.
-			$message = str_replace(
-					array(
-						'&amp;',
-						'&quot;',
-						'&apos;',
-						'&gt;',
-						'&lt;',
-					),
-					array(
-						'&',
-						'"',
-						"'",
-						'>',
-						'<',
-					),
-					$message
-			);
+			$message = $this->decodeEntities($message);
 
 			if ($logins !== false) {
 				try {
 					// Remove whitespace and empty entries from the list
 					$logins = $this->cleanupLoginList($logins);
-
 					// Send to given Players
 					$this->client->query('ChatSendServerMessageToLogin', $this->formatColors($message), $logins);
 				}
@@ -506,6 +490,58 @@ class Helper {
 				}
 			}
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function encodeEntities ($string) {
+		return str_replace(
+				array(
+					'&',
+					'"',
+					"'",
+					'>',
+					'<',
+				),
+				array(
+					'&amp;',
+					'&quot;',
+					'&apos;',
+					'&gt;',
+					'&lt;',
+				),
+				$string
+		);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function decodeEntities ($string) {
+		return str_replace(
+				array(
+					'&amp;',
+					'&quot;',
+					'&apos;',
+					'&gt;',
+					'&lt;',
+				),
+				array(
+					'&',
+					'"',
+					"'",
+					'>',
+					'<',
+				),
+				$string
+		);
 	}
 
 	/*

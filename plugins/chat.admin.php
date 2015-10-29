@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-19
+ * Date:	2015-10-29
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -41,6 +41,7 @@
  *  - plugins/plugin.round_points.php
  *  - plugins/plugin.uptodate.php
  *
+ * Translation status: command descriptions done, everything else missing
  */
 
 	// Start the plugin
@@ -102,110 +103,110 @@ class PluginChatAdmin extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer', 'onPlayerManialinkPageAnswer');
 
 		$params = array(
-			'help'				=> '#locales:chat.admin:help',
-			'helpall'			=> '#locales:chat.admin:helpall',
-			'setservername'			=> '#locales:chat.admin:setservername',
-			'setcomment'			=> 'Changes the server comment',
-			'setpwd'			=> 'Changes the player password',
-			'setspecpwd'			=> 'Changes the spectator password',
-			'setrefpwd'			=> 'Changes the referee password',
-			'setmaxplayers'			=> 'Sets a new maximum of players',
-			'setmaxspecs'			=> 'Sets a new maximum of spectators',
-			'setgamemode'			=> 'Sets next mode {timeattack, rounds, team, laps, cup, teamattack, knockout, doppler}',
-			'setrefmode'			=> 'Sets referee mode {0=top3,1=all}',
-			'nextmap/next'			=> 'Forces server to load next map',
-			'skipmap/skip'			=> 'Forces server to load next map',
-			'previous/prev'			=> 'Forces server to load previous map',
-			'nextenv'			=> 'Loads next map in same environment',
-			'restartmap/restart/res'	=> 'Restarts currently running map',
-			'replaymap/replay'		=> 'Replays current map (via jukebox)',
-			'dropjukebox/djb'		=> 'Drops a map from the jukebox',
-			'clearjukebox/cjb'		=> 'Clears the entire jukebox',
-//			'clearhist'			=> 'Clears (part of) map history',
-			'add'				=> 'Adds maps directly from MX (<ID> ...)',
-			'addthis'			=> 'Adds current /add-ed map permanently',
-			'addlocal'			=> 'Adds a local map (<filename>)',
-			'warn'				=> 'Sends a kick/ban warning to a player',
-			'kick'				=> 'Kicks a player from server',
-			'kickghost'			=> 'Kicks a ghost player from server',
-			'ban'				=> 'Bans a player from server',
-			'unban'				=> 'UnBans a player from server',
-			'banip'				=> 'Bans an IP address from server',
-			'unbanip'			=> 'UnBans an IP address from server',
-			'black'				=> 'Blacklists a player from server',
-			'unblack'			=> 'UnBlacklists a player from server',
-			'addguest'			=> 'Adds a guest player to server',
-			'removeguest'			=> 'Removes a guest player from server',
-			'pass'				=> 'Passes a chat-based or MX /add vote',
-			'cancel/can'			=> 'Cancels any running vote',
-			'endround/er'			=> 'Forces end of current round',
-			'players'			=> 'Displays list of known players {string}',
-			'showbanlist/listbans'		=> 'Displays current ban list',
-			'showiplist/listips'		=> 'Displays current banned IPs list',
-			'showblacklist/listblacks'	=> 'Displays current black list',
-			'showguestlist/listguests'	=> 'Displays current guest list',
-			'writeiplist'			=> 'Saves current banned IPs list (def: bannedips.xml)',
-			'readiplist'			=> 'Loads current banned IPs list (def: bannedips.xml)',
-			'writeblacklist'		=> 'Saves current black list (def: blacklist.txt)',
-			'readblacklist'			=> 'Loads current black list (def: blacklist.txt)',
-			'writeguestlist'		=> 'Saves current guest list (def: guestlist.txt)',
-			'readguestlist'			=> 'Loads current guest list (def: guestlist.txt)',
-			'cleanbanlist'			=> 'Cleans current ban list',
-			'cleaniplist'			=> 'Cleans current banned IPs list',
-			'cleanblacklist'		=> 'Cleans current black list',
-			'cleanguestlist'		=> 'Cleans current guest list',
-			'mergegbl'			=> 'Merges a global black list {URL}',
-			'access'			=> 'Handles player access control (see: /admin access help)',
-			'writemaplist'			=> 'Saves current map list (def: maplist.txt)',
-			'readmaplist'			=> 'Loads current map list (def: maplist.txt)',
-			'shuffle/shufflemaps'		=> 'Randomizes current map list',
-			'remove'			=> 'Removes a map from rotation',
-			'erase'				=> 'Removes a map from rotation & deletes map file',
-			'removethis'			=> 'Removes this map from rotation',
-			'erasethis'			=> 'Removes this map from rotation & deletes map file',
-			'mute/ignore'			=> 'Adds a player to global mute/ignore list',
-			'unmute/unignore'		=> 'Removes a player from global mute/ignore list',
-			'mutelist/listmutes'		=> 'Displays global mute/ignore list',
-			'ignorelist/listignores'	=> 'Displays global mute/ignore list',
-			'cleanmutes/cleanignores'	=> 'Cleans global mute/ignore list',
-			'addadmin'			=> 'Adds a new admin',
-			'removeadmin'			=> 'Removes an admin',
-			'addop'				=> 'Adds a new operator',
-			'removeop'			=> 'Removes an operator',
-			'listmasters'			=> 'Displays current masteradmin list',
-			'listadmins'			=> 'Displays current admin list',
-			'listops'			=> 'Displays current operator list',
-			'adminability'			=> 'Shows/changes admin ability {ON/OFF}',
-			'opability'			=> 'Shows/changes operator ability {ON/OFF}',
-			'listabilities'			=> 'Displays current abilities list',
-			'writeabilities'		=> 'Saves current abilities list (def: config/adminops.xml)',
-			'readabilities'			=> 'Loads current abilities list (def: config/adminops.xml)',
-			'wall/mta'			=> 'Displays popup message to all players',
-			'delrec'			=> 'Deletes specific record on current map',
-			'prunerecs'			=> 'Deletes records for specified map',
-			'amdl'				=> 'Sets AllowMapDownload {ON/OFF}',
-			'autotime'			=> 'Sets Auto TimeLimit {ON/OFF}',
-			'disablerespawn'		=> 'Disables respawn at CPs {ON/OFF}',
-			'forceshowopp'			=> 'Forces to show opponents {##/ALL/OFF}',
-			'scorepanel'			=> 'Shows automatic scorepanel {ON/OFF}',
-			'roundsfinish'			=> 'Shows rounds panel upon first finish {ON/OFF}',
-			'forceteam'			=> 'Forces player into {Blue} or {Red} team',
-			'forcespec'			=> 'Forces player into free spectator',
-			'specfree'			=> 'Forces spectator into free mode',
-			'panel'				=> 'Selects admin panel (see: /admin panel help)',
-			'admpanel'			=> 'Selects default admin panel',
-			'panelbg'			=> 'Selects default panel background',
-			'planets'			=> 'Shows server\'s planets amount',
-			'pay'				=> 'Pays server planets to login',
-			'relays'			=> 'Displays relays list or shows relay master',
-			'server'			=> 'Displays server\'s detailed settings',
-			'pm'				=> 'Sends private message to all available admins',
-			'pmlog'				=> 'Displays log of recent private admin messages',
-			'call'				=> 'Executes direct server call (see: /admin call help)',
-			'unlock'			=> 'Unlocks admin commands & features',
-			'debug'				=> 'Toggles debugging output',
-			'shutdown'			=> 'Shuts down UASECO',
-			'shutdownall'			=> 'Shuts down Server & UASECO',
+			'help'				=> new Message('chat.admin', 'help'),
+			'helpall'			=> new Message('chat.admin', 'helpall'),
+			'setservername'			=> new Message('chat.admin', 'setservername'),
+			'setcomment'			=> new Message('chat.admin', 'setcomment'),
+			'setpwd'			=> new Message('chat.admin', 'setpwd'),
+			'setspecpwd'			=> new Message('chat.admin', 'setspecpwd'),
+			'setrefpwd'			=> new Message('chat.admin', 'setrefpwd'),
+			'setmaxplayers'			=> new Message('chat.admin', 'setmaxplayers'),
+			'setmaxspecs'			=> new Message('chat.admin', 'setmaxspecs'),
+			'setgamemode'			=> new Message('chat.admin', 'setgamemode'),
+			'setrefmode'			=> new Message('chat.admin', 'setrefmode'),
+			'nextmap/next'			=> new Message('chat.admin', 'nextmap'),
+			'skipmap/skip'			=> new Message('chat.admin', 'skipmap'),
+			'previous/prev'			=> new Message('chat.admin', 'previous'),
+			'nextenv'			=> new Message('chat.admin', 'nextenv'),
+			'restartmap/restart/res'	=> new Message('chat.admin', 'restartmap'),
+			'replaymap/replay'		=> new Message('chat.admin', 'replaymap'),
+			'dropjukebox/djb'		=> new Message('chat.admin', 'dropjukebox'),
+			'clearjukebox/cjb'		=> new Message('chat.admin', 'clearjukebox'),
+//			'clearhist'			=> 'Clears (part of) map history', // UNTRANSLATED
+			'add'				=> new Message('chat.admin', 'add'),
+			'addthis'			=> new Message('chat.admin', 'addthis'),
+			'addlocal'			=> new Message('chat.admin', 'addlocal'),
+			'warn'				=> new Message('chat.admin', 'warn'),
+			'kick'				=> new Message('chat.admin', 'kick'),
+			'kickghost'			=> new Message('chat.admin', 'kickghost'),
+			'ban'				=> new Message('chat.admin', 'ban'),
+			'unban'				=> new Message('chat.admin', 'unban'),
+			'banip'				=> new Message('chat.admin', 'banip'),
+			'unbanip'			=> new Message('chat.admin', 'unbanip'),
+			'black'				=> new Message('chat.admin', 'black'),
+			'unblack'			=> new Message('chat.admin', 'unblack'),
+			'addguest'			=> new Message('chat.admin', 'addguest'),
+			'removeguest'			=> new Message('chat.admin', 'removeguest'),
+			'pass'				=> new Message('chat.admin', 'pass'),
+			'cancel/can'			=> new Message('chat.admin', 'cancel'),
+			'endround/er'			=> new Message('chat.admin', 'endround'),
+			'players'			=> new Message('chat.admin', 'players'),
+			'showbanlist/listbans'		=> new Message('chat.admin', 'showbanlist'),
+			'showiplist/listips'		=> new Message('chat.admin', 'showiplist'),
+			'showblacklist/listblacks'	=> new Message('chat.admin', 'showblacklist'),
+			'showguestlist/listguests'	=> new Message('chat.admin', 'showguestlist'),
+			'writeiplist'			=> new Message('chat.admin', 'writeiplist'),
+			'readiplist'			=> new Message('chat.admin', 'readiplist'),
+			'writeblacklist'		=> new Message('chat.admin', 'writeblacklist'),
+			'readblacklist'			=> new Message('chat.admin', 'readblacklist'),
+			'writeguestlist'		=> new Message('chat.admin', 'writeguestlist'),
+			'readguestlist'			=> new Message('chat.admin', 'readguestlist'),
+			'cleanbanlist'			=> new Message('chat.admin', 'cleanbanlist'),
+			'cleaniplist'			=> new Message('chat.admin', 'cleaniplist'),
+			'cleanblacklist'		=> new Message('chat.admin', 'cleanblacklist'),
+			'cleanguestlist'		=> new Message('chat.admin', 'cleanguestlist'),
+			'mergegbl'			=> new Message('chat.admin', 'mergegbl'),
+			'access'			=> new Message('chat.admin', 'access'),
+			'writemaplist'			=> new Message('chat.admin', 'writemaplist'),
+			'readmaplist'			=> new Message('chat.admin', 'readmaplist'),
+			'shuffle/shufflemaps'		=> new Message('chat.admin', 'shuffle'),
+			'remove'			=> new Message('chat.admin', 'remove'),
+			'erase'				=> new Message('chat.admin', 'erase'),
+			'removethis'			=> new Message('chat.admin', 'removethis'),
+			'erasethis'			=> new Message('chat.admin', 'erasethis'),
+			'mute/ignore'			=> new Message('chat.admin', 'mute'),
+			'unmute/unignore'		=> new Message('chat.admin', 'unmute'),
+			'mutelist/listmutes'		=> new Message('chat.admin', 'mutelist'),
+			'ignorelist/listignores'	=> new Message('chat.admin', 'mutelist'),
+			'cleanmutes/cleanignores'	=> new Message('chat.admin', 'cleanmutes'),
+			'addadmin'			=> new Message('chat.admin', 'addadmin'),
+			'removeadmin'			=> new Message('chat.admin', 'removeadmin'),
+			'addop'				=> new Message('chat.admin', 'addop'),
+			'removeop'			=> new Message('chat.admin', 'removeop'),
+			'listmasters'			=> new Message('chat.admin', 'listmasters'),
+			'listadmins'			=> new Message('chat.admin', 'listadmins'),
+			'listops'			=> new Message('chat.admin', 'listops'),
+			'adminability'			=> new Message('chat.admin', 'adminability'),
+			'opability'			=> new Message('chat.admin', 'opability'),
+			'listabilities'			=> new Message('chat.admin', 'listabilities'),
+			'writeabilities'		=> new Message('chat.admin', 'writeabilities'),
+			'readabilities'			=> new Message('chat.admin', 'readabilities'),
+			'wall/mta'			=> new Message('chat.admin', 'wall'),
+			'delrec'			=> new Message('chat.admin', 'delrec'),
+			'prunerecs'			=> new Message('chat.admin', 'prunerecs'),
+			'amdl'				=> new Message('chat.admin', 'amdl'),
+			'autotime'			=> new Message('chat.admin', 'autotime'),
+			'disablerespawn'		=> new Message('chat.admin', 'disablerespawn'),
+			'forceshowopp'			=> new Message('chat.admin', 'forceshowopp'),
+			'scorepanel'			=> new Message('chat.admin', 'scorepanel'),
+			'roundsfinish'			=> new Message('chat.admin', 'roundsfinish'),
+			'forceteam'			=> new Message('chat.admin', 'forceteam'),
+			'forcespec'			=> new Message('chat.admin', 'forcespec'),
+			'specfree'			=> new Message('chat.admin', 'specfree'),
+			'panel'				=> new Message('chat.admin', 'panel'),
+			'admpanel'			=> new Message('chat.admin', 'admpanel'),
+			'panelbg'			=> new Message('chat.admin', 'panelbg'),
+			'planets'			=> new Message('chat.admin', 'planets'),
+			'pay'				=> new Message('chat.admin', 'pay'),
+			'relays'			=> new Message('chat.admin', 'relays'),
+			'server'			=> new Message('chat.admin', 'server'),
+			'pm'				=> new Message('chat.admin', 'pm'),
+			'pmlog'				=> new Message('chat.admin', 'pmlog'),
+			'call'				=> new Message('chat.admin', 'call'),
+			'unlock'			=> new Message('chat.admin', 'unlock'),
+			'debug'				=> new Message('chat.admin', 'debug'),
+			'shutdown'			=> new Message('chat.admin', 'shutdown'),
+			'shutdownall'			=> new Message('chat.admin', 'shutdownall'),
 		);
 		ksort($params);
 
@@ -261,7 +262,7 @@ class PluginChatAdmin extends Plugin {
 					// write warning in console
 					$aseco->console($login .' tried to use admin chat command (no permission!): '. $arglist[0] .' '. $arglist[1]);
 					// show chat message
-					$aseco->client->query('ChatSendToLogin', $aseco->formatColors('{#error}You don\'t have the required admin rights to do that!'), $login);
+					$aseco->client->query('ChatSendToLogin', $aseco->formatColors($aseco->locales->_('#locales:common.insufficient_rights', $login)), $login);
 					return false;
 				}
 			}
@@ -273,10 +274,11 @@ class PluginChatAdmin extends Plugin {
 			// write warning in console
 			$aseco->console($login .' tried to use admin chat command (not unlocked!): '. $arglist[0] .' '. $arglist[1]);
 			// show chat message
-			$aseco->client->query('ChatSendToLogin', $aseco->formatColors('{#error}You don\'t have the required admin rights to do that!'), $login);
+			$aseco->client->query('ChatSendToLogin', $aseco->formatColors($aseco->locales->_('#locales:common.insufficient_rights', $login)), $login);
 			return false;
 		}
 
+		$command['params'][0] = strtolower($command['params'][0]);
 		if ($command['params'][0] == 'help') {
 			/**
 			 * Show admin help.
@@ -352,12 +354,10 @@ class PluginChatAdmin extends Plugin {
 			$aseco->console('[Admin] {1} [{2}] set new server name [{3}]', $logtitle, $login, $arglist[1]);
 
 			// show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets servername to {#highlite}{3}',
-				$chattitle,
-				$admin->nickname,
-				$arglist[1]
-			);
-			$aseco->sendChatMessage($message);
+			$msg = new Message('chat.admin', 'setservername_message');
+			$msg->addPlaceholders($chattitle, $admin->nickname, $arglist[1]);
+			$msg->sendChatMessage();
+
 		}
 		else if ($command['params'][0] == 'setcomment' && $command['params'][1] != '') {
 			/**
@@ -3842,7 +3842,7 @@ class PluginChatAdmin extends Plugin {
 //
 //			// extra admin tier check
 //			if (!$aseco->isMasterAdmin($admin)) {
-//				$aseco->client->query('ChatSendToLogin', $aseco->formatColors('{#error}You don\'t have the required admin rights to do that!'), $login);
+//				$aseco->client->query('ChatSendToLogin', $aseco->formatColors($aseco->locales->_('#locales:common.insufficient_rights', $login))), $login);
 //				return;
 //			}
 //

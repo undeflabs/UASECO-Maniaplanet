@@ -1159,6 +1159,7 @@
 			<width>[unsigned float]</width>
 			<height>[unsigned float]</height>
 			<background_color>[empty|RGBA]</background_color>
+			<background_focus>[empty|RGBA]</background_focus>
 			<background_style>[empty|style]</background_style>
 			<background_substyle>[empty|substyle]</background_substyle>
 			<icon_style>[empty|style]</icon_style>

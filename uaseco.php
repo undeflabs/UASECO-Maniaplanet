@@ -42,7 +42,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
 	define('UASECO_VERSION',	'1.0.0');
-	define('UASECO_BUILD',		'2015-10-25');
+	define('UASECO_BUILD',		'2015-10-29');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -80,7 +80,8 @@
 	require_once('includes/core/continent.class.php');
 	require_once('includes/core/country.class.php');
 	require_once('includes/core/database.class.php');
-	require_once('includes/core/locales.class.php');
+	require_once('includes/core/locales.class.php');		// Required by includes/core/message.class.php
+	require_once('includes/core/message.class.php');
 	require_once('includes/core/gameinfo.class.php');		// Required by includes/core/server.class.php
 	require_once('includes/core/server.class.php');
 	require_once('includes/core/dependence.class.php');		// Required by includes/core/plugin.class.php

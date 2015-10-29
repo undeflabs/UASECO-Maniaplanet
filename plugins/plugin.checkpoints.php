@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-10-22
+ * Date:	2015-10-29
 - * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -478,12 +478,12 @@ class PluginCheckpoints extends Plugin {
 		}
 
 		// Store current checkpoint
-		$this->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		$this->checkpoints[$login]->current['cps'][$cpid-1] = $time;
 		ksort($this->checkpoints[$login]->current['cps']);
 
 		// Check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
-		if ($time <= 0 || ($cpid > 1 && $time < $this->checkpoints[$login]->current['cps'][$cpid-2])) {
+		if ($time <= 0 || ($cpid > 1 && $time < $this->checkpoints[$login]->current['cps'][$cpid-1])) {
 			$this->processCheater($login, $cpid, $time, false);
 		}
 	}
@@ -522,7 +522,7 @@ class PluginCheckpoints extends Plugin {
 		}
 
 		// Store finish as checkpoint too
-		$this->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		$this->checkpoints[$login]->current['cps'][$cpid-1] = $time;
 		ksort($this->checkpoints[$login]->current['cps']);
 	}
 
@@ -563,7 +563,7 @@ class PluginCheckpoints extends Plugin {
 		$this->checkpoints[$login]->current['finish'] = $time;
 
 		// Store finish as checkpoint too
-		$this->checkpoints[$login]->current['cps'][($cpid-1)] = $time;
+		$this->checkpoints[$login]->current['cps'][$cpid-1] = $time;
 		ksort($this->checkpoints[$login]->current['cps']);
 
 		// Check for improvement and update
@@ -825,9 +825,9 @@ main() {
 						if (CheckpointTimes.existskey(CpCount) && (CheckpointTimes[CpCount] == 0 || CheckpointTimes[CpCount] > CpTime)) {
 							CheckpointTimes[CpCount] = CpTime;
 						}
-						else {
-							CheckpointTimes[CpCount] = CpTime;
-						}
+//						else {
+//							CheckpointTimes[CpCount] = CpTime;
+//						}
 						CpCount += 1;
 					}
 				}

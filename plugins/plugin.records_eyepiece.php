@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-09-20
+ * Date:		2015-10-29
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -4843,6 +4843,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 			if (isset($placement['BACKGROUND_COLOR'][0])) {
 				$xml .= ' bgcolor="'. $placement['BACKGROUND_COLOR'][0] .'"';
+			}
+			if (isset($placement['BACKGROUND_FOCUS'][0])) {
+				$xml .= ' bgcolorfocus="'. $placement['BACKGROUND_FOCUS'][0] .'"';
 			}
 			else if (isset($placement['BACKGROUND_STYLE'][0]) && isset($placement['BACKGROUND_SUBSTYLE'][0])) {
 				$xml .= ' style="'. $placement['BACKGROUND_STYLE'][0] .'" substyle="'. $placement['BACKGROUND_SUBSTYLE'][0] .'"';
