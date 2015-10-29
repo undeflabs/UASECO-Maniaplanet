@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2015-10-29
+	Authors:	[EN] undef.de
+			[DE] askuri
+	//-->
+
+	<help>
+		<en>Shows all available /admin commands (chat)</en>
+		<de>Zeigt verfügbare /admin Kommandos (Chat)</de>
+	</help>
+
+	<helpall>
+		<en>Displays help for available /admin commands (Fenster)</en>
+		<de>Zeigt die Hilfe für verfügbare /admin Kommandos (Fenster)</de>
+	</helpall>
+
+	<setservername>
+		<en>Changes the name of the server</en>
+		<de>Ändert den Namen des Servers</de>
+	</setservername>
+
+	<setcomment>
+		<en>Changes the server comment</en>
+		<de>Ändert das Kommtentar des Servers</de>
+	</setcomment>
+
+	<setpwd>
+		<en>Set the player password</en>
+		<de>Setze das Spieler Passwort</de>
+	</setpwd>
+
+	<setspecpwd>
+		<en>Set the Zuschauer password</en>
+		<de>Setze das Zuschauer Passwort</de>
+	</setspecpwd>
+
+	<setrefpwd>
+		<en>Changes the referee password</en>
+		<de>Ändert das Schiedsrichter Passwort</de>
+	</setrefpwd>
+
+	<setmaxplayers>
+		<en>Sets a new maximum of players</en>
+		<de>Ändert die maximale Anzahl Spieler</de>
+	</setmaxplayers>
+
+	<setmaxspecs>
+		<en>Sets a new maximum of spectators</en>
+		<de>Ändert die maximale Anzahl Zuschauer</de>
+	</setmaxspecs>
+
+	<setgamemode>
+		<en>Sets next mode {timeattack, rounds, team, laps, cup, teamattack, knockout, doppler}</en>
+		<de>Stellt den nächsten Modus ein {timeattack, rounds, team, laps, cup, teamattack, knockout, doppler}</de>
+	</setgamemode>
+
+	<setrefmode>
+		<en>Sets referee mode {0=top3,1=all}</en>
+		<de>Schaltet Zuschauermodus um {0=top3,1=alle}</de>
+	</setrefmode>
+
+	<nextmap>
+		<en>Forces server to load next map</en>
+		<de>Erzwingt Wechsel zur nächsten Map</de>
+	</nextmap>
+
+	<skipmap>
+		<en>Forces server to load next map</en>
+		<de>Erzwingt Wechsel zur nächsten Map</de>
+	</skipmap>
+
+	<previous>
+		<en>Forces server to load previous map</en>
+		<de>Erzwingt das Laden der vorigen Map</de>
+	</previous>
+
+	<nextenv>
+		<en>Loads next map in same environment</en>
+		<de>Lädt die nächste Map mit der selben Umgebung</de>
+	</nextenv>
+
+	<restartmap>
+		<en>Restarts currently running map</en>
+		<de>Startet die aktuelle Map neu</de>
+	</restartmap>
+
+	<replaymap>
+		<en>Replays current map (via jukebox)</en>
+		<de>Wiederholt die Map (einreihung in die Jukebox)</de>
+	</replaymap>
+
+	<dropjukebox>
+		<en>Drops a map from the jukebox</en>
+		<de>Entfernt eine map von der Jukebox</de>
+	</dropjukebox>
+
+	<clearjukebox>
+		<en>Clears the entire jukebox</en>
+		<de>Leert die Jukebox</de>
+	</clearjukebox>
+
+	<add>
+		<en>Adds maps directly from MX via MX-ID</en>
+		<de>Fügt Maps direkt direkt hinzu über die MX-ID</de>
+	</add>
+
+	<addthis>
+		<en>Adds current /add-ed map permanently</en>
+		<de>Fügt gerade ge-/add-ete Map dauerhaft hinzu</de>
+	</addthis>
+
+	<addlocal>
+		<en>Adds a local map (expects filename)</en>
+		<de>Fügt eine lokale map hinzu (erwartet Dateiname)</de>
+	</addlocal>
+
+	<warn>
+		<en>Sends a kick/ban warning to a player</en>
+		<de>Verwarnt einen Spieler</de>
+	</warn>
+
+	<kick>
+		<en>Kicks a player from server</en>
+		<de>Schmeißt einen Spieler vom Server</de>
+	</kick>
+
+	<kickghost>
+		<en>Kicks a ghost player from server</en>
+		<de>Schmeißt einen "Ghost" Spieler vom Server</de> <!-- Ghost? -->
+	</kickghost>
+
+	<ban>
+		<en>Bans a player from server</en>
+		<de>Sperrt einen Spieler vom Server aus</de>
+	</ban>
+
+	<unban>
+		<en>Unbans a player from server</en>
+		<de>Entsperrt einen Spieler</de>
+	</unban>
+
+	<banip>
+		<en>Bans an IP address from server</en>
+		<de>Sperrt eine IP Adresse vom Server aus</de>
+	</banip>
+
+	<unbanip>
+		<en>Unbans an IP address from server</en>
+		<de>Entsperrt eine IP Adresse</de>
+	</unbanip>
+
+	<black>
+		<en>Blacklists a player from server</en>
+		<de>Setzt einen Spieler auf die schwarze Liste (blacklist)</de>
+	</black>
+
+	<unblack>
+		<en>Unblacklists a player from server</en>
+		<de>Entfernt eine Spieler von der schwarzen Liste (blacklist)</de>
+	</unblack>
+
+	<addguest>
+		<en>Adds a player to the guestlist</en>
+		<de>Setzt einen Spieler auf die Gästeliste (guestlist)</de>
+	</addguest>
+
+	<removeguest>
+		<en>Removes a player from the guestlist</en>
+		<de>Entfernt einen Spieler von der Gästeliste</de>
+	</removeguest>
+
+	<pass>
+		<en>Passes a chat-based or MX /add vote</en>
+		<de>Lässt eine Abstimmung mit "Ja" enden</de>
+	</pass>
+
+	<cancel>
+		<en>Cancels any running vote</en>
+		<de>Beendet eine Abstimmung</de>
+	</cancel>
+
+	<endround>
+		<en>Forces end of current round</en>
+		<de>Erzwingt Ende der aktuellen Runde</de>
+	</endround>
+
+	<players>
+		<en>Displays list of known players</en>
+		<de>Zeigt eine Liste mit bekannten Spielern</de>
+	</players>
+
+	<showbanlist>
+		<en>Displays current ban list</en>
+		<de>Zeigt die Liste mit gesperrten Spielern (banlist)</de>
+	</showbanlist>
+
+	<showiplist>
+		<en>Displays current banned IPs list</en>
+		<de>Zeigt die Liste mit gesperrten IPs</de>
+	</showiplist>
+
+	<showblacklist>
+		<en>Displays current black list</en>
+		<de>Zeigt die schwarze Liste (blacklist)</de>
+	</showblacklist>
+
+	<showguestlist>
+		<en>Displays current guest list</en>
+		<de>Zeigt die Gästeliste (guestlist)</de>
+	</showguestlist>
+
+	<writeiplist>
+		<en>Saves current banned IPs list (default: bannedips.xml)</en>
+		<de>Speichert die Liste mit gesperrten IPs (Standard: bannedips.xml)</de>
+	</writeiplist>
+
+	<readiplist>
+		<en>Loads current banned IPs list (default: bannedips.xml)</en>
+		<de>Lädt die Liste mit gesperrten IPs (Standard: bannedips.xml)</de>
+	</readiplist>
+
+	<writeblacklist>
+		<en>Saves current black list (default: blacklist.txt)</en>
+		<de>Speichert die aktuelle schwarze Liste (Standard: blacklist.txt)</de>
+	</writeblacklist>
+
+	<readblacklist>
+		<en>Loads current black list (default: blacklist.txt)</en>
+		<de>Lädt die schwarze Liste (Standard: blacklist.txt)</de>
+	</readblacklist>
+
+	<writeguestlist>
+		<en>Saves current guest list (default: guestlist.txt)</en>
+		<de>Speichert die aktuelle Gästeliste (Standard: guestlist.txt)</de>
+	</writeguestlist>
+
+	<readguestlist>
+		<en>Loads current guest list (default: guestlist.txt)</en>
+		<de>Lädt die aktuelle Gästeliste (Standard: guestlist.txt)</de>
+	</readguestlist>
+
+	<cleanbanlist>
+		<en>Cleans current ban list</en>
+		<de>Leert die aktuelle Liste mit gesperrten Spielern</de>
+	</cleanbanlist>
+
+	<cleaniplist>
+		<en>Cleans current banned IPs list</en>
+		<de>Leert die aktuelle Liste mit gesperrten IPs</de>
+	</cleaniplist>
+
+	<cleanblacklist>
+		<en>Cleans current black list</en>
+		<de>Leert die aktuelle schwarze Liste (blacklist)</de>
+	</cleanblacklist>
+
+	<cleanguestlist>
+		<en>Cleans current guest list</en>
+		<de>Leert die aktuelle Gästeliste (guestlist)</de>
+	</cleanguestlist>
+
+	<mergegbl>
+		<en>Merges a global black list {URL}</en>
+		<de>importiert eine blacklist aus dem internet {url}</de>
+	</mergegbl>
+
+	<access>
+		<en>Handles player access control (see: /admin access help</en>
+		<de>Behandelt Spieler Zugriffskontrolle (siehe /admin access help)</de>
+	</access>
+
+	<writemaplist>
+		<en>Saves current map list (default: maplist.txt)</en>
+		<de>Schreibt die aktuelle Mapliste (Standard: maplist.txt)</de>
+	</writemaplist>
+
+	<readmaplist>
+		<en>Loads the map list (default: maplist.txt)</en>
+		<de>Liest die Mapliste (Standard: maplist.txt)</de>
+	</readmaplist>
+
+	<shuffle>
+		<en>Randomizes current map list</en>
+		<de>Bringt Maps in eine Zufällige Reihenfolge</de>
+	</shuffle>
+
+	<remove>
+		<en>Removes a map from rotation</en>
+		<de>Entfernt eine Map aus der Liste (nicht die Datei)</de>
+	</remove>
+
+	<erase>
+		<en>Removes a map from rotation and deletes map file</en>
+		<de>Löscht eine Map vollständig (auch die Datei)</de>
+	</erase>
+
+	<removethis>
+		<en>Removes this map from rotation</en>
+		<de>Entfernt die aktuelle Map aus der Liste (nicht die Datei)</de>
+	</removethis>
+
+	<erasethis>
+		<en>Removes this map from rotation and deletes map file</en>
+		<de>Löscht die aktuelle Map vollständig (auch die Datei)</de>
+	</erasethis>
+
+	<mute>
+		<en>Adds a player to global mute/ignore list</en>
+		<de>Schiebt einen Spieler auf die Ignorierliste (Stummschalten)</de>
+	</mute>
+
+	<unmute>
+		<en>Removes a player from global mute/ignore list</en>
+		<de>Entfernt einen Spieler von der Ignorierliste</de>
+	</unmute>
+
+	<mutelist>
+		<en>Displays global mute/ignore list</en>
+		<de>Zeigt die Ignorierliste</de>
+	</mutelist>
+
+	<cleanmutes>
+		<en>Cleans global mute/ignore list</en>
+		<de>Leert die Ignorierliste</de>
+	</cleanmutes>
+
+	<addadmin>
+		<en>Adds a new admin</en>
+		<de>Fügt einen Admin hinzu</de>
+	</addadmin>
+
+	<removeadmin>
+		<en>Removes an admin</en>
+		<de>Entfernt einen Admin</de>
+	</removeadmin>
+
+	<addop>
+		<en>Adds a new operator</en>
+		<de>Fügt einen Operator hinzu</de>
+	</addop>
+
+	<removeop>
+		<en>Removes an operator</en>
+		<de>Entfernt einen Operator</de>
+	</removeop>
+
+	<listmasters>
+		<en>Displays current masteradmin list</en>
+		<de>Zeigt Liste mit allen MasterAdmins</de>
+	</listmasters>
+
+	<listadmins>
+		<en>Displays current admin list</en>
+		<de>Zeigt Liste mit allen Admins</de>
+	</listadmins>
+
+	<listops>
+		<en>Displays current operator list</en>
+		<de>Zeigt Liste mit allen Operatoren</de>
+	</listops>
+
+	<adminability>
+		<en>Shows/changes admin ability {ON/OFF}</en>
+		<de>Zeigt/ändert Admin Rechte {ON/OFF}</de>
+	</adminability>
+
+	<opability>
+		<en>Shows/changes operator ability {ON/OFF}</en>
+		<de>Zeigt/ändert Operator Rechte {ON/OFF}</de>
+	</opability>
+
+	<listabilities>
+		<en>Displays current abilities list</en>
+		<de>Zeigt die aktuellen Rechte</de>
+	</listabilities>
+
+	<writeabilities>
+		<en>Saves current abilities list file (default: config/adminops.xml)</en>
+		<de>Schreibt die Rechte von Admins/Ops (Standard: config/adminops.xml)</de>
+	</writeabilities>
+
+	<readabilities>
+		<en>Loads current abilities list file (def: config/adminops.xml)</en>
+		<de>Lädt die Rechte von Admins/Ops Datei (Standard: config/adminops.xml)</de>
+	</readabilities>
+
+	<wall>
+		<en>Displays popup message to all players</en>
+		<de>Zeigt allen Spielern eine Popupnachricht</de>
+	</wall>
+
+	<delrec>
+		<en>Deletes specific record on current map</en>
+		<de>Löscht einen Rekord auf der aktuellen Map</de>
+	</delrec>
+
+	<prunerecs>
+		<en>Deletes records for specified map</en>
+		<de>Löscht Rekorde für eine angegebene Map</de>
+	</prunerecs>
+
+	<amdl>
+		<en>Sets AllowMapDownload {ON/OFF}</en>
+		<de>Erlaube Map Download {ON/OFF}</de>
+	</amdl>
+
+	<autotime>
+		<en>Sets Auto TimeLimit {ON/OFF}</en>
+		<de>Automatisches Zeitlimit? {ON/OFF}</de>
+	</autotime>
+
+	<disablerespawn>
+		<en>Disables respawn at CPs {ON/OFF}</en>
+		<de>Verbiete respawn bei Checkpoints {ON/OFF}</de>
+	</disablerespawn>
+
+	<forceshowopp>
+		<en>Forces to show opponents {NumberOfOpponents/ALL/OFF}</en>
+		<de>Erzwinge das Anzeigen der Gegner {AnzahlGegner/ALLE/AUS}</de>
+	</forceshowopp>
+
+	<scorepanel>
+		<en>Shows automatic scorepanel {ON/OFF}</en>
+		<de>Automatisches Scorepanel (Zeit/Punktestand) {ON/OFF}</de>
+	</scorepanel>
+
+	<roundsfinish>
+		<en>Shows rounds panel upon first finish {ON/OFF}</en>
+		<de>Zeige die Rundenpunkte nach dem ersten ins Ziel gefahrenen Gegner {ON/OFF}</de>
+	</roundsfinish>
+
+	<forceteam>
+		<en>Forces player into {Blue} or {Red} team</en>
+		<de>Zwinge Spiele in Team zu wechseln: {Blue/Red}</de>
+	</forceteam>
+
+	<forcespec>
+		<en>Forces player into free spectator</en>
+		<de>Zwinge Spieler zum Zuschauermodus</de>
+	</forcespec>
+
+	<specfree>
+		<en>Forces spectator into free camera mode</en>
+		<de>Zwinge Spieler in den Zuaschauermodus mit freier Kamera</de>
+	</specfree>
+
+	<panel>
+		<en>Selects admin panel (see: /admin panel help)</en>
+		<de>Wählt ein Adminpanel Style (siehe: /admin panel help)</de>
+	</panel>
+
+	<admpanel>
+		<en>Selects default admin panel</en>
+		<de>Wählt standard Adminpanel Style</de>
+	</admpanel>
+
+	<panelbg>
+		<en>Selects default panel background</en>
+		<de>Wählt standard Panel Hintergrund</de>
+	</panelbg>
+
+	<planets>
+		<en>Shows servers planets amount</en>
+		<de>Zeig wieviele Planets der Server besitzt</de>
+	</planets>
+
+	<pay>
+		<en>Pays server planets to login</en>
+		<de>Zahlt Planets an einen Spieler aus</de>
+	</pay>
+
+	<relays>
+		<en>Displays relays list or shows relay master</en>
+		<de>Zeigt Relayserver liste oder welcher Server der Master ist</de>
+	</relays>
+
+	<server>
+		<en>Displays servers detailed settings</en>
+		<de>Zeigt detaillierte Infos/Einstellungen</de>
+	</server>
+
+	<pm>
+		<en>Sends private message to all available admins</en>
+		<de>Sende eine private Nachricht an alle verfügbaren Admins</de>
+	</pm>
+
+	<pmlog>
+		<en>Displays log of recent private admin messages</en>
+		<de>Zeigt die letzten privaten Admin Nachrichten</de>
+	</pmlog>
+
+	<call>
+		<en>Executes direct server call (see: /admin call help)</en>
+		<de></de> <!-- whats that?! -->
+	</call>
+
+	<unlock>
+		<en>Unlocks admin commands and features</en>
+		<de>Entsperrt Admin commands mit einem Passwort</de>
+	</unlock>
+
+	<debug>
+		<en>Toggles debugging output</en>
+		<de>Schaltet Entwicklermodus (debug) {ON/OFF}</de>
+	</debug>
+
+	<shutdown>
+		<en>Shuts down UASECO</en>
+		<de>Schaltet UASECO aus</de>
+	</shutdown>
+
+	<shutdownall>
+		<en>Shuts down Server and UASECO</en>
+		<de>Schaltet UASECO und den Server aus</de>
+	</shutdownall>
+
+	<setservername_message>
+		<en>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets servername to {#highlite}{3}</en>
+		<de>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} ändert den Servernamen zu {#highlite}{3}</de>
+	</setservername_message>
+</locales>

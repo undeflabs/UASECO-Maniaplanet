@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2015-10-29
+	Authors:	[EN] undef.de
+			[DE] askuri
+	//-->
+
+	<yes>
+		<en>yes</en>
+		<de>ja</de>
+	</yes>
+
+	<no>
+		<en>no</en>
+		<de>nein</de>
+	</no>
+
+	<insufficient_rights>
+		<en>{#error}You dont have the required admin rights to do that!</en>
+		<de>{#error}Du hast nicht ausreichende Rechte um dies zu tun!</de>
+	</insufficient_rights>
+</locales>
