@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-19
+ * Date:	2015-10-30
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -49,7 +49,7 @@ class Player {
 	public $clublink;
 
 	public $ip;
-	public $ipport;
+	public $port;
 	public $downloadrate;
 	public $uploadrate;
 
@@ -137,8 +137,7 @@ class Player {
 			$this->avatar			= $data['Avatar']['FileName'];
 			$this->clublink			= $data['ClubLink'];
 
-			$this->ipport			= $data['IPAddress'];
-			$this->ip			= preg_replace('/:\d+/', '', $data['IPAddress']);  // strip port
+			list($this->ip, $this->port)	= explode(':', $data['IPAddress']);
 			$this->downloadrate		= $data['DownloadRate'];
 			$this->uploadrate		= $data['UploadRate'];
 

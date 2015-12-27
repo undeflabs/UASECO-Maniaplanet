@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-11-08
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -41,9 +41,9 @@
 */
 
 class PluginRounds extends Plugin {
-	private $rounds_count;
-	private $round_times;
-	private $round_pbs;
+	public $rounds_count;
+	public $round_times;
+	public $round_pbs;
 
 
 	/*

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <access>
 <!--	For a detailed explanation of this three-pass access control system,
 	see:  http://httpd.apache.org/docs/2.0/mod/mod_access.html

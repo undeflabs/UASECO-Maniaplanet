@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
 	<!--
 	Setup for connection to the dedicated server, make sure this is
@@ -30,7 +30,7 @@
 		<password>PASSWORD</password>
 		<database>DATABASE</database>
 
-		<!-- The ServerLogin is a good prefix to identify, but you should write it lower case and remove all underscore (max. 64 chars, incl. the default names like "records") -->
+		<!-- The ServerLogin is a good prefix to identify, but you should write it lower case and remove all underscore (max. 64 chars, incl. the default names like "maphistory") -->
 		<table_prefix>uaseco_</table_prefix>
 	</mysql>
 
@@ -48,22 +48,6 @@
 	Set to 'false' to log passwords in the logfile
 	//-->
 	<mask_password>true</mask_password>
-
-	<!--
-	Set to true to perform UASECO version check at start-up & MasterAdmin connect
-	//-->
-	<uptodate_check>true</uptodate_check>
-
-	<!--
-	Set to true to perform global blacklist merge at MasterAdmin connect
-	//-->
-	<global_blacklist_merge>true</global_blacklist_merge>
-
-	<!--
-	Set to global blacklist in XML format, same as <blacklist_url> in dedicated_cfg.txt,
-	e.g. http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml
-	//-->
-	<global_blacklist_url>http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml</global_blacklist_url>
 
 	<!--
 	We supports the "stripling" script for controlling the dedicated Server and UASECO,
@@ -207,10 +191,6 @@
 		<no_relays>{#server}» {#error}No relay servers connected</no_relays>
 		<relaymaster>{#server}» This server relays master server: {#highlite}{1}{#server} ({#highlite}{2}{#server})</relaymaster>
 		<notonrelay>{#server}» {#error}Command unavailable on relay server</notonrelay>
-
-		<!-- uptodate messages -->
-		<uptodate_ok>{#server}» {#message}This UASECO version {#highlite}{1}{#message} is up to date</uptodate_ok>
-		<uptodate_new>{#server}» {#message}New UASECO version {#highlite}{1}{#message} available from {#highlite}{2}</uptodate_new>
 
 		<!-- connection messages -->
 		<banip_dialog>{#welcome}Your IP was banned from this server.$z</banip_dialog>

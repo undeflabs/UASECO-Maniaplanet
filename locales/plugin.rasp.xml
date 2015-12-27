@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	
+	<rank>
+		<en>{#server}» {#record}Your server rank is {#rank}{1}{#record} of {#highlite}{2}{#record} Average: {#highlite}{3}</en>
+		<de>{#server}» {#record}Dein Serverrang ist {#rank}{1}{#record} von {#highlite}{2}{#record} Durchschnittsrang: {#highlite}{3}</de>
+	</rank>
+	
+	<rank_none>
+		<en>{#server}» {#record}You must have {#highlite}{1}{#record} Local Records on this server before recieving a rank!</en>
+		<de>{#server}» {#record}Du benötigst {#highlite}{1}{#record} lokale Rekorde, bevor du einen Rang auf diesem Server erhälst!</de>
+	</rank_none>
+	
+	<nextrank>
+		<en>{#server}» {#record}The next better ranked player is {#highlite}{1}{#record}: {#highlite}{2}</en>
+		<de>{#server}» {#record}Der nächstbessere Spieler ist {#highlite}{1}{#record}: {#highlite}{2}</de>
+	</nextrank>
+	
+	<nextrank_rp>
+		<en> $n{#record}[{#highlite}-{1}{#record} RP]</en>
+	</nextrank_rp>
+	
+	<toprank>
+		<en>{#server}» {#record}No better ranked player :-)</en>
+		<de>{#server}» {#record}Es gibt keinen der besser ist als du :-)</de>
+	</toprank>
+	
+	<pb>
+		<en>{#server}» {#record}Personal Best: {#highlite}{1}{#record}({#rank}{2}{#record}) Average: {#highlite}{3}</en>
+		<de>{#server}» {#record}Persönliche Bestzeit: {#highlite}{1}{#record}({#rank}{2}{#record}) Durchschnitt: {#highlite}{3}</de>
+	</pb>
+	
+	<pb_none>
+		<en>{#server}» {#error}You don't have a Local Record on this map yet</en>
+		<de>{#server}» {#error}Du hast bis jetzt keinen Rekord auf dieser Map</de>
+	</pb_none>
+	
+	<jukebox>
+		<en>{#server}» {#highlite}{1}{#emotic} was added to the jukebox by {#highlite}{2}</en>
+		<de>{#server}» {#highlite}{1}{#emotic} wurde zur Jukebox hinzugefügt durch {#highlite}{2}</de>
+	</jukebox>
+	
+	<jukebox_already>
+		<en>{#server}» {#emotic}You already have a map in the jukebox! Wait till it's been played before adding another.</en>
+		<de>{#server}» {#emotic}Du hast bereits eine Strecke in der Jukebox. Warte bis sie gespielt wurde, bevor du eine neue hinzufügst.</de>
+	</jukebox_already>
+	
+	<jukebox_dupl>
+		<en>{#server}» {#emotic}This map has already been added to the jukebox, pick another one.</en>
+		<de>{#server}» {#emotic}Diese Map befindet sich bereits in der Jukebox.</de>
+	</jukebox_dupl>
+	
+	<jukebox_repeat>
+		<en>{#server}» {#emotic}This map has been played recently. Wait a while before adding it again.</en>
+		<de>{#server}» {#emotic}Diese Map wurde kürzlich erst gespielt. Warte etwas, bis du sie wieder zu Jukebox hinzufügen kannst.</de>
+	</jukebox_repeat>
+	
+	<jukebox_next>
+		<en>{#server}» {#emotic}The next map will be {#highlite}{1}{#emotic} as requested by {#highlite}{2}</en>
+		<de>{#server}» {#emotic}Die nächste Map wird {#highlite}{1}{#emotic}, wie von {#highlite}{2} {#emotic}gewünscht</de>
+	</jukebox_next>
+	
+	<jukebox_nextenv>
+		<en>{#server}» {#emotic}The next map will be {#timelite}[{1}] {#highlite}{2}{#emotic} as requested by {#highlite}{3}</en>
+		<de>{#server}» {#emotic}Die nächste Map wird {#timelite}[{1}] {#highlite}{2}{#emotic}, wie von {#highlite}{3} {#emotic}gewünscht</de>
+	</jukebox_nextenv>
+	
+	<jukebox_skipleft>
+		<en>{#server}» {#emotic}Map {#highlite}{1}{#emotic} skipped because {#highlite}{2}{#emotic} left</en>
+		<de>{#server}» {#emotic}Map {#highlite}{1}{#emotic} übersprungen weil {#highlite}{2}{#emotic} den Server verlassen hat</de>
+	</jukebox_skipleft>
+	
+	<jukebox_ignored>
+		<en>{#server}» {#emotic}Map {#highlite}{1}{#emotic} ignored: {#error}{2}</en> <!-- ? -->
+	</jukebox_ignored>
+	
+	<jukebox_drop>
+		<en>{#server}» {#emotic}Player {#highlite}{1}{#emotic} dropped his/her map {#highlite}{2}{#emotic} from jukebox!</en>
+		<de>{#server}» {#emotic}{#highlite}{1}{#emotic} hat seine/ihre Map {#highlite}{2}{#emotic} aus der Jukebox entfernt!</de>
+	</jukebox_drop>
+	
+	<jukebox_nodrop>
+		<en>{#server}» {#emotic}You don't have a map in the jukebox, use {#highlite}/elist{#emotic} to add one</en>
+		<de>{#server}» {#emotic}Du hast keine Map in der Jukebox. Benutze {#highlite}/elist{#emotic} um eine hinzuzufügen</de>
+	</jukebox_nodrop>
+	
+	<jukebox_add>
+		<en>{#server}» {#highlite}{1}{#emotic} is requesting {#highlite}{2}{#emotic} from {3}.{br}{#emotic}This will require {#highlite}{4}{#emotic} votes to pass. Type {#highlite}/y{#emotic} to vote yes.</en>
+		<de>{#server}» {#highlite}{1}{#emotic} fragt ob {#highlite}{2}{#emotic} von {3} hinzugefügt werden soll.{#emotic}{br}Das erfordert {#highlite}{4}{#emotic} Stimmen. Gebe {#highlite}/y{#emotic} um mit "Ja" zu stimmen.</de>
+	</jukebox_add>
+	
+	<jukebox_y>
+		<en>{#server}» {#highlite}{1}{#emotic} more votes needed to add {#highlite}{3}{#emotic}. Type {#highlite}/y{#emotic} to vote yes.</en>
+		<de>{#server}» {#highlite}{1}{#emotic} mehr Stimmen benötigt zum hinzufügen von {#highlite}{3}{#emotic}. Gebe {#highlite}/y{#emotic} ein um mit "Ja" zu stimmen.</de>
+	</jukebox_y>
+	
+	<jukebox_pass>
+		<en>{#server}» {#emotic}Vote Passed! {#highlite}{1}{#emotic} has been added to the jukebox.</en>
+		<de>{#server}» {#emotic}Abstimmung erfolgreich! {#highlite}{1}{#emotic} wurde zur Jukebox hinzugefügt.</de>
+	</jukebox_pass>
+	
+	<jukebox_end>
+		<en>{#server}» {#emotic}Vote to add {#highlite}{1}{#emotic} {2} by {#highlite}{3}{#emotic}!</en>
+	</jukebox_end>
+	
+	<jukebox_cancel>
+		<en>{#server}» {#emotic}Current /add vote cancelled!</en>
+		<de>{#server}» {#emotic}Aktuelle /add Abstimmung geschlossen!</de>
+	</jukebox_cancel>
+	
+	<jukebox_notfound>
+		<en>{#server}» {#emotic}Map_ID not found - Type {#highlite}/list{#emotic} to see all maps.</en>
+		<de>{#server}» {#emotic}Map_ID nicht gefunden - Gebe {#highlite}/list{#emotic} ein für eine Liste aller Maps.</de>
+	</jukebox_notfound>
+	
+	<jukebox_empty>
+		<en>{#server}» {#emotic}No maps in the jukebox, use {#highlite}/elist{#emotic} to add one</en>
+		<de>{#server}» {#emotic}Keine Maps in der Jukebox, benutze {#highlite}/elist{#emotic} um eine hinzuzufügen</de>
+	</jukebox_empty>
+	
+	<jukebox_help>
+		<en>{#server}» {#emotic}You have to include a Map_ID, e.g {#highlite}/jukebox 12{#emotic} - Type {#highlite}/jukebox help{#emotic} for more info.</en>
+		<de>{#server}» {#emotic}Du musst eine Map_ID, e.g {#highlite}/jukebox 12{#emotic} angeben - Benutze {#highlite}/jukebox help{#emotic} für mehr Informationen.</de>
+	</jukebox_help>
+	
+	<jukebox_list>
+		<en>{#server}» {#emotic}Upcoming maps in the jukebox: </en>
+		<de>{#server}» {#emotic}Die nächsten Maps in der Jukebox: </de>
+	</jukebox_list>
+	
+	<list_help>
+		<en>{#server}» {#emotic}Use {#highlite}/list{#emotic} first - Type {#highlite}/list help{#emotic} for more info.</en>
+		<de>{#server}» {#emotic}Benutze erst {#highlite}/list{#emotic} - Gebe {#highlite}/list help{#emotic} für mehr Informationen ein.</de>
+	</list_help>
+	
+	<no_jukebox>
+		<en>{#server}» {#highlite}/jukebox{#emotic} is not currently enabled on this server.</en>
+		<de>{#server}» {#highlite}/jukebox{#emotic} ist aktuell auf diesem Server nicht verfügbar.</de>
+	</no_jukebox>
+	
+	<history>
+		<en>{#server}» {#emotic}Recently played maps: </en>
+		<de>{#server}» {#emotic}Zuletzt gespielte Maps: </de>
+	</history>
+	
+	<add_present>
+		<en>{#server}» {#highlite}Map already in server list, not added.</en>
+		<de>{#server}» {#highlite}Map ist betreits in der Liste.</de>
+	</add_present>
+	
+	<add_dupl>
+		<en>{#server}» {#emotic}Map is already /add-ed to jukebox.</en>
+		<de>{#server}» {#emotic}Map ist bereits in der Jukebox.</de>
+	</add_dupl>
+	
+	<no_add>
+		<en>{#server}» {#highlite}/add{#emotic} is not currently enabled on this server.</en>
+		<de>{#server}» {#highlite}/add{#emotic} ist auf diesem Server deaktiviert.</de>
+	</no_add>
+	
+	<map_too_large>
+		<en>{#server}» {#error}Map is too large ({#highlite}{1}$i{#error} > {2} KB) - not added!</en>
+		<de>{#server}» {#error}Map ist zu groß ({#highlite}{1}$i{#error} > {2} KB) - nicht hinzugefügt!</de>
+	</map_too_large>
+	
+	<vote_explain>
+		<en>{#server}» {#vote}CallVotes disabled - see {#highlite}/helpvote{#vote} for info on chat-based voting</en>
+		<de>{#server}» {#vote}CallVotes ausgeschaltet - siehe {#highlite}/helpvote{#vote} für mehr Informationen</de>
+	</vote_explain>
+	
+	<vote_already>
+		<en>{#server}» {#error}A vote is already in progress. Wait for this to complete.</en>
+		<de>{#server}» {#error}Es läuft bereits eine Abstimmung. Warte bis diese fertig ist.</de>
+	</vote_already>
+	
+	<vote_limit>
+		<en>{#server}» {#error}Already ran {#highlite}$i {1}{#error} {2} votes for this map - that's enough!</en>
+		<de>{#server}» {#error}Es sind bereits {#highlite}$i {1}{#error} {2} Abstimmungen für diese Map gelaufen - das ist genug!</de>
+	</vote_limit>
+	
+	<vote_start>
+		<en>{#server}» {#highlite}{1}{#vote} is requesting to {#highlite}{2}{#vote}.{br}{#vote}This will require {#highlite}{3}{#vote} votes to pass. Type {#highlite}/y{#vote} to vote yes.</en>
+	</vote_start>
+	
+	<vote_y>
+		<en>{#server}» {#highlite}{1}{#vote} more vote{2} needed to {#highlite}{3}{#vote}. Type {#highlite}/y{#vote} to vote yes.</en>
+	</vote_y>
+	
+	<vote_pass>
+		<en>{#server}» {#vote}Vote Passed! Server to {#highlite}{1}{#vote}.</en>
+		<de>{#server}» {#vote}Abstimmung erfolgreich! Server to {#highlite}{1}{#vote}.</de>
+	</vote_pass>
+	
+	<vote_end>
+		<en>{#server}» {#vote}Vote to {#highlite}{1}{#vote} {2} by {#highlite}{3}{#vote}!</en>
+	</vote_end>
+	
+	<vote_cancel>
+		<en>{#server}» {#vote}Current vote cancelled!</en>
+		<de>{#server}» {#vote}Abstimmung geschlossen!</de>
+	</vote_cancel>
+	
+	<no_more_replay>
+		<en>{#server}» {#vote}No more than {#highlite}{1}{#vote} replays per map allowed!</en>
+		<de>{#server}» {#vote}Nicht mehr als {#highlite}{1}{#vote} Wiederholungen einer Map erlaubt!</de>
+	</no_more_replay>
+	
+	<no_admin_kick>
+		<en>{#server}» {#vote}Player {#highlite}{1}{#vote} fruitlessly tried to kick-vote {#logina}admin {#highlite}{2}{#vote}!</en>
+	</no_admin_kick>
+	
+	<no_admin_ignore>
+		<en>{#server}» {#vote}Player {#highlite}{1}{#vote} fruitlessly tried to ignore-vote {#logina}admin {#highlite}{2}{#vote}!</en>
+	</no_admin_ignore>
+	
+	<ask_admin>
+		<en>{#server}» {#error}Chat-based votes disabled - ask the currently available admin to</en>
+	</ask_admin>
+	
+	<no_spectators>
+		<en>{#server}» {#error}Spectators not allowed to start votes!</en>
+		<de>{#server}» {#error}Zuschauer dürfen keine Abstimmungen starten!</de>
+	</no_spectators>
+	
+	<no_sb_vote>
+		<en>{#server}» {#error}Chat-based votes disabled during scoreboard!</en>
+		<de>{#server}» {#error}Abstimmungen zurzeit nicht möglich!</de>
+	</no_sb_vote>
+	
+	<no_vote>
+		<en>{#server}» {#error}Chat-based votes disabled - use normal CallVotes.</en>
+		<de>{#server}» {#error}Chabasierte Abstimmung deakivert - benutze normale Abstimmungen.</de>
+	</no_vote>
+	
+	<bootme_dialog>
+		<en>{#message}Thanks for playing, please come back soon!</en>
+		<de>{#message}Danke fürs spielen, auf Wiedersehen!</de>
+	</bootme_dialog>
+	
+	<ragequit>
+		<en>{#server}» {#highlite}{1}$z$s{#message} said: "@"#!" and ragequitted!</en>
+		<de>{#server}» {#highlite}{1}$z$s{#message} sagte: "@"#!" und hat völlig ausrastend den Server verlassen!</de>
+	</ragequit>
+	
+	<ragequit_dialog>
+		<en>{#message}Thanks for playing, please come back soon!</en>
+		<de>{#message}Danke fürs spielen, auf Wiedersehen!</de>
+	</ragequit_dialog>
+	
+</locales>

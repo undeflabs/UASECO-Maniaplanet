@@ -121,7 +121,7 @@
 
 	<!-- URLs of the Images, you can use this locations or just copy the images to your Server -->
 	<images>
-		<thumb_up>http://static.undef.name/ingame/vote-manager/thumb-up.png</thumb_up>
-		<thumb_down>http://static.undef.name/ingame/vote-manager/thumb-down.png</thumb_down>
+		<thumb_up>http://maniacdn.net/undef.de/uaseco/vote-manager/thumb-up.png</thumb_up>
+		<thumb_down>http://maniacdn.net/undef.de/uaseco/vote-manager/thumb-down.png</thumb_down>
 	</images>
 </settings>

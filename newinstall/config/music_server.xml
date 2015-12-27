@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
 	<!-- override a map's custom music? -->
 	<override_map>true</override_map>
@@ -29,9 +29,16 @@
 
 	<!-- full http link to directory holding the song files     -->
 	<!-- http server must allow direct download of those files  -->
-	<!-- OR a path below the server's UserData directory (e.g.  -->
+	<!-- OR a path below the server's "GameData" directory (e.g.  -->
 	<!-- "Music/") which allows serving songs without webserver -->
-	<music_server>http://static.undef.name/servers/music/</music_server>
+	<music_server>http://maniacdn.net/undef.de/shared/music/</music_server>
+
+	<!--
+	For song files which are stored remotely you can setup how many bytes will be transfered to parse for OGG tags,
+	512 bytes will be enough in the most case, but some files have to retrieve full (because the OGG tags are at the end of the file).
+	Adjust this if you miss some Artist/Title entries in <cache_file>. To retrieve the full file, set this to '-1'.
+	//-->
+	<maxlen>512</maxlen>
 
 	<!-- list of song files at your music server in .ogg or .mux   -->
 	<!-- avoid spaces and special characters in the filenames and  -->

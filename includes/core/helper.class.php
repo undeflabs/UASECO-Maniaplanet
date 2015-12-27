@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-10-29
+ * Date:	2015-11-09
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1914,7 +1914,7 @@ class Helper {
 			$this->logfile['handle'] = fopen($this->logfile['file'], 'wb+');
 		}
 		fwrite($this->logfile['handle'], $text);
-		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+		if (strtoupper(substr(php_uname('s'), 0, 3)) !== 'WIN') {
 			chmod($this->logfile['file'], 0666);
 		}
 		else {

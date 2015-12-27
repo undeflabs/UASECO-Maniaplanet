@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
+	<!-- Set calculation base, possible values are 'author', 'gold', 'silver' or 'bronze' -->
+	<calculation_base>bronze</calculation_base>
+
 	<!--
-	Set the multiplicator for author time (e.g. 6 x author
-	time = new timelimit); set to 0 to disable function
+	Set the multiplicator for time (e.g. 6x time = new timelimit);
+	Set to 0 to disable function
 	// -->
 	<multiplicator>4</multiplicator>
 
@@ -17,6 +20,4 @@
 
 	<!-- 2 = in message window, 1 = in chat, 0 = none -->
 	<display>1</display>
-
-	<message>{#server}» Set {1} timelimit for Map {#highlite}{2}{#server} to {#highlite}{3}{#server}, calculation based upon the author time of {#highlite}{4}{#server}</message>
 </settings>

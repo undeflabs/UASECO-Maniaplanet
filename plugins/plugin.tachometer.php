@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Authors:	undef.de, reaby
- * Date:	2015-08-23
+ * Date:	2015-12-27
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -99,8 +99,8 @@ class PluginTachometer extends Plugin {
 			'images' => array(
 				'background' 				=> $settings['IMAGES'][0]['BACKGROUND'][0],
 				'needle'				=> $settings['IMAGES'][0]['NEEDLE'][0],
-//				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-dark.png',
-//				'needle'				=> 'http://static.undef.name/ingame/tachometer/needle-test.png',
+//				'needle'				=> 'http://maniacdn.net/undef.de/uaseco/tachometer/needle-dark.png',
+//				'needle'				=> 'http://maniacdn.net/undef.de/uaseco/tachometer/needle-test.png',
 				'scale' => array(
 					'colorscale'			=> $settings['IMAGES'][0]['SCALE'][0]['COLORSCALE'][0],
 					'overlay'			=> $settings['IMAGES'][0]['SCALE'][0]['OVERLAY'][0],

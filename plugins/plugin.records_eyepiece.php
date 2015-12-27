@@ -9,7 +9,7 @@
  * Author:		undef.de
  * Contributors:	.anDy, Bueddl
  * Version:		1.1.0
- * Date:		2015-10-29
+ * Date:		2015-12-27
  * Copyright:		2009 - 2015 by undef.de
  * System:		UASECO/0.9.5+
  * Game:		ManiaPlanet Trackmania2 (TM2)
@@ -3059,26 +3059,8 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 		}
 		else if ( ($command[0] == 'remove') || ($command[0] == 'unjuke') ) {
-
-//			// Remove server path
-//			$filename = str_replace($aseco->server->mapdir, '', $command[1]);
-//
-//			// Find the removed Map and remove them here too
-//			$maplist = array();
-//			$i = 0;
-//			foreach ($this->cache['MapList'] as &$map) {
-//				if ($map['filename'] != $filename) {
-//					// Rebuild the ID for each Map (hole away)
-//					$map['id'] = $i;
-//					$maplist[] = $map;
-//
-//					$i ++;
-//				}
-//			}
-//			unset($map);
-//
-//			// Replace with the new list
-//			$this->cache['MapList'] = $maplist;
+			// Get the new Maplist
+			$this->getMaplist($command[1]);
 
 			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
 				// Refresh the MapcountWidget
@@ -4586,7 +4568,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$xml .= '<label posn="2.5 -5.0625 0.04" sizen="33.875 3.75" class="labels" text="'. $this->config['CurrentMusicInfos']['Title'] .'"/>';
 		$xml .= '<label posn="2.5 -8.4375 0.04" sizen="37.125 3.75" class="labels" scale="0.9" text="by '. $this->config['CurrentMusicInfos']['Artist'] .'"/>';
 //		if ($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0] == true) {
-//			$xml .= '<quad posn="23.75 -11.625 0.05" sizen="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripColors($this->config['CurrentMusicInfos']['Artist'], true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://static.undef.name/ingame/records-eyepiece/logo-amazon-normal.png" imagefocus="http://static.undef.name/ingame/records-eyepiece/logo-amazon-focus.png"/>';
+//			$xml .= '<quad posn="23.75 -11.625 0.05" sizen="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripColors($this->config['CurrentMusicInfos']['Artist'], true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
 //		}
 		$xml .= $this->templates['MUSIC_WIDGET']['FOOTER'];
 
@@ -11999,7 +11981,7 @@ EOL;
 //				if ( ($this->config['CurrentMusicInfos']['Artist'] == $song['Artist']) && ($this->config['CurrentMusicInfos']['Title'] == $song['Title']) ) {
 //					$xml .= '<quad posn="40 0 0.06" sizen="6.25 4.6875" style="BgRaceScore2" substyle="Fame"/>';
 //				}
-//				$xml .= '<quad posn="2.25 -12.9375 0.05" sizen="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripColors(str_replace('&amp;', '&', $song['Artist']), true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://static.undef.name/ingame/records-eyepiece/logo-amazon-normal.png" imagefocus="http://static.undef.name/ingame/records-eyepiece/logo-amazon-focus.png"/>';
+//				$xml .= '<quad posn="2.25 -12.9375 0.05" sizen="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripColors(str_replace('&amp;', '&', $song['Artist']), true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
 				$xml .= '</frame>';
 
 				$line ++;
@@ -12614,7 +12596,7 @@ EOL;
 
 		// Set the content
 		$xml .= '<frame posn="7.5 -11.25 0.01">';
-		$xml .= '<quad posn="153.4 0 0.11" sizen="34.1 87.1875" image="http://static.undef.name/ingame/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://static.undef.name/ingame/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.undef.name/UASECO/Records-Eyepiece.php"/>';
+		$xml .= '<quad posn="153.4 0 0.11" sizen="34.1 87.1875" image="maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.undef.name/UASECO/Records-Eyepiece.php"/>';
 
 		if ($page == 0) {
 			// Begin Help for Players

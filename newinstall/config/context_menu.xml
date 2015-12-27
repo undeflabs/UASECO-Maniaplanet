@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+
+<!--
+	<entries>
+		<entry title="Admin">
+			<entry title="Restart current Map" action="/admin restartmap" icon="Icons64x64_1|ClipRewind" dependency="PluginChatAdmin" />
+			<entry title="Force end of round" action="/admin endround" icon="Icons64x64_1|ClipPause" dependency="PluginChatAdmin" />
+			<entry title="Skip to next Map" action="/admin nextmap" icon="Icons64x64_1|ClipPlay" dependency="PluginChatAdmin" />
+			<entry title="Queue current Map for replay" action="/admin replaymap" icon="Icons128x32_1|RT_Laps" dependency="PluginChatAdmin" />
+			<entry title="List Players" action="/admin players live" icon="http://maniacdn.net/undef.de/uaseco/context-menu/icon-players.png" dependency="PluginChatAdmin" />
+
+			<entry type="separator" />
+
+			<entry title="SubAdmin">
+				<entry title="Add This Map" action="/admin addthis" dependency="PluginChatAdmin" />
+				<entry title="Remove This Map" action="/admin removethis" dependency="PluginChatAdmin" />
+				<entry title="Erase This Map" action="/admin erasethis" dependency="PluginChatAdmin" />
+				<entry title="Shuffle Maplist" action="/admin shufflemaps" dependency="PluginChatAdmin" />
+				<entry title="List Duplicates" action="/admin listdupes" dependency="PluginChatAdmin" />
+				<entry title="Clear Jukebox" action="/admin clearjukebox" dependency="PluginChatAdmin" />
+				<entry title="Clear History" action="/admin clearhist" dependency="PluginChatAdmin" />
+				<entry title="Read Matchsettings" action="/admin readmaplist" dependency="PluginChatAdmin" />
+				<entry title="Write Matchsettings" action="/admin writemaplist" dependency="PluginChatAdmin" />
+			</entry>
+		</entry>
+	</entries>
+//-->
+	<entries>
+		<group title="Admin">
+			<entry title="Restart current Map" action="/admin restartmap" icon="Icons64x64_1|ClipRewind" dependency="PluginChatAdmin" />
+			<entry title="Force end of round" action="/admin endround" icon="Icons64x64_1|ClipPause" dependency="PluginChatAdmin" />
+			<entry title="Skip to next Map" action="/admin nextmap" icon="Icons64x64_1|ClipPlay" dependency="PluginChatAdmin" />
+			<entry title="Queue current Map for replay" action="/admin replaymap" icon="Icons128x32_1|RT_Laps" dependency="PluginChatAdmin" />
+			<entry title="List Players" action="/admin players live" icon="http://maniacdn.net/undef.de/uaseco/context-menu/icon-players.png" dependency="PluginChatAdmin" />
+
+			<entry type="separator" />
+
+			<entry title="Clear Jukebox" action="/admin clearjukebox" dependency="PluginChatAdmin" />
+			<entry title="Clear History" action="/admin clearhist" dependency="PluginChatAdmin" />
+			<entry title="Read Matchsettings" action="/admin readmaplist" dependency="PluginChatAdmin" />
+			<entry title="Write Matchsettings" action="/admin writemaplist" dependency="PluginChatAdmin" />
+		</group>
+	</entries>
+
+<!--
+		<group title="Examples">
+			<entry title="Link to Website" action="http://www.uaseco.org/" icon="Icons128x32_1|ManiaLinkHome" />
+			<entry title="Link to Manialink" action="maniaplanet://:undefs" icon="Icons128x32_1|ManiaLinkSwitch" />
+		</group>
+//-->
+</settings>

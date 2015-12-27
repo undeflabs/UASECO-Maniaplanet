@@ -57,7 +57,7 @@ class PluginChatlog extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Keeps log of player chat, and displays the chat log.');
+		$this->setDescription(new Message('plugin.chat_log', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
@@ -65,7 +65,7 @@ class PluginChatlog extends Plugin {
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onPlayerChat',		'onPlayerChat');
 
-		$this->registerChatCommand('chatlog',		'chat_chatlog', 'Displays log of recent chat messages', Player::PLAYERS);
+		$this->registerChatCommand('chatlog',		'chat_chatlog', new Message('plugin.chat_log', 'plugin_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -76,7 +76,7 @@ class PluginChatlog extends Plugin {
 
 	public function onSync ($aseco) {
 		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Forgot what someone said? Use "/chatlog" to check the chat history!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage(new Message('plugin.chat_log', 'info_message'));
 		}
 	}
 
@@ -146,7 +146,7 @@ class PluginChatlog extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
 		else {
-			$aseco->sendChatMessage('{#server}» {#error}No chat history found!', $player->login);
+			(new Message('plugin.chat_log', 'message_no_history'))->sendChatMessage($login);
 		}
 	}
 }

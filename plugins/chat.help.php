@@ -55,7 +55,8 @@ class PluginChatHelp extends Plugin {
 		$this->setDescription('Displays help for public chat commands.');
 
 		// Register chat-commands
-		$this->registerChatCommand('help', 'chat_help', 'Displays help for available commands.', Player::PLAYERS);
+		// $this->registerChatCommand('help', 'chat_help', 'Displays help for available commands.', Player::PLAYERS);
+		$this->registerChatCommand('help', 'chat_help', new Message('chat.help', 'slash_help_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -105,8 +106,10 @@ class PluginChatHelp extends Plugin {
 					// Chat command is allowed for everyone
 					$allowed = true;
 				}
+				
 				if ($allowed == true) {
-					$data[] = array('/'.$name, $cc['help']);
+					$message = $aseco->locales->handleMessage($cc['help'], $login);
+					$data[] = array('/'.$name, $message);
 				}
 			}
 		}
@@ -124,12 +127,12 @@ class PluginChatHelp extends Plugin {
 			'textcolors'	=> array('FF5F', 'FFFF'),
 			'heading'	=> array('Command', 'Description'),
 		);
-
+		
 		$window = new Window();
 		$window->setLayoutTitle($settings_title);
 		$window->setLayoutHeading($settings_heading);
 		$window->setColumns($settings_columns);
-		$window->setContent('Currently supported chat commands', $data);
+		$window->setContent((new Message('chat.help', 'help_window_title'))->finish($login), $data);
 		$window->send($player, 0, false);
 	}
 }

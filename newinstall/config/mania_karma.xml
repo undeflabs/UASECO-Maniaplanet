@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <mania_karma>
 	<!--
 		For an list of Nationcodes in 'ISO 3166 ALPHA-3', see the row "Alpha-3" at
@@ -273,9 +273,9 @@
 	<messages>
 		<!-- Misc. messages -->
 		<welcome>{#server}» This Server uses the ManiaKarma world Map vote system at {#highlite}$l[{1}]{2}$l{br}{#server}» Type {#highlite}/karma help{#server} for more info.</welcome>
-		<uptodate_ok>{#emotic}» This ManiaKarma plugin version {#highlite}{1}{#emotic} is up to date.</uptodate_ok>
-		<uptodate_new>{#emotic}» New ManiaKarma plugin version {#highlite}{1}{#emotic} available from {#highlite}{2}</uptodate_new>
-		<uptodate_failed>{#error}» Could not check plugin version, connection failed.</uptodate_failed>
+		<uptodate_ok>{#server}»{#emotic} This ManiaKarma plugin version {#highlite}{1}{#emotic} is up to date.</uptodate_ok>
+		<uptodate_new>{#server}»{#emotic} New ManiaKarma plugin version {#highlite}{1}{#emotic} available from {#highlite}{2}</uptodate_new>
+		<uptodate_failed>{#server}»{#error} Could not check plugin version, connection failed.</uptodate_failed>
 
 		<!-- Vote messages -->
 		<karma_message>{#server}» {#karma}Karma of {#highlite}{1}{#karma} is {#highlite}{2}</karma_message>
@@ -318,20 +318,20 @@
 
 	<!-- Image links -->
 	<images>
-		<widget_open_left>http://static.undef.name/ingame/mania-karma/edge-open-ld-dark.png</widget_open_left>
-		<widget_open_right>http://static.undef.name/ingame/mania-karma/edge-open-rd-dark.png</widget_open_right>
+		<widget_open_left>http://maniacdn.net/undef.de/uaseco/mania-karma/edge-open-ld-dark.png</widget_open_left>
+		<widget_open_right>http://maniacdn.net/undef.de/uaseco/mania-karma/edge-open-rd-dark.png</widget_open_right>
 
-		<mx_logo_normal>http://static.undef.name/ingame/mania-karma/logo-maniaexchange-normal.png</mx_logo_normal>
-		<mx_logo_focus>http://static.undef.name/ingame/mania-karma/logo-maniaexchange-focus.png</mx_logo_focus>
+		<mx_logo_normal>http://maniacdn.net/undef.de/uaseco/mania-karma/logo-maniaexchange-normal.png</mx_logo_normal>
+		<mx_logo_focus>http://maniacdn.net/undef.de/uaseco/mania-karma/logo-maniaexchange-focus.png</mx_logo_focus>
 
-		<button_normal>http://static.undef.name/ingame/mania-karma/button-normal.png</button_normal>
-		<button_focus>http://static.undef.name/ingame/mania-karma/button-focus.png</button_focus>
+		<button_normal>http://maniacdn.net/undef.de/uaseco/mania-karma/button-normal.png</button_normal>
+		<button_focus>http://maniacdn.net/undef.de/uaseco/mania-karma/button-focus.png</button_focus>
 
-		<cup_gold>http://static.undef.name/ingame/mania-karma/cup_gold.png</cup_gold>
-		<cup_silver>http://static.undef.name/ingame/mania-karma/cup_silver.png</cup_silver>
+		<cup_gold>http://maniacdn.net/undef.de/uaseco/mania-karma/cup_gold.png</cup_gold>
+		<cup_silver>http://maniacdn.net/undef.de/uaseco/mania-karma/cup_silver.png</cup_silver>
 
-		<maniakarma_logo>http://static.undef.name/ingame/mania-karma/logo-tm-karma.png</maniakarma_logo>
-		<progress_indicator>http://static.undef.name/ingame/mania-karma/progress_bar_yellow_2D.webm</progress_indicator>
+		<maniakarma_logo>http://maniacdn.net/undef.de/uaseco/mania-karma/logo-mania-karma.png</maniakarma_logo>
+		<progress_indicator>http://maniacdn.net/undef.de/uaseco/mania-karma/progress_bar_yellow_2D.webm</progress_indicator>
 	</images>
 
 	<!--

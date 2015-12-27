@@ -2,6 +2,9 @@
  *	Based upon original version 2014-11-05
  *	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
+ *	2015-12-27 changed by undef.de:
+ *	- Changed the all external URLs to the images
+ *
  *	2015-09-20 changed by undef.de:
  *	- Changed the country and continent to "Continent / Country" instead of "Country / Continent" at id "Label_MultiRank"
  *
@@ -54,7 +57,7 @@
  *	- LibST_SMWithLegends, add a space for columns legends in the header
  */
 
-#Const Version		"2015-09-20"
+#Const Version		"2015-12-27"
 #Const ScriptName	"ScoresTable.Script.txt"
 
 #Include "TextLib" as TL
@@ -2053,8 +2056,8 @@ Void Build(Text _Game, Boolean _Restore) {
 					declare ButtonSize = Private_ResizeKeepRatio(<10., 10.>, <ColsSizeX[ColId], PlayerCardTopSizeY/2.>);
 					ML_PlayerCard[Side] ^= """
 <frame posn="{{{ColPosX}}} {{{(-PlayerCardTopSizeY/2.)-PlayerCardTopMargin+(PlayerCardTopSizeY*0.05)}}} 2">
-	<quad posn="0 {{{(ButtonSize.Y/3.0)+0.2}}}" sizen="{{{ButtonSize.X+0.75}}} {{{ButtonSize.Y+0.75}}}" halign="{{{ColHAlign}}}" valign="center" image="http://static.undef.name/scorestable/spectating-normal.png" imagefocus="http://static.undef.name/scorestable/spectating-focus.png" modulatecolor="CCC" scriptevents="1" id="Button_Spec"/>
-	<quad posn="0 {{{-(ButtonSize.Y/3.0)-0.2}}}" sizen="{{{ButtonSize.X+1.0}}} {{{ButtonSize.Y+1.0}}}" halign="{{{ColHAlign}}}" valign="center" image="http://static.undef.name/scorestable/profile-normal.png" imagefocus="http://static.undef.name/scorestable/profile-focus.png" modulatecolor="CCC" scriptevents="1" id="Button_Profile"/>
+	<quad posn="0 {{{(ButtonSize.Y/3.0)+0.2}}}" sizen="{{{ButtonSize.X+0.75}}} {{{ButtonSize.Y+0.75}}}" halign="{{{ColHAlign}}}" valign="center" image="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/spectating-normal.png" imagefocus="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/spectating-focus.png" modulatecolor="CCC" scriptevents="1" id="Button_Spec"/>
+	<quad posn="0 {{{-(ButtonSize.Y/3.0)-0.2}}}" sizen="{{{ButtonSize.X+1.0}}} {{{ButtonSize.Y+1.0}}}" halign="{{{ColHAlign}}}" valign="center" image="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/profile-normal.png" imagefocus="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/profile-focus.png" modulatecolor="CCC" scriptevents="1" id="Button_Profile"/>
 </frame>""";
 				}
 				case "LibST_Tags": {
@@ -2700,7 +2703,7 @@ Void UpdateSlot(Integer _Slot, CScore _Score) {
 			}
 			case C_Status_Spectating: {
 				Label_LocalRank.Opacity = 1.0;
-				Quad_Status.ImageUrl = "http://static.undef.name/scorestable/spectating-normal.png";
+				Quad_Status.ImageUrl = "http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/spectating-normal.png";
 				Quad_Status.Style = "Bgs1";
 				Quad_Status.Substyle = "BgEmpty";
 				if (UsePlayerDarkening && !Quad_PlayerDarkening.Visible) Quad_PlayerDarkening.Visible = True;

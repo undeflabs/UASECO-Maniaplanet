@@ -1,9 +1,9 @@
 <manialink id="EffectStudioOnStartCountdownAnimation" name="OnStartCountdownAnimation" version="2">
 <frame posn="0 0 20" id="Frame_Animation">
-<quad posn="0 0 0.01" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-3.png" id="Quad_Countdown3" opacity="0.0"/>
-<quad posn="0 0 0.02" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-2.png" id="Quad_Countdown2" opacity="0.0"/>
-<quad posn="0 0 0.03" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-1.png" id="Quad_Countdown1" opacity="0.0"/>
-<quad posn="0 0 0.04" sizen="100.0 100.0" halign="center" valign="center2" image="http://static.undef.name/ingame/effect-studio/images/v2-go.png" id="Quad_CountdownGo" opacity="0.0"/>
+<quad posn="0 0 0.01" sizen="100.0 100.0" halign="center" valign="center2" image="http://maniacdn.net/undef.de/uaseco/effect-studio/images/v2-3.png" id="Quad_Countdown3" opacity="0.0"/>
+<quad posn="0 0 0.02" sizen="100.0 100.0" halign="center" valign="center2" image="http://maniacdn.net/undef.de/uaseco/effect-studio/images/v2-2.png" id="Quad_Countdown2" opacity="0.0"/>
+<quad posn="0 0 0.03" sizen="100.0 100.0" halign="center" valign="center2" image="http://maniacdn.net/undef.de/uaseco/effect-studio/images/v2-1.png" id="Quad_Countdown1" opacity="0.0"/>
+<quad posn="0 0 0.04" sizen="100.0 100.0" halign="center" valign="center2" image="http://maniacdn.net/undef.de/uaseco/effect-studio/images/v2-go.png" id="Quad_CountdownGo" opacity="0.0"/>
 </frame>
 <script><!--
  /*
@@ -11,7 +11,7 @@
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2015-10-25
+ * Version:	2015-12-27
  * ----------------------------------
  */
 #Include "AnimLib" as AnimLib
@@ -22,14 +22,14 @@ main() {
 	declare Quad_Countdown1			<=> (Page.GetFirstChild("Quad_Countdown1") as CMlQuad);
 	declare Quad_CountdownGo		<=> (Page.GetFirstChild("Quad_CountdownGo") as CMlQuad);
 
-//	declare SoundCountdown3			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/count-03-v02.ogg", 1.0, False, False, False);
-//	declare SoundCountdown2			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/count-02-v02.ogg", 1.0, False, False, False);
-//	declare SoundCountdown1			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/count-01-v02.ogg", 1.0, False, False, False);
-	declare SoundCountdownGo		= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/race-go.ogg", 1.0, False, False, False);
-	declare SoundCountdown3			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/laser-3.ogg", 1.0, False, False, False);
-	declare SoundCountdown2			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/laser-2.ogg", 1.0, False, False, False);
-	declare SoundCountdown1			= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/laser-1.ogg", 1.0, False, False, False);
-//	declare SoundCountdownGo		= Audio.CreateSound("http://static.undef.name/ingame/effect-studio/sounds/script/countdown-3-2-1-go/shoot-go.ogg", 1.0, False, False, False);
+//	declare SoundCountdown3			= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/count-03-v02.ogg", 1.0, False, False, False);
+//	declare SoundCountdown2			= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/count-02-v02.ogg", 1.0, False, False, False);
+//	declare SoundCountdown1			= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/count-01-v02.ogg", 1.0, False, False, False);
+	declare SoundCountdownGo		= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/race-go.ogg", 1.0, False, False, False);
+	declare SoundCountdown3			= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/laser-3.ogg", 1.0, False, False, False);
+	declare SoundCountdown2			= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/laser-2.ogg", 1.0, False, False, False);
+	declare SoundCountdown1			= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/laser-1.ogg", 1.0, False, False, False);
+//	declare SoundCountdownGo		= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/script/countdown-3-2-1-go/shoot-go.ogg", 1.0, False, False, False);
 
 	declare Integer Counter			= 0;
 	declare Integer PrevCount		= 0;

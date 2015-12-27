@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -54,7 +55,7 @@ class PluginLastWindow extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setDescription('Re-opens the last closed window.');
 
-		$this->registerChatCommand('lastwin', 'chat_lastwin', 'Re-opens the last closed window.', Player::PLAYERS);
+		$this->registerChatCommand('lastwin', 'chat_lastwin', new Message('chat.last_window', 'slash_lastwin'), Player::PLAYERS);
 	}
 
 	/*

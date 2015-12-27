@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2015-11-13
+	Authors:	[EN] undef.de
+			[DE] askuri
+	//-->
+
+	<plugin_description>
+		<en>Builds a chat message starting with the nickname from player.</en>
+		<de>Sendet eine Chatnachricht die mit dem Nickname des Spielers beginnt.</de>
+	</plugin_description>
+</locales>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+
+	<!--
+	Set to true to perform UASECO version check at start-up & MasterAdmin connect
+	//-->
+	<uptodate_check>true</uptodate_check>
+
+	<!--
+	Setup the URL for the up-to-date checks
+	e.g. http://www.uaseco.org/uptodate/current_release.txt
+	//-->
+	<uptodate_url>http://www.uaseco.org/uptodate/current_release.txt</uptodate_url>
+
+	<!--
+	Set to true to perform global blacklist merge at MasterAdmin connect
+	//-->
+	<global_blacklist_merge>true</global_blacklist_merge>
+
+	<!--
+	Set to global blacklist in XML format, same as <blacklist_url> in dedicated_cfg.txt,
+	e.g. http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml
+	//-->
+	<global_blacklist_url>http://www.uaseco.org/uptodate/trackmania_blacklist_dedimania.xml</global_blacklist_url>
+</settings>

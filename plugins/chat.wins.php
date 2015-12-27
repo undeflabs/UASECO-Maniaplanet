@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -52,9 +53,9 @@ class PluginChatWins extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Shows wins for current or given online player');
+		$this->setDescription(new Message('chat.wins', 'plugin_description'));
 
-		$this->registerChatCommand('wins', 'chat_wins', 'Shows wins for current or given online player', Player::PLAYERS);
+		$this->registerChatCommand('wins', 'chat_wins', new Message('chat.wins', 'plugin_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -67,33 +68,26 @@ class PluginChatWins extends Plugin {
 
 		if ($chat_parameter != '') {
 			if (!$player = $aseco->server->players->getPlayerByLogin($chat_parameter)) {
-				$message = '{#server}» {#error}Given player login {#highlite}'. $chat_parameter .'{#error} not found!';
-				$aseco->sendChatMessage($message, $login);
+				$msg = new Message('chat.wins', 'message_player_not_found');
+				$msg->addPlaceholders($chat_parameter);
+				$msg->sendChatMessage($login);
 				return;
 			}
 			$wins = $player->getWins();
 
-			// use plural unless 1, and add ! for 2 or more
-			$message = $aseco->formatText($aseco->getChatMessage('WINS_OTHER'),
-				$aseco->stripColors($player->nickname),
-				$wins,
-				($wins == 1 ? '.' : ($wins > 1 ? 's!' : 's.'))
-			);
+			$msg = new Message('common', 'wins_other');
+			$msg->addPlaceholders($aseco->stripColors($player->nickname), $wins);
+			$msg->sendChatMessage($login);
 		}
 		else {
-			if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$wins = $player->getWins();
 
-				// use plural unless 1, and add ! for 2 or more
-				$message = $aseco->formatText($aseco->getChatMessage('WINS'),
-					$wins,
-					($wins == 1 ? '.' : ($wins > 1 ? 's!' : 's.'))
-				);
+				$msg = new Message('common', 'wins');
+				$msg->addPlaceholders($wins);
+				$msg->sendChatMessage($login);
 			}
 		}
-
-		// Show chat message
-		$aseco->sendChatMessage($message, $login);
 	}
 }
 

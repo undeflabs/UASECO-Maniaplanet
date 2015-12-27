@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	askuri
- * Date:	2015-10-29
+ * Date:	2015-11-11
  * Copyright:	2015 Martin Weber (askuri)
  * ----------------------------------------------------------------------------------
  *
@@ -52,7 +52,13 @@ class Locales {
 
 		foreach (glob('locales/*.xml') as $filename) {
 			$plugin = basename($filename, '.xml');			// Filename without .xml is the plugin identification
-			$this->locales[$plugin] = json_decode(json_encode(simplexml_load_file($filename)), true); // Read with simplexml and use a trick to convert it to an array
+
+			$xml = simplexml_load_file($filename);
+			if (!$xml) {
+				trigger_error('[LOCALES] Unable to parse '. $filename. '! Please check its syntax and the encoding (has to be UTF8!)', E_USER_ERROR);
+			}
+
+			$this->locales[$plugin] = json_decode(json_encode($xml), true); // Read with simplexml and use a trick to convert it to an array
 		}
 	}
 
@@ -95,7 +101,7 @@ class Locales {
 	*/
 
 	public function getSingleTranslation ($sourcefile, $id, $lang) {
-		return $this->locales[$sourcefile][strtolower($id)][$lang];
+		return $this->locales[$sourcefile][$id][$lang];
 	}
 
 	/*
@@ -105,7 +111,7 @@ class Locales {
 	*/
 
 	public function getAllTranslations ($sourcefile, $id) {
-		return $this->locales[$sourcefile][strtolower($id)];
+		return $this->locales[$sourcefile][$id];
 	}
 
 	/*
@@ -116,6 +122,26 @@ class Locales {
 
 	public function getPlayerLanguage ($login) {
 		return $this->playerlang_cache[$login];
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Used when outputting messages. Sadly not every message is made with Message class, some are still strings
+	// this function ensures backwardcompatibility and avoids errors
+	public function handleMessage ($message, $login) {
+		if ($message instanceof Message) { // Is Message object?
+			return $message->finish($login);
+		}
+		else if (is_string($message)) {
+			return $message;
+		}
+		else {
+			trigger_error('[LOCALES] handleMessage() is unable to handle the following message due to an invalid datatype:', E_USER_WARNING);
+		}
 	}
 }
 

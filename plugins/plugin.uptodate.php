@@ -2,14 +2,15 @@
 /*
  * Plugin: Uptodate
  * ~~~~~~~~~~~~~~~~
- * » Checks UASECO version at start-up & MasterAdmin connect, and provides "/admin uptodate" command.
+ * » Checks if there is a more recent version of UASECO at start-up & MasterAdmin connect, and provides "/admin uptodate" command.
  *   Also merges global blacklist at MasterAdmin connect, and provides "/admin mergegbl" command.
  * » Based upon plugin.uptodate.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Author:	askuri
+ * Date:	2015-11-13
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -28,7 +29,7 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - none
+ *  - plugins/chat.admin.php
  *
  */
 
@@ -42,6 +43,7 @@
 */
 
 class PluginUptodate extends Plugin {
+	public $config;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -53,12 +55,14 @@ class PluginUptodate extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Checks UASECO version at start-up & MasterAdmin connect.');
+		$this->setDescription(new Message('plugin.uptodate', 'plugin_description'));
+
+		$this->addDependence('PluginChatAdmin',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onPlayerConnect',	'onPlayerConnect');
 
-		$this->registerChatCommand('uptodate',	'chat_uptodate', 'Checks current version of UASECO', Player::OPERATORS);
+		$this->registerChatCommand('uptodate',	'chat_uptodate', new Message('plugin.uptodate', 'chat_uptodate'), Player::OPERATORS);
 	}
 
 	/*
@@ -67,46 +71,47 @@ class PluginUptodate extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function checkUasecoUptodate ($aseco) {
+	public function chat_uptodate ($aseco, $login, $chat_command, $chat_parameter) {
+		$this->checkUasecoUptodate($login);
+	}
 
-		$version_url = UASECO_WEBSITE .'/uptodate/current_release.txt';  // URL to current version file
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
 
-		// Grab version file
-		$response = $aseco->webaccess->request($version_url, null, 'none');
-		if ($response['Code'] == 200) {
-			if ($response['Message']) {
-				// compare versions
-				if ($response['Message'] != UASECO_VERSION) {
-					$message = $aseco->formatText($aseco->getChatMessage('UPTODATE_NEW'), $response['Message'],
-						'$l['. UASECO_WEBSITE .']'. UASECO_WEBSITE .'$l'
-					);
-				}
-				else {
-					$message = $aseco->formatText($aseco->getChatMessage('UPTODATE_OK'), $response['Message']);
-				}
+	public function onSync ($aseco) {
+
+		// Load config file
+		$config_file = 'config/uptodate.xml';
+		if (file_exists($config_file)) {
+			$aseco->console('[UpToDate] Load config file ['. $config_file .']');
+			if ($xml = $aseco->parser->xmlToArray($config_file, true, true)) {
+				$this->config = $xml['SETTINGS'];
 			}
 			else {
-				$message = false;
+				trigger_error('[UpToDate] Could not read/parse config file ['. $config_file .']!', E_USER_WARNING);
 			}
 		}
 		else {
-			$message = false;
+			trigger_error('[UpToDate] Could not find config file ['. $config_file .']!', E_USER_WARNING);
 		}
-		return $message;
-	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
+		// Transform 'TRUE' or 'FALSE' from string to boolean
+		$this->config['UPTODATE_CHECK'][0] = ((strtoupper($this->config['UPTODATE_CHECK'][0]) == 'TRUE') ? true : false);
 
-	public function onSync ($aseco, $command) {
+		// Setup defaults, if required
+		if ($this->config['UPTODATE_URL'][0] == '') {
+			$this->config['UPTODATE_URL'][0] = UASECO_WEBSITE .'/uptodate/current_release.txt';
+		}
+		if ($this->config['GLOBAL_BLACKLIST_URL'][0] == '') {
+			$this->config['GLOBAL_BLACKLIST_URL'][0] = UASECO_WEBSITE .'/uptodate/trackmania_blacklist_dedimania.xml';
+		}
 
-		// Check version but ignore error
-		if ($aseco->settings['uptodate_check'] && $message = $this->checkUasecoUptodate($aseco)) {
-			// Show chat message
-			$aseco->sendChatMessage($message);
+		// Check version
+		if ($this->config['UPTODATE_CHECK'][0] == true) {
+			$this->checkUasecoUptodate(false);
 		}
 	}
 
@@ -118,46 +123,53 @@ class PluginUptodate extends Plugin {
 
 	public function onPlayerConnect ($aseco, $player) {
 
-		// check for a master admin
+		// Check for a MasterAdmin
 		if ($aseco->isMasterAdmin($player)) {
-			// check version but ignore error
-			if ($aseco->settings['uptodate_check'] && $message = $this->checkUasecoUptodate($aseco)) {
-				// check whether out of date
-				if (!preg_match('/' . $aseco->formatText($aseco->getChatMessage('UPTODATE_OK'), '.*') . '/', $message)) {
-					// strip 1 leading '>' to indicate a player message instead of system-wide
-					$message = str_replace('{#server}» ', '{#server}» ', $message);
+			// Check version
+			if ($this->config['UPTODATE_CHECK'][0] == true) {
+				$this->checkUasecoUptodate($player->login);
+			}
 
-					// Show chat message
-					$aseco->sendChatMessage($message, $player->login);
+			// Check whether to merge global black list
+			if ($this->config['GLOBAL_BLACKLIST_MERGE'][0] == true) {
+				$this->admin_mergegbl($aseco, 'MasterAdmin', $player->login, false);
+			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function checkUasecoUptodate ($login = false) {
+		global $aseco;
+
+		// Grab version file
+		$response = $aseco->webaccess->request($this->config['UPTODATE_URL'][0], null, 'none');
+		if ($response['Code'] == 200) {
+			if ($response['Message']) {
+				// Compare versions
+				if ($response['Message'] != UASECO_VERSION) {
+					$msg = new Message('plugin.uptodate', 'uptodate_new');
+					$msg->addPlaceholders($response['Message'], '$L['. UASECO_WEBSITE .']'. UASECO_WEBSITE .'$L');
+					$msg->sendChatMessage($login);
+				}
+				else {
+					$msg = new Message('plugin.uptodate', 'uptodate_ok');
+					$msg->addPlaceholders(UASECO_VERSION);
+					$msg->sendChatMessage($login);
 				}
 			}
-
-			// check whether to merge global black list
-			if ($aseco->settings['global_blacklist_merge'] && $aseco->settings['global_blacklist_url'] != '') {
-				$this->admin_mergegbl($aseco, 'MasterAdmin', $player->login, false, $aseco->settings['global_blacklist_url']);
+			else {
+				$msg = new Message('plugin.uptodate', 'uptodate_failed');
+				$msg->sendChatMessage($login);
 			}
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_uptodate ($aseco, $login, $chat_command, $chat_parameter) {
-
-		// check version or report error
-		if ($message = $this->checkUasecoUptodate($aseco)) {
-			// strip 1 leading '>' to indicate a player message instead of system-wide
-			$message = str_replace('{#server}» ', '{#server}» ', $message);
-
-			// show chat message
-			$aseco->sendChatMessage($message, $login);
-		}
 		else {
-			$message = '{#server}» {#error}Error: can\'t access the last version!';
-			$aseco->sendChatMessage($message, $login);
+			$msg = new Message('plugin.uptodate', 'uptodate_failed');
+			$msg->sendChatMessage($login);
 		}
 	}
 
@@ -167,21 +179,26 @@ class PluginUptodate extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function admin_mergegbl ($aseco, $logtitle, $login, $manual, $url) {
+	public function admin_mergegbl ($aseco, $logtitle, $login, $manual, $url = false) {
 
-		if ( !isset($aseco->plugins['PluginChatAdmin']) ) {
+		if (!isset($aseco->plugins['PluginChatAdmin'])) {
 			return;
 		}
 
-		// download & parse global black list
+		if ($url == false) {
+			$url = $this->config['GLOBAL_BLACKLIST_URL'][0];
+		}
+
+		// Download & parse global black list
 		$response = $aseco->webaccess->request($url, null, 'none');
 		if ($response['Code'] == 200) {
 			if ($response['Message']) {
 				if ($globals = $aseco->parser->xmlToArray($response['Message'], false)) {
-					// get current black list
+
+					// Get current black list
 					$blacks = $aseco->plugins['PluginChatAdmin']->getBlacklist($aseco);  // from chat.admin.php
 
-					// merge new global entries
+					// Merge new global entries
 					$new = 0;
 					foreach ($globals['BLACKLIST']['PLAYER'] as $black) {
 						if (!array_key_exists($black['LOGIN'][0], $blacks)) {
@@ -190,37 +207,32 @@ class PluginUptodate extends Plugin {
 						}
 					}
 
-					// update black list file if necessary
+					// Update black list file if necessary
 					if ($new > 0) {
 						$filename = $aseco->settings['blacklist_file'];
 						$aseco->client->addCall('SaveBlackList', $filename);
 					}
 
-					// check whether to report new mergers
+					// Check whether to report new mergers
 					if ($new > 0 || $manual) {
-						// log console message
+						// Log console message
 						$aseco->console('{1} [{2}] merged global blacklist [{3}] new: {4}', $logtitle, $login, $url, $new);
 
-						// show chat message
-						$message = $aseco->formatText('{#server}» {#highlite}{1} {#server}new login{2} merged into blacklist',
-							$new,
-							($new == 1 ? '' : 's')
-						);
-						$aseco->sendChatMessage($message, $login);
+						$msg = new Message('plugin.uptodate', 'admin_merged');
+						$msg->addPlaceholders($new);
+						$msg->sendChatMessage($login);
 					}
 				}
 				else {
-					$message = $aseco->formatText('{#server}» {#error}Error: can\'t parse {#highlite}$i{1}{#error}!',
-						$url
-					);
-					$aseco->sendChatMessage($message, $login);
+					$msg = new Message('plugin.uptodate', 'admin_can_not_parse');
+					$msg->addPlaceholders($url);
+					$msg->sendChatMessage($login);
 				}
 			}
 			else {
-				$message = $aseco->formatText('{#server}» {#error}Error: can\'t access {#highlite}$i{1}{#error}!',
-					$url
-				);
-				$aseco->sendChatMessage($message, $login);
+				$msg = new Message('plugin.uptodate', 'admin_can_not_access');
+				$msg->addPlaceholders($url);
+				$msg->sendChatMessage($login);
 			}
 		}
 	}

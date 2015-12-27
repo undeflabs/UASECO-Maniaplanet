@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-12-27
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -27,12 +27,12 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - includes/musicserver/ogg_comments.inc.php
+ *  - includes/musicserver/getid3/*
  *  - plugins/plugin.manialinks.php
  *
  */
 
-	require_once('includes/musicserver/ogg_comments.inc.php');	// Provides .OGG comments handling
+	require_once('includes/musicserver/getid3/getid3.php');
 
 	// Start the plugin
 	$_PLUGIN = new PluginMusicServer();
@@ -95,6 +95,7 @@ class PluginMusicServer extends Plugin {
 	public function onSync ($aseco) {
 
 		// read & parse config file
+		$aseco->console('[MusicServer] ********************************************************');
 		$aseco->console('[MusicServer] Load music server config [config/music_server.xml]');
 		if (!$settings = $aseco->parser->xmlToArray('config/music_server.xml', true, true)) {
 			trigger_error('[MusicServer] Could not read/parse Music server config file [config/music_server.xml]!', E_USER_ERROR);
@@ -113,6 +114,22 @@ class PluginMusicServer extends Plugin {
 
 		$this->cachefile	= $settings['CACHE_FILE'][0];
 		$this->server		= $settings['MUSIC_SERVER'][0];
+		$this->maxlen		= $settings['MAXLEN'][0];
+		$this->localpath	= str_replace('UserData', 'GameData', $aseco->server->gamedir);		// https://forum.maniaplanet.com/viewtopic.php?p=217924#p217924
+
+		$this->stream_context = stream_context_create(
+			array(
+				'http'		=> array(
+					'ignore_errors'		=> false,
+					'method'		=> 'GET',
+					'timeout'		=> 5,
+					'follow_location'	=> true,
+					'max_redirects'		=> 20,
+					'protocol_version'	=> 1.0,
+					'user_agent'		=> USER_AGENT .' plugin.music_server.php/'. $this->getVersion(),
+				),
+			)
+		);
 
 		// check for remote or local path
 		if (substr($this->server, 0, 7) == 'http://') {
@@ -150,6 +167,7 @@ class PluginMusicServer extends Plugin {
 		if ($this->cachetags) {
 			$this->refreshTags($aseco);
 		}
+		$aseco->console('[MusicServer] ********************************************************');
 	}
 
 	/*
@@ -203,8 +221,11 @@ class PluginMusicServer extends Plugin {
 
 			// check remote or local song access
 			$song = $this->server . $this->setNextSong($next);
-			if (!$this->httpHead($song) && !file_exists($aseco->server->gamedir . $song)) {
-				trigger_error('[MusicServer] Could not access song ['. $song .']', E_USER_WARNING);
+			if (substr($song, 0, 7) == 'http://' && !$this->httpHead($song)) {
+				$aseco->console('[MusicServer] Could not access remote song ['. $song .']!!!');
+			}
+			else if (!file_exists($this->localpath . $song)) {
+				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
 			}
 			else {
 				// log console message
@@ -217,11 +238,14 @@ class PluginMusicServer extends Plugin {
 		}
 
 		// check for automatic next song
-		if ($this->autonext) {
+		if ($this->autonext == true) {
 			// check remote or local song access
 			$song = $this->server . $this->getNextSong();
-			if (!$this->httpHead($song) && !file_exists($aseco->server->gamedir . $song)) {
-				trigger_error('[MusicServer] Could not access song ['. $song .']', E_USER_WARNING);
+			if (substr($song, 0, 7) == 'http://' && !$this->httpHead($song)) {
+				$aseco->console('[MusicServer] Could not access remote song ['. $song .']!!!');
+			}
+			else if (!file_exists($this->localpath . $song)) {
+				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
 			}
 			else {
 				// log console message
@@ -250,8 +274,8 @@ class PluginMusicServer extends Plugin {
 			if (isset($cache['TAGS']['SONG'])) {
 				foreach ($cache['TAGS']['SONG'] as $song) {
 					$this->tags[$song['FILE'][0]] = array(
-						'Title' => $song['TITLE'][0],
-						'Artist' => $song['ARTIST'][0]
+						'Title'		=> $song['TITLE'][0],
+						'Artist'	=> $song['ARTIST'][0]
 					);
 				}
 			}
@@ -259,22 +283,57 @@ class PluginMusicServer extends Plugin {
 
 		// define full path to server
 		$server = $this->server;
+		$remote_file = true;
 		if (substr($server, 0, 7) != 'http://') {
-			$server = $aseco->server->gamedir . $server;
+			$server = $this->localpath . $server;
+			$remote_file = false;
 		}
 
-		// check all .OGG songs for cached or new tags
+		// Init
+		$getID3 = new getID3;
+
+		// Check all .OGG songs for cached or new tags
+		$aseco->console('[MusicServer] Parsing OGG files for ID3-Tags:');
 		foreach ($this->songs as $song) {
 			if (strtoupper(substr($song, -4)) == '.OGG') {
 				if (!isset($this->tags[$song])) {
-					$tags = new Ogg_Comments($server . $song, true);
-					if (!empty($tags->comments) && isset($tags->comments['TITLE']) && isset($tags->comments['ARTIST'])) {
-						$this->tags[$song] = array(
-							'Title' => $tags->comments['TITLE'],
-							'Artist' => $tags->comments['ARTIST']
-						);
+					$aseco->console('[MusicServer] » Parsing "'. $server.$song .'"');
+					if ($remote_file == true) {
+						$fileparts = false;
+						if ($this->maxlen > 0) {
+							// Get only the configured bytes from the song/file
+							$fileparts = file_get_contents($server.$song, false, $this->stream_context, 0, $this->maxlen);
+						}
+						else {
+							$fileparts = file_get_contents($server.$song, false, $this->stream_context);
+						}
+						if ($fileparts !== false) {
+							$tmpfname = tempnam('./', $song .'_');
+							file_put_contents($tmpfname, $fileparts);
+
+							// Get the ID3 tag
+							$id3 = $getID3->analyze($tmpfname);
+
+							// Remove temporary file
+							unlink($tmpfname);
+						}
 					}
+					else {
+						// Get the ID3 tag
+						$id3 = $getID3->analyze($server.$song);
+					}
+
+					$this->tags[$song] = array(
+						'Title'		=> ((isset($id3['tags']['vorbiscomment']['title'][0]) && !empty($id3['tags']['vorbiscomment']['title'][0])) ? $id3['tags']['vorbiscomment']['title'][0] : ''),
+						'Artist'	=> ((isset($id3['tags']['vorbiscomment']['artist'][0]) && !empty($id3['tags']['vorbiscomment']['artist'][0])) ? $id3['tags']['vorbiscomment']['artist'][0] : ''),
+					);
 				}
+				else {
+					$aseco->console('[MusicServer] » Skip "'. $server.$song .'" (already parsed)');
+				}
+			}
+			else {
+				$aseco->console('[MusicServer] » Skip "'. $server.$song .'" (not a OGG-File)');
 			}
 		}
 
@@ -290,8 +349,8 @@ class PluginMusicServer extends Plugin {
 		foreach ($this->tags as $song => $tags) {
 			$list .= "\t<song>". CRLF;
 			$list .= "\t\t<file>". $song ."</file>". CRLF;
-			$list .= "\t\t<title>". utf8_encode($tags['Title']) ."</title>". CRLF;
 			$list .= "\t\t<artist>". utf8_encode($tags['Artist']) ."</artist>". CRLF;
+			$list .= "\t\t<title>". utf8_encode($tags['Title']) ."</title>". CRLF;
 			$list .= "\t</song>". CRLF;
 		}
 		$list .= '</tags>'. CRLF;
@@ -586,8 +645,11 @@ class PluginMusicServer extends Plugin {
 			if ($aseco->allowAbility($player, 'chat_musicadmin')) {
 				// check remote or local song access
 				$song = $this->server . $this->getNextSong();
-				if (!$this->httpHead($song) && !file_exists($aseco->server->gamedir . $song)) {
-					trigger_error('[MusicServer] Could not access song ['. $song .']!', E_USER_WARNING);
+				if (substr($song, 0, 7) == 'http://' && !$this->httpHead($song)) {
+					$aseco->console('[MusicServer] Could not access remote song ['. $song .']!!!');
+				}
+				else if (!file_exists($this->localpath . $song)) {
+					$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
 				}
 				else {
 					// load next song
@@ -1016,6 +1078,7 @@ class PluginMusicServer extends Plugin {
 				),
 			)
 		);
+
 
 		$fh = @fopen($url, 'rb', false, $stream_context);
 		@fclose($fh);

@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-20
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -54,12 +55,12 @@ class PluginAutotime extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Changes Timelimit dynamically depending on the next map\'s author time.');
+		$this->setDescription(new Message('plugin.autotime', 'plugin_description'));
 
-		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
+		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED, '1.0.0', null);
 
 		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onUnloadingMap',	'onUnloadingMap');
+		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 	}
 
 	/*
@@ -92,34 +93,48 @@ class PluginAutotime extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $data) {
+	public function onLoadingMap ($aseco, $map) {
 
 		// Check for compatible Gamemode on next map
 		$gamemode = $aseco->server->gameinfo->mode;
 		if ($gamemode == Gameinfo::TIME_ATTACK || $gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::TEAM_ATTACK || $gamemode == Gameinfo::CHASE) {
 			// Check if auto timelimit enabled
 			if ($this->config['MULTIPLICATOR'][0] > 0) {
-				// Get map object
-				$map = $aseco->server->maps->getNextMap();
-				$newtime = substr((int)$map->author_time, 0, -3);
+				// Setup calculation base
+				if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'AUTHOR') {
+					$newtime = substr((int)$map->author_time, 0, -3);
+				}
+				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'GOLD') {
+					$newtime = substr((int)$map->goldtime, 0, -3);
+				}
+				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'SILVER') {
+					$newtime = substr((int)$map->silvertime, 0, -3);
+				}
+				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'BRONZE') {
+					$newtime = substr((int)$map->bronzetime, 0, -3);
+				}
 
 				// Compute new timelimit
 				if ($newtime <= 0) {
 					$newtime = $this->config['DEFAULTTIME'][0] * 60;
+					$msg = new Message('plugin.autotime', 'message_default');
 					$tag = 'default';
 				}
 				else {
 					$newtime *= $this->config['MULTIPLICATOR'][0];
+					$msg = new Message('plugin.autotime', 'message_new');
 					$tag = 'new';
 				}
 
 				// Check for min/max times
 				if ($newtime < $this->config['MINTIME'][0] * 60) {
 					$newtime = $this->config['MINTIME'][0] * 60;
+					$msg = new Message('plugin.autotime', 'message_minimum');
 					$tag = 'minimum';
 				}
 				else if ($newtime > $this->config['MAXTIME'][0] * 60) {
 					$newtime = $this->config['MAXTIME'][0] * 60;
+					$msg = new Message('plugin.autotime', 'message_maximum');
 					$tag = 'maximum';
 				}
 
@@ -139,27 +154,29 @@ class PluginAutotime extends Plugin {
 				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
 
 				// Set and log timelimit (strip .000 sec)
-				$aseco->console('[AutoTime] Set [{1}] timelimit for [{2}] to [{3}], author time: [{4}]',
+				$aseco->console('[AutoTime] Setting {1} timelimit for Map [{2}] to [{3}], based upon {4} time [{5}]',
 					$tag,
 					$aseco->stripColors($map->name, false),
 					substr($aseco->formatTime($newtime * 1000), 0, -4),
+					strtolower($this->config['CALCULATION_BASE'][0]),
 					$aseco->formatTime($map->author_time)
 				);
 
 				// Display timelimit (strip .000 sec)
-				$message = $aseco->formatText($this->config['MESSAGE'][0],
-					$tag,
+				$msg->addPlaceholders(
 					$aseco->stripColors($map->name),
 					substr($aseco->formatTime($newtime * 1000), 0, -4),
+					new Message('common', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
 					$aseco->formatTime($map->author_time)
 				);
+				$msg->sendChatMessage();
 
-				if ($this->config['DISPLAY'][0] == 2) {
-					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
-				}
-				else if ($this->config['DISPLAY'][0] > 0) {
-					$aseco->sendChatMessage($message);
-				}
+//				if ($this->config['DISPLAY'][0] == 2) {
+//					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
+//				}
+//				else if ($this->config['DISPLAY'][0] > 0) {
+//					$aseco->sendChatMessage($message);
+//				}
 			}
 		}
 	}

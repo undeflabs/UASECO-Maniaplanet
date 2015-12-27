@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
 	<replay>
 		<enabled>true</enabled> 		<!-- Defines whether this button is active, bool' -->

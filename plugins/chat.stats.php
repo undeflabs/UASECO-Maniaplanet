@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -57,7 +58,7 @@ class PluginChatStats extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Displays player statistics and personal settings.');
+		$this->setDescription(new Message('chat.stats', 'plugin_description'));
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -67,8 +68,8 @@ class PluginChatStats extends Plugin {
 
 		$this->registerEvent('onSync',			'onSync');
 
-		$this->registerChatCommand('stats',	'chat_stats',		'Displays statistics of current player',	Player::PLAYERS);
-		$this->registerChatCommand('settings',	'chat_settings',	'Displays your personal settings',		Player::PLAYERS);
+		$this->registerChatCommand('stats',	'chat_stats',		new Message('chat.stats', 'plugin_description'),	Player::PLAYERS);
+		$this->registerChatCommand('settings',	'chat_settings',	new Message('chat.stats', 'plugin_description'),		Player::PLAYERS);
 	}
 
 	/*
@@ -79,7 +80,7 @@ class PluginChatStats extends Plugin {
 
 	public function onSync ($aseco) {
 		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('For player info use the "/stats" command.');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage(new Message('chat.stats', 'info_message'));
 		}
 	}
 
@@ -97,7 +98,7 @@ class PluginChatStats extends Plugin {
 		$target = $player;
 
 		// check for optional player parameter
-		if ($chat_parameter != '') {
+		if (!empty($chat_parameter)) {
 			if (!$target = $aseco->server->players->getPlayerParam($player, $chat_parameter, true)) {
 				return;
 			}

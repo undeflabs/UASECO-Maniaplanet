@@ -8,7 +8,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
+ * Date:	2015-12-02
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -270,7 +270,7 @@ class PluginAccessControl extends Plugin {
 		}
 
 		// get zone to check for access
-		$access = $player->zone;
+		$access = implode('|', $player->zone);
 
 		// check for empty zone
 		if ($access == '') {

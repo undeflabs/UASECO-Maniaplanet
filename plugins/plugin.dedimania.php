@@ -11,7 +11,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-26
+ * Date:	2015-12-06
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -857,7 +857,7 @@ class PluginDedimania extends Plugin {
 				// if the record is new then display it
 				if (isset($cur_record['NewBest']) && $cur_record['NewBest']) {
 					$totalnew++;
-					$record_msg = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW_ON'),
+					$record_msg = $aseco->formatText($this->db['Messages']['RANKING_RECORD_NEW_ON'][0],
 						$i + 1,
 						$aseco->stripColors($cur_record['NickName']),
 						$aseco->formatTime($cur_record['Best'])
@@ -868,7 +868,7 @@ class PluginDedimania extends Plugin {
 				else {
 					// check if player is online
 					if ( in_array($cur_record['Login'], $players) ) {
-						$record_msg = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_ON'),
+						$record_msg = $aseco->formatText($this->db['Messages']['RANKING_RECORD_ON'][0],
 							$i + 1,
 							$aseco->stripColors($cur_record['NickName']),
 							$aseco->formatTime($cur_record['Best'])
@@ -890,7 +890,7 @@ class PluginDedimania extends Plugin {
 						}
 					}
 					else {
-						$record_msg = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD'),
+						$record_msg = $aseco->formatText($this->db['Messages']['RANKING_RECORD'][0],
 							$i + 1,
 							$aseco->stripColors($cur_record['NickName']),
 							$aseco->formatTime($cur_record['Best'])

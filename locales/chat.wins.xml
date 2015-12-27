@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<plugin_description>
+		<en>Shows wins for current or given online player</en>
+		<de>Zeigt an wieviele Rennen du oder der angegebene Spieler bereits gewonnen hast</de>
+	</plugin_description>
+	
+	<message_player_not_found>
+		<en>{#server}» {#error}Given player login {#highlite}{1}{#error} not found!</en>
+		<de>{#server}» {#error}Der angegebene Spieler {#highlite}{1}{#error} wurde nicht gefunden!</de>
+	</message_player_not_found>
+</locales>

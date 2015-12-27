@@ -1,3 +1,10 @@
+onModeScriptSettingsChanged
+Data:		Nothing
+Example:	[]
+Note:		This callback is sent when the ModeScript settings has been changed, but NOT within start-up phase!
+		Attention: If changes to the ModeScript settings are made by a ManiaScript, the controller can not notice the changes!
+
+
 onPlayerInfoChanged
 Data:		A string with the Login from the Player
 Example:	['undef.de']

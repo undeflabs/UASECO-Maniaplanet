@@ -14,7 +14,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-20
+ * Date:	2015-10-30
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -110,6 +110,9 @@ class Converter {
 			$this->settings['mysql']['password'] = $settings['MYSQL'][0]['PASSWORD'][0];
 			$this->settings['mysql']['database'] = $settings['MYSQL'][0]['DATABASE'][0];
 			$this->settings['mysql']['table_prefix'] = $settings['MYSQL'][0]['TABLE_PREFIX'][0];
+			if (empty($this->settings['mysql']['table_prefix'])) {
+				$this->settings['mysql']['table_prefix'] = 'uaseco_';
+			}
 			$this->console('...done!');
 		}
 		else {
@@ -916,7 +919,7 @@ class Converter {
 		$check_step2['records']		= in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
 		$check_step2['settings']	= in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
 		$check_step2['times']		= in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
-		if ($check_step1['authors'] && $check_step1['maphistory'] && $check_step1['maps'] && $check_step1['players'] && $check_step1['playlist'] && $check_step1['rankings'] && $check_step1['ratings'] && $check_step1['records'] && $check_step1['settings'] && $check_step1['times']) {
+		if ($check_step2['authors'] && $check_step2['maphistory'] && $check_step2['maps'] && $check_step2['players'] && $check_step2['playlist'] && $check_step2['rankings'] && $check_step2['ratings'] && $check_step2['records'] && $check_step2['settings'] && $check_step2['times']) {
 			trigger_error('Can not setup all tables, can not finish convert: '. $this->db->errmsg(), E_USER_ERROR);
 		}
 

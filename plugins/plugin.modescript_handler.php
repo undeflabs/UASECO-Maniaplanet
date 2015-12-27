@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-10
+ * Date:	2015-12-27
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -1172,6 +1172,11 @@ class PluginModescriptHandler extends Plugin {
 
 		// Setup the settings
 		$aseco->client->query('SetModeScriptSettings', array_merge($modebase, $modesetup));
+
+		// Release event, but not while start-up
+		if ($aseco->startup_phase != true) {
+			$aseco->releaseEvent('onModeScriptSettingsChanged', null);
+		}
 	}
 
 	/*
@@ -1222,9 +1227,9 @@ class PluginModescriptHandler extends Plugin {
 		$xml .= '  <position x="0.0" y="6.0" />';
 		$xml .= '  <size width="240.0" height="108.0" />';
 //		$xml .= '  <collection>';
-//		$xml .= '   <image environment="Canyon" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
-//		$xml .= '   <image environment="Valley" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
-//		$xml .= '   <image environment="Stadium" path="http://static.undef.name/scorestable/uaseco-bg-canyon.dds?20140615213000.dds" />';
+//		$xml .= '   <image environment="Canyon" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds" />';
+//		$xml .= '   <image environment="Valley" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds" />';
+//		$xml .= '   <image environment="Stadium" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds" />';
 ////		$xml .= '   <image environment="Canyon" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-canyon.dds" />';
 ////		$xml .= '   <image environment="Valley" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-valley.dds" />';
 ////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds" />';

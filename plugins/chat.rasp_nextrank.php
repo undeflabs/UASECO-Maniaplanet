@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -53,14 +54,14 @@ class PluginChatRaspNextrank extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Shows the next better ranked player.');
+		$this->setDescription(new Message('chat.rasp_nextrank', 'plugin_description'));
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 
-		$this->registerChatCommand('nextrank', 'chat_nextrank', 'Shows the next better ranked player.', Player::PLAYERS);
+		$this->registerChatCommand('nextrank', 'chat_nextrank', new Message('chat.rasp_nextrank', 'plugin_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -71,7 +72,7 @@ class PluginChatRaspNextrank extends Plugin {
 
 	public function onSync ($aseco) {
 		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Looking for the next better ranked player to beat?  Use "/nextrank"!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage(new Message('chat.rasp_nextrank', 'info_msg'));
 		}
 	}
 
@@ -82,15 +83,15 @@ class PluginChatRaspNextrank extends Plugin {
 	*/
 
 	public function chat_nextrank ($aseco, $login, $chat_command, $chat_parameter) {
-
 		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->sendChatMessage($message, $player->login);
+			$msg = new Message('chat.rasp_nextrank', 'notonrelay');
+			$msg->sendChatMessage($player->login);
+
 			return;
 		}
 
@@ -146,24 +147,33 @@ class PluginChatRaspNextrank extends Plugin {
 						$rank
 					);
 
+					$msg = new Message('plugin.rasp', 'nextrank');
+					$msg->addPlaceholders($aseco->stripColors($row3['Nickname']), $rank);
+					$message = $msg->finish($player->login);
+
 					// show difference in record positions too?
 					if ($aseco->plugins['PluginRasp']->nextrank_show_rp) {
 						// compute difference in record positions
 						$diff = ($avg - $avg2) / 10000 * count($aseco->server->maps->map_list);
-						$message .= $aseco->formatText($aseco->plugins['PluginRasp']->messages['NEXTRANK_RP'][0], ceil($diff));
+
+						$msg = new Message('plugin.rasp', 'nextrank_rp');
+						$msg->addPlaceholders(ceil($diff));
+						$message .= $msg->finish($player->login);
 					}
 					$aseco->sendChatMessage($message, $player->login);
 					$res3->free_result();
 				}
 				else {
-					$message = $aseco->plugins['PluginRasp']->messages['TOPRANK'][0];
-					$aseco->sendChatMessage($message, $player->login);
+					$msg = new Message('plugin.rasp', 'toprank');
+					$msg->addPlaceholders($aseco->stripColors($row3['Nickname']), $rank);
+					$msg->sendToChat($player->login);
 				}
 				$res2->free_result();
 			}
 			else {
-				$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['RANK_NONE'][0], $aseco->plugins['PluginRasp']->minrank);
-				$aseco->sendChatMessage($message, $player->login);
+				$msg = new Message('plugin.rasp', 'rank_none');
+				$msg->addPlaceholders($aseco->plugins['PluginRasp']->minrank);
+				$msg->sendToChat($player->login);
 			}
 			$res->free_result();
 		}

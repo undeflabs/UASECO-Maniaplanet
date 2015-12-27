@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-17
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -52,13 +53,13 @@ class PluginLastOnline extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Shows when a player was last online...');
+		$this->setDescription(new Message('chat.last_online', 'plugin_description'));
 
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 
-		$this->registerChatCommand('laston', 'chat_laston', 'Shows when a player was last online', Player::PLAYERS);
+		$this->registerChatCommand('laston', 'chat_laston', new Message('chat.last_online', 'plugin_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -69,7 +70,7 @@ class PluginLastOnline extends Plugin {
 
 	public function onSync ($aseco) {
 		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Wondering when a player was last online? Use "/laston LOGIN" to find out!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage(new Message('chat.last_online', 'info_message'));
 		}
 	}
 
@@ -108,14 +109,15 @@ class PluginLastOnline extends Plugin {
 			$result->free_result();
 			$laston = $laston[0];
 
-			$message = '{#server}» Player {#highlite}'. $target->nickname .'$z$s{#server} was last online on: {#highlite}'. $laston;
+			$msg = new Message('chat.last_online', 'answer');
+			$msg->addPlaceholder($target->nickname, $laston);
 		}
 		else {
 			trigger_error('Could not query last online for player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 		}
 
 		// Show chat message
-		$aseco->sendChatMessage($message, $player->login);
+		$msg->sendChatMessage($login);
 	}
 }
 

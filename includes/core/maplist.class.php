@@ -7,7 +7,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-19
+ * Date:	2015-11-09
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -264,13 +264,6 @@ class MapList {
 			}
 		}
 		unset($newlist);
-
-
-		// Get also current Map, because maybe not in current selection
-		// of the dedicated server after deleting them, e.g. "/admin erasethis"
-		// and a UASECO restart.
-		$response = $aseco->client->query('GetCurrentMapInfo');
-		$maplist[] = $response;
 
 
 		// Load map infos from Database for all maps
@@ -785,7 +778,7 @@ class MapList {
 
 		$gbx = new GBXChallMapFetcher(true, true, false);
 		try {
-			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
 				$file = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $aseco->stripBOM($file));
 				if ($file !== false) {
 					$gbx->processFile($file);

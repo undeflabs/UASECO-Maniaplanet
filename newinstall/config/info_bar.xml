@@ -17,13 +17,13 @@
 		<background_color_focus>0099FFFF</background_color_focus>
 
 		<!-- Image to indicate that a box is clickable -->
-		<clickable_indicator>http://static.undef.name/ingame/info-bar/edge-open-ld-light.png</clickable_indicator>
+		<clickable_indicator>http://maniacdn.net/undef.de/uaseco/info-bar/edge-open-ld-light.png</clickable_indicator>
 	</box>
 
 
 	<player_count>
 		<label>PLAYER</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-players.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-players.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -36,7 +36,7 @@
 
 	<spectator_count>
 		<label>VIEWER</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-spectators.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-spectators.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -49,7 +49,7 @@
 
 	<current_ranking>
 		<label>RANKING</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-player-ranking.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-player-ranking.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
 		<action>PluginRecordsEyepiece?Action=showLiveRankingsWindow</action>
@@ -64,7 +64,7 @@
 
 
 	<donation>
-		<icon>http://static.undef.name/ingame/info-bar/icon-donate.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-donate.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -77,7 +77,7 @@
 
 	<best_time>
 		<label>BEST RACE TIME</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-best-race-time.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-best-race-time.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -90,7 +90,7 @@
 
 	<last_time>
 		<label>LAST RACE TIME</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-last-race-time.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-last-race-time.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -103,7 +103,7 @@
 
 	<personal_best>
 		<label>PERSONAL BEST</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-personal-best-time.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-personal-best-time.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
 		<action></action>
@@ -119,7 +119,7 @@
 
 	<local_record>
 		<label>1. LOCAL RECORD</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-local-record.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-local-record.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
 		<action>PluginRecordsEyepiece?Action=showLocalRecordsWindow</action>
@@ -135,7 +135,7 @@
 
 	<dedimania_record>
 		<label>1. DEDIMANIA</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-dedimania-record.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-dedimania-record.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
 		<action>PluginRecordsEyepiece?Action=showDedimaniaRecordsWindow</action>
@@ -151,7 +151,7 @@
 
 	<mania_exchange>
 		<label>MANIA EXCHANGE</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-maniaexchange.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-maniaexchange.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
 		<action>PluginRecordsEyepiece?Action=showManiaExchangeMapInfoWindow</action>
@@ -166,7 +166,7 @@
 
 
 	<gamemode>
-		<icon>http://static.undef.name/ingame/info-bar/icon-gamemode.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-gamemode.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -179,7 +179,7 @@
 
 	<ladder_limits>
 		<label>LADDER</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-ladder-limits.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-ladder-limits.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>
@@ -192,7 +192,7 @@
 
 	<clock>
 		<label>LOCAL TIME</label>
-		<icon>http://static.undef.name/ingame/info-bar/icon-clock.png</icon>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-clock.png</icon>
 
 		<!-- RRGGBBAA -->
 		<font_color_top>FFFFFFFF</font_color_top>

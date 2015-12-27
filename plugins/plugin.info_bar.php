@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-23
+ * Date:	2015-11-09
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -78,6 +78,7 @@ class PluginInfoBar extends Plugin {
 		$this->registerEvent('onDedimaniaRecord',		'onDedimaniaRecord');
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 		$this->registerEvent('onManiaExchangeBestLoaded',	'onManiaExchangeBestLoaded');
+		$this->registerEvent('onModeScriptSettingsChanged',	'onModeScriptSettingsChanged');
 	}
 
 	/*
@@ -130,6 +131,16 @@ class PluginInfoBar extends Plugin {
 		if ($aseco->server->gamestate != Server::SCORE) {
 			$this->updateRecords();
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onModeScriptSettingsChanged ($aseco) {
+		$aseco->sendManiaLink($this->buildGamemode(true), false);
 	}
 
 	/*

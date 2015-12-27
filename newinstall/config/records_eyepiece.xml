@@ -1262,71 +1262,71 @@
 
 	<!-- URLs of the Images, you can use this locations or just copy the images to your Server -->
 	<images>
-		<widget_open_left>http://static.undef.name/ingame/records-eyepiece/edge-open-ld-dark.png</widget_open_left>
-		<widget_open_right>http://static.undef.name/ingame/records-eyepiece/edge-open-rd-dark.png</widget_open_right>
-		<widget_open_small>http://static.undef.name/ingame/records-eyepiece/edge-open-ld-light.png</widget_open_small>
+		<widget_open_left>http://maniacdn.net/undef.de/uaseco/records-eyepiece/edge-open-ld-dark.png</widget_open_left>
+		<widget_open_right>http://maniacdn.net/undef.de/uaseco/records-eyepiece/edge-open-rd-dark.png</widget_open_right>
+		<widget_open_small>http://maniacdn.net/undef.de/uaseco/records-eyepiece/edge-open-ld-light.png</widget_open_small>
 
-		<widget_plus_normal>http://static.undef.name/ingame/records-eyepiece/button-plus-normal.png</widget_plus_normal>
-		<widget_plus_focus>http://static.undef.name/ingame/records-eyepiece/button-plus-focus.png</widget_plus_focus>
-		<widget_minus_normal>http://static.undef.name/ingame/records-eyepiece/button-minus-normal.png</widget_minus_normal>
-		<widget_minus_focus>http://static.undef.name/ingame/records-eyepiece/button-minus-focus.png</widget_minus_focus>
-		<widget_ok_normal>http://static.undef.name/ingame/records-eyepiece/button-ok-normal.png</widget_ok_normal>
-		<widget_ok_focus>http://static.undef.name/ingame/records-eyepiece/button-ok-focus.png</widget_ok_focus>
+		<widget_plus_normal>http://maniacdn.net/undef.de/uaseco/records-eyepiece/button-plus-normal.png</widget_plus_normal>
+		<widget_plus_focus>http://maniacdn.net/undef.de/uaseco/records-eyepiece/button-plus-focus.png</widget_plus_focus>
+		<widget_minus_normal>http://maniacdn.net/undef.de/uaseco/records-eyepiece/button-minus-normal.png</widget_minus_normal>
+		<widget_minus_focus>http://maniacdn.net/undef.de/uaseco/records-eyepiece/button-minus-focus.png</widget_minus_focus>
+		<widget_ok_normal>http://maniacdn.net/undef.de/uaseco/records-eyepiece/button-ok-normal.png</widget_ok_normal>
+		<widget_ok_focus>http://maniacdn.net/undef.de/uaseco/records-eyepiece/button-ok-focus.png</widget_ok_focus>
 
-		<icon_mania_exchange>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-mania-exchange.png</icon_mania_exchange>
-		<icon_rankings>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-ranking.png</icon_rankings>
-		<icon_maps>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-maps.png</icon_maps>
-		<icon_visitors>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-visitors.png</icon_visitors>
-		<icon_favorites>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-favorites.png</icon_favorites>
-		<icon_clock>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-clock.png</icon_clock>
-		<icon_donate>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-donate.png</icon_donate>
-		<icon_spectator>http://static.undef.name/ingame/records-eyepiece/uaseco/icon-spectator.png</icon_spectator>
+		<icon_mania_exchange>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-mania-exchange.png</icon_mania_exchange>
+		<icon_rankings>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-ranking.png</icon_rankings>
+		<icon_maps>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-maps.png</icon_maps>
+		<icon_visitors>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-visitors.png</icon_visitors>
+		<icon_favorites>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-favorites.png</icon_favorites>
+		<icon_clock>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-clock.png</icon_clock>
+		<icon_donate>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-donate.png</icon_donate>
+		<icon_spectator>http://maniacdn.net/undef.de/uaseco/records-eyepiece/uaseco/icon-spectator.png</icon_spectator>
 
-		<worldmap>http://static.undef.name/ingame/records-eyepiece/worldmap-pure.png</worldmap>
-		<no_screenshot>http://static.undef.name/ingame/records-eyepiece/no-screenshot-tm2.jpg</no_screenshot>
-		<progress_indicator>http://static.undef.name/ingame/records-eyepiece/progress_bar_yellow_2D.webm</progress_indicator>
+		<worldmap>http://maniacdn.net/undef.de/uaseco/records-eyepiece/worldmap-pure.png</worldmap>
+		<no_screenshot>http://maniacdn.net/undef.de/uaseco/records-eyepiece/no-screenshot-tm2.jpg</no_screenshot>
+		<progress_indicator>http://maniacdn.net/undef.de/uaseco/records-eyepiece/progress_bar_yellow_2D.webm</progress_indicator>
 
 		<environment>
 			<logos>
-				<canyon>http://static.undef.name/ingame/records-eyepiece/env-canyon.png</canyon>
-				<stadium>http://static.undef.name/ingame/records-eyepiece/env-stadium2.png</stadium>
-				<valley>http://static.undef.name/ingame/records-eyepiece/env-valley.png</valley>
+				<canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-canyon.png</canyon>
+				<stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-stadium2.png</stadium>
+				<valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-valley.png</valley>
 			</logos>
 			<enabled>
-				<icon_canyon>http://static.undef.name/ingame/records-eyepiece/env-canyon-enabled.png</icon_canyon>
-				<icon_stadium>http://static.undef.name/ingame/records-eyepiece/env-stadium2-enabled.png</icon_stadium>
-				<icon_valley>http://static.undef.name/ingame/records-eyepiece/env-valley-enabled.png</icon_valley>
+				<icon_canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-canyon-enabled.png</icon_canyon>
+				<icon_stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-stadium2-enabled.png</icon_stadium>
+				<icon_valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-valley-enabled.png</icon_valley>
 			</enabled>
 			<focus>
-				<icon_canyon>http://static.undef.name/ingame/records-eyepiece/env-canyon-focus.png</icon_canyon>
-				<icon_stadium>http://static.undef.name/ingame/records-eyepiece/env-stadium2-focus.png</icon_stadium>
-				<icon_valley>http://static.undef.name/ingame/records-eyepiece/env-valley-focus.png</icon_valley>
+				<icon_canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-canyon-focus.png</icon_canyon>
+				<icon_stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-stadium2-focus.png</icon_stadium>
+				<icon_valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-valley-focus.png</icon_valley>
 			</focus>
 		</environment>
 
 		<mood>
 			<enabled>
-				<sunrise>http://static.undef.name/ingame/records-eyepiece/mood-sunrise-normal.png</sunrise>
-				<day>http://static.undef.name/ingame/records-eyepiece/mood-day-normal.png</day>
-				<sunset>http://static.undef.name/ingame/records-eyepiece/mood-sunset-normal.png</sunset>
-				<night>http://static.undef.name/ingame/records-eyepiece/mood-night-normal.png</night>
+				<sunrise>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunrise-normal.png</sunrise>
+				<day>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-day-normal.png</day>
+				<sunset>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunset-normal.png</sunset>
+				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-night-normal.png</night>
 			</enabled>
 			<focus>
-				<sunrise>http://static.undef.name/ingame/records-eyepiece/mood-sunrise-focus.png</sunrise>
-				<day>http://static.undef.name/ingame/records-eyepiece/mood-day-focus.png</day>
-				<sunset>http://static.undef.name/ingame/records-eyepiece/mood-sunset-focus.png</sunset>
-				<night>http://static.undef.name/ingame/records-eyepiece/mood-night-focus.png</night>
+				<sunrise>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunrise-focus.png</sunrise>
+				<day>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-day-focus.png</day>
+				<sunset>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunset-focus.png</sunset>
+				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-night-focus.png</night>
 			</focus>
 		</mood>
 
 		<continents>
-			<africa>http://static.undef.name/ingame/records-eyepiece/continents-africa.png</africa>
-			<asia>http://static.undef.name/ingame/records-eyepiece/continents-asia.png</asia>
-			<europe>http://static.undef.name/ingame/records-eyepiece/continents-europe.png</europe>
-			<middle_east>http://static.undef.name/ingame/records-eyepiece/continents-middle-east.png</middle_east>
-			<north_america>http://static.undef.name/ingame/records-eyepiece/continents-north-america.png</north_america>
-			<south_america>http://static.undef.name/ingame/records-eyepiece/continents-south-america.png</south_america>
-			<oceania>http://static.undef.name/ingame/records-eyepiece/continents-oceania.png</oceania>
+			<africa>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-africa.png</africa>
+			<asia>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-asia.png</asia>
+			<europe>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-europe.png</europe>
+			<middle_east>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-middle-east.png</middle_east>
+			<north_america>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-north-america.png</north_america>
+			<south_america>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-south-america.png</south_america>
+			<oceania>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-oceania.png</oceania>
 		</continents>
 	</images>
 

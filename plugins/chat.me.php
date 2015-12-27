@@ -7,8 +7,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
+ * Co-Authors:	askuri
+ * Date:	2015-11-11
+ * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -52,9 +53,9 @@ class PluginChatMe extends Plugin {
 
 		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Builds a chat message starting with the nickname from player.');
+		$this->setDescription(new Message('chat.me', 'plugin_description'));
 
-		$this->registerChatCommand('me', 'chat_me', 'Can be used to express emotions', Player::PLAYERS);
+		$this->registerChatCommand('me', 'chat_me', new Message('chat.me', 'plugin_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -71,8 +72,9 @@ class PluginChatMe extends Plugin {
 
 		// Check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
-			$message = $aseco->formatText($aseco->getChatMessage('MUTED'), '/me');
-			$aseco->sendChatMessage($message, $player->login);
+			$msg = new Message('common', 'muted');
+			$msg->addPlaceholders('/me');
+			$msg->sendChatMessage($login);
 			return;
 		}
 

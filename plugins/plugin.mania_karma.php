@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Version:	2.0.0
- * Date:	2015-09-24
+ * Date:	2015-11-09
  * Copyright:	2009 - 2015 by undef.de
  * System:	UASECO/0.9.5+
  * Game:	ManiaPlanet Trackmania2 (TM2)
@@ -4296,7 +4296,7 @@ EOL;
 
 		$gbx = new GBXChallMapFetcher(true, true, false);
 		try {
-			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
 				$gbx->processFile($aseco->server->mapdir . iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $aseco->stripBOM($aseco->server->maps->current->filename)));
 			}
 			else {
