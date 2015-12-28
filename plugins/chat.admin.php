@@ -798,7 +798,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->console('[Admin] {1} [{2}] restarts map!', $logtitle, $login);
 
 			// show chat message
-			$msg = new Message('chat.admin', 'message_replaymap');
+			$msg = new Message('chat.admin', 'message_restartmap');
 			$msg->addPlaceholders($chattitle, $admin->nickname);
 			$msg->sendChatMessage();
 		}
