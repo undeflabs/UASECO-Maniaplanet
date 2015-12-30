@@ -119,6 +119,7 @@ class PluginWelcomeCenter extends Plugin {
 	*/
 
 	public function addInfoMessage ($message) {
+		global $aseco;
 
 		if (is_string($message)) {
 			$this->messages[] = $message;
