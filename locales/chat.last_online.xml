@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2015-11-13
+	Version:	2015-12-30
 	Authors:	[EN] undef.de
 			[DE] askuri
 	//-->
@@ -11,10 +11,10 @@
 		<de>Zeigt an wann der Spieler zuletzt online war</de>
 	</plugin_description>
 
-	<infomessage>
+	<info_message>
 		<en>Wondering when a player was last online? Use "/laston LOGIN" to find out!</en>
 		<de>Fragst du dich wann ein Spieler zuletzt Online war? Gebe /laston LOGIN ein, um es rauszufinden!</de>
-	</infomessage>
+	</info_message>
 
 	<answer>
 		<en>{#server}» Player {#highlite}{1}$z$s{#server} was last online on: {#highlite}{2}</en>

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-09-10
+ * Date:	2015-12-30
  * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -119,8 +119,17 @@ class PluginWelcomeCenter extends Plugin {
 	*/
 
 	public function addInfoMessage ($message) {
-		$this->messages[] = $message;
-		$this->messages = array_unique($this->messages);
+
+		if (is_string($message)) {
+			$this->messages[] = $message;
+		}
+		else if ($message instanceof Message) {
+			// Add prefix before message text
+			foreach ($message->translations as $lang => &$text) {
+				$text = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0]) . $text;
+			}
+			$this->messages[] = $message;
+		}
 	}
 
 	/*
@@ -285,17 +294,21 @@ class PluginWelcomeCenter extends Plugin {
 
 		// Get random message
 		$i = mt_rand(0, count($this->messages) - 1);
-		$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
+		if (is_string($this->messages[$i])) {
+			$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
 
-
-		// Send the Message to all connected Players...
-		if (strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) == 'WINDOW') {
-			// ..into message window
-			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+			// Send the Message to all connected Players...
+			if (strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) == 'WINDOW') {
+				// ..into message window
+				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+			}
+			else {
+				// ..into chat
+				$aseco->sendChatMessage($message, false);
+			}
 		}
-		else {
-			// ..into chat
-			$aseco->sendChatMessage($message, false);
+		else if (get_class($this->messages[$i]) == 'Message') {
+			$this->messages[$i]->sendChatMessage();
 		}
 	}
 

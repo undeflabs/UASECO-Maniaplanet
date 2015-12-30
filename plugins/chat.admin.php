@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Co-Authors:	askuri
- * Date:	2015-12-27
+ * Date:	2015-12-30
  * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
@@ -798,7 +798,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->console('[Admin] {1} [{2}] restarts map!', $logtitle, $login);
 
 			// show chat message
-			$msg = new Message('chat.admin', 'message_replaymap');
+			$msg = new Message('chat.admin', 'message_restartmap');
 			$msg->addPlaceholders($chattitle, $admin->nickname);
 			$msg->sendChatMessage();
 		}
@@ -1787,7 +1787,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			// show chat message
 			$message->addPlaceholders($filename);
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'readiplist') {
 			/**
@@ -1807,7 +1807,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			// show chat message
 			$message->addPlaceholders($filename);
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'writeblacklist') {
 			/**
@@ -1830,7 +1830,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message->addPlaceholders($filename);
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'readblacklist') {
 			/**
@@ -1853,7 +1853,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message->addPlaceholders($filename);
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'writeguestlist') {
 			/**
@@ -1877,7 +1877,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message->addPlaceholders($filename);
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'readguestlist') {
 			/**
@@ -1900,7 +1900,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message->addPlaceholders($filename);
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'cleanbanlist') {
 			/**
@@ -1915,7 +1915,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message = new Message('chat.admin', 'message_clean_banlist');
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'cleaniplist') {
 			/**
@@ -1931,7 +1931,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message = new Message('chat.admin', 'message_cleaned_bannediplist');
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'cleanblacklist') {
 			/**
@@ -1946,7 +1946,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message = new Message('chat.admin', 'message_cleaned_blacklist');
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'cleanguestlist') {
 			/**
@@ -1961,7 +1961,7 @@ class PluginChatAdmin extends Plugin {
 
 			// show chat message
 			$message = new Message('chat.admin', 'message_cleaned_guestlist');
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'mergegbl') {
 			/**
@@ -2067,7 +2067,7 @@ class PluginChatAdmin extends Plugin {
 				$message = new Message('chat.admin', 'message_failed_writing_detailed');
 			}
 
-			$message->sendToChat($login);
+			$message->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'readmaplist') {
 			/**
@@ -2209,7 +2209,7 @@ class PluginChatAdmin extends Plugin {
 					$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - NextMap');
 
 					$msg = new Message('chat.admin', 'message_load_next_map_failed');
-					$msg->sendToChat($login);
+					$msg->sendChatMessage($login);
 				}
 
 				// Remove Map from Maplist
@@ -3983,7 +3983,7 @@ class PluginChatAdmin extends Plugin {
 			else {
 				$msg = new Message('chat.admin', 'message_invalid_password');
 			}
-			$msg->sendToChat($login);
+			$msg->sendChatMessage($login);
 		}
 		elseif ($command['params'][0] == 'debug') {
 			/**
@@ -4518,7 +4518,7 @@ class PluginChatAdmin extends Plugin {
 		}
 
 		// Show chat message
-		$msg->sendToChat($login);
+		$msg->sendChatMessage($login);
 	}
 
 	/*

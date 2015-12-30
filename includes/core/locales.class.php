@@ -6,7 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	askuri
- * Date:	2015-11-11
+ * Co-Authors:	undef.de
+ * Date:	2015-12-30
  * Copyright:	2015 Martin Weber (askuri)
  * ----------------------------------------------------------------------------------
  *
@@ -34,9 +35,8 @@
 */
 
 class Locales {
-	private $aseco;
-	private $playerlang_cache = array();				// Stores which player speaks which language | struct: [login => language, login2 => language2, ...]
-	private $locales;
+	public $playerlang_cache = array();				// Stores which player speaks which language | struct: [login => language, login2 => language2, ...]
+	public $locales;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

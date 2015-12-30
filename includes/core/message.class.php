@@ -7,7 +7,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	askuri
- * Date:	2015-11-11
+ * Co-Authors:	undef.de
+ * Date:	2015-12-30
  * Copyright:	2015 Martin Weber (askuri)
  * ----------------------------------------------------------------------------------
  *
@@ -29,8 +30,8 @@
  */
 
 class Message {
-	private $translations = array();
-	private $placeholders = false;
+	public $translations = array();
+	public $placeholders = false;
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

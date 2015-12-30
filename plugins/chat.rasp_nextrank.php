@@ -8,7 +8,7 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Co-Authors:	askuri
- * Date:	2015-11-11
+ * Date:	2015-12-30
  * Copyright:	2014 - 2015 by undef.de, askuri
  * ----------------------------------------------------------------------------------
  *
@@ -166,14 +166,14 @@ class PluginChatRaspNextrank extends Plugin {
 				else {
 					$msg = new Message('plugin.rasp', 'toprank');
 					$msg->addPlaceholders($aseco->stripColors($row3['Nickname']), $rank);
-					$msg->sendToChat($player->login);
+					$msg->sendChatMessage($player->login);
 				}
 				$res2->free_result();
 			}
 			else {
 				$msg = new Message('plugin.rasp', 'rank_none');
 				$msg->addPlaceholders($aseco->plugins['PluginRasp']->minrank);
-				$msg->sendToChat($player->login);
+				$msg->sendChatMessage($player->login);
 			}
 			$res->free_result();
 		}
