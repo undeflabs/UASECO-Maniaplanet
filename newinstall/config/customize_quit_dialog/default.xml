@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<manialink id="CustomQuitDialog" name="CustomQuitDialog" version="2">
+<frame posn="0 64 -19.9" id="Frame_UASECO">
+<label posn="-44.5 3 0.02" sizen="91.8 10" textsize="2" style="TextValueSmallSm" textcolor="0099FFFF" text="POWERED BY" hidden="true" id="Label_PoweredBy"/>
+<quad posn="0 0 0.01" sizen="91.8 22.4" halign="center" url="http://www.UASECO.org/" image="http://www.uaseco.org/media/uaseco/logo-uaseco.png" hidden="true" id="Quad_UASECO"/>
+</frame>
+<frame posn="0 30 -19.9">
+<quad posn="0 3 0.02" sizen="138 8" halign="center" style="Bgs1" substyle="BgGlow2"/>
+<quad posn="0 0 0.01" sizen="132 20" halign="center" style="Bgs1" substyle="BgWindow2"/>
+<quad posn="0 -20 0.02" sizen="132 2" halign="center" style="Bgs1" substyle="BgCard"/>
+<label posn="0 -11.3 0.03" sizen="100 10" halign="center" valign="center" textsize="3" style="TextValueSmallSm" textcolor="FFFFFFDD" autonewline="1" text="DO NOT LEAVE THIS SERVER UNTIL YOU HAVE ADDED THIS TO YOUR FAVORITES!"/>
+</frame>
+<quad posn="0 0 -20.0" sizen="320 180" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/customize-quit-dialog/night-sky-with-maniaplanet-1920x1080.jpg"/>
+<script><!--
+/*
+ * ----------------------------------
+ * Function:	Preload @ plugin.customize_quit_dialog.php
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * Version:	2015-12-27
+ * ----------------------------------
+ */
+main() {
+	declare Frame_UASECO		<=> (Page.GetFirstChild("Frame_UASECO") as CMlFrame);
+	declare Label_PoweredBy		<=> (Page.GetFirstChild("Label_PoweredBy") as CMlLabel);
+	declare Quad_UASECO		<=> (Page.GetFirstChild("Quad_UASECO") as CMlQuad);
+
+	declare Real FadeSteps		= 0.075;
+	declare Real EndPosnY		= Frame_UASECO.RelativePosition.Y;
+
+	// Setup
+	Frame_UASECO.RelativePosition.Y	= 120.0;
+	Label_PoweredBy.Opacity		= 0.0;
+	Quad_UASECO.Opacity		= 0.0;
+	Label_PoweredBy.Visible		= True;
+	Quad_UASECO.Visible		= True;
+
+	declare Real MovementSteps = ((Frame_UASECO.RelativePosition.Y - EndPosnY) / (1.0 / FadeSteps));
+	while (Label_PoweredBy.Opacity < 1.0) {
+		if ((Label_PoweredBy.Opacity + FadeSteps) > 1.0) {
+			Label_PoweredBy.Opacity = 1.0;
+			Quad_UASECO.Opacity = 1.0;
+
+			Label_PoweredBy.RelativePosition.Y -= MovementSteps;
+			Quad_UASECO.RelativePosition.Y -= MovementSteps;
+			break;
+		}
+
+		// FadeIn
+		Label_PoweredBy.Opacity += FadeSteps;
+		Quad_UASECO.Opacity += FadeSteps;
+
+		// ScrollDown
+		Label_PoweredBy.RelativePosition.Y -= MovementSteps;
+		Quad_UASECO.RelativePosition.Y -= MovementSteps;
+		yield;
+	}
+}
+--></script>
+</manialink>

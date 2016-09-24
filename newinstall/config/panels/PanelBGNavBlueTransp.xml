@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel>
+	<!-- background container -->
+	<background>
+		<style>Bgs1InRace</style>
+		<substyle>NavButtonBlink</substyle>
+	</background>
+</panel>

@@ -1,0 +1,18 @@
+﻿<manialink id="EffectStudioClippingTest" name="EffectStudioClippingTest" version="2">
+<frame posn="0.0 0.0 0.0" id="Frame_NoClipping">
+	<quad posn="0.0 0.0 0.0" sizen="50.0 50.0" halign="center" valign="center" bgcolor="F00A" id="Quad_NoClipping"/>
+</frame>
+<frame posn="0.0 0.0 0.1" id="Frame_Clipping">
+	<quad posn="0.0 0.0 0.0" sizen="50.0 50.0" halign="center" valign="center" bgcolor="00FA" id="Quad_Clipping"/>
+	<label posn="100.0 0.0 0.0" sizen="320.0 2.0" halign="center" valign="center" textsize="1" text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."/>
+</frame>
+<script>
+<!--
+declare Frame_Clipping <=> (Page.GetFirstChild("Frame_Clipping") as CMlFrame);
+
+Frame_Clipping.ClipWindowActive = True;
+Frame_Clipping.ClipWindowSize = <25.0, 25.0>;
+Frame_Clipping.ClipWindowRelativePosition = <0.0, 0.0>;
+-->
+</script>
+</manialink>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+	<!-- Position where the messages will be placed -->
+	<position>
+		<x>0</x>
+		<y>35.5</y>
+		<z>20</z>
+	</position>
+
+	<!-- RGBA -->
+	<text_colors>
+		<stunts>EEEF</stunts>
+		<points>FA0F</points>
+		<bonus>FA0F</bonus>
+		<penalty>F30F</penalty>
+	</text_colors>
+</settings>

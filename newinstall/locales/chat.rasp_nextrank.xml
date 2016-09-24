@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<plugin_description>
+		<en>Shows the next better ranked player.</en>
+		<de>Shows the next better ranked player.</de>
+	</plugin_description>
+	
+	<info_msg>
+		<en>Looking for the next better ranked player to beat?  Use "/nextrank"!</en>
+		<de>Du fragst dich, welcher Spieler den nächstbesseren Serverrang hat? Gebe "/nextrank" ein um es herauszufinden!</de>
+	</info_msg>
+	
+</locales>

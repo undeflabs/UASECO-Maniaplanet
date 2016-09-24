@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+
+	<!-- Styling for the complete Bar -->
+	<bar>
+		<!-- RRGGBBAA -->
+		<background_color>55556699</background_color>
+	</bar>
+
+
+	<!-- Styling for the boxes in where the infos are shown -->
+	<box>
+		<!-- RRGGBBAA -->
+		<seperator_color>DDDDDD66</seperator_color>
+
+		<background_color_default>00000000</background_color_default>
+		<background_color_focus>0099FFFF</background_color_focus>
+
+		<!-- Image to indicate that a box is clickable -->
+		<clickable_indicator>http://maniacdn.net/undef.de/uaseco/info-bar/edge-open-ld-light.png</clickable_indicator>
+	</box>
+
+
+	<player_count>
+		<label>PLAYER</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-players.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</player_count>
+
+
+	<spectator_count>
+		<label>VIEWER</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-spectators.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</spectator_count>
+
+
+	<current_ranking>
+		<label>RANKING</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-player-ranking.png</icon>
+
+		<!-- Enter here an action id from other Plugins, empty for no action -->
+		<action>PluginRecordsEyepiece?Action=showLiveRankingsWindow</action>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</current_ranking>
+
+
+	<donation>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-donate.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</donation>
+
+
+	<best_time>
+		<label>BEST RACE TIME</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-best-race-time.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</best_time>
+
+
+	<last_time>
+		<label>LAST RACE TIME</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-last-race-time.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</last_time>
+
+
+	<personal_best>
+		<label>PERSONAL BEST</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-personal-best-time.png</icon>
+
+		<!-- Enter here an action id from other Plugins, empty for no action -->
+		<action></action>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</personal_best>
+
+
+	<local_record>
+		<label>1. LOCAL RECORD</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-local-record.png</icon>
+
+		<!-- Enter here an action id from other Plugins, empty for no action -->
+		<action>PluginRecordsEyepiece?Action=showLocalRecordsWindow</action>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</local_record>
+
+
+	<dedimania_record>
+		<label>1. DEDIMANIA</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-dedimania-record.png</icon>
+
+		<!-- Enter here an action id from other Plugins, empty for no action -->
+		<action>PluginRecordsEyepiece?Action=showDedimaniaRecordsWindow</action>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</dedimania_record>
+
+
+	<mania_exchange>
+		<label>MANIA EXCHANGE</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-maniaexchange.png</icon>
+
+		<!-- Enter here an action id from other Plugins, empty for no action -->
+		<action>PluginRecordsEyepiece?Action=showManiaExchangeMapInfoWindow</action>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</mania_exchange>
+
+
+	<gamemode>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-gamemode.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</gamemode>
+
+
+	<ladder_limits>
+		<label>LADDER</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-ladder-limits.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</ladder_limits>
+
+
+	<clock>
+		<label>LOCAL TIME</label>
+		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-clock.png</icon>
+
+		<!-- RRGGBBAA -->
+		<font_color_top>FFFFFFFF</font_color_top>
+		<font_color_bottom>DDDDDDFF</font_color_bottom>
+
+		<!-- RRGGBB -->
+		<modulatecolor>DDDDDD</modulatecolor>
+	</clock>
+</settings>

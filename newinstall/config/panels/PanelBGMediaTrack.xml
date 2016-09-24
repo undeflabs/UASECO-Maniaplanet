@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel>
+	<!-- background container -->
+	<background>
+		<style>BgsPlayerCard</style>
+		<substyle>BgMediaTracker</substyle>
+	</background>
+</panel>

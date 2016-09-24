@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+	<!-- Set calculation base, possible values are 'author', 'gold', 'silver' or 'bronze' -->
+	<calculation_base>bronze</calculation_base>
+
+	<!--
+	Set the multiplicator for time (e.g. 6x time = new timelimit);
+	Set to 0 to disable function
+	// -->
+	<multiplicator>4</multiplicator>
+
+	<!-- Set minimum timelimit in minutes -->
+	<mintime>3.5</mintime>
+
+	<!-- Set maximum timelimit in minutes -->
+	<maxtime>5</maxtime>
+
+	<!-- Set default timelimit in minutes if any error occurs -->
+	<defaulttime>5</defaulttime>
+
+	<!-- 2 = in message window, 1 = in chat, 0 = none -->
+	<display>1</display>
+</settings>

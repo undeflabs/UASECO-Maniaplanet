@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<slash_recs>
+		<en>Displays all records on the current map.</en>
+		<de>Zeigt alle Rekorde auf der aktuellen Map an</de>
+	</slash_recs>
+	
+	<slash_newrecs>
+		<en>Shows newly driven records</en>
+		<de>Zeigt neulich gefahrene Rekorde an</de>
+	</slash_newrecs>
+	
+	<slash_liverecs>
+		<en>Shows records of online players</en>
+		<de>Zeigt die Rekorde der Spieler an, die gerade online sind</de>
+	</slash_liverecs>
+	
+	<slash_best>
+		<en>Displays your best records</en>
+		<de>Zeigt deine besten Rekorde an</de>
+	</slash_best>
+	
+	<slash_worst>
+		<en>Displays your worst records</en>
+		<de>Zeigt deine schlechtesten Rekorde an</de>
+	</slash_worst>
+	
+	<slash_summary>
+		<en>Shows summary of all your records</en>
+		<de>Zeigt eine Zusammenfassung aller deiner Rekorde</de>
+	</slash_summary>
+	
+	<slash_topsums>
+		<en>Displays top 100 of top-3 record holders</en>
+		<de>Zeigt die Top 100 der besten Top3 Rekordhalter</de>
+	</slash_topsums>
+	
+	<slash_toprecs>
+		<en>Displays top 100 ranked records holders</en>
+		<de>Zeigt die Spieler mit der größten anzahl Rekorde an</de>
+	</slash_toprecs>
+</locales>

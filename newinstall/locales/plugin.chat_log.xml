@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2015-12-30
+	Authors:	[EN] undef.de
+			[DE] askuri
+	//-->
+
+	<plugin_description>
+		<en>Displays log of recent chat messages</en>
+		<de>Zeigt den Chatverlauf an</de>
+	</plugin_description>
+
+	<info_message>
+		<en>Forgot what someone said? Use "/chatlog" to check the chat history!</en>
+		<de>Vergessen was jemand geschrieben hat? Gebe "/chatlog" ein, um es herauszufinden!</de>
+	</info_message>
+
+	<message_no_history>
+		<en>{#server}» {#error}No chat history found!</en>
+		<de>{#server}» {#error}Kein Chatverlauf gefunden!</de>
+	</message_no_history>
+</locales>

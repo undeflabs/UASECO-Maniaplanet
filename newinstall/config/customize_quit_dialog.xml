@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+
+	<!-- A Manialink page to display when a Player wants to leave the Server -->
+	<manialink_file>config/customize_quit_dialog/default.xml</manialink_file>
+
+	<!-- If this Server is a match server, setup here the link to the lobby server, otherwise leave empty. See also: http://doc.maniaplanet.com/client/protocol.html  -->
+	<send_to_server></send_to_server>
+
+	<!-- If you want to propose the Player to add your Server to them Favorites, then setup 'true'. Otherwise 'false'. -->
+	<propose_add_to_favorites>true</propose_add_to_favorites>
+
+	<!-- If you want to grey out the Quit-Button for a limited time, setup here the wait time in sec., to disable the wait time setup this '0'. -->
+	<delay_quit_button>0</delay_quit_button>
+</settings>

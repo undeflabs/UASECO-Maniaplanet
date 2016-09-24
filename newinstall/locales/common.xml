@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2015-11-11
+	Authors:	[EN] undef.de
+			[DE] askuri
+	//-->
+
+	<yes>
+		<en>yes</en>
+		<de>ja</de>
+	</yes>
+
+	<no>
+		<en>no</en>
+		<de>nein</de>
+	</no>
+
+	<enabled>
+		<en>enabled</en>
+		<de>eingeschaltet</de>
+	</enabled>
+
+	<disabled>
+		<en>disabled</en>
+		<de>ausgeschaltet</de>
+	</disabled>
+
+	<default>
+		<en>default</en>
+		<de>standard</de>
+	</default>
+
+	<medal_author>
+		<en>author medal</en>
+		<de>Autor-Medaille</de>
+	</medal_author>
+
+	<medal_gold>
+		<en>gold medal</en>
+		<de>Gold-Medaille</de>
+	</medal_gold>
+
+	<medal_silver>
+		<en>silver medal</en>
+		<de>Silber-Medaille</de>
+	</medal_silver>
+
+	<medal_bronze>
+		<en>bronze medal</en>
+		<de>Bronze-Medaille</de>
+	</medal_bronze>
+
+	<insufficient_rights>
+		<en>{#error}You dont have the required admin rights to do that!</en>
+		<de>{#error}Du hast nicht ausreichende Rechte um dies zu tun!</de>
+	</insufficient_rights>
+
+	<!-- init messages -->
+	<startup>
+		<en>{#server}» {#highlite}UASECO/{1}{#server} running on {#highlite}{2}{#server}:{#highlite}{3}{#server}</en>
+		<de>{#server}» {#highlite}UASECO/{1}{#server} laufend auf {#highlite}{2}{#server}:{#highlite}{3}{#server}</de>
+	</startup>
+
+	<welcome>
+		<en>{#server}» {#welcome}Welcome {#highlite}{1}{#welcome} to {#highlite}{2}$z$s{br}{#server}» {#welcome}This server uses {#highlite}UASECO/{3}{#welcome} to manage your records.</en>
+		<de>{#server}» {#welcome}Willkommen {#highlite}{1}{#welcome} auf {#highlite}{2}$z$s{br}{#server}» {#welcome}Dieser Server verwendet {#highlite}UASECO/{3}{#welcome} zur Verwaltung deiner Rekorde.</de>
+	</welcome>
+
+	<player_warning>
+		<en>$s{#welcome}This is an administrative warning.{br}{br}$gWhatever you wrote is against our server's policy.{br}Not respecting other players, or{br}using offensive language might result in a {#welcome}kick, or ban {#message}the next time.{br}{br}$gThe server administrators.</en>
+		<de>$s{#welcome}Dies ist eine Warnung eines Admins oder Operator.{br}{br}$gWas auch immer du geschrieben hast, ist gegen die Regeln unseres Servers.{br}Das Nichtrespektieren anderer Spieler, Beleidigung, Hassreden oder Hetze wird das nächste mal einen {#welcome}Kick oder Ban {#message} zur Folge haben.{br}{br}$gDie Serveradministratoren.</de>
+	</player_warning>
+
+	<!-- record misc. messages -->
+	<ranking_record2>
+		<en>{#rank}{1}{#message}.{#timelite}{2}{#message}, </en>
+	</ranking_record2>
+
+	<ranking_record>
+		<en>{#rank}{1}{#message}.{#timelite}{2}{#message}[{#timelite}{3}{#message}], </en>
+	</ranking_record>
+
+	<no_records_found>
+		<en>{#server}» {#error}No records found!</en>
+		<de>{#server}» {#error}Keine Rekorde gefunden!</de>
+	</no_records_found>
+
+	<!-- record relation messages -->
+	<first_record>
+		<en>{#server}» {#record}The first Local record is: </en>
+		<de>{#server}» {#record}Der erste lokale Rekord ist: </de>
+	</first_record>
+
+	<last_record>
+		<en>{#server}» {#record}The last Local record is: </en>
+		<de>{#server}» {#record}Der letzte lokale Rekord ist: </de>
+	</last_record>
+
+	<diff_record>
+		<en>{#server}» {#record}Difference between {1}{#record} and {2}{#record} is: {#highlite}{3}</en>
+		<de>{#server}» {#record}Differenz zwischen {1}{#record} und {2}{#record} ist: {#highlite}{3}</de>
+	</diff_record>
+
+	<summary>
+		<en>{#server}» {#highlite}{1} $z$s{#record}has {#highlite}{2}{#record} Local records, the top {3} being: </en>
+		<de>{#server}» {#highlite}{1} $z$s{#record}hat {#highlite}{2}{#record} lokale Rekorde, die Top {3} sind: </de>
+	</summary>
+
+	<sum_entry>
+		<en> {#highlite}{1} {#record}rec{2} #{#rank}{3}{#record}, </en>
+	</sum_entry>
+
+	<!-- ranking messages -->
+	<ranking_record_new>
+		<en>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}], </en>
+	</ranking_record_new>
+
+	<!-- win messages -->
+	<wins>
+		<en>{#server}» {#record}You have already won {#highlite}{1}{#record} races</en>
+		<de>{#server}» {#record}Du hast bereits {#highlite}{1}{#record} Rennen gewonnen</de>
+	</wins>
+
+	<wins_other>
+		<en>{#server}» {#record}Player {#highlite}{1}{#record} has won {#highlite}{2}{#record} races</en>
+		<de>{#server}» {#record}{#highlite}{1}{#record} hat bereits {#highlite}{2}{#record} Rennen gewonnen</de>
+	</wins_other>
+
+	<win_new>
+		<en>{#server}» {#record}Congratulations, you won your {#highlite}{1}{#record}. race!</en>
+		<de>{#server}» {#record}Glückwunsch, du hast dein {#highlite}{1}{#record}. Rennen gewonnen!</de>
+	</win_new>
+
+	<win_multi>
+		<en>{#server}» {#record}Congratulations, {#highlite}{1}{#record} won his/her {#highlite}{2}{#record}. race!</en>
+		<de>{#server}» {#record}Glückwunsch, {#highlite}{1}{#record} hat sein/ihr {#highlite}{2}{#record}. Rennen gewonnen!</de>
+	</win_multi>
+
+	<!-- muting messages -->
+	<mute>
+		<en>{#server}» Player {#highlite}{1}$z$s{#server} is muted!</en>
+		<de>{#server}» Spieler {#highlite}{1}$z$s{#server} ist stummgeschaltet!</de>
+	</mute>
+
+	<unmute>
+		<en>{#server}» Player {#highlite}{1}$z$s{#server} is unmuted!</en>
+		<de>{#server}» Spieler {#highlite}{1}$z$s{#server} is nicht mehr stummgeschaltet!</de>
+	</unmute>
+
+	<muted>
+		<en>{#server}» {#highlite}{1}{#error} disabled because you are on the global mute list!</en>
+		<de>{#server}» {#highlite}{1}{#error} ausgeschaltet, weil du auf der globalen Stummschaltliste (mutelist) bist!</de>
+	</muted>
+
+	<!-- playtime/map messages -->
+	<playtime>
+		<en>{#server}» Current map {#highlite}{1}{#server} has been played for {#highlite}{2}</en>
+		<de>{#server}» Aktuelle map {#highlite}{1}{#server} wurde bereits {#highlite}{2}{#server} gespielt</de>
+	</playtime>
+
+	<playtime_finish>
+		<en>{#server}» Current map {#highlite}{1}{#server} finished after {#highlite}{2}</en>
+		<de>{#server}» Aktuelle Map {#highlite}{1}{#server} finished after {#highlite}{2}</de>
+	</playtime_finish>
+
+	<playtime_replay>
+		<en> {#server}({#highlite}{1}{#server} replay{2}, total {#highlite}{3}{#server})</en>
+		<de> {#server}({#highlite}{1}{#server} replay{2}, insgesamt {#highlite}{3}{#server})</de>
+	</playtime_replay>
+
+	<map>
+		<en>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3} {#server}Gold: {#highlite}{4} {#server}Silver: {#highlite}{5} {#server}Bronze: {#highlite}{6} {#server}Cost: {#highlite}{7}</en>
+		<de>{#server}» Aktuelle Map {#highlite}{1} {#server}von {#highlite}{2} {#server}Autor: {#highlite}{3} {#server}Gold: {#highlite}{4} {#server}Silber: {#highlite}{5} {#server}Bronze: {#highlite}{6} {#server}Kosten: {#highlite}{7}</de>
+	</map>
+
+	<current_map>
+		<en>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3}</en>
+		<de>{#server}» Aktuelle Map {#highlite}{1} {#server}von {#highlite}{2} {#server}Autor: {#highlite}{3}</de>
+	</current_map>
+
+	<next_map>
+		<en>{#server}» The next Map will be: {#timelite}[{1}] {#highlite}{2}</en>
+		<de>{#server}» Die nächste Map: {#timelite}[{1}] {#highlite}{2}</de>
+	</next_map>
+
+	<!-- relay messages -->
+	<no_relays>
+		<en>{#server}» {#error}No relay servers connected</en>
+		<de>{#server}» {#error}Keine Relayserver verbunden</de>
+	</no_relays>
+
+	<relaymaster>
+		<en>{#server}» This server relays master server: {#highlite}{1}{#server} ({#highlite}{2}{#server})</en>
+		<de>{#server}» Dieser Relayserver gehört zu Masterserver: {#highlite}{1}{#server} ({#highlite}{2}{#server})</de>
+	</relaymaster>
+
+	<notonrelay>
+		<en>{#server}» {#error}Command unavailable on relay server</en>
+		<de>{#server}» {#error}Dieses Kommando ist nicht verfügbar auf Relayservern</de>
+	</notonrelay>
+
+	<!-- connection messages -->
+	<banip_dialog>
+		<en>{#welcome}Your IP was banned from this server.$z</en>
+		<de>{#welcome}Deine IP wurde auf diesem Server gebannt.$z</de>
+	</banip_dialog>
+
+	<banip_error>
+		<en>{#welcome}Could not connect:{br}{br}Your IP was banned from this server!</en>
+		<de>{#welcome}Verbindung nicht möglich:{br}{br}Deine IP wurde auf diesem Server gebannt!</de>
+	</banip_error>
+
+	<client_dialog>
+		<en>{#welcome}Obsolete client version, please $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]upgrade$l.$z</en>
+		<de>{#welcome}Veraltete Spielversion, bitte $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]updaten$l.$z</de>
+	</client_dialog>
+
+	<client_error>
+		<en>{#welcome}Obsolete client version!{br}Please upgrade to the $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]latest version$l.</en>
+		<de>{#welcome}Veraltete Spielversion!{br}Bitte update auf die $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]neueste Version$l.</de>
+	</client_error>
+
+	<connect_dialog>
+		<en>{#welcome}Connection problem, please retry.$z</en>
+		<de>{#welcome}Verbindungsproblem, bitte versuche es erneut.$z</de>
+	</connect_dialog>
+
+	<connect_error>
+		<en>{#welcome}$sThis is an administrative notice.$z{br}{br}UASECO encountered a very rare player connection{br}problem. Please re-join the server to correct it.{br}Apologies for the inconvenience.{br}{br}$sThe server administrators.</en>
+		<de>{#welcome}$sAchtung:$z{br}{br}UASECO hat ein äußerst seltenes Verbindungsproblem bei der Verbindung eines Spielers festgestellt. Bitte versuche erneut auf den Server zu kommen, um den Fehler zu beheben.{br}Entschuldigung für die Unannehmlichkeiten.{br}{br}$sDie Serveradministratoren.</de>
+	</connect_error>
+
+	<!-- miscellaneous messages -->
+	<song>
+		<en>{#server}» Map {#highlite}{1} {#server}plays song: {#highlite}{2}</en>
+		<de>{#server}» Die Map {#highlite}{1} {#server}spielt folgenden Song: {#highlite}{2}</de>
+	</song>
+
+	<mod>
+		<en>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</en>
+		<de>{#server}» Die Map {#highlite}{1} {#server}verwendet Mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</de>
+	</mod>
+
+	<show_planets>
+		<en>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets</en>
+		<de>{#server}» Der Server {#highlite}{1}$z$s {#server}besitzt {#highlite}{2} {#server}Planets</de>
+	</show_planets>
+
+	<time>
+		<en>{#server}» {#interact}Current Server Time: {#highlite}$i {1}{#interact} on {#highlite}$i {2}</en>
+		<de>{#server}» {#interact}Aktuelle Serverzeit: {#highlite}$i {1}{#interact} am {#highlite}$i {2}</de>
+	</time>
+
+	<round>
+		<en>{#server}» $n{#message}Round {#highlite}{1}{#message}: </en>
+		<de>{#server}» $n{#message}Runde {#highlite}{1}{#message}: </de>
+	</round>
+</locales>

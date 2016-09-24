@@ -1,0 +1,88 @@
+<manialink id="EffectStudioPersonalMedalSound" name="EffectStudioPersonalMedalSound" version="2">
+<script><!--
+ /*
+ * ----------------------------------
+ * Author:	undef.de
+ * Website:	http://www.undef.name
+ * License:	GPLv3
+ * Version:	2015-12-27
+ * ----------------------------------
+ */
+Void USleep (Integer _Wait) {
+	declare Integer Start = Now;
+	while (Now < Start + _Wait) {
+		yield;
+	}
+}
+main() {
+	declare SoundMedalAuthor	= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerFinishMapTimeAuthor.ogg", 1.0, False, False, False);
+	declare SoundMedalGold		= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerFinishMapTimeGold.ogg", 1.0, False, False, False);
+	declare SoundMedalSilver	= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerFinishMapTimeSilver.ogg", 1.0, False, False, False);
+	declare SoundMedalBronze	= Audio.CreateSound("http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerFinishMapTimeBronze.ogg", 1.0, False, False, False);
+
+	SoundMedalAuthor.Volume		= 1.0;
+	SoundMedalGold.Volume		= 1.0;
+	SoundMedalSilver.Volume		= 1.0;
+	SoundMedalBronze.Volume		= 1.0;
+
+	declare Integer RefreshInterval	= 100;
+	declare Integer RefreshTime	= CurrentTime;
+	declare Integer LastPlayerScore	= -1;
+
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+		if (CurrentTime > RefreshTime) {
+
+			foreach (Player in Players) {
+				if (Player.Login != LocalUser.Login) {
+					continue;
+				}
+				if (Player.Score != Null) {
+					if (Player.Score.BestRace.Time == -1) {
+						LastPlayerScore = Player.Score.BestRace.Time;
+					}
+					else if (Player.Score.BestRace.Time > 0 && (LastPlayerScore == -1 || Player.Score.BestRace.Time < LastPlayerScore)) {
+
+						// Check for better score
+						if (Player.Score.BestRace.Time < Map.TMObjective_AuthorTime) {
+							SoundMedalBronze.Play();
+							USleep(750);
+							SoundMedalSilver.Play();
+							USleep(750);
+							SoundMedalGold.Play();
+							USleep(750);
+							SoundMedalAuthor.Play();
+							LastPlayerScore = Player.Score.BestRace.Time;
+						}
+						else if (Player.Score.BestRace.Time < Map.TMObjective_GoldTime) {
+							SoundMedalBronze.Play();
+							USleep(750);
+							SoundMedalSilver.Play();
+							USleep(750);
+							SoundMedalGold.Play();
+							LastPlayerScore = Player.Score.BestRace.Time;
+						}
+						else if (Player.Score.BestRace.Time < Map.TMObjective_SilverTime) {
+							SoundMedalBronze.Play();
+							USleep(750);
+							SoundMedalSilver.Play();
+							LastPlayerScore = Player.Score.BestRace.Time;
+						}
+						else if (Player.Score.BestRace.Time < Map.TMObjective_BronzeTime) {
+							SoundMedalBronze.Play();
+							LastPlayerScore = Player.Score.BestRace.Time;
+						}
+					}
+				}
+			}
+
+			// Reset RefreshTime
+			RefreshTime = (CurrentTime + RefreshInterval);
+		}
+	}
+}
+--></script>
+</manialink>

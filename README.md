@@ -7,5 +7,5 @@ UASECO is a fork of the XAseco2/1.03 controller for Trackmania and has been over
 Official website
 ================
 
-For more details, please visit the official website at http://www.uaseco.org/
+For more details, please visit the official website at http://www.UASECO.org/
 
