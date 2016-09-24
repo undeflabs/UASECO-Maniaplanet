@@ -4,17 +4,17 @@
 		<en>Displays player statistics and personal settings.</en>
 		<de>Zeigt Spielerstatistiken und persönliche Einstellungen</de>
 	</plugin_description>
-	
+
 	<slash_stats>
 		<en>Displays statistics about a player</en>
 		<de>Zeigt die Statistiken eines Spielers</de>
 	</slash_stats>
-	
+
 	<slash_settings>
 		<en>Displays settings of a Player</en>
 		<de>Zeigt die Einstellungen eines Spielers</de>
 	</slash_settings>
-	
+
 	<info_message>
 		<en>For player info use the "/stats" command.</en>
 		<de>Deine persänlichen Statistiken kannst du mit "/stats" ansehen</de>
