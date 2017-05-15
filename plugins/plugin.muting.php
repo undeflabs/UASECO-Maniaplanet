@@ -6,10 +6,6 @@
  * » Based upon plugin.muting.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-17
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -53,8 +45,10 @@ class PluginMuting extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Handles individual and global player muting');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -174,7 +168,7 @@ class PluginMuting extends Plugin {
 			);
 			$message = $aseco->formatText('{#server}» {#error}Cannot mute {#logina}$i {1} {#highlite}{2}$z$s{#error} !',
 				$title,
-				$aseco->stripColors($target->nickname)
+				$aseco->stripStyles($target->nickname)
 			);
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -190,7 +184,7 @@ class PluginMuting extends Plugin {
 			);
 		}
 		else {
-			$message = '{#server}» {#error}Player {#highlite}$i '. $aseco->stripColors($target->nickname) .'$z$s{#error} is already in your mute list!';
+			$message = '{#server}» {#error}Player {#highlite}$i '. $aseco->stripStyles($target->nickname) .'$z$s{#error} is already in your mute list!';
 		}
 
 		// show chat message
@@ -225,7 +219,7 @@ class PluginMuting extends Plugin {
 			);
 		}
 		else {
-			$message = '{#server}» {#error}Player {#highlite}$i '. $aseco->stripColors($target->nickname) .'$z$s{#error} is not in your mute list!';
+			$message = '{#server}» {#error}Player {#highlite}$i '. $aseco->stripStyles($target->nickname) .'$z$s{#error} is not in your mute list!';
 		}
 
 		// show chat message

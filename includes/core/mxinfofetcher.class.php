@@ -29,8 +29,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-02
- * Copyright:	2014 - 2015 by undef.de
+ * Date:	2017-05-09
+ * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -406,7 +406,7 @@ class MXInfoFetcher {
 		$request .= "Host: ". $url['host'] ."\r\n";
 		$request .= "Content-Type: application/json\r\n";
 		$request .= "X-ManiaPlanet-ServerLogin: ". $aseco->server->login ."\r\n";
-		$request .= "User-Agent: ". USER_AGENT ." ". get_class($this) ."/1.7b\r\n\r\n";
+		$request .= "User-Agent: ". get_class($this) ."/1.7b ". USER_AGENT ."\r\n\r\n";
 		fwrite($fp, $request);
 
 		stream_set_timeout($fp, 8);

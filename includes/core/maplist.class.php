@@ -6,10 +6,6 @@
  *   functions for sorting.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-11-09
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,23 +35,24 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class MapList {
+class MapList extends BaseClass {
 	public $map_list;						// Holds the whole map list with all installed maps
 	public $previous;						// Holds the previous map object
 	public $current;						// Holds the current map object
 	public $next;							// Holds the next map object
 
-	public $max_age_mxinfo	= 86400;				// Age max. 86400 = 1 day
-	public $size_limit	= 2097152;				// 2014-04-29: 2048 kB: Changed map size limit to 2MB: http://forum.maniaplanet.com/viewtopic.php?p=212999#p212999
+	public $max_age_mxinfo		= 86400;			// Age max. 86400 = 1 day
+	public $size_limit		= 4194304;			// 2017-03-10: 4096 kB: Changed map size limit to 4 MB: https://forum.maniaplanet.com/viewtopic.php?p=275568#p275568 (closed Beta MP4 forum)
 
-	public $moods		= array(
+	public $moods			= array(
 		'Sunrise',
 		'Day',
 		'Sunset',
 		'Night',
 	);
 
-	private $debug		= false;
+	private $debug			= false;
+	private $force_maplist_update	= false;
 
 
 	/*
@@ -64,13 +61,48 @@ class MapList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function __construct ($debug) {
-		$this->debug = $debug;
+	public function __construct ($debug, $force_maplist_update) {
 
-		$this->map_list	= array();
-		$this->previous	= new Map(null, null);
-		$this->current	= new Map(null, null);
-		$this->next	= new Map(null, null);
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-08');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
+
+		$this->debug			= $debug;
+		$this->force_maplist_update	= $force_maplist_update;
+
+		$this->map_list			= array();
+		$this->previous			= new Map(null, null);
+		$this->current			= new Map(null, null);
+		$this->next			= new Map(null, null);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getCurrentMapInfo () {
+		global $aseco;
+
+		$response = $aseco->client->query('GetCurrentMapInfo');
+
+		// Get Map from map_list[]
+		$map = $this->getMapByUid($response['UId']);
+		if ($map->uid !== false) {
+			// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response,
+			// this is required for old Maps (e.g. early Canyon beta or converted TMF Stadium)
+			$map->nb_laps = $response['NbLaps'];
+			$map->nb_checkpoints = $response['NbCheckpoints'];
+
+			// Store updated 'NbLaps' and 'NbCheckpoints' into database
+			$this->updateMapInDatabase($map);
+
+			return $map;
+		}
+		return new Map(null, null);
 	}
 
 	/*
@@ -283,7 +315,7 @@ class MapList {
 		$database['filenames'] = array();
 		foreach ($maplist as $mapinfo) {
 			// Setup from database, if not present, add this to the list for adding into database
-			if (isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename'])) {
+			if ($this->force_maplist_update === true && isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename'])) {
 				// Create a dummy Map and setup it with data from the database
 				$map			= new Map(null, null);
 				$map->id		= $dbinfos[$mapinfo['UId']]['mapid'];
@@ -299,12 +331,12 @@ class MapList {
 				$map->author_nation	= $dbinfos[$mapinfo['UId']]['author_nation'];
 				$map->author_score	= $dbinfos[$mapinfo['UId']]['author_score'];
 				$map->author_time	= $dbinfos[$mapinfo['UId']]['author_time'];
-				$map->goldtime		= $dbinfos[$mapinfo['UId']]['goldtime'];
-				$map->silvertime	= $dbinfos[$mapinfo['UId']]['silvertime'];
-				$map->bronzetime	= $dbinfos[$mapinfo['UId']]['bronzetime'];
-				$map->nblaps		= $dbinfos[$mapinfo['UId']]['nblaps'];
-				$map->multilap		= $dbinfos[$mapinfo['UId']]['multilap'];
-				$map->nbcheckpoints	= $dbinfos[$mapinfo['UId']]['nbcheckpoints'];
+				$map->gold_time		= $dbinfos[$mapinfo['UId']]['gold_time'];
+				$map->silver_time	= $dbinfos[$mapinfo['UId']]['silver_time'];
+				$map->bronze_time	= $dbinfos[$mapinfo['UId']]['bronze_time'];
+				$map->nb_laps		= $dbinfos[$mapinfo['UId']]['nb_laps'];
+				$map->multi_lap		= $dbinfos[$mapinfo['UId']]['multi_lap'];
+				$map->nb_checkpoints	= $dbinfos[$mapinfo['UId']]['nb_checkpoints'];
 				$map->cost		= $dbinfos[$mapinfo['UId']]['cost'];
 				$map->environment	= $dbinfos[$mapinfo['UId']]['environment'];
 				$map->mood		= $dbinfos[$mapinfo['UId']]['mood'];
@@ -313,15 +345,21 @@ class MapList {
 				$map->validated		= $dbinfos[$mapinfo['UId']]['validated'];
 				$map->exeversion	= $dbinfos[$mapinfo['UId']]['exeversion'];
 				$map->exebuild		= $dbinfos[$mapinfo['UId']]['exebuild'];
-				$map->modname		= $dbinfos[$mapinfo['UId']]['modname'];
-				$map->modfile		= $dbinfos[$mapinfo['UId']]['modfile'];
-				$map->modurl		= $dbinfos[$mapinfo['UId']]['modurl'];
-				$map->songfile		= $dbinfos[$mapinfo['UId']]['songfile'];
-				$map->songurl		= $dbinfos[$mapinfo['UId']]['songurl'];
+				$map->mod_name		= $dbinfos[$mapinfo['UId']]['mod_name'];
+				$map->mod_file		= $dbinfos[$mapinfo['UId']]['mod_file'];
+				$map->mod_url		= $dbinfos[$mapinfo['UId']]['mod_url'];
+				$map->song_file		= $dbinfos[$mapinfo['UId']]['song_file'];
+				$map->song_url		= $dbinfos[$mapinfo['UId']]['song_url'];
 
 				// Always update Map pathes in the database, to make sure the map can be found
 				// if the admin has moved the Map files
 				$database['filenames'][$mapinfo['UId']] = $mapinfo['FileName'];
+
+				// Check for saved Thumbnail from the map, otherwise force to save it
+				if ($this->getThumbnailByUid($map->uid) === false) {
+					$this->parseMap($aseco->server->mapdir . $mapinfo['FileName']);
+				}
+
 			}
 			else {
 				// Retrieve MapInfo from GBXInfoFetcher
@@ -359,6 +397,9 @@ class MapList {
 		}
 		unset($maplist, $dbinfos);
 
+		// Override after finished
+		$this->force_maplist_update == false;
+
 
 		// Add Maps that are not yet stored in the database
 		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
@@ -390,6 +431,9 @@ class MapList {
 
 		// Find the current running map
 		$this->current = $this->getCurrentMapInfo();
+
+		// Find the next map
+		$this->next = $this->getNextMap();
 	}
 
 	/*
@@ -544,25 +588,25 @@ class MapList {
 			". $authorid .",
 			". $map->author_score .",
 			". $map->author_time .",
-			". $map->goldtime .",
-			". $map->silvertime .",
-			". $map->bronzetime .",
+			". $map->gold_time .",
+			". $map->silver_time .",
+			". $map->bronze_time .",
 			". $aseco->db->quote($map->environment) .",
 			". $aseco->db->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'unknown') ) .",
 			". $map->cost .",
 			". $aseco->db->quote($map->type) .",
 			". $aseco->db->quote($map->style) .",
-			". $aseco->db->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
-			". (($map->nblaps > 1) ? $map->nblaps : 0) .",
-			". $map->nbcheckpoints .",
+			". $aseco->db->quote( (($map->multi_lap == true) ? 'true' : 'false') ) .",
+			". (($map->nb_laps > 1) ? $map->nb_laps : 0) .",
+			". $map->nb_checkpoints .",
 			". $aseco->db->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
 			". $aseco->db->quote($map->exeversion) .",
 			". $aseco->db->quote($map->exebuild) .",
-			". $aseco->db->quote($map->modname) .",
-			". $aseco->db->quote($map->modfile) .",
-			". $aseco->db->quote($map->modurl) .",
-			". $aseco->db->quote($map->songfile) .",
-			". $aseco->db->quote($map->songurl) ."
+			". $aseco->db->quote($map->mod_name) .",
+			". $aseco->db->quote($map->mod_file) .",
+			". $aseco->db->quote($map->mod_url) .",
+			". $aseco->db->quote($map->song_file) .",
+			". $aseco->db->quote($map->song_url) ."
 		);
 		";
 
@@ -605,25 +649,25 @@ class MapList {
 			`AuthorId` = ". $authorid .",
 			`AuthorScore` = ". $map->author_score .",
 			`AuthorTime` = ". $map->author_time .",
-			`GoldTime` = ". $map->goldtime .",
-			`SilverTime` = ". $map->silvertime .",
-			`BronzeTime` = ". $map->bronzetime .",
+			`GoldTime` = ". $map->gold_time .",
+			`SilverTime` = ". $map->silver_time .",
+			`BronzeTime` = ". $map->bronze_time .",
 			`Environment` = ". $aseco->db->quote($map->environment) .",
 			`Mood` = ". $aseco->db->quote( (in_array($map->mood, $this->moods) ? $map->mood : 'unknown') ) .",
 			`Cost` = ". $map->cost .",
 			`Type` = ". $aseco->db->quote($map->type) .",
 			`Style` = ". $aseco->db->quote($map->style) .",
-			`MultiLap` = ". $aseco->db->quote( (($map->multilap == true) ? 'true' : 'false') ) .",
-			`NbLaps` = ". (($map->nblaps > 1) ? $map->nblaps : 0) .",
-			`NbCheckpoints` = ". $map->nbcheckpoints .",
+			`MultiLap` = ". $aseco->db->quote( (($map->multi_lap == true) ? 'true' : 'false') ) .",
+			`NbLaps` = ". (($map->nb_laps > 1) ? $map->nb_laps : 0) .",
+			`NbCheckpoints` = ". $map->nb_checkpoints .",
 			`Validated` = ". $aseco->db->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
 			`ExeVersion` = ". $aseco->db->quote($map->exeversion) .",
 			`ExeBuild` = ". $aseco->db->quote($map->exebuild) .",
-			`ModName` = ". $aseco->db->quote($map->modname) .",
-			`ModFile` = ". $aseco->db->quote($map->modfile) .",
-			`ModUrl` = ". $aseco->db->quote($map->modurl) .",
-			`SongFile` = ". $aseco->db->quote($map->songfile) .",
-			`SongUrl` = ". $aseco->db->quote($map->songurl) ."
+			`ModName` = ". $aseco->db->quote($map->mod_name) .",
+			`ModFile` = ". $aseco->db->quote($map->mod_file) .",
+			`ModUrl` = ". $aseco->db->quote($map->mod_url) .",
+			`SongFile` = ". $aseco->db->quote($map->song_file) .",
+			`SongUrl` = ". $aseco->db->quote($map->song_url) ."
 		WHERE `Uid` = ". $aseco->db->quote($map->uid) ."
 		LIMIT 1;
 		";
@@ -724,7 +768,7 @@ class MapList {
 						'uid'			=> $row['Uid'],
 						'filename'		=> $row['Filename'],
 						'name'			=> $row['Name'],
-						'name_stripped'		=> $aseco->stripColors($row['Name'], true),
+						'name_stripped'		=> $aseco->stripStyles($row['Name'], true),
 						'comment'		=> $row['Comment'],
 						'author'		=> $row['Login'],
 						'author_nickname'	=> $row['Nickname'],
@@ -733,12 +777,12 @@ class MapList {
 						'author_nation'		=> $row['Nation'],
 						'author_score'		=> $row['AuthorScore'],
 						'author_time'		=> $row['AuthorTime'],
-						'goldtime'		=> $row['GoldTime'],
-						'silvertime'		=> $row['SilverTime'],
-						'bronzetime'		=> $row['BronzeTime'],
-						'nblaps'		=> (int)$row['NbLaps'],
-						'multilap'		=> $aseco->string2bool($row['MultiLap']),
-						'nbcheckpoints'		=> (int)$row['NbCheckpoints'],
+						'gold_time'		=> $row['GoldTime'],
+						'silver_time'		=> $row['SilverTime'],
+						'bronze_time'		=> $row['BronzeTime'],
+						'nb_laps'		=> (int)$row['NbLaps'],
+						'multi_lap'		=> $aseco->string2bool($row['MultiLap']),
+						'nb_checkpoints'	=> (int)$row['NbCheckpoints'],
 						'cost'			=> $row['Cost'],
 						'environment'		=> $row['Environment'],
 						'mood'			=> $row['Mood'],
@@ -747,11 +791,11 @@ class MapList {
 						'validated'		=> $aseco->string2bool($row['Validated']),
 						'exeversion'		=> $row['ExeVersion'],
 						'exebuild'		=> $row['ExeBuild'],
-						'modname'		=> $row['ModName'],
-						'modfile'		=> $row['ModFile'],
-						'modurl'		=> $row['ModUrl'],
-						'songfile'		=> $row['SongFile'],
-						'songurl'		=> $row['SongUrl'],
+						'mod_name'		=> $row['ModName'],
+						'mod_file'		=> $row['ModFile'],
+						'mod_url'		=> $row['ModUrl'],
+						'song_file'		=> $row['SongFile'],
+						'song_url'		=> $row['SongUrl'],
 					);
 				}
 			}
@@ -778,7 +822,7 @@ class MapList {
 
 		$gbx = new GBXChallMapFetcher(true, true, false);
 		try {
-			if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
+			if (OPERATING_SYSTEM === 'WINDOWS') {
 				$file = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $aseco->stripBOM($file));
 				if ($file !== false) {
 					$gbx->processFile($file);
@@ -830,7 +874,12 @@ class MapList {
 		global $aseco;
 
 		if (!is_dir($aseco->settings['mapimages_path'])) {
-			mkdir($aseco->settings['mapimages_path'], 0755, true);
+			if (!is_file($aseco->settings['mapimages_path'])) {
+				mkdir($aseco->settings['mapimages_path'], 0755, true);
+			}
+			else {
+				trigger_error('[MapList] Configured directory at <mapimages_path> in UASECO.xml ['. $aseco->settings['mapimages_path'] .'] can not be created, because a file with that name exists!', E_USER_WARNING);
+			}
 		}
 
 		if (is_writeable($aseco->settings['mapimages_path'])) {
@@ -847,33 +896,6 @@ class MapList {
 		else {
 			trigger_error('[MapList] Configured directory at <mapimages_path> in UASECO.xml ['. $aseco->settings['mapimages_path'] .'] is not writeable!', E_USER_WARNING);
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function getCurrentMapInfo () {
-		global $aseco;
-
-		$response = $aseco->client->query('GetCurrentMapInfo');
-
-		// Get Map from map_list[]
-		$map = $this->getMapByUid($response['UId']);
-		if ($map->uid !== false) {
-			// Update 'NbLaps' and 'NbCheckpoints' for current Map from $response,
-			// this is required for old Maps (e.g. early Canyon beta or converted TMF Stadium)
-			$map->nblaps = $response['NbLaps'];
-			$map->nbcheckpoints = $response['NbCheckpoints'];
-
-			// Store updated 'NbLaps' and 'NbCheckpoints' into database
-			$this->updateMapInDatabase($map);
-
-			return $map;
-		}
-		return new Map(null, null);
 	}
 
 	/*

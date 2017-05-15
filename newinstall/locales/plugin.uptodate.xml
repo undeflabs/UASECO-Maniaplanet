@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2015-11-13
+	Version:	2017-03-21
 	Authors:	[EN] undef.de
 			[DE] askuri, undef.de
 	//-->
@@ -42,7 +42,7 @@
 	</admin_can_not_parse>
 
 	<admin_can_not_access>
-		<en>{#server}» {#error}Error: Can not access {#highlite}$I{1}{#error}!</en>
-		<de>{#server}» {#error}Error: Konnte {#highlite}$I{1}{#error} nicht aufrufen!</de>
+		<en>{#server}» {#error}Error: Can not access {#highlite}$I$L{1}$L{#error}!</en>
+		<de>{#server}» {#error}Error: Konnte {#highlite}$I$L{1}$L{#error} nicht aufrufen!</de>
 	</admin_can_not_access>
 </locales>

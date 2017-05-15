@@ -1,0 +1,14 @@
+﻿https://forum.maniaplanet.com/viewtopic.php?p=279395#p279395
+Eole » 06 Apr 2017, 11:41
+~~~~~~~~~~~~~~~~~~~~~~~~~
+'Trackmania.WarmUp.Start' and 'Trackmania.WarmUp.End' are callbacks sent at the beginning and the end of the "traditional" TM warm up system where you see your time displayed in orange.
+
+'Trackmania.WarmUp.Stop' and 'Trackmania.WarmUp.StopRound' are methods that you can call during a Trackmania warm up to stop the whole warm up or the current round if there are several.
+
+'Maniaplanet.WarmUp.Start' and 'Maniaplanet.WarmUp.End' are callbacks sent at the beginning and the end of the "global" warm up system that is used mainly in Shootmania but also in TM Chase.
+In this kind of warm up players can take a slot in the team of their choice and choose when they are ready to start the match.
+
+'Maniaplanet.WarmUp.Stop' is a method that allows a server controller to force the end of the warm up and the beginning of the match.
+
+The 'Maniaplanet.WarmUp.GetStatus' only triggers the 'Maniaplanet.WarmUp.Status' if the warm up library is implemented into the game mode.
+It is planned to improve it so every game mode answers and say if it supports the warm up system or not.

@@ -5,10 +5,6 @@
  * » Structure of a ranking.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2014-10-03
- * Copyright:	2014 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -38,17 +31,23 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Ranking {
+class Ranking extends BaseClass {
 	public $rank;			// Current Rank
 	public $pid;			// PlayerId at the dedicated Server
 	public $login;			// PlayerLogin
 	public $nickname;		// PlayerNickname
-	public $time;			// Players best time
-	public $score;			// Players current score
-	public $cps;			// Array of Checkpoint times from the best time
-	public $team;			// TeamId of that Team the Player is member from, -1 = no Team
-	public $spectator;		// boolean indicator
-	public $away;			// boolean indicator
+	public $round_points;
+	public $map_points;
+	public $match_points;
+	public $best_race_time;		// Best race time in milliseconds
+	public $best_race_respawns;	// Number of respawn during best race
+	public $best_race_checkpoints;	// Checkpoints times during best race
+	public $best_lap_time;		// Best lap time in milliseconds
+	public $best_lap_respawns;	// Number of respawn during best lap
+	public $best_lap_checkpoints;	// Checkpoints times during best lap
+	public $stunts_score;
+
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -57,16 +56,27 @@ class Ranking {
 	*/
 
 	public function __construct () {
-		$this->rank		= 0;
-		$this->pid		= 0;
-		$this->login		= 'Unset';
-		$this->nickname		= 'Unset';
-		$this->time		= 0;
-		$this->score		= 0;
-		$this->cps		= array();
-		$this->team		= -1;
-		$this->spectator	= false;
-		$this->away		= false;
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Structure of a ranking.');
+
+		$this->rank			= 0;
+		$this->pid			= 0;
+		$this->login			= 'Unset';
+		$this->nickname			= 'Unset';
+		$this->round_points		= 0;
+		$this->map_points		= 0;
+		$this->match_points		= 0;
+		$this->best_race_time		= 0;
+		$this->best_race_respawns	= 0;
+		$this->best_race_checkpoints	= array();
+		$this->best_lap_time		= 0;
+		$this->best_lap_respawns	= 0;
+		$this->best_lap_checkpoints	= array();
+		$this->stunts_score		= 0;
 	}
 }
 

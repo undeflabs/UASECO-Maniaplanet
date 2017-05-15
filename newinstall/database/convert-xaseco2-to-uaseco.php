@@ -14,8 +14,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-10-30
- * Copyright:	2014 - 2015 by undef.de
+ * Date:	2017-05-08
+ * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -33,14 +33,11 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - includes/core/xmlparser.class.php
- *  - includes/core/database.class.php
- *
  */
 
 
 	// Include required classes
+	require_once('includes/core/baseclass.class.php');
 	require_once('includes/core/xmlparser.class.php');
 	require_once('includes/core/database.class.php');
 
@@ -105,13 +102,13 @@ class Converter {
 			$settings = $settings['SETTINGS'];
 
 			// Read <mysql> settings and apply them
-			$this->settings['mysql']['host'] = $settings['MYSQL'][0]['HOST'][0];
-			$this->settings['mysql']['login'] = $settings['MYSQL'][0]['LOGIN'][0];
-			$this->settings['mysql']['password'] = $settings['MYSQL'][0]['PASSWORD'][0];
-			$this->settings['mysql']['database'] = $settings['MYSQL'][0]['DATABASE'][0];
-			$this->settings['mysql']['table_prefix'] = $settings['MYSQL'][0]['TABLE_PREFIX'][0];
-			if (empty($this->settings['mysql']['table_prefix'])) {
-				$this->settings['mysql']['table_prefix'] = 'uaseco_';
+			$this->settings['dbms']['host'] = $settings['DBMS'][0]['HOST'][0];
+			$this->settings['dbms']['login'] = $settings['DBMS'][0]['LOGIN'][0];
+			$this->settings['dbms']['password'] = $settings['DBMS'][0]['PASSWORD'][0];
+			$this->settings['dbms']['database'] = $settings['DBMS'][0]['DATABASE'][0];
+			$this->settings['dbms']['table_prefix'] = $settings['DBMS'][0]['TABLE_PREFIX'][0];
+			if (empty($this->settings['dbms']['table_prefix'])) {
+				$this->settings['dbms']['table_prefix'] = 'uaseco_';
 			}
 			$this->console('...done!');
 		}
@@ -664,16 +661,16 @@ class Converter {
 
 	public function connectDatabase () {
 
-		$this->console('Try to connect to MySQL server on "'. $this->settings['mysql']['host'] .'" with database "'. $this->settings['mysql']['database'] .'", login "'. $this->settings['mysql']['login'] .'" and password "'. $this->settings['mysql']['password'] .'"...');
+		$this->console('Try to connect to MySQL server on "'. $this->settings['dbms']['host'] .'" with database "'. $this->settings['dbms']['database'] .'", login "'. $this->settings['dbms']['login'] .'" and password "'. $this->settings['dbms']['password'] .'"...');
 		$settings = array(
-			'host'			=> $this->settings['mysql']['host'],
-	                'login'			=> $this->settings['mysql']['login'],
-	                'password'		=> $this->settings['mysql']['password'],
-			'database'		=> $this->settings['mysql']['database'],
-			'table_prefix'		=> $this->settings['mysql']['table_prefix'],
+			'host'			=> $this->settings['dbms']['host'],
+	                'login'			=> $this->settings['dbms']['login'],
+	                'password'		=> $this->settings['dbms']['password'],
+			'database'		=> $this->settings['dbms']['database'],
+			'table_prefix'		=> $this->settings['dbms']['table_prefix'],
 			'autocommit'		=> false,			// NO AUTOCOMMIT!
-			'charset'		=> 'utf8',
-			'collate'		=> 'utf8_bin',
+			'charset'		=> 'utf8mb4',
+			'collate'		=> 'utf8mb4_unicode_ci',
 			'debug'			=> false,
 		);
 
@@ -694,66 +691,66 @@ class Converter {
 		$this->console('Checking database structure:');
 
 		// Create tables
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'authors`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'authors`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%authors` (
 		  `AuthorId` mediumint(3) unsigned AUTO_INCREMENT,
-		  `Login` varchar(64) COLLATE utf8_bin DEFAULT '',
-		  `Nickname` varchar(100) COLLATE utf8_bin DEFAULT '',
-		  `Zone` varchar(256) COLLATE utf8_bin DEFAULT '',
-		  `Continent` varchar(2) COLLATE utf8_bin DEFAULT '',
-		  `Nation` varchar(3) COLLATE utf8_bin DEFAULT '',
+		  `Login` varchar(64) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Nickname` varchar(100) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Zone` varchar(256) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Continent` varchar(2) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Nation` varchar(3) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
 		  PRIMARY KEY (`AuthorId`),
 		  UNIQUE KEY `Login` (`Login`),
 		  KEY `Continent` (`Continent`),
 		  KEY `Nation` (`Nation`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'maphistory`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'maphistory`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%maphistory` (
 		  `MapId` mediumint(3) unsigned NOT NULL,
-		  `Date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+		  `Date` datetime DEFAULT '1970-01-01 00:00:00',
 		  KEY `MapId` (`MapId`),
 		  KEY `Date` (`Date`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'maps`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%maps` (
 		  `MapId` mediumint(3) UNSIGNED AUTO_INCREMENT,
-		  `Uid` varchar(27) COLLATE utf8_bin DEFAULT '',
-		  `Filename` text COLLATE utf8_bin,
-		  `Name` varchar(100) COLLATE utf8_bin DEFAULT '',
-		  `Comment` text COLLATE utf8_bin,
+		  `Uid` varchar(27) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Filename` text COLLATE 'utf8mb4_unicode_ci',
+		  `Name` varchar(100) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Comment` text COLLATE 'utf8mb4_unicode_ci',
 		  `AuthorId` mediumint(3) unsigned DEFAULT '0',
 		  `AuthorScore` int(4) unsigned DEFAULT '0',
 		  `AuthorTime` int(4) unsigned DEFAULT '0',
 		  `GoldTime` int(4) unsigned DEFAULT '0',
 		  `SilverTime` int(4) unsigned DEFAULT '0',
 		  `BronzeTime` int(4) unsigned DEFAULT '0',
-		  `Environment` varchar(10) COLLATE utf8_bin DEFAULT '',
-		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE utf8_bin NOT NULL,
+		  `Environment` varchar(10) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Mood` enum('unknown','Sunrise','Day','Sunset','Night') COLLATE 'utf8mb4_unicode_ci' NOT NULL,
 		  `Cost` mediumint(3) unsigned DEFAULT '0',
-		  `Type` varchar(32) COLLATE utf8_bin DEFAULT '',
-		  `Style` varchar(32) COLLATE utf8_bin DEFAULT '',
-		  `MultiLap` enum('false','true') COLLATE utf8_bin NOT NULL,
+		  `Type` varchar(32) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Style` varchar(32) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `MultiLap` enum('false','true') COLLATE 'utf8mb4_unicode_ci' NOT NULL,
 		  `NbLaps` tinyint(1) unsigned DEFAULT '0',
 		  `NbCheckpoints` tinyint(1) unsigned DEFAULT '0',
-		  `Validated` enum('null','false','true') COLLATE utf8_bin NOT NULL,
-		  `ExeVersion` varchar(16) COLLATE utf8_bin DEFAULT '',
-		  `ExeBuild` varchar(32) COLLATE utf8_bin DEFAULT '',
-		  `ModName` varchar(64) COLLATE utf8_bin DEFAULT '',
-		  `ModFile` varchar(256) COLLATE utf8_bin DEFAULT '',
-		  `ModUrl` text COLLATE utf8_bin,
-		  `SongFile` varchar(256) COLLATE utf8_bin DEFAULT '',
-		  `SongUrl` text COLLATE utf8_bin,
+		  `Validated` enum('null','false','true') COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+		  `ExeVersion` varchar(16) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `ExeBuild` varchar(32) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `ModName` varchar(64) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `ModFile` varchar(256) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `ModUrl` text COLLATE 'utf8mb4_unicode_ci',
+		  `SongFile` varchar(256) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `SongUrl` text COLLATE 'utf8mb4_unicode_ci',
 		  PRIMARY KEY (`MapId`),
 		  UNIQUE KEY `Uid` (`Uid`),
 		  KEY `AuthorId` (`AuthorId`),
@@ -767,21 +764,21 @@ class Converter {
 		  KEY `MultiLap` (`MultiLap`),
 		  KEY `NbLaps` (`NbLaps`),
 		  KEY `NbCheckpoints` (`NbCheckpoints`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'players`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'players`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%players` (
 		  `PlayerId` mediumint(3) unsigned AUTO_INCREMENT,
-		  `Login` varchar(64) COLLATE utf8_bin DEFAULT '',
-		  `Nickname` varchar(100) COLLATE utf8_bin DEFAULT '',
-		  `Zone` varchar(256) COLLATE utf8_bin DEFAULT '',
-		  `Continent` varchar(2) COLLATE utf8_bin DEFAULT '',
-		  `Nation` varchar(3) COLLATE utf8_bin DEFAULT '',
-		  `LastVisit` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Login` varchar(64) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Nickname` varchar(100) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Zone` varchar(256) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Continent` varchar(2) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `Nation` varchar(3) COLLATE 'utf8mb4_unicode_ci' DEFAULT '',
+		  `LastVisit` datetime DEFAULT '1970-01-01 00:00:00',
 		  `Visits` mediumint(3) unsigned DEFAULT '0',
 		  `Wins` mediumint(3) unsigned DEFAULT '0',
 		  `Donations` mediumint(3) unsigned DEFAULT '0',
@@ -795,39 +792,39 @@ class Converter {
 		  KEY `Wins` (`Wins`),
 		  KEY `Donations` (`Donations`),
 		  KEY `TimePlayed` (`TimePlayed`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=1;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'playlist`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%playlist` (
 		  `Timestamp` decimal(17,3) unsigned DEFAULT '0.000',
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
-		  `Method` enum('select','vote','pay','add') COLLATE utf8_bin DEFAULT 'select',
+		  `Method` enum('select','vote','pay','add') COLLATE 'utf8mb4_unicode_ci' DEFAULT 'select',
 		  KEY `Timestamp` (`Timestamp`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
 		  KEY `Method` (`Method`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'rankings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%rankings` (
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
 		  `Average` int(4) unsigned DEFAULT '0',
 		  PRIMARY KEY (`PlayerId`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'ratings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%ratings` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
@@ -839,61 +836,61 @@ class Converter {
 		  KEY `PlayerId` (`PlayerId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'records`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%records` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
 		  `GamemodeId` tinyint(1) unsigned DEFAULT '0',
-		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Date` datetime DEFAULT '1970-01-01 00:00:00',
 		  `Score` int(4) unsigned DEFAULT '0',
-		  `Checkpoints` text COLLATE utf8_bin,
+		  `Checkpoints` text COLLATE 'utf8mb4_unicode_ci',
 		  PRIMARY KEY (`MapId`,`PlayerId`,`GamemodeId`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
 		  KEY `GamemodeId` (`GamemodeId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'settings`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%settings` (
-		  `Plugin` varchar(64) COLLATE utf8_bin NOT NULL,
+		  `Plugin` varchar(64) COLLATE 'utf8mb4_unicode_ci' NOT NULL,
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
-		  `Key` varchar(64) COLLATE utf8_bin NOT NULL,
-		  `Value` text COLLATE utf8_bin,
+		  `Key` varchar(64) COLLATE 'utf8mb4_unicode_ci' NOT NULL,
+		  `Value` text COLLATE 'utf8mb4_unicode_ci',
 		  PRIMARY KEY (`Plugin`,`PlayerId`,`Key`),
 		  KEY `PlayerId` (`PlayerId`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
 
-		$this->console('> Checking table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		$this->console('> Checking table `'. $this->settings['dbms']['table_prefix'] .'times`');
 		$query = "
 		CREATE TABLE IF NOT EXISTS `%prefix%times` (
 		  `MapId` mediumint(3) unsigned DEFAULT '0',
 		  `PlayerId` mediumint(3) unsigned DEFAULT '0',
 		  `GamemodeId` tinyint(1) unsigned DEFAULT '0',
-		  `Date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `Date` datetime DEFAULT '1970-01-01 00:00:00',
 		  `Score` int(4) unsigned DEFAULT '0',
-		  `Checkpoints` text COLLATE utf8_bin,
+		  `Checkpoints` text COLLATE 'utf8mb4_unicode_ci',
 		  PRIMARY KEY (`MapId`,`PlayerId`,`GamemodeId`,`Score`),
 		  KEY `MapId` (`MapId`),
 		  KEY `PlayerId` (`PlayerId`),
 		  KEY `GamemodeId` (`GamemodeId`),
 		  KEY `Date` (`Date`),
 		  KEY `Score` (`Score`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 		";
 		$this->db->query($query);
 
@@ -909,44 +906,44 @@ class Converter {
 		}
 
 		$check_step2 = array();
-		$check_step2['authors']		= in_array($this->settings['mysql']['table_prefix'] .'authors', $tables);
-		$check_step2['maphistory']	= in_array($this->settings['mysql']['table_prefix'] .'maphistory', $tables);
-		$check_step2['maps']		= in_array($this->settings['mysql']['table_prefix'] .'maps', $tables);
-		$check_step2['players']		= in_array($this->settings['mysql']['table_prefix'] .'players', $tables);
-		$check_step2['playlist']	= in_array($this->settings['mysql']['table_prefix'] .'playlist', $tables);
-		$check_step2['rankings']	= in_array($this->settings['mysql']['table_prefix'] .'rankings', $tables);
-		$check_step2['ratings']		= in_array($this->settings['mysql']['table_prefix'] .'ratings', $tables);
-		$check_step2['records']		= in_array($this->settings['mysql']['table_prefix'] .'records', $tables);
-		$check_step2['settings']	= in_array($this->settings['mysql']['table_prefix'] .'settings', $tables);
-		$check_step2['times']		= in_array($this->settings['mysql']['table_prefix'] .'times', $tables);
-		if ($check_step2['authors'] && $check_step2['maphistory'] && $check_step2['maps'] && $check_step2['players'] && $check_step2['playlist'] && $check_step2['rankings'] && $check_step2['ratings'] && $check_step2['records'] && $check_step2['settings'] && $check_step2['times']) {
-			trigger_error('Can not setup all tables, can not finish convert: '. $this->db->errmsg(), E_USER_ERROR);
+		$check_step2['authors']		= in_array($this->settings['dbms']['table_prefix'] .'authors', $tables);
+		$check_step2['maphistory']	= in_array($this->settings['dbms']['table_prefix'] .'maphistory', $tables);
+		$check_step2['maps']		= in_array($this->settings['dbms']['table_prefix'] .'maps', $tables);
+		$check_step2['players']		= in_array($this->settings['dbms']['table_prefix'] .'players', $tables);
+		$check_step2['playlist']	= in_array($this->settings['dbms']['table_prefix'] .'playlist', $tables);
+		$check_step2['rankings']	= in_array($this->settings['dbms']['table_prefix'] .'rankings', $tables);
+		$check_step2['ratings']		= in_array($this->settings['dbms']['table_prefix'] .'ratings', $tables);
+		$check_step2['records']		= in_array($this->settings['dbms']['table_prefix'] .'records', $tables);
+		$check_step2['settings']	= in_array($this->settings['dbms']['table_prefix'] .'settings', $tables);
+		$check_step2['times']		= in_array($this->settings['dbms']['table_prefix'] .'times', $tables);
+		if (!$check_step2['authors'] && !$check_step2['maphistory'] && !$check_step2['maps'] && !$check_step2['players'] && !$check_step2['playlist'] && !$check_step2['rankings'] && !$check_step2['ratings'] && !$check_step2['records'] && !$check_step2['settings'] && !$check_step2['times']) {
+			trigger_error('[Database] Table structure incorrect, automatic setup failed!', E_USER_ERROR);
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maphistory`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maphistory`');
 		$query = "
 		ALTER TABLE `%prefix%maphistory`
 		  ADD CONSTRAINT `%prefix%maphistory_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE;
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maphistory` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maphistory` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maps`');
 		$query = "
 		ALTER TABLE `%prefix%maps`
 		  ADD CONSTRAINT `%prefix%maps_ibfk_1` FOREIGN KEY (`AuthorId`) REFERENCES `%prefix%authors` (`AuthorId`);
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'maps` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maps` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'playlist`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'playlist`');
 		$query = "
 		ALTER TABLE `%prefix%playlist`
 		  ADD CONSTRAINT `%prefix%playlist_ibfk_1` FOREIGN KEY (`MapId`) REFERENCES `%prefix%maps` (`MapId`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -954,22 +951,22 @@ class Converter {
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'playlist` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'playlist` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'rankings`');
 		$query = "
 		ALTER TABLE `%prefix%rankings`
 		  ADD CONSTRAINT `%prefix%ranks_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'ratings`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'ratings`');
 		$query = "
 		ALTER TABLE `%prefix%ratings`
 		  ADD CONSTRAINT `%prefix%ratings_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -981,7 +978,7 @@ class Converter {
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'records`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'records`');
 		$query = "
 		ALTER TABLE `%prefix%records`
 		  ADD CONSTRAINT `%prefix%records_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -993,18 +990,18 @@ class Converter {
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'settings`');
 		$query = "
 		ALTER TABLE `%prefix%settings`
 		  ADD CONSTRAINT `%prefix%settings_ibfk_1` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE;
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 
-		$this->console(' > Adding foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times`');
+		$this->console(' > Adding foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'times`');
 		$query = "
 		ALTER TABLE `%prefix%times`
 		  ADD CONSTRAINT `%prefix%times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `%prefix%players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1012,7 +1009,7 @@ class Converter {
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['mysql']['table_prefix'] .'times` '. $this->db->errmsg(), E_USER_ERROR);
+			trigger_error('Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'times` '. $this->db->errmsg(), E_USER_ERROR);
 		}
 
 

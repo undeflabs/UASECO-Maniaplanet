@@ -6,10 +6,6 @@
  * » Based upon basic.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-11-09
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +22,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -39,7 +32,22 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Helper {
+class Helper extends BaseClass {
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function __construct () {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-15');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Provides several function for use in UASECO and plugins.');
+	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -49,13 +57,13 @@ class Helper {
 
 	public function displayLoadStatus ($message, $ratio = 0.0) {
 
-		if ($this->settings['developer']['show_load_status'] == true) {
-			$xml = '<manialink id="UASECO:LoadStatus" version="2">';
+		if ($this->settings['show_load_status'] == true) {
+			$xml = '<manialink id="UASECO:LoadStatus" version="3">';
 			if ($message !== false && $this->startup_phase === true) {
-				$xml .= '<frame posn="-44.375 60.75 0.01">';
-				$xml .= '<quad posn="0 0 0.01" sizen="91.8 22.4" url="'. UASECO_WEBSITE .'" image="'. UASECO_WEBSITE .'/media/uaseco/logo-uaseco.png"/>';
-				$xml .= '<label posn="1.8 -22 0.02" sizen="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
-				$xml .= '<gauge posn="0 -24 0.03" sizen="91.8 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
+				$xml .= '<frame pos="-44.375 60.75" z-index="0.01">';
+				$xml .= '<quad pos="0 0" z-index="0.01" size="91.8 22.4" url="'. UASECO_WEBSITE .'" image="'. UASECO_WEBSITE .'/media/uaseco/logo-uaseco.png"/>';
+				$xml .= '<label pos="1.8 -22" z-index="0.02" size="125.9 10" textsize="2" scale="0.9" style="TextValueSmallSm" textcolor="FFFF" text="'. $this->handleSpecialChars($message) .'"/>';
+				$xml .= '<gauge pos="0 -24" z-index="0.03" size="91.8 10" ratio="'. $ratio .'" style="ProgressBarSmall" drawbg="1" drawblockbg="1"/>';
 				$xml .= '</frame>';
 			}
 			$xml .= '</manialink>';
@@ -71,26 +79,33 @@ class Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Converts [&"'<>] to HTML entities, removes "\n\n", \n" and "\r" and validates the string
+	public function generateManialinkId () {
+
+		$pool = array_merge(
+			range('0', '9'),
+			range('a', 'z'),
+			range('A', 'Z')
+		);
+		shuffle($pool);
+
+		$id = array();
+		for ($i = 1; $i <= 32; $i++) {
+			$id[] = $pool[mt_rand(0, count($pool)-1)];
+		}
+
+		return implode('', $id);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	// Converts `&`, `"`, `'`, `<`, `>` to HTML entities, removes "\n\n", \n" and "\r" and validates the string
 	public function handleSpecialChars ($string) {
 
-		$string = str_replace(
-				array(
-					'&',
-					'"',
-					"'",
-					'>',
-					'<'
-				),
-				array(
-					'&amp;',
-					'&quot;',
-					'&apos;',
-					'&gt;',
-					'&lt;'
-				),
-				$string
-		);
+		$string = $this->encodeEntities($string);
 		$string = $this->stripNewlines($string);
 		return $this->validateUTF8String($string);
 	}
@@ -102,36 +117,33 @@ class Helper {
 	*/
 
 	/**
-	 * http://sourcecookbook.com/en/recipes/8/function-to-slugify-strings-in-php
+	 * Based upon http://stackoverflow.com/a/40642103
 	 * This is a function to slugify (replace non-ASCII characters with ASCII characters) strings in PHP.
-	 * It tries to replace some characters like ñ or ç to a similar ASCII character (for example, it will transform a ñ to a n).
+	 * It tries to replace some characters to a similar ASCII character, e.g.:
+	 * "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöùúûüýÿ" will be changed to "AAAAAEAAAECEEEEIIIIDNOOOOOEUUUUEYssaaaaaeaaaeceeeeiiiidnoooooeuuuueyy"
 	 */
-	public function slugify ($string) {
-		// Remove unnecessary chars
-		$new = trim($this->stripColors($this->stripNewlines($this->stripBOM($string)), true));
-
-		// Replace non letter by "-"
-		$new = preg_replace('#[^\\pL]+#u', '-', $new);
-
-		// Transliterate
-		$new = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $new);
-		if ($new !== false) {
-			$new = iconv('UTF-8', 'US-ASCII//TRANSLIT//IGNORE', $string);
-		}
-
-		// Remove unwanted characters
-		$new = preg_replace('#[^-\w]+#', '', $new);
-
-		// Replace multiple "---" with single "-"
-		$new = preg_replace('#-{2,}#', '-', $new);
-
-		// Trim
-		$new = trim($new, '-');
-
-		if (empty($new)) {
-			return date('Y-m-d-H-i-s') .'_unnamed';
-		}
-		return $new;
+	public function slugify ($string, $delimiter = '-') {
+		return trim(
+			preg_replace('/[\s-]+/', $delimiter,
+				preg_replace('/[^A-Za-z0-9-]+/', $delimiter,
+					preg_replace('/[&]/', 'and',
+						preg_replace('/[\']/', '',
+							iconv('UTF-8', 'ASCII//TRANSLIT',
+								trim(
+									$this->stripStyles(
+										$this->stripNewlines(
+											$this->stripBOM($string)
+										),
+										true
+									)
+								)
+							)
+						)
+					)
+				)
+			),
+			$delimiter
+		);
 	}
 
 	/*
@@ -178,8 +190,9 @@ class Helper {
 		$xml .= '  <uptime>'. $this->server->networkstats['Uptime'] .'</uptime>'.LF;
 		$xml .= ' </dedicated>'.LF;
 		$xml .= ' <server>'.LF;
+		$xml .= '  <admin_contact>'. $this->settings['admin_contact'] .'</admin_contact>'.LF;
 		$xml .= '  <login>'. $this->server->login .'</login>'.LF;
-		$xml .= '  <name>'. $this->stripColors($this->server->name) .'</name>'.LF;
+		$xml .= '  <name>'. $this->stripStyles($this->server->name) .'</name>'.LF;
 		$xml .= '  <continent>'. $this->server->zone[0] .'</continent>'.LF;
 		$xml .= '  <country>'. $this->server->zone[1] .'</country>'.LF;
 		$xml .= '  <protected>'. ((!empty($this->server->options['Password'])) ? 'true' : 'false') .'</protected>'.LF;
@@ -205,23 +218,24 @@ class Helper {
 		$xml .= ' </server>'.LF;
 		$xml .= ' <current>'.LF;
 		$xml .= '  <map>'.LF;
+		$xml .= '   <uid>'. $this->server->maps->current->uid .'</uid>'.LF;
 		$xml .= '   <name>'. $this->handleSpecialChars($this->server->maps->current->name_stripped) .'</name>'.LF;
 		$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
 		$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
 		$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
 		$xml .= '   <authortime>'. $this->server->maps->current->author_time .'</authortime>'.LF;
-		$xml .= '   <goldtime>'. $this->server->maps->current->goldtime .'</goldtime>'.LF;
-		$xml .= '   <silvertime>'. $this->server->maps->current->silvertime .'</silvertime>'.LF;
-		$xml .= '   <bronzetime>'. $this->server->maps->current->bronzetime .'</bronzetime>'.LF;
+		$xml .= '   <goldtime>'. $this->server->maps->current->gold_time .'</goldtime>'.LF;
+		$xml .= '   <silvertime>'. $this->server->maps->current->silver_time .'</silvertime>'.LF;
+		$xml .= '   <bronzetime>'. $this->server->maps->current->bronze_time .'</bronzetime>'.LF;
 		$xml .= '   <mxurl>'. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .'</mxurl>'.LF;
 		$xml .= '  </map>'.LF;
 		$xml .= '  <players>'.LF;
 		foreach ($this->server->players->player_list as $player) {
 				$xml .= '   <player>'.LF;
-				$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripColors($player->nickname)) .'</nickname>'.LF;
+				$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripStyles($player->nickname)) .'</nickname>'.LF;
 				$xml .= '     <login>'. $player->login .'</login>'.LF;
 				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
-				$xml .= '     <ladder>'. $player->ladderrank .'</ladder>'.LF;
+				$xml .= '     <ladder>'. $player->ladder_rank .'</ladder>'.LF;
 				$xml .= '     <spectator>'. $this->bool2string($player->is_spectator) .'</spectator>'.LF;
 				$xml .= '   </player>'.LF;
 		}
@@ -231,20 +245,25 @@ class Helper {
 
 		// Store this information too.
 		if (!empty($this->settings['stripling_path'])) {
-			file_put_contents($this->settings['stripling_path'], $xml);
+			if (!@file_put_contents($this->settings['stripling_path'], $xml)) {
+				$this->logMessage('Could not write into "stripling" file ['. $this->settings['stripling_path'] .']!');
+			}
 		}
 
-		// Send and ignore response
-		$this->webaccess->request(
-			UASECO_WEBSITE .'/usagereport.php',				// URL
-			null,								// Callback
-			$xml,								// POST data
-			false,								// IsXmlRpc
-			100,								// KeepaliveMinTimeout
-			30,								// OpenTimeout
-			40,								// WaitTimeout
-			UASECO_NAME .'/'. UASECO_VERSION .' ('. UASECO_BUILD .')'	// UserAgent
-		);
+		try {
+			// Send and ignore response
+			$params = array(
+				'url'			=> UASECO_WEBSITE .'/usagereport.php',
+				'callback'		=> null,
+				'sync'			=> false,
+				'data'			=> $xml,
+				'user_agent'		=> USER_AGENT,
+			);
+			$this->webrequest->POST($params);
+		}
+		catch (Exception $exception) {
+			$this->console('[UASECO] webrequest->post(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+		}
 	}
 
 	/*
@@ -465,6 +484,7 @@ class Helper {
 		if ($message != '') {
 			// Replace all entities back to normal for chat.
 			$message = $this->decodeEntities($message);
+			$message = str_replace('»', '', $message);
 
 			if ($logins !== false) {
 				try {
@@ -661,7 +681,7 @@ class Helper {
 		// shift values up
 		$array = array_values($array);
 		return true;
-	}  // removeArrayElement
+	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -906,7 +926,10 @@ class Helper {
 
 	// Convert text string to boolean value
 	public function string2bool ($string) {
-		if (strtoupper($string) == 'TRUE') {
+		if (is_bool($string)) {
+			return $string;
+		}
+		else if (strtoupper($string) == 'TRUE') {
 			return true;
 		}
 		else if (strtoupper($string) == 'FALSE') {
@@ -924,8 +947,9 @@ class Helper {
 	*/
 
 	/**
-	 * Summary: Strips all display formatting from an input string, suitable for display
-	 *          within the game ('$$' escape pairs are preserved) and for logging
+	 * Summary: Strips all formatting from an input string, suitable for display
+	 *          within the game ('$$' escape pairs are preserved) and for logging,
+	 *          removes also $g, $t, $i, $<, $>, $z
 	 * Params : $input - The input string to strip formatting from
 	 *          $for_tm - Optional flag to double up '$' into '$$' (default, for TM) or not (for logs, etc)
 	 * Returns: The content portions of $input without formatting
@@ -944,7 +968,7 @@ class Helper {
 	 *                    http://www.tm-forum.com/viewtopic.php?p=183410#p183410
 	 * 2014-06-01 undef - added trim()
 	 */
-	public function stripColors ($input, $for_tm = true) {
+	public function stripStyles ($input, $for_tm = true) {
 
 		return trim(
 				//Replace all occurrences of a null character back with a pair of dollar
@@ -1003,7 +1027,7 @@ class Helper {
 	/**
 	 * Strips only size tags from TM strings.
 	 * "$w$af0Brat$n$fffwurst" will become "$af0Brat$fffwurst".
-	 * 2009-03-27 Xymph - derived from stripColors above
+	 * 2009-03-27 Xymph - derived from stripStyles above
 	 *                    http://www.tm-forum.com/viewtopic.php?f=127&t=20602
 	 * 2009-05-16 Slig  - extended to emit non-TM variant
 	 *                    http://www.tm-forum.com/viewtopic.php?p=153368#p153368
@@ -1223,7 +1247,7 @@ class Helper {
 			$current
 		);
 
-		return version_compare($wanted, $current, $operator);
+		return version_compare($wanted, $current, strtolower($operator));
 	}
 
 	/*
@@ -1263,7 +1287,7 @@ class Helper {
 	*/
 
 	// Checks if an operator is allowed to perform this ability
-	public function allowOpAbility ($ability) {
+	public function allowOperatorAbility ($ability) {
 
 		// Map to uppercase before checking list
 		$ability = strtoupper($ability);
@@ -1301,7 +1325,7 @@ class Helper {
 
 		// Check Operators & their abilities
 		if ($this->isOperator($player)) {
-			return $this->allowOpAbility($ability);
+			return $this->allowOperatorAbility($ability);
 		}
 
 		return false;
@@ -1430,7 +1454,7 @@ class Helper {
 	*/
 
 	// Checks if the given player login is in masteradmin list.
-	public function isMasterAdminL ($login) {
+	public function isMasterAdminByLogin ($login) {
 		if ($login != '' && isset($this->masteradmin_list['TMLOGIN'])) {
 			return in_array($login, $this->masteradmin_list['TMLOGIN']);
 		}
@@ -1446,7 +1470,7 @@ class Helper {
 	*/
 
 	// Checks if the given player login is in admin list.
-	public function isAdminL ($login) {
+	public function isAdminByLogin ($login) {
 		if ($login != '' && isset($this->admin_list['TMLOGIN'])) {
 			return in_array($login, $this->admin_list['TMLOGIN']);
 		}
@@ -1462,7 +1486,7 @@ class Helper {
 	*/
 
 	// Checks if the given player login is in operator list.
-	public function isOperatorL ($login) {
+	public function isOperatorByLogin ($login) {
 		// Check for operator list entry
 		if ($login != '' && isset($this->operator_list['TMLOGIN'])) {
 			return in_array($login, $this->operator_list['TMLOGIN']);
@@ -1479,8 +1503,8 @@ class Helper {
 	*/
 
 	// Checks if the given player login is in any admin tier.
-	public function isAnyAdminL ($login) {
-		return ($this->isMasterAdminL($login) || $this->isAdminL($login) || $this->isOperatorL($login));
+	public function isAnyAdminByLogin ($login) {
+		return ($this->isMasterAdminByLogin($login) || $this->isAdminByLogin($login) || $this->isOperatorByLogin($login));
 	}
 
 	/*
@@ -1693,7 +1717,8 @@ class Helper {
 		if (!@file_put_contents($adminops_file, $lists)) {
 			trigger_error('Could not write adminops file ['. $adminops_file .']!', E_USER_WARNING);
 			return false;
-		} else {
+		}
+		else {
 			return true;
 		}
 	}
@@ -1786,16 +1811,29 @@ class Helper {
 				$this->releaseEvent('onShutdown', null);
 
 				// Make sure the Dedicated-Server have the control
-				$this->client->query('ManualFlowControlEnable', false);
-				$this->client->query('ManualFlowControlProceed');
-
 				try {
-					// Clear all ManiaLinks
-					$this->client->query('SendHideManialinkPage');
+					$this->client->query('ManualFlowControlEnable', false);
+
+					try {
+						$this->client->query('ManualFlowControlProceed');
+
+						// Clear all ManiaLinks
+						try {
+							$this->client->query('SendHideManialinkPage');
+						}
+						catch (Exception $exception) {
+							$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): SendHideManialinkPage');
+						}
+
+					}
+					catch (Exception $exception) {
+						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): ManualFlowControlProceed');
+					}
 				}
 				catch (Exception $exception) {
-					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): SendHideManialinkPage');
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): ManualFlowControlEnable');
 				}
+
 
 				if (function_exists('xdebug_get_function_stack')) {
 					$this->logMessage(print_r(xdebug_get_function_stack()), true);
@@ -1914,10 +1952,10 @@ class Helper {
 			$this->logfile['handle'] = fopen($this->logfile['file'], 'wb+');
 		}
 		fwrite($this->logfile['handle'], $text);
-		if (strtoupper(substr(php_uname('s'), 0, 3)) !== 'WIN') {
+		if (OPERATING_SYSTEM === 'POSIX') {
 			chmod($this->logfile['file'], 0666);
 		}
-		else {
+		else if (OPERATING_SYSTEM === 'WINDOWS') {
 			// Echo to console on Windows
 			echo str_replace('»', '>', $text);
 		}

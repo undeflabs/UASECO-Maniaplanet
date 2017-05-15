@@ -2,13 +2,8 @@
 /*
  * Class: Locales
  * ~~~~~~~~~~~~~~
- * » Provides multilanguage support
+ * » Provides multilanguage support.
  *
- * ----------------------------------------------------------------------------------
- * Author:	askuri
- * Co-Authors:	undef.de
- * Date:	2015-12-30
- * Copyright:	2015 Martin Weber (askuri)
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -34,7 +29,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Locales {
+class Locales extends BaseClass {
 	public $playerlang_cache = array();				// Stores which player speaks which language | struct: [login => language, login2 => language2, ...]
 	public $locales;
 
@@ -47,6 +42,13 @@ class Locales {
 	public function __construct () {
 		global $aseco;
 
+		$this->setAuthor('askuri');
+		$this->setCoAuthors('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by Martin Weber (askuri)');
+		$this->setDescription('Provides multilanguage support.');
+
 		$aseco->registerEvent('onPlayerConnect',	array($this, 'onPlayerConnect'));
 		$aseco->registerEvent('onPlayerDisconnect',	array($this, 'onPlayerDisconnect'));
 
@@ -58,7 +60,16 @@ class Locales {
 				trigger_error('[LOCALES] Unable to parse '. $filename. '! Please check its syntax and the encoding (has to be UTF8!)', E_USER_ERROR);
 			}
 
-			$this->locales[$plugin] = json_decode(json_encode($xml), true); // Read with simplexml and use a trick to convert it to an array
+			// Remove comments
+			unset($xml->comment);
+
+			// Read with simplexml and use a trick to convert it to an array
+			$this->locales[$plugin] = json_decode(json_encode($xml), true);
+
+			// Remove more comments
+			foreach ($this->locales[$plugin] as $id => &$array) {
+				unset($array['comment']);
+			}
 		}
 	}
 

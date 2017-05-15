@@ -6,10 +6,6 @@
  * » Based upon chat.help.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/core/window.class.php
  *
  */
 
@@ -50,12 +43,15 @@ class PluginChatHelp extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Displays help for public chat commands.');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription(new Message('chat.help', 'plugin_description'));
+
+		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 
 		// Register chat-commands
-		// $this->registerChatCommand('help', 'chat_help', 'Displays help for available commands.', Player::PLAYERS);
 		$this->registerChatCommand('help', 'chat_help', new Message('chat.help', 'slash_help_description'), Player::PLAYERS);
 	}
 
@@ -104,36 +100,53 @@ class PluginChatHelp extends Plugin {
 			else {
 				if ($cc['rights'] & Player::PLAYERS) {
 					// Chat command is allowed for everyone
-					$allowed = true;
-				}
-				
-				if ($allowed == true) {
 					$message = $aseco->locales->handleMessage($cc['help'], $login);
-					$data[] = array('/'.$name, $message);
+					$data[] = array(
+						array(
+							'action'	=> 'PluginChatHelp?Action=ReleaseChatCommand&amp;command=/'. $name,		// Execute on click
+							'title'		=> '/'.$name,									// Display name
+						),
+						$message,
+					);
 				}
 			}
 		}
 
 		// Setup settings for Window
-		$settings_title = array(
-			'icon'	=> 'ManiaPlanetMainMenu,IconStore',
-		);
-		$settings_heading = array(
-			'textcolors'	=> array('FF5F', 'FFFF'),
+		$settings_styles = array(
+			'icon'			=> 'ManiaPlanetMainMenu,IconStore',
+			'textcolors'		=> array('FF5F', 'FFFF'),
 		);
 		$settings_columns = array(
-			'columns'	=> 2,
-			'widths'	=> array(25, 75),
-			'textcolors'	=> array('FF5F', 'FFFF'),
-			'heading'	=> array('Command', 'Description'),
+			'columns'		=> 2,
+			'widths'		=> array(25, 75),
+			'textcolors'		=> array('FF5F', 'FFFF'),
+			'heading'		=> array('Command', 'Description'),
 		);
-		
+		$settings_content = array(
+			'title'			=> (new Message('chat.help', 'help_window_title'))->finish($login),
+			'data'			=> $data,
+			'mode'			=> 'columns',
+		);
+
 		$window = new Window();
-		$window->setLayoutTitle($settings_title);
-		$window->setLayoutHeading($settings_heading);
+		$window->setStyles($settings_styles);
 		$window->setColumns($settings_columns);
-		$window->setContent((new Message('chat.help', 'help_window_title'))->finish($login), $data);
+		$window->setContent($settings_content);
 		$window->send($player, 0, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
+
+		if ($params['Action'] == 'ReleaseChatCommand') {
+			$aseco->releaseChatCommand($params['command'], $login);
+		}
 	}
 }
 

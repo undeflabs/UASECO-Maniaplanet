@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2017-04-23
+	Authors:	[EN] undef.de
+			[DE] undef.de
+	//-->
+
+	<windowlist_description>
+		<en>Handles actions for Manialink windows created with the Class Window.</en>
+		<de>Behandelt aktionen für Manialink-Fenster die mit der "Class Window" erstellt wurden.</de>
+	</windowlist_description>
+
+	<window_description>
+		<en>Provides a comfortable, configurable styled Manialink window.</en>
+		<de>Bietet ein komfortables und konfigurierbares Manialink-Fenster.</de>
+	</window_description>
+
+	<slash_lastwin>
+		<en>Re-opens the last closed window.</en>
+		<de>Öffnet das zuletzt geöffnete Fentser erneut.</de>
+	</slash_lastwin>
+</locales>

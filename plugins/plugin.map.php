@@ -8,10 +8,6 @@
  *   and plugin.rasp_nextmap.php from XAseco2/1.03 updated by Xymph and AssemblerManiac
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +23,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.rasp_jukebox.php
  *
  */
 
@@ -52,8 +45,10 @@ class PluginMap extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Times playing time of a map, provides map and time info and shows (file)names of current map\'s and song mod.');
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
@@ -78,7 +73,7 @@ class PluginMap extends Plugin {
 
 	public function chat_map ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$name = $aseco->stripColors($aseco->server->maps->current->name);
+		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
 			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
@@ -87,9 +82,9 @@ class PluginMap extends Plugin {
 			$name,
 			$aseco->server->maps->current->author,
 			$aseco->formatTime($aseco->server->maps->current->author_time),
-			$aseco->formatTime($aseco->server->maps->current->goldtime),
-			$aseco->formatTime($aseco->server->maps->current->silvertime),
-			$aseco->formatTime($aseco->server->maps->current->bronzetime),
+			$aseco->formatTime($aseco->server->maps->current->gold_time),
+			$aseco->formatTime($aseco->server->maps->current->silver_time),
+			$aseco->formatTime($aseco->server->maps->current->bronze_time),
 			$aseco->server->maps->current->cost
 		);
 
@@ -110,16 +105,16 @@ class PluginMap extends Plugin {
 		}
 
 		// Check for map's song
-		if ($aseco->server->maps->current->songfile) {
+		if ($aseco->server->maps->current->song_file) {
 			$message = $aseco->formatText($aseco->getChatMessage('SONG'),
-				$aseco->stripColors($aseco->server->maps->current->name),
-				$aseco->server->maps->current->songfile
+				$aseco->stripStyles($aseco->server->maps->current->name),
+				$aseco->server->maps->current->song_file
 			);
 
 			// Use only first parameter
 			$chat_parameter = explode(' ', $chat_parameter, 2);
-			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->songurl) {
-				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->songurl .']'. $aseco->server->maps->current->songurl .'$l';
+			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->song_url) {
+				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->song_url .']'. $aseco->server->maps->current->song_url .'$l';
 			}
 		}
 		else {
@@ -148,14 +143,14 @@ class PluginMap extends Plugin {
 		// Check for map's mod
 		if ($aseco->server->maps->current->modname) {
 			$message = $aseco->formatText($aseco->getChatMessage('MOD'),
-				$aseco->stripColors($aseco->server->maps->current->name),
-				$aseco->server->maps->current->modname,
-				$aseco->server->maps->current->modfile
+				$aseco->stripStyles($aseco->server->maps->current->name),
+				$aseco->server->maps->current->mod_name,
+				$aseco->server->maps->current->mod_file
 			);
 			// Use only first parameter
 			$chat_parameter = explode(' ', $chat_parameter, 2);
-			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->modurl) {
-				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->modurl .']'. $aseco->server->maps->current->modurl .'$l';
+			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->mod_url) {
+				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->mod_url .']'. $aseco->server->maps->current->mod_url .'$l';
 			}
 		}
 		else {
@@ -199,7 +194,7 @@ class PluginMap extends Plugin {
 		// Show chat message
 		$message = $aseco->formatText($aseco->getChatMessage('NEXT_MAP'),
 			$env,
-			$aseco->stripColors($next)
+			$aseco->stripStyles($next)
 		);
 		$aseco->sendChatMessage($message, $login);
 	}
@@ -212,7 +207,7 @@ class PluginMap extends Plugin {
 
 	public function chat_playtime ($aseco, $login, $chat_command, $chat_parameter) {
 
-		$name = $aseco->stripColors($aseco->server->maps->current->name);
+		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
 			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name . '$l';
 		}
@@ -261,7 +256,7 @@ class PluginMap extends Plugin {
 
 		// Check for divider message
 		if ($aseco->settings['show_curmap'] > 0) {
-			$name = $aseco->stripColors($map->name);
+			$name = $aseco->stripStyles($map->name);
 			if (isset($map->mx->error) && $map->mx->error == '') {
 				$name = '$l[http://' . $map->mx->prefix .'.mania-exchange.com/tracks/view/'. $map->mx->id .']'. $name . '$l';
 			}
@@ -289,7 +284,7 @@ class PluginMap extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onRestartMap ($aseco, $uid) {
+	public function onRestartMap ($aseco, $map) {
 
 		// Remember time this map starts playing
 		$aseco->server->maps->current->starttime = time();
@@ -308,7 +303,7 @@ class PluginMap extends Plugin {
 			return;
 		}
 
-		$name = $aseco->stripColors($aseco->server->maps->current->name);
+		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
 			$name = '$l[http://' . $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
@@ -341,13 +336,13 @@ class PluginMap extends Plugin {
 			// Log console message
 			if ($aseco->plugins['PluginRaspJukebox']->replays_total == 0) {
 				$aseco->console('[Map] The Map [{1}] finished after {2}',
-					$aseco->stripColors($aseco->server->maps->current->name, false),
+					$aseco->stripStyles($aseco->server->maps->current->name, false),
 					$playtime
 				);
 			}
 			else {
 				$aseco->console('[Map] The Map [{1}] finished after {2} ({3} replay{4}, total {5})',
-					$aseco->stripColors($aseco->server->maps->current->name, false),
+					$aseco->stripStyles($aseco->server->maps->current->name, false),
 					$playtime,
 					$aseco->plugins['PluginRaspJukebox']->replays_total,
 					($aseco->plugins['PluginRaspJukebox']->replays_total == 1 ? '' : 's'),

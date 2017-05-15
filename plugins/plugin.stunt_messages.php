@@ -5,10 +5,6 @@
  * » Displays Stunt messages at the top of the screen like "Free Style 360!!"...
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-23
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -56,8 +49,10 @@ class PluginStuntMessages extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-12');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays Stunt messages at the top of the screen like "Free Style 360!!"...');
 
 		// Register functions for events
@@ -65,10 +60,9 @@ class PluginStuntMessages extends Plugin {
 		$this->registerEvent('onPlayerStunt',		'onPlayerStunt');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
-		$this->registerEvent('onEndMap1',		'onEndMap1');
+		$this->registerEvent('onEndMapPrefix',		'onEndMapPrefix');
 		$this->registerEvent('onRestartMap',		'onRestartMap');
 		$this->registerEvent('onPlayerStartCountdown',	'onPlayerStartCountdown');
-//		$this->registerEvent('onPlayerRespawn',		'onPlayerRespawn');
 		$this->registerEvent('onPlayerGiveUp',		'onPlayerGiveUp');
 
 		$this->manialinkid				= 'StuntsMessage';
@@ -267,19 +261,9 @@ class PluginStuntMessages extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-//	public function onPlayerRespawn ($aseco, $login) {
-//		$this->hideWidget($login);
-//	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onPlayerGiveUp ($aseco, $login) {
+	public function onPlayerGiveUp ($aseco, $params) {
 		// Reset all points
-		$this->db[$login] = array(
+		$this->db[$params['login']] = array(
 			'total_points'	=> 0,
 			'total_bonus'	=> 0,
 			'total_penalty'	=> 0,
@@ -293,9 +277,9 @@ class PluginStuntMessages extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerStartCountdown ($aseco, $login) {
+	public function onPlayerStartCountdown ($aseco, $params) {
 		// Reset all points
-		$this->db[$login] = array(
+		$this->db[$params['login']] = array(
 			'total_points'	=> 0,
 			'total_bonus'	=> 0,
 			'total_penalty'	=> 0,
@@ -308,7 +292,7 @@ class PluginStuntMessages extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onBeginMap ($aseco, $params) {
 		$this->cleanDatabase();
 	}
 
@@ -328,8 +312,8 @@ class PluginStuntMessages extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $map) {
-		// TODO: Store into own database
+	public function onEndMapPrefix ($aseco, $map) {
+		// TODO: Store into own database table
 
 		foreach ($aseco->server->players->player_list as $player) {
 			$message = '{#record}» You made {#highlite}'. ($this->db[$player->login]['total_points'] + $this->db[$player->login]['total_bonus']) .'{#record} Stunt-Point'. ($this->db[$player->login]['total_points'] == 1 ? '' : 's');
@@ -356,8 +340,6 @@ class PluginStuntMessages extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=Login, [1]=StuntPoints, [2]=Combo, [3]=TotalStuntsScore, [4]=StuntFactor, [5]=StuntName,
-	// [6]=StuntAngle, [7]=IsStraightStunt, [8]=IsStuntReversed, [9]=IsMasterJump
 	public function onPlayerStunt ($aseco, $params) {
 
 		// 2014-05-23: Bug that sends stunts too, if the server is at score:
@@ -367,8 +349,8 @@ class PluginStuntMessages extends Plugin {
 		}
 
 		$stunt = array();
-		if ( isset($this->stunt_events[$params[5]]) ) {
-			$stunt[] = $this->stunt_events[$params[5]];
+		if (isset($this->stunt_events[$params['figure']])) {
+			$stunt[] = $this->stunt_events[$params['figure']];
 
 			// Setup "-" points
 			$positive_points = false;
@@ -378,92 +360,92 @@ class PluginStuntMessages extends Plugin {
 			$positive_points = true;
 
 			// Add "Combo"
-			if ($params[2] == 1) {
+			if ($params['combo'] == 1) {
 				$stunt[] = 'Chained';
 			}
-			else if ($params[2] > 1) {
-				$stunt[] = $params[2] .'X Chained';
+			else if ($params['combo'] > 1) {
+				$stunt[] = $params['combo'] .'X Chained';
 			}
 
 			// Add "StraightStunt", but not where containing already "Straight" in the figure
-			if ( ($aseco->string2bool($params[7]) == true) && (($params[5] != '::EStuntFigure::StraightJump') && ($params[5] != '::EStuntFigure::WreckStraightJump')) ) {
+			if ($params['is_straight'] == true && ($params['figure'] != '::EStuntFigure::StraightJump' && $params['figure'] != '::EStuntFigure::WreckStraightJump')) {
 				$stunt[] = 'Straight';
 			}
 
 			// Add "ReversedStunt"
-			if ($aseco->string2bool($params[8]) == true) {
+			if ($params['is_reverse'] == true) {
 				$stunt[] = 'Reversed';
 			}
 
 			// Add "MasterJump"
-			if ($aseco->string2bool($params[9]) == true) {
+			if ($params['is_masterjump'] == true) {
 				$stunt[] = 'Master';
 			}
 
 			// Add "StuntFigure"
-			if ($params[5] == '::EStuntFigure::StraightJump') {
+			if ($params['figure'] == '::EStuntFigure::StraightJump') {
 				// Rename "Straight" to others name to have more figures and fun =)
 				$range = 0;
-				if ($params[1] < 5) {
+				if ($params['points'] < 5) {
 					$range = 0;
 				}
-				else if ($params[1] < 10) {
+				else if ($params['points'] < 10) {
 					$range = 5;
 				}
-				else if ($params[1] < 15) {
+				else if ($params['points'] < 15) {
 					$range = 10;
 				}
-				else if ($params[1] < 20) {
+				else if ($params['points'] < 20) {
 					$range = 15;
 				}
-				else if ($params[1] >= 20) {
+				else if ($params['points'] >= 20) {
 					$range = 20;
 				}
-				$rename = $this->stunt_figures[$params[5]];
+				$rename = $this->stunt_figures[$params['figure']];
 				$stunt[] = str_replace('Straight', $this->jump_names[$range][mt_rand(0, count($this->jump_names[$range])-1)] , $rename);
 			}
 			else {
-				$stunt[] = $this->stunt_figures[$params[5]];
+				$stunt[] = $this->stunt_figures[$params['figure']];
 			}
 
 			// Add "StuntAngle"
-			if ($params[6] > 0) {
-				$stunt[] = $params[6];
+			if ($params['angle'] > 0) {
+				$stunt[] = $params['angle'];
 			}
 		}
 
 		// Build manialink
 		$points = array();
 		$bonus = '';
-		$xml = '<manialink id="'. $this->manialinkid .'" name="'. $this->manialinkid .'">';
-		$xml .= '<frame posn="'. $this->position['x'] .' '. $this->position['y'] .' '. $this->position['z'] .'" id="'. $this->manialinkid .'Frame">';
-		$xml .= '<label posn="0 0 0.01" sizen="60 2.2" textsize="3" style="TextButtonBig" scale="0.9" halign="center" textcolor="'. $this->text_colors['stunts'] .'" text="$S$O'. implode(' ', $stunt) .'!!" id="'. $this->manialinkid .'Name" hidden="true" opacity="0.0"/>';
-		if ($params[1] > 0) {
+		$xml = '<manialink id="'. $this->manialinkid .'" name="'. $this->manialinkid .'" version="3">';
+		$xml .= '<frame pos="'. $this->position['x'] .' '. $this->position['y'] .'" z-index="'. $this->position['z'] .'" id="'. $this->manialinkid .'Frame">';
+		$xml .= '<label pos="0 0" z-index="0.01" size="150 4.125" textsize="3" style="TextButtonBig" scale="0.9" halign="center" textcolor="'. $this->text_colors['stunts'] .'" text="$S$O'. implode(' ', $stunt) .'!!" id="'. $this->manialinkid .'Name" hidden="true" opacity="0.0"/>';
+		if ($params['points'] > 0) {
 			if ($positive_points == true) {
 				$textcolor = $this->text_colors['points'];
-				$this->db[$params[0]]['total_points'] += $params[1];
+				$this->db[$params['login']]['total_points'] += $params['points'];
 			}
 			else {
 				$textcolor = $this->text_colors['penalty'];
-				$this->db[$params[0]]['total_points'] -= $params[1];
-				if ($this->db[$params[0]]['total_points'] < 0) {
-					$this->db[$params[0]]['total_points'] = 0;
+				$this->db[$params['login']]['total_points'] -= $params['points'];
+				if ($this->db[$params['login']]['total_points'] < 0) {
+					$this->db[$params['login']]['total_points'] = 0;
 				}
-				$this->db[$params[0]]['total_penalty'] += $params[1];
+				$this->db[$params['login']]['total_penalty'] += $params['points'];
 			}
 
 			// Add "StuntPoints"
-			$points[] = (($positive_points == true) ? '+' : '-') . $params[1] .' '. (($params[1] == 1) ? 'point' : 'points');
+			$points[] = (($positive_points == true) ? '+' : '-') . $params['points'] .' '. (($params['points'] == 1) ? 'point' : 'points');
 
 			// Add "StuntFactor", but only on a higher amount of points
-			if ($params[1] > 10 && $params[4] > 1 && $positive_points == true) {
-				$sum = (ceil($params[1] * $params[4]) - $params[1]);
+			if ($params['points'] > 10 && $params['factor'] > 1 && $positive_points == true) {
+				$sum = (ceil($params['points'] * $params['factor']) - $params['points']);
 				$bonus = '+'. $sum .' Bonus '. (($sum == 1) ? 'Point' : 'Points') .'!!';
-				$this->db[$params[0]]['total_bonus'] += $sum;
+				$this->db[$params['login']]['total_bonus'] += $sum;
 			}
 		}
-		$xml .= '<label posn="0 -2.3 0.01" sizen="50 2.2" textsize="2" scale="0.8" style="TextButtonNavBack" halign="center" textcolor="'. $textcolor .'" text="$S'. implode(' ', $points) .'" id="'. $this->manialinkid .'Points" hidden="true" opacity="0.0"/>';
-		$xml .= '<label posn="0 -4 0.01" sizen="50 2.2" textsize="2" scale="0.6" style="TextButtonNavBack" halign="center" textcolor="'. $this->text_colors['bonus'] .'" text="$S'. $bonus .'" id="'. $this->manialinkid .'Bonus" hidden="true" opacity="0.0"/>';
+		$xml .= '<label pos="0 -4.25" z-index="0.01" size="125 4.125" textsize="2" scale="0.8" style="TextButtonNavBack" halign="center" textcolor="'. $textcolor .'" text="$S'. implode(' ', $points) .'" id="'. $this->manialinkid .'Points" hidden="true" opacity="0.0"/>';
+		$xml .= '<label pos="0 -7.5" z-index="0.01" size="125 4.125" textsize="2" scale="0.6" style="TextButtonNavBack" halign="center" textcolor="'. $this->text_colors['bonus'] .'" text="$S'. $bonus .'" id="'. $this->manialinkid .'Bonus" hidden="true" opacity="0.0"/>';
 		$xml .= '</frame>';
 $maniascript = <<<EOL
 <script><!--
@@ -495,9 +477,9 @@ Void StuntsMessageAnimateOut () {
 		StuntsMessageBonus.Opacity -= 0.05;
 
 		// ScrollDown
-		StuntsMessageName.RelativePosition.Y -= 0.25;
-		StuntsMessagePoints.RelativePosition.Y -= 0.25;
-		StuntsMessageBonus.RelativePosition.Y -= 0.25;
+		StuntsMessageName.RelativePosition_V3.Y -= 0.25;
+		StuntsMessagePoints.RelativePosition_V3.Y -= 0.25;
+		StuntsMessageBonus.RelativePosition_V3.Y -= 0.25;
 		yield;
 	}
 }
@@ -508,26 +490,26 @@ Void StuntsMessageAnimateIn () {
 	declare StuntsMessagePoints	<=> (Page.GetFirstChild("{$this->manialinkid}Points") as CMlLabel);
 	declare StuntsMessageBonus	<=> (Page.GetFirstChild("{$this->manialinkid}Bonus") as CMlLabel);
 	declare Real FadeSteps		= 0.05;
-	declare Real EndPosnY		= StuntsMessageFrame.RelativePosition.Y;
+	declare Real EndPosnY		= StuntsMessageFrame.RelativePosition_V3.Y;
 
 	// Set frame at top
-	StuntsMessageFrame.RelativePosition.Y = 86.0;
+	StuntsMessageFrame.RelativePosition_V3.Y = 86.0;
 
 	// Set visible
 	StuntsMessageName.Visible = True;
 	StuntsMessagePoints.Visible = True;
 	StuntsMessageBonus.Visible = True;
 
-	declare Real MovementSteps = ((StuntsMessageFrame.RelativePosition.Y - EndPosnY) / (1.0 / FadeSteps));
+	declare Real MovementSteps = ((StuntsMessageFrame.RelativePosition_V3.Y - EndPosnY) / (1.0 / FadeSteps));
 	while (StuntsMessageName.Opacity < 1.0) {
 		if ((StuntsMessageName.Opacity + FadeSteps) > 1.0) {
 			StuntsMessageName.Opacity = 1.0;
 			StuntsMessagePoints.Opacity = 1.0;
 			StuntsMessageBonus.Opacity = 1.0;
 
-			StuntsMessageName.RelativePosition.Y -= MovementSteps;
-			StuntsMessagePoints.RelativePosition.Y -= MovementSteps;
-			StuntsMessageBonus.RelativePosition.Y -= MovementSteps;
+			StuntsMessageName.RelativePosition_V3.Y -= MovementSteps;
+			StuntsMessagePoints.RelativePosition_V3.Y -= MovementSteps;
+			StuntsMessageBonus.RelativePosition_V3.Y -= MovementSteps;
 			break;
 		}
 
@@ -537,9 +519,9 @@ Void StuntsMessageAnimateIn () {
 		StuntsMessageBonus.Opacity += FadeSteps;
 
 		// ScrollDown
-		StuntsMessageName.RelativePosition.Y -= MovementSteps;
-		StuntsMessagePoints.RelativePosition.Y -= MovementSteps;
-		StuntsMessageBonus.RelativePosition.Y -= MovementSteps;
+		StuntsMessageName.RelativePosition_V3.Y -= MovementSteps;
+		StuntsMessagePoints.RelativePosition_V3.Y -= MovementSteps;
+		StuntsMessageBonus.RelativePosition_V3.Y -= MovementSteps;
 		yield;
 	}
 }
@@ -567,7 +549,7 @@ main() {
 EOL;
 		$xml .= $maniascript;
 		$xml .= '</manialink>';
-		$aseco->sendManialink($xml, $params[0], 0);
+		$aseco->sendManialink($xml, $params['login'], 0);
 	}
 
 	/*
@@ -579,7 +561,7 @@ EOL;
 	public function hideWidget ($login) {
 		global $aseco;
 
-		$xml = '<manialink id="'. $this->manialinkid .'"></manialink>';
+		$xml = '<manialink id="'. $this->manialinkid .'" version="3"></manialink>';
 		$aseco->sendManialink($xml, $login, 0);
 	}
 

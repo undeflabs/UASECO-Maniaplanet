@@ -22,9 +22,9 @@
 	</masteradmins>
 
 	<!--
-	MySQL Server Settings for mysqli connection
+	Database Server settings
 	//-->
-	<mysql>
+	<dbms>
 		<host>localhost</host>
 		<login>LOGIN</login>
 		<password>PASSWORD</password>
@@ -32,7 +32,7 @@
 
 		<!-- The ServerLogin is a good prefix to identify, but you should write it lower case and remove all underscore (max. 64 chars, incl. the default names like "maphistory") -->
 		<table_prefix>uaseco_</table_prefix>
-	</mysql>
+	</dbms>
 
 	<!--
 	Set to contact (email, ICQ, etc) to show in /server command, leave empty to skip entry
@@ -58,16 +58,18 @@
 	<!--
 	Full path in where the "ManiaPlanetServer" or "ManiaPlanetServer.exe" is located,
 	required for the checking routine of the dedicated server scripts.
-	E.g.: /home/user/bin/GameServer/
+	E.g.: "/home/user/bin/GameServer/"
 	//-->
-	<dedicated_installation>PATH_TO_DEDICATED_SERVER</dedicated_installation>
+	<dedicated_installation>/path/to/the/GameServer</dedicated_installation>
 
 	<!--
-	Maplist used by the dedicated server, typical located in
-	"UserData/Maps/MatchSettings/"
+	Maplist used by the dedicated server, typical located in "UserData/Maps/MatchSettings/"
 	//-->
-	<default_maplist>TMCanyonA.txt</default_maplist>
+	<default_maplist>maplist.txt</default_maplist>
 	<writemaplist_random>true</writemaplist_random>
+
+	<!-- If you use an external tool (e.g. "AdminServ") to add maps to the dedicated server, then have to set this to 'true', otherwise set this to 'false'. -->
+	<automatic_refresh_maplist>false</automatic_refresh_maplist>
 
 	<!--
 	Specifies how large the Map(List) history buffer is.
@@ -75,9 +77,9 @@
 	<max_history_entries>20</max_history_entries>
 
 	<!--
-	Setup a path into the image from each Map will be stored.
+	Setup a path where the image from each map will be stored (for later use in e.g. Records-Eyepiece).
 	//-->
-	<mapimages_path>cache/mapimages/</mapimages_path>
+	<mapimages_path>/path/to/the/mapimages/</mapimages_path>
 
 	<auto_admin_addip>false</auto_admin_addip>
 	<adminops_file>config/adminops.xml</adminops_file>
@@ -88,6 +90,8 @@
 	-->
 	<blacklist_file>blacklist.txt</blacklist_file>
 	<guestlist_file>guestlist.txt</guestlist_file>
+
+
 
 	<log_all_chat>false</log_all_chat>
 	<chatpmlog_times>true</chatpmlog_times>
@@ -150,7 +154,7 @@
 
 	<messages>
 		<!-- init messages -->
-		<startup>{#server}» {#highlite}UASECO/{1}{#server} running on {#highlite}{2}{#server}:{#highlite}{3}{#server}</startup>
+		<startup>{#server}» {#highlite}UASECO/{1}{#server} build {#highlite}{2}{#server} running on {#highlite}{3}{#server}:{#highlite}{4}{#server}</startup>
 		<welcome>{#server}» {#welcome}Welcome {#highlite}{1}{#welcome} to {#highlite}{2}$z$s{br}{#server}» {#welcome}This server uses {#highlite}UASECO/{3}{#welcome} to manage your records.</welcome>
 		<warning>$s{#welcome}This is an administrative warning.{br}{br}$gWhatever you wrote is against our server's{br}policy. Not respecting other players, or{br}using offensive language might result in a{br}{#welcome}kick, or ban {#message}the next time.{br}{br}$gThe server administrators.</warning>
 
@@ -204,13 +208,18 @@
 		<song>{#server}» Map {#highlite}{1} {#server}plays song: {#highlite}{2}</song>
 		<mod>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</mod>
 		<planets>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets!</planets>
-		<time>{#server}» {#interact}Current Server Time: {#highlite}$i {1}{#interact} on {#highlite}$i {2}</time>
 		<round>{#server}» $n{#message}Round {#highlite}{1}{#message}: </round>
 		<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>
 	</messages>
 
 
 
+
+
+
+
+	<!-- Show or hide the load status widget while UASECO startup (slows down start-up a little bit) -->
+	<show_load_status>false</show_load_status>
 
 	<!--
 	Setup a timeout to make sure that UASECO or a Plugin does not hang,
@@ -237,17 +246,14 @@
 	<developer_options>
 		<debug>false</debug>
 
-		<!-- Show or hide the load status widget while UASECO startup -->
-		<show_load_status>true</show_load_status>
-
 		<log_events>
 			<!-- Log events like '[Event] Begin Map' -->
-			<common>false</common>
+			<common>true</common>
 
 			<!--
 			Log events like '[EventType] Releasing "onPlayerConnect"',
-			without "onMainLoop", "onEverySecond", "onModeScriptCallbackArray"
-			and "onModeScriptCallback", but only if a plugin is listening
+			without "onMainLoop", "onEverySecond" and "onModeScriptCallbackArray",
+			but only if a plugin is listening
 			for this event.
 			//-->
 			<registered_types>false</registered_types>
@@ -258,5 +264,11 @@
 			//-->
 			<all_types>false</all_types>
 		</log_events>
+
+		<!-- For the need/want to force the maplist to be updated -->
+		<force_maplist_update>false</force_maplist_update>
+
+		<!-- On start-up write the the documentation into "docs/gamemodes/" and "docs/dedicated-server/" -->
+		<write_documentation>false</write_documentation>
 	</developer_options>
 </settings>

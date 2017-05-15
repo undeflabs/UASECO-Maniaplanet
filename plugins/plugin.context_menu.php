@@ -6,12 +6,6 @@
  * http://www.undef.name/UASECO/Context-Menu.php
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Version:		1.0.0
- * Date:		2015-08-19
- * System:		UASECO/0.9.5+
- * Game:		ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -54,8 +45,10 @@ class PluginContextMenu extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-12');
+		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription('A configurable Right-Mouse-Button-Menu (Context-Menu).');
 
 		$this->registerEvent('onSync',				'onSync');
@@ -72,8 +65,8 @@ class PluginContextMenu extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[ContextMenu] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
@@ -196,16 +189,16 @@ class PluginContextMenu extends Plugin {
 		global $aseco;
 
 		$total_entries = 1;
-		$xml  = '<manialink id="ManialinkContextMenu" name="ContextMenu" version="2">';
-		$xml .= '<quad posn="-160 90 34" sizen="320 180" bgcolor="00000055" id="ContextMenuLightbox"/>';
-		$xml .= '<frame posn="0 0 35" id="ContextMenu">';
+		$xml  = '<manialink id="ManialinkContextMenu" name="ContextMenu" version="3">';
+		$xml .= '<quad pos="-160 90" z-index="34" size="320 180" bgcolor="00000055" id="ContextMenuLightbox"/>';
+		$xml .= '<frame pos="0 0" z-index="35" id="ContextMenu">';
 
 		foreach ($this->config['entries']['group'] as $group) {
 			if (isset($group['title'])) {
-				$xml .= '<quad posn="0 0 0.002" sizen="48.75 %context_menu_height%" bgcolor="555566AA"/>';
-				$xml .= '<quad posn="0.5 -0.5 0.003" sizen="47.75 3.75" bgcolor="0099FFDD"/>';
-				$xml .= '<quad posn="43.5 -0.6 0.004" sizen="4 3.6" style="Icons128x32_1" substyle="Close" id="ContextMenuClose'. str_replace(' ', '', $group['title']) .'" scriptevents="1"/>';
-				$xml .= '<label posn="2 -1.2 0.004" sizen="44.3 3" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="$O'. (string)$group['title'] .'"/>';
+				$xml .= '<quad pos="0 0" z-index="0.002" size="48.75 %context_menu_height%" bgcolor="555566AA"/>';
+				$xml .= '<quad pos="0.5 -0.5" z-index="0.003" size="47.75 3.75" bgcolor="0099FFDD"/>';
+				$xml .= '<quad pos="43.5 -0.6" z-index="0.004" size="4 3.6" style="Icons128x32_1" substyle="Close" id="ContextMenuClose'. str_replace(' ', '', $group['title']) .'" scriptevents="1"/>';
+				$xml .= '<label pos="2 -1.2" z-index="0.004" size="44.3 3" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="$O'. (string)$group['title'] .'"/>';
 			}
 
 			$offset = 0.6;
@@ -234,7 +227,7 @@ class PluginContextMenu extends Plugin {
 					else if (substr($entry['action'], 0, 1) == '/') {
 	 					$action = ' data-chatcmd="<![CDATA[PluginContextMenu?Action=executeAction&amp;Call='. (string)$entry['action'] .']]>"';
 					}
-					$xml .= '<quad posn="0.5 -'. ($menu_height + $offset) .' 0.003" sizen="47.75 3.75"'. $action .' bgcolor="00000033" bgcolorfocus="88AA0077" id="ContextMenuActionEntry'. $total_entries .'" scriptevents="1"/>';
+					$xml .= '<quad pos="0.5 -'. ($menu_height + $offset) .'" z-index="0.003" size="47.75 3.75"'. $action .' bgcolor="00000033" bgcolorfocus="88AA0077" id="ContextMenuActionEntry'. $total_entries .'" scriptevents="1"/>';
 
 					// Entry icon
 					$icon[0] = false;
@@ -242,16 +235,16 @@ class PluginContextMenu extends Plugin {
 						$icon = explode('|', (string)$entry['icon']);
 					}
 					if (substr($icon[0], 0, 7) == 'http://') {
-						$xml .= '<quad posn="0.9 -'. ($menu_height + $offset) .' 0.004" sizen="3.8 3.8" image="'. $icon[0] .'"/>';
+						$xml .= '<quad pos="0.9 -'. ($menu_height + $offset) .'" z-index="0.004" size="3.8 3.8" image="'. $icon[0] .'"/>';
 					}
 					else if ($icon[0] !== false) {
-						$xml .= '<quad posn="0.9 -'. ($menu_height + $offset) .' 0.004" sizen="3.8 3.8" style="'. $icon[0] .'" substyle="'. $icon[1] .'"/>';
+						$xml .= '<quad pos="0.9 -'. ($menu_height + $offset) .'" z-index="0.004" size="3.8 3.8" style="'. $icon[0] .'" substyle="'. $icon[1] .'"/>';
 					}
-					$xml .= '<label posn="5.5 -'. ($menu_height + $offset + 0.7) .' 0.004" sizen="42.75 3" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="'. (string)$entry['title'] .'"/>';
+					$xml .= '<label pos="5.5 -'. ($menu_height + $offset + 0.7) .'" z-index="0.004" size="42.75 3" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="'. (string)$entry['title'] .'"/>';
 
 //					if (count($entry) > 0) {
 //						// Submenu indicator
-//						$xml .= '<quad posn="44 -'. ($menu_height + $offset + 0.635) .' 0.003" sizen="3.8 2.53" style="Icons64x64_1" substyle="ShowRight2" colorize="5BF"/>';
+//						$xml .= '<quad pos="44 -'. ($menu_height + $offset + 0.635) .'" z-index="0.003" size="3.8 2.53" style="Icons64x64_1" substyle="ShowRight2" colorize="5BF"/>';
 //					}
 
 					$menu_height += 4;
@@ -287,8 +280,8 @@ main () {
 		}
 
 		if (MouseRightButton == True) {
-			FrameContextMenu.RelativePosition.X = MouseX;
-			FrameContextMenu.RelativePosition.Y = MouseY;
+			FrameContextMenu.RelativePosition_V3.X = MouseX;
+			FrameContextMenu.RelativePosition_V3.Y = MouseY;
 			FrameContextMenu.Visible = True;
 			QuadContextMenuLightbox.Visible = True;
 

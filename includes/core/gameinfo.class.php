@@ -6,10 +6,6 @@
  * » Based upon types.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-22
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +22,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -38,7 +31,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Gameinfo {
+class Gameinfo extends BaseClass {
 	public $mode;
 	public $script;
 
@@ -72,6 +65,12 @@ class Gameinfo {
 	*/
 
 	public function __construct ($aseco, $clone = false) {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-13');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Provides information to the current game which is running.');
 
 		$info = $aseco->client->query('GetCurrentGameInfo', 1);
 		if ($info['GameMode'] !== 0) {
@@ -133,12 +132,12 @@ class Gameinfo {
 
 
 		// ModeBase
-		$this->modebase['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
-		$this->modebase['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
+//		$this->modebase['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
+//		$this->modebase['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
 		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
 		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
 		$this->modebase['WarmUpDuration']	= $modescript['settings']['S_WarmUpDuration'];
-		$this->modebase['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
+//		$this->modebase['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
 
 
 		// http://doc.maniaplanet.com/dedicated-server/settings-list.html
@@ -190,7 +189,6 @@ class Gameinfo {
 
 			$this->team['MaxPointsPerRound']		= $modescript['settings']['S_MaxPointsPerRound'];
 			$this->team['PointsGap']			= $modescript['settings']['S_PointsGap'];
-			$this->team['UsePlayerClublinks']		= $modescript['settings']['S_UsePlayerClublinks'];
 		}
 		else if ($this->mode == self::LAPS) {
 			// Laps
@@ -239,7 +237,6 @@ class Gameinfo {
 			$this->chase['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->chase['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
 			$this->chase['DisplayWarning']			= $modescript['settings']['S_DisplayWarning'];
-			$this->chase['UsePlayerClublinks']		= $modescript['settings']['S_UsePlayerClublinks'];
 			$this->chase['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
 			$this->chase['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
 			$this->chase['CompetitiveMode']			= $modescript['settings']['S_CompetitiveMode'];

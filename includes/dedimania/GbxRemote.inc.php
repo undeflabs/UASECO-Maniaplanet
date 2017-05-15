@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
 
+// 2017-02-03: Added memleak fixes presented by Bueddl: http://www.tm-forum.com/viewtopic.php?p=231206#p231206
 // 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
 
 /*
@@ -217,6 +218,7 @@ class IXR_Message {
 			return false;
 		}
 		xml_parser_free($this->_parser);
+		unset($this->_parser);
 		// Grab the error messages, if any
 		if ($this->messageType == 'fault') {
 			$this->faultCode = $this->params[0]['faultCode'];

@@ -5,10 +5,6 @@
  * » Customize the Quit-Dialog when a Player wants to leave the server.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-23
- * Copyright:	2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -50,8 +43,10 @@ class PluginCustomizeQuitDialog extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-08');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Customize the Quit-Dialog when a Player wants to leave the server.');
 
 		$this->registerEvent('onSync', 'onSync');

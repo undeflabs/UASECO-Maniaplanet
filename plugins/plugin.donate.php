@@ -6,10 +6,6 @@
  * » Based upon plugin.donate.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-09-09
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -55,8 +48,10 @@ class PluginDonate extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-12');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Processes planet donations to and payments from the server.');
 
 		$this->registerEvent('onSync',				'onSync');
@@ -158,7 +153,7 @@ class PluginDonate extends Plugin {
 				while ($row = $res->fetch_object()) {
 					$nickname = $row->Nickname;
 					if (!$aseco->settings['lists_colornicks']) {
-						$nickname = $aseco->stripColors($nickname);
+						$nickname = $aseco->stripStyles($nickname);
 					}
 					$dons[] = array(
 						$i .'.',
@@ -170,24 +165,28 @@ class PluginDonate extends Plugin {
 
 
 				// Setup settings for Window
-				$settings_title = array(
-					'icon'	=> 'Icons128x128_1,Coppers',
-				);
-				$settings_heading = array(
-					'textcolors'	=> array('FFFF', 'FFFF', 'FFFF'),
+				$settings_styles = array(
+					'icon'			=> 'Icons128x128_1,Coppers',
+					'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 				);
 				$settings_columns = array(
-					'columns'	=> 4,
-					'widths'	=> array(11, 22, 67),
-					'halign'	=> array('right', 'right', 'left'),
-					'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
-					'heading'	=> array('#', 'Planets', 'Player'),
+					'columns'		=> 4,
+					'widths'		=> array(11, 22, 67),
+					'halign'		=> array('right', 'right', 'left'),
+					'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
+					'heading'		=> array('#', 'Planets', 'Player'),
 				);
+				$settings_content = array(
+					'title'			=> 'Current TOP 100 Donators',
+					'data'			=> $dons,
+					'about'			=> 'DONATE/'. $this->getVersion(),
+					'mode'			=> 'columns',
+				);
+
 				$window = new Window();
-				$window->setLayoutTitle($settings_title);
-				$window->setLayoutHeading($settings_heading);
+				$window->setStyles($settings_styles);
 				$window->setColumns($settings_columns);
-				$window->setContent('Current TOP 100 Donators', $dons);
+				$window->setContent($settings_content);
 				$window->send($player, 0, false);
 			}
 			else {
@@ -252,20 +251,42 @@ class PluginDonate extends Plugin {
 	public function display_payment ($login, $label) {
 		global $aseco;
 
-		// Build manialink
-		$xml = '<manialink id="DonateConfirmationWindow" name="DonateConfirmationWindow">';
-		$xml .= '<frame pos="0.4 0.15 0">';
-		$xml .= '<quad size="0.8 0.3" style="Bgs1" substyle="BgTitle2"/>';
-		$xml .= '<label pos="-0.04 -0.04 -0.2" textsize="2" text="$i$159Initiating payment from server $fff'. $aseco->server->name .'$z $fff:"/>';
-		$xml .= '<label pos="-0.04 -0.08 -0.2" textsize="2" text="$i$159Label: '. $aseco->formatColors($label) .'"/>';
-		$xml .= '<label pos="-0.04 -0.12 -0.2" textsize="2" text="$159Would you like to pay now?"/>';
-		$xml .= '<label pos="-0.22 -0.19 -0.2" halign="center" style="CardButtonMedium" text="Yes" action="PluginDonate?Action=Payout&Answer=Confirm"/>';
-		$xml .= '<label pos="-0.58 -0.19 -0.2" halign="center" style="CardButtonMedium" text="No" action="PluginDonate?Action=Payout&Answer=Cancel"/>';
-		$xml .= '</frame>';
-		$xml .= '</manialink>';
+		// Get Player object
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
 
-		// Disable dialog once clicked
-		$aseco->addManialink($xml, $login, 0, true);
+		// Setup the styles
+		$settings_style = array(
+			'textcolor'		=> '09FF',
+			'icon'			=> 'Icons64x64_1,Outbox',
+		);
+
+
+		// Build the buttons
+		$buttons = array(
+			array(
+				'title'		=> 'Yes',
+				'action'	=> 'PluginDonate?Action=Payout&Answer=Confirm',
+			),
+			array(
+				'title'		=> 'No',
+				'action'	=> 'PluginDonate?Action=Payout&Answer=Cancel',
+			),
+		);
+
+		// Setup content
+		$settings_content = array(
+			'title'			=> 'Initiating payment from server "'. $aseco->stripStyles($aseco->server->name) .'"',
+			'message'		=> $label . LF .'Would you like to pay now?',
+			'buttons'		=> $buttons,
+		);
+
+		// Create the Dialog
+		$dialog = new Dialog();
+		$dialog->setStyles($settings_style);
+		$dialog->setContent($settings_content);
+		$dialog->send($player);
 	}
 
 	/*

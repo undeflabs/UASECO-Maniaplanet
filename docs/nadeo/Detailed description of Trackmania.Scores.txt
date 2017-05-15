@@ -1,0 +1,19 @@
+﻿https://forum.maniaplanet.com/viewtopic.php?p=279260#p279260
+Eole » 04 Apr 2017, 11:27
+~~~~~~~~~~~~~~~~~~~~~~~~~
+The Nadeo game modes scripts are divided into several parts: Match > Maps > Rounds > Turns. A match is played on one or several maps,
+a map is composed of one or several rounds and a round can be further divided into one or several turns. Depending on the modes the
+granularity will be more or less used.
+
+The scores are tied to this subdivision system. As each modes can have very different scoring systems, the points sent in the
+callback can vary but the general philosophy is the following:
+
+ - The "matchpoints" represent a player or team points cumulated over several maps. They are reset when the match ends. eg:
+   in a BO5 teams match, the match points could be 3-2.
+   In the cup mode the match points are the points cumulated by the players since the beginning of the match over several maps.
+
+ - The "mappoints" represent the points a player cumulated since the beginning of the map. They are reset at the end of each map.
+   eg: in Rounds mode, these are the points you cumulate until you reach the limit and win the map.
+
+ - The "roundpoints" are the points won during the round. They are reset at the end of each round. eg: in Rounds mode,
+   these are the points you score at the end of the race: 10,6,4,3,...

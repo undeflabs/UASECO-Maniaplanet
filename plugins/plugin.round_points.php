@@ -6,10 +6,6 @@
  * » Based upon plugin.rpoints.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-23
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/core/window.class.php
- *  - plugins/plugin.modescript_handler.php
  *
  */
 
@@ -53,13 +45,16 @@ class PluginRoundPoints extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-26');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0',	null);
 
-		$this->registerEvent('onSync',			'onSync');
+		$this->registerEvent('onSync',				'onSync');
+		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 
 		$this->registerChatCommand('setrpoints',	'chat_setrpoints',	'Sets custom Rounds points (see: /setrpoints help)',	Player::ADMINS);
 		$this->registerChatCommand('rpoints',		'chat_rpoints',		'Shows current Rounds points system.',			Player::PLAYERS);
@@ -112,7 +107,7 @@ class PluginRoundPoints extends Plugin {
 
 				try {
 					// Set new custom points
-					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
 					$aseco->console('[RoundPoints] Setup default rounds points: "{1}" -> {2}',
 						$this->rounds_points[$system]['label'],
 						implode(',', $this->rounds_points[$system]['points'])
@@ -134,7 +129,7 @@ class PluginRoundPoints extends Plugin {
 			}
 			else if ($system == '') {
 				try {
-					$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
 				}
 				catch (Exception $exception) {
 					$aseco->console('[RoundPoints] Setting modescript default rounds points: {1} Error: {2}', $points, $exception->getMessage());
@@ -145,7 +140,7 @@ class PluginRoundPoints extends Plugin {
 			}
 
 
-			// Convent string (string are required by 'Rounds_SetPointsRepartition') back to int
+			// Convent string (string are required by 'Trackmania.SetPointsRepartition') back to int
 			foreach ($points as &$num) {
 				settype($num, 'int');
 			}
@@ -163,6 +158,19 @@ class PluginRoundPoints extends Plugin {
 				}
 				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
 			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
+
+		if ($params['Action'] == 'ReleaseChatCommand') {
+			$aseco->releaseChatCommand($params['command'], $login);
 		}
 	}
 
@@ -237,52 +245,67 @@ class PluginRoundPoints extends Plugin {
 			$data[] = array('',				'must be at least two values with no spaces');
 			$data[] = array('/setrpoints off',		'Disables custom points system');
 
+
 			// Setup settings for Window
-			$settings_title = array(
-				'icon'	=> 'Icons64x64_1,TrackInfo',
-			);
-			$settings_heading = array(
-				'textcolors'	=> array('FF5F', 'FFFF'),
+			$settings_styles = array(
+				'icon'			=> 'Icons64x64_1,TrackInfo',
+				'textcolors'		=> array('FF5F', 'FFFF'),
 			);
 			$settings_columns = array(
-				'columns'	=> 1,
-				'widths'	=> array(30, 70),
-				'textcolors'	=> array('FF5F', 'FFFF'),
-				'heading'	=> array('Command', 'Description'),
+				'columns'		=> 1,
+				'widths'		=> array(30, 70),
+				'textcolors'		=> array('FF5F', 'FFFF'),
+				'heading'		=> array('Command', 'Description'),
+			);
+			$settings_content = array(
+				'title'			=> 'Help for /setrpoints',
+				'data'			=> $data,
+				'about'			=> 'ROUND POINTS/'. $this->getVersion(),
+				'mode'			=> 'columns',
 			);
 
 			$window = new Window();
-			$window->setLayoutTitle($settings_title);
-			$window->setLayoutHeading($settings_heading);
+			$window->setStyles($settings_styles);
 			$window->setColumns($settings_columns);
-			$window->setContent('Help for /setrpoints', $data);
+			$window->setContent($settings_content);
 			$window->send($player, 0, false);
 		}
 		else if ($chat_parameter == 'list') {
 			$data = array();
-			foreach ($this->rounds_points as $tag => $points) {
-				$data[] = array($tag, $points[0], implode(', ', $points[1]) .', ...');
+			foreach ($this->rounds_points as $points) {
+				$data[] = array(
+					array(
+						'action'	=> 'PluginRoundPoints?Action=ReleaseChatCommand&amp;command=/setrpoints '. $points['id'],	// Execute on click
+						'title'		=> $points['id'],										// Display name
+					),
+					$points['label'],
+					$points['limit'],
+					implode(', ', $points['points']) .', ...'
+				);
 			}
 
 			// Setup settings for Window
-			$settings_title = array(
-				'icon'	=> 'Icons128x32_1,RT_Rounds',
-			);
-			$settings_heading = array(
-				'textcolors'	=> array('FF5F', 'FFFF'),
+			$settings_styles = array(
+				'icon'			=> 'Icons128x32_1,RT_Rounds',
+				'textcolors'		=> array('FF5F', 'FFFF', 'FFFF', 'FFFF'),
 			);
 			$settings_columns = array(
-				'columns'	=> 1,
-				'widths'	=> array(10, 20, 70),
-				'textcolors'	=> array('FF5F', 'FF5F', 'FFFF'),
-				'heading'	=> array('Label', 'System', 'Distribution'),
+				'columns'		=> 1,
+				'widths'		=> array(10, 20, 5, 65),
+				'textcolors'		=> array('FF5F', 'FF5F', 'FFFF'),
+				'heading'		=> array('ID', 'Label', 'Limit', 'Points'),
+			);
+			$settings_content = array(
+				'title'			=> 'Currently available Rounds points systems',
+				'data'			=> $data,
+				'about'			=> 'ROUND POINTS/'. $this->getVersion(),
+				'mode'			=> 'columns',
 			);
 
 			$window = new Window();
-			$window->setLayoutTitle($settings_title);
-			$window->setLayoutHeading($settings_heading);
+			$window->setStyles($settings_styles);
 			$window->setColumns($settings_columns);
-			$window->setContent('Currently available Rounds points systems', $data);
+			$window->setContent($settings_content);
 			$window->send($player, 0, false);
 		}
 		else if ($chat_parameter == 'show') {
@@ -332,7 +355,7 @@ class PluginRoundPoints extends Plugin {
 			$points = array('10', '6', '4', '3', '2', '1');
 
 			try {
-				$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
 			}
 			catch (Exception $exception) {
 				$aseco->console('[RoundPoints] Setting modescript default rounds points: {1} Error: {2}', $points, $exception->getMessage());
@@ -353,7 +376,7 @@ class PluginRoundPoints extends Plugin {
 
 			try {
 				// Set new custom points
-				$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
 				$aseco->console('[RoundPoints] [{1}] set new custom points: {2}', $login, $points);
 			}
 			catch (Exception $exception) {
@@ -381,10 +404,10 @@ class PluginRoundPoints extends Plugin {
 
 			try {
 				// Set new custom points
-				$aseco->client->query('TriggerModeScriptEventArray', 'Rounds_SetPointsRepartition', $points);
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
 				$aseco->console('[RoundPoints] [{1}] set new custom points [{2}]',
 					$login,
-					$this->rounds_points[$system][0]
+					$this->rounds_points[$system]['label']
 				);
 
 				// Setup limits
@@ -401,10 +424,10 @@ class PluginRoundPoints extends Plugin {
 			}
 
 			// Show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#admin}: {#highlite}{3},...',
+			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#server}: {#highlite}{3}, ...',
 				$player->nickname,
-				$this->rounds_points[$system][0],
-				implode(',', $this->rounds_points[$system][1])
+				$this->rounds_points[$system]['label'],
+				implode(', ', $this->rounds_points[$system]['points'])
 			);
 			$aseco->sendChatMessage($message);
 		}

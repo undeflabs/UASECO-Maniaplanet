@@ -5,10 +5,6 @@
  * » Force environment Mods for Maps.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-25
- * Copyright:	2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -51,8 +44,10 @@ class PluginForceMod extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-08');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Force environment Mods for Maps.');
 
 		$this->registerEvent('onSync',			'onSync');
@@ -122,7 +117,7 @@ class PluginForceMod extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $map) {
+	public function onUnloadingMap ($aseco, $uid) {
 		$this->setupModforEnvironment($aseco, $aseco->server->maps->getNextMap());
 	}
 

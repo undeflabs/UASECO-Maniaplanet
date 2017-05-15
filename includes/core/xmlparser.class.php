@@ -5,11 +5,8 @@
  * » Builds an easy structured array out of a xml file, element names will be the
  *   keys and the data the values.
  * » Based upon xmlparser.inc.php from XAseco2/1.03 written by Xymph and others
+ * » Added memleak and PHP/7.1 fixes presented by Bueddl: http://www.tm-forum.com/viewtopic.php?p=231206#p231206
  *
- * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-02-17
- * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -27,9 +24,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -39,12 +33,28 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class XmlParser {
+class XmlParser extends BaseClass {
 	private $data;
 	private $struct;
 	private $parser;
 	private $stack;
 	private $utf8enc;
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function __construct () {
+
+		$this->setAuthor('undef.de');
+		$this->setContributors('Bueddl');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Builds an easy structured array out of a xml file, element names will be the keys and the data the values.');
+	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -88,8 +98,12 @@ class XmlParser {
 			$err = xml_error_string($code);
 			$line = xml_get_current_line_number($this->parser);
 			trigger_error("[XML Error $code] $err on line $line", E_USER_WARNING);
+			xml_parser_free($this->parser);
+			unset($this->parser);
 			return false;
 		}
+		xml_parser_free($this->parser);
+		unset($this->parser);
 		return $this->struct;
 	}
 
@@ -134,7 +148,15 @@ class XmlParser {
 		if (count($this->stack) > 1) {
 			$from = array_pop($this->stack);
 			$to = $this->stack[count($this->stack)-1];
-			$this->struct[$to][$from][] = $this->struct[$from];
+
+			$content = $this->struct[$from];
+			if (!is_array($this->struct[$to])) {
+				$this->struct[$to] = array();
+			}
+			if (!isset($this->struct[$to][$from]) || !is_array($this->struct[$to][$from])) {
+				$this->struct[$to][$from] = array();
+			}
+			$this->struct[$to][$from][] = $content;
 			unset($this->struct[$from]);
 		}
 	}

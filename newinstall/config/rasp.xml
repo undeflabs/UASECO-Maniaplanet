@@ -26,8 +26,8 @@
 
 	<!--
 	Set to true to always show PB at map start
-	If false and <show_recs_before> is 2 or 6 AND player has ranked record, OR
-	player uses the records panel, then PB message is not shown at map start
+	If false and <show_recs_before> (from local_records.xml) is 2 or 6 AND player has ranked record,
+	then PB message is not shown at map start
 	//-->
 	<always_show_pb>true</always_show_pb>
 
@@ -255,7 +255,7 @@
 	not enough players agree, and thus block players from starting a
 	different type of vote;
 	therefore limits can be set how long a vote runs in Rounds/Team and
-	TimeAttack/Laps modes, expiring it after a certain number of
+	TimeAttack/Laps, expiring it after a certain number of
 	rounds or a certain amount of time, respectively;
 	in TA this uses Checkpoint events as a trigger, so it depends on
 	players regularly crossing them;

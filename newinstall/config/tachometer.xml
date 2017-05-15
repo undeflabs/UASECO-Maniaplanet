@@ -1,84 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <settings>
-	<position>
-		<x>136.0</x>
-		<y>-76.0</y>
-		<z>-60.0</z>
-	</position>
-
+	<template>template_classic.xml</template>
 
 	<!-- Change the scale factor, 1.0 = 100% -->
 	<scale>0.53</scale>
 
-
-	<!--
-	With this you can change the colors of the tachometer scale
-
-	Nice modulate colors (RRGGBB)
-	~~~~~~~~~~~~~~~~~~~~
-	ACC720 = Green
-	5E8ADB = Blue
-	FFF700 = Yellow
-	F7AC1E = Orange
-	E74F3C = Red
-	F74BD3 = Pink (for the Girls)
-	//-->
-	<modulation>
-		<colorscale>777777</colorscale>
-		<needle>FBBE08</needle>
-		<overlay>FFFFFF</overlay>
-		<tiles>
-			<tile01>FFF700</tile01>
-			<tile02>FFF700</tile02>
-			<tile03>FFF700</tile03>
-			<tile04>FFF700</tile04>
-			<tile05>FFF700</tile05>
-			<tile06>FFF700</tile06>
-			<tile07>FFF700</tile07>
-			<tile08>FFF700</tile08>
-			<tile09>FFF700</tile09>
-			<tile10>FFF700</tile10>
-			<tile11>FFF700</tile11>
-			<tile12>FFF700</tile12>
-		</tiles>
-	</modulation>
-
-
-	<images>
-		<background>http://static.undef.name/ingame/tachometer/2015/tachometer-background.png</background>
-<!--		<needle>http://static.undef.name/ingame/tachometer/2015/needle-light.png</needle>			-->
-		<needle>http://static.undef.name/ingame/tachometer/2015/needle-light-cutted.png</needle>
-
-		<scale>
-			<colorscale>http://static.undef.name/ingame/tachometer/2015/tachometer-colorscale.png</colorscale>
-			<overlay>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-overlay.png</overlay>
-			<tiles>
-				<tile01>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-01.png</tile01>
-				<tile02>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-02.png</tile02>
-				<tile03>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-03.png</tile03>
-				<tile04>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-04.png</tile04>
-				<tile05>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-05.png</tile05>
-				<tile06>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-06.png</tile06>
-				<tile07>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-07.png</tile07>
-				<tile08>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-08.png</tile08>
-				<tile09>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-09.png</tile09>
-				<tile10>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-10.png</tile10>
-				<tile11>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-11.png</tile11>
-				<tile12>http://static.undef.name/ingame/tachometer/2015/tachometer-scale-12.png</tile12>
-			</tiles>
-		</scale>
-
-		<icons>
-			<sounds>http://static.undef.name/ingame/tachometer/2015/icon-sounds.png</sounds>
-			<lights>http://static.undef.name/ingame/tachometer/2015/icon-lights.png</lights>
-			<fuel>http://static.undef.name/ingame/tachometer/2015/icon-fuel.png</fuel>
-			<temperature>http://static.undef.name/ingame/tachometer/2015/icon-temperature.png</temperature>
-		</icons>
-	</images>
-
-
 	<sounds>
-		<drive_backward>http://static.undef.name/ingame/tachometer/2015/biep-biep-biep.ogg</drive_backward>
-		<gear_shift>http://static.undef.name/ingame/tachometer/2015/gear-shift.ogg</gear_shift>
+		<drive_backward>http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/biep-biep-biep.ogg</drive_backward>
+		<gear_shift>http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/gear-shift.ogg</gear_shift>
 	</sounds>
 </settings>

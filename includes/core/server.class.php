@@ -6,10 +6,6 @@
  * » Based upon types.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-29
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +34,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Server {
+class Server extends BaseClass {
 	// Listmethod 'GetVersion'
 	public $game;
 	public $version;
@@ -105,6 +101,13 @@ class Server {
 	*/
 
 	public function __construct ($ip, $port, $login, $pass) {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Stores basic information of the server UASECO is running on.');
+
 		$this->xmlrpc['ip']	= $ip;
 		$this->xmlrpc['port']	= $port;
 		$this->xmlrpc['login']	= $login;

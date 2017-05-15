@@ -6,10 +6,6 @@
  * » Based upon plugin.msglog.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
  *
  */
 
@@ -55,13 +48,15 @@ class PluginMessageLog extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-14');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Keeps log of system messages, and displays the messages log.');
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
-		// handles action id "7223" for /msglog button
+
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onBeginMap',			'onBeginMap');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
@@ -78,9 +73,9 @@ class PluginMessageLog extends Plugin {
 
 	public function onPlayerConnect ($aseco, $player) {
 
-		$xml  = '<manialink id="MessageLogButton">';
-		$xml .= '<frame posn="-64.1 -36.6 0">';
-		$xml .= '<quad posn="0 0 0" sizen="2.6 2.6" style="UIConstructionSimple_Buttons" substyle="Text" action="PluginMessageLog?Action=MessageLogShow"/>';
+		$xml  = '<manialink id="MessageLogButton" name="MessageLogButton" version="3">';
+		$xml .= '<frame pos="-159.4 -68" z-index="0">';
+		$xml .= '<quad pos="0 0" z-index="0" size="4.875 4.875" style="UIConstructionSimple_Buttons" substyle="Text" action="PluginMessageLog?Action=MessageLogShow"/>';
 		$xml .= '</frame>';
 		$xml .= '</manialink>';
 
@@ -110,7 +105,7 @@ class PluginMessageLog extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onBeginMap ($aseco, $response) {
 
 		$timeout = $aseco->client->query('GetChatTime');
 		$this->podium_chat_time = $timeout['CurrentValue'];
@@ -191,11 +186,11 @@ class PluginMessageLog extends Plugin {
 	public function display_msgwindow ($aseco, $msgs, $timeout) {
 
 		$cnt = count($msgs);
-		$xml = '<manialink id="UASECO-7"><frame posn="-49 43.5 0">';
-		$pos = -1;
+		$xml = '<manialink id="MessageLogWindow" name="MessageLogWindow" version="3"><frame pos="-122.5 81.5625" z-index="0">';
+		$pos = -1.875;
 		foreach ($msgs as $msg) {
-			$xml .= '<label posn="1 '. $pos .' 1" sizen="91 1" style="TextRaceChat" text="'. $aseco->handleSpecialChars($msg) .'"/>';
-			$pos -= 2.5;
+			$xml .= '<label pos="2.5 '. $pos .'" z-index="1" sizen="227.5 1.875" style="TextRaceChat" text="'. $aseco->handleSpecialChars($msg) .'"/>';
+			$pos -= 4.6875;
 		}
 		$xml .= '</frame></manialink>';
 		$aseco->addManialink($xml, false, $timeout, false);

@@ -5,13 +5,6 @@
  * » Automated greeting robot for new connected Players.
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Version:		1.0.0
- * Date:		2015-08-23
- * Copyright:		2012 - 2015 by undef.de
- * System:		UASECO/0.9.5+
- * Game:		ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  -
  *
  */
 
@@ -53,12 +43,14 @@ class PluginGreetingDude extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-04');
+		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('Automated greeting robot for new connected Players.');
 
 		$this->registerEvent('onSync',			'onSync');
-		$this->registerEvent('onPlayerConnect1',	'onPlayerConnect1');
+		$this->registerEvent('onPlayerConnectPostfix',	'onPlayerConnectPostfix');
 
 		$this->registerChatCommand('dudereload',	'chat_dudereload',	'Reload the "Greeting Dude" settings.',	Player::MASTERADMINS);
 	}
@@ -72,8 +64,8 @@ class PluginGreetingDude extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[GreetingDude] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
@@ -112,7 +104,7 @@ class PluginGreetingDude extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerConnect1 ($aseco, $player) {
+	public function onPlayerConnectPostfix ($aseco, $player) {
 
 		$message = false;
 		$nickname = '{#highlite}'. $this->handleSpecialChars($player->nickname) .'$Z'. $this->config['TEXT_FORMATTING'][0];

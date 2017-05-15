@@ -5,10 +5,6 @@
  * » Provides and handles a Playlist for Maps.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-09-10
- * Copyright:	2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -37,7 +30,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class PlayList {
+class PlayList extends BaseClass {
 	private $debug		= false;
 	private $playlist	= array();
 
@@ -48,6 +41,13 @@ class PlayList {
 	*/
 
 	public function __construct ($debug) {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-30');
+		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setDescription('Provides and handles a Playlist for Maps.');
+
 		$this->debug = $debug;
 	}
 
@@ -234,10 +234,10 @@ class PlayList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function isMapInPlaylistById ($id) {
-		if (!empty($id)) {
+	public function isMapInPlaylistByUid ($uid) {
+		if (!empty($uid)) {
 			foreach ($this->playlist as $item) {
-				if ($item['map'] == $id) {
+				if ($item['uid'] == $uid) {
 					return true;
 				}
 			}
@@ -251,10 +251,10 @@ class PlayList {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getPlaylistEntryById ($id) {
-		if (!empty($id)) {
+	public function getPlaylistEntryByUid ($uid) {
+		if (!empty($uid)) {
 			foreach ($this->playlist as $item) {
-				if ($item['map'] == $id) {
+				if ($item['uid'] == $uid) {
 					return $item;
 				}
 			}

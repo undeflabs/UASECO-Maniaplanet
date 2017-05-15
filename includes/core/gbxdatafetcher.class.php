@@ -1,6 +1,6 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » 2014-09-20: No changes made for UASECO */
+/* » 2017-02-03: No changes made for UASECO */
 
 /**
  * GBXDataFetcher - Fetch GBX challenge/map/replay/pack data for TrackMania (TM)
@@ -11,6 +11,7 @@
  * http://www.tm-forum.com/viewtopic.php?p=192817#p192817
  * and http://en.tm-wiki.org/wiki/PAK
  *
+ * v2.9: Fix resource leak on PHP7
  * v2.8: Fix minor lookback strings bug
  * v2.7: Add class GBXPackHeaderFetcher for Included Packs info in GBXPackFetcher;
  *       move readFiletime method to base class; add $vehicle to GBXChallMapFetcher
@@ -320,6 +321,7 @@ class GBXBaseFetcher
 			                        xml_get_current_line_number($xml_parser)), 12);
 
 		xml_parser_free($xml_parser);
+		unset($xml_parser); // for PHP7
 	}
 
 	/**
@@ -902,6 +904,7 @@ class GBXChallMapFetcher extends GBXBaseFetcher
 
 										if ($version >= 13) {
 											$this->nbChecks = $this->readInt32();
+
 											$this->nbLaps = $this->readInt32();
 										}
 									}
@@ -1090,7 +1093,7 @@ class GBXChallengeFetcher extends GBXChallMapFetcher
 {
 	public $authortm, $goldtm, $silvertm, $bronzetm, $ascore, $azone, $multi, $editor,
 	       $pub, $nblaps, $parsedxml, $xmlver, $exever, $exebld, $songfile, $songurl,
-         $modname, $modfile, $modurl;
+	       $modname, $modfile, $modurl;
 
 	/**
 	 * Fetches a hell of a lot of data about a GBX challenge
@@ -1104,7 +1107,7 @@ class GBXChallengeFetcher extends GBXChallMapFetcher
 	 *        libraries are present, image will be flipped upright, otherwise
 	 *        it will be in the original upside-down format
 	 *        Warning: this is binary data in JPEG format, 256x256 pixels for
-   *        TMU/TMF or 512x512 pixels for MP
+	 *        TMU/TMF or 512x512 pixels for MP
 	 * @return GBXChallengeFetcher
 	 *        If $uid is empty, GBX data couldn't be extracted
 	 */
@@ -1561,4 +1564,4 @@ class GBXPackHeaderFetcher extends GBXBaseFetcher
 	}  // processGBX
 
 }  // class GBXPackHeaderFetcher
-?>
+

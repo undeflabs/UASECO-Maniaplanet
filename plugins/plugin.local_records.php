@@ -6,10 +6,6 @@
  * » Based upon plugin.localdatabase.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-09-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/core/record.class.php
- *  - includes/core/recordlist.class.php
  *
  */
 
@@ -54,8 +46,10 @@ class PluginLocalRecords extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Saves record into a local database.');
 
 		$this->registerEvent('onSync',			'onSync');
@@ -141,16 +135,16 @@ class PluginLocalRecords extends Plugin {
 		if ($cur_record !== false && $cur_record->score > 0) {
 			// set message to the current record
 			$message = $aseco->formatText($this->settings['messages']['RECORD_CURRENT'][0],
-				$aseco->stripColors($aseco->server->maps->current->name),
+				$aseco->stripStyles($aseco->server->maps->current->name),
 				$aseco->formatTime($cur_record->score),
-				$aseco->stripColors($cur_record->player->nickname)
+				$aseco->stripStyles($cur_record->player->nickname)
 			);
 		}
 		else {
 			// If there should be no record to display
 			// display a no-record message
 			$message = $aseco->formatText($this->settings['messages']['RECORD_NONE'][0],
-				$aseco->stripColors($aseco->server->maps->current->name)
+				$aseco->stripStyles($aseco->server->maps->current->name)
 			);
 		}
 	}
@@ -268,16 +262,16 @@ class PluginLocalRecords extends Plugin {
 
 				// Log console message of current record
 				$aseco->console('[LocalRecords] Current record on Map [{1}] is [{2}] and held by Player [{3}]',
-					$aseco->stripColors($map->name, false),
+					$aseco->stripStyles($map->name, false),
 					$aseco->formatTime($cur_record->score),
-					$aseco->stripColors($cur_record->player->login, false)
+					$aseco->stripStyles($cur_record->player->login, false)
 				);
 
 				// Replace parameters
 				$message = $aseco->formatText($this->settings['messages']['RECORD_CURRENT'][0],
-					$aseco->stripColors($map->name),
+					$aseco->stripStyles($map->name),
 					$aseco->formatTime($cur_record->score),
-					$aseco->stripColors($cur_record->player->nickname)
+					$aseco->stripStyles($cur_record->player->nickname)
 				);
 			}
 			else {
@@ -285,12 +279,12 @@ class PluginLocalRecords extends Plugin {
 
 				// Log console message of no record
 				$aseco->console('[LocalRecords] Currently no record on [{1}]',
-					$aseco->stripColors($map->name, false)
+					$aseco->stripStyles($map->name, false)
 				);
 
 				// Replace parameters
 				$message = $aseco->formatText($this->settings['messages']['RECORD_NONE'][0],
-					$aseco->stripColors($map->name)
+					$aseco->stripStyles($map->name)
 				);
 			}
 			$aseco->releaseEvent('onLocalRecordBestLoaded', $score);
@@ -314,7 +308,7 @@ class PluginLocalRecords extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginMap ($aseco, $map) {
+	public function onBeginMap ($aseco, $response) {
 
 		// Bail out immediately on unsupported gamemodes
 		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
@@ -351,14 +345,14 @@ class PluginLocalRecords extends Plugin {
 			if ($this->records->count() == 0) {
 				// display a no-new-record message
 				$message = $aseco->formatText($this->settings['messages']['RANKING_NONE'][0],
-					$aseco->stripColors($aseco->server->maps->current->name),
+					$aseco->stripStyles($aseco->server->maps->current->name),
 					'after'
 				);
 			}
 			else {
 				// Display new records set up this round
 				$message = $aseco->formatText($this->settings['messages']['RANKING'][0],
-					$aseco->stripColors($aseco->server->maps->current->name),
+					$aseco->stripStyles($aseco->server->maps->current->name),
 					'after'
 				);
 
@@ -371,7 +365,7 @@ class PluginLocalRecords extends Plugin {
 						// replace parameters
 						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_NEW'][0],
 							$i+1,
-							$aseco->stripColors($cur_record->player->nickname),
+							$aseco->stripStyles($cur_record->player->nickname),
 							$aseco->formatTime($cur_record->score)
 						);
 						$records .= $record_msg;
@@ -419,7 +413,7 @@ class PluginLocalRecords extends Plugin {
 //		}
 
 		$login = $finish_item->player->login;
-		$nickname = $aseco->stripColors($finish_item->player->nickname);
+		$nickname = $aseco->stripStyles($finish_item->player->nickname);
 
 		// reset lap 'Finish' flag & add checkpoints
 		$finish_item->new = false;
@@ -900,7 +894,7 @@ class PluginLocalRecords extends Plugin {
 					$totalnew++;
 					$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_NEW_ON'][0],
 						$i + 1,
-						$aseco->stripColors($cur_record->player->nickname),
+						$aseco->stripStyles($cur_record->player->nickname),
 						$aseco->formatTime($cur_record->score)
 					);
 
@@ -912,7 +906,7 @@ class PluginLocalRecords extends Plugin {
 					if (in_array($cur_record->player->login, $players)) {
 						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_ON'][0],
 							$i + 1,
-							$aseco->stripColors($cur_record->player->nickname),
+							$aseco->stripStyles($cur_record->player->nickname),
 							$aseco->formatTime($cur_record->score)
 						);
 
@@ -934,7 +928,7 @@ class PluginLocalRecords extends Plugin {
 					else {
 						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD'][0],
 							$i + 1,
-							$aseco->stripColors($cur_record->player->nickname),
+							$aseco->stripStyles($cur_record->player->nickname),
 							$aseco->formatTime($cur_record->score)
 						);
 
@@ -968,7 +962,7 @@ class PluginLocalRecords extends Plugin {
 				break;
 		}
 
-		$name = $aseco->stripColors($aseco->server->maps->current->name);
+		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
 			$name = '$l[http://' . $aseco->server->maps->current->mx->prefix .
 			        '.mania-exchange.com/tracks/view/'.

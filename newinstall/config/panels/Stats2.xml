@@ -1,18 +1,22 @@
-<manialink id="UASECO-9"><frame posn="-63.9 -22.0 0">
-<format textsize="1" textcolor="ddd"/>
-<quad sizen="10 2.2" posn="2 0 0" style="%STYLE%" substyle="%SUBST%"/>
-<label posn="7 -0.3" sizen="8 2" halign="center" textcolor="ffc" text="Your Stats"/>
-<quad sizen="14 13" posn="0 -1.9 0" style="%STYLE%" substyle="%SUBST%"/>
-<label posn="6.8 -2.7" halign="right" text="Rank:"/>
-<label posn="7.2 -2.7" sizen="6 2" textcolor="fff" text="%RANK%"/>
-<label posn="6.8 -4.7" halign="right" text="Avg:"/>
-<label posn="7.2 -4.7" textcolor="fff" text="%AVG%"/>
-<label posn="6.8 -6.7" halign="right" text="Records:"/>
-<label posn="7.2 -6.7" textcolor="fff" text="%RECS%"/>
-<label posn="6.8 -8.7" halign="right" text="Wins:"/>
-<label posn="7.2 -8.7" textcolor="fff" text="%WINS%"/>
-<label posn="6.8 -10.7" halign="right" text="Played:"/>
-<label posn="7.2 -10.7" textcolor="fff" text="%PLAY%"/>
-<label posn="6.8 -12.7" halign="right" text="Donations:"/>
-<label posn="7.2 -12.7" textcolor="fff" text="%DONS%"/>
-</frame></manialink>
+<manialink id="UASECO-9" version="3">
+<frame pos="-159.75 -41.25" z-index="0">
+<stylesheet>
+<style class="labels" textsize="1" scale="1" textcolor="DDDF"/>
+</stylesheet>
+<quad pos="5 0" z-index="0" size="25 4.125" style="%STYLE%" substyle="%SUBST%"/>
+<label pos="32.8125 -0.3" size="20 3.75" halign="center" textcolor="ffc" text="Your Stats"/>
+<quad pos="0 -3.5625" size="35 24.375" z-index="0" style="%STYLE%" substyle="%SUBST%"/>
+<label pos="17 -5.0625" class="labels" halign="right" text="Rank:"/>
+<label pos="18 -5.0625" class="labels" size="15 3.75" textcolor="fff" text="%RANK%"/>
+<label pos="17 -8.8125" class="labels" halign="right" text="Avg:"/>
+<label pos="18 -8.8125" class="labels" textcolor="fff" text="%AVG%"/>
+<label pos="17 -12.5625" class="labels" halign="right" text="Records:"/>
+<label pos="18 -12.5625" class="labels" textcolor="fff" text="%RECS%"/>
+<label pos="17 -16.3125" class="labels" halign="right" text="Wins:"/>
+<label pos="18 -16.3125" class="labels" textcolor="fff" text="%WINS%"/>
+<label pos="17 -20.0625" class="labels" halign="right" text="Played:"/>
+<label pos="18 -20.0625" class="labels" textcolor="fff" text="%PLAY%"/>
+<label pos="17 -23.8125" class="labels" halign="right" text="Donations:"/>
+<label pos="18 -23.8125" class="labels" textcolor="fff" text="%DONS%"/>
+</frame>
+</manialink>

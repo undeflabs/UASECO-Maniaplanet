@@ -5,13 +5,6 @@
  * » A buttons Widget for lazy Players.
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Version:		1.0.0
- * Date:		2015-08-23
- * Copyright:		2012 - 2015 by undef.de
- * System:		UASECO/0.9.5+
- * Game:		ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  -
- *
- */
-
-/* The following manialink id's are used in this plugin (the 925 part of id can be changed on trouble):
- *
- * ManialinkID's
- * ~~~~~~~~~~~~~
- * 92500		id for manialink Widget
- *
- * ActionID's
- * ~~~~~~~~~~
- *  92500 - 92519	ids for action clicks
  *
  */
 
@@ -65,8 +43,10 @@ class PluginLazyButtons extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-13');
+		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('A buttons Widget for lazy Players.');
 
 		$this->registerEvent('onSync',				'onSync');
@@ -74,7 +54,7 @@ class PluginLazyButtons extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
-		$this->registerEvent('onEndMap1',			'onEndMap1');
+		$this->registerEvent('onEndMapPrefix',			'onEndMapPrefix');
 
 		$this->registerChatCommand('lazyreload',		'chat_lazyreload',	'Reload the "Lazy Buttons" settings.',	Player::MASTERADMINS);
 	}
@@ -88,8 +68,8 @@ class PluginLazyButtons extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[LazyButtons] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
@@ -105,8 +85,6 @@ class PluginLazyButtons extends Plugin {
 		$this->config = $xml['SETTINGS'];
 		unset($xml);
 
-		$this->config['ManialinkId'] = '925';
-
 		$this->config['Widget']['Race'] = $this->loadTemplate('Race');
 		$this->config['Widget']['Score'] = $this->loadTemplate('Score');
 	}
@@ -120,34 +98,36 @@ class PluginLazyButtons extends Plugin {
 	public function loadTemplate ($state) {
 
 		// Setup Widget
-		$xml = '<manialink id="'. $this->config['ManialinkId'] .'00">';
+		$xml = '<manialink name="PluginLazyButtonsWidget" id="PluginLazyButtonsWidget" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
 
 		// Figure out how many commands where added
 		$command_amount = count($this->config['COMMANDS'][0]['ENTRY']);
 		$command_amount = (($command_amount > 20) ? 20 : $command_amount);
 
 		if ($state == 'Race') {
-			$posx = -(64 + ($command_amount * 4.3) + 5.7);
-			$xml .= '<frame posn="'. $posx .' '. $this->config['WIDGET'][0]['RACE'][0]['POS_Y'][0] .' 20" id="LazyButtonsFrame">';
+			$posx = -(160 + ($command_amount * 10.75) + 14.25);
+			$xml .= '<frame pos="'. $posx .' '. $this->config['WIDGET'][0]['RACE'][0]['POS_Y'][0] .'" z-index="20" id="LazyButtonsFrame">';
 		}
 		else {
-			$posx = -(64 + ($command_amount * 4.3) + 5.7);
-			$xml .= '<frame posn="'. $posx  .' '. $this->config['WIDGET'][0]['SCORE'][0]['POS_Y'][0] .' 20" id="LazyButtonsFrame">';
+			$posx = -(160 + ($command_amount * 10.75) + 14.25);
+			$xml .= '<frame pos="'. $posx  .' '. $this->config['WIDGET'][0]['SCORE'][0]['POS_Y'][0] .'" z-index="20" id="LazyButtonsFrame">';
 		}
 
-		$xml .= '<format textsize="1"/>';
-		$xml .= '<quad posn="0 0 0.001" sizen="'. (($command_amount * 4.3) + 10) .' 3.4" style="'. $this->config['WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'" ScriptEvents="1"/>';
-		$xml .= '<quad posn="'. (($command_amount * 4.3) + 6.6) .' -0.3 0.002" sizen="2.7 2.7" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="'. (($command_amount * 4.3) + 5.7) .' -3.7 0.1" sizen="15 0" halign="right" textcolor="FC0F" scale="0.8" text="LAZY-BUTTONS/'. $this->getVersion() .'" url="http://www.undef.name/UASECO/Lazy-Buttons.php"/>';
-		$xml .= '<quad posn="1.5 0 0.2" sizen="3.5 3.5" style="Icons128x128_1" substyle="BackFocusable" ScriptEvents="1"/>';
+		$xml .= '<quad pos="0 0" z-index="0.001" size="'. (($command_amount * 10.75) + 25) .' 6.7" bgcolor="55556699" bgcolorfocus="555566BB" ScriptEvents="1"/>';
+		$xml .= '<quad pos="'. (($command_amount * 10.75) + 16.5) .' -0.2" z-index="0.002" size="6 6" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<label pos="'. (($command_amount * 10.75) + 14.25) .' -6.94" z-index="0.1" size="37.5 0" class="labels" halign="right" textcolor="FC0F" scale="0.8" text="LAZY-BUTTONS/'. $this->getVersion() .'" url="http://www.undef.name/UASECO/Lazy-Buttons.php"/>';
+		$xml .= '<quad pos="4 0" z-index="0.2" size="8.75 6.6" style="Icons128x128_1" substyle="BackFocusable" ScriptEvents="1"/>';
 
-		$offset = 5.8;
+		$offset = 14.5;
 		$col = 0;
 		$command_count = 0;
 		foreach ($this->config['COMMANDS'][0]['ENTRY'] as $item) {
-			$xml .= '<quad posn="'. ($col + $offset) .' -0.5 0.2" sizen="4.3 2.5" action="PluginLazyButtons?Action='. $this->config['ManialinkId'] . sprintf('%02d', $command_count) .'" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'" ScriptEvents="1"/>';
-			$xml .= '<label posn="'. (($col + $offset) + 2.15) .' -1.75 0.3" sizen="5.45 3.1" halign="center" valign="center" scale="0.7" autonewline="1" textcolor="'. $item['TEXT_COLOR'][0] .'" text="'. $this->handleSpecialChars($item['TITLE'][0]) .'"/>';
-			$col += 4.3;
+			$xml .= '<quad pos="'. ($col + $offset) .' -0.9375" z-index="0.2" size="10 4.6875" action="PluginLazyButtons?Action=Button&MessageId='. $command_count .'" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="LazyButtons'. $command_count .'" ScriptEvents="1"/>';
+			$xml .= '<label pos="'. (($col + $offset) + 5) .' -3.28125" z-index="0.3" size="13 5.8125" class="labels" halign="center" valign="center2" scale="0.7" autonewline="1" textcolor="'. $item['TEXT_COLOR'][0] .'" text="'. $this->handleSpecialChars($item['TITLE'][0]) .'"/>';
+			$col += 10.75;
 
 			// Limited to 20 entries
 			if ($command_count >= 19) {
@@ -168,10 +148,11 @@ $xml .= <<<EOL
  * License:	GPLv3
  * ----------------------------------
  */
+#Include "TextLib" as TextLib
 Void Scrolling(Text ChildId, Boolean Direction) {
-	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real PositionClosed = {$posx} * 2.5;
-	declare Real PositionOpen = -65.4 * 2.5;
+	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
+	declare Real PositionClosed = {$posx};
+	declare Real PositionOpen = -163.5;
 	declare Real Distance = (PositionClosed - PositionOpen);
 	if (Direction == True) {
 		while (Container.PosnX > PositionClosed) {
@@ -207,6 +188,10 @@ main() {
 					}
 				}
 				case CMlEvent::Type::MouseOver : {
+					if (TextLib::SubString(Event.ControlId, 0, 11) == "LazyButtons") {
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+					}
+
 					AutoCloseTimer = (CurrentTime + 7000);
 				}
 			}
@@ -255,19 +240,16 @@ EOL;
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ( ($answer['Action'] >= (int)$this->config['ManialinkId'] .'00') && ($answer['Action'] <= (int)$this->config['ManialinkId'] .'19') ) {
+		if ($answer['Action'] == 'Button') {
 
 			// Get the Player object
 			$player = $aseco->server->players->player_list[$login];
 
-			// Get the wished MessageId
-			$msgid = intval( str_replace($this->config['ManialinkId'], '', abs($answer['Action'])) );
-
-			if ( isset($this->config['COMMANDS'][0]['ENTRY'][$msgid]['MESSAGE'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$msgid]['MESSAGE'][0] != '') {
-				$aseco->sendChatMessage('$FF0[$Z'. $player->nickname .'$Z$S$FF0] $I'. $this->config['COMMANDS'][0]['ENTRY'][$msgid]['MESSAGE'][0], false);
+			if ( isset($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0] != '') {
+				$aseco->sendChatMessage('$FF0[$Z'. $player->nickname .'$Z$S$FF0] $I'. $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0], false);
 			}
-			else if ( isset($this->config['COMMANDS'][0]['ENTRY'][$msgid]['CHAT_COMMAND'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$msgid]['CHAT_COMMAND'][0] != '' ) {
-				$aseco->releaseChatCommand($this->config['COMMANDS'][0]['ENTRY'][$msgid]['CHAT_COMMAND'][0], $player->login);
+			else if ( isset($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0] != '' ) {
+				$aseco->releaseChatCommand($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0], $player->login);
 			}
 		}
 	}
@@ -288,7 +270,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onLoadingMap ($aseco, $unused) {
+	public function onLoadingMap ($aseco, $map) {
 		$aseco->sendManialink($this->config['Widget']['Race'], false);
 	}
 
@@ -298,7 +280,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onRestartMap ($aseco, $unused) {
+	public function onRestartMap ($aseco, $map) {
 		$aseco->sendManialink($this->config['Widget']['Race'], false);
 	}
 
@@ -308,7 +290,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $unused) {
+	public function onEndMapPrefix ($aseco, $map) {
 		$aseco->sendManialink($this->config['Widget']['Score'], false);
 	}
 

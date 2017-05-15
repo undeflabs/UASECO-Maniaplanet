@@ -1,23 +1,56 @@
 <?php
 
-/* Pay2Play v1.02
-*
-* Plugin by Leigham.
-*
-* All settings are configurable in the pay2play.xml file.
+/*
+ * Plugin: Pay2Play
+ * ~~~~~~~~~~~~~~~~
+ * » Charges planets to skip or replay a map.
+ * » All settings are configurable in the pay2play.xml file.
+ *
+ * ----------------------------------------------------------------------------------
+ *
+ * LICENSE: This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * ----------------------------------------------------------------------------------
+ *
+ */
+
+	// Start the plugin
+	$_PLUGIN = new PluginPay2Play;
+
+/*
+#///////////////////////////////////////////////////////////////////////#
+#									#
+#///////////////////////////////////////////////////////////////////////#
 */
 
-$_PLUGIN = new PluginPay2Play;
-
 class PluginPay2Play extends Plugin {
-
 	public $p2p = array();
 
-	public function __construct() {
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
 
-		$this->setVersion('1.02');
+	public function __construct () {
+
 		$this->setAuthor('leigham');
-		$this->setDescription('Charges planets to skip or replay a map');
+		$this->setCoAuthors('undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2017-04-18');
+		$this->setCopyright('2012 - 2017 by leigham');
+		$this->setDescription('Charges planets to skip or replay a map.');
 
 		$this->addDependence('PluginRaspJukebox', Dependence::REQUIRED, '1.0.0', null);
 
@@ -34,7 +67,14 @@ class PluginPay2Play extends Plugin {
 		$this->registerEvent('onShutdown',			'apocalypse');
 	}
 
-	public function setup($aseco) { //Read pay2play.xml and load settings
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+
+	public function setup ($aseco) { //Read pay2play.xml and load settings
 
 		$votes = array();
 
@@ -43,7 +83,7 @@ class PluginPay2Play extends Plugin {
 
 			if (strtolower($config['REPLAY'][0]['ENABLED'][0]) == 'true') {
 				$this->p2p['replay']['active'] = true;
-				$this->p2p['replay']['position'] = floatval($config['REPLAY'][0]['POSX'][0]).' '.floatval($config['REPLAY'][0]['POSY'][0]).' 1';
+				$this->p2p['replay']['position'] = floatval($config['REPLAY'][0]['POSX'][0]).' '.floatval($config['REPLAY'][0]['POSY'][0]);
 				$this->p2p['replay']['basecost'] = intval($config['REPLAY'][0]['COST'][0]);
 				$this->p2p['replay']['cost'] = $this->p2p['replay']['basecost'];
 				$this->p2p['replay']['max_val'] = intval($config['REPLAY'][0]['MAX_REPLAYS'][0]);
@@ -59,7 +99,7 @@ class PluginPay2Play extends Plugin {
 
 			if (strtolower($config['SKIP'][0]['ENABLED'][0]) == 'true') {
 				$this->p2p['skip']['active'] = true;
-				$this->p2p['skip']['position'] = floatval($config['SKIP'][0]['POSX'][0]).' '.floatval($config['SKIP'][0]['POSY'][0]).' 1';
+				$this->p2p['skip']['position'] = floatval($config['SKIP'][0]['POSX'][0]).' '.floatval($config['SKIP'][0]['POSY'][0]);
 				$this->p2p['skip']['cost'] = intval($config['SKIP'][0]['COST'][0]);
 				$this->p2p['skip']['delay'] = intval($config['SKIP'][0]['DELAY'][0]);
 				$this->p2p['skip']['blink'] = ((strtolower($config['SKIP'][0]['BLINK'][0]) == 'true') ? true : false);
@@ -90,7 +130,13 @@ class PluginPay2Play extends Plugin {
 		}
 	}
 
-	public function connect($aseco) { //Deal with new player
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function connect ($aseco) { //Deal with new player
 
 		if (!$this->p2p['score']) {
 			if ($this->p2p['replay']['active']) {
@@ -114,7 +160,13 @@ class PluginPay2Play extends Plugin {
 		}
 	}
 
-	public function check($aseco) { //Check map and load widgets
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function check ($aseco) { //Check map and load widgets
 
 		$this->p2p['score'] = false;
 
@@ -151,18 +203,30 @@ class PluginPay2Play extends Plugin {
 		}
 	}
 
-	public function off($aseco) { //Close widgets and reset variables
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function off ($aseco) { //Close widgets and reset variables
 
 		$this->p2p['replay']['success'] = false;
 		$this->p2p['skip']['success'] = false;
 		$this->p2p['score'] = true;
 
-		$xml = '<manialink id="PluginPay2Play00"></manialink>
-		        <manialink id="PluginPay2Play01"></manialink>';
+		$xml = '<manialink id="PluginPay2Play00"></manialink>';
+		$xml .= '<manialink id="PluginPay2Play01"></manialink>';
 		$aseco->addManialink($xml, false, 0, false);
 	}
 
-	private function buildReplay($aseco, $state = false) { //Build replay widget
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function buildReplay ($aseco, $state = false) { //Build replay widget
 
 		if ($this->p2p['style']['background_default'] != '') {
 			$layout = 'bgcolor="'. $this->p2p['style']['background_default'] .'" bgcolorfocus="'. $this->p2p['style']['background_focus'] .'"';
@@ -173,61 +237,67 @@ class PluginPay2Play extends Plugin {
 		if ($state == 'success') {
 
 			if ($this->p2p['replay']['blink']) {
-				$a = array('style="TextTitle2Blink"', 0.8, 0.6, '$ccc', '$c90', 5);
+				$a = array('style="TextTitle2Blink"', 0.8, 0.6, '$ccc', '$c90', 12.5);
 			} else {
-				$a = array('', 0.8, 0.6, '', '', 5);
+				$a = array('', 0.8, 0.6, '', '', 12.5);
 			}
 
-			$xml = '<manialink id="PluginPay2Play00">
-			<frame posn="'.$this->p2p['replay']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .'/>
-			<label posn="2.25 -0.75 0.1" sizen="'.$a[5].' 2" halign="center" '.$a[0].' textsize="1" scale="'.$a[1].'" textcolor="FFFF" text="'.$a[3].'MAP"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center" '.$a[0].' textsize="1" scale="'.$a[2].'" textcolor="FC0F" text="'.$a[4].'WILL BE"/>
-			<label posn="2.25 -3.55 0.1" sizen="'.$a[5].' 2" halign="center" '.$a[0].' textsize="1" scale="'.$a[1].'" textcolor="FFFF" text="'.$a[3].'REPLAYED"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center" '.$a[0].' textsize="1" scale="'.$a[2].'" textcolor="FC0F" text="'.$a[4].'NEXT!"/>
+			$xml = '<manialink id="PluginPay2Play00" version="3">
+			<frame pos="'. $this->p2p['replay']['position'] .'" z-index="1">
+			<quad pos="0 0" z-index="0" size="11.5 12.1875" '. $layout .'/>
+			<label pos="5.625 -1.40625" z-index="0.1" size="'.$a[5].' 3.75" halign="center" '.$a[0].' textsize="1" scale="'.$a[1].'" textcolor="FFFF" text="'.$a[3].'MAP"/>
+			<label pos="5.625 -4.3125" z-index="0.1" size="12.5 3.75" halign="center" '.$a[0].' textsize="1" scale="'.$a[2].'" textcolor="FC0F" text="'.$a[4].'WILL BE"/>
+			<label pos="5.625 -6.65625" z-index="0.1" size="'.$a[5].' 3.75" halign="center" '.$a[0].' textsize="1" scale="'.$a[1].'" textcolor="FFFF" text="'.$a[3].'REPLAYED"/>
+			<label pos="5.625 -9.375" z-index="0.1" size="12.5 3.75" halign="center" '.$a[0].' textsize="1" scale="'.$a[2].'" textcolor="FC0F" text="'.$a[4].'NEXT!"/>
 			</frame>
 			</manialink>';
 
 		} elseif ($state == 'max') {
 
-			$xml = '<manialink id="PluginPay2Play00">
-			<frame posn="'.$this->p2p['replay']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .'/>
-			<label posn="2.25 -0.75 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="MAXIMUM"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="REPLAY"/>
-			<label posn="2.25 -3.55 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="LIMIT"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="REACHED!"/>
+			$xml = '<manialink id="PluginPay2Play00" version="3">
+			<frame pos="'.$this->p2p['replay']['position'].'" z-index="1">
+			<quad pos="0 0" z-index="0" size="11.5 12.1875" '. $layout .'/>
+			<label pos="5.625 -1.40625" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.9" textcolor="FFFF" text="MAXIMUM"/>
+			<label pos="5.625 -4.3125" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="REPLAY"/>
+			<label pos="5.625 -6.65625" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.9" textcolor="FFFF" text="LIMIT"/>
+			<label pos="5.625 -9.375" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="REACHED!"/>
 			</frame>
 			</manialink>';
 
 		} elseif ($state == 'skip') {
 
-			$xml = '<manialink id="PluginPay2Play00">
-			<frame posn="'.$this->p2p['replay']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .'/>
-			<label posn="2.25 -0.75 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="REPLAY"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="DISABLED"/>
-			<label posn="2.25 -3.55 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="SKIP"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="INCOMING"/>
+			$xml = '<manialink id="PluginPay2Play00" version="3">
+			<frame pos="'.$this->p2p['replay']['position'].'" z-index="1">
+			<quad pos="0 0" z-index="0" size="4.6 6.5" '. $layout .'/>
+			<label pos="2.25 -0.75" z-index="0.1" size="5 2" halign="center" textsize="1" scale="0.9" textcolor="FFFF" text="REPLAY"/>
+			<label pos="2.25 -2.3" z-index="0.1" size="5 2" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="DISABLED"/>
+			<label pos="2.25 -3.55" z-index="0.1" size="5 2" halign="center" textsize="1" scale="0.9" textcolor="FFFF" text="SKIP"/>
+			<label pos="2.25 -5" z-index="0.1" size="5 2" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="INCOMING"/>
 			</frame>
 			</manialink>';
 
 		} else {
 
-			$xml = '<manialink id="PluginPay2Play00">
-			<frame posn="'.$this->p2p['replay']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .' action="PluginPay2Play?Action=replay"/>
-			<label posn="2.25 -0.75 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="PAY '.$this->p2p['replay']['cost'].'"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="PLANETS"/>
-			<label posn="2.25 -3.55 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="FOR"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="REPLAY"/>
+			$xml = '<manialink id="PluginPay2Play00" version="3">
+			<frame pos="'.$this->p2p['replay']['position'].'" z-index="1">
+			<quad pos="0 0" z-index="0" size="11.5 12.1875" '. $layout .' action="PluginPay2Play?Action=replay"/>
+			<label pos="5.625 -1.40625" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="PAY '.$this->p2p['replay']['cost'].'"/>
+			<label pos="5.625 -4.3125" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="PLANETS"/>
+			<label pos="5.625 -6.65625" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="FOR"/>
+			<label pos="5.625 -9.375" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="REPLAY"/>
 			</frame>
 			</manialink>';
 		}
 		$aseco->addManialink($xml, false, 0, false);
 	}
 
-	private function buildSkip($aseco, $state = false) { //Build skip widget
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function buildSkip ($aseco, $state = false) { //Build skip widget
 
 		if ($this->p2p['style']['background_default'] != '') {
 			$layout = 'bgcolor="'. $this->p2p['style']['background_default'] .'" bgcolorfocus="'. $this->p2p['style']['background_focus'] .'"';
@@ -238,43 +308,43 @@ class PluginPay2Play extends Plugin {
 		if ($state == 'success') {
 
 			if ($this->p2p['skip']['blink']) {
-				//$a = array('style="TextTitle2Blink"', 0.5, 0.35, '$ccc', '$c90', 7);
-				$a = array('style="TextTitle2Blink"', 0.8, 0.6, '$ccc', '$c90', 5);
+				//$a = array('style="TextTitle2Blink"', 0.5, 0.35, '$ccc', '$c90', 17.5);
+				$a = array('style="TextTitle2Blink"', 0.8, 0.6, '$ccc', '$c90', 12.5);
 			} else {
-				$a = array('', 0.8, 0.6, '', '', 5);
+				$a = array('', 0.8, 0.6, '', '', 12.5);
 			}
 
-			$xml = '<manialink id="PluginPay2Play01">
-			<frame posn="'.$this->p2p['skip']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .'/>
-			<label posn="2.25 -0.75 0.1" sizen="'.$a[5].' 2" halign="center" '.$a[0].' textsize="1" textcolor="FFFF" scale="'.$a[1].'" text="'.$a[3].'MAP"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center" '.$a[0].' textsize="1" textcolor="FCOF" scale="'.$a[2].'" text="'.$a[4].'WILL BE"/>
-			<label posn="2.25 -3.55 0.1" sizen="'.$a[5].' 2" halign="center" '.$a[0].' textsize="1" textcolor="FFFF" scale="'.$a[1].'" text="'.$a[3].'SKIPPED"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center" '.$a[0].' textsize="1" textcolor="FCOF" scale="'.$a[2].'" text="'.$a[4].'SHORTLY!"/>
+			$xml = '<manialink id="PluginPay2Play01" version="3">
+			<frame pos="'.$this->p2p['skip']['position'].'" z-index="1">
+			<quad pos="0 0" z-index="0" size="11.5 12.1875" '. $layout .'/>
+			<label pos="5.625 -1.40625" z-index="0.1" size="'.$a[5].' 3.75" halign="center" '.$a[0].' textsize="1" textcolor="FFFF" scale="'.$a[1].'" text="'.$a[3].'MAP"/>
+			<label pos="5.625 -4.3125" z-index="0.1" size="12.5 3.75" halign="center" '.$a[0].' textsize="1" textcolor="FCOF" scale="'.$a[2].'" text="'.$a[4].'WILL BE"/>
+			<label pos="5.625 -6.65625" z-index="0.1" size="'.$a[5].' 3.75" halign="center" '.$a[0].' textsize="1" textcolor="FFFF" scale="'.$a[1].'" text="'.$a[3].'SKIPPED"/>
+			<label pos="5.625 -9.375" z-index="0.1" size="12.5 3.75" halign="center" '.$a[0].' textsize="1" textcolor="FCOF" scale="'.$a[2].'" text="'.$a[4].'SHORTLY!"/>
 			</frame>
 			</manialink>';
 
 		} elseif ($state == 'replay') {
 
-			$xml = '<manialink id="PluginPay2Play01">
-			<frame posn="'.$this->p2p['skip']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .'/>
-			<label posn="2.25 -0.75 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="SKIP"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="DISABLED"/>
-			<label posn="2.25 -3.55 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="DURING"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="REPLAY"/>
+			$xml = '<manialink id="PluginPay2Play01" version="3">
+			<frame pos="'.$this->p2p['skip']['position'].'" z-index="1">
+			<quad pos="0 0" z-index="0" size="11.5 12.1875" '. $layout .'/>
+			<label pos="5.625 -1.40625" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="SKIP"/>
+			<label pos="5.625 -4.3125" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="DISABLED"/>
+			<label pos="5.625 -6.65625" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="DURING"/>
+			<label pos="5.625 -9.375" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="REPLAY"/>
 			</frame>
 			</manialink>';
 
 		} else {
 
-			$xml = '<manialink id="PluginPay2Play01">
-			<frame posn="'.$this->p2p['skip']['position'].'">
-			<quad posn="0 0 0" sizen="4.6 6.5" '. $layout .' action="PluginPay2Play?Action=skip"/>
-			<label posn="2.25 -0.75 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="PAY '.$this->p2p['skip']['cost'].'"/>
-			<label posn="2.25 -2.3 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="PLANETS"/>
-			<label posn="2.25 -3.55 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="FOR"/>
-			<label posn="2.25 -5 0.1" sizen="5 2" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="SKIP"/>
+			$xml = '<manialink id="PluginPay2Play01" version="3">
+			<frame pos="'.$this->p2p['skip']['position'].'" z-index="1">
+			<quad pos="0 0" z-index="0" size="11.5 12.1875" '. $layout .' action="PluginPay2Play?Action=skip"/>
+			<label pos="5.625 -1.40625" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="PAY '.$this->p2p['skip']['cost'].'"/>
+			<label pos="5.625 -4.3125" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="PLANETS"/>
+			<label pos="5.625 -6.65625" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.9" textcolor="FFFF" text="FOR"/>
+			<label pos="5.625 -9.375" z-index="0.1" size="12.5 3.75" halign="center"  textsize="1" scale="0.6" textcolor="FC0F" text="SKIP"/>
 			</frame>
 			</manialink>';
 
@@ -282,8 +352,14 @@ class PluginPay2Play extends Plugin {
 		$aseco->addManialink($xml, false, 0, false);
 	}
 
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	// Deal with button clicks
-	public function click($aseco, $login, $command) {
+	public function click ($aseco, $login, $command) {
 
 		$player = $aseco->server->players->getPlayerByLogin($login);
 		if ($command['Action'] == 'replay') {
@@ -308,7 +384,13 @@ class PluginPay2Play extends Plugin {
 		}
 	}
 
-	public function bill($aseco, $bill) {  //Deal with bill payments
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function bill ($aseco, $bill) {  //Deal with bill payments
 
 		$id = $bill[0];
 		// check for known bill ID
@@ -402,7 +484,13 @@ class PluginPay2Play extends Plugin {
 		}
 	}
 
-	public function time($aseco) { //Deal with time functions
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function time ($aseco) { //Deal with time functions
 
 		if (isset($this->p2p['time']['skip'])) {
 			$time = time();
@@ -419,7 +507,13 @@ class PluginPay2Play extends Plugin {
 		}
 	}
 
-	public function apocalypse($aseco) { //Restore altered callvotes
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function apocalypse ($aseco) { //Restore altered callvotes
 
 		$aseco->client->query('SetCallVoteRatios', $this->p2p['oldvotes']);
 	}

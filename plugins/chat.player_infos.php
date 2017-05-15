@@ -7,10 +7,6 @@
  *   Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +24,9 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - includes/core/window.class.php
- *  - plugins/plugin.rasp.php
- *  - plugins/plugin.manialinks.php
+ * » includes/core/window.class.php
+ * » plugins/plugin.rasp.php
+ * » plugins/plugin.manialinks.php
  *
  */
 
@@ -53,8 +49,10 @@ class PluginPlayerInfos extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays current list of nicks/logins.');
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -116,7 +114,7 @@ class PluginPlayerInfos extends Plugin {
 
 		// create list of players, optionally by (sub)string
 		foreach ($aseco->server->players->player_list as $pl) {
-			if (strlen($command['params'][0]) == 0 || stripos($aseco->stripColors($pl->nickname), $command['params'][0]) !== false || stripos($pl->login, $command['params'][0]) !== false) {
+			if (strlen($command['params'][0]) == 0 || stripos($aseco->stripStyles($pl->nickname), $command['params'][0]) !== false || stripos($pl->login, $command['params'][0]) !== false) {
 				$plarr = array();
 				$plarr['login'] = $pl->login;
 				$player->playerlist[] = $plarr;

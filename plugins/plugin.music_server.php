@@ -6,10 +6,6 @@
  * » Based upon plugin.musicserver.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-12-30
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/musicserver/getid3/*
- *  - plugins/plugin.manialinks.php
  *
  */
 
@@ -61,6 +53,8 @@ class PluginMusicServer extends Plugin {
 	public $jukebox;
 	public $messages;
 
+	private $protocols;
+
 	/*
 	#///////////////////////////////////////////////////////////////////////#
 	#									#
@@ -69,8 +63,10 @@ class PluginMusicServer extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-15');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Handles all server-controlled music.');
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
@@ -117,22 +113,24 @@ class PluginMusicServer extends Plugin {
 		$this->maxlen		= $settings['MAXLEN'][0];
 		$this->localpath	= str_replace('UserData', 'GameData', $aseco->server->gamedir);		// https://forum.maniaplanet.com/viewtopic.php?p=217924#p217924
 
+		$this->protocols	= array('http://', 'https://');
+
 		$this->stream_context = stream_context_create(
 			array(
 				'http'		=> array(
 					'ignore_errors'		=> false,
 					'method'		=> 'GET',
-					'timeout'		=> 5,
+					'timeout'		=> 10,
 					'follow_location'	=> true,
 					'max_redirects'		=> 20,
-					'protocol_version'	=> 1.0,
-					'user_agent'		=> USER_AGENT .' plugin.music_server.php/'. $this->getVersion(),
+					'protocol_version'	=> 1.1,
+					'user_agent'		=> 'MusicServer/'. $this->getVersion() .' '. USER_AGENT,
 				),
 			)
 		);
 
 		// check for remote or local path
-		if (substr(strtolower($this->server), 0, 7) == 'http://') {
+		if (in_array(substr(strtolower($this->server), 0, 7), $this->protocols)) {
 			// Remote: append / if missing
 			if (substr($this->server, -1) != '/') {
 				$this->server .= '/';
@@ -221,10 +219,10 @@ class PluginMusicServer extends Plugin {
 
 			// check remote or local song access
 			$song = $this->setNextSong($next);
-			if (substr(strtolower($this->server), 0, 7) == 'http://' && !$this->httpHead($song)) {
+			if (in_array(substr(strtolower($this->server), 0, 7), $this->protocols) && !$this->httpHead($this->server . $song)) {
 				$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!!!');
 			}
-			else if (substr(strtolower($this->server), 0, 7) != 'http://' && !file_exists($this->localpath . $song)) {
+			else if (!in_array(substr(strtolower($this->server), 0, 7), $this->protocols) && !file_exists($this->localpath . $song)) {
 				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
 			}
 			else {
@@ -241,10 +239,10 @@ class PluginMusicServer extends Plugin {
 		if ($this->autonext == true) {
 			// check remote or local song access
 			$song = $this->getNextSong();
-			if (substr(strtolower($this->server), 0, 7) == 'http://' && !$this->httpHead($this->server . $song)) {
+			if (in_array(substr(strtolower($this->server), 0, 7), $this->protocols) && !$this->httpHead($this->server . $song)) {
 				$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!!!');
 			}
-			else if (substr(strtolower($this->server), 0, 7) != 'http://' && !file_exists($this->localpath . $song)) {
+			else if (!in_array(substr(strtolower($this->server), 0, 7), $this->protocols) && !file_exists($this->localpath . $song)) {
 				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
 			}
 			else {
@@ -282,7 +280,7 @@ class PluginMusicServer extends Plugin {
 		}
 
 		// Define full path to server
-		if (substr(strtolower($this->server), 0, 7) == 'http://') {
+		if (in_array(substr(strtolower($this->server), 0, 7), $this->protocols)) {
 			$server = $this->server;
 			$remote_file = true;
 		}
@@ -647,10 +645,10 @@ class PluginMusicServer extends Plugin {
 			if ($aseco->allowAbility($player, 'chat_musicadmin')) {
 				// check remote or local song access
 				$song = $this->getNextSong();
-				if (substr(strtolower($this->server), 0, 7) == 'http://' && !$this->httpHead($this->server . $song)) {
+				if (in_array(substr(strtolower($this->server), 0, 7), $this->protocols) && !$this->httpHead($this->server . $song)) {
 					$aseco->console('[MusicServer]3 Could not access remote song ['. $this->server . $song .']!!!');
 				}
-				else if (substr(strtolower($this->server), 0, 7) != 'http://' && !file_exists($this->localpath . $song)) {
+				else if (!in_array(substr(strtolower($this->server), 0, 7), $this->protocols) && !file_exists($this->localpath . $song)) {
 					$aseco->console('[MusicServer]3 Could not access local song ['. $this->localpath . $song .']!!!');
 				}
 				else {
@@ -940,7 +938,7 @@ class PluginMusicServer extends Plugin {
 					$song = preg_replace('|\.[^.]+$|', '', $song);
 				}
 				$message = $aseco->formatText($this->messages['JUKEBOX_DROP'][0],
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$song
 				);
 				$aseco->sendChatMessage($message);
@@ -973,7 +971,7 @@ class PluginMusicServer extends Plugin {
 								$song = preg_replace('|\.[^.]+$|', '', $song);
 							}
 							$message = $aseco->formatText($this->messages['JUKEBOX'][0],
-								$aseco->stripColors($player->nickname),
+								$aseco->stripStyles($player->nickname),
 								$song
 							);
 							$aseco->sendChatMessage($message);
@@ -1067,32 +1065,24 @@ class PluginMusicServer extends Plugin {
 	private function httpHead ($url) {
 		global $aseco;
 
-		$stream_context = stream_context_create(
-			array(
-				'http'		=> array(
-					'ignore_errors'		=> false,
-					'method'		=> 'HEAD',
-					'timeout'		=> 5,
-					'follow_location'	=> true,
-					'max_redirects'		=> 20,
-					'protocol_version'	=> 1.0,
-					'user_agent'		=> USER_AGENT .' plugin.music_server.php/'. $this->getVersion(),
-				),
-			)
-		);
-
-
-		$fh = @fopen($url, 'rb', false, $stream_context);
-		@fclose($fh);
-
 		// http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-		$headers = get_headers($url);
-		$code = substr($headers[0], 9, 3);
-		if ($code == 200 || $code == 301 || $code == 302 || $code == 303 || $code == 304 || $code == 307 || $code == 308) {
-			return true;
-		}
-		else {
+		$http_status_codes = array(200, 206, 301, 302, 303, 304, 307, 308);
+
+		try {
+			// Start sync request
+			$params = array(
+				'url'			=> $url,
+				'user_agent'		=> 'MusicServer/'. $this->getVersion() .' '. USER_AGENT,
+			);
+
+			$request = $aseco->webrequest->HEAD($params);
+			if (isset($request->response['header']['code']) && in_array($request->response['header']['code'], $http_status_codes)) {
+				return true;
+			}
 			return false;
+		}
+		catch (Exception $exception) {
+			$aseco->console('[MusicServer] webrequest->HEAD(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
 		}
 	}
 }

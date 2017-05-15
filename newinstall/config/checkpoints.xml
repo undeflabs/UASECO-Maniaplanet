@@ -5,8 +5,8 @@
 	<time_diff_widget>
 		<enabled>true</enabled>
 
-		<pos_x>-8.5</pos_x>
-		<pos_y>-43.9</pos_y>
+		<pos_x>-21.25</pos_x>
+		<pos_y>-82.3125</pos_y>
 
 		<!-- If <background_color> is not empty then the style/substyle are ignored -->
 		<background_color>55556699</background_color>
@@ -33,8 +33,8 @@
 		<enabled>true</enabled>
 		<text_color>DDDDEEFF</text_color>
 
-		<pos_x>-8.5</pos_x>
-		<pos_y>-39.7</pos_y>
+		<pos_x>-21.25</pos_x>
+		<pos_y>-74.4375</pos_y>
 		<scale>1.0</scale>
 
 		<!-- If <background_color> is not empty then the style/substyle are ignored -->

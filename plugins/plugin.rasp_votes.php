@@ -7,10 +7,6 @@
  * » Based upon plugin.rasp_votes.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-22
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +22,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.map.php
- *  - plugins/plugin.rasp_jukebox.php
  *
  */
 
@@ -65,8 +56,10 @@ class PluginRaspVotes extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides sophisticated chat-based voting features, similar to (and fully integrated with) MX /add votes.');
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::REQUIRED,	'1.0.0', null);
@@ -74,7 +67,7 @@ class PluginRaspVotes extends Plugin {
 		$this->addDependence('PluginMap',		Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
-		$this->registerEvent('onEndMap1',		'onEndMap1');		// use pre event before all other processing
+		$this->registerEvent('onEndMapPrefix',		'onEndMapPrefix');		// use pre event before all other processing
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onPlayerCheckpoint',	'onPlayerCheckpoint');
@@ -108,7 +101,7 @@ class PluginRaspVotes extends Plugin {
 		$aseco->plugins['PluginRaspJukebox']->plrvotes = array();
 		$aseco->plugins['PluginRaspJukebox']->replays_counter = 0;
 
-		$this->onEndMap1($aseco, null);
+		$this->onEndMapPrefix($aseco, null);
 	}
 
 	/*
@@ -117,7 +110,7 @@ class PluginRaspVotes extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $data) {
+	public function onEndMapPrefix ($aseco, $data) {
 
 		// check for ongoing chat vote
 		if (!empty($this->chatvote)) {
@@ -280,10 +273,10 @@ class PluginRaspVotes extends Plugin {
 					// !empty($this->mxadd)
 					$aseco->console('[RaspVotes] Vote by {1} to add {2} expired!',
 						$this->mxadd['login'],
-						$aseco->stripColors($this->mxadd['name'], false)
+						$aseco->stripStyles($this->mxadd['name'], false)
 					);
 					$message = $aseco->formatText($this->messages['JUKEBOX_END'][0],
-						$aseco->stripColors($this->mxadd['name']),
+						$aseco->stripStyles($this->mxadd['name']),
 						'expired',
 						'Server'
 					);
@@ -318,7 +311,7 @@ class PluginRaspVotes extends Plugin {
 						$message = $aseco->formatText($this->messages['JUKEBOX_Y'][0],
 							$this->mxadd['votes'],
 							($this->mxadd['votes'] == 1 ? '' : 's'),
-							$aseco->stripColors($this->mxadd['name'])
+							$aseco->stripStyles($this->mxadd['name'])
 						);
 						if ($this->jukebox_in_window) {
 							$aseco->releaseEvent('onSendWindowMessage', array($message, false));
@@ -338,8 +331,7 @@ class PluginRaspVotes extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $param = [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [6]=LapWaypointNumber
-	public function onPlayerCheckpoint ($aseco, $data) {
+	public function onPlayerCheckpoint ($aseco, $unused) {
 
 		// in Rounds/Team/Cup modes, bail out immediately
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
@@ -375,10 +367,10 @@ class PluginRaspVotes extends Plugin {
 					// !empty($this->mxadd)
 					$aseco->console('[RaspVotes] Vote by {1} to add {2} expired!',
 						$this->mxadd['login'],
-						$aseco->stripColors($this->mxadd['name'], false)
+						$aseco->stripStyles($this->mxadd['name'], false)
 					);
 					$message = $aseco->formatText($this->messages['JUKEBOX_END'][0],
-						$aseco->stripColors($this->mxadd['name']),
+						$aseco->stripStyles($this->mxadd['name']),
 						'expired',
 						'Server'
 					);
@@ -421,7 +413,7 @@ class PluginRaspVotes extends Plugin {
 							$message = $aseco->formatText($this->messages['JUKEBOX_Y'][0],
 								$this->mxadd['votes'],
 								($this->mxadd['votes'] == 1 ? '' : 's'),
-								$aseco->stripColors($this->mxadd['name'])
+								$aseco->stripStyles($this->mxadd['name'])
 							);
 							if ($this->jukebox_in_window) {
 								$aseco->releaseEvent('onSendWindowMessage', array($message, false));
@@ -548,7 +540,7 @@ class PluginRaspVotes extends Plugin {
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
-			$aseco->stripColors($this->chatvote['nick']),
+			$aseco->stripStyles($this->chatvote['nick']),
 			$this->chatvote['desc'],
 			$this->chatvote['votes']
 		);
@@ -679,7 +671,7 @@ class PluginRaspVotes extends Plugin {
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
-			$aseco->stripColors($this->chatvote['nick']),
+			$aseco->stripStyles($this->chatvote['nick']),
 			$this->chatvote['desc'],
 			$this->chatvote['votes']
 		);
@@ -827,7 +819,7 @@ class PluginRaspVotes extends Plugin {
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
-			$aseco->stripColors($this->chatvote['nick']),
+			$aseco->stripStyles($this->chatvote['nick']),
 			$this->chatvote['desc'],
 			$this->chatvote['votes']
 		);
@@ -958,7 +950,7 @@ class PluginRaspVotes extends Plugin {
 
 		// compile & show chat message
 		$message = $aseco->formatText($this->messages['VOTE_START'][0],
-			$aseco->stripColors($this->chatvote['nick']),
+			$aseco->stripStyles($this->chatvote['nick']),
 			$this->chatvote['desc'],
 			$this->chatvote['votes']
 		);
@@ -1038,7 +1030,7 @@ class PluginRaspVotes extends Plugin {
 				$this->chatvote['nick'] = $player->nickname;
 				$this->chatvote['votes'] = $this->required_votes($this->vote_ratios[6]);
 				$this->chatvote['type'] = 6;
-				$this->chatvote['desc'] = 'Ignore ' . $aseco->stripColors($target->nickname);
+				$this->chatvote['desc'] = 'Ignore ' . $aseco->stripStyles($target->nickname);
 				$this->chatvote['target'] = $target->login;
 
 				// reset votes, rounds counter, TA interval counter & start time
@@ -1049,7 +1041,7 @@ class PluginRaspVotes extends Plugin {
 
 				// compile & show chat message
 				$message = $aseco->formatText($this->messages['VOTE_START'][0],
-					$aseco->stripColors($this->chatvote['nick']),
+					$aseco->stripStyles($this->chatvote['nick']),
 					$this->chatvote['desc'],
 					$this->chatvote['votes']
 				);
@@ -1069,8 +1061,8 @@ class PluginRaspVotes extends Plugin {
 			else {
 				// expose naughty player ;)
 				$message = $aseco->formatText($this->messages['NO_ADMIN_IGNORE'][0],
-					$aseco->stripColors($player->nickname),
-					$aseco->stripColors($target->nickname)
+					$aseco->stripStyles($player->nickname),
+					$aseco->stripStyles($target->nickname)
 				);
 				$aseco->sendChatMessage($message);
 			}
@@ -1139,7 +1131,7 @@ class PluginRaspVotes extends Plugin {
 				$this->chatvote['nick'] = $player->nickname;
 				$this->chatvote['votes'] = $this->required_votes($this->vote_ratios[4]);
 				$this->chatvote['type'] = 4;
-				$this->chatvote['desc'] = 'Kick ' . $aseco->stripColors($target->nickname);
+				$this->chatvote['desc'] = 'Kick ' . $aseco->stripStyles($target->nickname);
 				$this->chatvote['target'] = $target->login;
 
 				// reset votes, rounds counter, TA interval counter & start time
@@ -1150,7 +1142,7 @@ class PluginRaspVotes extends Plugin {
 
 				// compile & show chat message
 				$message = $aseco->formatText($this->messages['VOTE_START'][0],
-					$aseco->stripColors($this->chatvote['nick']),
+					$aseco->stripStyles($this->chatvote['nick']),
 					$this->chatvote['desc'],
 					$this->chatvote['votes']
 				);
@@ -1170,8 +1162,8 @@ class PluginRaspVotes extends Plugin {
 			else {
 				// expose naughty player ;)
 				$message = $aseco->formatText($this->messages['NO_ADMIN_KICK'][0],
-					$aseco->stripColors($player->nickname),
-					$aseco->stripColors($target->nickname)
+					$aseco->stripStyles($player->nickname),
+					$aseco->stripStyles($target->nickname)
 				);
 				$aseco->sendChatMessage($message);
 			}
@@ -1201,7 +1193,7 @@ class PluginRaspVotes extends Plugin {
 				$message = $aseco->formatText($this->messages['VOTE_END'][0],
 					$this->chatvote['desc'],
 					'cancelled',
-					$aseco->stripColors($player->nickname)
+					$aseco->stripStyles($player->nickname)
 				);
 				if ($this->vote_in_window) {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
@@ -1220,13 +1212,13 @@ class PluginRaspVotes extends Plugin {
 			// check for vote ownership or admin
 			if ($player->login == $this->mxadd['login'] || $aseco->allowAbility($player, 'cancel')) {
 				$aseco->console('[RaspVotes] Vote to add {1} cancelled by {2}!',
-					$aseco->stripColors($this->mxadd['name'], false),
+					$aseco->stripStyles($this->mxadd['name'], false),
 					$player->login
 				);
 				$message = $aseco->formatText($this->messages['JUKEBOX_END'][0],
-					$aseco->stripColors($this->mxadd['name']),
+					$aseco->stripStyles($this->mxadd['name']),
 					'cancelled',
-					$aseco->stripColors($player->nickname)
+					$aseco->stripStyles($player->nickname)
 				);
 				if ($this->jukebox_in_window) {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));

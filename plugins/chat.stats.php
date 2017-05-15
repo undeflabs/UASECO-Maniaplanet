@@ -6,11 +6,6 @@
  * » Based upon chat.stats.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-11-11
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.rasp.php
- *  - plugins/plugin.local_records.php
- *  - plugins/plugin.panels.php
- *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -56,8 +44,11 @@ class PluginChatStats extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-30');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.stats', 'plugin_description'));
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -105,12 +96,12 @@ class PluginChatStats extends Plugin {
 		}
 
 		// Setup current player info
-		$rank = $target->ladderrank;
-		$score = $target->ladderscore;
-		$lastm = $target->lastmatchscore;
-		$wins = $target->nbwins;
-		$draws = $target->nbdraws;
-		$losses = $target->nblosses;
+		$rank = $target->ladder_rank;
+		$score = $target->ladder_score;
+		$lastm = $target->last_match_score;
+		$wins = $target->nb_wins;
+		$draws = $target->nb_draws;
+		$losses = $target->nb_losses;
 
 		// get zone info
 		$inscr = $target->zone_inscription;

@@ -7,10 +7,6 @@
  * » Based upon plugin.access.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-12-02
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +22,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
  *
  */
 
@@ -57,14 +50,16 @@ class PluginAccessControl extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Controls player access by zone.');
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
-		$this->registerEvent('onPlayerConnect1',	'onPlayerConnect1');  // use post event after all join processing
+		$this->registerEvent('onPlayerConnectPostfix',	'onPlayerConnectPostfix');  // use post event after all join processing
 	}
 
 	/*
@@ -262,7 +257,7 @@ class PluginAccessControl extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerConnect1 ($aseco, $player) {
+	public function onPlayerConnectPostfix ($aseco, $player) {
 
 		// if no access control, bail out immediately
 		if (!$this->access_control) {
@@ -319,7 +314,7 @@ class PluginAccessControl extends Plugin {
 		$aseco->console('[Access] Player \'{1}\' denied access from "{2}" - kicking...', $player->login, $access);
 
 		$message = $aseco->formatText($this->access_control['messages']['denied'],
-			$aseco->stripColors($player->nickname),
+			$aseco->stripStyles($player->nickname),
 			'zone',
 			$access
 		);

@@ -6,10 +6,6 @@
  * » Based upon basic.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-05-15
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +34,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Map {
+class Map extends BaseClass {
 	public $id;							// Database id
 	public $uid;
 	public $filename;
@@ -54,13 +50,13 @@ class Map {
 
 	public $author_score;
 	public $author_time;
-	public $goldtime;
-	public $silvertime;
-	public $bronzetime;
+	public $gold_time;
+	public $silver_time;
+	public $bronze_time;
 
-	public $nblaps;
-	public $multilap;
-	public $nbcheckpoints;
+	public $nb_laps;
+	public $multi_lap;
+	public $nb_checkpoints;
 
 	public $cost;
 	public $environment;
@@ -68,12 +64,12 @@ class Map {
 	public $type;
 	public $style;
 
-	public $modname;
-	public $modfile;
-	public $modurl;
+	public $mod_name;
+	public $mod_file;
+	public $mod_url;
 
-	public $songfile;
-	public $songurl;
+	public $song_file;
+	public $song_url;
 
 	public $validated;
 	public $exeversion;
@@ -94,12 +90,18 @@ class Map {
 	public function __construct ($gbx = null, $filename = null) {
 		global $aseco;
 
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Stores information about a Map on the dedicated server.');
+
 		if ($gbx != null) {
 			$this->id		= 0;
 			$this->uid		= $gbx->uid;
 			$this->filename		= $filename;
 			$this->name		= trim($aseco->stripNewlines($aseco->stripBOM($gbx->name)));
-			$this->name_stripped	= $aseco->stripColors($this->name, true);
+			$this->name_stripped	= $aseco->stripStyles($this->name, true);
 			$this->comment		= $gbx->comment;
 
 			if ($gbx->authorLogin) {
@@ -129,7 +131,7 @@ class Map {
 						case 'North America':
 						case 'South America':
 						case 'Oceania':
-							$this->author_continent = $aseco->continent->continentToAbbr($this->author_zone[0]);
+							$this->author_continent = $aseco->continent->continentToAbbreviation($this->author_zone[0]);
 							$this->author_nation = $aseco->country->countryToIoc($this->author_zone[1]);
 							break;
 						default:
@@ -145,13 +147,13 @@ class Map {
 
 			$this->author_score	= $gbx->authorScore;
 			$this->author_time	= $gbx->authorTime;
-			$this->goldtime		= $gbx->goldTime;
-			$this->silvertime	= $gbx->silverTime;
-			$this->bronzetime	= $gbx->bronzeTime;
+			$this->gold_time	= $gbx->goldTime;
+			$this->silver_time	= $gbx->silverTime;
+			$this->bronze_time	= $gbx->bronzeTime;
 
-			$this->nblaps		= $gbx->nbLaps;
-			$this->multilap		= $gbx->multiLap;
-			$this->nbcheckpoints	= $gbx->nbChecks;
+			$this->nb_laps		= $gbx->nbLaps;
+			$this->multi_lap	= $gbx->multiLap;
+			$this->nb_checkpoints	= $gbx->nbChecks;
 
 			$this->cost		= $gbx->cost;
 			$this->environment	= $gbx->envir;
@@ -159,12 +161,12 @@ class Map {
 			$this->type		= $gbx->mapType;
 			$this->style		= trim($gbx->mapStyle);
 
-			$this->modname		= $gbx->modName;
-			$this->modfile		= $gbx->modFile;
-			$this->modurl		= $gbx->modUrl;
+			$this->mod_name		= $gbx->modName;
+			$this->mod_file		= $gbx->modFile;
+			$this->mod_url		= $gbx->modUrl;
 
-			$this->songfile		= $gbx->songFile;
-			$this->songurl		= $gbx->songUrl;
+			$this->song_file	= $gbx->songFile;
+			$this->song_url		= $gbx->songUrl;
 
 			$this->validated	= $gbx->validated;
 			$this->exeversion	= $gbx->exeVer;
@@ -190,13 +192,13 @@ class Map {
 
 			$this->author_score	= 0;
 			$this->author_time	= 0;
-			$this->goldtime		= 0;
-			$this->silvertime	= 0;
-			$this->bronzetime	= 0;
+			$this->gold_time	= 0;
+			$this->silver_time	= 0;
+			$this->bronze_time	= 0;
 
-			$this->nblaps		= 0;
-			$this->multilap		= false;
-			$this->nbcheckpoints	= 0;
+			$this->nb_laps		= 0;
+			$this->multi_lap	= false;
+			$this->nb_checkpoints	= 0;
 
 			$this->cost		= 0;
 			$this->environment	= '';
@@ -204,12 +206,12 @@ class Map {
 			$this->type		= '';
 			$this->style		= '';
 
-			$this->modname		= '';
-			$this->modfile		= '';
-			$this->modurl		= '';
+			$this->mod_name		= '';
+			$this->mod_file		= '';
+			$this->mod_url		= '';
 
-			$this->songfile		= '';
-			$this->songurl		= '';
+			$this->song_file	= '';
+			$this->song_url		= '';
 
 			$this->validated	= false;
 			$this->exeversion	= '';

@@ -3,18 +3,19 @@
  * Class: GbxRemote
  * ~~~~~~~~~~~~~~~~
  * » ManiaPlanet dedicated server Xml-RPC client.
- * » Based upon GbxRemote.php from 'https://github.com/NewboO/dedicated-server-api/',
- *   version from 2015-06-18 and changed to UASECO requirements.
+ * » Based upon GbxRemote.php from 'https://github.com/maniaplanet/dedicated-server-api',
+ *   version from 2017-02-24 and changed to UASECO requirements.
  *
  *   2014-10-03: Renamed query() into singlequery(), changed parameter for addCall() and query()
  *   2014-10-10: Set constant MAX_REQUEST_SIZE to real 512 kb limit (thanks reaby)
  *   2015-01-28: Added a try/catch at query() to catch all exception (possibly forgotten by Plugin authors)
  *   2015-02-18: Added ignore list for error messages for ListMethods
+ *   2017-03-23: Changed [UASECO Exception] logging to full output
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-07-13
- * Copyright:	2014 - 2015 by undef.de
+ * Date:	2017-04-02
+ * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: http://www.gnu.org/licenses/lgpl.html LGPL License 3
@@ -55,6 +56,7 @@ class GbxRemote {
 	private $lastNetworkActivity	= 0;
 
 	private $ignore_error_messages	= array(
+		'Flow control not enabled.',					// ManualFlowControlProceed
 		'Not in script mode.',						// TriggerModeScriptEvent, TriggerModeScriptEventArray
 		'Connection not initialized',					// *ToLogin
 		'Login unknown.',						// *ToLogin, GetDetailedPlayerInfo
@@ -141,7 +143,7 @@ class GbxRemote {
 		// handshake
 		$header = $this->read(15);
 		if ($header === false) {
-			$this->onIoFailure('during handshake');
+			$this->onIoFailure(sprintf('during handshake (%s)', socket_strerror(socket_last_error($this->socket))));
 		}
 
 		extract(unpack('Vsize/a*protocol', $header));
@@ -194,13 +196,8 @@ class GbxRemote {
 			catch (Exception $exception) {
 				$message = $exception->getMessage();
 				if (!in_array($message, $this->ignore_error_messages)) {
-					if ($aseco->debug) {
-						$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
-						$aseco->dump($args);
-					}
-					else {
-						$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
-					}
+					$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
+					$aseco->dump($args);
 				}
 			}
 		}

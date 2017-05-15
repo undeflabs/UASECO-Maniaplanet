@@ -6,10 +6,6 @@
  * » Based upon mistral.idlekick.php from XAseco2/1.03 written by Mistral and Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-23
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -60,8 +53,10 @@ class PluginMistralIdlekick extends Plugin {
 	public function __construct () {
 		global $aseco;
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-08');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Kick idle Players to let waiting spectators play.');
 
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
@@ -155,15 +150,14 @@ class PluginMistralIdlekick extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $checkpt: [0]=Login, [1]=WaypointBlockId, [2]=Time [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
-	public function onPlayerCheckpoint ($aseco, $checkpt) {
+	public function onPlayerCheckpoint ($aseco, $params) {
 
 		// If no check on checkpoints, bail out
 		if (!$this->reset_oncheckpoint) {
 			return;
 		}
 
-		if ($player = $aseco->server->players->getPlayerByLogin($checkpt[0])) {
+		if ($player = $aseco->server->players->getPlayerByLogin($params['login'])) {
 			$this->storePlayerData($player, 'IdleCount', 0);
 			if ($this->debug) {
 				$aseco->console('[MistralIdlekick] Player [{1}] reset on checkpoint.', $player->login);

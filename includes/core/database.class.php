@@ -2,12 +2,12 @@
 /*
  * Class: Database
  * ~~~~~~~~~~~~~~~
- * » Provides access to a MySQL-Server over the mysqli extension.
+ * » Provides access to a MySQL- or MariaDB-Server over the mysqli extension.
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2015-08-21
- * Copyright:	2014 - 2015 by undef.de
+ * Date:	2017-04-14
+ * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -25,9 +25,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -39,11 +36,14 @@
 */
 
 class Database extends mysqli {
-	public $debug		= false;
-	public $table_prefix	= 'uaseco_';
+	public $debug			= false;
+	public $table_prefix		= 'uaseco_';
+	public $db_type			= 'MySQL';
+	public $db_version		= '0.0.0';
+	public $db_version_full		= '0.0.0';
 
 	// $placeholder will be replaced with $this->table_prefix at each query
-	private $placeholder	= '%prefix%';
+	private $placeholder		= '%prefix%';
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -78,6 +78,30 @@ class Database extends mysqli {
 		if (!empty($setup['table_prefix'])) {
 			$this->table_prefix = $setup['table_prefix'];
 		}
+
+
+		// Get the version of the database
+		$row = $this->select_one("SHOW VARIABLES LIKE 'version';");
+		$this->db_version_full = $row['Value'];
+
+		// Examples:
+		// MySQL:	"5.7.16", "5.7.17-0ubuntu1"
+		// MariaDB:	"10.0.27-MariaDB-0ubuntu0.16.04.1"
+		$this->db_version = explode('-', $this->db_version_full);
+		if (isset($this->db_version[0]) && !empty($this->db_version[0])) {
+			$this->db_version = $this->db_version[0];
+		}
+		else {
+			$this->db_version = $this->db_version_full;
+		}
+
+		// Get the type of the database
+		if (mb_stripos($this->db_version_full, 'mariadb') !== false) {
+			$this->db_type = 'MariaDB';
+		}
+//		else if (mb_stripos($this->db_version_full, 'percona') !== false) {
+//			$this->db_type = 'Percona-Server';
+//		}
 	}
 
 	/*
@@ -362,8 +386,7 @@ class Database extends mysqli {
 
 	public function server_version () {
 		if ($this->stat() !== false) {
-			// 5.5.36
-			return 'MySQL/'. $this->server_info;
+			return $this->db_type .'/'. $this->db_version_full;
 		}
 	}
 
@@ -375,7 +398,7 @@ class Database extends mysqli {
 
 	public function client_version () {
 		if ($this->stat() !== false) {
-			// mysqlnd 5.0.10 - 20111026 - $Id: c85105d7c6f7d70d609bb4c000257868a40840ab $
+			// Example: mysqlnd 5.0.10 - 20111026 - $Id: c85105d7c6f7d70d609bb4c000257868a40840ab $
 			$client_info = $this->get_client_info();
 			$client_info = explode(' - ', $client_info);
 

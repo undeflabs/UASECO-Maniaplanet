@@ -1,15 +1,9 @@
 <?php
-
 /*
  * Class: Message
  * ~~~~~~~~~~~~~~
- * » Part of multilanguage support
+ * » Part of multilanguage support.
  *
- * ----------------------------------------------------------------------------------
- * Author:	askuri
- * Co-Authors:	undef.de
- * Date:	2015-12-30
- * Copyright:	2015 Martin Weber (askuri)
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -29,7 +23,7 @@
  *
  */
 
-class Message {
+class Message extends BaseClass {
 	public $translations = array();
 	public $placeholders = false;
 
@@ -42,7 +36,14 @@ class Message {
 	public function __construct ($file, $id) {
 		global $aseco;
 
-		$this->translations = $aseco->locales->getAllTranslations($file, $id);
+		$this->setAuthor('askuri');
+		$this->setCoAuthors('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-03');
+		$this->setCopyright('2014 - 2017 by Martin Weber (askuri)');
+		$this->setDescription('Part of multilanguage support.');
+
+		$this->translations = $aseco->locales->getAllTranslations(strtolower($file), strtolower($id));
 		// if the line above fails, this will return false
 		return $this->translations;
 	}
@@ -107,7 +108,7 @@ class Message {
 	*/
 
 	/**
-	 * Takes the result of finish() ans splits it by {br} to an array
+	 * Takes the result of finish() and splits it by {br} to an array
 	 *
 	 * @author	askuri <askuri@uaseco.org>
 	 * @param	string $id a string
@@ -116,11 +117,11 @@ class Message {
 	public function finish ($id, $is_login = true) {
 		global $aseco;
 
-		if ($is_login) {
-			$lang = $aseco->locales->getPlayerLanguage($id); // login was given, get his language
+		if ($is_login === true) {
+			$lang = $aseco->locales->getPlayerLanguage($id); 			// login was given, get his language
 		}
 		else {
-			$lang = $id; // language given
+			$lang = $id;								// language given
 		}
 
 		$message = $aseco->formatColors($this->chooseTranslation($lang));
@@ -134,14 +135,11 @@ class Message {
 			}
 
 			$message = call_user_func_array(
-				array($aseco, 'formatText'),				// The function $aseco->formatText
+				array($aseco, 'formatText'),					// The function $aseco->formatText
 				array_merge(array($message), $this->placeholders)		// Its params
 			);
 		}
-
-		$message = $aseco->decodeEntities($message, $lang);
-
-		return $message;
+		return $aseco->decodeEntities($message, $lang);
 	}
 
 	/*
@@ -180,13 +178,14 @@ class Message {
 
 		$messages = array();
 		foreach ($this->translations as $lang => $text) {
+			$text = str_replace('»', '', $text);
 			if ($lang != 'en') {
 				// Replace all entities back to normal for chat.
 				// $text = $aseco->decodeEntities($this->replacePlaceholders($this->chooseTranslation($lang), $lang));
 				$text = $this->finish($lang, false);
 				$messages[] = array(
 					'Lang' => $lang,
-					'Text' => $aseco->formatColors($text)
+					'Text' => $aseco->formatColors($text),
 				);
 			}
 		}
@@ -194,6 +193,7 @@ class Message {
 		// Adding english to the end, because the last one is default
 		// $text = $aseco->decodeEntities($this->replacePlaceholders($this->chooseTranslation('en'), 'en'));		// Replace all entities back to normal for chat.
 		$text = $this->finish('en', false);
+		$text = str_replace('»', '', $text);
 		$messages[] = array(
 			'Lang' => 'en',
 			'Text' => $aseco->formatColors($text)

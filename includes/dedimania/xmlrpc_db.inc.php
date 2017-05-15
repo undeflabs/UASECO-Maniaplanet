@@ -2,6 +2,11 @@
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
 
 // 2015-10-22: Changed PHP 4 style constructors for PHP/7.x.x deprecated warnings: Methods with the same name as their class will not be constructors in a future version of PHP
+// 2017-04-22: Fixed:
+//  [2017-04-15 12:20:08] Webaccess (dedimania.net:8082): Error(110) Connection timed out, connection failed!
+//  [2017-04-15 12:20:08] Webaccess (dedimania.net:8082): [CLOSED,OPEN]: -1.000 / -1.000 / -1.000 (0.000) / 0 [0,0,0]
+//  [PHP Warning] Illegal string offset 'Data' on line 203 in file [...]dedimania/xmlrpc_db.inc.php
+//  [PHP Notice] Array to string conversion on line 203 in file [...]dedimania/xmlrpc_db.inc.php
 
 ////////////////////////////////////////////////////////////////
 //
@@ -199,11 +204,12 @@ class XmlrpcDB {
 			$param_end = end($datas['params']);
 			if (isset($param_end['globalTTR']) && !isset($response['Data']['globalTTR']))
 				$response['Data']['globalTTR'] = $param_end['globalTTR'];
-		} else {
-			$response['Data'] = $datas;
 		}
+//		else {
+//			$response['Data'] = $datas;
+//		}
 		if ($this->_debug > 0)
-			$aseco->console_text('XmlrpcDB->RequestWaitArray() - response[Data]' . CRLF . print_r($response['Data'], true));
+			$aseco->console_text('XmlrpcDB->RequestWaitArray() - response[Data]' . CRLF . print_r($response['Data'], true) . CRLF . print_r($datas, true));
 
 		$this->_initRequest();
 		return $response;

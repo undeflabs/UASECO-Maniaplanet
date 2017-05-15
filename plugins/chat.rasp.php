@@ -6,10 +6,6 @@
  * » Based upon plugin.rasp_chat.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-25
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +23,11 @@
  * ----------------------------------------------------------------------------------
  *
  * Dependencies:
- *  - plugins/plugin.rasp.php
- *  - plugins/chat.admin.php
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.muting.php
- *  - plugins/plugin.welcome_center.php
+ * » plugins/plugin.rasp.php
+ * » plugins/chat.admin.php
+ * » plugins/plugin.manialinks.php
+ * » plugins/plugin.muting.php
+ * » plugins/plugin.welcome_center.php
  *
  */
 
@@ -54,8 +50,10 @@ class PluginChatRasp extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides private messages and a wide variety of shout-outs.');
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -286,7 +284,7 @@ class PluginChatRasp extends Plugin {
 			$player->msgs[0] = array(1, $head, array(1.2), array('Icons64x64_1', 'Outbox'));
 			foreach ($player->pmbuf as $item) {
 				// break up long lines into chunks with continuation strings
-				$multi = explode(LF, wordwrap($aseco->stripColors($item[2]), $lnlen + 30, LF . '...'));
+				$multi = explode(LF, wordwrap($aseco->stripStyles($item[2]), $lnlen + 30, LF . '...'));
 				foreach ($multi as $line) {
 					$line = substr($line, 0, $lnlen + 33);  // chop off excessively long words
 					$msg[] = array(

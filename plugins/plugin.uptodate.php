@@ -7,11 +7,6 @@
  * » Based upon plugin.uptodate.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Author:	askuri
- * Date:	2015-11-13
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +22,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/chat.admin.php
  *
  */
 
@@ -53,8 +45,11 @@ class PluginUptodate extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-15');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.uptodate', 'plugin_description'));
 
 		$this->addDependence('PluginChatAdmin',	Dependence::WANTED,	'1.0.0', null);
@@ -108,11 +103,6 @@ class PluginUptodate extends Plugin {
 		if ($this->config['GLOBAL_BLACKLIST_URL'][0] == '') {
 			$this->config['GLOBAL_BLACKLIST_URL'][0] = UASECO_WEBSITE .'/uptodate/trackmania_blacklist_dedimania.xml';
 		}
-
-		// Check version
-		if ($this->config['UPTODATE_CHECK'][0] == true) {
-			$this->checkUasecoUptodate(false);
-		}
 	}
 
 	/*
@@ -146,14 +136,34 @@ class PluginUptodate extends Plugin {
 	public function checkUasecoUptodate ($login = false) {
 		global $aseco;
 
-		// Grab version file
-		$response = $aseco->webaccess->request($this->config['UPTODATE_URL'][0], null, 'none');
-		if ($response['Code'] == 200) {
-			if ($response['Message']) {
+		try {
+			// Grab version file
+			$params = array(
+				'url'		=> $this->config['UPTODATE_URL'][0],
+				'callback'	=> array(array($this, 'handleWebrequest'), $login),
+			);
+			return $aseco->webrequest->GET($params);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[UpToDate] webrequest->get(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+			return false;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+	public function handleWebrequest ($request, $login = false) {
+		global $aseco;
+
+		if ($request->response['header']['code'] == 200) {
+			if ($request->response['content']) {
 				// Compare versions
-				if ($response['Message'] != UASECO_VERSION) {
+				if ($aseco->versionCheck($request->response['content'], UASECO_VERSION, '>') === true) {
 					$msg = new Message('plugin.uptodate', 'uptodate_new');
-					$msg->addPlaceholders($response['Message'], '$L['. UASECO_WEBSITE .']'. UASECO_WEBSITE .'$L');
+					$msg->addPlaceholders($request->response['content'], '$L['. UASECO_WEBSITE .']'. UASECO_WEBSITE .'$L');
 					$msg->sendChatMessage($login);
 				}
 				else {
@@ -189,51 +199,61 @@ class PluginUptodate extends Plugin {
 			$url = $this->config['GLOBAL_BLACKLIST_URL'][0];
 		}
 
-		// Download & parse global black list
-		$response = $aseco->webaccess->request($url, null, 'none');
-		if ($response['Code'] == 200) {
-			if ($response['Message']) {
-				if ($globals = $aseco->parser->xmlToArray($response['Message'], false)) {
+		try {
+			// Download & parse global black list
+			$params = array(
+				'url'			=> $url,
+				'sync'			=> true,
+				'user_agent'		=> USER_AGENT,
+			);
+			$request = $aseco->webrequest->GET($params);
+			if (isset($request->response['header']['code']) && $request->response['header']['code'] == 200) {
+				if ($request->response['content']) {
+					if ($globals = $aseco->parser->xmlToArray($request->response['content'], false)) {
 
-					// Get current black list
-					$blacks = $aseco->plugins['PluginChatAdmin']->getBlacklist($aseco);  // from chat.admin.php
+						// Get current black list
+						$blacks = $aseco->plugins['PluginChatAdmin']->getBlacklist($aseco);
 
-					// Merge new global entries
-					$new = 0;
-					foreach ($globals['BLACKLIST']['PLAYER'] as $black) {
-						if (!array_key_exists($black['LOGIN'][0], $blacks)) {
-							$aseco->client->addCall('BlackList', $black['LOGIN'][0]);
-							$new++;
+						// Merge new global entries
+						$new = 0;
+						foreach ($globals['BLACKLIST']['PLAYER'] as $black) {
+							if (!array_key_exists($black['LOGIN'][0], $blacks)) {
+								$aseco->client->addCall('BlackList', $black['LOGIN'][0]);
+								$new++;
+							}
+						}
+
+						// Update black list file if necessary
+						if ($new > 0) {
+							$filename = $aseco->settings['blacklist_file'];
+							$aseco->client->addCall('SaveBlackList', $filename);
+						}
+
+						// Check whether to report new mergers
+						if ($new > 0 || $manual) {
+							// Log console message
+							$aseco->console('[UpToDate] {1} [{2}] merged global blacklist [{3}] new: {4}', $logtitle, $login, $url, $new);
+
+							$msg = new Message('plugin.uptodate', 'admin_merged');
+							$msg->addPlaceholders($new);
+							$msg->sendChatMessage($login);
 						}
 					}
-
-					// Update black list file if necessary
-					if ($new > 0) {
-						$filename = $aseco->settings['blacklist_file'];
-						$aseco->client->addCall('SaveBlackList', $filename);
-					}
-
-					// Check whether to report new mergers
-					if ($new > 0 || $manual) {
-						// Log console message
-						$aseco->console('{1} [{2}] merged global blacklist [{3}] new: {4}', $logtitle, $login, $url, $new);
-
-						$msg = new Message('plugin.uptodate', 'admin_merged');
-						$msg->addPlaceholders($new);
+					else {
+						$msg = new Message('plugin.uptodate', 'admin_can_not_parse');
+						$msg->addPlaceholders($url);
 						$msg->sendChatMessage($login);
 					}
 				}
 				else {
-					$msg = new Message('plugin.uptodate', 'admin_can_not_parse');
+					$msg = new Message('plugin.uptodate', 'admin_can_not_access');
 					$msg->addPlaceholders($url);
 					$msg->sendChatMessage($login);
 				}
 			}
-			else {
-				$msg = new Message('plugin.uptodate', 'admin_can_not_access');
-				$msg->addPlaceholders($url);
-				$msg->sendChatMessage($login);
-			}
+		}
+		catch (Exception $exception) {
+			$aseco->console('[ManiaKarma] webrequest->get(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
 		}
 	}
 }

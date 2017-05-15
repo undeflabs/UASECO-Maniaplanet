@@ -6,10 +6,6 @@
  * » Based upon plugin.rasp_karma.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-22
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -50,8 +43,10 @@ class PluginRaspKarma extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Votes for a map and displays current score of it.');
 
 		$this->registerEvent('onSync',		'onSync');
@@ -112,7 +107,7 @@ class PluginRaspKarma extends Plugin {
 
 				$karma = $this->getKarma($map->id, $player->login);
 				$message = $aseco->formatText($this->messages['KARMA_MAP'][0],
-					$aseco->stripColors($map->name),
+					$aseco->stripStyles($map->name),
 					$karma
 				);
 			}

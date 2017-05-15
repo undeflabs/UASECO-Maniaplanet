@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2015-11-11
+	Version:	2017-04-18
 	Authors:	[EN] undef.de
 			[DE] askuri
 	//-->
@@ -247,13 +247,21 @@
 		<de>{#server}» Der Server {#highlite}{1}$z$s {#server}besitzt {#highlite}{2} {#server}Planets</de>
 	</show_planets>
 
-	<time>
-		<en>{#server}» {#interact}Current Server Time: {#highlite}$i {1}{#interact} on {#highlite}$i {2}</en>
-		<de>{#server}» {#interact}Aktuelle Serverzeit: {#highlite}$i {1}{#interact} am {#highlite}$i {2}</de>
-	</time>
-
 	<round>
 		<en>{#server}» $n{#message}Round {#highlite}{1}{#message}: </en>
 		<de>{#server}» $n{#message}Runde {#highlite}{1}{#message}: </de>
 	</round>
+
+
+
+	<!-- includes/core/window.class.php -->
+	<header_page>
+		<en>Page</en>
+		<de>Seite</de>
+	</header_page>
+
+	<header_of>
+		<en>of</en>
+		<de>von</de>
+	</header_of>
 </locales>

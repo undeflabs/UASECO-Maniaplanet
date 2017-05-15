@@ -1,0 +1,63 @@
+<!--
+ * Template of a classic speedometer
+ * ----------------------------------------------------------------------------------
+ * Authors:	undef.de
+ * Date:	2017-05-12
+ * Copyright:	2014 - 2017 by undef.de
+ * ----------------------------------------------------------------------------------
+ * You have to use the Manialink V3 syntax, attributes, position and sizes!
+ * ----------------------------------------------------------------------------------
+-->
+<frame pos="-115 -15" z-index="20.1" id="FrameSpeedStatistic" hidden="true">
+	<label pos="0 -41.3" z-index="0.05" size="60 4" textsize="1" scale="0.8" text="" textcolor="FFFFFF" id="LabelSpeedStatistic"/>
+	<label pos="0 -44.3" z-index="0.05" size="60 4" textsize="1" scale="0.8" text="" textcolor="00FF00" id="LabelAltitudeStatistic"/>
+<!--	<quad pos="0 25" z-index="0.01" size="230 75" bgcolor="AAA3"/>		-->
+	<quad pos="0 -39.2" z-index="0.02" size="230 0.2" bgcolor="0005"/>
+	<graph pos="0 25" z-index="2.0" size="690 225" scale="0.3333333333333333" id="GraphStatistic"/>
+</frame>
+
+<frame pos="136.0 -76.0" z-index="20.0" id="FrameTachometer">
+	<quad pos="0 0" z-index="0.01" size="95.5 95.5" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-background-rpm.png" id="QuadTachometer"/>
+	<quad pos="0 -2.2" z-index="0.10" size="87.625 87.625" halign="center" valign="center" modulatecolor="FBBE08" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/needle-light-cutted.png" id="QuadTachoneedle"/>
+	<quad pos="0 0" z-index="0.03" size="95.5 95.5" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-colorscale.png" id="QuadTachoscale" scriptevents="1"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-01.png" id="QuadTachoscale01"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-02.png" id="QuadTachoscale02"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-03.png" id="QuadTachoscale03"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-04.png" id="QuadTachoscale04"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-05.png" id="QuadTachoscale05"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-06.png" id="QuadTachoscale06"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-07.png" id="QuadTachoscale07"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-08.png" id="QuadTachoscale08"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="5E8ADB" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-09.png" id="QuadTachoscale09"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="FF0000" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-10.png" id="QuadTachoscale10"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="FF0000" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-11.png" id="QuadTachoscale11"/>
+	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="FF0000" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-12.png" id="QuadTachoscale12"/>
+	<quad pos="0 0" z-index="0.05" size="95.5 95.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-overlay.png" id="QuadTachoscaleOverlay"/>
+	<label pos="0 4.2" z-index="0.04" size="20 4" halign="center" valign="center2" style="TextButtonSmall" textsize="1.5" text=" " id="LabelVelocityUnit" scriptevents="1"/>
+	<label pos="0 11" z-index="0.04" size="80 20" halign="center" valign="center2" style="TextButtonBig" textsize="10" text="0" id="LabelSpeed"/>
+
+	<label pos="0 20" z-index="0.04" halign="center" valign="center2" style="TextButtonSmall" textsize="1" textcolor="777777FF" text="RPM X 1000"/>
+
+	<frame pos="-11.1 -1.9" z-index="0.04">
+		<label pos="0 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance1"/>
+		<label pos="4.5 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance2"/>
+		<label pos="9 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance3"/>
+		<label pos="13.5 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance4"/>
+		<label pos="18 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance5"/>
+		<label pos="22.5 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance6"/>
+	</frame>
+
+	<frame pos="-3 -10.5" z-index="0.04">
+		<quad pos="0 0" z-index="0.04" size="6 6" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-gears.png"/>
+		<quad pos="8.5 0" z-index="0.04" size="8 7" halign="center" valign="center" bgcolor="FFFFFF"/>
+		<label pos="8.5 -0.15" z-index="0.05" size="6 6" halign="center" valign="center2" style="TextButtonNav" textsize="5" textcolor="000000" text="P" id="LabelGear"/>
+	</frame>
+
+	<frame pos="-12 -21.5" z-index="0.04">
+		<quad pos="0 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-statistics.png" scriptevents="1" id="QuadIconStatistics"/>
+		<quad pos="6 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-sounds.png" scriptevents="1" id="QuadIconSounds"/>
+		<quad pos="12 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-lights.png" scriptevents="1" id="QuadIconLights"/>
+		<quad pos="18 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-fuel.png" scriptevents="1" id="QuadIconFuel"/>
+		<quad pos="24 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-temperature.png" scriptevents="1" id="QuadIconTemperature"/>
+	</frame>
+</frame>

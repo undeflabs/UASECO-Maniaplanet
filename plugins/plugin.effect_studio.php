@@ -6,13 +6,6 @@
  * http://www.undef.name/UASECO/Effect-Studio.php
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Version:		1.0.0
- * Date:		2015-08-23
- * Copyright:		2012 - 2015 by undef.de
- * System:		UASECO/0.9.5+
- * Game:		ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.modescript_handler.php
  *
  */
 
@@ -59,8 +49,10 @@ class PluginEffectStudio extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-04');
+		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
@@ -81,8 +73,8 @@ class PluginEffectStudio extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[EffectStudio] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
@@ -104,13 +96,13 @@ class PluginEffectStudio extends Plugin {
 			'onNewMap'			=> 'onLoadingMap',
 			'onBeginRound'			=> 'onBeginRound',
 			'onPlayerCheckpoint'		=> 'onPlayerCheckpoint',
-			'onPlayerConnect'		=> 'onPlayerConnect1',
+			'onPlayerConnect'		=> 'onPlayerConnectPostfix',
 			'onPlayerStartCountdown'	=> 'onPlayerStartCountdown',
 			'onPlayerStartLine'		=> 'onPlayerStartLine',
-			'onPlayerFinish'		=> 'onPlayerFinish1',
+			'onPlayerFinish'		=> 'onPlayerFinishPrefix',
 			'onPlayerWins'			=> 'onPlayerWins',
 			'onEndRound'			=> 'onEndRound',
-			'onEndMap'			=> 'onEndMap1',
+			'onEndMap'			=> 'onEndMapPrefix',
 			'onRestartMap'			=> 'onRestartMap',
 			'onLocalRecord'			=> 'onLocalRecord',
 			'onDedimaniaRecord'		=> 'onDedimaniaRecord',
@@ -188,9 +180,9 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerStartCountdown ($aseco, $login) {
+	public function onPlayerStartCountdown ($aseco, $params) {
 		if (isset($this->config['EventActions']['onPlayerStartCountdown'])) {
-			$this->eventHandler('auditive', $login, 'onPlayerStartCountdown');
+			$this->eventHandler('auditive', $params['login'], 'onPlayerStartCountdown');
 		}
 	}
 
@@ -200,9 +192,9 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerStartLine ($aseco, $login) {
+	public function onPlayerStartLine ($aseco, $params) {
 		if (isset($this->config['EventActions']['onPlayerStartLine'])) {
-			$this->eventHandler('auditive', $login, 'onPlayerStartLine');
+			$this->eventHandler('auditive', $params['login'], 'onPlayerStartLine');
 		}
 	}
 
@@ -239,9 +231,8 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $param = [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
 	public function onPlayerCheckpoint ($aseco, $param) {
-		$this->eventHandler('auditive', $param[0], 'onPlayerCheckpoint');
+		$this->eventHandler('auditive', $param['login'], 'onPlayerCheckpoint');
 	}
 
 	/*
@@ -262,7 +253,7 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerConnect1 ($aseco, $player) {
+	public function onPlayerConnectPostfix ($aseco, $player) {
 		$this->eventHandler('auditive', $player->login, 'onPlayerConnect');
 	}
 
@@ -272,7 +263,7 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerFinish1 ($aseco, $finish) {
+	public function onPlayerFinishPrefix ($aseco, $finish) {
 		if ($finish->score > 0) {
 			if (isset($this->config['EventActions']['onPlayerFinish'])) {
 				$this->eventHandler('auditive', $finish->player->login, 'onPlayerFinish');
@@ -306,7 +297,7 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $unused) {
+	public function onEndMapPrefix ($aseco, $map) {
 		$this->eventHandler('auditive', false, 'onEndMap');
 	}
 
@@ -316,7 +307,7 @@ class PluginEffectStudio extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onRestartMap ($aseco, $unused) {
+	public function onRestartMap ($aseco, $map) {
 		$this->eventHandler('auditive', false, 'onRestartMap');
 	}
 
@@ -361,8 +352,8 @@ class PluginEffectStudio extends Plugin {
 
 		$xml = false;
 		if (($typ == 'auditive') || ($typ == 'both') ) {
-			$xml .= '<manialink name="EffectStudioAuditive'. ucfirst($event) .'" id="EffectStudioAuditive'. ucfirst($event) .'">';
-			$xml .= '<audio posn="140 0 0" sizen="3 3" data="'. $this->config['EventActions'][$event]['Url'] .'?chksum='. $this->config['EventActions'][$event]['ChkSum'] .'.ogg" play="1" looping="'. $this->config['EventActions'][$event]['Loop'] .'" />';
+			$xml .= '<manialink name="EffectStudioAuditive'. ucfirst($event) .'" id="EffectStudioAuditive'. ucfirst($event) .'" version="3">';
+			$xml .= '<audio posn="350 0 0" sizen="7.5 5.625" data="'. $this->config['EventActions'][$event]['Url'] .'?chksum='. $this->config['EventActions'][$event]['ChkSum'] .'.ogg" play="1" looping="'. $this->config['EventActions'][$event]['Loop'] .'" />';
 			$xml .= '</manialink>';
 		}
 		elseif (($typ == 'visual') || ($typ == 'both') ) {

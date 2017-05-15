@@ -2,9 +2,9 @@
 <settings>
 	<!-- Position where the messages will be placed -->
 	<position>
-		<x>0</x>
-		<y>35.5</y>
-		<z>20</z>
+		<x>0.0</x>
+		<y>75.0</y>
+		<z>20.0</z>
 	</position>
 
 	<!-- RGBA -->

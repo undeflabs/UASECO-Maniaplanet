@@ -1,10 +1,12 @@
-<manialink id="UASECO-3"><frame posn="60.1 5.5 0">
-<quad sizen="4.6 29.6" style="%STYLE%" substyle="%SUBST%"/>
-<quad posn="0.6 -1 2" sizen="3 3" style="Icons64x64_1" substyle="ClipRewind" action="PluginManialinks?Action=21"/>
-<quad posn="0.7 -5 2" sizen="3 3" style="Icons64x64_1" substyle="ClipPause" action="PluginManialinks?Action=22"/>
-<quad posn="0.7 -9 2" sizen="3 3" style="Icons64x64_1" substyle="ClipPlay" action="PluginManialinks?Action=23"/>
-<quad posn="0.6 -13 2" sizen="3 3.1" style="Icons64x64_1" substyle="Refresh" action="PluginManialinks?Action=24"/>
-<quad posn="0.5 -16 2" sizen="3.4 5" style="Icons64x64_1" substyle="ArrowGreen" action="PluginManialinks?Action=25"/>
-<quad posn="0.5 -20 2" sizen="3.4 5" style="Icons64x64_1" substyle="ArrowRed" action="PluginManialinks?Action=26"/>
-<quad posn="0.6 -25 2" sizen="3.2 4" style="Icons64x64_1" substyle="Buddy" action="PluginManialinks?Action=27"/>
-</frame></manialink>
+<manialink id="UASECO-3" version="3">
+<frame pos="150.25 10.3125" z-index="0">
+<quad size="11.5 55.5" style="%STYLE%" substyle="%SUBST%"/>
+<quad pos="1.5 -1.875" z-index="2" size="7.5 5.625" style="Icons64x64_1" substyle="ClipRewind" action="PluginManialinks?Action=21"/>
+<quad pos="1.75 -9.375" z-index="2" size="7.5 5.625" style="Icons64x64_1" substyle="ClipPause" action="PluginManialinks?Action=22"/>
+<quad pos="1.75 -16.875" z-index="2" size="7.5 5.625" style="Icons64x64_1" substyle="ClipPlay" action="PluginManialinks?Action=23"/>
+<quad pos="1.5 -24.375" z-index="2" size="7.5 5.8125" style="Icons64x64_1" substyle="Refresh" action="PluginManialinks?Action=24"/>
+<quad pos="1.25 -30" z-index="2" size="8.5 9.375" style="Icons64x64_1" substyle="ArrowGreen" action="PluginManialinks?Action=25"/>
+<quad pos="1.25 -37.5" z-index="2" size="8.5 9.375" style="Icons64x64_1" substyle="ArrowRed" action="PluginManialinks?Action=26"/>
+<quad pos="1.5 -46.875" z-index="2" size="8 7.5" style="Icons64x64_1" substyle="Buddy" action="PluginManialinks?Action=27"/>
+</frame>
+</manialink>

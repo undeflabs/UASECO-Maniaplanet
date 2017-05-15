@@ -67,6 +67,9 @@
 		<ranking_nonew>{#server}» {#dedimsg}Dedimania Record rankings on {#highlite}{1}{#dedimsg} {2} this round: none new so far</ranking_nonew>
 		<ranking_none>{#server}» {#dedimsg}Dedimania Record rankings on {#highlite}{1}{#dedimsg} {2} this round: no records!</ranking_none>
 		<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}], </ranking_record_new>
+		<ranking_record_new_on>{#rank}{1}{#message}.$i{#highlite}{2}{#message}[{#highlite}{3}{#message}]$i, </ranking_record_new_on>
+		<ranking_record_on>{#rank}{1}{#message}.$i{#timelite}{2}{#message}[{#timelite}{3}{#message}]$i, </ranking_record_on>
+		<ranking_record>{#rank}{1}{#message}.{#timelite}{2}{#message}[{#timelite}{3}{#message}], </ranking_record>
 
 		<!-- record messages -->
 		<record_new>{#server}» {#highlite}{1}{#dedirec} secured his/her {#rank}{2}{#dedirec}. Dedimania Record! Time: {#highlite}{3}{#dedirec} ({#rank}{4} {#highlite}{5}{#dedirec})</record_new>

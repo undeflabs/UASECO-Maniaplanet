@@ -7,10 +7,6 @@
  * » Based upon basic.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-30
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +35,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Player {
+class Player extends BaseClass {
 	public $id;			// Database Id
 	public $pid;			// Dedicated Id
 	public $login;
@@ -72,15 +68,15 @@ class Player {
 	public $target_autoselect;
 	public $target_spectating;
 
-	public $teamid;
+	public $team_id;
 	public $allies;
 
-	public $ladderrank;
-	public $ladderscore;
-	public $lastmatchscore;
-	public $nbwins;
-	public $nbdraws;
-	public $nblosses;
+	public $ladder_rank;
+	public $ladder_score;
+	public $last_match_score;
+	public $nb_wins;
+	public $nb_draws;
+	public $nb_losses;
 
 	public $client;
 	public $created;
@@ -92,9 +88,9 @@ class Player {
 
 	public $visits;
 	public $wins;
-	public $newwins;
+	public $new_wins;
 	public $donations;
-	public $timeplayed;
+	public $time_played;
 
 	public $data;
 
@@ -128,6 +124,12 @@ class Player {
 	public function __construct ($data = null) {
 		global $aseco;
 
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-01');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
+
 		if ($data) {
 			$this->id			= $aseco->server->players->getPlayerIdByLogin($data['Login'], true);
 			$this->pid			= $data['PlayerId'];
@@ -145,15 +147,15 @@ class Player {
 			$this->is_official		= $data['IsInOfficialMode'];
 			$this->is_referee		= $data['IsReferee'];
 
-			$this->teamid			= $data['TeamId'];
+			$this->team_id			= $data['TeamId'];
 			$this->allies			= $data['Allies'];
 
-			$this->ladderrank		= $data['LadderStats']['PlayerRankings'][0]['Ranking'];
-			$this->ladderscore		= round($data['LadderStats']['PlayerRankings'][0]['Score'], 2);
-			$this->lastmatchscore		= $data['LadderStats']['LastMatchScore'];
-			$this->nbwins			= $data['LadderStats']['NbrMatchWins'];
-			$this->nbdraws			= $data['LadderStats']['NbrMatchDraws'];
-			$this->nblosses			= $data['LadderStats']['NbrMatchLosses'];
+			$this->ladder_rank		= $data['LadderStats']['PlayerRankings'][0]['Ranking'];
+			$this->ladder_score		= round($data['LadderStats']['PlayerRankings'][0]['Score'], 2);
+			$this->last_match_score		= $data['LadderStats']['LastMatchScore'];
+			$this->nb_wins			= $data['LadderStats']['NbrMatchWins'];
+			$this->nb_draws			= $data['LadderStats']['NbrMatchDraws'];
+			$this->nb_losses		= $data['LadderStats']['NbrMatchLosses'];
 
 			$this->client			= $data['ClientVersion'];
 			$this->created			= time();
@@ -205,14 +207,14 @@ class Player {
 			$this->is_official		= false;
 			$this->is_referee		= false;
 
-			$this->teamid			= -1;
+			$this->team_id			= -1;
 			$this->allies			= array();
 
-			$this->ladderrank		= 0;
-			$this->ladderscore		= 0;
-			$this->nbwins			= 0;
-			$this->nbdraws			= 0;
-			$this->nblosses			= 0;
+			$this->ladder_rank		= 0;
+			$this->ladder_score		= 0;
+			$this->nb_wins			= 0;
+			$this->nb_draws			= 0;
+			$this->nb_losses		= 0;
 
 			$this->client			= '';
 			$this->created			= 0;
@@ -230,8 +232,8 @@ class Player {
 		}
 		$this->visits				= 0;
 		$this->wins				= 0;
-		$this->newwins				= 0;
-		$this->timeplayed			= 0;
+		$this->new_wins				= 0;
+		$this->time_played			= 0;
 		$this->donations			= 0;
 
 		$this->unlocked				= false;
@@ -338,7 +340,7 @@ class Player {
 
 		// Check LadderRanking
 		if ($info['LadderRanking'] > 0) {
-			$this->ladderrank = $info['LadderRanking'];
+			$this->ladder_rank = $info['LadderRanking'];
 			$this->is_official = true;
 		}
 		else {
@@ -395,7 +397,7 @@ class Player {
 	*/
 
 	public function getWins () {
-		return $this->wins + $this->newwins;
+		return $this->wins + $this->new_wins;
 	}
 
 	/*
@@ -405,7 +407,7 @@ class Player {
 	*/
 
 	public function getTimePlayed () {
-		return $this->timeplayed + $this->getTimeOnline();
+		return $this->time_played + $this->getTimeOnline();
 	}
 
 	/*

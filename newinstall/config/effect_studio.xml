@@ -4,98 +4,98 @@
 		<effect>
 			<enabled>false</enabled>
 			<event>onPlayerStartCountdown</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerStartCountdown.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerStartCountdown.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onPlayerStartLine</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerStartLine.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerStartLine.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
-			<enabled>true</enabled>
+			<enabled>false</enabled>
 			<event>onPlayerConnect</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerConnect.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerConnect.ogg</url>
 			<loop>false</loop>
 			<length>5</length>
 		</effect>
 		<effect>
 			<enabled>true</enabled>
 			<event>onNewMap</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onNewMap.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onNewMap.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>true</enabled>
 			<event>onEndMap</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onEndMap.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onEndMap.ogg</url>
 			<loop>false</loop>
 			<length>26</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onRestartMap</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onRestartMap.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onRestartMap.ogg</url>
 			<loop>false</loop>
 			<length>26</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onBeginRound</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onBeginRound.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onBeginRound.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onEndRound</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onEndRound.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onEndRound.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
-			<enabled>true</enabled>
+			<enabled>false</enabled>
 			<event>onPlayerCheckpoint</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerCheckpoint.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerCheckpoint.ogg</url>
 			<loop>false</loop>
 			<length>2</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onPlayerFinish</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerFinish.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerFinish.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onPlayerWins</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerWins.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerWins.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>true</enabled>
 			<event>onLocalRecord</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onLocalRecord.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onLocalRecord.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>true</enabled>
 			<event>onDedimaniaRecord</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onDedimaniaRecord.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onDedimaniaRecord.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
 		<effect>
 			<enabled>false</enabled>
 			<event>onPlayerWinCurrency</event>
-			<url>http://static.undef.name/ingame/effect-studio/sounds/onPlayerWinCurrency.ogg</url>
+			<url>http://maniacdn.net/undef.de/uaseco/effect-studio/sounds/onPlayerWinCurrency.ogg</url>
 			<loop>false</loop>
 			<length>3</length>
 		</effect>
@@ -120,10 +120,6 @@
 		<script>
 			<enabled>false</enabled>
 			<path>config/effect_studio/personal-medal-sound.xml</path>
-		</script>
-		<script>
-			<enabled>false</enabled>
-			<path>config/effect_studio/clipping-test.xml</path>
 		</script>
 	</scripts>
 </settings>

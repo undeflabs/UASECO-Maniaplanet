@@ -7,11 +7,6 @@
  *   by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-11-11
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +22,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.local_records.php
  *
  */
 
@@ -54,8 +45,11 @@ class PluginChatRecords extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays all records of the current map.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -178,7 +172,7 @@ class PluginChatRecords extends Plugin {
 			$cur_record = $aseco->plugins['PluginLocalRecords']->records->getRecord($i);
 			$nick = $cur_record->player->nickname;
 			if (!$aseco->settings['lists_colornicks']) {
-				$nick = $aseco->stripColors($nick);
+				$nick = $aseco->stripStyles($nick);
 			}
 			if ($aseco->settings['show_rec_logins']) {
 				$msg[] = array(str_pad($i+1, 2, '0', STR_PAD_LEFT) . '.',
@@ -492,7 +486,7 @@ class PluginChatRecords extends Plugin {
 			// obtain nickname for this login
 			$nick = $aseco->server->players->getPlayerNickname($login);
 			if (!$aseco->settings['lists_colornicks']) {
-				$nick = $aseco->stripColors($nick);
+				$nick = $aseco->stripStyles($nick);
 			}
 
 			$records[] = array(
@@ -511,25 +505,28 @@ class PluginChatRecords extends Plugin {
 
 
 		// Setup settings for Window
-		$settings_title = array(
-			'icon'	=> 'BgRaceScore2,LadderRank',
-		);
-		$settings_heading = array(
-			'textcolors'	=> array('FFFF', '0F0F', '0F0F', '0F0F', 'FFFF', 'FFFF'),
+		$settings_styles = array(
+			'icon'			=> 'BgRaceScore2,LadderRank',
+			'textcolors'		=> array('FFFF', '0F0F', '0F0F', '0F0F', 'FFFF', 'FFFF'),
 		);
 		$settings_columns = array(
-			'columns'	=> 2,
-			'widths'	=> array(5, 8, 8, 8, 2, 69),
-			'halign'	=> array('right', 'right', 'right', 'right', 'left', 'left'),
-			'textcolors'	=> array('EEEF', 'EEEF', 'EEEF', 'EEEF', 'FFFF', 'FFFF'),
-			'heading'	=> array('#', '#1', '#2', '#3', '', 'Player'),
+			'columns'		=> 2,
+			'widths'		=> array(5, 8, 8, 8, 2, 69),
+			'halign'		=> array('right', 'right', 'right', 'right', 'left', 'left'),
+			'textcolors'		=> array('EEEF', 'EEEF', 'EEEF', 'EEEF', 'FFFF', 'FFFF'),
+			'heading'		=> array('#', '#1', '#2', '#3', '', 'Player'),
+		);
+		$settings_content = array(
+			'title'			=> 'TOP 100 of Top-3 Record Holders',
+			'data'			=> $records,
+			'about'			=> 'CHAT RECORDS/'. $this->getVersion(),
+			'mode'			=> 'columns',
 		);
 
 		$window = new Window();
-		$window->setLayoutTitle($settings_title);
-		$window->setLayoutHeading($settings_heading);
+		$window->setStyles($settings_styles);
 		$window->setColumns($settings_columns);
-		$window->setContent('TOP 100 of Top-3 Record Holders', $records);
+		$window->setContent($settings_content);
 		$window->send($player, 0, false);
 	}
 
@@ -598,7 +595,7 @@ class PluginChatRecords extends Plugin {
 			// obtain nickname for this login
 			$nick = $aseco->server->players->getPlayerNickname($login);
 			if (!$aseco->settings['lists_colornicks']) {
-				$nick = $aseco->stripColors($nick);
+				$nick = $aseco->stripStyles($nick);
 			}
 
 			$records[] = array(
@@ -606,33 +603,36 @@ class PluginChatRecords extends Plugin {
 				$rec,
 				$nick,
 			);
-			$i++;
-			if ($i > $top) {
+			if ($i >= $top) {
 				break;
 			}
+			$i++;
 		}
 
 
 		// Setup settings for Window
-		$settings_title = array(
-			'icon'	=> 'BgRaceScore2,LadderRank',
-		);
-		$settings_heading = array(
-			'textcolors'	=> array('FFFF', 'FFFF', 'FFFF'),
+		$settings_styles = array(
+			'icon'			=> 'BgRaceScore2,LadderRank',
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 		);
 		$settings_columns = array(
-			'columns'	=> 4,
-			'widths'	=> array(11, 22, 67),
-			'halign'	=> array('right', 'right', 'left'),
-			'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
-			'heading'	=> array('#', 'Records', 'Player'),
+			'columns'		=> 4,
+			'widths'		=> array(11, 22, 67),
+			'halign'		=> array('right', 'right', 'left'),
+			'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
+			'heading'		=> array('#', 'Records', 'Player'),
+		);
+		$settings_content = array(
+			'title'			=> 'TOP 100 Ranked Record Holders',
+			'data'			=> $records,
+			'about'			=> 'CHAT RECORDS/'. $this->getVersion(),
+			'mode'			=> 'columns',
 		);
 
 		$window = new Window();
-		$window->setLayoutTitle($settings_title);
-		$window->setLayoutHeading($settings_heading);
+		$window->setStyles($settings_styles);
 		$window->setColumns($settings_columns);
-		$window->setContent('TOP 100 Ranked Record Holders', $records);
+		$window->setContent($settings_content);
 		$window->send($player, 0, false);
 	}
 
@@ -688,12 +688,12 @@ class PluginChatRecords extends Plugin {
 					// format map name
 					$mapname = $map->name;
 					if (!$aseco->settings['lists_colormaps']) {
-						$mapname = $aseco->stripColors($mapname);
+						$mapname = $aseco->stripStyles($mapname);
 					}
 
 					// grey out if in history
 					if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
-						$mapname = '{#grey}' . $aseco->stripColors($mapname);
+						$mapname = '{#grey}' . $aseco->stripStyles($mapname);
 					}
 					else {
 						$mapname = '{#black}' . $mapname;

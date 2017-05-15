@@ -6,11 +6,6 @@
  * » Based upon chat.lastwin.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-11-11
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -51,8 +43,11 @@ class PluginLastWindow extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-18');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Re-opens the last closed window.');
 
 		$this->registerChatCommand('lastwin', 'chat_lastwin', new Message('chat.last_window', 'slash_lastwin'), Player::PLAYERS);

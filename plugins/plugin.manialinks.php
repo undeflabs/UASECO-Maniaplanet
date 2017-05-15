@@ -7,10 +7,6 @@
  * » Based upon the manialinks.inc.php from XAseco2, written by the Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,9 +113,12 @@ class PluginManialinks extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-14');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides simple ManiaLink windows, also handles special panels and custom UI changes.');
+
 
 		// Register functions for events
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
@@ -187,38 +186,40 @@ class PluginManialinks extends Plugin {
 		$lines = count($data);
 
 		// build manialink header & window
-		$xml  = '<manialink id="UASECO-1"><frame pos="' . ($widths[0]/2) . ' 0.47 0">' .
-		        '<quad size="' . $widths[0] . ' ' . (0.11+$hsize+$lines*$bsize) .
+		$xml  = '<manialink id="UASECO-1" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF" style="' . $style['BODY'][0]['TEXTSTYLE'][0] . '"/>';
+		$xml .= '</stylesheet>';
+		$xml .= '<frame pos="-' . ($widths[0]/2) . ' 0.47 0">';
+		$xml .= '<quad pos="0 0 0" size="' . $widths[0] . ' ' . (0.11+$hsize+$lines*$bsize) .
 		        '" style="' . $style['WINDOW'][0]['STYLE'][0] .
 		        '" substyle="' . $style['WINDOW'][0]['SUBSTYLE'][0] . '"/>' . LF;
 
 		// add header and optional icon
-		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -0.01 -0.1" size="' . ($widths[0]-0.02) . ' ' . $hsize .
-		        '" halign="center" style="' . $style['HEADER'][0]['STYLE'][0] .
+		$xml .= '<quad pos="0 -0.01 -0.1" size="' . ($widths[0] - 0.02) . ' ' . $hsize .
+		        '" style="' . $style['HEADER'][0]['STYLE'][0] .
 		        '" substyle="' . $style['HEADER'][0]['SUBSTYLE'][0] . '"/>' . LF;
 		if (is_array($icon)) {
-			$isize = $hsize;
-			if (isset($icon[2]))
-				$isize += $icon[2];
-			$xml .= '<quad pos="-0.055 -0.045 -0.2" size="' . $isize . ' ' . $isize .
-			        '" halign="center" valign="center" style="' . $icon[0] . '" substyle="' . $icon[1] . '"/>' . LF;
-			$xml .= '<label pos="-0.10 -0.025 -0.2" size="' . ($widths[0]-0.12) . ' ' . $hsize .
-			        '" halign="left" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
+			$isize = 0.05;
+			$xml .= '<quad pos="0.02 -0.02 -0.2" size="' . $isize . ' ' . $isize .
+			        '" style="' . $icon[0] . '" substyle="' . $icon[1] . '"/>' . LF;
+			$xml .= '<label pos="'. ($isize + 0.03) .' -0.029 -0.2" size="' . ($widths[0]-0.12) . ' ' . $hsize .
+			        '" class="labels" halign="left" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
 			        '" text="' . $aseco->handleSpecialChars($header) . '"/>' . LF;
-		} else {
-			$xml .= '<label pos="-0.03 -0.025 -0.2" size="' . ($widths[0]-0.05) . ' ' . $hsize .
-			        '" halign="left" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
+		}
+		else {
+			$xml .= '<label pos="'. ($isize + 0.03) .' -0.029 -0.2" size="' . ($widths[0]-0.05) . ' ' . $hsize .
+			        '" class="labels" halign="left" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
 			        '" text="' . $aseco->handleSpecialChars($header) . '"/>' . LF;
 		}
 
 		// add body
-		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -' . (0.02+$hsize) .
+		$xml .= '<quad pos="' . ($widths[0]/2) . ' -' . (0.02+$hsize) .
 		        ' -0.1" size="' . ($widths[0]-0.02) . ' ' . (0.015+$lines*$bsize) .
 		        '" halign="center" style="' . $style['BODY'][0]['STYLE'][0] .
 		        '" substyle="' . $style['BODY'][0]['SUBSTYLE'][0] . '"/>' . LF;
 
 		// add lines with optional columns
-		$xml .= '<format style="' . $style['BODY'][0]['TEXTSTYLE'][0] . '"/>' . LF;
 		$cnt = 0;
 		foreach ($data as $line) {
 			$cnt++;
@@ -226,39 +227,44 @@ class PluginManialinks extends Plugin {
 				if (count($line) > 1) {
 					for ($i = 0; $i < count($widths)-1; $i++) {
 						if (is_array($line[$i])) {
-							$xml .= '<quad pos="-' . (0.015+array_sum(array_slice($widths,1,$i))) .
+							$xml .= '<quad pos="' . (0.015+array_sum(array_slice($widths,1,$i))) .
 							        ' -' . ($hsize-0.013+$cnt*$bsize) .
-							        ' -0.15" size="' . ($widths[$i+1]-0.03) . ' ' . ($bsize+0.000) .
+							        ' 0.04" size="' . ($widths[$i+1]-0.03) . ' ' . ($bsize+0.000) .
 							        '" halign="left" style="' . $style['BUTTON'][0]['STYLE'][0] .
 							        '" substyle="' . $style['BUTTON'][0]['SUBSTYLE'][0] .
 							        '" action="' . $line[$i][1] . '"/>' . LF;
-							$xml .= '<label pos="-' . (0.025+array_sum(array_slice($widths,1,$i))) .
+							$xml .= '<label pos="' . (0.025+array_sum(array_slice($widths,1,$i))) .
 							        ' -' . ($hsize-0.008+$cnt*$bsize) .
-							        ' -0.2" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
-							        '" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
+							        ' 0.05" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
+							        '" class="labels" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
 							        '" text="' . $aseco->handleSpecialChars($line[$i][0]) . '"/>' . LF;
-						} else {
-							$xml .= '<label pos="-' . (0.025+array_sum(array_slice($widths,1,$i))) .
+						}
+						else {
+							$xml .= '<label pos="' . (0.025+array_sum(array_slice($widths,1,$i))) .
 							        ' -' . ($hsize-0.008+$cnt*$bsize) .
-							        ' -0.2" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
-							        '" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
+							        ' 0.05" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
+							        '" class="labels" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
 							        '" text="' . $aseco->handleSpecialChars($line[$i]) . '"/>' . LF;
 						}
 					}
-				} else {
+				}
+				else {
 					$xml .= '<label pos="-0.025 -' . ($hsize-0.008+$cnt*$bsize) .
-					        ' -0.2" size="' . ($widths[0]-0.04) . ' ' . (0.02+$bsize) .
-					        '" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
+					        ' 0.05" size="' . ($widths[0]-0.04) . ' ' . (0.02+$bsize) .
+					        '" class="labels" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
 					        '" text="' . $aseco->handleSpecialChars($line[0]) . '"/>' . LF;
 				}
 			}
 		}
 
 		// add button (action "0" = close) & footer
-		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -' . (0.03+$hsize+$lines*$bsize) .
-		        ' -0.2" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="PluginManialinks?Action=0"/>' . LF;
+		$xml .= '<quad pos="' . ($widths[0]/2) . ' -' . (0.03+$hsize+$lines*$bsize) .
+		        ' 0.04" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="PluginManialinks?Action=0"/>' . LF;
 		$xml .= '</frame></manialink>';
 		$xml = str_replace('{#black}', $style['WINDOW'][0]['BLACKCOLOR'][0], $xml);
+
+		$xml = preg_replace_callback('/ pos="(\S+) (\S+) (\S+)"/', array($this, 're_convertPosnToVersion3'), $xml);
+		$xml = preg_replace_callback('/ size="(\S+) (\S+)"/', array($this, 're_convertSizenToVersion3'), $xml);
 
 		//$aseco->console_text($xml);
 		$aseco->client->addCall('SendDisplayManialinkPageToLogin', $login, $aseco->formatColors($xml), 0, true);
@@ -451,42 +457,43 @@ class PluginManialinks extends Plugin {
 		}
 
 		// build manialink header & window
-		$xml  = '<manialink id="UASECO-1"><frame pos="' . ($widths[0]/2) . ' 0.47 0">' .
-		        '<quad size="' . $widths[0] . ' ' . (0.11+$hsize+$lines*$bsize) .
+		$xml  = '<manialink id="UASECO-1" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="2" scale="1" textcolor="FFFF" style="' . $style['BODY'][0]['TEXTSTYLE'][0] . '"/>';
+		$xml .= '</stylesheet>';
+		$xml .= '<frame pos="-' . ($widths[0]/2) . ' 0.47 0">';
+		$xml .= '<quad pos="0 0 0" size="' . $widths[0] . ' ' . (0.11+$hsize+$lines*$bsize) .
 		        '" style="' . $style['WINDOW'][0]['STYLE'][0] .
 		        '" substyle="' . $style['WINDOW'][0]['SUBSTYLE'][0] . '"/>' . LF;
 
 		// add header
-		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -0.01 -0.1" size="' . ($widths[0]-0.02) . ' ' . $hsize .
-		        '" halign="center" style="' . $style['HEADER'][0]['STYLE'][0] .
+		$xml .= '<quad pos="0.01 -0.01 0.01" size="' . ($widths[0] - 0.02) . ' ' . $hsize .
+		        '" style="' . $style['HEADER'][0]['STYLE'][0] .
 		        '" substyle="' . $style['HEADER'][0]['SUBSTYLE'][0] . '"/>' . LF;
 		if (is_array($icon)) {
-			$isize = $hsize;
-			if (isset($icon[2]))
-				$isize += $icon[2];
-			$xml .= '<quad pos="-0.055 -0.045 -0.2" size="' . $isize . ' ' . $isize .
-			        '" halign="center" valign="center" style="' . $icon[0] . '" substyle="' . $icon[1] . '"/>' . LF;
-			$xml .= '<label pos="-0.10 -0.025 -0.2" size="' . ($widths[0]-0.25) . ' ' . $hsize .
-			        '" halign="left" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
+			$isize = 0.05;
+			$xml .= '<quad pos="0.02 -0.02 0.02" size="' . $isize . ' ' . $isize .
+			        '" style="' . $icon[0] . '" substyle="' . $icon[1] . '"/>' . LF;
+			$xml .= '<label pos="'. ($isize + 0.03) .' -0.029 0.04" size="' . ($widths[0]-0.25) . ' ' . $hsize .
+			        '" class="labels" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
 			        '" text="' . $aseco->handleSpecialChars($header) . '"/>' . LF;
 		}
 		else {
-			$xml .= '<label pos="-0.03 -0.025 -0.2" size="' . ($widths[0]-0.18) . ' ' . $hsize .
-			        '" halign="left" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
+			$xml .= '<label pos="'. ($isize + 0.03) .' -0.029 0.04" size="' . ($widths[0]-0.18) . ' ' . $hsize .
+			        '" class="labels" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
 			        '" text="' . $aseco->handleSpecialChars($header) . '"/>' . LF;
 		}
-		$xml .= '<label pos="-' . ($widths[0]-0.02) . ' -0.025 -0.2" size="0.12 ' . $hsize .
-		        '" halign="right" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
+		$xml .= '<label pos="' . ($widths[0]-0.02) . ' -0.029 0.04" size="0.12 ' . $hsize .
+		        '" class="labels" halign="right" style="' . $style['HEADER'][0]['TEXTSTYLE'][0] .
 		        '" text="$n(' . $ptr . '/' . $tot . ')"/>' . LF;
 
 		// add body
-		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -' . (0.02+$hsize) .
-		        ' -0.1" size="' . ($widths[0]-0.02) . ' ' . (0.015+$lines*$bsize) .
+		$xml .= '<quad pos="' . ($widths[0]/2) . ' -' . (0.02+$hsize) .
+		        ' 0.03" size="' . ($widths[0]-0.02) . ' ' . (0.015+$lines*$bsize) .
 		        '" halign="center" style="' . $style['BODY'][0]['STYLE'][0] .
 		        '" substyle="' . $style['BODY'][0]['SUBSTYLE'][0] . '"/>' . LF;
 
 		// add lines with optional columns
-		$xml .= '<format style="' . $style['BODY'][0]['TEXTSTYLE'][0] . '"/>' . LF;
 		$cnt = 0;
 		foreach ($player->msgs[$ptr] as $line) {
 			$cnt++;
@@ -496,23 +503,23 @@ class PluginManialinks extends Plugin {
 						if (isset($line[$i])) {
 							// check for action button
 							if (is_array($line[$i])) {
-								$xml .= '<quad pos="-' . (0.015+array_sum(array_slice($widths,1,$i))) .
+								$xml .= '<quad pos="' . (0.015+array_sum(array_slice($widths,1,$i))) .
 								        ' -' . ($hsize-0.013+$cnt*$bsize) .
-								        ' -0.15" size="' . ($widths[$i+1]-0.03) . ' ' . ($bsize+0.000) .
+								        ' 0.04" size="' . ($widths[$i+1]-0.03) . ' ' . ($bsize+0.000) .
 								        '" halign="left" style="' . $style['BUTTON'][0]['STYLE'][0] .
 								        '" substyle="' . $style['BUTTON'][0]['SUBSTYLE'][0] .
 								        '" action="' . $line[$i][1] . '"/>' . LF;
-								$xml .= '<label pos="-' . (0.025+array_sum(array_slice($widths,1,$i))) .
+								$xml .= '<label class="labels" pos="' . (0.025+array_sum(array_slice($widths,1,$i))) .
 								        ' -' . ($hsize-0.008+$cnt*$bsize) .
-								        ' -0.2" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
+								        ' 0.05" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
 								        '" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
 								        '" text="' . $aseco->handleSpecialChars($line[$i][0]) . '"/>' . LF;
 							}
 							else {
-								$xml .= '<label pos="-' . (0.025+array_sum(array_slice($widths,1,$i))) .
+								$xml .= '<label pos="' . (0.025+array_sum(array_slice($widths,1,$i))) .
 								        ' -' . ($hsize-0.008+$cnt*$bsize) .
-								        ' -0.2" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
-								        '" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
+								        ' 0.05" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .
+								        '" class="labels" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
 								        '" text="' . $aseco->handleSpecialChars($line[$i]) . '"/>' . LF;
 							}
 						}
@@ -520,8 +527,8 @@ class PluginManialinks extends Plugin {
 				}
 				else {
 					$xml .= '<label pos="-0.025 -' . ($hsize-0.008+$cnt*$bsize) .
-					        ' -0.2" size="' . ($widths[0]-0.04) . ' ' . (0.02+$bsize) .
-					        '" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
+					        ' 0.04" size="' . ($widths[0]-0.04) . ' ' . (0.02+$bsize) .
+					        '" class="labels" halign="left" style="' . $style['BODY'][0]['TEXTSTYLE'][0] .
 					        '" text="' . $aseco->handleSpecialChars($line[0]) . '"/>' . LF;
 				}
 			}
@@ -546,17 +553,17 @@ class PluginManialinks extends Plugin {
 			$icsiz = '0.038';
 			$icoff = 0.051;
 		}
-		$xml .= '<quad pos="-0.04 -' . ($icoff+$hsize+$lines*$bsize) .
-		        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $first . '/>' . LF;
+		$xml .= '<quad pos="0.04 -' . ($icoff+$hsize+$lines*$bsize) .
+		        ' 0.02" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $first . '/>' . LF;
 		if ($add5) {
-			$xml .= '<quad pos="-0.095 -' . ($icoff+$hsize+$lines*$bsize) .
-			        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $prev5 . '/>' . LF;
+			$xml .= '<quad pos="0.095 -' . ($icoff+$hsize+$lines*$bsize) .
+			        ' 0.02" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $prev5 . '/>' . LF;
 		}
-		$xml .= '<quad pos="-' . ($widths[0]*0.25) . ' -' . ($icoff+$hsize+$lines*$bsize) .
-		        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $prev1 . '/>' . LF;
+		$xml .= '<quad pos="' . ($widths[0]*0.25) . ' -' . ($icoff+$hsize+$lines*$bsize) .
+		        ' 0.02" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $prev1 . '/>' . LF;
 		// always a Close button
-		$xml .= '<quad pos="-' . ($widths[0]/2) . ' -' . (0.03+$hsize+$lines*$bsize) .
-		        ' -0.2" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="PluginManialinks?Action=0"/>' . LF;
+		$xml .= '<quad pos="' . ($widths[0]/2) . ' -' . (0.03+$hsize+$lines*$bsize) .
+		        ' 0.02" size="0.08 0.08" halign="center" style="Icons64x64_1" substyle="Close" action="PluginManialinks?Action=0"/>' . LF;
 		// check for succeeding page(s), then Next(5) & Last button(s)
 		if ($ptr < $tot) {
 			$next1 = '"ArrowNext" action="PluginManialinks?Action=2"';
@@ -574,21 +581,48 @@ class PluginManialinks extends Plugin {
 			$icsiz = '0.038';
 			$icoff = 0.051;
 		}
-		$xml .= '<quad pos="-' . ($widths[0]*0.75) . ' -' . ($icoff+$hsize+$lines*$bsize) .
-		        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $next1 . '/>' . LF;
+		$xml .= '<quad pos="' . ($widths[0]*0.75) . ' -' . ($icoff+$hsize+$lines*$bsize) .
+		        ' 0.02" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $next1 . '/>' . LF;
 		if ($add5) {
-			$xml .= '<quad pos="-' . ($widths[0]-0.095) . ' -' . ($icoff+$hsize+$lines*$bsize) .
-			        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $next5 . '/>' . LF;
+			$xml .= '<quad pos="' . ($widths[0]-0.095) . ' -' . ($icoff+$hsize+$lines*$bsize) .
+			        ' 0.02" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $next5 . '/>' . LF;
 		}
-		$xml .= '<quad pos="-' . ($widths[0]-0.04) . ' -' . ($icoff+$hsize+$lines*$bsize) .
-		        ' -0.2" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $last . '/>' . LF;
+		$xml .= '<quad pos="' . ($widths[0]-0.04) . ' -' . ($icoff+$hsize+$lines*$bsize) .
+		        ' 0.02" size="' . $icsiz . ' ' . $icsiz . '" halign="center" style="' . $icstl . '" substyle=' . $last . '/>' . LF;
 
 		$xml .= '</frame></manialink>';
 		$xml = str_replace('{#black}', $style['WINDOW'][0]['BLACKCOLOR'][0], $xml);
 
+		$xml = preg_replace_callback('/ pos="(\S+) (\S+) (\S+)"/', array($this, 're_convertPosnToVersion3'), $xml);
+		$xml = preg_replace_callback('/ size="(\S+) (\S+)"/', array($this, 're_convertSizenToVersion3'), $xml);
+
 		//$aseco->console_text($xml);
 		$aseco->client->addCall('SendDisplayManialinkPageToLogin', $player->login, $aseco->formatColors($xml), 0, false);
 	}
+
+/*
+#///////////////////////////////////////////////////////////////////////#
+#									#
+#///////////////////////////////////////////////////////////////////////#
+*/
+
+public function re_convertPosnToVersion3 ($pos) {
+//	return ' posn="'. ($pos[1] * 2.5) .' '. ($pos[2] * 1.875) .' '. $pos[3] .'"';
+	return ' pos="'. ($pos[1] * 60 * 2.5) .' '. ($pos[2] * 60 * 1.875) .'" z-index="'. $pos[3] .'"';
+	unset($pos);
+}
+
+/*
+#///////////////////////////////////////////////////////////////////////#
+#									#
+#///////////////////////////////////////////////////////////////////////#
+*/
+
+public function re_convertSizenToVersion3 ($size) {
+	return ' size="'. ($size[1] * 60 * 2.5) .' '. ($size[2] * 60 * 1.875) .'"';
+//	return ' sizen="'. ($size[1] * 60 * 2.5) .' '. ($size[2] * 60 * 1.875) .'"';
+	unset($size);
+}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

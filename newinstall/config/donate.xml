@@ -19,7 +19,7 @@
 		<thanks_you>{#server}» {#donate}You made a donation of {#highlite}{1}{#donate} planets.  Thank You!</thanks_you>
 		<donate_minimum>{#server}» {#error}Minimum donation amount is {#highlite}$i {1}{#error} planets!</donate_minimum>
 		<donate_help>{#server}» {#error}Use {#highlite}$i /donate &lt;number&gt;{#error} to donate planets to the server</donate_help>
-		<payment>{#donate} Send {#highlite}{1}{#donate} planets to {#highlite}{2}$z</payment>
+		<payment>{#donate}Send {#highlite}{1}{#donate} planets to {#highlite}{2}$z</payment>
 		<pay_insuff>{#server}» {#error}Insufficient server planets: {#highlite}$i {1}{#error}!</pay_insuff>
 		<pay_server>{#server}» {#error}Cannot pay this server itself!</pay_server>
 		<pay_confirm>{#server}» {#donate}Payment of {#highlite}{1}{#donate} planets to {#highlite}{2}{#donate} confirmed! Remaining planets: {#highlite}{3}</pay_confirm>

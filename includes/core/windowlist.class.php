@@ -5,10 +5,6 @@
  * » Handles actions for Manialink windows created with the Class Window.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-09-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +33,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class WindowList {
+class WindowList extends BaseClass {
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -47,9 +43,29 @@ class WindowList {
 
 	public function __construct ($aseco) {
 
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription(new Message('class.window', 'windowlist_description'));
+
 		// Register callbacks for this new Window
 		$aseco->registerEvent('onPlayerManialinkPageAnswer', array($this, 'onPlayerManialinkPageAnswer'));
 		$aseco->registerEvent('onPlayerDisconnectPrepare', array($this, 'onPlayerDisconnectPrepare'));
+
+		$aseco->registerChatCommand('lastwin', array($this, 'chat_lastwin'), new Message('class.window', 'slash_lastwin'), Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_lastwin ($aseco, $login, $chat_command, $chat_parameter) {
+
+		$answer['Action'] = 'ClassWindowRefreshPage';
+		$this->onPlayerManialinkPageAnswer($aseco, $login, $answer);
 	}
 
 	/*
@@ -78,13 +94,25 @@ class WindowList {
 		}
 
 		// Restore stored data from Player object
-		if ( $this->existsPlayerData($player, 'ClassWindow') ) {
+		if ($this->existsPlayerData($player, 'ClassWindow')) {
 			$window = $this->getPlayerData($player, 'ClassWindow');
 		}
 
 
 		$send = false;
-		if ($answer['Action'] == 'ClassWindowPagePrev') {
+		if ($answer['Action'] == 'StripStyles') {
+
+			$window->settings['stripcodes'] = true;
+			$send = true;
+
+		}
+		else if ($answer['Action'] == 'DefaultStyles') {
+
+			$window->settings['stripcodes'] = false;
+			$send = true;
+
+		}
+		else if ($answer['Action'] == 'ClassWindowPagePrev') {
 
 			$window->content['page'] -= 1;
 			if ($window->content['page'] < 0) {
@@ -132,13 +160,20 @@ class WindowList {
 			$send = true;
 
 		}
-
 		else if ($answer['Action'] == 'ClassWindowRefreshPage') {
 
 			// Just send the current Page again
 			$send = true;
 
 		}
+
+		if (isset($answer['X']) && !empty($answer['X'])) {
+			$window->layout['position']['x'] = $answer['X'];
+		}
+		if (isset($answer['Y']) && !empty($answer['Y'])) {
+			$window->layout['position']['y'] = $answer['Y'];
+		}
+
 
 		if ($send == true) {
 			$this->send($window, $player, $window->settings['hideclick'], $window->settings['hideclick']);
@@ -188,38 +223,34 @@ class WindowList {
 			$this->storePlayerData($player, 'ClassWindow', $window);
 
 			// Concat all the elements
-			if ( is_array($window->content['data']) ) {
+			if ($window->settings['mode'] == 'columns') {
 				$xml = str_replace(
 					array(
 						'%content%',
-						'%page%',
 						'%buttons%',
 						'%maniascript%',
 					),
 					array(
-						$window->buildColumns(),
-						$window->buildPageinfo(),
+						$window->buildColumns($player->login),
 						$window->buildButtons(),
 						$window->buildManiascript(),
 					),
-					$window->buildWindow()
+					$window->buildWindow($player->login)
 				);
 			}
-			else if ( is_string($window->content['data']) ) {
+			else if ($window->settings['mode'] == 'pages') {
 				$xml = str_replace(
 					array(
 						'%content%',
-						'%page%',
 						'%buttons%',
 						'%maniascript%',
 					),
 					array(
-						$window->content['data'],
-						$window->buildPageinfo(),
+						$window->buildPages(),
 						$window->buildButtons(),
 						$window->buildManiascript(),
 					),
-					$window->buildWindow()
+					$window->buildWindow($player->login)
 				);
 			}
 
@@ -274,7 +305,7 @@ class WindowList {
 		if (!isset($player)) {
 			return;
 		}
-		if ( (isset($key)) && (isset($player->data['ClassWindow'][$key])) ) {
+		if (isset($key) && isset($player->data['ClassWindow'][$key])) {
 			unset($player->data['ClassWindow'][$key]);
 		}
 	}
@@ -286,7 +317,7 @@ class WindowList {
 	*/
 
 	private function existsPlayerData ($player, $key) {
-		if ( (isset($key)) && (isset($player->data['ClassWindow'][$key])) ) {
+		if (isset($key) && isset($player->data['ClassWindow'][$key])) {
 			return true;
 		}
 		return false;

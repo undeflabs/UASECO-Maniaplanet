@@ -5,7 +5,22 @@
 		<!-- The map name and author displayed in the top right of the screen when viewing the scores table -->
 		<map_info>
 			<visible>true</visible>
+			<pos>
+				<x>-160.0</x>
+				<y>80.0</y>
+				<z>150.0</z>
+			</pos>
 		</map_info>
+
+		<!-- Information about live envent displayed in the top right of the screen -->
+		<live_info>
+			<visible>true</visible>
+			<pos>
+				<x>-159.0</x>
+				<y>84.0</y>
+				<z>5.0</z>
+			</pos>
+		</live_info>
 
 		<!-- Only visible in solo modes, it hides the medal/ghost selection UI -->
 		<opponents_info>
@@ -26,34 +41,59 @@
 			<linecount>7</linecount>
 		</chat>
 
+		<!-- The avatar of the last player speaking in the chat displayed above the chat -->
+		<chat_avatar>
+			<visible>true</visible>
+		</chat_avatar>
+
+		<!-- Checkpoint time information displayed in the middle of the screen when crossing a checkpoint -->
+		<checkpoint_time>
+			<visible>true</visible>
+			<pos>
+				<x>-8.0</x>
+				<y>25.8</y>
+				<z>-10.0</z>
+			</pos>
+		</checkpoint_time>
+
 		<!-- Time of the players at the current checkpoint displayed at the bottom of the screen -->
 		<checkpoint_list>
 			<visible>true</visible>
-			<position>
-				<x>23.0</x>
-				<y>-90.0</y>
+			<pos>
+				<x>48.0</x>
+				<y>-52.0</y>
 				<z>5.0</z>
-			</position>
+			</pos>
 		</checkpoint_list>
+
+		<!-- Player's ranking at the latest checkpoint -->
+		<checkpoint_ranking>
+			<visible>true</visible>
+			<pos>
+				<x>0.0</x>
+				<y>84.0</y>
+				<z>5.0</z>
+			</pos>
+		</checkpoint_ranking>
 
 		<!-- Small scores table displayed at the end of race of the round based modes (Rounds, Cup, ...) on the right of the screen -->
 		<round_scores>
 			<visible>true</visible>
-			<position>
-				<x>104.0</x>
-				<y>14.0</y>
-				<z>5.0</z>
-			</position>
+			<pos>
+				<x>-158.5</x>
+				<y>40.0</y>
+				<z>150.0</z>
+			</pos>
 		</round_scores>
 
 		<!-- Race time left displayed at the bottom right of the screen -->
 		<countdown>
 			<visible>true</visible>
-			<position>
-				<x>105.0</x>
-				<y>-76.5</y>
+			<pos>
+				<x>153.0</x>
+				<y>-7.0</y>
 				<z>5.0</z>
-			</position>
+			</pos>
 		</countdown>
 
 		<!-- 3, 2, 1, Go! message displayed on the middle of the screen when spawning -->
@@ -64,61 +104,51 @@
 		<!-- Current race chrono displayed at the bottom center of the screen -->
 		<chrono>
 			<visible>true</visible>
-			<position>
-				<x>110.3</x>
-				<y>-80.5</y>
+			<pos>
+				<x>0.0</x>
+				<y>-80.0</y>
 				<z>5.0</z>
-			</position>
+			</pos>
 		</chrono>
 
 		<!-- Speed and distance raced displayed in the bottom right of the screen -->
 		<speed_and_distance>
 			<visible>true</visible>
-			<position>
-				<x>158.0</x>
-				<y>-79.5</y>
+			<pos>
+				<x>137.0</x>
+				<y>-69.0</y>
 				<z>5.0</z>
-			</position>
+			</pos>
 		</speed_and_distance>
 
 		<!-- Previous and best times displayed at the bottom right of the screen -->
 		<personal_best_and_rank>
 			<visible>true</visible>
-			<position>
-				<x>158.0</x>
-				<y>-67.0</y>
+			<pos>
+				<x>157.0</x>
+				<y>-24.0</y>
 				<z>5.0</z>
-			</position>
+			</pos>
 		</personal_best_and_rank>
 
 		<!-- Current position in the map ranking displayed at the bottom right of the screen -->
 		<position>
 			<visible>true</visible>
+			<pos>
+				<x>150.5</x>
+				<y>-28.0</y>
+				<z>5.0</z>
+			</pos>
 		</position>
-
-		<!-- Checkpoint time information displayed in the middle of the screen when crossing a checkpoint -->
-		<checkpoint_time>
-			<visible>true</visible>
-			<position>
-				<x>-8.0</x>
-				<y>31.8</y>
-				<z>-10.0</z>
-			</position>
-		</checkpoint_time>
-
-		<!-- The avatar of the last player speaking in the chat displayed above the chat -->
-		<chat_avatar>
-			<visible>true</visible>
-		</chat_avatar>
 
 		<!-- Warm-up progression displayed on the right of the screen during warm-up -->
 		<warmup>
 			<visible>true</visible>
-			<position>
-				<x>170.0</x>
-				<y>27.0</y>
+			<pos>
+				<x>153.0</x>
+				<y>13.0</y>
 				<z>0.0</z>
-			</position>
+			</pos>
 		</warmup>
 
 		<!-- Ladder progression box displayed on the top of the screen at the end of the map -->
@@ -129,12 +159,19 @@
 		<!-- Laps count displayed on the right of the screen on multilaps map -->
 		<multilap_info>
 			<visible>true</visible>
+			<pos>
+				<x>140.0</x>
+				<y>84.0</y>
+				<z>5.0</z>
+			</pos>
 		</multilap_info>
 	</ui_properties>
 
 
 
-	<!-- Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html -->
+	<!--
+	Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html#All%2D%2DModeBase%2D
+	//-->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
 		<chat_time>20</chat_time>
@@ -151,6 +188,7 @@
 		//-->
 		<scores_table_style_path></scores_table_style_path>
 	</modebase>
+
 
 
 	<modesetup>
@@ -245,7 +283,7 @@
 		//-->
 		<laps>
 			<!-- Time limit in seconds, until the next Map is loaded -->
-			<time_limit>300</time_limit>
+			<time_limit>1200</time_limit>
 
 			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' to disable -->
 			<finish_timeout>10</finish_timeout>
@@ -342,7 +380,7 @@
 			<min_players_number>2</min_players_number>
 
 			<!-- Number of Laps (-1 to use the map default, 0 to disable laps limit) -->
-			<force_laps_number>5</force_laps_number>
+			<force_laps_number>3</force_laps_number>
 
 			<!-- Finish timeout (< 0 automatic, based on author time) -->
 			<finish_timeout>-1</finish_timeout>
@@ -506,13 +544,7 @@
 		<entry>Libs/domino54/SentenceBank.Script.txt|2015-06-27</entry>
 		<entry>Libs/domino54/Translations.Script.txt|2015-06-27</entry>
 		<entry>Libs/domino54/UpdateChecker.Script.txt|2015-06-27</entry>
-		<entry>Libs/Nadeo/TrackMania/UI.Script.txt|2015-07-03</entry>
-		<entry>Libs/Nadeo/TrackMania/XmlRpc.Script.txt|2015-03-23</entry>
-		<entry>Libs/Nadeo/ScoresTable2.Script.txt|2015-12-27</entry>
-		<entry>Modes/TrackMania/Chase.Script.txt|2015-05-30</entry>
 		<entry>Modes/TrackMania/Doppler.Script.txt|2015-08-29</entry>
 		<entry>Modes/TrackMania/Knockout.Script.txt|2015-06-27</entry>
-		<entry>Modes/TrackMania/ModeBase.Script.txt|2015-02-26</entry>
-		<entry>Modes/TrackMania/ModeMatchmaking.Script.txt|2015-03-11</entry>
 	</scripts>
 </settings>

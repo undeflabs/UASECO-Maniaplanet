@@ -6,11 +6,6 @@
  * » Based upon plugin.autotime.php from XAseco2/1.03 written by ck|cyrus and Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-11-11
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.modescript_handler.php
  *
  */
 
@@ -53,8 +45,11 @@ class PluginAutotime extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.autotime', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED, '1.0.0', null);
@@ -105,13 +100,13 @@ class PluginAutotime extends Plugin {
 					$newtime = substr((int)$map->author_time, 0, -3);
 				}
 				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'GOLD') {
-					$newtime = substr((int)$map->goldtime, 0, -3);
+					$newtime = substr((int)$map->gold_time, 0, -3);
 				}
 				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'SILVER') {
-					$newtime = substr((int)$map->silvertime, 0, -3);
+					$newtime = substr((int)$map->silver_time, 0, -3);
 				}
 				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'BRONZE') {
-					$newtime = substr((int)$map->bronzetime, 0, -3);
+					$newtime = substr((int)$map->bronze_time, 0, -3);
 				}
 
 				// Compute new timelimit
@@ -156,7 +151,7 @@ class PluginAutotime extends Plugin {
 				// Set and log timelimit (strip .000 sec)
 				$aseco->console('[AutoTime] Setting {1} timelimit for Map [{2}] to [{3}], based upon {4} time [{5}]',
 					$tag,
-					$aseco->stripColors($map->name, false),
+					$aseco->stripStyles($map->name, false),
 					substr($aseco->formatTime($newtime * 1000), 0, -4),
 					strtolower($this->config['CALCULATION_BASE'][0]),
 					$aseco->formatTime($map->author_time)
@@ -164,7 +159,7 @@ class PluginAutotime extends Plugin {
 
 				// Display timelimit (strip .000 sec)
 				$msg->addPlaceholders(
-					$aseco->stripColors($map->name),
+					$aseco->stripStyles($map->name),
 					substr($aseco->formatTime($newtime * 1000), 0, -4),
 					new Message('common', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
 					$aseco->formatTime($map->author_time)

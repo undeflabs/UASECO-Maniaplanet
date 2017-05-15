@@ -6,13 +6,6 @@
  * http://www.undef.name/UASECO/Mania-Karma.php
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Version:	2.0.0
- * Date:	2015-11-09
- * Copyright:	2009 - 2015 by undef.de
- * System:	UASECO/0.9.5+
- * Game:	ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/core/webaccess.inc.php
  *
  */
 
@@ -49,8 +39,7 @@
  * ActionID's
  * ~~~~~~~~~~
  * OpenHelpWindow
- * OpenKarmaDetailWindow
- * OpenWhoKarmaWindow
+ * OpenKarmaWindow
  * Vote
  * -> Fantastic
  * -> Beautiful
@@ -84,8 +73,10 @@ class PluginManiaKarma extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('2.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('2.0.0');
+		$this->setBuild('2017-05-15');
+		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
 		$this->addDependence('PluginRaspKarma', Dependence::DISALLOWED, '1.0.0', null);
@@ -122,8 +113,8 @@ class PluginManiaKarma extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[ManiaKarma] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
@@ -429,23 +420,23 @@ class PluginManiaKarma extends Plugin {
 		$this->config['urls']['api_auth'] = (string)$xmlcfg->urls->api_auth;
 
 		// Check the given config timeouts and set defaults on too low or on empty timeouts
-		if ( ((int)$xmlcfg->wait_timeout < 40) || ((int)$xmlcfg->wait_timeout == '') ) {
-			$this->config['wait_timeout'] = 40;
+		if ((int)$xmlcfg->timeout < 40 || (int)$xmlcfg->timeout == '') {
+			$this->config['timeout'] = 40;
 		}
 		else {
-			$this->config['wait_timeout'] = (int)$xmlcfg->wait_timeout;
+			$this->config['timeout'] = (int)$xmlcfg->timeout;
 		}
-		if ( ((int)$xmlcfg->connect_timeout < 30) || ((int)$xmlcfg->connect_timeout == '') ) {
-			$this->config['connect_timeout'] = 30;
-		}
-		else {
-			$this->config['connect_timeout'] = (int)$xmlcfg->connect_timeout;
-		}
-		if ( ((int)$xmlcfg->keepalive_min_timeout < 100) || ((int)$xmlcfg->keepalive_min_timeout == '') ) {
-			$this->config['keepalive_min_timeout'] = 100;
+		if ((int)$xmlcfg->timeout_connect < 30 || (int)$xmlcfg->timeout_connect == '') {
+			$this->config['timeout_connect'] = 30;
 		}
 		else {
-			$this->config['keepalive_min_timeout'] = (int)$xmlcfg->keepalive_min_timeout;
+			$this->config['timeout_connect'] = (int)$xmlcfg->timeout_connect;
+		}
+		if ((int)$xmlcfg->timeout_dns < 100 || (int)$xmlcfg->timeout_dns == '') {
+			$this->config['timeout_dns'] = 100;
+		}
+		else {
+			$this->config['timeout_dns'] = (int)$xmlcfg->timeout_dns;
 		}
 
 		// Set connection status to 'all fine'
@@ -459,7 +450,7 @@ class PluginManiaKarma extends Plugin {
 		$this->config['account']['nation']	= strtoupper((string)$xmlcfg->nation);
 
 		// Create a User-Agent-Identifier for the authentication
-		$this->config['user_agent'] = 'UASECO/'. UASECO_VERSION .' mania-karma/'. $this->getVersion() .' '. $aseco->server->game .'/'. $aseco->server->build .' php/'. phpversion() .' '. php_uname('s') .'/'. php_uname('r') .' '. php_uname('m');
+		$this->config['user_agent'] = 'ManiaKarma/'. $this->getVersion() .' '. USER_AGENT;
 
 		$aseco->console('[ManiaKarma] » Set Server location to "'. $iso3166Alpha3[$this->config['account']['nation']][0] .'"');
 		$aseco->console('[ManiaKarma] » Trying to authenticate with central database "'. $this->config['urls']['api_auth'] .'"...');
@@ -474,36 +465,20 @@ class PluginManiaKarma extends Plugin {
 			urlencode( $this->config['account']['nation'] )
 		);
 
-
-		// Start an async GET request
-		$response = $aseco->webaccess->request($api_url, null, 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
-		if (isset($response['Code']) && $response['Code'] == 200) {
-			// Read the response
-			if (!$xml = @simplexml_load_string($response['Message'], null, LIBXML_COMPACT) ) {
-				$this->config['retrytime'] = (time() + $this->config['retrywait']);
-				$this->config['account']['authcode'] = false;
-				$this->config['urls']['api'] = false;
-
-				// Fake import done to do not ask a MasterAdmin to export
-				$this->config['import_done'] = true;
-
-				$aseco->console('[ManiaKarma] » Could not read/parse response from mania-karma.com "'. $response['Message'] .'"!');
-				$aseco->console('[ManiaKarma] » Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
-				$aseco->console('[ManiaKarma] ********************************************************');
-			}
-			else {
-				if ((int)$xml->status == 200) {
-					$this->config['retrytime'] = 0;
-					$this->config['account']['authcode'] = (string)$xml->authcode;
-					$this->config['urls']['api'] = (string)$xml->api_url;
-
-					$this->config['import_done'] = ((strtoupper((string)$xml->import_done) == 'TRUE') ? true : false);
-
-					$aseco->console('[ManiaKarma] » Successfully started with async communication.');
-					$aseco->console('[ManiaKarma] » The API set the Request-URL to "'. $this->config['urls']['api'] .'"');
-					$aseco->console('[ManiaKarma] ********************************************************');
-				}
-				else {
+		try {
+			// Start sync GET request
+			$params = array(
+				'url'			=> $api_url,
+				'sync'			=> true,
+				'user_agent'		=> $this->config['user_agent'],
+				'timeout_dns'		=> $this->config['timeout_dns'],
+				'timeout_connect'	=> $this->config['timeout_connect'],
+				'timeout'		=> $this->config['timeout'],
+			);
+			$request = $aseco->webrequest->GET($params);
+			if (isset($request->response['header']['code']) && $request->response['header']['code'] == 200) {
+				// Read the request
+				if (!$xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
 					$this->config['retrytime'] = (time() + $this->config['retrywait']);
 					$this->config['account']['authcode'] = false;
 					$this->config['urls']['api'] = false;
@@ -511,27 +486,56 @@ class PluginManiaKarma extends Plugin {
 					// Fake import done to do not ask a MasterAdmin to export
 					$this->config['import_done'] = true;
 
-					$aseco->console('[ManiaKarma] » Authentication failed with error code "'. $xml->status .'", votes are not possible!!!');
+					$aseco->console('[ManiaKarma] » Could not read/parse response "'. $request->response['content'] .'"!');
+					$aseco->console('[ManiaKarma] » Connection failed with "'. $request->response['header']['code'] .'" for url ['. $api_url .'], retry again later.');
 					$aseco->console('[ManiaKarma] ********************************************************');
 				}
-			}
-		}
-		else {
-			$this->config['retrytime'] = (time() + $this->config['retrywait']);
-			$this->config['account']['authcode'] = false;
-			$this->config['urls']['api'] = false;
+				else {
+					if ((int)$xml->status == 200) {
+						$this->config['retrytime'] = 0;
+						$this->config['account']['authcode'] = (string)$xml->authcode;
+						$this->config['urls']['api'] = (string)$xml->api_url;
 
-			// Fake import done to do not ask a MasterAdmin to export
-			$this->config['import_done'] = true;
+						$this->config['import_done'] = ((strtoupper((string)$xml->import_done) == 'TRUE') ? true : false);
 
-			if (isset($response['Code'])) {
-				$aseco->console('[ManiaKarma] » Connection failed with "'. $response['Code'] .'" ('. $response['Reason'] .') for url ['. $api_url .'], retry again later.');
+						$aseco->console('[ManiaKarma] » Successfully started with async communication.');
+						$aseco->console('[ManiaKarma] » The API set the Request-URL to "'. $this->config['urls']['api'] .'"');
+						$aseco->console('[ManiaKarma] ********************************************************');
+					}
+					else {
+						$this->config['retrytime'] = (time() + $this->config['retrywait']);
+						$this->config['account']['authcode'] = false;
+						$this->config['urls']['api'] = false;
+
+						// Fake import done to do not ask a MasterAdmin to export
+						$this->config['import_done'] = true;
+
+						$aseco->console('[ManiaKarma] » Authentication failed with error code "'. $xml->status .'", votes are not possible!!!');
+						$aseco->console('[ManiaKarma] ********************************************************');
+					}
+				}
 			}
 			else {
-				$aseco->console('[ManiaKarma] » Connection failed with "'. $aseco->dump($response) .'" for url ['. $api_url .'], retry again later.');
+				$this->config['retrytime'] = (time() + $this->config['retrywait']);
+				$this->config['account']['authcode'] = false;
+				$this->config['urls']['api'] = false;
+
+				// Fake import done to do not ask a MasterAdmin to export
+				$this->config['import_done'] = true;
+
+				if (isset($request->response['header']['code'])) {
+					$aseco->console('[ManiaKarma] » Connection failed with "'. $request->response['header']['code'] .'" for url ['. $api_url .'], retry again later.');
+				}
+				else {
+					$aseco->console('[ManiaKarma] » Connection failed with "'. $aseco->dump($request) .'" for url ['. $api_url .'], retry again later.');
+				}
+				$aseco->console('[ManiaKarma] ********************************************************');
 			}
-			$aseco->console('[ManiaKarma] ********************************************************');
 		}
+		catch (Exception $exception) {
+			$aseco->console('[ManiaKarma] webrequest->GET(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+		}
+
 
 		// Erase $iso3166Alpha3
 		unset($iso3166Alpha3);
@@ -610,8 +614,6 @@ class PluginManiaKarma extends Plugin {
 		$this->config['images']['widget_open_right']			= (string)$xmlcfg->images->widget_open_right;
 		$this->config['images']['mx_logo_normal']			= (string)$xmlcfg->images->mx_logo_normal;
 		$this->config['images']['mx_logo_focus']			= (string)$xmlcfg->images->mx_logo_focus;
-		$this->config['images']['button_normal']			= (string)$xmlcfg->images->button_normal;
-		$this->config['images']['button_focus']				= (string)$xmlcfg->images->button_focus;
 		$this->config['images']['cup_gold']				= (string)$xmlcfg->images->cup_gold;
 		$this->config['images']['cup_silver']				= (string)$xmlcfg->images->cup_silver;
 		$this->config['images']['maniakarma_logo']			= (string)$xmlcfg->images->maniakarma_logo;
@@ -682,6 +684,7 @@ class PluginManiaKarma extends Plugin {
 		$this->config['widget']['buttons']['negative_text_color']	= (string)$xmlcfg->widget_styles->vote_buttons->negative->text_color;
 		$this->config['widget']['buttons']['bg_vote']			= (string)$xmlcfg->widget_styles->vote_buttons->votes->bgcolor_vote;
 		$this->config['widget']['buttons']['bg_disabled']		= (string)$xmlcfg->widget_styles->vote_buttons->votes->bgcolor_disabled;
+		$this->config['widget']['buttons']['text_disabled']		= (string)$xmlcfg->widget_styles->vote_buttons->votes->text_color_disabled;
 		$this->config['widget']['race']['title']			= (string)$xmlcfg->widget_styles->race->title;
 		$this->config['widget']['race']['icon_style']			= (string)$xmlcfg->widget_styles->race->icon_style;
 		$this->config['widget']['race']['icon_substyle']		= (string)$xmlcfg->widget_styles->race->icon_substyle;
@@ -729,9 +732,6 @@ class PluginManiaKarma extends Plugin {
 				'thousands_sep'	=> ' ',
 			),
 		);
-
-		// Load the templates
-		$this->config['Templates']		= $this->loadTemplates();
 
 		// Init
 		if ($aseco->startup_phase == true) {
@@ -842,8 +842,8 @@ class PluginManiaKarma extends Plugin {
 		$message = false;
 
 		// Check optional parameter
-		if ( (strtoupper($chat_parameter) == 'HELP') || (strtoupper($chat_parameter) == 'ABOUT') ) {
-			$this->sendHelpAboutWindow($player->login, $this->config['messages']['karma_help']);
+		if (strtoupper($chat_parameter) == 'HELP' || strtoupper($chat_parameter) == 'ABOUT') {
+			$this->onPlayerManialinkPageAnswer($aseco, $player->login, array('Action' => 'OpenHelpWindow'));
 		}
 		else if (strtoupper($chat_parameter) == 'DETAILS') {
 			$message = $aseco->formatText($this->config['messages']['karma_details'],
@@ -1155,15 +1155,55 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		if ($answer['Action'] == 'OpenHelpWindow') {
-			$this->sendHelpAboutWindow($player->login, $this->config['messages']['karma_help']);
+			$page_help = $this->buildHelpAboutWindow($this->config['messages']['karma_help']);
+
+			// Setup settings for Window
+			$settings_styles = array(
+				'icon'			=> $this->config['widget']['race']['icon_style'] .','. $this->config['widget']['race']['icon_substyle'],
+			);
+			$settings_content = array(
+				'title'			=> 'ManiaKarma help',
+				'data'			=> array($page_help),
+				'mode'			=> 'pages',
+				'add_background'	=> true,
+			);
+			$settings_footer = array(
+				'about_title'		=> 'MANIA-KARMA/'. $this->getVersion(),
+				'about_link'		=> 'http://'. $this->config['urls']['website'],
+			);
+
+			$window = new Window();
+			$window->setStyles($settings_styles);
+			$window->setContent($settings_content);
+			$window->setFooter($settings_footer);
+			$window->send($player, 0, false);
 		}
-		else if ($answer['Action'] == 'OpenKarmaDetailWindow') {
-			$window = $this->buildKarmaDetailWindow($player->login);
-			$this->sendWindow($player->login, $window);
-		}
-		else if ($answer['Action'] == 'OpenWhoKarmaWindow') {
-			$window = $this->buildWhoKarmaWindow($player->login);
-			$this->sendWindow($player->login, $window);
+		else if ($answer['Action'] == 'OpenKarmaWindow') {
+			$page_votes = $this->buildKarmaDetailWindow($player->login);
+			$page_whokarma = $this->buildWhoKarmaWindow();
+
+			// Setup settings for Window
+			$settings_styles = array(
+				'icon'			=> $this->config['widget']['race']['icon_style'] .','. $this->config['widget']['race']['icon_substyle'],
+			);
+			$settings_content = array(
+				'title'			=> 'ManiaKarma votes overview',
+				'data'			=> array($page_votes, $page_whokarma),
+				'mode'			=> 'pages',
+				'add_background'	=> true,
+			);
+			$settings_footer = array(
+				'about_title'		=> 'MANIA-KARMA/'. $this->getVersion(),
+				'about_link'		=> 'http://'. $this->config['urls']['website'],
+				'button_title'		=> 'MORE INFO ON MANIA-KARMA.COM',
+				'button_link'		=> 'http://'. $this->config['urls']['website'] .'/goto?uid='. $this->karma['data']['uid'] .'&amp;env='. $this->karma['data']['env'] .'&amp;game='. $aseco->server->game,
+			);
+
+			$window = new Window();
+			$window->setStyles($settings_styles);
+			$window->setContent($settings_content);
+			$window->setFooter($settings_footer);
+			$window->send($player, 0, false);
 		}
 		else if ($answer['Action'] == 'Vote') {
 			if ($answer['Value'] == 'Fantastic') {						// Vote +++
@@ -1202,7 +1242,7 @@ class PluginManiaKarma extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $id) {
+	public function onUnloadingMap ($aseco, $uid) {
 
 		// Set $gamemode for the KarmaWidget
 		$this->config['widget']['current_state'] = $aseco->server->gameinfo->mode;
@@ -1256,7 +1296,22 @@ class PluginManiaKarma extends Plugin {
 					urlencode( $this->config['account']['authcode'] )
 				);
 
-				$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'PING', $api_url), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+				try {
+					// Start async GET request
+					$params = array(
+						'url'			=> $api_url,
+						'callback'		=> array(array($this, 'handleWebrequest'), array('PING', $api_url)),
+						'sync'			=> false,
+						'user_agent'		=> $this->config['user_agent'],
+						'timeout_dns'		=> $this->config['timeout_dns'],
+						'timeout_connect'	=> $this->config['timeout_connect'],
+						'timeout'		=> $this->config['timeout'],
+					);
+					$aseco->webrequest->GET($params);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[ManiaKarma] webrequest->GET(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+				}
 			}
 
 			// Get the local karma
@@ -1390,10 +1445,8 @@ class PluginManiaKarma extends Plugin {
 		// Set $gamemode for the KarmaWidget
 		$this->config['widget']['current_state'] = $aseco->server->gameinfo->mode;
 
-
 		// Make sure the Widget gets updated at all Players at Race
 		$this->sendWidgetCombination(array('skeleton_race', 'cups_values'), false);
-
 
 		// Display the Marker
 		foreach ($aseco->server->players->player_list as $player) {
@@ -1509,17 +1562,17 @@ class PluginManiaKarma extends Plugin {
 		// Possible parameters: 'skeleton_race', 'skeleton_score', 'cups_values', 'player_marker', 'hide_window' and 'hide_all'
 		foreach ($widgets as $widget) {
 			if ($widget == 'hide_all') {
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'02" name="Windows"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'05" name="KarmaCupsValue"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'06" name="ConnectionStatus"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'07" name="LoadingIndicator"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'02" name="Windows" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'05" name="KarmaCupsValue" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'06" name="ConnectionStatus" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'07" name="LoadingIndicator" version="3"></manialink>';
 				break;
 			}
 
 			if ($widget == 'hide_window') {
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'02"></manialink>';	// Windows
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'02" name="Windows" version="3"></manialink>';
 			}
 
 			if (isset($this->config['widget']['states'][$this->config['widget']['current_state']]) && $this->config['widget']['states'][$this->config['widget']['current_state']]['enabled'] == true) {
@@ -1537,9 +1590,9 @@ class PluginManiaKarma extends Plugin {
 				}
 			}
 			else {
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker"></manialink>';
-				$xml .= '<manialink id="'. $this->config['manialink_id'] .'05" name="KarmaCupsValue"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker" version="3"></manialink>';
+				$xml .= '<manialink id="'. $this->config['manialink_id'] .'05" name="KarmaCupsValue" version="3"></manialink>';
 			}
 		}
 
@@ -1566,50 +1619,53 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		// No Placeholder here!
-		$xml = '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget">';
+		$xml = '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
 
 		// MainWidget Frame
-		$xml .= '<frame posn="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .' 10" id="'. $this->config['manialink_id'] .'03MainFrame">';
+		$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0" id="'. $this->config['manialink_id'] .'03MainFrame">';
 		if ($gamemode == 0) {
 			// No action to open the full widget at 'Score'
 			if ($this->config['widget']['score']['background_color'] != '') {
-				$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" bgcolor="'. $this->config['widget']['score']['background_color'] .'"/>';
+				$xml .= '<quad pos="0 0" z-index="0.01" size="39.4 20.15625" bgcolor="'. $this->config['widget']['score']['background_color'] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" style="'. $this->config['widget']['score']['background_style'] .'" substyle="'. $this->config['widget']['score']['background_substyle'] .'"/>';
+				$xml .= '<quad pos="0 0" z-index="0.01" size="39.4 20.15625" style="'. $this->config['widget']['score']['background_style'] .'" substyle="'. $this->config['widget']['score']['background_substyle'] .'"/>';
 			}
 		}
 		else {
-			$xml .= '<quad posn="0.1 -0.1 0" sizen="15.56 10.55" action="PluginManiaKarma?Action=OpenKarmaDetailWindow" text=" " bgcolor="'. $this->config['widget']['race']['background_color'] .'" bgcolorfocus="'. $this->config['widget']['race']['background_focus'] .'"/>';
-			$xml .= '<quad posn="-0.2 0.3 0.01" sizen="16.16 11.35" style="'. $this->config['widget']['race']['border_style'] .'" substyle="'. $this->config['widget']['race']['border_substyle'] .'"/>';
-			$xml .= '<quad posn="0 0 0.02" sizen="15.76 10.75" style="'. $this->config['widget']['race']['background_style'] .'" substyle="'. $this->config['widget']['race']['background_substyle'] .'"/>';
+			$xml .= '<quad pos="0.25 -0.1875" z-index="0.01" size="38.9 19.78125" action="PluginManiaKarma?Action=OpenKarmaWindow" text=" " bgcolor="'. $this->config['widget']['race']['background_color'] .'" bgcolorfocus="'. $this->config['widget']['race']['background_focus'] .'"/>';
+			$xml .= '<quad pos="-0.5 0.5625" z-index="0.02" size="40.4 21.28125" style="'. $this->config['widget']['race']['border_style'] .'" substyle="'. $this->config['widget']['race']['border_substyle'] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0.03" size="39.4 20.15625" style="'. $this->config['widget']['race']['background_style'] .'" substyle="'. $this->config['widget']['race']['background_substyle'] .'"/>';
 			if ($this->config['widget']['states'][$gamemode]['pos_x'] > 0) {
-				$xml .= '<quad posn="-0.1 -7.4 0.05" sizen="3.5 3.5" image="'. $this->config['images']['widget_open_left'] .'"/>';
+				$xml .= '<quad pos="-0.25 -13.875" z-index="0.04" size="8.75 6.5625" image="'. $this->config['images']['widget_open_left'] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="12.46 -7.4 0.05" sizen="3.5 3.5" image="'. $this->config['images']['widget_open_right'] .'"/>';
+				$xml .= '<quad pos="31.15 -13.875" z-index="0.04" size="8.75 6.5625" image="'. $this->config['images']['widget_open_right'] .'"/>';
 			}
 		}
 
 		// Vote Frame, different offset on default widget
-		$xml .= '<frame posn="0 0 0">';
+		$xml .= '<frame pos="0 0" z-index="0.05">';
 
 
 		// Window title
 		if ($gamemode == 0) {
 			if ($this->config['widget']['score']['title_background'] != '') {
-				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['score']['title_background'] .'"/>';
+				$xml .= '<quad pos="1 -0.75" z-index="0.01" size="37.4 3.75" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['score']['title_background'] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['score']['title_style'] .'" substyle="'. $this->config['widget']['score']['title_substyle'] .'"/>';
+				$xml .= '<quad pos="1 -0.75" z-index="0.01" size="37.4 3.75" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['score']['title_style'] .'" substyle="'. $this->config['widget']['score']['title_substyle'] .'"/>';
 			}
 		}
 		else {
 			if ($this->config['widget']['race']['title_background'] != '') {
-				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['race']['title_background'] .'"/>';
+				$xml .= '<quad pos="1 -0.75" z-index="0.01" size="37.4 3.75" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['race']['title_background'] .'"/>';
 			}
 			else {
-				$xml .= '<quad posn="0.4 -0.4 3" sizen="14.96 2" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['race']['title_style'] .'" substyle="'. $this->config['widget']['race']['title_substyle'] .'"/>';
+				$xml .= '<quad pos="1 -0.75" z-index="0.01" size="37.4 3.75" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" style="'. $this->config['widget']['race']['title_style'] .'" substyle="'. $this->config['widget']['race']['title_substyle'] .'"/>';
 			}
 		}
 
@@ -1626,54 +1682,54 @@ class PluginManiaKarma extends Plugin {
 
 		if ($this->config['widget']['states'][$gamemode]['pos_x'] > 0) {
 			// Position from icon and title to left
-			$xml .= '<quad posn="0.6 -0.15 3.1" sizen="2.3 2.3" style="'. $icon_style .'" substyle="'. $icon_substyle .'"/>';
-			$xml .= '<label posn="3.2 -0.6 3.2" sizen="10 0" halign="left" textsize="1" text="'. $title .'"/>';
+			$xml .= '<quad pos="3.3 -2.55" z-index="0.02" size="3.75 3.75" halign="center" valign="center2" style="'. $icon_style .'" substyle="'. $icon_substyle .'"/>';
+			$xml .= '<label pos="5.45 -1.525" z-index="0.02" size="25 0" class="labels" textsize="1" text="'. $title .'"/>';
 		}
 		else {
 			// Position from icon and title to right
-			$xml .= '<quad posn="13.1 -0.15 3.1" sizen="2.3 2.3" style="'. $icon_style .'" substyle="'. $icon_substyle .'"/>';
-			$xml .= '<label posn="12.86 -0.6 3.2" sizen="10 0" halign="right" textsize="1" text="'. $title .'"/>';
+			$xml .= '<quad pos="36.8 -2.55" z-index="0.02" size="3.75 3.75" halign="center" valign="center2" style="'. $icon_style .'" substyle="'. $icon_substyle .'"/>';
+			$xml .= '<label pos="34.3 -1.525" z-index="0.02" size="25 0" class="labels" halign="right" textsize="1" text="'. $title .'"/>';
 		}
 
 		// BG for Buttons to prevent flicker of the widget background (clickable too, but ignored)
-		$xml .= '<frame posn="1.83 -8.3 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.1" sizen="11.8 1.4" action="PluginManiaKarma?Action=Vote&Value=Ignore" bgcolor="0000"/>';
+		$xml .= '<frame pos="4.575 -15.5625" z-index="0.9">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.1" size="29.5 2.625" action="PluginManiaKarma?Action=Vote&Value=Ignore" bgcolor="0000"/>';
 		$xml .= '</frame>';
 
 		// Button +++
-		$xml .= '<frame posn="1.83 -8.5 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.2" sizen="1.8 1.4" bgcolor="'. $this->config['widget']['buttons']['bg_positive_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" id="Fantastic" scriptevents="1"/>';
-		$xml .= '<label posn="1.12 -0.3 0.4" sizen="1.8 0" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="+++"/>';
+		$xml .= '<frame pos="4.575 -15.9375" z-index="1">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" bgcolor="'. $this->config['widget']['buttons']['bg_positive_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" id="Fantastic" scriptevents="1"/>';
+		$xml .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="+++"/>';
 		$xml .= '</frame>';
 
 		// Button ++
-		$xml .= '<frame posn="3.83 -8.5 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.2" sizen="1.8 1.4" bgcolor="'. $this->config['widget']['buttons']['bg_positive_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" id="Beautiful" scriptevents="1"/>';
-		$xml .= '<label posn="1.12 -0.3 0.4" sizen="1.8 0" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="++"/>';
+		$xml .= '<frame pos="9.575 -15.9375" z-index="1">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" bgcolor="'. $this->config['widget']['buttons']['bg_positive_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" id="Beautiful" scriptevents="1"/>';
+		$xml .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="++"/>';
 		$xml .= '</frame>';
 
 		// Button +
-		$xml .= '<frame posn="5.83 -8.5 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.2" sizen="1.8 1.4" bgcolor="'. $this->config['widget']['buttons']['bg_positive_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" id="Good" scriptevents="1"/>';
-		$xml .= '<label posn="1.12 -0.3 0.4" sizen="1.8 0" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="+"/>';
+		$xml .= '<frame pos="14.575 -15.9375" z-index="1">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" bgcolor="'. $this->config['widget']['buttons']['bg_positive_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_positive_focus'] .'" id="Good" scriptevents="1"/>';
+		$xml .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['positive_text_color'] .'" text="+"/>';
 		$xml .= '</frame>';
 
 		// Button -
-		$xml .= '<frame posn="7.83 -8.5 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.2" sizen="1.8 1.4" bgcolor="'. $this->config['widget']['buttons']['bg_negative_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" id="Bad" scriptevents="1"/>';
-		$xml .= '<label posn="1.12 -0.2 0.4" sizen="1.8 0" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="-"/>';
+		$xml .= '<frame pos="19.575 -15.9375" z-index="1">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" bgcolor="'. $this->config['widget']['buttons']['bg_negative_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" id="Bad" scriptevents="1"/>';
+		$xml .= '<label pos="2.8 -0.375" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="-"/>';
 		$xml .= '</frame>';
 
 		// Button --
-		$xml .= '<frame posn="9.83 -8.5 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.2" sizen="1.8 1.4" bgcolor="'. $this->config['widget']['buttons']['bg_negative_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" id="Poor" scriptevents="1"/>';
-		$xml .= '<label posn="1.12 -0.2 0.4" sizen="1.8 0" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="--"/>';
+		$xml .= '<frame pos="24.575 -15.9375" z-index="1">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" bgcolor="'. $this->config['widget']['buttons']['bg_negative_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" id="Poor" scriptevents="1"/>';
+		$xml .= '<label pos="2.8 -0.375" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="--"/>';
 		$xml .= '</frame>';
 
 		// Button ---
-		$xml .= '<frame posn="11.83 -8.5 1">';
-		$xml .= '<quad posn="0.2 -0.08 0.2" sizen="1.8 1.4" bgcolor="'. $this->config['widget']['buttons']['bg_negative_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" id="Waste" scriptevents="1"/>';
-		$xml .= '<label posn="1.12 -0.2 0.4" sizen="1.8 0" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="---"/>';
+		$xml .= '<frame pos="29.575 -15.9375" z-index="1">';
+		$xml .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" bgcolor="'. $this->config['widget']['buttons']['bg_negative_default'] .'" bgcolorfocus="'. $this->config['widget']['buttons']['bg_negative_focus'] .'" id="Waste" scriptevents="1"/>';
+		$xml .= '<label pos="2.8 -0.375" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.9" halign="center" textcolor="'. $this->config['widget']['buttons']['negative_text_color'] .'" text="---"/>';
 		$xml .= '</frame>';
 
 
@@ -1691,7 +1747,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container <=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlFrame Container <=> (Page.GetFirstChild("{$this->config['manialink_id']}03MainFrame") as CMlFrame);
 	Container.RelativeScale = {$this->config['widget']['states'][$gamemode]['scale']};
 
 	while (True) {
@@ -1734,16 +1790,16 @@ EOL;
 
 		$total_cups = 10;
 		$cup_offset = array(
-			0.8,
-			0.85,
-			0.85,
-			0.875,
-			0.90,
-			0.925,
-			0.95,
-			0.975,
-			1.0,
-			1.025,
+			2,
+			2.125,
+			2.125,
+			2.1875,
+			2.25,
+			2.3125,
+			2.375,
+			2.4375,
+			2.5,
+			2.5625,
 		);
 
 		$cup_gold_amount = 0;
@@ -1765,13 +1821,13 @@ EOL;
 				$cup_gold_amount = intval($this->karma['local']['votes']['karma'] / $total_cups);
 			}
 		}
-		$cup_silver = '<quad posn="%x% 0 %z%" sizen="%width% %height%" valign="bottom" image="'. $this->config['images']['cup_silver'] .'"/>';
-		$cup_gold = '<quad posn="%x% 0 %z%" sizen="%width% %height%" valign="bottom" image="'. $this->config['images']['cup_gold'] .'"/>';
+		$cup_silver = '<quad pos="%x% 0" z-index="%z%" size="%width% %height%" valign="bottom" image="'. $this->config['images']['cup_silver'] .'"/>';
+		$cup_gold = '<quad pos="%x% 0" z-index="%z%" size="%width% %height%" valign="bottom" image="'. $this->config['images']['cup_gold'] .'"/>';
 		$cups_result = '';
 		for ($i = 0 ; $i < $total_cups ; $i ++) {
 			$layer = sprintf("0.%02d", ($i+1));
-			$width = 1.1 + ($i / $total_cups) * $cup_offset[$i];
-			$height = 1.5 + ($i / $total_cups) * $cup_offset[$i];
+			$width = 2.75 + ($i / $total_cups) * $cup_offset[$i];
+			$height = 2.2 + ($i / $total_cups) * $cup_offset[$i];
 			if ($i < $cup_gold_amount) {
 				$award = $cup_gold;
 			}
@@ -1782,11 +1838,14 @@ EOL;
 		}
 
 
-		$xml  = '<manialink id="'. $this->config['manialink_id'] .'05" name="KarmaCupsValue">';
-		$xml .= '<frame posn="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .' 10" id="'. $this->config['manialink_id'] .'05MainFrame">';
+		$xml  = '<manialink id="'. $this->config['manialink_id'] .'05" name="KarmaCupsValue" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
+		$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0.01" id="'. $this->config['manialink_id'] .'05MainFrame">';
 
 		// Cups
-		$xml .= '<frame posn="2.23 -4.95 0.01">';
+		$xml .= '<frame pos="5.575 -9.5" z-index="0.01">';
 		$xml .= $cups_result;
 		$xml .= '</frame>';
 
@@ -1819,19 +1878,19 @@ EOL;
 		}
 
 		// Global values and votes
-		$xml .= '<frame posn="2.1 -5.35 0">';
-		$xml .= '<quad posn="0 -0.1 1" sizen="0.1 2.85" bgcolor="FFF5"/>';
-		$xml .= '<label posn="0.3 -0.1 1" sizen="4 1.1" textsize="1" scale="0.65" textcolor="FFFF" text="GLOBAL"/>';
-		$xml .= '<label posn="3.3 0 1" sizen="3 1.4" textsize="1" scale="0.9" textcolor="'. $globalcolor .'" text="$O'. $this->karma['global']['votes']['karma'] .'"/>';
-		$xml .= '<label posn="0.3 -1.3 1" sizen="6.6 1.2" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<frame pos="5.25 -10.03125" z-index="0.01">';
+		$xml .= '<quad pos="0 -0.1875" z-index="0.01" size="0.25 5.34375" bgcolor="FFF5"/>';
+		$xml .= '<label pos="0.75 -0.1875" z-index="0.01" class="labels" size="10 2.0625" textsize="1" scale="0.65" textcolor="FFFF" text="GLOBAL"/>';
+		$xml .= '<label pos="8.25 0" z-index="0.01" size="7.5 2.625" class="labels" textsize="1" scale="0.9" textcolor="'. $globalcolor .'" text="$O'. $this->karma['global']['votes']['karma'] .'"/>';
+		$xml .= '<label pos="0.75 -2.4375" z-index="0.01" size="16.5 2.25" class="labels" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 		$xml .= '</frame>';
 
 		// Local values and votes
-		$xml .= '<frame posn="8.75 -5.35 0">';
-		$xml .= '<quad posn="0 -0.1 1" sizen="0.1 2.85" bgcolor="FFF5"/>';
-		$xml .= '<label posn="0.3 -0.1 1" sizen="4 1.1" textsize="1" scale="0.65" textcolor="FFFF" text="LOCAL "/>';
-		$xml .= '<label posn="3 0 1" sizen="3 1.4" textsize="1" scale="0.9" textcolor="'. $localcolor .'" text="$O'. $this->karma['local']['votes']['karma'] .'"/>';
-		$xml .= '<label posn="0.3 -1.3 1" sizen="6.6 1.2" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<frame pos="21.875 -10.03125" z-index="0.01">';
+		$xml .= '<quad pos="0 -0.1875" z-index="0.01" size="0.25 5.34375" bgcolor="FFF5"/>';
+		$xml .= '<label pos="0.75 -0.1875" z-index="0.01" size="10 2.0625" class="labels" textsize="1" scale="0.65" textcolor="FFFF" text="LOCAL "/>';
+		$xml .= '<label pos="7.5 0" z-index="0.01" size="7.5 2.625" textsize="1" scale="0.9" textcolor="'. $localcolor .'" text="$O'. $this->karma['local']['votes']['karma'] .'"/>';
+		$xml .= '<label pos="0.75 -2.4375" z-index="0.01" size="16.5 2.25" class="labels" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 		$xml .= '</frame>';
 
 
@@ -1848,7 +1907,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container <=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlFrame Container <=> (Page.GetFirstChild("{$this->config['manialink_id']}05MainFrame") as CMlFrame);
 	Container.RelativeScale = {$this->config['widget']['states'][$gamemode]['scale']};
 }
 --></script>
@@ -1880,37 +1939,10 @@ EOL;
 	public function buildKarmaDetailWindow ($login) {
 		global $aseco;
 
-		// Frame for Previous/Next Buttons
-		$buttons = '<frame posn="52.05 -53.3 0.04">';
 
-		// Reload button
-		$buttons .= '<quad posn="16.65 -1 0.14" sizen="3 3" action="PluginManiaKarma?Action=OpenKarmaDetailWindow" style="Icons64x64_1" substyle="Refresh"/>';
+		// BEGIN: Global vote frame
+		$xml = '<frame pos="0 8" z-index="1">';
 
-		// Previous button
-		$buttons .= '<quad posn="19.95 -1.15 0.12" sizen="2.8 2.7" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-		// Next button
-		$buttons .= '<quad posn="23.25 -1 0.12" sizen="3 3" action="PluginManiaKarma?Action=OpenWhoKarmaWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '<quad posn="23.65 -1.4 0.13" sizen="2.1 2.1" bgcolor="000F"/>';
-		$buttons .= '<quad posn="23.45 -1.2 0.14" sizen="2.5 2.5" style="Icons64x64_1" substyle="ShowRight2"/>';
-		$buttons .= '</frame>';
-
-		$xml = str_replace(
-			array(
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'ManiaKarma detailed vote statistic',
-				$buttons
-			),
-			$this->config['Templates']['WINDOW']['HEADER']
-		);
-
-
-		// Build Karma Headline
-
-		// Global Karma
 		$color = '$FFF';
 		if ($this->config['karma_calculation_method'] == 'DEFAULT') {
 			if ( ($this->karma['global']['votes']['karma'] >= 0) && ($this->karma['global']['votes']['karma'] <= 30) ) {
@@ -1923,10 +1955,117 @@ EOL;
 				$color = '$0D0';
 			}
 		}
-		$xml .= '<label posn="10.2 -6.5 0.03" sizen="20 0" textsize="2" scale="0.9" text="$FFFGlobal Karma: $O'. $color . $this->karma['global']['votes']['karma'] .'"/>';
-		$xml .= '<label posn="38.2 -6.5 0.03" sizen="20 0" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<label pos="17.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" text="$FFFGlobal Karma: $O'. $color . $this->karma['global']['votes']['karma'] .'"/>';
+		$xml .= '<label pos="87.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 
-		// Local Karma
+
+		$xml .= '<label pos="11.75 -21.28125" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="100%"/>';
+		$xml .= '<quad pos="13.75 -22.5" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -22.5" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -26.90625" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="90%"/>';
+		$xml .= '<quad pos="13.75 -28.125" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -28.125" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -32.53125" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="80%"/>';
+		$xml .= '<quad pos="13.75 -33.75" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -33.75" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -38.15625" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="70%"/>';
+		$xml .= '<quad pos="13.75 -39.375" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -39.375" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -43.78125" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="60%"/>';
+		$xml .= '<quad pos="13.75 -45" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -45" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -49.40625" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="50%"/>';
+		$xml .= '<quad pos="13.75 -50.625" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -50.625" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -55.03125" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="40%"/>';
+		$xml .= '<quad pos="13.75 -56.25" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -56.25" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -60.65625" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="30%"/>';
+		$xml .= '<quad pos="13.75 -61.875" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -61.875" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -66.28125" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="20%"/>';
+		$xml .= '<quad pos="13.75 -67.5" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -67.5" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -71.90625" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="10%"/>';
+		$xml .= '<quad pos="13.75 -73.125" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -73.125" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<quad pos="17.75 -78.75" z-index="0.04" size="70 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.5 -22.5" z-index="0.03" size="0.25 56.25" bgcolor="FFFD"/>';
+
+		$height['fantastic']	= (($this->karma['global']['votes']['fantastic']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['fantastic']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['beautiful']	= (($this->karma['global']['votes']['beautiful']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['beautiful']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['good']		= (($this->karma['global']['votes']['good']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['good']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['bad']		= (($this->karma['global']['votes']['bad']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['bad']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['poor']		= (($this->karma['global']['votes']['poor']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['poor']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['waste']	= (($this->karma['global']['votes']['waste']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['waste']['percent'] / 3.3333333333 * 1.875)) : 0);
+
+		$xml .= '<label pos="25.5 -'. (75 - $height['fantastic']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['fantastic']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="36.75 -'. (75 - $height['beautiful']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['beautiful']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="48 -'. (75 - $height['good']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['good']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+
+		$xml .= '<quad pos="25 -'. (78.75 - $height['fantastic']) .'" z-index="0.02" size="10 '. $height['fantastic'] .'" halign="center" bgcolor="170F"/>';
+		$xml .= '<quad pos="36.25 -'. (78.75 - $height['beautiful']) .'" z-index="0.02" size="10 '. $height['beautiful'] .'" halign="center" bgcolor="170F"/>';
+		$xml .= '<quad pos="47.5 -'. (78.75 - $height['good']) .'" z-index="0.02" size="10 '. $height['good'] .'" halign="center" bgcolor="170F"/>';
+
+		$xml .= '<quad pos="25 -'. (78.75 - $height['fantastic']) .'" z-index="0.03" size="10 '. $height['fantastic'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
+		$xml .= '<quad pos="36.25 -'. (78.75 - $height['beautiful']) .'" z-index="0.03" size="10 '. $height['beautiful'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
+		$xml .= '<quad pos="47.5 -'. (78.75 - $height['good']) .'" z-index="0.03" size="10 '. $height['good'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
+
+		$xml .= '<label pos="59.25 -'. (75 - $height['bad']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['bad']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="70.5 -'. (75 - $height['poor']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['poor']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="81.75 -'. (75 - $height['waste']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['waste']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+
+		$xml .= '<quad pos="58.75 -'. (78.75 - $height['bad']) .'" z-index="0.02" size="10 '. $height['bad'] .'" halign="center" bgcolor="701F"/>';
+		$xml .= '<quad pos="70 -'. (78.75 - $height['poor']) .'" z-index="0.02" size="10 '. $height['poor'] .'" halign="center" bgcolor="701F"/>';
+		$xml .= '<quad pos="81.25 -'. (78.75 - $height['waste']) .'" z-index="0.02" size="10 '. $height['waste'] .'" halign="center" bgcolor="701F"/>';
+
+		$xml .= '<quad pos="58.75 -'. (78.75 - $height['bad']) .'" z-index="0.03" size="10 '. $height['bad'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
+		$xml .= '<quad pos="70 -'. (78.75 - $height['poor']) .'" z-index="0.03" size="10 '. $height['poor'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
+		$xml .= '<quad pos="81.25 -'. (78.75 - $height['waste']) .'" z-index="0.03" size="10 '. $height['waste'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
+
+		$xml .= '<label pos="7.5 -80.625" z-index="0.03" size="15 0" class="labels" text="Votes:"/>';
+
+		$xml .= '<label pos="25 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['global']['votes']['fantastic']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="36.25 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['global']['votes']['beautiful']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="47.5 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['global']['votes']['good']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="58.75 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['global']['votes']['bad']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="70 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['global']['votes']['poor']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="81.25 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['global']['votes']['waste']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+
+		$xml .= '<label pos="25 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_fantastic']) .'"/>';
+		$xml .= '<label pos="36.25 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_beautiful']) .'"/>';
+		$xml .= '<label pos="47.5 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_good']) .'"/>';
+		$xml .= '<label pos="58.75 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_bad']) .'"/>';
+		$xml .= '<label pos="70 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_poor']) .'"/>';
+		$xml .= '<label pos="81.25 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_waste']) .'"/>';
+
+		$xml .= '<label pos="25 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$6C0+++"/>';
+		$xml .= '<label pos="36.25 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$6C0++"/>';
+		$xml .= '<label pos="47.5 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$6C0+"/>';
+		$xml .= '<label pos="58.75 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$F02-"/>';
+		$xml .= '<label pos="70 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$F02--"/>';
+		$xml .= '<label pos="81.25 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$F02---"/>';
+
+		$xml .= '</frame>';
+		// END: Global vote frame
+
+
+
+
+
+		// BEGIN: Local vote frame
+		$xml .= '<frame pos="105 8" z-index="1">';
+
 		$color = '$FFF';
 		if ($this->config['karma_calculation_method'] == 'DEFAULT') {
 			if ( ($this->karma['local']['votes']['karma'] >= 0) && ($this->karma['local']['votes']['karma'] <= 30) ) {
@@ -1939,238 +2078,106 @@ EOL;
 				$color = '$0F0';
 			}
 		}
-		$xml .= '<label posn="47.2 -6.5 0.03" sizen="20 0" textsize="2" scale="0.9" text="$FFFLocal Karma: $O'. $color . $this->karma['local']['votes']['karma'] .'"/>';
-		$xml .= '<label posn="75.2 -6.5 0.03" sizen="20 0" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<label pos="17.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" text="$FFFLocal Karma: $O'. $color . $this->karma['local']['votes']['karma'] .'"/>';
+		$xml .= '<label pos="87.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+
+		$xml .= '<label pos="11.75 -21.28125" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="100%"/>';
+		$xml .= '<quad pos="13.75 -22.5" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -22.5" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -26.90625" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="90%"/>';
+		$xml .= '<quad pos="13.75 -28.125" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -28.125" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -32.53125" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="80%"/>';
+		$xml .= '<quad pos="13.75 -33.75" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -33.75" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -38.15625" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="70%"/>';
+		$xml .= '<quad pos="13.75 -39.375" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -39.375" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -43.78125" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="60%"/>';
+		$xml .= '<quad pos="13.75 -45" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -45" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -49.40625" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="50%"/>';
+		$xml .= '<quad pos="13.75 -50.625" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -50.625" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -55.03125" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="40%"/>';
+		$xml .= '<quad pos="13.75 -56.25" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -56.25" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -60.65625" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="30%"/>';
+		$xml .= '<quad pos="13.75 -61.875" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -61.875" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -66.28125" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="20%"/>';
+		$xml .= '<quad pos="13.75 -67.5" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -67.5" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<label pos="11.75 -71.90625" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="10%"/>';
+		$xml .= '<quad pos="13.75 -73.125" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.75 -73.125" z-index="0.04" size="70 0.1875" bgcolor="FFF5"/>';
+
+		$xml .= '<quad pos="17.75 -78.75" z-index="0.04" size="70 0.1875" bgcolor="FFFD"/>';
+		$xml .= '<quad pos="17.5 -22.5" z-index="0.03" size="0.25 56.25" bgcolor="FFFD"/>';
+
+		$height['fantastic']	= (($this->karma['local']['votes']['fantastic']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['fantastic']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['beautiful']	= (($this->karma['local']['votes']['beautiful']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['beautiful']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['good']		= (($this->karma['local']['votes']['good']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['good']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['bad']		= (($this->karma['local']['votes']['bad']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['bad']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['poor']		= (($this->karma['local']['votes']['poor']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['poor']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['waste']	= (($this->karma['local']['votes']['waste']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['waste']['percent'] / 3.3333333333 * 1.875)) : 0);
+
+		$xml .= '<label pos="25.5 -'. (75 - $height['fantastic']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['fantastic']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="36.75 -'. (75 - $height['beautiful']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['beautiful']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="48 -'. (75 - $height['good']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['good']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+
+		$xml .= '<quad pos="25 -'. (78.75 - $height['fantastic']) .'" z-index="0.02" size="10 '. $height['fantastic'] .'" halign="center" bgcolor="170F"/>';
+		$xml .= '<quad pos="36.25 -'. (78.75 - $height['beautiful']) .'" z-index="0.02" size="10 '. $height['beautiful'] .'" halign="center" bgcolor="170F"/>';
+		$xml .= '<quad pos="47.5 -'. (78.75 - $height['good']) .'" z-index="0.02" size="10 '. $height['good'] .'" halign="center" bgcolor="170F"/>';
+
+		$xml .= '<quad pos="25 -'. (78.75 - $height['fantastic']) .'" z-index="0.03" size="10 '. $height['fantastic'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
+		$xml .= '<quad pos="36.25 -'. (78.75 - $height['beautiful']) .'" z-index="0.03" size="10 '. $height['beautiful'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
+		$xml .= '<quad pos="47.5 -'. (78.75 - $height['good']) .'" z-index="0.03" size="10 '. $height['good'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
+
+		$xml .= '<label pos="59.25 -'. (75 - $height['bad']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['bad']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="70.5 -'. (75 - $height['poor']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['poor']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+		$xml .= '<label pos="81.75 -'. (75 - $height['waste']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['waste']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
+
+		$xml .= '<quad pos="58.75 -'. (78.75 - $height['bad']) .'" z-index="0.02" size="10 '. $height['bad'] .'" halign="center" bgcolor="701F"/>';
+		$xml .= '<quad pos="70 -'. (78.75 - $height['poor']) .'" z-index="0.02" size="10 '. $height['poor'] .'" halign="center" bgcolor="701F"/>';
+		$xml .= '<quad pos="81.25 -'. (78.75 - $height['waste']) .'" z-index="0.02" size="10 '. $height['waste'] .'" halign="center" bgcolor="701F"/>';
+
+		$xml .= '<quad pos="58.75 -'. (78.75 - $height['bad']) .'" z-index="0.03" size="10 '. $height['bad'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
+		$xml .= '<quad pos="70 -'. (78.75 - $height['poor']) .'" z-index="0.03" size="10 '. $height['poor'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
+		$xml .= '<quad pos="81.25 -'. (78.75 - $height['waste']) .'" z-index="0.03" size="10 '. $height['waste'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
 
 
+		$xml .= '<label pos="7.5 -80.625" z-index="0.03" size="15 0" class="labels" text="Votes:"/>';
 
+		$xml .= '<label pos="25 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['local']['votes']['fantastic']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="36.25 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['local']['votes']['beautiful']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="47.5 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['local']['votes']['good']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="58.75 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['local']['votes']['bad']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="70 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['local']['votes']['poor']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
+		$xml .= '<label pos="81.25 -80.625" z-index="0.03" size="25 0" halign="center" class="labels" text="'. number_format($this->karma['local']['votes']['waste']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
 
-		// BEGIN: Global vote frame
-		$xml .= '<frame posn="3.2 -0.6 0.01">';
-		$xml .= '<format textsize="1" textcolor="FFFF"/>';
+		$xml .= '<label pos="25 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_fantastic']) .'"/>';
+		$xml .= '<label pos="36.25 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_beautiful']) .'"/>';
+		$xml .= '<label pos="47.5 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_good']) .'"/>';
+		$xml .= '<label pos="58.75 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_bad']) .'"/>';
+		$xml .= '<label pos="70 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_poor']) .'"/>';
+		$xml .= '<label pos="81.25 -84.46875" z-index="0.03" size="25 0" halign="center" class="labels" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_waste']) .'"/>';
 
-		$xml .= '<label posn="4.7 -11.35 0.03" sizen="3 0" halign="right" scale="0.8" text="100%"/>';
-		$xml .= '<quad posn="5.5 -12 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -12 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -14.35 0.03" sizen="3 0" halign="right" scale="0.8" text="90%"/>';
-		$xml .= '<quad posn="5.5 -15 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -15 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -17.35 0.03" sizen="3 0" halign="right" scale="0.8" text="80%"/>';
-		$xml .= '<quad posn="5.5 -18 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -18 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -20.35 0.03" sizen="3 0" halign="right" scale="0.8" text="70%"/>';
-		$xml .= '<quad posn="5.5 -21 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -21 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -23.35 0.03" sizen="3 0" halign="right" scale="0.8" text="60%"/>';
-		$xml .= '<quad posn="5.5 -24 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -24 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -26.35 0.03" sizen="3 0" halign="right" scale="0.8" text="50%"/>';
-		$xml .= '<quad posn="5.5 -27 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -27 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -29.35 0.03" sizen="3 0" halign="right" scale="0.8" text="40%"/>';
-		$xml .= '<quad posn="5.5 -30 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -30 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -32.35 0.03" sizen="3 0" halign="right" scale="0.8" text="30%"/>';
-		$xml .= '<quad posn="5.5 -33 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -33 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -35.35 0.03" sizen="3 0" halign="right" scale="0.8" text="20%"/>';
-		$xml .= '<quad posn="5.5 -36 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -36 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -38.35 0.03" sizen="3 0" halign="right" scale="0.8" text="10%"/>';
-		$xml .= '<quad posn="5.5 -39 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -39 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<quad posn="7.1 -42 0.04" sizen="28 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7 -12 0.03" sizen="0.1 30" bgcolor="FFFD"/>';
-
-		$height['fantastic']	= (($this->karma['global']['votes']['fantastic']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['fantastic']['percent'] / 3.3333333333)) : 0);
-		$height['beautiful']	= (($this->karma['global']['votes']['beautiful']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['beautiful']['percent'] / 3.3333333333)) : 0);
-		$height['good']		= (($this->karma['global']['votes']['good']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['good']['percent'] / 3.3333333333)) : 0);
-		$height['bad']		= (($this->karma['global']['votes']['bad']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['bad']['percent'] / 3.3333333333)) : 0);
-		$height['poor']		= (($this->karma['global']['votes']['poor']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['poor']['percent'] / 3.3333333333)) : 0);
-		$height['waste']	= (($this->karma['global']['votes']['waste']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['waste']['percent'] / 3.3333333333)) : 0);
-
-		$xml .= '<label posn="10.2 -'. (40 - $height['fantastic']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['global']['votes']['fantastic']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="14.7 -'. (40 - $height['beautiful']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['global']['votes']['beautiful']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="19.2 -'. (40 - $height['good']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['global']['votes']['good']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-
-		$xml .= '<quad posn="10 -'. (42 - $height['fantastic']) .' 0.02" sizen="4 '. $height['fantastic'] .'" halign="center" bgcolor="170F"/>';
-		$xml .= '<quad posn="14.5 -'. (42 - $height['beautiful']) .' 0.02" sizen="4 '. $height['beautiful'] .'" halign="center" bgcolor="170F"/>';
-		$xml .= '<quad posn="19 -'. (42 - $height['good']) .' 0.02" sizen="4 '. $height['good'] .'" halign="center" bgcolor="170F"/>';
-
-		$xml .= '<quad posn="10 -'. (42 - $height['fantastic']) .' 0.03" sizen="4 '. $height['fantastic'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
-		$xml .= '<quad posn="14.5 -'. (42 - $height['beautiful']) .' 0.03" sizen="4 '. $height['beautiful'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
-		$xml .= '<quad posn="19 -'. (42 - $height['good']) .' 0.03" sizen="4 '. $height['good'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
-
-		$xml .= '<quad posn="10 -'. (42 - $height['fantastic']) .' 0.035" sizen="4.4 '. (($height['fantastic'] < 3) ? $height['fantastic'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="14.5 -'. (42 - $height['beautiful']) .' 0.035" sizen="4.4 '. (($height['beautiful'] < 3) ? $height['beautiful'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="19 -'. (42 - $height['good']) .' 0.035" sizen="4.4 '. (($height['good'] < 3) ? $height['good'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-
-		$xml .= '<label posn="23.7 -'. (40 - $height['bad']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['global']['votes']['bad']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="28.2 -'. (40 - $height['poor']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['global']['votes']['poor']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="32.7 -'. (40 - $height['waste']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['global']['votes']['waste']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-
-		$xml .= '<quad posn="23.5 -'. (42 - $height['bad']) .' 0.02" sizen="4 '. $height['bad'] .'" halign="center" bgcolor="701F"/>';
-		$xml .= '<quad posn="28 -'. (42 - $height['poor']) .' 0.02" sizen="4 '. $height['poor'] .'" halign="center" bgcolor="701F"/>';
-		$xml .= '<quad posn="32.5 -'. (42 - $height['waste']) .' 0.02" sizen="4 '. $height['waste'] .'" halign="center" bgcolor="701F"/>';
-
-		$xml .= '<quad posn="23.5 -'. (42 - $height['bad']) .' 0.03" sizen="4 '. $height['bad'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
-		$xml .= '<quad posn="28 -'. (42 - $height['poor']) .' 0.03" sizen="4 '. $height['poor'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
-		$xml .= '<quad posn="32.5 -'. (42 - $height['waste']) .' 0.03" sizen="4 '. $height['waste'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
-
-		$xml .= '<quad posn="23.5 -'. (42 - $height['bad']) .' 0.035" sizen="4.4 '. (($height['bad'] < 3) ? $height['bad'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="28 -'. (42 - $height['poor']) .' 0.035" sizen="4.4 '. (($height['poor'] < 3) ? $height['poor'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="32.5 -'. (42 - $height['waste']) .' 0.035" sizen="4.4 '. (($height['waste'] < 3) ? $height['waste'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-
-
-		$xml .= '<label posn="3 -43 0.03" sizen="6 0" textcolor="FFFF" text="Votes:"/>';
-
-		$xml .= '<label posn="10 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['global']['votes']['fantastic']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="14.5 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['global']['votes']['beautiful']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="19 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['global']['votes']['good']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="23.5 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['global']['votes']['bad']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="28 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['global']['votes']['poor']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="32.5 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['global']['votes']['waste']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-
-		$xml .= '<label posn="10 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_fantastic']) .'"/>';
-		$xml .= '<label posn="14.5 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_beautiful']) .'"/>';
-		$xml .= '<label posn="19 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_good']) .'"/>';
-		$xml .= '<label posn="23.5 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_bad']) .'"/>';
-		$xml .= '<label posn="28 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_poor']) .'"/>';
-		$xml .= '<label posn="32.5 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_waste']) .'"/>';
-
-		$xml .= '<label posn="10 -46.05 0.03" sizen="10 0" halign="center" text="$6C0+++"/>';
-		$xml .= '<label posn="14.5 -46.05 0.03" sizen="10 0" halign="center" text="$6C0++"/>';
-		$xml .= '<label posn="19 -46.05 0.03" sizen="10 0" halign="center" text="$6C0+"/>';
-		$xml .= '<label posn="23.5 -46.05 0.03" sizen="10 0" halign="center" text="$F02-"/>';
-		$xml .= '<label posn="28 -46.05 0.03" sizen="10 0" halign="center" text="$F02--"/>';
-		$xml .= '<label posn="32.5 -46.05 0.03" sizen="10 0" halign="center" text="$F02---"/>';
-
-		$xml .= '</frame>';
-		// END: Global vote frame
-
-
-
-
-
-		// BEGIN: Local vote frame
-		$xml .= '<frame posn="40.2 -0.6 0.01">';
-		$xml .= '<format textsize="1" textcolor="FFFF"/>';
-
-		$xml .= '<label posn="4.7 -11.35 0.03" sizen="3 0" halign="right" scale="0.8" text="100%"/>';
-		$xml .= '<quad posn="5.5 -12 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -12 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -14.35 0.03" sizen="3 0" halign="right" scale="0.8" text="90%"/>';
-		$xml .= '<quad posn="5.5 -15 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -15 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -17.35 0.03" sizen="3 0" halign="right" scale="0.8" text="80%"/>';
-		$xml .= '<quad posn="5.5 -18 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -18 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -20.35 0.03" sizen="3 0" halign="right" scale="0.8" text="70%"/>';
-		$xml .= '<quad posn="5.5 -21 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -21 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -23.35 0.03" sizen="3 0" halign="right" scale="0.8" text="60%"/>';
-		$xml .= '<quad posn="5.5 -24 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -24 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -26.35 0.03" sizen="3 0" halign="right" scale="0.8" text="50%"/>';
-		$xml .= '<quad posn="5.5 -27 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -27 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -29.35 0.03" sizen="3 0" halign="right" scale="0.8" text="40%"/>';
-		$xml .= '<quad posn="5.5 -30 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -30 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -32.35 0.03" sizen="3 0" halign="right" scale="0.8" text="30%"/>';
-		$xml .= '<quad posn="5.5 -33 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -33 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -35.35 0.03" sizen="3 0" halign="right" scale="0.8" text="20%"/>';
-		$xml .= '<quad posn="5.5 -36 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -36 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<label posn="4.7 -38.35 0.03" sizen="3 0" halign="right" scale="0.8" text="10%"/>';
-		$xml .= '<quad posn="5.5 -39 0.04" sizen="1.5 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7.1 -39 0.04" sizen="28 0.1" bgcolor="FFF5"/>';
-
-		$xml .= '<quad posn="7.1 -42 0.04" sizen="28 0.1" bgcolor="FFFD"/>';
-		$xml .= '<quad posn="7 -12 0.03" sizen="0.1 30" bgcolor="FFFD"/>';
-
-		$height['fantastic']	= (($this->karma['local']['votes']['fantastic']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['fantastic']['percent'] / 3.3333333333)) : 0);
-		$height['beautiful']	= (($this->karma['local']['votes']['beautiful']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['beautiful']['percent'] / 3.3333333333)) : 0);
-		$height['good']		= (($this->karma['local']['votes']['good']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['good']['percent'] / 3.3333333333)) : 0);
-		$height['bad']		= (($this->karma['local']['votes']['bad']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['bad']['percent'] / 3.3333333333)) : 0);
-		$height['poor']		= (($this->karma['local']['votes']['poor']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['poor']['percent'] / 3.3333333333)) : 0);
-		$height['waste']	= (($this->karma['local']['votes']['waste']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['waste']['percent'] / 3.3333333333)) : 0);
-
-		$xml .= '<label posn="10.2 -'. (40 - $height['fantastic']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['local']['votes']['fantastic']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="14.7 -'. (40 - $height['beautiful']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['local']['votes']['beautiful']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="19.2 -'. (40 - $height['good']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['local']['votes']['good']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-
-		$xml .= '<quad posn="10 -'. (42 - $height['fantastic']) .' 0.02" sizen="4 '. $height['fantastic'] .'" halign="center" bgcolor="170F"/>';
-		$xml .= '<quad posn="14.5 -'. (42 - $height['beautiful']) .' 0.02" sizen="4 '. $height['beautiful'] .'" halign="center" bgcolor="170F"/>';
-		$xml .= '<quad posn="19 -'. (42 - $height['good']) .' 0.02" sizen="4 '. $height['good'] .'" halign="center" bgcolor="170F"/>';
-
-		$xml .= '<quad posn="10 -'. (42 - $height['fantastic']) .' 0.03" sizen="4 '. $height['fantastic'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
-		$xml .= '<quad posn="14.5 -'. (42 - $height['beautiful']) .' 0.03" sizen="4 '. $height['beautiful'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
-		$xml .= '<quad posn="19 -'. (42 - $height['good']) .' 0.03" sizen="4 '. $height['good'] .'" halign="center" style="BgRaceScore2" substyle="CupFinisher"/>';
-
-		$xml .= '<quad posn="10 -'. (42 - $height['fantastic']) .' 0.035" sizen="4.4 '. (($height['fantastic'] < 3) ? $height['fantastic'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="14.5 -'. (42 - $height['beautiful']) .' 0.035" sizen="4.4 '. (($height['beautiful'] < 3) ? $height['beautiful'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="19 -'. (42 - $height['good']) .' 0.035" sizen="4.4 '. (($height['good'] < 3) ? $height['good'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-
-		$xml .= '<label posn="23.7 -'. (40 - $height['bad']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['local']['votes']['bad']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="28.2 -'. (40 - $height['poor']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['local']['votes']['poor']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-		$xml .= '<label posn="32.7 -'. (40 - $height['waste']) .' 0.06" sizen="3.8 0" halign="center" textcolor="FFFF" scale="0.8" text="'. number_format($this->karma['local']['votes']['waste']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
-
-		$xml .= '<quad posn="23.5 -'. (42 - $height['bad']) .' 0.02" sizen="4 '. $height['bad'] .'" halign="center" bgcolor="701F"/>';
-		$xml .= '<quad posn="28 -'. (42 - $height['poor']) .' 0.02" sizen="4 '. $height['poor'] .'" halign="center" bgcolor="701F"/>';
-		$xml .= '<quad posn="32.5 -'. (42 - $height['waste']) .' 0.02" sizen="4 '. $height['waste'] .'" halign="center" bgcolor="701F"/>';
-
-		$xml .= '<quad posn="23.5 -'. (42 - $height['bad']) .' 0.03" sizen="4 '. $height['bad'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
-		$xml .= '<quad posn="28 -'. (42 - $height['poor']) .' 0.03" sizen="4 '. $height['poor'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
-		$xml .= '<quad posn="32.5 -'. (42 - $height['waste']) .' 0.03" sizen="4 '. $height['waste'] .'" halign="center" style="BgRaceScore2" substyle="CupPotentialFinisher"/>';
-
-		$xml .= '<quad posn="23.5 -'. (42 - $height['bad']) .' 0.035" sizen="4.4 '. (($height['bad'] < 3) ? $height['bad'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="28 -'. (42 - $height['poor']) .' 0.035" sizen="4.4 '. (($height['poor'] < 3) ? $height['poor'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-		$xml .= '<quad posn="32.5 -'. (42 - $height['waste']) .' 0.035" sizen="4.4 '. (($height['waste'] < 3) ? $height['waste'] : 3) .'" halign="center" style="BgsPlayerCard" substyle="BgRacePlayerLine"/>';
-
-
-		$xml .= '<label posn="3 -43 0.03" sizen="6 0" textcolor="FFFF" text="Votes:"/>';
-
-		$xml .= '<label posn="10 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['local']['votes']['fantastic']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="14.5 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['local']['votes']['beautiful']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="19 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['local']['votes']['good']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="23.5 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['local']['votes']['bad']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="28 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['local']['votes']['poor']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-		$xml .= '<label posn="32.5 -43 0.03" sizen="10 0" halign="center" text="'. number_format($this->karma['local']['votes']['waste']['count'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'"/>';
-
-		$xml .= '<label posn="10 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_fantastic']) .'"/>';
-		$xml .= '<label posn="14.5 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_beautiful']) .'"/>';
-		$xml .= '<label posn="19 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$6C0'. ucfirst($this->config['messages']['karma_good']) .'"/>';
-		$xml .= '<label posn="23.5 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_bad']) .'"/>';
-		$xml .= '<label posn="28 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_poor']) .'"/>';
-		$xml .= '<label posn="32.5 -45.05 0.03" sizen="10 0" halign="center" scale="0.8" text="$F02'. ucfirst($this->config['messages']['karma_waste']) .'"/>';
-
-		$xml .= '<label posn="10 -46.05 0.03" sizen="10 0" halign="center" text="$6C0+++"/>';
-		$xml .= '<label posn="14.5 -46.05 0.03" sizen="10 0" halign="center" text="$6C0++"/>';
-		$xml .= '<label posn="19 -46.05 0.03" sizen="10 0" halign="center" text="$6C0+"/>';
-		$xml .= '<label posn="23.5 -46.05 0.03" sizen="10 0" halign="center" text="$F02-"/>';
-		$xml .= '<label posn="28 -46.05 0.03" sizen="10 0" halign="center" text="$F02--"/>';
-		$xml .= '<label posn="32.5 -46.05 0.03" sizen="10 0" halign="center" text="$F02---"/>';
+		$xml .= '<label pos="25 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$6C0+++"/>';
+		$xml .= '<label pos="36.25 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$6C0++"/>';
+		$xml .= '<label pos="47.5 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$6C0+"/>';
+		$xml .= '<label pos="58.75 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$F02-"/>';
+		$xml .= '<label pos="70 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$F02--"/>';
+		$xml .= '<label pos="81.25 -86.34375" z-index="0.03" size="25 0" halign="center" class="labels" text="$F02---"/>';
 
 		$xml .= '</frame>';
 		// END: Local vote frame
@@ -2180,30 +2187,30 @@ EOL;
 		// BEGIN: Place Player marker, if Player has already voted
 		if ( isset($this->karma['global']['players'][$login]) ) {
 			// BEGIN: Global vote frame
-			$xml .= '<frame posn="3.2 -48.5 0.02">';
+			$xml .= '<frame pos="0 -80.5" z-index="1">';
 			if ($this->karma['global']['players'][$login]['vote'] == 3) {
-				$xml .= '<quad posn="10 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="10 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['global']['players'][$login]['vote'] == 2) {
-				$xml .= '<quad posn="14.5 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="14.5 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="36.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="36.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['global']['players'][$login]['vote'] == 1) {
-				$xml .= '<quad posn="19 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="19 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="47.5 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="47.5 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['global']['players'][$login]['vote'] == -1) {
-				$xml .= '<quad posn="23.5 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="23.5 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="58.75 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="58.75 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['global']['players'][$login]['vote'] == -2) {
-				$xml .= '<quad posn="28 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="28 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="70 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="70 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['global']['players'][$login]['vote'] == -3) {
-				$xml .= '<quad posn="32.5 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="32.5 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="81.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="81.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			$xml .= '</frame>';
 			// END: Global vote frame
@@ -2211,43 +2218,36 @@ EOL;
 
 		if ( isset($this->karma['local']['players'][$login]) ) {
 			// BEGIN: Local vote frame
-			$xml .= '<frame posn="40.2 -48.5 0.02">';
+			$xml .= '<frame pos="105 -80.5" z-index="1">';
 			if ($this->karma['local']['players'][$login]['vote'] == 3) {
-				$xml .= '<quad posn="10 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="10 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['local']['players'][$login]['vote'] == 2) {
-				$xml .= '<quad posn="14.5 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="14.5 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="36.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="36.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['local']['players'][$login]['vote'] == 1) {
-				$xml .= '<quad posn="19 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="19 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="47.5 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="47.5 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['local']['players'][$login]['vote'] == -1) {
-				$xml .= '<quad posn="23.5 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="23.5 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="58.75 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="58.75 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['local']['players'][$login]['vote'] == -2) {
-				$xml .= '<quad posn="28 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="28 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="70 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="70 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			else if ($this->karma['local']['players'][$login]['vote'] == -3) {
-				$xml .= '<quad posn="32.5 0 0.05" sizen="2.8 2.8" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
-				$xml .= '<label posn="32.5 -2.5 0.03" sizen="6 0" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
+				$xml .= '<quad pos="81.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
+				$xml .= '<label pos="81.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
 			$xml .= '</frame>';
 			// END: Local vote frame
 		}
 		// END: Place Player marker
 
-
-		// Website-Link Frame
-		$xml .= '<frame posn="28.6 -54.5 0.04">';
-		$xml .= '<label posn="12 0 0.02" sizen="30 2.6" halign="center" textsize="1" scale="0.8" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->karma['data']['uid'] .'&amp;env='. $this->karma['data']['env'] .'&amp;game='. $aseco->server->game .'" text="MORE INFO ON MANIA-KARMA.COM" style="CardButtonMediumWide"/>';
-		$xml .= '</frame>';
-
-		$xml .= $this->config['Templates']['WINDOW']['FOOTER'];
 		return $xml;
 	}
 
@@ -2260,41 +2260,11 @@ EOL;
 	public function buildWhoKarmaWindow () {
 		global $aseco;
 
-		// Frame for Previous/Next Buttons
-		$buttons = '<frame posn="52.05 -53.3 0.04">';
+		$xml = '<frame pos="0 0" z-index="0.05">';
 
-		// Reload button
-		$buttons .= '<quad posn="16.65 -1 0.14" sizen="3 3" action="PluginManiaKarma?Action=OpenWhoKarmaWindow" style="Icons64x64_1" substyle="Refresh"/>';
-
-		// Previous button
-		$buttons .= '<quad posn="19.95 -1 0.12" sizen="3 3" action="PluginManiaKarma?Action=OpenKarmaDetailWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '<quad posn="20.35 -1.4 0.13" sizen="2.1 2.1" bgcolor="000F"/>';
-		$buttons .= '<quad posn="20.15 -1.2 0.14" sizen="2.5 2.5" style="Icons64x64_1" substyle="ShowLeft2"/>';
-
-		// Next button (display only if more pages to display)
-		$buttons .= '<quad posn="23.25 -1.15 0.12" sizen="2.8 2.7" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '</frame>';
-
-		$xml = str_replace(
-			array(
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'ManiaKarma who voted what',
-				$buttons
-			),
-			$this->config['Templates']['WINDOW']['HEADER']
-		);
-
-
-		$xml .= '<frame posn="3.2 -6.5 0.05">';
-		$xml .= '<format textsize="1" textcolor="FFFF"/>';
-
-		$xml .= '<quad posn="0 0.8 0.02" sizen="17.75 46.88" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-		$xml .= '<quad posn="19.05 0.8 0.02" sizen="17.75 46.88" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-		$xml .= '<quad posn="38.1 0.8 0.02" sizen="17.75 46.88" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-		$xml .= '<quad posn="57.15 0.8 0.02" sizen="17.75 46.88" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
+		$xml .= '<quad pos="49.5 -1" z-index="0.02" size="0.2 88" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="99.5 -1" z-index="0.02" size="0.2 88" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="149.5 -1" z-index="0.02" size="0.2 88" bgcolor="FFFFFF33"/>';
 
 		$players = array();
 		foreach ($aseco->server->players->player_list as $player) {
@@ -2332,17 +2302,16 @@ EOL;
 		$rank = 1;
 		$line = 0;
 		$offset = 0;
+		$xml .= '<frame pos="0 -1.2" z-index="0.05">';
 		foreach ($players as $player) {
-			$xml .= '<quad posn="'. ($offset + 0.4) .' '. (((1.83 * $line - 0.2) > 0) ? -(1.83 * $line - 0.2) : 0.2) .' 0.03" sizen="16.95 1.83" style="BgsPlayerCard" substyle="BgCardSystem"/>';
-			$xml .= '<label posn="'. (1 + $offset) .' -'. (1.83 * $line) .' 0.04" sizen="14 1.7" scale="0.9" text="'. $player['nickname'] .'"/>';
-			$xml .= '<label posn="'. (16.6 + $offset) .' -'. (1.83 * $line) .' 0.04" sizen="3 1.7" halign="right" scale="0.9" textcolor="FFFF" text="'. $vote_index[$player['vote']] .'"/>';
-
+			$xml .= '<label pos="'. (2 + $offset) .' -'. (3.53 * $line) .'" z-index="0.04" size="7 3.3" class="labels" scale="0.9" text="'. $vote_index[$player['vote']] .'"/>';
+			$xml .= '<label pos="'. (9 + $offset) .' -'. (3.53 * $line) .'" z-index="0.04" size="38.5 3.3" class="labels" text="'. $player['nickname'] .'"/>';
 			$line ++;
 			$rank ++;
 
 			// Reset lines
 			if ($line >= 25) {
-				$offset += 19.05;
+				$offset += 50;
 				$line = 0;
 			}
 
@@ -2351,16 +2320,10 @@ EOL;
 				break;
 			}
 		}
-		unset($item);
 		$xml .= '</frame>';
 
-
-		// Website-Link Frame
-		$xml .= '<frame posn="28.6 -54.5 0.04">';
-		$xml .= '<label posn="12 0 0.02" sizen="30 2.6" halign="center" textsize="1" scale="0.8" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $this->karma['data']['uid'] .'&amp;env='. $this->karma['data']['env'] .'&amp;game='. $aseco->server->game .'" text="MORE INFO ON MANIA-KARMA.COM" style="CardButtonMediumWide"/>';
 		$xml .= '</frame>';
 
-		$xml .= $this->config['Templates']['WINDOW']['FOOTER'];
 		return $xml;
 	}
 
@@ -2373,7 +2336,7 @@ EOL;
 	public function buildPlayerVoteMarker ($player, $gamemode) {
 
 		// Bail out if Player is already disconnected
-		if ( !isset($player->login) ) {
+		if (!isset($player->login) || !$this->karma['global']['players'][$player->login]) {
 			return;
 		}
 
@@ -2455,57 +2418,66 @@ EOL;
 		// Button +++
 		if ($preset['fantastic']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
-			$marker .= '<frame posn="1.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action=Vote&Value='. $preset['fantastic']['action'] .'" bgcolor="'. $preset['fantastic']['bgcolor'] .'"/>';
+			$marker .= '<frame pos="4.575 -15.9375" z-index="1">';
+			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['fantastic']['action'] .'" bgcolor="'. $preset['fantastic']['bgcolor'] .'"/>';
+			$marker .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['text_disabled'] .'" text="+++"/>';
 			$marker .= '</frame>';
 		}
 
 		// Button ++
 		if ($preset['beautiful']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
-			$marker .= '<frame posn="3.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action=Vote&Value='. $preset['beautiful']['action'] .'" bgcolor="'. $preset['beautiful']['bgcolor'] .'"/>';
+			$marker .= '<frame pos="9.575 -15.9375" z-index="1">';
+			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['beautiful']['action'] .'" bgcolor="'. $preset['beautiful']['bgcolor'] .'"/>';
+			$marker .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['text_disabled'] .'" text="++"/>';
 			$marker .= '</frame>';
 		}
 
 		// Button +
 		if ($preset['good']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
-			$marker .= '<frame posn="5.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action=Vote&Value='. $preset['good']['action'] .'" bgcolor="'. $preset['good']['bgcolor'] .'"/>';
+			$marker .= '<frame pos="14.575 -15.9375" z-index="1">';
+			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['good']['action'] .'" bgcolor="'. $preset['good']['bgcolor'] .'"/>';
+			$marker .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['text_disabled'] .'" text="+"/>';
 			$marker .= '</frame>';
 		}
 
 		// Button -
 		if ($preset['bad']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
-			$marker .= '<frame posn="7.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action=Vote&Value='. $preset['bad']['action'] .'" bgcolor="'. $preset['bad']['bgcolor'] .'"/>';
+			$marker .= '<frame pos="19.575 -15.9375" z-index="1">';
+			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['bad']['action'] .'" bgcolor="'. $preset['bad']['bgcolor'] .'"/>';
+			$marker .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['text_disabled'] .'" text="-"/>';
 			$marker .= '</frame>';
 		}
 
 		// Button --
 		if ($preset['poor']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
-			$marker .= '<frame posn="9.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action=Vote&Value='. $preset['poor']['action'] .'" bgcolor="'. $preset['poor']['bgcolor'] .'"/>';
+			$marker .= '<frame pos="24.575 -15.9375" z-index="1">';
+			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['poor']['action'] .'" bgcolor="'. $preset['poor']['bgcolor'] .'"/>';
+			$marker .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['text_disabled'] .'" text="--"/>';
 			$marker .= '</frame>';
 		}
 
 		// Button ---
 		if ($preset['waste']['bgcolor'] != '0000') {
 			// Mark current vote or disable the vote possibility
-			$marker .= '<frame posn="11.83 -8.5 1">';
-			$marker .= '<quad posn="0.2 -0.08 0.3" sizen="1.8 1.4" action="PluginManiaKarma?Action=Vote&Value='. $preset['waste']['action'] .'" bgcolor="'. $preset['waste']['bgcolor'] .'"/>';
+			$marker .= '<frame pos="29.575 -15.9375" z-index="1">';
+			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['waste']['action'] .'" bgcolor="'. $preset['waste']['bgcolor'] .'"/>';
+			$marker .= '<label pos="2.8 -0.5625" z-index="0.4" size="4.5 0" class="labels" textsize="1" scale="0.8" halign="center" textcolor="'. $this->config['widget']['buttons']['text_disabled'] .'" text="---"/>';
 			$marker .= '</frame>';
 		}
 
 
-		$xml = '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker">';
+		$xml = '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
 
 		// Send/Build MainWidget Frame only when required, if empty then the player can vote
 		if ($marker != false) {
-			$xml .= '<frame posn="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .' 10" id="'. $this->config['manialink_id'] .'04MainFrame">';
+			$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0.01" id="'. $this->config['manialink_id'] .'04MainFrame">';
 			$xml .= $marker;
 			$xml .= '</frame>';
 $maniascript = <<<EOL
@@ -2519,7 +2491,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlControl Container <=> (Page.GetFirstChild(Page.MainFrame.ControlId ^ "MainFrame") as CMlFrame);
+	declare CMlFrame Container <=> (Page.GetFirstChild("{$this->config['manialink_id']}04MainFrame") as CMlFrame);
 	Container.RelativeScale = {$this->config['widget']['states'][$gamemode]['scale']};
 }
 --></script>
@@ -2541,12 +2513,15 @@ EOL;
 	public function sendConnectionStatus ($status = true, $gamemode) {
 		global $aseco;
 
-		$xml = '<manialink id="'. $this->config['manialink_id'] .'06" name="ConnectionStatus">';
+		$xml = '<manialink id="'. $this->config['manialink_id'] .'06" name="ConnectionStatus" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
 		if ($status === false) {
 			$this->sendLoadingIndicator(false, $gamemode);
-			$xml .= '<frame posn="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .' 20">';
-			$xml .= '<quad posn="0.5 -5.2 0.9" sizen="1.4 1.4" style="Icons64x64_2" substyle="Disconnected" id="ManiaKarmaTooltipIcon" ScriptEvents="1"/>';
-			$xml .= '<label posn="-0.4 -5.2 0.9" sizen="20 1.4" textsize="1" halign="right" scale="0.8" text="Connection failed, retrying shortly." hidden="true" id="ManiaKarmaTooltipMessage"/>';
+			$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0.03">';
+			$xml .= '<quad pos="1.25 -9.75" z-index="0.04" size="3.5 3.5" style="Icons64x64_2" substyle="Disconnected" id="ManiaKarmaTooltipIcon" ScriptEvents="1"/>';
+			$xml .= '<label pos="-1 -9.75" z-index="0.04" size="50 2.625" class="labels" textsize="1" halign="right" scale="0.8" text="Connection failed, retrying shortly." hidden="true" id="ManiaKarmaTooltipMessage"/>';
 			$xml .= '</frame>';
 
 $maniascript = <<<EOL
@@ -2604,11 +2579,14 @@ EOL;
 			return;
 		}
 
-		$xml = '<manialink id="'. $this->config['manialink_id'] .'07" name="LoadingIndicator">';
+		$xml = '<manialink id="'. $this->config['manialink_id'] .'07" name="LoadingIndicator" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
 		if ($status === true) {
-			$xml .= '<frame posn="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .' 20">';
-			$xml .= '<quad posn="0.5 -5.2 0.9" sizen="1.4 1.4" image="'. $this->config['images']['progress_indicator'] .'" id="ManiaKarmaTooltipIcon" ScriptEvents="1"/>';
-			$xml .= '<label posn="-0.4 -5.2 0.9" sizen="20 1.4" textsize="1" halign="right" scale="0.8" text="Loading global votes." hidden="true" id="ManiaKarmaTooltipMessage"/>';
+			$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0.03">';
+			$xml .= '<quad pos="1.25 -9.75" z-index="0.04" size="3.5 3.5" image="'. $this->config['images']['progress_indicator'] .'" id="ManiaKarmaTooltipIcon" ScriptEvents="1"/>';
+			$xml .= '<label pos="-1 -9.75" z-index="0.04" size="50 2.625" class="labels" textsize="1" halign="right" scale="0.8" text="Loading global votes." hidden="true" id="ManiaKarmaTooltipMessage"/>';
 			$xml .= '</frame>';
 
 $maniascript = <<<EOL
@@ -2867,7 +2845,7 @@ EOL;
 
 		// Tell the player the result for his/her vote
 		if ($this->karma['global']['players'][$player->login]['previous'] == 0) {
-			$message = $aseco->formatText($this->config['messages']['karma_done'], $aseco->stripColors($aseco->server->maps->current->name) );
+			$message = $aseco->formatText($this->config['messages']['karma_done'], $aseco->server->maps->current->name_stripped);
 			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, $player);
 			}
@@ -2877,7 +2855,7 @@ EOL;
 
 		}
 		else if ($this->karma['global']['players'][$player->login]['previous'] != $vote) {
-			$message = $aseco->formatText($this->config['messages']['karma_change'], $aseco->stripColors($aseco->server->maps->current->name) );
+			$message = $aseco->formatText($this->config['messages']['karma_change'], $aseco->server->maps->current->name_stripped);
 			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, $player);
 			}
@@ -2952,7 +2930,7 @@ EOL;
 				$player_voted = $this->config['messages']['karma_waste'];
 			}
 			$message = $aseco->formatText($this->config['messages']['karma_show_opinion'],
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$player_voted
 			);
 			$message = str_replace('{br}', LF, $message);  // split long message
@@ -3106,7 +3084,7 @@ EOL;
 					}
 
 					$message = $aseco->formatText($this->config['messages']['karma_show_undecided'],
-							$aseco->stripColors($caller->nickname)
+							$aseco->stripStyles($caller->nickname)
 					);
 					$message = str_replace('{br}', LF, $message);  // split long message
 					$aseco->sendChatMessage($message, $player->login);
@@ -3135,55 +3113,88 @@ EOL;
 			$gamestate = 'score';
 		}
 
-		$content = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow">';
-		$content .= '<frame posn="'. $this->config['reminder_window'][$gamestate]['pos_x'] .' '. $this->config['reminder_window'][$gamestate]['pos_y'] .' 2">';
-		$content .= '<quad posn="0 1 0" sizen="81.8 6.3" style="Bgs1InRace" substyle="BgTitle2"/>';
-		$content .= '<label posn="16.5 -0.8 1" sizen="18 1.8" textsize="2" scale="0.8" halign="right" text="$000'. $this->config['messages']['karma_reminder_at_score'] .'"/>';
-		$content .= '<label posn="16.5 -2.5 1" sizen="18 0.2" textsize="1" scale="0.8" halign="right" text="$555powered by mania-karma.com"/>';
+		$content = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow" version="3">';
+		$content .= '<stylesheet>';
+		$content .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$content .= '</stylesheet>';
+		$content .= '<frame pos="'. $this->config['reminder_window'][$gamestate]['pos_x'] .' '. $this->config['reminder_window'][$gamestate]['pos_y'] .'" z-index="0">';
+		$content .= '<quad pos="0 0" z-index="0.01" size="196 8" bgcolor="032942DD"/>';
+		$content .= '<label pos="41.25 -1.5" z-index="0.02" size="45 3.375" class="labels" textsize="2" scale="0.8" halign="right" text="'. $this->config['messages']['karma_reminder_at_score'] .'"/>';
+		$content .= '<label pos="41.25 -4.6875" z-index="0.02" size="45 0.375" class="labels" textsize="1" scale="0.8" halign="right" text="powered by mania-karma.com"/>';
 
-		$content .= '<frame posn="19.2 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Fantastic" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0.02" sizen="7.5 2.8" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_fantastic']) .'"/>';
-		$content .= '<label posn="4 -1.8 0.02" sizen="10 2.8" halign="center" textsize="1" text="$390+++"/>';
+		$content .= '<frame pos="48 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Fantastic" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton1" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_fantastic']) .'"/>';
+		$content .= '<label pos="10 -3.375" z-index="0.03" size="25 5.25" class="labels" halign="center" textsize="1" text="$390+++"/>';
 		$content .= '</frame>';
 
-		$content .= '<frame posn="27.9 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Beautiful" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_beautiful']) .'"/>';
-		$content .= '<label posn="4 -1.8 0" sizen="10 2.8" halign="center" textsize="1" text="$390++"/>';
+		$content .= '<frame pos="69 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Beautiful" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton2" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_beautiful']) .'"/>';
+		$content .= '<label pos="10 -3.375" z-index="0.03" size="25 5.25" class="labels" halign="center" textsize="1" text="$390++"/>';
 		$content .= '</frame>';
 
-		$content .= '<frame posn="36.6 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Good" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_good']) .'"/>';
-		$content .= '<label posn="4 -1.8 0" sizen="10 2.8" halign="center" textsize="1" text="$390+"/>';
+		$content .= '<frame pos="90 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Good" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton3" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$390'. strtoupper($this->config['messages']['karma_good']) .'"/>';
+		$content .= '<label pos="10 -3.375" z-index="0.03" size="25 5.25" class="labels" halign="center" textsize="1" text="$390+"/>';
 		$content .= '</frame>';
 
-		$content .= '<frame posn="45.3 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Undecided" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$888'. strtoupper($this->config['messages']['karma_undecided']) .'"/>';
-		$content .= '<label posn="4 -2 0" sizen="10 2.8" halign="center" textsize="1" scale="0.7" text="$888???"/>';
+		$content .= '<frame pos="111 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Undecided" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton4" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$888'. strtoupper($this->config['messages']['karma_undecided']) .'"/>';
+		$content .= '<label pos="10 -3.75" z-index="0.03" size="25 5.25" class="labels" halign="center" textsize="1" scale="0.7" text="$888???"/>';
 		$content .= '</frame>';
 
-		$content .= '<frame posn="54 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Bad" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_bad']) .'"/>';
-		$content .= '<label posn="4 -1.7 0" sizen="14 2.8" halign="center" textsize="1" text="$D02-"/>';
+		$content .= '<frame pos="132 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Bad" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton5" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_bad']) .'"/>';
+		$content .= '<label pos="10 -3.1875" z-index="0.03" size="35 5.25" class="labels" halign="center" textsize="1" text="$D02-"/>';
 		$content .= '</frame>';
 
-		$content .= '<frame posn="62.7 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Poor" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_poor']) .'"/>';
-		$content .= '<label posn="4 -1.7 0" sizen="14 2.8" halign="center" textsize="1" text="$D02--"/>';
+		$content .= '<frame pos="153 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Poor" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton6" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_poor']) .'"/>';
+		$content .= '<label pos="10 -3.1875" z-index="0.03" size="35 5.25" class="labels" halign="center" textsize="1" text="$D02--"/>';
 		$content .= '</frame>';
 
-		$content .= '<frame posn="71.4 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" action="PluginManiaKarma?Action=Vote&Value=Waste" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0" sizen="7.5 2.8" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_waste']) .'"/>';
-		$content .= '<label posn="4 -1.7 0" sizen="14 2.8" halign="center" textsize="1" text="$D02---"/>';
+		$content .= '<frame pos="174 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.02" size="19.75 5.64375" action="PluginManiaKarma?Action=Vote&Value=Waste" bgcolor="FFFFFFFF" bgcolorfocus="FFFFFFDD" id="ManiaKarmaButton7" ScriptEvents="1"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.03" size="17.75 5.25" class="labels" halign="center" textsize="1" text="$D02'. strtoupper($this->config['messages']['karma_waste']) .'"/>';
+		$content .= '<label pos="10 -3.1875" z-index="0.03" size="35 5.25" class="labels" halign="center" textsize="1" text="$D02---"/>';
 		$content .= '</frame>';
 
 		$content .= '</frame>';
+
+$maniascript = <<<EOL
+<script><!--
+main () {
+	declare CMlFrame Container <=> (Page.GetFirstChild("FrameReminderWindow") as CMlFrame);
+	while (True) {
+		yield;
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseOver : {
+					if (
+						Event.ControlId == "ManiaKarmaButton1" ||
+						Event.ControlId == "ManiaKarmaButton2" ||
+						Event.ControlId == "ManiaKarmaButton3" ||
+						Event.ControlId == "ManiaKarmaButton4" ||
+						Event.ControlId == "ManiaKarmaButton5" ||
+						Event.ControlId == "ManiaKarmaButton6" ||
+						Event.ControlId == "ManiaKarmaButton7"
+
+					) {
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+					}
+				}
+			}
+		}
+	}
+}
+--></script>
+EOL;
+		$content .= $maniascript;
 		$content .= '</manialink>';
 
 		$aseco->sendManialink($content, $players, 0, true);
@@ -3237,29 +3248,32 @@ EOL;
 			$gamestate = 'score';
 		}
 
-		$content = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow">';
-		$content .= '<frame posn="'. $this->config['reminder_window'][$gamestate]['pos_x'] .' '. $this->config['reminder_window'][$gamestate]['pos_y'] .' 2">';
-		$content .= '<quad posn="0 1 0" sizen="81.8 6.3" style="Bgs1InRace" substyle="BgTitle2"/>';
-		$content .= '<label posn="16.5 -0.8 1" sizen="18 1.8" textsize="2" scale="0.8" halign="right" text="$000'. $this->config['messages']['karma_you_have_voted'] .'"/>';
-		$content .= '<label posn="16.5 -2.5 1" sizen="18 0.2" textsize="1" scale="0.8" halign="right" text="$555powered by mania-karma.com"/>';
+		$content = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow" version="3">';
+		$content .= '<stylesheet>';
+		$content .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$content .= '</stylesheet>';
+		$content .= '<frame pos="'. $this->config['reminder_window'][$gamestate]['pos_x'] .' '. $this->config['reminder_window'][$gamestate]['pos_y'] .'" z-index="0">';
+		$content .= '<quad pos="0 0" z-index="0.01" size="196 8" bgcolor="032942DD"/>';
+		$content .= '<label pos="41.25 -1.5" z-index="0.02" size="45 3.375" class="labels" textsize="2" scale="0.8" halign="right" text="'. $this->config['messages']['karma_you_have_voted'] .'"/>';
+		$content .= '<label pos="41.25 -4.6875" z-index="0.02" size="45 0.375" class="labels" textsize="1" scale="0.8" halign="right" text="powered by mania-karma.com"/>';
 
-		$content .= '<frame posn="19.2 -0.45 0.01">';
-		$content .= '<quad posn="0 -0.2 0" sizen="8.01 3.01" image="'. $this->config['images']['button_normal'] .'" imagefocus="'. $this->config['images']['button_focus'] .'"/>';
-		$content .= '<label posn="4 -0.5 0.02" sizen="7.5 2.8" textsize="1" halign="center" text="'. $voted .'"/>';
-		$content .= '<label posn="4 -1.8 0.02" sizen="10 2.8" textsize="1" halign="center" text="'. $cmd .'"/>';
+		$content .= '<frame pos="48 -0.84375" z-index="0.02">';
+		$content .= '<quad pos="0 -0.375" z-index="0.01" size="20.025 5.64375" bgcolor="FFFFFFFF"/>';
+		$content .= '<label pos="10 -0.9375" z-index="0.02" size="18.75 5.25" class="labels" textsize="1" halign="center" text="'. $voted .'"/>';
+		$content .= '<label pos="10 -3.375" z-index="0.02" size="25 5.25" class="labels" textsize="1" halign="center" text="'. $cmd .'"/>';
 		$content .= '</frame>';
 
-		if ( isset($aseco->server->maps->current->mx->pageurl) ) {
+		if (isset($aseco->server->maps->current->mx->pageurl)) {
 			// Show link direct to the last map
-			$content .= '<frame posn="33 -0.2 1">';
-			$content .= '<label posn="40.5 -1.3 0" sizen="50 0" halign="right" textsize="1" text="$000Visit &#187; '. preg_replace('/\$S/i', '', $aseco->server->maps->current->name) .'$Z$000 &#171; at"/>';
-			$content .= '<quad posn="41.25 0.08 0" sizen="4 4" image="'. $this->config['images']['mx_logo_normal'] .'" imagefocus="'. $this->config['images']['mx_logo_focus'] .'" url="'. preg_replace('/(&)/', '&amp;', $aseco->server->maps->current->mx->pageurl) .'"/>';
+			$content .= '<frame pos="82.5 -0.375" z-index="0.02">';
+			$content .= '<label pos="101.25 -2.4375" z-index="0.01" class="labels" size="125 0" halign="right" textsize="1" text="Visit &#187; '. preg_replace('/\$S/i', '', $aseco->handleSpecialChars($aseco->server->maps->current->name)) .'$Z$FFF &#171; at"/>';
+			$content .= '<quad pos="103.125 0.15" z-index="0.01" class="labels" size="7.5 7.5" image="'. $this->config['images']['mx_logo_normal'] .'" imagefocus="'. $this->config['images']['mx_logo_focus'] .'" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->pageurl) .'"/>';
 			$content .= '</frame>';
 		}
 		else {
 			// Show link to tm.mania-exchange.com
-			$content .= '<frame posn="33 -0.2 1">';
-			$content .= '<quad posn="41.25 0.08 0" sizen="4 4" image="'. $this->config['images']['mx_logo_normal'] .'" imagefocus="'. $this->config['images']['mx_logo_focus'] .'" url="http://tm.mania-exchange.com/"/>';
+			$content .= '<frame pos="82.5 -0.375" z-index="0.02">';
+			$content .= '<quad pos="103.125 0.15" z-index="0.01" size="7.5 7.5" image="'. $this->config['images']['mx_logo_normal'] .'" imagefocus="'. $this->config['images']['mx_logo_focus'] .'" url="http:tm.mania-exchange.com/"/>';
 			$content .= '</frame>';
 		}
 
@@ -3286,7 +3300,7 @@ EOL;
 		}
 
 		// Build the Manialink
-		$xml = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow"></manialink>';
+		$xml = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow" version="3"></manialink>';
 
 		if ($player != false) {
 			if ($this->getPlayerData($player, 'ReminderWindow') == true) {
@@ -3313,34 +3327,14 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function sendHelpAboutWindow ($login, $message) {
-		global $aseco;
+	public function buildHelpAboutWindow ($message) {
 
-		$buttons = '';
-		$xml = str_replace(
-			array(
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'ManiaKarma/'. $this->getVersion() .' for UASECO',
-				$buttons
-			),
-			$this->config['Templates']['WINDOW']['HEADER']
-		);
-
-		$xml .= '<frame posn="3 -6 0">';
-		$xml .= '<quad posn="54 4 0.05" sizen="23 23" image="'. $this->config['images']['maniakarma_logo'] .'" url="http://www.mania-karma.com"/>';
-		$xml .= '<label posn="0 0 0.05" sizen="57 0" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
+		$xml = '<frame pos="0 0" z-index="1">';
+		$xml .= '<quad pos="142.5 7.5" z-index="0.05" size="57.5 57.5" image="'. $this->config['images']['maniakarma_logo'] .'" url="http://www.mania-karma.com"/>';
+		$xml .= '<label pos="2.5 -2.5" z-index="0.05" size="142.5 0" class="labels" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
 		$xml .= '</frame>';
 
-		// Website-Link Frame
-		$xml .= '<frame posn="28.6 -54.5 0.04">';
-		$xml .= '<label posn="12 0 0.02" sizen="30 2.6" halign="center" textsize="1" scale="0.8" url="http://'. $this->config['urls']['website'] .'" text="VISIT MANIA-KARMA.COM" style="CardButtonMediumWide"/>';
-		$xml .= '</frame>';
-
-		$xml .= $this->config['Templates']['WINDOW']['FOOTER'];
-		$aseco->sendManialink($xml, $login, 0, false);
+		return $xml;
 	}
 
 	/*
@@ -3386,16 +3380,30 @@ EOL;
 					base64_encode( $this->karma['data']['name'] ),
 					urlencode( $this->karma['data']['author'] ),
 					$aseco->server->maps->current->author_time,
-					urlencode( $aseco->server->maps->current->nblaps ),
-					urlencode( $aseco->server->maps->current->nbcheckpoints ),
+					urlencode( $aseco->server->maps->current->nb_laps ),
+					urlencode( $aseco->server->maps->current->nb_checkpoints ),
 					urlencode( $aseco->server->maps->current->mood ),
 					urlencode( $this->karma['data']['env'] ),
 					implode('|', $pairs),
 					$this->karma['data']['tmx']
 				);
 
-				// Start an async VOTE request
-				$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'VOTE', $api_url), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+				try {
+					// Start async GET request
+					$params = array(
+						'url'			=> $api_url,
+						'callback'		=> array(array($this, 'handleWebrequest'), array('VOTE', $api_url)),
+						'sync'			=> false,
+						'user_agent'		=> $this->config['user_agent'],
+						'timeout_dns'		=> $this->config['timeout_dns'],
+						'timeout_connect'	=> $this->config['timeout_connect'],
+						'timeout'		=> $this->config['timeout'],
+					);
+					$aseco->webrequest->GET($params);
+				}
+				catch (Exception $exception) {
+					$aseco->console('[ManiaKarma] webrequest->GET(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+				}
 			}
 
 
@@ -3604,10 +3612,24 @@ EOL;
 			implode('|', $players)					// Already Url-Encoded
 		);
 
-		// Start an async GET request
-		$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'GET', $api_url, $target), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		try {
+			// Start async GET request
+			$params = array(
+				'url'			=> $api_url,
+				'callback'		=> array(array($this, 'handleWebrequest'), array('GET', $api_url)),
+				'sync'			=> false,
+				'user_agent'		=> $this->config['user_agent'],
+				'timeout_dns'		=> $this->config['timeout_dns'],
+				'timeout_connect'	=> $this->config['timeout_connect'],
+				'timeout'		=> $this->config['timeout'],
+			);
+			$aseco->webrequest->GET($params);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[ManiaKarma] webrequest->GET(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+		}
 
-		// Return an empty set, get replaced with handleWebaccess()
+		// Return an empty set, get replaced with $this->handleWebrequest()
 		return;
 	}
 
@@ -3617,218 +3639,220 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function handleWebaccess ($response, $type, $url, $target = false) {
+	public function handleWebrequest ($request, $params) {
 		global $aseco;
 
-		if (empty($response['Error'])) {
-			if ($response['Code'] == 200) {
-				if ($type == 'GET') {
-					// Read the response
-					if (!$xml = @simplexml_load_string($response['Message'], null, LIBXML_COMPACT) ) {
-						$aseco->console('[ManiaKarma] handleWebaccess() on type "'. $type .'": Could not read/parse response from mania-karma.com "'. $response['Message'] .'"!');
+		$target = false;
+		if (isset($params[0])) {
+			$type = $params[0];
+		}
+		if (isset($params[1])) {
+			$url = $params[1];
+		}
+		if (isset($params[2])) {
+			$target = $params[2];
+		}
+
+		if ($request->response['header']['code'] == 200) {
+			if ($type == 'GET') {
+				// Read the request
+				if (!$xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
+					$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'": Could not read/parse request from mania-karma.com "'. $request->response['content'] .'"!');
+					$this->config['retrytime'] = (time() + $this->config['retrywait']);
+					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
+					$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
+				}
+				else {
+					$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
+
+					if ($xml->status == 200) {
+
+						$this->karma['global']['votes']['fantastic']['percent']		= (float)$xml->votes->fantastic['percent'];
+						$this->karma['global']['votes']['fantastic']['count']		= (int)$xml->votes->fantastic['count'];
+						$this->karma['global']['votes']['beautiful']['percent']		= (float)$xml->votes->beautiful['percent'];
+						$this->karma['global']['votes']['beautiful']['count']		= (int)$xml->votes->beautiful['count'];
+						$this->karma['global']['votes']['good']['percent']		= (float)$xml->votes->good['percent'];
+						$this->karma['global']['votes']['good']['count']		= (int)$xml->votes->good['count'];
+
+						$this->karma['global']['votes']['bad']['percent']		= (float)$xml->votes->bad['percent'];
+						$this->karma['global']['votes']['bad']['count']			= (int)$xml->votes->bad['count'];
+						$this->karma['global']['votes']['poor']['percent']		= (float)$xml->votes->poor['percent'];
+						$this->karma['global']['votes']['poor']['count']		= (int)$xml->votes->poor['count'];
+						$this->karma['global']['votes']['waste']['percent']		= (float)$xml->votes->waste['percent'];
+						$this->karma['global']['votes']['waste']['count']		= (int)$xml->votes->waste['count'];
+
+						$this->karma['global']['votes']['karma']			= (int)$xml->votes->karma;
+						$this->karma['global']['votes']['total']			= ($this->karma['global']['votes']['fantastic']['count'] + $this->karma['global']['votes']['beautiful']['count'] + $this->karma['global']['votes']['good']['count'] + $this->karma['global']['votes']['bad']['count'] + $this->karma['global']['votes']['poor']['count'] + $this->karma['global']['votes']['waste']['count']);
+
+						// Insert the votes for every Player
+						foreach ($aseco->server->players->player_list as $player) {
+							foreach ($xml->players->player as $pl) {
+								if ($player->login == $pl['login']) {
+									$this->karma['global']['players'][$player->login]['vote']	= (int)$pl['vote'];
+									$this->karma['global']['players'][$player->login]['previous']	= (int)$pl['previous'];
+								}
+							}
+						}
+
+						// If <require_finish> is enabled
+						if ($this->config['require_finish'] > 0) {
+							// Has the Player already vote this Map? If true, set to 9999 for max.
+							foreach ($aseco->server->players->player_list as $player) {
+								foreach ($xml->players->player as $pl) {
+									if ( ($player->login == $pl['login']) && ((int)$pl['vote'] != 0) ) {
+										// Set the state of finishing this map, if not already has a setup of a != 0 value
+										if ($this->getPlayerData($player, 'FinishedMapCount') == 0) {
+											$this->storePlayerData($player, 'FinishedMapCount', 9999);
+										}
+									}
+								}
+							}
+						}
+
+						// Check to see if it is required to sync global to local votes?
+						if ($this->config['sync_global_karma_local'] == true) {
+							$this->syncGlobaAndLocalVotes('local', true);
+						}
+
+						// Now sync local votes to global votes (e.g. on connection lost...)
+						$this->syncGlobaAndLocalVotes('global', true);
+
+						if ($this->config['karma_calculation_method'] == 'RASP') {
+							// Update the global/local $this->karma
+							$this->calculateKarma(array('global','local'));
+						}
+
+						// Display the Karma value of Map?
+						if ($this->config['show_at_start'] == true) {
+							// Show players' actual votes, or global karma message?
+							if ($this->config['show_votes'] == true) {
+								// Send individual player messages
+								if ($target === false) {
+									foreach ($aseco->server->players->player_list as $player) {
+										$this->sendMapKarmaMessage($player->login);
+									}
+								}
+								else {
+									$this->sendMapKarmaMessage($target->login);
+								}
+							}
+							else {
+								// Send more efficient global message
+								$this->sendMapKarmaMessage(false);
+							}
+						}
+
+						if ($target === false) {
+							$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
+
+							// Extract the MapImage and store them at the API
+							if (strtoupper($xml->image_present) == 'FALSE') {
+								$this->transmitMapImage();
+							}
+						}
+					}
+					else {
+						$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'": Connection failed with "'. $xml->status .'" for url ['. $url .']');
 						$this->config['retrytime'] = (time() + $this->config['retrywait']);
 						$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 						$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 					}
+
+					if ($target === false) {
+						// Update KarmaWidget for all connected Players
+						if ($this->config['widget']['current_state'] == 0) {
+							$this->sendWidgetCombination(array('skeleton_score', 'cups_values'), false);
+						}
+						else {
+							$this->sendWidgetCombination(array('skeleton_race', 'cups_values'), false);
+						}
+						foreach ($aseco->server->players->player_list as $player) {
+							$this->sendWidgetCombination(array('player_marker'), $player);
+						}
+					}
 					else {
-						$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
-
-						if ($xml->status == 200) {
-
-							$this->karma['global']['votes']['fantastic']['percent']		= (float)$xml->votes->fantastic['percent'];
-							$this->karma['global']['votes']['fantastic']['count']		= (int)$xml->votes->fantastic['count'];
-							$this->karma['global']['votes']['beautiful']['percent']		= (float)$xml->votes->beautiful['percent'];
-							$this->karma['global']['votes']['beautiful']['count']		= (int)$xml->votes->beautiful['count'];
-							$this->karma['global']['votes']['good']['percent']		= (float)$xml->votes->good['percent'];
-							$this->karma['global']['votes']['good']['count']		= (int)$xml->votes->good['count'];
-
-							$this->karma['global']['votes']['bad']['percent']		= (float)$xml->votes->bad['percent'];
-							$this->karma['global']['votes']['bad']['count']			= (int)$xml->votes->bad['count'];
-							$this->karma['global']['votes']['poor']['percent']		= (float)$xml->votes->poor['percent'];
-							$this->karma['global']['votes']['poor']['count']		= (int)$xml->votes->poor['count'];
-							$this->karma['global']['votes']['waste']['percent']		= (float)$xml->votes->waste['percent'];
-							$this->karma['global']['votes']['waste']['count']		= (int)$xml->votes->waste['count'];
-
-							$this->karma['global']['votes']['karma']			= (int)$xml->votes->karma;
-							$this->karma['global']['votes']['total']			= ($this->karma['global']['votes']['fantastic']['count'] + $this->karma['global']['votes']['beautiful']['count'] + $this->karma['global']['votes']['good']['count'] + $this->karma['global']['votes']['bad']['count'] + $this->karma['global']['votes']['poor']['count'] + $this->karma['global']['votes']['waste']['count']);
-
-							// Insert the votes for every Player
-							foreach ($aseco->server->players->player_list as $player) {
-								foreach ($xml->players->player as $pl) {
-									if ($player->login == $pl['login']) {
-										$this->karma['global']['players'][$player->login]['vote']	= (int)$pl['vote'];
-										$this->karma['global']['players'][$player->login]['previous']	= (int)$pl['previous'];
-									}
-								}
-							}
-
-							// If <require_finish> is enabled
-							if ($this->config['require_finish'] > 0) {
-								// Has the Player already vote this Map? If true, set to 9999 for max.
-								foreach ($aseco->server->players->player_list as $player) {
-									foreach ($xml->players->player as $pl) {
-										if ( ($player->login == $pl['login']) && ((int)$pl['vote'] != 0) ) {
-											// Set the state of finishing this map, if not already has a setup of a != 0 value
-											if ($this->getPlayerData($player, 'FinishedMapCount') == 0) {
-												$this->storePlayerData($player, 'FinishedMapCount', 9999);
-											}
-										}
-									}
-								}
-							}
-
-							// Check to see if it is required to sync global to local votes?
-							if ($this->config['sync_global_karma_local'] == true) {
-								$this->syncGlobaAndLocalVotes('local', true);
-							}
-
-							// Now sync local votes to global votes (e.g. on connection lost...)
-							$this->syncGlobaAndLocalVotes('global', true);
-
-							if ($this->config['karma_calculation_method'] == 'RASP') {
-								// Update the global/local $this->karma
-								$this->calculateKarma(array('global','local'));
-							}
-
-							// Display the Karma value of Map?
-							if ($this->config['show_at_start'] == true) {
-								// Show players' actual votes, or global karma message?
-								if ($this->config['show_votes'] == true) {
-									// Send individual player messages
-									if ($target === false) {
-										foreach ($aseco->server->players->player_list as $player) {
-											$this->sendMapKarmaMessage($player->login);
-										}
-									}
-									else {
-										$this->sendMapKarmaMessage($target->login);
-									}
-								}
-								else {
-									// Send more efficient global message
-									$this->sendMapKarmaMessage(false);
-								}
-							}
-
-							if ($target === false) {
-								$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
-
-								// Extract the MapImage and store them at the API
-								if (strtoupper($xml->image_present) == 'FALSE') {
-									$this->transmitMapImage();
-								}
-							}
+						// Update KarmaWidget only for current Player
+						if ($this->config['widget']['current_state'] == 0) {
+							$this->sendWidgetCombination(array('skeleton_score', 'cups_values', 'player_marker'), $target);
 						}
 						else {
-							$aseco->console('[ManiaKarma] handleWebaccess() on type "'. $type .'": Connection failed with "'. $xml->status .'" for url ['. $url .']');
-							$this->config['retrytime'] = (time() + $this->config['retrywait']);
-							$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
-							$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
-						}
-
-						if ($target === false) {
-							// Update KarmaWidget for all connected Players
-							if ($this->config['widget']['current_state'] == 0) {
-								$this->sendWidgetCombination(array('skeleton_score', 'cups_values'), false);
-							}
-							else {
-								$this->sendWidgetCombination(array('skeleton_race', 'cups_values'), false);
-							}
-							foreach ($aseco->server->players->player_list as $player) {
-								$this->sendWidgetCombination(array('player_marker'), $player);
-							}
-						}
-						else {
-							// Update KarmaWidget only for current Player
-							if ($this->config['widget']['current_state'] == 0) {
-								$this->sendWidgetCombination(array('skeleton_score', 'cups_values', 'player_marker'), $target);
-							}
-							else {
-								$this->sendWidgetCombination(array('skeleton_race', 'cups_values', 'player_marker'), $target);
-							}
+							$this->sendWidgetCombination(array('skeleton_race', 'cups_values', 'player_marker'), $target);
 						}
 					}
 				}
-				else if ($type == 'VOTE') {
-					// Read the response
-					if ($xml = @simplexml_load_string($response['Message'], null, LIBXML_COMPACT) ) {
-						if (!$xml->status == 200) {
-							$aseco->console('[ManiaKarma] handleWebaccess() on type "'. $type .'":  Storing votes failed with returncode "'. $xml->status .'"');
-						}
-						unset($xml);
+			}
+			else if ($type == 'VOTE') {
+				// Read the request
+				if ($xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
+					if (!$xml->status == 200) {
+						$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'":  Storing votes failed with returncode "'. $xml->status .'"');
+					}
+					unset($xml);
+				}
+				else {
+					$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'": Could not read/parse request from mania-karma.com "'. $request->response['content'] .'"!');
+					$this->config['retrytime'] = (time() + $this->config['retrywait']);
+					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
+				}
+			}
+			else if ($type == 'UPTODATE') {
+				// Read the request
+				if ($xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
+					$current_release = $xml->uaseco;
+					if ( version_compare($current_release, $this->getVersion(), '>') ) {
+						$release_url = 'http://'. $this->config['urls']['website'] .'/Downloads/';
+						$message = $aseco->formatText($this->config['messages']['uptodate_new'],
+							$current_release,
+							'$L[' . $release_url . ']' . $release_url . '$L'
+						);
+						$aseco->sendChatMessage($message, $target->login);
 					}
 					else {
-						$aseco->console('[ManiaKarma] handleWebaccess() on type "'. $type .'": Could not read/parse response from mania-karma.com "'. $response['Message'] .'"!');
-						$this->config['retrytime'] = (time() + $this->config['retrywait']);
-						$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
-					}
-				}
-				else if ($type == 'UPTODATE') {
-					// Read the response
-					if ($xml = @simplexml_load_string($response['Message'], null, LIBXML_COMPACT) ) {
-						$current_release = $xml->uaseco;
-						if ( version_compare($current_release, $this->getVersion(), '>') ) {
-							$release_url = 'http://'. $this->config['urls']['website'] .'/Downloads/';
-							$message = $aseco->formatText($this->config['messages']['uptodate_new'],
-								$current_release,
-								'$L[' . $release_url . ']' . $release_url . '$L'
+						if ($this->config['uptodate_info'] == 'DEFAULT') {
+							$message = $aseco->formatText($this->config['messages']['uptodate_ok'],
+								$this->getVersion()
 							);
 							$aseco->sendChatMessage($message, $target->login);
 						}
-						else {
-							if ($this->config['uptodate_info'] == 'DEFAULT') {
-								$message = $aseco->formatText($this->config['messages']['uptodate_ok'],
-									$this->getVersion()
-								);
-								$aseco->sendChatMessage($message, $target->login);
-							}
-						}
-					}
-					else {
-						$aseco->sendChatMessage($this->config['messages']['uptodate_failed'], $target->login);
-						$aseco->console('[ManiaKarma] handleWebaccess() on type "'. $type .'": Could not read/parse xml response!');
-						$this->config['retrytime'] = (time() + $this->config['retrywait']);
-						$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 					}
 				}
-				else if ($type == 'EXPORT') {
-					if ($response['Code'] == 200) {
-						$this->config['import_done'] = true;		// Set to true, otherwise only after restart UASECO knows that
-						$message = '{#server}» {#admin}Export done. Thanks for supporting mania-karma.com!';
-						$aseco->sendChatMessage($message, $target->login);
-					}
-					else if ($response['Code'] == 406) {
-						$message = '{#server}» {#error}Export rejected! Please check your <login> and <nation> in config file "config/mania_karma.xml"!';
-						$aseco->sendChatMessage($message, $target->login);
-					}
-					else if ($response['Code'] == 409) {
-						$message = '{#server}» {#error}Export rejected! Export was already done, allowed only one time!';
-						$aseco->sendChatMessage($message, $target->login);
-					}
-					else {
-						$message = '{#server}» {#error}Connection failed with '. $response['Code'] .' ('. $response['Reason'] .') for url ['. $api_url .']' ."\n\r";
-						$aseco->sendChatMessage($message, $target->login);
-					}
-				}
-				else if ($type == 'PING') {
-					$this->config['retrytime'] = 0;
-				}
-				else if ($type == 'STOREIMAGE') {
-					// Do nothing
+				else {
+					$aseco->sendChatMessage($this->config['messages']['uptodate_failed'], $target->login);
+					$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'": Could not read/parse xml request!');
+					$this->config['retrytime'] = (time() + $this->config['retrywait']);
+					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 				}
 			}
-			else {
-				$aseco->console('[ManiaKarma] handleWebaccess(): For type "'. $type .'" connection failed with "'. $response['Code'] .' - '. $response['Reason'] .'" for url ['. $url .']');
-				$this->config['retrytime'] = (time() + $this->config['retrywait']);
-				$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
+			else if ($type == 'EXPORT') {
+				if ($request->response['header']['code'] == 200) {
+					$this->config['import_done'] = true;		// Set to true, otherwise only after restart UASECO knows that
+					$message = '{#server}» {#admin}Export done. Thanks for supporting mania-karma.com!';
+					$aseco->sendChatMessage($message, $target->login);
+				}
+				else if ($request->response['header']['code'] == 406) {
+					$message = '{#server}» {#error}Export rejected! Please check your <login> and <nation> in config file "config/mania_karma.xml"!';
+					$aseco->sendChatMessage($message, $target->login);
+				}
+				else if ($request->response['header']['code'] == 409) {
+					$message = '{#server}» {#error}Export rejected! Export was already done, allowed only one time!';
+					$aseco->sendChatMessage($message, $target->login);
+				}
+				else {
+					$message = '{#server}» {#error}Connection failed with '. $request->response['header']['code'] .' ('. $request->response['header']['code_text'] .') for url ['. $api_url .']' ."\n\r";
+					$aseco->sendChatMessage($message, $target->login);
+				}
+			}
+			else if ($type == 'PING') {
+				$this->config['retrytime'] = 0;
+			}
+			else if ($type == 'STOREIMAGE') {
+				// Do nothing
 			}
 		}
 		else {
-			$aseco->console('[ManiaKarma] handleWebaccess(): For type "'. $type .'" connection failed '. $response['Error'] .' for url ['. $url .']');
-			if ($type != 'PING' || $type != 'STOREIMAGE' || $type != 'UPTODATE') {
-				$this->config['retrytime'] = (time() + $this->config['retrywait']);
-				$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
-			}
+			$aseco->console('[ManiaKarma] handleWebrequest(): For type "'. $type .'" connection failed with "'. $request->response['header']['code'] .' - '. $request->response['header']['code_text'] .'" for url ['. $url .']');
+			$this->config['retrytime'] = (time() + $this->config['retrywait']);
+			$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 		}
 	}
 
@@ -4131,9 +4155,23 @@ EOL;
 			return;
 		}
 
-		// Start an async UPTODATE request
-		$url = 'http://'. $this->config['urls']['website'] .'/api/plugin-releases.xml';
-		$aseco->webaccess->request($url, array(array($this, 'handleWebaccess'), 'UPTODATE', $url, $player), 'none', false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		$api_url = 'http://'. $this->config['urls']['website'] .'/api/plugin-releases.xml';
+		try {
+			// Start async GET request
+			$params = array(
+				'url'			=> $api_url,
+				'callback'		=> array(array($this, 'handleWebrequest'), array('UPTODATE', $api_url, $player)),
+				'sync'			=> false,
+				'user_agent'		=> $this->config['user_agent'],
+				'timeout_dns'		=> $this->config['timeout_dns'],
+				'timeout_connect'	=> $this->config['timeout_connect'],
+				'timeout'		=> $this->config['timeout'],
+			);
+			$aseco->webrequest->GET($params);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[ManiaKarma] webrequest->GET(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+		}
 	}
 
 	/*
@@ -4281,8 +4319,23 @@ EOL;
 			urlencode( $this->config['account']['nation'] )
 		);
 
-		// Start an async EXPORT request
-		$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'EXPORT', $api_url, $player), $csv, false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		try {
+			// Start async POST request
+			$params = array(
+				'url'			=> $api_url,
+				'callback'		=> array(array($this, 'handleWebrequest'), array('EXPORT', $api_url, $player)),
+				'data'			=> $csv,
+				'sync'			=> false,
+				'user_agent'		=> $this->config['user_agent'],
+				'timeout_dns'		=> $this->config['timeout_dns'],
+				'timeout_connect'	=> $this->config['timeout_connect'],
+				'timeout'		=> $this->config['timeout'],
+			);
+			$aseco->webrequest->POST($params);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[ManiaKarma] webrequest->POST(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+		}
 	}
 
 	/*
@@ -4318,8 +4371,23 @@ EOL;
 			urlencode( $aseco->server->game )
 		);
 
-		// Start an async STOREIMAGE request
-		$aseco->webaccess->request($api_url, array(array($this, 'handleWebaccess'), 'STOREIMAGE', $api_url), base64_encode($gbx->thumbnail), false, $this->config['keepalive_min_timeout'], $this->config['connect_timeout'], $this->config['wait_timeout'], $this->config['user_agent']);
+		try {
+			// Start async POST request
+			$params = array(
+				'url'			=> $api_url,
+				'callback'		=> array(array($this, 'handleWebrequest'), array('STOREIMAGE', $api_url)),
+				'data'			=> base64_encode($gbx->thumbnail),
+				'sync'			=> false,
+				'user_agent'		=> $this->config['user_agent'],
+				'timeout_dns'		=> $this->config['timeout_dns'],
+				'timeout_connect'	=> $this->config['timeout_connect'],
+				'timeout'		=> $this->config['timeout'],
+			);
+			$aseco->webrequest->POST($params);
+		}
+		catch (Exception $exception) {
+			$aseco->console('[ManiaKarma] webrequest->POST(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+		}
 	}
 
 	/*
@@ -4370,179 +4438,6 @@ EOL;
 		$string = $aseco->stripNewlines($string);
 
 		return $aseco->validateUTF8String($string);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function loadTemplates () {
-
-		//--------------------------------------------------------------//
-		// BEGIN: Window						//
-		//--------------------------------------------------------------//
-		// %window_title%
-		// %prev_next_buttons%
-		$header  = '<manialink id="'. $this->config['manialink_id'] .'02" name="Windows">';
-		$header .= '<frame posn="-40.8 30.55 18" id="ManiaKarmaWindow">';	// BEGIN: Window Frame
-		$header .= '<quad posn="-0.2 0.2 0.01" sizen="81.8 59" style="Bgs1InRace" substyle="BgTitle2" id="ManiaKarmaWindowBody" ScriptEvents="1"/>';
-		$header .= '<quad posn="1.8 -4.1 0.02" sizen="77.7 49.9" bgcolor="0018"/>';
-
-		// Header Line
-		$header .= '<quad posn="-0.6 0.6 0.02" sizen="82.6 6" style="Bgs1InRace" substyle="BgTitle3_3"/>';
-		$header .= '<quad posn="-0.6 0.6 0.03" sizen="82.6 6" style="Bgs1InRace" substyle="BgTitle3_3" id="ManiaKarmaWindowTitle" ScriptEvents="1"/>';
-
-		// Title
-		$header .= '<quad posn="1.8 -0.7 0.04" sizen="3.2 3.2" style="Icons64x64_1" substyle="ToolLeague1"/>';
-		$header .= '<label posn="5.5 -1.7 0.04" sizen="75.4 0" textsize="2" scale="0.9" textcolor="000F" text="%window_title%"/>';
-
-		// Close Button
-		$header .= '<frame posn="76.7 -0.15 0.05">';
-		$header .= '<quad posn="0 0 0.01" sizen="4.5 4.5" style="Icons64x64_1" substyle="ArrowUp" id="ManiaKarmaWindowClose" ScriptEvents="1"/>';
-		$header .= '<quad posn="1.2 -1.2 0.02" sizen="2 2" bgcolor="EEEF"/>';
-		$header .= '<quad posn="0.7 -0.7 0.03" sizen="3.1 3.1" style="Icons64x64_1" substyle="Close"/>';
-		$header .= '</frame>';
-
-		// Minimize Button
-		$header .= '<frame posn="73.4 -0.15 0.05">';
-		$header .= '<quad posn="0 0 0.01" sizen="4.5 4.5" style="Icons64x64_1" substyle="ArrowUp" id="ManiaKarmaWindowMinimize" ScriptEvents="1"/>';
-		$header .= '<quad posn="1.2 -1.2 0.02" sizen="2 2" bgcolor="EEEF"/>';
-		$header .= '<label posn="2.33 -2.4 0.03" sizen="6 0" halign="center" valign="center" textsize="3" textcolor="000F" text="$O-"/>';
-		$header .= '</frame>';
-
-		$header .= '<label posn="6.8 -55.8 0.04" sizen="14 2" halign="center" valign="center" textsize="1" scale="0.7" action="PluginManiaKarma?Action=OpenHelpWindow" focusareacolor1="0000" focusareacolor2="FFF5" textcolor="000F" text="MANIAKARMA/'. $this->getVersion() .'"/>';
-		$header .= '%prev_next_buttons%';
-
-$maniascript = <<<EOL
-<script><!--
- /*
- * ----------------------------------
- * Function:	Window @ plugin.mania_karma.php
- * Author:	undef.de
- * Website:	http://www.undef.name
- * License:	GPLv3
- * ----------------------------------
- */
-Void WipeOut (Text ChildId) {
-	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container != Null) {
-		declare Real EndPosnX = 0.0;
-		declare Real EndPosnY = 0.0;
-		declare Real PosnDistanceX = (EndPosnX - Container.PosnX);
-		declare Real PosnDistanceY = (EndPosnY - Container.PosnY);
-
-		while (Container.RelativeScale > 0.0) {
-			Container.PosnX += (PosnDistanceX / 20);
-			Container.PosnY += (PosnDistanceY / 20);
-			Container.RelativeScale -= 0.05;
-			yield;
-		}
-		Container.Unload();
-
-//		// Disable catching ESC key
-//		EnableMenuNavigationInputs = False;
-	}
-}
-Void Minimize (Text ChildId) {
-	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real EndPosnX = (-40.8 * 2.5);
-	declare Real EndPosnY = (30.55 * 1.875);
-	declare Real PosnDistanceX = (EndPosnX - Container.PosnX);
-	declare Real PosnDistanceY = (EndPosnY - Container.PosnY);
-
-	while (Container.RelativeScale > 0.2) {
-		Container.PosnX += (PosnDistanceX / 16);
-		Container.PosnY += (PosnDistanceY / 16);
-		Container.RelativeScale -= 0.05;
-		yield;
-	}
-}
-Void Maximize (Text ChildId) {
-	declare CMlControl Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real EndPosnX = (-40.8 * 2.5);
-	declare Real EndPosnY = (30.55 * 1.875);
-	declare Real PosnDistanceX = (EndPosnX - Container.PosnX);
-	declare Real PosnDistanceY = (EndPosnY - Container.PosnY);
-
-	while (Container.RelativeScale < 1.0) {
-		Container.PosnX += (PosnDistanceX / 16);
-		Container.PosnY += (PosnDistanceY / 16);
-		Container.RelativeScale += 0.05;
-		yield;
-	}
-}
-main () {
-	declare CMlControl Container <=> (Page.GetFirstChild("ManiaKarmaWindow") as CMlFrame);
-	declare CMlQuad Quad;
-	declare Boolean MoveWindow = False;
-	declare Boolean IsMinimized = False;
-	declare Real MouseDistanceX = 0.0;
-	declare Real MouseDistanceY = 0.0;
-
-//	// Enable catching ESC key
-//	EnableMenuNavigationInputs = True;
-
-	while (True) {
-		if (MoveWindow == True) {
-			Container.PosnX = (MouseDistanceX + MouseX);
-			Container.PosnY = (MouseDistanceY + MouseY);
-		}
-		if (MouseLeftButton == True) {
-			foreach (Event in PendingEvents) {
-				if (Event.ControlId == "ManiaKarmaWindowTitle") {
-					MouseDistanceX = (Container.PosnX - MouseX);
-					MouseDistanceY = (Container.PosnY - MouseY);
-					MoveWindow = True;
-				}
-			}
-		}
-		else {
-			MoveWindow = False;
-		}
-		foreach (Event in PendingEvents) {
-			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
-					if (Event.ControlId == "ManiaKarmaWindowClose") {
-						WipeOut("ManiaKarmaWindow");
-					}
-					else if ( (Event.ControlId == "ManiaKarmaWindowMinimize") && (IsMinimized == False) ) {
-						Minimize("ManiaKarmaWindow");
-						IsMinimized = True;
-					}
-					else if ( (Event.ControlId == "ManiaKarmaWindowBody") && (IsMinimized == True) ) {
-						Maximize("ManiaKarmaWindow");
-						IsMinimized = False;
-					}
-				}
-//				case CMlEvent::Type::KeyPress : {
-//					if (Event.KeyName == "Escape") {
-//						WipeOut("ManiaKarmaWindow");
-//					}
-//				}
-			}
-		}
-		yield;
-	}
-}
---></script>
-EOL;
-		// Footer
-		$footer  = '</frame>';				// END: Window Frame
-		$footer .= $maniascript;
-		$footer .= '</manialink>';
-
-		$templates['WINDOW']['HEADER'] = $header;
-		$templates['WINDOW']['FOOTER'] = $footer;
-
-		unset($header, $footer);
-		//--------------------------------------------------------------//
-		// END: Window							//
-		//--------------------------------------------------------------//
-
-
-		return $templates;
 	}
 }
 

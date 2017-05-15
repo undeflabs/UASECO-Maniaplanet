@@ -6,10 +6,6 @@
  * » Based upon the plugin.modescriptcallback.php from MPAseco, written by the MPAseco team for ShootMania
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-12-27
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +23,11 @@
  * ----------------------------------------------------------------------------------
  *
  * Documentation:
- * » http://doc.maniaplanet.com/dedicated-server/xmlrpc/xml-rpc-scripts.html
- * » http://doc.maniaplanet.com/dedicated-server/settings-list.html
- * » http://doc.maniaplanet.com/dedicated-server/xmlrpc/methods/latest.html
- * » http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
- * » http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html
- * » docs/Dedicated Server/ListCallbacks_2013-04-16.html
- *
- * Dependencies:
- * - plugins/plugin.checkpoints.php
+ * » https://www.maniaplanet.com/documentation/dedicated-server/references/xml-rpc-scripts
+ * » https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
+ * » https://www.maniaplanet.com/documentation/dedicated-server/references/xml-rpc-methods
+ * » http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html (2017-05-13 still outdated)
+ * » https://www.uaseco.org/dedicated-server/callbacks.php
  *
  */
 
@@ -50,35 +42,10 @@
 
 class PluginModescriptHandler extends Plugin {
 
-	// Block some callbacks we did not want to use
-	public $callback_blocklist = array(
-		// Nadeo officials
-		'LibXmlRpc_BeginMatchStop',
-		'LibXmlRpc_BeginMapStop',
-		'LibXmlRpc_BeginSubmatchStop',
-		'LibXmlRpc_BeginRoundStop',
-		'LibXmlRpc_BeginTurnStop',
-		'LibXmlRpc_EndTurnStop',
-		'LibXmlRpc_EndRoundStop',
-		'LibXmlRpc_EndSubmatchStop',
-		'LibXmlRpc_EndMapStop',
-		'LibXmlRpc_EndMatchStop',
-		'LibXmlRpc_EndServerStop',
-		'LibXmlRpc_PlayersTimes',				// LibXmlRpc_GetPlayersTimes
-		'LibXmlRpc_PlayersScores',				// LibXmlRpc_GetPlayersScores
-		'LibXmlRpc_TeamsMode',					// LibXmlRpc_GetTeamsMode
-
-		// Knockout.Script.txt					https://forum.maniaplanet.com/viewtopic.php?p=247611
-		'KOPlayerAdded',
-		'KOPlayerRemoved',
-		'KOSendWinner',
-	);
-
-	// Stores the modescript_settings.xml settings
-	private $settings		= array();
-
-	// Stores the <ui_properties>
-	private $ui_properties		= array();
+	public $min_api_version;
+	public $callback_blocklist;
+	private $settings;
+	private $ui_properties;
 
 
 	/*
@@ -89,18 +56,61 @@ class PluginModescriptHandler extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-15');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Handle the Modescript Callbacks send by the dedicated server and related settings.');
 
 		$this->addDependence('PluginCheckpoints',		Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',				'onSync');
-		$this->registerEvent('onEndRound',			'onEndRound');
-		$this->registerEvent('onLoadingMap',			'onLoadingMap');
-		$this->registerEvent('onBeginScriptInitialisation',	'onBeginScriptInitialisation');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
-		$this->registerEvent('onModeScriptCallback',		'onModeScriptCallback');
+		$this->registerEvent('onShutdown',			'onShutdown');
+
+		// Block some callbacks we did not want to use
+		$this->callback_blocklist = array(
+			// Nadeo officials
+			'Maniaplanet.StartServer_End',
+			'Maniaplanet.EndServer_Start',
+			'Maniaplanet.EndServer_End',
+			'Maniaplanet.StartMatch_End',
+			'Maniaplanet.StartTurn_End',
+			'Maniaplanet.EndTurn_End',
+			'Maniaplanet.EndMatch_Start',
+			'Maniaplanet.StartMap_End',
+			'Maniaplanet.EndMap_End',
+			'Maniaplanet.StartRound_End',
+			'Maniaplanet.EndRound_End',
+			'Maniaplanet.LoadingMap_Start',
+			'Maniaplanet.UnloadingMap_End',
+
+//			'Trackmania.Event.Default',
+			'Trackmania.Event.OnPlayerAdded',
+			'Trackmania.Event.OnPlayerRemoved',
+
+//			'UI.Event.Default',
+//			'UI.Event.OnModuleCustomEvent',
+//			'UI.Event.OnModuleShowRequest',
+//			'UI.Event.OnModuleHideRequest',
+//			'UI.Event.OnModuleStorePurchase',
+//			'UI.Event.OnModuleInventoryDrop',
+//			'UI.Event.OnModuleInventoryEquip',
+
+			// Knockout.Script.txt					https://forum.maniaplanet.com/viewtopic.php?p=247611
+			'KOPlayerAdded',
+			'KOPlayerRemoved',
+			'KOSendWinner',
+		);
+
+		// Stores the modescript_settings.xml settings
+		$this->settings			= array();
+
+		// Stores the <ui_properties>
+		$this->ui_properties		= array();
+
+		// Request minimal API version to use
+		$this->min_api_version		= '2.0.0';
 	}
 
 	/*
@@ -111,8 +121,20 @@ class PluginModescriptHandler extends Plugin {
 
 	public function onSync ($aseco, $restart = false) {
 
-		// Block some Callbacks we did not want to use
-		$this->setupBlockCallbacks();
+		// We need to enable XmlRpc-Callbacks for ModeScripts
+		$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.EnableCallbacks', array('true'));
+
+		// Set the min. required ApiVersion
+		$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.SetApiVersion', array($this->min_api_version));
+
+		// Write the ModeScript documentation?
+		if ($aseco->settings['developer']['write_documentation'] === true) {
+			$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.GetDocumentation', array($aseco->server->gameinfo->getModeVersion() .'_'. $aseco->server->gameinfo->getModeScriptName() .'.md'));
+			$this->writeMethodsDocumentation();
+		}
+
+		// Block some Callbacks we do not want to use
+		$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.BlockCallbacks', $this->callback_blocklist);
 
 		// Read Configuration
 		if (!$this->settings = $aseco->parser->xmlToArray('config/modescript_settings.xml', true, true)) {
@@ -150,12 +172,12 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->matchmaking['ProgressiveActivation_PlayersNbRatio']	= (int)$this->settings['MATCHMAKING'][0]['PROGRESSIVE_ACTIVATION_PLAYERS_NUMBER_RATIO'][0];
 
 		// ModeBase
-		$aseco->server->gameinfo->modebase['UseScriptCallbacks']	= true;		// Turn on the script callbacks
-		$aseco->server->gameinfo->modebase['UseLegacyCallbacks']	= false;	// Disable the legacy callbacks (default value: True)
+//		$aseco->server->gameinfo->modebase['UseScriptCallbacks']	= true;		// Turn on the script callbacks
+//		$aseco->server->gameinfo->modebase['UseLegacyCallbacks']	= false;	// Disable the legacy callbacks (default value: True)
 		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
 		$aseco->server->gameinfo->modebase['WarmUpDuration']		= (int)$this->settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
-		$aseco->server->gameinfo->modebase['ScoresTableStylePath']	= $this->settings['MODEBASE'][0]['SCORES_TABLE_STYLE_PATH'][0];
+//		$aseco->server->gameinfo->modebase['ScoresTableStylePath']	= $this->settings['MODEBASE'][0]['SCORES_TABLE_STYLE_PATH'][0];
 
 		// Rounds +RoundsBase
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
@@ -242,7 +264,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->setupModescriptSettings();
 
 		// Setup the custom Scoretable
-		$this->setupCustomScoretable();
+//		$this->setupCustomScoretable();
 
 
 		// Setup the UI
@@ -250,6 +272,7 @@ class PluginModescriptHandler extends Plugin {
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
 		$this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['LIVE_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['LIVE_INFO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['CHAT'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHAT'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
@@ -265,6 +288,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 
 		// Send the UI settings
 		$this->setupUserInterface();
@@ -276,173 +300,186 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndRound ($aseco, $round) {
-
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
-			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onLoadingMap ($aseco, $map) {
-
-		// When changing Gamemode force all Plugins to resync
-		if ($aseco->changing_to_gamemode !== false) {
-			$aseco->console('[ModescriptHandler] ########################################################');
-			$aseco->console('[ModescriptHandler] Gamemode change detected, forcing all Plugins to resync!');
-			$aseco->console('[ModescriptHandler] ########################################################');
-			$aseco->releaseEvent('onSync', null);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onBeginScriptInitialisation ($aseco) {
-
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-			// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
-			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onModeScriptCallbackArray ($aseco, $data) {
 
-		$name = $data[0];
-		$params = isset($data[1]) ? $data[1] : '';
-
 		// Bail out if callback is on blocklist
-		if (in_array($name, $this->callback_blocklist)) {
+		if (in_array($data[0], $this->callback_blocklist)) {
 			return;
 		}
 
-		switch($name) {
-			// [0]=Login
-			case 'LibXmlRpc_OnStartLine':
-				$aseco->releaseEvent('onPlayerStartLine', $params[0]);
+		$params = array();
+		if (isset($data[1][0]) && !empty($data[1][0])) {
+			$params = json_decode($data[1][0], true);
+		}
+
+		switch($data[0]) {
+			case 'XmlRpc.Documentation':
+				// Called 'XmlRpc.GetDocumentation'
+				if (isset($data[1][1]) && !empty($data[1][1])) {
+					$aseco->console('[ModescriptHandler] Generating documentation of the Gamemode...');
+
+					@mkdir('docs/Gamemodes/', 0755, true);
+
+					$destination = 'docs/Gamemodes/'. $params['responseid'];
+					if (file_put_contents($destination, $data[1][1], LOCK_EX) !== false) {
+						$aseco->console('[ModescriptHandler] ... successfully written to "'. $destination .'"!');
+					}
+					else {
+						$aseco->console('[ModescriptHandler] ... could not write to "'. $destination .'"!');
+					}
+				}
 		    		break;
 
 
 
-			// [0]=Login
-			case 'LibXmlRpc_OnStartCountdown':
-				$aseco->releaseEvent('onPlayerStartCountdown', $params[0]);
+
+
+			case 'Trackmania.Event.StartLine':
+				$aseco->releaseEvent('onPlayerStartLine', $params);
 		    		break;
 
 
 
-			// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=WaypointIsFinishLine, [5]=CurrentLapTime, [6]=LapWaypointNumber, [7]=WaypointIsFinishLap
-			case 'LibXmlRpc_OnWayPoint':
-				if ($aseco->string2bool($params[4]) === false && $aseco->string2bool($params[7]) === false) {
-					$aseco->releaseEvent('onPlayerCheckpoint', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+
+
+			case 'Trackmania.Event.StartCountdown':
+				$aseco->releaseEvent('onPlayerStartCountdown', $params);
+		    		break;
+
+
+
+
+
+			case 'Trackmania.Event.WayPoint':
+				$response = array(
+					'time'				=> $params['time'],				// Server time when the event occured
+					'login'				=> $params['login'],				// PlayerLogin
+					'race_time'			=> $params['racetime'],				// Total race time in milliseconds
+					'lap_time'			=> $params['laptime'],				// Lap time in milliseconds
+					'stunts_score'			=> $params['stuntsscore'],			// Stunts score
+					'checkpoint_in_race'		=> ($params['checkpointinrace'] + 1),		// Number of checkpoints crossed since the beginning of the race
+					'current_race_checkpoints'	=> $params['curracecheckpoints'],		// Checkpoints times since the beginning of the race
+					'checkpoint_in_lap'		=> ($params['checkpointinlap'] + 1),		// Number of checkpoints crossed since the beginning of the lap
+					'current_lap_checkpoints'	=> $params['curlapcheckpoints'],		// Checkpoints time since the beginning of the lap
+					'is_endrace'			=> $params['isendrace'],			// Is it the finish line checkpoint
+					'is_endlap'			=> $params['isendlap'],				// Is it the multilap checkpoint
+					'block_id'			=> $params['blockid'],				// Id of the checkpoint block
+					'speed'				=> $params['speed'],				// Speed of the player in km/h
+					'distance'			=> $params['distance'],				// Distance traveled by the player since the beginning of the race
+				);
+				if ($response['is_endrace'] === false && $response['is_endlap'] === false) {
+					$aseco->releaseEvent('onPlayerCheckpoint', $response);
 
 					if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking',
-						// required to be up-to-date on each Checkpoint in Laps
-						$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
+						// Call 'Trackmania.GetScores' to get 'Trackmania.Scores', required to be up-to-date on each Checkpoint in Laps
+						$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 					}
 				}
 				else {
-					if ($aseco->server->maps->current->multilap === true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE)) {
-						if ($aseco->string2bool($params[4]) === false && $aseco->string2bool($params[7]) === true) {
-							$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+					if ($aseco->server->maps->current->multi_lap === true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE)) {
+						if ($response['is_endrace'] === false && $response['is_endlap'] === true) {
+							$aseco->releaseEvent('onPlayerFinishLap', $response);
 						}
-						else if ($aseco->string2bool($params[4]) === true && $aseco->string2bool($params[7]) === false) {
-							$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+						else if ($response['is_endrace'] === true && $response['is_endlap'] === false) {
+							$aseco->releaseEvent('onPlayerFinishLine', $response);
 						}
-						else if ($aseco->string2bool($params[4]) === true && $aseco->string2bool($params[7]) === true) {
-							$aseco->releaseEvent('onPlayerFinishLap', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
-							$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+						else if ($response['is_endrace'] === true && $response['is_endlap'] === true) {
+							$aseco->releaseEvent('onPlayerFinishLap', $response);
+							$aseco->releaseEvent('onPlayerFinishLine', $response);
 						}
 					}
 					else {
-						$aseco->releaseEvent('onPlayerFinishLine', array($params[0], $params[1], (int)$params[2], ((int)$params[3]+1), (int)$params[5], ((int)$params[6]+1)));
+						$aseco->releaseEvent('onPlayerFinishLine', $response);
 					}
 				}
-				if ($aseco->string2bool($params[4]) === true || $aseco->string2bool($params[7]) === true) {
+				if ($response['is_endrace'] === true || $response['is_endlap'] === true) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
-						// Call 'LibXmlRpc_GetPlayerRanking' to get 'LibXmlRpc_PlayerRanking'
-						$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetPlayerRanking', $params[0]);
+						// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
+						$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 					}
+
+					$this->playerFinish($response);
 				}
 		    		break;
 
 
 
-			// [0]=Login, [1]=WaypointBlockId, [2]=WaypointIndexRace, [3]=WaypointIndexLap, [4]=TotalRespawns
-			case 'LibXmlRpc_OnRespawn':
-				$aseco->releaseEvent('onPlayerRespawn', array($params[0], $params[1], (int)$params[2], (int)$params[3], (int)$params[4]));
+
+
+			case 'Trackmania.Event.Respawn':
+				$response = array(
+					'time'			=> $params['time'],					// Server time when the event occured
+					'login'			=> $params['login'],					// PlayerLogin
+					'nb_respawns'		=> $params['nbrespawns'],				// Number of respawns since the beginning of the race
+					'race_time'		=> $params['racetime'],					// Total race time in milliseconds
+					'lap_time'		=> $params['laptime'],					// Lap time in milliseconds
+					'stunts_score'		=> $params['stuntsscore'],				// Stunts score
+					'checkpoint_in_race'	=> ($params['checkpointinrace'] + 1),			// Number of checkpoints crossed since the beginning of the race
+					'checkpoint_in_lap'	=> ($params['checkpointinlap'] + 1),			// Number of checkpoints crossed since the beginning of the lap
+					'speed'			=> $params['speed'],					// Speed of the player in km/h
+					'distance'		=> $params['distance'],					// Distance traveled by the player since the beginning of the race
+				);
+				$aseco->releaseEvent('onPlayerRespawn', $response);
 		    		break;
 
 
 
-			// [0]=Login
-			case 'LibXmlRpc_OnGiveUp':
-				$aseco->releaseEvent('onPlayerGiveUp', $params[0]);
+
+
+			case 'Trackmania.Event.GiveUp':
+				$aseco->releaseEvent('onPlayerGiveUp', $params);
 		    		break;
 
 
 
-			// [0]=Login, [1]=StuntPoints, [2]=Combo, [3]=TotalStuntsScore, [4]=StuntFactor, [5]=StuntName, [6]=StuntAngle, [7]=IsStraightStunt, [8]=IsStuntReversed, [9]=IsMasterJump
-			case 'LibXmlRpc_OnStunt':
-				$aseco->releaseEvent('onPlayerStunt', $params);
+
+
+			case 'Trackmania.Event.Stunt':
+				$response = array(
+					'time'			=> $params['time'],					// Server time when the event occured
+					'login'			=> $params['login'],					// PlayerLogin
+					'race_time'		=> $params['racetime'],					// Total race time in milliseconds
+					'lap_time'		=> $params['laptime'],					// Lap time in milliseconds
+					'stunts_score'		=> $params['stuntsscore'],				// Stunts score
+					'figure'		=> $params['figure'],					// Name of the figure
+					'angle'			=> $params['angle'],					// Angle of the car
+					'points'		=> $params['points'],					// Point awarded by the figure
+					'combo'			=> $params['combo'],					// Combo counter
+					'is_straight'		=> $params['isstraight'],				// Is the car straight
+					'is_reverse'		=> $params['isreverse'],				// Is the car reversed
+					'is_masterjump'		=> $params['ismasterjump'],
+					'factor'		=> $params['factor'],					// Points multiplier
+				);
+				$aseco->releaseEvent('onPlayerStunt', $response);
 		    		break;
 
 
 
-			// [0]=Login, [1]=FinishBlockId, [2]=Time(/Score?)
-			case 'LibXmlRpc_OnPlayerFinish':
-				$this->playerFinish($aseco, $params[0], (int)$params[2]);
-		    		break;
 
 
-
-			case 'LibXmlRpc_BeginServer':
-				$aseco->releaseEvent('onBeginScriptInitialisation', null);
-		    		break;
-
-
-
-			case 'LibXmlRpc_BeginServerStop':
-				$aseco->releaseEvent('onEndScriptInitialisation', null);
-		    		break;
-
-
-
-			case 'LibXmlRpc_BeginPlaying':
+			case 'Maniaplanet.StartPlayLoop':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Begin Playing');
+					$aseco->console('[Event] Begin Playing ['.  $params['count'] .']');
 				}
-				$aseco->releaseEvent('onBeginPlaying', null);
+				$aseco->releaseEvent('onBeginPlaying', $params['count']);
 		    		break;
 
 
 
-			case 'LibXmlRpc_EndPlaying':
+
+
+			case 'Maniaplanet.EndPlayLoop':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] End Playing');
+					$aseco->console('[Event] End Playing ['. $params['count'] .']');
 				}
-				$aseco->releaseEvent('onEndPlaying', null);
+				$aseco->releaseEvent('onEndPlaying', $params['count']);
 		    		break;
 
 
 
-			case 'LibXmlRpc_BeginPodium':
+
+
+			case 'Maniaplanet.Podium_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Begin Podium');
 				}
@@ -451,7 +488,9 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			case 'LibXmlRpc_EndPodium':
+
+
+			case 'Maniaplanet.Podium_End':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] End Podium');
 				}
@@ -460,298 +499,173 @@ class PluginModescriptHandler extends Plugin {
 
 
 
-			// [0]=IndexOfMap, [1]=Uid, [2]=RestartFlag
-			case 'LibXmlRpc_LoadingMap':
+
+
+			case 'Maniaplanet.ChannelProgression_Start':
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] Begin Channel Progression');
+				}
+				$aseco->releaseEvent('onBeginChannelProgression', $params['time']);
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.ChannelProgression_End':
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] End Channel Progression');
+				}
+				$aseco->releaseEvent('onEndChannelProgression', $params['time']);
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.LoadingMap_End':
 				// Cleanup rankings
 				$aseco->server->rankings->reset();
 
 				// Refresh the current round point system (Rounds, Team and Cup)
 				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
-					$aseco->client->query('TriggerModeScriptEvent', 'Rounds_GetPointsRepartition', '');
+					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 				}
-				if ($aseco->string2bool($params[2]) === true) {
-					$aseco->restarting = true;			// Map was restarted
+
+				if ($params['restarted'] === true) {
+					$aseco->restarting = true;							// Map was restarted
 				}
 				else {
-					$aseco->restarting = false;			// No Restart
+					$aseco->restarting = false;							// Not restarted
 				}
-///start work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=241929#p241929
-///uncomment after bugfix
-//				$aseco->loadingMap($params[1]);
-///END
+				$aseco->loadingMap($params['map']['uid']);
 		    		break;
 
 
 
-			// [0]=IndexOfMap, [1]=Uid
-			case 'LibXmlRpc_UnloadingMap':
+
+
+			case 'Maniaplanet.UnloadingMap_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Unloading Map');
 				}
-				$aseco->releaseEvent('onUnloadingMap', (int)$params[1]);
+				$aseco->releaseEvent('onUnloadingMap', $params['map']['uid']);
 		    		break;
 
 
 
-			// [0]=NbRound
-			case 'LibXmlRpc_BeginRound':
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Begin Round');
-				}
-				$aseco->releaseEvent('onBeginRound', (int)$params[0]);
-				break;
 
 
+			case 'Maniaplanet.StartMap_Start':
+				// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 
-			// [0]=NbRound
-			case 'LibXmlRpc_EndRound':
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] End Round');
-				}
-				$aseco->releaseEvent('onEndRound', (int)$params[0]);
-				break;
+				// Call 'Maniaplanet.WarmUp.GetStatus' to get 'Maniaplanet.WarmUp.Status'
+				$aseco->client->query('TriggerModeScriptEventArray', 'Maniaplanet.WarmUp.GetStatus', array((string)time()));
 
-
-
-			// [0]=IndexOfMap, [1]=Uid, [2]=RestartFlag
-			case 'LibXmlRpc_BeginMap':
-///start work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=241929#p241929
-///remove after bugfix
-	if ($aseco->string2bool($params[2]) === true) {
-		$aseco->restarting = true;			// Map was restarted
-	}
-	else {
-		$aseco->restarting = false;			// No Restart
-	}
-	$aseco->loadingMap($params[1]);
-///END
-				if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-					// Call 'LibXmlRpc_GetTeamsScores' to get 'LibXmlRpc_TeamsScores'
-					$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetTeamsScores', '');
-				}
-
-				// Reset status
-				$aseco->changing_to_gamemode = false;
-
-				$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_GetWarmUp', '');
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Begin Map');
 				}
-				$aseco->releaseEvent('onBeginMap', $params[1]);
+				$aseco->releaseEvent('onBeginMap', $params['map']['uid']);
 				break;
 
 
 
-			// [0]=IndexOfMap, [1]=Uid
-			case 'LibXmlRpc_EndMap':
-				$aseco->endMap(array((int)$params[0], $params[1]));
+
+
+			case 'Maniaplanet.EndMap_Start':
+				$aseco->endMap();
 				break;
 
 
 
-			// [0]=NbMatch, [1]=ScriptRestartFlag
-			case 'LibXmlRpc_BeginMatch':
+
+
+			case 'Maniaplanet.StartRound_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Begin Match');
+					$aseco->console('[Event] Begin Round ['. $params['count'] .']');
 				}
-				$aseco->releaseEvent('onBeginMatch', (int)$params[0], $aseco->string2bool($params[1]));
+				$aseco->releaseEvent('onBeginRound', $params['count']);
 				break;
 
 
 
-			// [0]=NbMatch
-			case 'LibXmlRpc_EndMatch':
+
+
+			case 'Maniaplanet.EndRound_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] End Match');
+					$aseco->console('[Event] End Round ['. $params['count'] .']');
 				}
-				$aseco->releaseEvent('onEndMatch', (int)$params[0]);
+				$aseco->releaseEvent('onEndRound', $params['count']);
 				break;
 
 
 
-			// [0]=NbSubMatch
-			case 'LibXmlRpc_BeginSubmatch':
+
+
+
+			case 'Maniaplanet.StartMatch_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Begin SubMatch');
+					$aseco->console('[Event] Begin Match ['.  $params['count'] .']');
 				}
-				$aseco->releaseEvent('onBeginSubMatch', (int)$params[0]);
+				$aseco->releaseEvent('onBeginMatch',  $params['count']);
 				break;
 
 
 
-			// [0]=NbSubMatch
-			case 'LibXmlRpc_EndSubMatch':
+
+
+			case 'Maniaplanet.EndMatch_End':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] End SubMatch');
+					$aseco->console('[Event] End Match ['.  $params['count'] .']');
 				}
-				$aseco->releaseEvent('onEndSubMatch', (int)$params[0]);
+				$aseco->releaseEvent('onEndMatch',  $params['count']);
 				break;
 
 
 
-			case 'LibXmlRpc_BeginWarmUp':
+
+
+			case 'Maniaplanet.StartTurn_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] WarmUp Status Changed');
+					$aseco->console('[Event] Begin Turn ['.  $params['count'] .']');
 				}
-				$aseco->warmup_phase = true;
-				$aseco->releaseEvent('onWarmUpStatusChanged', $aseco->warmup_phase);
-		    		break;
-
-
-
-			case 'LibXmlRpc_EndWarmUp':
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] WarmUp Status Changed');
-				}
-				$aseco->warmup_phase = false;
-				$aseco->releaseEvent('onWarmUpStatusChanged', $aseco->warmup_phase);
-		    		break;
-
-
-
-			// [0]=StatusOfWarmUp
-			case 'LibXmlRpc_WarmUp':
-				$status = $aseco->string2bool($params[0]);
-				if ($aseco->warmup_phase !== $status) {
-					if ($aseco->settings['developer']['log_events']['common'] == true) {
-						$aseco->console('[Event] WarmUp Status Changed');
-					}
-					$aseco->warmup_phase = $status;
-					$aseco->releaseEvent('onWarmUpStatusChanged', $aseco->warmup_phase);
-				}
-		    		break;
-
-
-
-			// [0]=NbTurn
-			case 'LibXmlRpc_BeginTurn':
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Begin Turn');
-				}
-				$aseco->releaseEvent('onBeginTurn', (int)$params[0]);
+				$aseco->releaseEvent('onBeginTurn', $params['count']);
 				break;
 
 
 
-			// [0]=NbTurn
-			case 'LibXmlRpc_EndTurn':
+
+
+			case 'Maniaplanet.EndTurn_Start':
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] End Turn');
+					$aseco->console('[Event] End Turn ['.  $params['count'] .']');
 				}
-				$aseco->releaseEvent('onEndTurn', (int)$params[0]);
+				$aseco->releaseEvent('onEndTurn', $params['count']);
 				break;
 
 
 
-			// [0]=Status
-			case 'LibXmlRpc_Pause':
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] ModeScript Pause changed');
-				}
-				$aseco->releaseEvent('onModeScriptPauseChanged', $aseco->string2bool($params[0]));
-				break;
+
+
+//			case 'LibXmlRpc_Pause':
+//				if ($aseco->settings['developer']['log_events']['common'] == true) {
+//					$aseco->console('[Event] ModeScript Pause changed');
+//				}
+//				$aseco->releaseEvent('onModeScriptPauseChanged', $aseco->string2bool($params[0]));
+//				break;
 
 
 
-			case 'LibXmlRpc_ScoresReady':
-				// Trigger 'LibXmlRpc_PlayersRanking' response
-				$aseco->client->query('TriggerModeScriptEventArray', 'LibXmlRpc_GetPlayersRanking', array('300','0'));
-
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
-					$aseco->console('[Event] Scores ready');
-				}
-				$aseco->releaseEvent('onScoresReady', null);
-				break;
 
 
-
-			// [0]=Rank, [1]=Login, [2]=NickName, [3]=TeamId, [4]=IsSpectator, [5]=IsAway, [6]=BestTime, [7]=Zone, [8]=RoundScore, [9]=BestCheckpoints, [10]=TotalScore
-			case 'LibXmlRpc_PlayerRanking':
-				if ( isset($params[1]) ) {
-					if ($player = $aseco->server->players->getPlayerByLogin($params[1])) {
-						// Get current Ranking object from Player
-						if ($rank = $aseco->server->rankings->getRankByLogin($player->login)) {
-
-							// Explode string and convert to integer
-							$cps = array_map('intval', explode(',', $params[9]));
-							if (count($cps) == 1 && $cps[0] === -1) {
-								$cps = array();
-							}
-
-							// Check for improved time/score
-							if ($rank->time == 0 || $rank->time > (int)$params[6] || (int)$params[10] > 0 || count($cps) > count($rank->cps)) {
-								$update = array(
-									'rank'		=> (int)$params[0],
-									'login'		=> $player->login,
-									'nickname'	=> $player->nickname,
-									'time'		=> (int)$params[6],
-									'score'		=> (int)$params[10],
-									'cps'		=> $cps,
-			 						'team'		=> (int)$params[3],
-									'spectator'	=> $aseco->string2bool($params[4]),
-									'away'		=> $aseco->string2bool($params[5]),
-								);
-
-								// Update current ranking cache
-								$aseco->server->rankings->update($update);
-								if ($aseco->settings['developer']['log_events']['common'] == true) {
-									$aseco->console('[Event] Player Ranking Updated (Player)');
-								}
-								$aseco->releaseEvent('onPlayerRankingUpdated', null);
-							}
-						}
-					}
-				}
-		    		break;
-
-
-
-			// [0]=Login, [1]=Rank, [2]=BestCheckpoints, [3]=TeamId, [4]=IsSpectator, [5]=IsAway, [6]=BestTime, [7]=Zone, [8]=RoundScore, [9]=TotalScore
-			case 'LibXmlRpc_PlayersRanking':
-				if ($aseco->server->gameinfo->mode != Gameinfo::TEAM && count($params) > 0) {
-					foreach ($params as $item) {
-						$rank = explode(':', $item);
-						if ($player = $aseco->server->players->getPlayerByLogin($rank[0])) {
-							// Explode string and convert to integer
-							$cps = array_map('intval', explode(',', $rank[2]));
-							if (count($cps) == 1 && $cps[0] === -1) {
-								$cps = array();
-							}
-
-							$update = array(
-								'rank'		=> (int)$rank[1],
-								'login'		=> $player->login,
-								'nickname'	=> $player->nickname,
-								'time'		=> (int)$rank[6],
-								'score'		=> (int)$rank[9],
-								'cps'		=> $cps,
-		 						'team'		=> (int)$rank[3],
-								'spectator'	=> $aseco->string2bool($rank[4]),
-								'away'		=> $aseco->string2bool($rank[5]),
-							);
-
-							// Update current ranking cache
-							$aseco->server->rankings->update($update);
-						}
-					}
-
-					if ($aseco->settings['developer']['log_events']['common'] == true) {
-						$aseco->console('[Event] Player Ranking Updated (Players)');
-					}
-					$aseco->releaseEvent('onPlayerRankingUpdated', null);
-				}
-		    		break;
-
-
-
-			// [0]=TeamBlueRoundScore, [1]=TeamRedRoundScore, [2]=TeamBlueTotalScore, [3]=TeamRedTotalScore
-			case 'LibXmlRpc_TeamsScores':
-				if ( isset($params) ) {
+			case 'Trackmania.Scores':
+				if ($aseco->server->gameinfo->mode === Gameinfo::TEAM) {
 					$rank_blue = PHP_INT_MAX;
 					$rank_red = PHP_INT_MAX;
 
 					// Check which team has a higher score
-					if ((int)$params[2] > (int)$params[3]) {
+					if ($params['teams'][0]['mappoints'] > $params['teams'][1]['mappoints']) {
 						// Set "Team Blue" to Rank 1 and "Team Red" to 2
 						$rank_blue = 1;
 						$rank_red = 2;
@@ -764,29 +678,37 @@ class PluginModescriptHandler extends Plugin {
 
 					// Store "Team Blue"
 					$update = array(
-						'rank'		=> $rank_blue,
-						'login'		=> '*team:blue',
-						'nickname'	=> '$08FTeam Blue',
-						'time'		=> 0,
-						'score'		=> (int)$params[2],
-						'cps'		=> array(),
- 						'team'		=> 0,
-						'spectator'	=> false,
-						'away'		=> false,
+						'rank'				=> $rank_blue,
+						'login'				=> '*team:blue',
+						'nickname'			=> '$08FTeam Blue',
+						'round_points'			=> $params['teams'][0]['roundpoints'],
+						'map_points'			=> $params['teams'][0]['mappoints'],
+						'match_points'			=> $params['teams'][0]['matchpoints'],
+						'best_race_time'		=> 0,
+						'best_race_respawns'		=> 0,
+						'best_race_checkpoints'		=> array(),
+						'best_lap_time'			=> 0,
+						'best_lap_respawns'		=> 0,
+						'best_lap_checkpoints'		=> array(),
+						'stunts_score'			=> 0,
 					);
 					$aseco->server->rankings->update($update);
 
 					// Store "Team Red"
 					$update = array(
-						'rank'		=> $rank_red,
-						'login'		=> '*team:red',
-						'nickname'	=> '$F50Team Red',
-						'time'		=> 0,
-						'score'		=> (int)$params[3],
-						'cps'		=> array(),
- 						'team'		=> 1,
-						'spectator'	=> false,
-						'away'		=> false,
+						'rank'				=> $rank_red,
+						'login'				=> '*team:red',
+						'nickname'			=> '$F50Team Red',
+						'round_points'			=> $params['teams'][1]['roundpoints'],
+						'map_points'			=> $params['teams'][1]['mappoints'],
+						'match_points'			=> $params['teams'][1]['matchpoints'],
+						'best_race_time'		=> 0,
+						'best_race_respawns'		=> 0,
+						'best_race_checkpoints'		=> array(),
+						'best_lap_time'			=> 0,
+						'best_lap_respawns'		=> 0,
+						'best_lap_checkpoints'		=> array(),
+						'stunts_score'			=> 0,
 					);
 					$aseco->server->rankings->update($update);
 
@@ -795,40 +717,189 @@ class PluginModescriptHandler extends Plugin {
 					}
 					$aseco->releaseEvent('onPlayerRankingUpdated', null);
 				}
+				else {
+					$found_improvement = false;
+					foreach ($params['players'] as $item) {
+						if ($player = $aseco->server->players->getPlayerByLogin($item['login'])) {
+							$update = array(
+								'rank'				=> $item['rank'],
+								'login'				=> $player->login,
+								'nickname'			=> $player->nickname,
+								'round_points'			=> $item['roundpoints'],
+								'map_points'			=> $item['mappoints'],
+								'match_points'			=> $item['matchpoints'],
+								'best_race_time'		=> $item['bestracetime'],		// Best race time in milliseconds
+								'best_race_respawns'		=> $item['bestracerespawns'],		// Number of respawn during best race
+								'best_race_checkpoints'		=> $item['bestracecheckpoints'],	// Checkpoints times during best race
+								'best_lap_time'			=> $item['bestlaptime'],		// Best lap time in milliseconds
+								'best_lap_respawns'		=> $item['bestlaprespawns'],		// Number of respawn during best lap
+								'best_lap_checkpoints'		=> $item['bestlapcheckpoints'],		// Checkpoints times during best lap
+								'stunts_score'			=> $item['stuntsscore'],
+							);
+
+							$rank = $aseco->server->rankings->getRankByLogin($item['login']);
+							if ($rank->best_race_time === 0 || $rank->best_lap_time === 0 || $rank->best_race_time > $update['best_race_time'] || $rank->best_lap_time > $update['best_lap_time']) {
+								// Update current ranking cache
+								$aseco->server->rankings->update($update);
+
+								// Lets send the event 'onPlayerRankingUpdated'
+								$found_improvement = true;
+							}
+						}
+					}
+					if ($found_improvement == true) {
+						if ($aseco->settings['developer']['log_events']['common'] == true) {
+							$aseco->console('[Event] Player Ranking Updated (Players)');
+						}
+						$aseco->releaseEvent('onPlayerRankingUpdated', null);
+					}
+				}
 		    		break;
 
 
 
-			case 'Rounds_PointsRepartition':
-				// Read and set the current round points repartition
-				$points = array_map('intval', $params);
+
+
+			case 'Maniaplanet.WarmUp.Status':
+				if ($aseco->warmup_phase !== $params['active']) {
+					if ($aseco->settings['developer']['log_events']['common'] == true) {
+						$aseco->console('[Event] WarmUp Status Changed');
+					}
+					$aseco->warmup_phase = $params['active'];
+					$aseco->releaseEvent('onWarmUpStatusChanged', $params);
+				}
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.WarmUp.Start':
+			case 'Trackmania.WarmUp.Start':
+				$aseco->warmup_phase = true;
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] WarmUp Status changed to "WarmUp starting"');
+				}
+				$aseco->releaseEvent('onWarmUpStatusChanged', $aseco->warmup_phase);
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.WarmUp.End':
+			case 'Trackmania.WarmUp.End':
+				$aseco->warmup_phase = false;
+				if ($aseco->settings['developer']['log_events']['common'] == true) {
+					$aseco->console('[Event] WarmUp Status changed to "WarmUp ending"');
+				}
+				$aseco->releaseEvent('onWarmUpStatusChanged', $aseco->warmup_phase);
+		    		break;
+
+
+
+
+
+			case 'Trackmania.WarmUp.StartRound':
+				$aseco->releaseEvent('onWarmUpRoundChanged', $params);
+		    		break;
+
+
+
+
+
+			case 'Trackmania.WarmUp.EndRound':
+				$aseco->releaseEvent('onWarmUpRoundChanged', $params);
+		    		break;
+
+
+
+
+
+			case 'Trackmania.Event.OnCommand':
+				if ($aseco->settings['developer']['log_events']['all_types'] == true) {
+					$aseco->console('[Event] ModeScript Command');
+				}
+				$aseco->releaseEvent('onModeScriptCommand', $params);
+				break;
+
+
+
+
+
+			case 'Trackmania.PointsRepartition':
 				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
-					$aseco->server->gameinfo->rounds['PointsRepartition'] = $points;
+					$aseco->server->gameinfo->rounds['PointsRepartition'] = $params['pointsrepartition'];
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
 						$aseco->console('[Event] Points Repartition Loaded');
 					}
-					$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
+					$aseco->releaseEvent('onPointsRepartitionLoaded', $params['pointsrepartition']);
 				}
 				else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-					$aseco->server->gameinfo->team['PointsRepartition'] = $points;
+					$aseco->server->gameinfo->team['PointsRepartition'] = $params['pointsrepartition'];
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
 						$aseco->console('[Event] Points Repartition Loaded');
 					}
-					$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
+					$aseco->releaseEvent('onPointsRepartitionLoaded', $params['pointsrepartition']);
 				}
 				else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
-					$aseco->server->gameinfo->cup['PointsRepartition'] = $points;
+					$aseco->server->gameinfo->cup['PointsRepartition'] = $params['pointsrepartition'];
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
 						$aseco->console('[Event] Points Repartition Loaded');
 					}
-					$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
+					$aseco->releaseEvent('onPointsRepartitionLoaded', $params['pointsrepartition']);
 				}
 		    		break;
+
+
+
+
+
+			case 'Trackmania.UI.Properties':
+				$aseco->releaseEvent('onUiProperties', $params);
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.Mode.UseTeams':
+				$aseco->releaseEvent('onModeUseTeams', $params);
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.Pause.Status':
+				$aseco->releaseEvent('onPauseStatus', $params);
+		    		break;
+
+
+
+
+
+			case 'Maniaplanet.StartServer_Start':
+				// When changing Gamemode force all Plugins to resync
+				if ($aseco->changing_to_gamemode !== false && $params['mode']['updated'] === true) {
+					$aseco->console('[ModescriptHandler] ########################################################');
+					$aseco->console('[ModescriptHandler] Gamemode change detected, forcing all Plugins to resync!');
+					$aseco->console('[ModescriptHandler] ########################################################');
+					$aseco->releaseEvent('onSync', null);
+
+					$aseco->releaseEvent('onModeScriptChanged', $params['mode']['name']);
+
+					// Reset status
+					$aseco->changing_to_gamemode = false;
+				}
+		    		break;
+
+
 
 
 
 			default:
-				$aseco->console('[ModescriptHandler] Unsupported callback at onModeScriptCallbackArray() received: ['. $name .'], please report this at '. UASECO_WEBSITE);
+				$aseco->console('[ModescriptHandler] Unsupported callback at onModeScriptCallbackArray() received: ['. $data[0] .'], please report this at '. UASECO_WEBSITE);
 		    		break;
 		}
 	}
@@ -839,8 +910,34 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onModeScriptCallback ($aseco, $data) {
-		$aseco->console('[ModescriptHandler] Unsupported callback at onModeScriptCallback() received: ['. $data[0] .'], please report this at '. UASECO_WEBSITE);
+	public function onShutdown ($aseco) {
+		if (isset($this->settings['UI_PROPERTIES'])) {
+			// Setup the default UI
+			$this->ui_properties = $this->settings['UI_PROPERTIES'][0];
+
+			// Transform 'TRUE' or 'FALSE' from string to boolean
+			$this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['LIVE_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['LIVE_INFO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['CHAT'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHAT'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['GO'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['GO'][0]['VISIBLE'][0]) == 'TRUE')				? true : false);
+			$this->ui_properties['CHRONO'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) == 'TRUE')	? true : false);
+			$this->ui_properties['POSITION'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['POSITION'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+
+			// Send the UI settings
+			$this->setupUserInterface();
+		}
 	}
 
 	/*
@@ -849,8 +946,8 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Player reaches finish.
-	public function playerFinish ($aseco, $login, $score) {
+	public function playerFinish ($response) {
+		global $aseco;
 
 		// If no Map info bail out immediately
 		if ($aseco->server->maps->current->id === 0) {
@@ -863,14 +960,19 @@ class PluginModescriptHandler extends Plugin {
 		}
 
 		// Check for valid player
-		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+		if (!$player = $aseco->server->players->getPlayerByLogin($response['login'])) {
 			return;
 		}
 
 		// Build a record object with the current finish information
 		$finish			= new Record();
 		$finish->player		= $player;
-		$finish->score		= $score;
+		if ($response['is_endrace'] === true) {
+			$finish->score	= $response['race_time'];
+		}
+		else if ($response['is_endlap'] === true) {
+			$finish->score	= $response['lap_time'];
+		}
 		$finish->checkpoints	= (isset($aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]->current['cps'] : array());
 		$finish->date		= strftime('%Y-%m-%d %H:%M:%S');
 		$finish->new		= false;
@@ -878,7 +980,7 @@ class PluginModescriptHandler extends Plugin {
 		unset($finish->map->mx);	// reduce memory usage
 
 		// Throw prefix 'player finishes' event (checkpoints)
-		$aseco->releaseEvent('onPlayerFinish1', $finish);
+		$aseco->releaseEvent('onPlayerFinishPrefix', $finish);
 
 		// Throw main 'player finishes' event
 		$aseco->releaseEvent('onPlayerFinish', $finish);
@@ -895,7 +997,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$aseco->console('[ModescriptHandler] Checking version from dedicated Server Modescripts...');
 
-		$path = $aseco->settings['dedicated_installation'] .'/UserData/Scripts/';
+		$path = $aseco->settings['dedicated_installation'] .'/GameData/Scripts/';
 		if (!is_dir($path)) {
 			trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
 		}
@@ -953,25 +1055,27 @@ class PluginModescriptHandler extends Plugin {
 		}
 
 		$ui  = '<ui_properties>';
-		$ui .= ' <map_info visible="'. $aseco->bool2string($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) .'" />';
-		$ui .= ' <opponents_info visible="'. $aseco->bool2string($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) .'" />';
-		$ui .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'" />';
-		$ui .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'" />';
-		$ui .= ' <chrono visible="'. $aseco->bool2string($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <speed_and_distance visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <personal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" />';
-		$ui .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'" />';
-		$ui .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POSITION'][0]['Z'][0]) .'" />';
-		$ui .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'" />';
-		$ui .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'" />';
+		$ui .= ' <map_info visible="'. $aseco->bool2string($this->ui_properties['MAP_INFO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['MAP_INFO'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['MAP_INFO'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['MAP_INFO'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <live_info visible="'. $aseco->bool2string($this->ui_properties['LIVE_INFO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['LIVE_INFO'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['LIVE_INFO'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['LIVE_INFO'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <opponents_info visible="'. $aseco->bool2string($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) .'"/>';
+		$ui .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'"/>';
+		$ui .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'"/>';
+		$ui .= ' <chrono visible="'. $aseco->bool2string($this->ui_properties['CHRONO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHRONO'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <speed_and_distance visible="'. $aseco->bool2string($this->ui_properties['SPEED_AND_DISTANCE'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPEED_AND_DISTANCE'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <personal_best_and_rank visible="'. $aseco->bool2string($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['PERSONAL_BEST_AND_RANK'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['POSITION'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['POSITION'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['POSITION'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'"/>';
+		$ui .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'"/>';
+		$ui .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'"/>';
+		$ui .= ' <checkpoint_ranking visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= '</ui_properties>';
 
-		$aseco->client->query('TriggerModeScriptEvent', 'UI_SetProperties', $ui);
+		$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.UI.SetProperties', array($ui));
 	}
 
 	/*
@@ -996,10 +1100,10 @@ class PluginModescriptHandler extends Plugin {
 	public function setUserInterfacePosition ($field, $values = array()) {
 		global $aseco;
 
-		if (array_key_exists(strtoupper($field), $this->ui_properties) && array_key_exists('POSITION', $this->ui_properties[strtoupper($field)][0]) && count($values) == 3) {
-			$this->ui_properties[strtoupper($field)][0]['POSITION'][0]['X'][0] = $aseco->formatFloat($values[0]);
-			$this->ui_properties[strtoupper($field)][0]['POSITION'][0]['Y'][0] = $aseco->formatFloat($values[1]);
-			$this->ui_properties[strtoupper($field)][0]['POSITION'][0]['Z'][0] = $aseco->formatFloat($values[2]);
+		if (array_key_exists(strtoupper($field), $this->ui_properties) && array_key_exists('POS', $this->ui_properties[strtoupper($field)][0]) && count($values) == 3) {
+			$this->ui_properties[strtoupper($field)][0]['POS'][0]['X'][0] = $aseco->formatFloat($values[0]);
+			$this->ui_properties[strtoupper($field)][0]['POS'][0]['Y'][0] = $aseco->formatFloat($values[1]);
+			$this->ui_properties[strtoupper($field)][0]['POS'][0]['Z'][0] = $aseco->formatFloat($values[2]);
 		}
 	}
 
@@ -1011,7 +1115,7 @@ class PluginModescriptHandler extends Plugin {
 
 	public function getUserInterfaceField ($field) {
 
-		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
+		if (array_key_exists(strtoupper($field), $this->ui_properties)) {
 			return $this->ui_properties[strtoupper($field)][0];
 		}
 	}
@@ -1022,11 +1126,59 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function setupBlockCallbacks () {
+	public function writeMethodsDocumentation () {
 		global $aseco;
 
-		foreach ($this->callback_blocklist as $callback) {
-			$aseco->client->query('TriggerModeScriptEvent', 'LibXmlRpc_BlockCallback', $callback);
+		$aseco->console('[ModescriptHandler] Generating documentation of the Methods from the dedicated server...');
+
+		$aseco->client->query('SetApiVersion', API_VERSION);
+		$methods = $aseco->client->query('system.listMethods');
+
+		$docs = LF;
+		$docs .= '# Dedicated Server' .LF;
+		$docs .= '###### Methods from API version: '. API_VERSION .LF.LF;
+		$docs .= '***' .LF.LF;
+		foreach ($methods as $method) {
+			$docs .= '### ['. $method .'](_#'. $method .')' .LF;
+
+			$help = $aseco->client->query('system.methodHelp', $method);
+			$help = str_replace(
+				array(
+					"''",
+					"That's",
+					"it's",
+					'<i>',
+					'</i>',
+					"'",
+				),
+				array(
+					"an empty string",
+					"That is",
+					"it is",
+					'`',
+					'`',
+					'`',
+				),
+				$help
+			);
+			$docs .= $help .LF.LF;
+
+			$signatures = $aseco->client->query('system.methodSignature', $method);
+			$docs .= '#### Description' .LF;
+			$docs .= '	'. array_shift($signatures[0]) .' '. $method .'('. implode(', ', $signatures[0]) .')';
+			$docs .= LF.LF;
+			$docs .= '***';
+			$docs .= LF.LF;
+		}
+
+		@mkdir('docs/Dedicated-Server/', 0755, true);
+
+		$destination = 'docs/Dedicated-Server/Methods.md';
+		if (file_put_contents($destination, $docs, LOCK_EX) !== false) {
+			$aseco->console('[ModescriptHandler] ... successfully written to "'. $destination .'"!');
+		}
+		else {
+			$aseco->console('[ModescriptHandler] ... could not write to "'. $destination .'"!');
 		}
 	}
 
@@ -1042,12 +1194,12 @@ class PluginModescriptHandler extends Plugin {
 
 		// ModeBase
 		$modebase = array(
-			'S_UseScriptCallbacks'			=> $aseco->server->gameinfo->modebase['UseScriptCallbacks'],
-			'S_UseLegacyCallbacks'			=> $aseco->server->gameinfo->modebase['UseLegacyCallbacks'],
+//			'S_UseScriptCallbacks'			=> $aseco->server->gameinfo->modebase['UseScriptCallbacks'],
+//			'S_UseLegacyCallbacks'			=> $aseco->server->gameinfo->modebase['UseLegacyCallbacks'],
 			'S_ChatTime'				=> $aseco->server->gameinfo->modebase['ChatTime'],
 			'S_AllowRespawn'			=> $aseco->server->gameinfo->modebase['AllowRespawn'],
 			'S_WarmUpDuration'			=> $aseco->server->gameinfo->modebase['WarmUpDuration'],
-			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->modebase['ScoresTableStylePath'],
+//			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->modebase['ScoresTableStylePath'],
 		);
 
 		$modesetup = array();
@@ -1084,7 +1236,6 @@ class PluginModescriptHandler extends Plugin {
 				// Team
 				'S_MaxPointsPerRound'		=> $aseco->server->gameinfo->team['MaxPointsPerRound'],
 				'S_PointsGap'			=> $aseco->server->gameinfo->team['PointsGap'],
-				'S_UsePlayerClublinks'		=> $aseco->server->gameinfo->team['UsePlayerClublinks'],
 				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->team['NbPlayersPerTeamMax'],
 				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->team['NbPlayersPerTeamMin'],
 
@@ -1137,7 +1288,6 @@ class PluginModescriptHandler extends Plugin {
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->chase['ForceLapsNb'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->chase['FinishTimeout'],
 				'S_DisplayWarning'		=> $aseco->server->gameinfo->chase['DisplayWarning'],
-				'S_UsePlayerClublinks'		=> $aseco->server->gameinfo->chase['UsePlayerClublinks'],
 				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMax'],
 				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMin'],
 				'S_CompetitiveMode'		=> $aseco->server->gameinfo->chase['CompetitiveMode'],
@@ -1198,69 +1348,69 @@ class PluginModescriptHandler extends Plugin {
 		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 		$xml .= '<scorestable version="1">';
 		$xml .= ' <properties>';
-		$xml .= '  <position x="0.0" y="51.0" z="20.0" />';
-		$xml .= '  <headersize x="70.0" y="8.7" />';
-		$xml .= '  <modeicon icon="Bgs1|BgEmpty" />';
-		$xml .= '  <tablesize x="182.0" y="67.0" />';
-		$xml .= '  <taleformat columns="2" lines="8" />';
-		$xml .= '  <footersize x="180.0" y="17.0" />';
+		$xml .= '  <position x="0.0" y="51.0" z="20.0"/>';
+		$xml .= '  <headersize x="70.0" y="8.7"/>';
+		$xml .= '  <modeicon icon="Bgs1|BgEmpty"/>';
+		$xml .= '  <tablesize x="182.0" y="67.0"/>';
+		$xml .= '  <taleformat columns="2" lines="8"/>';
+		$xml .= '  <footersize x="180.0" y="17.0"/>';
 		$xml .= '</properties>';
 
 		$xml .= ' <settings>';
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
-			$xml .= '  <setting name="TeamsMode" value="True" />';
-			$xml .= '  <setting name="TeamsScoresVisibility" value="True" />';
-			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False" />';
+			$xml .= '  <setting name="TeamsMode" value="True"/>';
+			$xml .= '  <setting name="TeamsScoresVisibility" value="True"/>';
+			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False"/>';
 		}
 		else {
-			$xml .= '  <setting name="TeamsMode" value="False" />';
-			$xml .= '  <setting name="TeamsScoresVisibility" value="False" />';
-			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False" />';
+			$xml .= '  <setting name="TeamsMode" value="False"/>';
+			$xml .= '  <setting name="TeamsScoresVisibility" value="False"/>';
+			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False"/>';
 		}
-		$xml .= '  <setting name="PlayerDarkening" value="True" />';
-		$xml .= '  <setting name="PlayerInfoVisibility" value="True" />';
-		$xml .= '  <setting name="ServerNameVisibility" value="True" />';
+		$xml .= '  <setting name="PlayerDarkening" value="True"/>';
+		$xml .= '  <setting name="PlayerInfoVisibility" value="True"/>';
+		$xml .= '  <setting name="ServerNameVisibility" value="True"/>';
 		$xml .= ' </settings>';
 
 		$xml .= '<images>';
 		$xml .= ' <background>';
-		$xml .= '  <position x="0.0" y="6.0" />';
-		$xml .= '  <size width="240.0" height="108.0" />';
+		$xml .= '  <position x="0.0" y="6.0"/>';
+		$xml .= '  <size width="240.0" height="108.0"/>';
 //		$xml .= '  <collection>';
-//		$xml .= '   <image environment="Canyon" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds" />';
-//		$xml .= '   <image environment="Valley" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds" />';
-//		$xml .= '   <image environment="Stadium" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds" />';
-////		$xml .= '   <image environment="Canyon" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-canyon.dds" />';
-////		$xml .= '   <image environment="Valley" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-valley.dds" />';
-////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds" />';
+//		$xml .= '   <image environment="Canyon" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds"/>';
+//		$xml .= '   <image environment="Valley" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds"/>';
+//		$xml .= '   <image environment="Stadium" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds"/>';
+////		$xml .= '   <image environment="Canyon" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-canyon.dds"/>';
+////		$xml .= '   <image environment="Valley" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-valley.dds"/>';
+////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds"/>';
 //		$xml .= '  </collection>';
 		$xml .= ' </background>';
 		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
 			$xml .= ' <team1>';
-			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-left.dds" />';
-			$xml .= '  <position x="0.0" y="3.8" />';
-			$xml .= '  <size width="120.0" height="25.0" />';
+			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-left.dds"/>';
+			$xml .= '  <position x="0.0" y="3.8"/>';
+			$xml .= '  <size width="120.0" height="25.0"/>';
 			$xml .= ' </team1>';
 			$xml .= ' <team2>';
-			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-right.dds" />';
-			$xml .= '  <position x="0.0" y="3.8" />';
-			$xml .= '  <size width="120.0" height="25.0" />';
+			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-right.dds"/>';
+			$xml .= '  <position x="0.0" y="3.8v';
+			$xml .= '  <size width="120.0" height="25.0"/>';
 			$xml .= ' </team2>';
 		}
 		$xml .= '</images>';
 
 //		$xml .= '<columns>';
-//		$xml .= ' <column id="LibST_Avatar" action="create" />';
-//		$xml .= ' <column id="LibST_Name" action="create" />';
-//		$xml .= ' <column id="LibST_ManiaStars" action="create" />';
-//		$xml .= ' <column id="LibST_Tools" action="create" />';
-//		$xml .= ' <column id="LibST_TMBestTime" action="destroy" />';
-//		$xml .= ' <column id="LibST_PrevTime" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMStunts" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMRespawns" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMCheckpoints" action="destroy" />';
-//		$xml .= ' <column id="LibST_TMPoints" action="create" />';
-//		$xml .= ' <column id="LibST_TMPrevRaceDeltaPoints" action="destroy" />';
+//		$xml .= ' <column id="LibST_Avatar" action="createv';
+//		$xml .= ' <column id="LibST_Name" action="create"/>';
+//		$xml .= ' <column id="LibST_ManiaStars" action="create"/>';
+//		$xml .= ' <column id="LibST_Tools" action="create"/>';
+//		$xml .= ' <column id="LibST_TMBestTime" action="destroy"/>';
+//		$xml .= ' <column id="LibST_PrevTime" action="destroy"/>';
+//		$xml .= ' <column id="LibST_TMStunts" action="destroyv';
+//		$xml .= ' <column id="LibST_TMRespawns" action="destroy"/>';
+//		$xml .= ' <column id="LibST_TMCheckpoints" action="destroy"/>';
+//		$xml .= ' <column id="LibST_TMPoints" action="create"/>';
+//		$xml .= ' <column id="LibST_TMPrevRaceDeltaPoints" action="destroy"/>';
 //
 //		$xml .= ' <column id="LibST_Avatar" action="create">';
 //		$xml .= '  <legend>TestFull</legend>';

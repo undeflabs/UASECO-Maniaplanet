@@ -5,10 +5,6 @@
  * » Displays randomized images between the Map change.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-19
- * Copyright:	2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -51,13 +44,15 @@ class PluginForceLoadscreen extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription('Displays randomized images between the Map change.');
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onLoadingMap',	'onLoadingMap');
-		$this->registerEvent('onEndMap1',	'onEndMap1');
+		$this->registerEvent('onEndMapPrefix',	'onEndMapPrefix');
 		$this->registerEvent('onUnloadingMap',	'onUnloadingMap');
 	}
 
@@ -128,7 +123,7 @@ class PluginForceLoadscreen extends Plugin {
 		$this->next_image_url = $urls[mt_rand(0, count($urls)-1)];
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'"></manialink>';			// Remove Main worker
-		$xml .= '<manialink id="'. $this->config['manialinkid'] .'Preload" name="'. $this->config['manialinkid'] .'Preload" version="2">';
+		$xml .= '<manialink id="'. $this->config['manialinkid'] .'Preload" name="'. $this->config['manialinkid'] .'Preload" version="3">';
 $maniascript = <<<EOL
 <script><!--
 /*
@@ -147,6 +142,35 @@ EOL;
 
 		$aseco->addManialink($xml, false);
 	}
+//
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function onEndMapPrefix ($aseco, $map) {
+//
+//		$loader = '<manialink id=\"LoadingScreenLayer\" version=\"3\">';
+//		$loader .= '<quad pos=\"-160.0 90.0\" z-index=\"39.0\" size=\"320.0 180.0\" image=\"'. $this->next_image_url .'\"/>';
+//		$loader .= '</manialink>';
+//
+//		$xml = '<manialink id="'. $this->config['manialinkid'] .'" version="3">';
+//$maniascript = <<<EOL
+//<script><!--
+//
+//main() {
+//	declare CUILayer LoadingScreenLayer <=> UILayerCreate();
+//	LoadingScreenLayer.Type = CUILayer::EUILayerType::LoadingScreen;
+//	LoadingScreenLayer.ManialinkPage = "{$loader}";
+//}
+//--></script>
+//EOL;
+//		$xml .= $maniascript;
+//		$xml .= '</manialink>';
+//
+//		$aseco->sendManialink($xml, false);
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -154,13 +178,13 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $map) {
+	public function onEndMapPrefix ($aseco, $map) {
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Preload"></manialink>';	// Remove Preloader
 		$aseco->addManialink($xml, false);
 
-		$xml = '<manialink id="'. $this->config['manialinkid'] .'" version="2">';
-		$xml .= '<quad posn="-160.0 90.0 39.0" sizen="320.0 180.0" image="'. $this->next_image_url .'" hidden="true" id="Image"/>';
+		$xml = '<manialink id="'. $this->config['manialinkid'] .'" version="3">';
+		$xml .= '<quad pos="-160.0 90.0" z-index="39.0" size="320.0 180.0" image="'. $this->next_image_url .'" hidden="true" id="Image"/>';
 
 		// Set timeout
 		$timeout = (($aseco->server->gameinfo->modebase['ChatTime'] * 1000) - 1500);
@@ -230,7 +254,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $map) {
+	public function onUnloadingMap ($aseco, $uid) {
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'"></manialink>';	// Remove Main worker
 		$aseco->sendManialink($xml, false);
 	}

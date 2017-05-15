@@ -6,10 +6,6 @@
  * » Based upon types.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2014-08-02
- * Copyright:	2014 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +22,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -38,7 +31,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class RecordList {
+class RecordList extends BaseClass {
 	public $record_list;
 	public $max_records;
 
@@ -49,6 +42,13 @@ class RecordList {
 	*/
 
 	public function __construct ($max_records) {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Manages a list of records, add records to the list and remove them.');
+
 		$this->record_list = array();
 		$this->max_records = $max_records;
 	}

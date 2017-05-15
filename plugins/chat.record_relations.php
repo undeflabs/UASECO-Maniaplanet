@@ -6,11 +6,6 @@
  * » Based upon chat.recrels.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-11-11
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.local_records.php
  *
  */
 
@@ -52,9 +44,12 @@ class PluginRecordRelations extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Shows ranked records and their relations on the current map.');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription(new Message('chat.record_relations', 'plugin_description');
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 
@@ -88,7 +83,7 @@ class PluginRecordRelations extends Plugin {
 			$message = (new Message('common', 'first_record'))->finish($login);
 
 			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders(1, $aseco->stripColors($record->player->nickname),	$aseco->formatTime($record->score));
+			$msg->addPlaceholders(1, $aseco->stripStyles($record->player->nickname),	$aseco->formatTime($record->score));
 			$message.= $msg->finish($login);
 
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
@@ -124,7 +119,7 @@ class PluginRecordRelations extends Plugin {
 			$message = (new Message('common', 'last_record'))->finish($login);
 
 			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders($total, $aseco->stripColors($record->player->nickname),	$aseco->formatTime($record->score));
+			$msg->addPlaceholders($total, $aseco->stripStyles($record->player->nickname),	$aseco->formatTime($record->score));
 			$message.= $msg->finish($login);
 
 			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
@@ -182,12 +177,12 @@ class PluginRecordRelations extends Plugin {
 
 				// show chat message
 				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders($rank + 1, $aseco->stripColors($record->player->nickname), $aseco->formatTime($record->score));
+				$msg->addPlaceholders($rank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
 				$message1.= $msg->finish($login);
 				substr($message1, 0, strlen($message1)-2);
 
 				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders($nextrank + 1, $aseco->stripColors($record->player->nickname), $aseco->formatTime($record->score));
+				$msg->addPlaceholders($nextrank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
 				$message2.= $msg->finish($login);
 				substr($message2, 0, strlen($message1)-2);
 
@@ -228,12 +223,12 @@ class PluginRecordRelations extends Plugin {
 
 					// show chat message
 					$msg = new Message('common', 'ranking_record_new');
-					$msg->addPlaceholders('PB', $aseco->stripColors($command['author']->nickname), $aseco->formatTime($unranked->Score));
+					$msg->addPlaceholders('PB', $aseco->stripStyles($command['author']->nickname), $aseco->formatTime($unranked->Score));
 					$message1.= $msg->finish($login);
 					substr($message1, 0, strlen($message1)-2);
 
 					$msg = new Message('common', 'ranking_record_new');
-					$msg->addPlaceholders($total, $aseco->stripColors($last->player->nickname),	$aseco->formatTime($last->score));
+					$msg->addPlaceholders($total, $aseco->stripStyles($last->player->nickname),	$aseco->formatTime($last->score));
 					$message2.= $msg->finish($login);
 					substr($message2, 0, strlen($message1)-2);
 
@@ -292,12 +287,12 @@ class PluginRecordRelations extends Plugin {
 
 				// show chat message
 				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders($rank + 1, $aseco->stripColors($record->player->nickname), $aseco->formatTime($record->score));
+				$msg->addPlaceholders($rank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
 				$message1.= $msg->finish($login);
 				substr($message1, 0, strlen($message1)-2);
 
 				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders(1, $aseco->stripColors($first->player->nickname), $aseco->formatTime($first->score));
+				$msg->addPlaceholders(1, $aseco->stripStyles($first->player->nickname), $aseco->formatTime($first->score));
 				$message2.= $msg->finish($login);
 				substr($message2, 0, strlen($message1)-2);
 
@@ -344,14 +339,14 @@ class PluginRecordRelations extends Plugin {
 			// show chat message
 			$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 				1,
-				$aseco->stripColors($first->player->nickname),
+				$aseco->stripStyles($first->player->nickname),
 				$aseco->formatTime($first->score)
 			);
 			$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
 
 			$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
 				$total,
-				$aseco->stripColors($last->player->nickname),
+				$aseco->stripStyles($last->player->nickname),
 				$aseco->formatTime($last->score)
 			);
 			$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
@@ -366,12 +361,12 @@ class PluginRecordRelations extends Plugin {
 
 
 			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders(1, $aseco->stripColors($first->player->nickname), $aseco->formatTime($first->score));
+			$msg->addPlaceholders(1, $aseco->stripStyles($first->player->nickname), $aseco->formatTime($first->score));
 			$message1.= $msg->finish($login);
 			substr($message1, 0, strlen($message1)-2);
 
 			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders($total, $aseco->stripColors($last->player->nickname), $aseco->formatTime($last->score));
+			$msg->addPlaceholders($total, $aseco->stripStyles($last->player->nickname), $aseco->formatTime($last->score));
 			$message2.= $msg->finish($login);
 			substr($message2, 0, strlen($message1)-2);
 

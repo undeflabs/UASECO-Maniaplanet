@@ -26,7 +26,7 @@ How it works:
  - If you directly want to apply a method on the message object, you can use this short-syntax:
 	(new Message('plugin_your_creation', 'msg_id'))->finish($login);
  - There is also a replacement for formatText(), which in some cases can't be used together with the Messageclass
-	Therefor we introduced $msg->addPlaceholder($ph1, $ph2, ...). This method can directly be applied on a newly created Message object
+	Therefor we introduced $msg->addPlaceholders($ph1, $ph2, ...). This method can directly be applied on a newly created Message object
 	and works in the same way as formatText().
 	If you don't know what formatText() does: it replaces {1}, {2} and so on by given placeholders in the same order in the message, as you add them.
 

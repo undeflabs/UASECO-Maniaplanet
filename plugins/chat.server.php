@@ -6,10 +6,6 @@
  * » Based upon chat.server.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-17
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.local_records.php
- *  - plugins/plugin.rasp_votes.php
- *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -53,154 +43,25 @@ class PluginChatServer extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Displays server and UASECO info');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription(new Message('chat.server', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
-		$this->registerEvent('onSync',			'onSync');
-
-		$this->registerChatCommand('server',	'chat_server',	'Displays info about this server',		Player::PLAYERS);
-		$this->registerChatCommand('uaseco',	'chat_uaseco',	'Displays info about this UASECO',		Player::PLAYERS);
-		$this->registerChatCommand('plugins',	'chat_plugins',	'Displays list of active plugins',		Player::PLAYERS);
-		$this->registerChatCommand('time',	'chat_time',	'Shows current server time and date',		Player::PLAYERS);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onSync ($aseco) {
-		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('For server info use the "/server" command.');
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Looking for the name of this server? Use the "/server" command.');
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_server ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-			return;
-		}
-
-		// collect players/nations stats
-		$query = "
-		SELECT
-			COUNT(`PlayerId`),
-			COUNT(DISTINCT `Nation`),
-			SUM(`TimePlayed`)
-		FROM `%prefix%players`;
-		";
-
-		$res = $aseco->db->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				$row = $res->fetch_row();
-				$players = $row[0];
-				$nations = $row[1];
-				$totaltime = $row[2];
-
-				$playdays = floor($totaltime / (24 * 3600));
-				$playtime = $totaltime - ($playdays * 24 * 3600);
-			}
-			$res->free_result();
-		}
-		else {
-			trigger_error('No players/nations stats found!', E_USER_ERROR);
-		}
-
-		// Calculate server uptime
-		$updays = floor($aseco->server->networkstats['Uptime'] / (24 * 3600));
-		$uptime = $aseco->server->networkstats['Uptime'] - ($updays * 24 * 3600);
-
-		// get more server settings in one go
-		$comment = $aseco->server->comment;
-		$planets = $aseco->server->amount_planets;
-
-		$header = 'Welcome to: ' . $aseco->server->name;
-		$stats = array();
-		$stats[] = array('Server Date', '{#black}' . date('M d, Y'));
-		$stats[] = array('Server Time', '{#black}' . date('H:i:s T'));
-		$stats[] = array('Zone', '{#black}'. implode(', ', $aseco->server->zone));
-		$field = 'Comment';
-
-		// break up long line into chunks with continuation strings
-		$multicmt = explode(LF, wordwrap($comment, 35, LF . '...'));
-		foreach ($multicmt as $line) {
-			$stats[] = array($field, '{#black}' . $line);
-			$field = '';
-		}
-
-		$stats[] = array('Uptime', '{#black}' . $updays . ' day' . ($updays == 1 ? ' ' : 's ') . $aseco->formatTime($uptime * 1000, false));
-		if ($aseco->server->isrelay) {
-			$stats[] = array('Relays', '{#black}'.
-				$aseco->server->relaymaster['Login'] .
-				' / '. $aseco->server->relaymaster['NickName']
-			);
-		}
-		else {
-			$stats[] = array('Map Count', '{#black}'. count($aseco->server->maps->map_list));
-		}
-		$stats[] = array('Game Mode', '{#black}' . str_replace('_', ' ', $aseco->server->gameinfo->getModeName()));
-		switch ($aseco->server->gameinfo->mode) {
-			case Gameinfo::ROUNDS:
-				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->rounds['PointsLimit'] .' points.');
-				break;
-
-			case Gameinfo::TIME_ATTACK:
-				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(($aseco->server->gameinfo->time_attack['TimeLimit'] * 1000), false) .' min.');
-				break;
-
-			case Gameinfo::TEAM:
-				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->team['PointsLimit'] .' points.');
-				break;
-
-			case Gameinfo::LAPS:
-				$stats[] = array('Time Limit', '{#black}'. $aseco->formatTime(($aseco->server->gameinfo->laps['TimeLimit'] * 1000), false) .' min.');
-				break;
-
-			case Gameinfo::CUP:
-				$stats[] = array('Points Limit', '{#black}'. $aseco->server->gameinfo->cup['PointsLimit'] .'$g   R/C: {#black}'. $aseco->server->gameinfo->cup['RoundsPerMap']);
-				break;
-		}
-		$stats[] = array('Max Players', '{#black}' . $aseco->server->options['CurrentMaxPlayers']);
-		$stats[] = array('Max Specs', '{#black}' . $aseco->server->options['CurrentMaxSpectators']);
-		if ( isset($aseco->plugins['PluginLocalRecords']) ) {
-			$stats[] = array('Recs/Map', '{#black}'. $aseco->plugins['PluginLocalRecords']->records->getMaxRecords());
-		}
-		if (isset($aseco->plugins['PluginRaspVotes']) && $aseco->plugins['PluginRaspVotes']->feature_votes) {
-			$stats[] = array('Voting info', '{#black}/helpvote');
-		}
-		else {
-			$stats[] = array('Vote Timeout', '{#black}' . $aseco->formatTime($aseco->server->options['CurrentCallVoteTimeOut'], false));
-			$stats[] = array('Vote Ratio', '{#black}' . round($aseco->server->options['CallVoteRatio'], 2));
-		}
-		if ($aseco->allowAbility($player, 'server_planets')) {
-			$stats[] = array('Planets', '{#black}' . $planets);
-		}
-		$stats[] = array('Ladder Limits', '{#black}' . $aseco->server->ladder_limit_min .
-		                  '$g - {#black}' . $aseco->server->ladder_limit_max);
-		if ($aseco->settings['admin_contact']) {
-			$stats[] = array('Admin Contact', '{#black}' . $aseco->settings['admin_contact']);
-		}
-		$stats[] = array();
-		$stats[] = array('Visited by $f80' . $players . ' $gPlayers from $f40' . $nations . ' $gNations');
-		$stats[] = array('who together played: {#black}' . $playdays . ' day' . ($playdays == 1 ? ' ' : 's ') . $aseco->formatTime($playtime * 1000, false) . ' $g!');
-
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons128x32_1', 'Settings', 0.01), $stats, array(1.0, 0.3, 0.7), 'OK');
+		$this->registerChatCommand('uaseco',		'chat_uaseco',		new Message('chat.server', 'slash_uaseco_description'),		Player::PLAYERS);
+		$this->registerChatCommand('contact',		'chat_contact',		new Message('chat.server', 'slash_contact_description'),	Player::PLAYERS);
+		$this->registerChatCommand('masteradmins',	'chat_masteradmins',	new Message('chat.server', 'slash_masteradmins_description'),	Player::PLAYERS);
+		$this->registerChatCommand('admins',		'chat_admins',		new Message('chat.server', 'slash_admins_description'),		Player::PLAYERS);
+		$this->registerChatCommand('operators',		'chat_operators',	new Message('chat.server', 'slash_operators_description'),	Player::PLAYERS);
+		$this->registerChatCommand('plugins',		'chat_plugins',		new Message('chat.server', 'slash_plugins_description'),	Player::PLAYERS);
+		$this->registerChatCommand('time',		'chat_time',		new Message('chat.server', 'slash_time_description'),		Player::PLAYERS);
+		$this->registerChatCommand('uptime',		'chat_uptime',		new Message('chat.server', 'slash_uptime_description'),		Player::PLAYERS);
 	}
 
 	/*
@@ -211,62 +72,167 @@ class PluginChatServer extends Plugin {
 
 	public function chat_uaseco ($aseco, $login, $chat_command, $chat_parameter) {
 
+		// Show chat message
+		$msg = new Message('chat.server', 'slash_uaseco_chat_message');
+		$msg->addPlaceholders(
+			UASECO_WEBSITE,
+			UASECO_NAME,
+			UASECO_VERSION,
+			UASECO_BUILD
+		);
+		$msg->sendChatMessage($login);
+
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_contact ($aseco, $login, $chat_command, $chat_parameter) {
+
+		// Show chat message
+		if (strtolower($aseco->settings['admin_contact']) != 'your@email.com') {
+			$msg = new Message('chat.server', 'slash_contact_chat_message');
+			$msg->addPlaceholders(
+				$aseco->settings['admin_contact']
+			);
+		}
+		else {
+			$msg = new Message('chat.server', 'slash_contact_chat_message_no_contact');
+		}
+		$msg->sendChatMessage($login);
+
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_masteradmins ($aseco, $login, $chat_command, $chat_parameter) {
+
 		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 			return;
 		}
 
-		$uptime = time() - $aseco->uptime;
-		$updays = floor($uptime / (24 * 3600));
-		$uptime = $uptime - ($updays * 24 * 3600);
+		// Create list of all MasterAdmins
+		$data = array();
+		foreach ($aseco->masteradmin_list['TMLOGIN'] as $lgn) {
+			// Skip any LAN logins
+			if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
+				$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+			}
+		}
 
-		// prepare Welcome message
-		$welcome = $aseco->formatText($aseco->getChatMessage('WELCOME'),
-			$aseco->stripColors($player->nickname),
-			$aseco->server->name,
-			UASECO_VERSION
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Hotseat',
+		);
+		$settings_columns = array(
+			'columns'		=> 4,
+			'widths'		=> array(100),
+			'textcolors'		=> array('FFFF'),
+		);
+		$settings_content = array(
+			'title'			=> (new Message('chat.server', 'slash_masteradmins_window_title'))->finish($login),
+			'data'			=> $data,
+			'mode'			=> 'columns',
 		);
 
-		$header = 'UASECO info: ' . $aseco->server->name;
-		$info = array();
-		$info[] = array('Version', '{#black}' . UASECO_VERSION);
-		$field = 'Welcome';
-		$welcome = preg_split('/{br}/', $aseco->formatColors($welcome));
-		foreach ($welcome as $line) {
-			$info[] = array($field, '{#black}' . $line);
-			$field = '';
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_admins ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
 		}
 
-		$info[] = array('Uptime', '{#black}' . $updays . ' day' . ($updays == 1 ? ' ' : 's ') . $aseco->formatTime($uptime * 1000, false));
-		$info[] = array('Website', '{#black}$l[' . UASECO_WEBSITE . ']' . UASECO_WEBSITE . '$l');
-		$info[] = array('Author', '{#black}undef');
-		$info[] = array('Credits', '{#black}Main author of XAseco(2): Xymph');
-		if (isset($aseco->masteradmin_list['TMLOGIN'])) {
-			// count non-LAN logins
-			$count = 0;
-			foreach ($aseco->masteradmin_list['TMLOGIN'] as $lgn) {
-				if ($lgn != '' && !$aseco->isLANLogin($lgn)) {
-					$count++;
-				}
+		// Create list of all Admins
+		$data = array();
+		foreach ($aseco->admin_list['TMLOGIN'] as $lgn) {
+			// Skip any LAN logins
+			if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
+				$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
 			}
-			if ($count > 0) {
-				$field = 'Masteradmin';
-				if ($count > 1)
-					$field .= 's';
-				foreach ($aseco->masteradmin_list['TMLOGIN'] as $lgn) {
-					// skip any LAN logins
-					if ($lgn != '' && !$aseco->isLANLogin($lgn)) {
-						$info[] = array($field, '{#black}'. $aseco->server->players->getPlayerNickname($lgn) .'$z');
-						$field = '';
-					}
-				}
-			}
-		}
-		if ($aseco->settings['admin_contact']) {
-			$info[] = array('Admin Contact', '{#black}' . $aseco->settings['admin_contact']);
 		}
 
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('BgRaceScore2', 'Warmup'), $info, array(1.0, 0.3, 0.7), 'OK');
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Hotseat',
+		);
+		$settings_columns = array(
+			'columns'		=> 4,
+			'widths'		=> array(100),
+			'textcolors'		=> array('FFFF'),
+		);
+		$settings_content = array(
+			'title'			=> (new Message('chat.server', 'slash_admins_window_title'))->finish($login),
+			'data'			=> $data,
+			'mode'			=> 'columns',
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_operators ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
+		// Create list of all Operator
+		$data = array();
+		foreach ($aseco->operator_list['TMLOGIN'] as $lgn) {
+			// Skip any LAN logins
+			if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
+				$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+			}
+		}
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Hotseat',
+		);
+		$settings_columns = array(
+			'columns'		=> 4,
+			'widths'		=> array(100),
+			'textcolors'		=> array('FFFF'),
+		);
+		$settings_content = array(
+			'title'			=> (new Message('chat.server', 'slash_operators_window_title'))->finish($login),
+			'data'			=> $data,
+			'mode'			=> 'columns',
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
 	}
 
 	/*
@@ -281,38 +247,48 @@ class PluginChatServer extends Plugin {
 			return;
 		}
 
-		$head = 'Currently active plugins:';
-		$list = array();
-		$list[] = array('Class', 'Version', 'Filename');
-		$lines = 0;
-		$player->msgs = array();
-		$player->msgs[0] = array(1, $head, array(1.3, 0.5, 0.2, 0.6), array('Icons128x128_1', 'Browse'));
-
 		// Create list of plugins
 		$plugins = $aseco->plugins;
 		ksort($plugins);
+
+		$data = array();
 		foreach ($plugins as $plugin) {
-			$list[] = array(
-				'{#black}'. $plugin->getClassname(),
-				'{#black}'. $plugin->getVersion(),
-				'{#black}'. $plugin->getFilename(),
+			$description = $plugin->getDescription();
+
+			$data[] = array(
+				'$N'. $plugin->getFilename(),
+				'$N'. ($description instanceof Message ? $description->finish($player->login) : $description),
+				'$N'. $plugin->getVersion() .' ('. $plugin->getBuild() .')',
 			);
-
-			if (++$lines > 14) {
-				$player->msgs[] = $list;
-				$lines = 0;
-				$list = array();
-				$list[] = array('Class', 'Version', 'Filename');
-			}
 		}
+		unset($plugins);
 
-		// add if last batch exists
-		if (!empty($list)) {
-			$player->msgs[] = $list;
-		}
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Browse',
+			'textcolors'		=> array('FF5F', 'FFFF'),
+		);
+		$settings_columns = array(
+			'columns'		=> 1,
+			'widths'		=> array(17.5, 72.5, 10),
+			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF', 'FFFF'),
+			'heading'		=> array(
+				(new Message('chat.server', 'slash_plugins_heading_filename'))->finish($login),
+				(new Message('chat.server', 'slash_plugins_heading_description'))->finish($login),
+				(new Message('chat.server', 'slash_plugins_heading_version_build'))->finish($login),
+			),
+		);
+		$settings_content = array(
+			'title'			=> (new Message('chat.server', 'slash_plugins_window_title'))->finish($login),
+			'data'			=> $data,
+			'mode'			=> 'columns',
+		);
 
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
 	}
 
 	/*
@@ -322,12 +298,31 @@ class PluginChatServer extends Plugin {
 	*/
 
 	public function chat_time ($aseco, $login, $chat_command, $chat_parameter) {
-		// show chat message
-		$message = $aseco->formatText($aseco->getChatMessage('TIME'),
+
+		// Show chat message
+		$msg = new Message('chat.server', 'slash_time_chat_message');
+		$msg->addPlaceholders(
 			date('H:i:s T'),
 			date('Y-m-d')
 		);
-		$aseco->sendChatMessage($message, $login);
+		$msg->sendChatMessage($login);
+	}
+
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_uptime ($aseco, $login, $chat_command, $chat_parameter) {
+
+		// Show chat message
+		$msg = new Message('chat.server', 'slash_uptime_chat_message');
+		$msg->addPlaceholders(
+			$aseco->timeString($aseco->server->networkstats['Uptime'])
+		);
+		$msg->sendChatMessage($login);
 	}
 }
 

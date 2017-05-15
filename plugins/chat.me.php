@@ -6,11 +6,6 @@
  * » Based upon chat.me.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-11-11
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +46,11 @@ class PluginChatMe extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-18');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.me', 'plugin_description'));
 
 		$this->registerChatCommand('me', 'chat_me', new Message('chat.me', 'plugin_description'), Player::PLAYERS);

@@ -25,7 +25,7 @@
 
 		<karma>
 			<!-- With this you adjust the min. amount of Votes for a Map to come into the TopMaps list, Maps below this limit are skipped from TopMaps list. -->
-			<min_votes>30</min_votes>
+			<min_votes>10</min_votes>
 
 			<!-- Here you can select the method how the Karma is calculated:
 				'tmkarma'	= calculate like TM-Karma.com it does (default)
@@ -68,7 +68,7 @@
 				Setup in UASECO.xml the <mapimages_path> to a path which are accessible over HTTP for anybody.
  				e.g. 'http://www.example.com/mapimages/'
 				//-->
-				<access_url>http://192.168.0.99/mapimages/</access_url>
+				<access_url></access_url>
 			</mapimages>
 		</maplist>
 
@@ -84,7 +84,7 @@
 	<!-- Display a progress indicator for functions that need a little bit of time to load -->
 	<show_progress_indicator>
 		<!-- If the amount of Maps is larger then this configured value, then display the progress indicator. Set to '0' to disable -->
-		<maplist>300</maplist>
+		<maplist>20</maplist>
 	</show_progress_indicator>
 
 
@@ -96,10 +96,10 @@
 			<background_default>55556655</background_default>
 			<background_focus>55556688</background_focus>
 
-			<background_style>Bgs1</background_style>
+			<background_style>Bgs1InRace</background_style>
 			<background_substyle>BgEmpty</background_substyle>
 
-			<border_style>Bgs1</border_style>
+			<border_style>Bgs1InRace</border_style>
 			<border_substyle>BgEmpty</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', or 'BgList' are useful) -->
 
 			<!-- If <title_background> is not empty then the style/substyle are ignored -->
@@ -209,14 +209,37 @@
 
 		<!-- Set to 'true' if you want to see the Lap indicator on the right of the screen on multilaps map -->
 		<multilap_info>false</multilap_info>
+
+		<!-- Current position in the map ranking displayed at the bottom right of the screen -->
+		<position>false</position>
+
+		<!-- Speed and distance raced displayed in the bottom right of the screen -->
+		<speed_and_distance>false</speed_and_distance>
+
+		<!-- Previous and best times displayed at the bottom right of the screen -->
+		<personal_best_and_rank>false</personal_best_and_rank>
+
+		<!-- Time of the players at the current checkpoint displayed at the bottom of the screen -->
+		<checkpoint_list>false</checkpoint_list>
+
+		<!-- Race time left displayed at the bottom right of the screen -->
+		<countdown>
+			<position>105.0,-66.5,5.0</position>	<!-- x,y,z -->
+		</countdown>
+
+		<!-- Current race chrono displayed at the bottom center of the screen -->
+		<chrono>
+			<position>95.5,-84.0,5.0</position>	<!-- x,y,z -->
+		</chrono>
 	</ui_properties>
+
 
 
 
 	<!-- The Map Widget where the current Map are displayed and the next and last Map are accessible -->
 	<map_widget>
 		<enabled>true</enabled>
-		<width>15.76</width>
+		<width>39.4</width>
 
 		<icons>
 			<last>
@@ -239,13 +262,13 @@
 		</titles>
 
 		<race>
-			<pos_x>48.64</pos_x>
-			<pos_y>43.3</pos_y>
+			<pos_x>121.6</pos_x>
+			<pos_y>81.1875</pos_y>
 			<scale>1.0</scale>
 		</race>
 		<score>
-			<pos_x>47.8</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 
 			<!-- Setup which Map you want to display at Score:
@@ -263,10 +286,10 @@
 		<enabled>true</enabled>
 
 		<title>Current Song</title>
-		<width>15.76</width>
+		<width>39.4</width>
 
-		<pos_x>-64.54</pos_x>
-		<pos_y>43.3</pos_y>
+		<pos_x>-161.35</pos_x>
+		<pos_y>81.1875</pos_y>
 		<scale>1.0</scale>
 
 		<icon_style>Icons128x128_1</icon_style>
@@ -277,7 +300,7 @@
 	<!-- Dedimania Records Widget -->
 	<dedimania_records>
 		<title>Dedimania Records</title>
-		<width>15.76</width>
+		<width>39.4</width>
 
 		<!-- Limit the max. records to display, setup to '0' to unlimited, see for details: http://www.tm-forum.com/viewtopic.php?p=210661#p210661 -->
 		<display_max_records>0</display_max_records>
@@ -288,8 +311,8 @@
 		<gamemode>
 			<rounds>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -297,8 +320,8 @@
 
 			<time_attack>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 				<entries>30</entries>
 				<topcount>3</topcount>
@@ -306,8 +329,8 @@
 
 			<team>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>61.6875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -315,8 +338,8 @@
 
 			<laps>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -324,8 +347,8 @@
 
 			<cup>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>61.6875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -333,8 +356,8 @@
 
 			<team_attack>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>32.9</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>61.6875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -346,8 +369,8 @@
 
 			<knockout>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 				<entries>30</entries>
 				<topcount>3</topcount>
@@ -355,8 +378,8 @@
 
 			<doppler>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 				<entries>30</entries>
 				<topcount>3</topcount>
@@ -367,7 +390,7 @@
 
 	<local_records>
 		<title>Local Records</title>
-		<width>15.76</width>
+		<width>39.4</width>
 
 		<icon_style>BgRaceScore2</icon_style>
 		<icon_substyle>LadderRank</icon_substyle>
@@ -375,8 +398,8 @@
 		<gamemode>
 			<rounds>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>4.2</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>7.875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -384,8 +407,8 @@
 
 			<time_attack>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.5</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.0625</pos_y>
 				<scale>1.0</scale>
 				<entries>16</entries>
 				<topcount>3</topcount>
@@ -393,8 +416,8 @@
 
 			<team>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>2.5</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>4.6875</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
@@ -402,8 +425,8 @@
 
 			<laps>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>4.2</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>7.875</pos_y>
 				<scale>1.0</scale>
 				<entries>15</entries>
 				<topcount>3</topcount>
@@ -411,8 +434,8 @@
 
 			<cup>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>2.5</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>4.6875</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
@@ -420,8 +443,8 @@
 
 			<team_attack>
 				<enabled>true</enabled>
-				<pos_x>-64.54</pos_x>
-				<pos_y>2.5</pos_y>
+				<pos_x>-161.35</pos_x>
+				<pos_y>4.6875</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
@@ -433,8 +456,8 @@
 
 			<knockout>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.5</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.0625</pos_y>
 				<scale>1.0</scale>
 				<entries>16</entries>
 				<topcount>3</topcount>
@@ -442,8 +465,8 @@
 
 			<doppler>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.5</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.0625</pos_y>
 				<scale>1.0</scale>
 				<entries>16</entries>
 				<topcount>3</topcount>
@@ -454,7 +477,7 @@
 
 	<live_rankings>
 		<title>Live Rankings</title>
-		<width>15.76</width>
+		<width>39.4</width>
 
 		<icon_style>BgRaceScore2</icon_style>
 		<icon_substyle>LadderRank</icon_substyle>
@@ -464,8 +487,8 @@
 				<enabled>true</enabled>
 				<display_type>scores</display_type>		<!-- Display 'score' or 'time' in the LiveRankings? -->
 				<format>{score} ({remaining})</format>		<!-- Placeholder '{score}', '{remaining}' and '{pointlimit}' are replaced with e.g. "25 (74)" -->
-				<pos_x>48.64</pos_x>
-				<pos_y>-5.1</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-9.5625</pos_y>
 				<scale>1.0</scale>
 				<entries>11</entries>
 				<topcount>3</topcount>
@@ -473,8 +496,8 @@
 
 			<time_attack>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>-8.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-16.3125</pos_y>
 				<scale>1.0</scale>
 				<entries>9</entries>
 				<topcount>3</topcount>
@@ -482,8 +505,8 @@
 
 			<team>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>-21.3</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-39.9375</pos_y>
 				<scale>1.0</scale>
 				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
 				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
@@ -492,8 +515,8 @@
 			<laps>
 				<enabled>true</enabled>
 				<display_type>checkpoints</display_type>	<!-- Display 'checkpoints' or 'time' in the LiveRankings? -->
-				<pos_x>48.64</pos_x>
-				<pos_y>-5.06</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-9.487499999999999</pos_y>
 				<scale>1.0</scale>
 				<entries>11</entries>
 				<topcount>3</topcount>
@@ -501,8 +524,8 @@
 
 			<cup>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>-5.1</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-9.5625</pos_y>
 				<scale>1.0</scale>
 				<entries>11</entries>
 				<topcount>3</topcount>
@@ -510,8 +533,8 @@
 
 			<team_attack>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>28.3</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>53.0625</pos_y>
 				<scale>1.0</scale>
 				<entries>2</entries>				<!-- max. 2 entries, because there only two Teams -->
 				<topcount>2</topcount>				<!-- max. 2 topcounts, because there only two Teams -->
@@ -523,8 +546,8 @@
 
 			<knockout>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>-8.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-16.3125</pos_y>
 				<scale>1.0</scale>
 				<entries>9</entries>
 				<topcount>3</topcount>
@@ -532,8 +555,8 @@
 
 			<doppler>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>-8.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>-16.3125</pos_y>
 				<scale>1.0</scale>
 				<entries>9</entries>
 				<topcount>3</topcount>
@@ -545,7 +568,7 @@
 	<!-- This disables the default Round-Score at the right side and display an own one -->
 	<round_score>
 		<title>Round Score</title>
-		<width>15.76</width>
+		<width>39.4</width>
 
 		<race>
 			<icon_style>Icons64x64_1</icon_style>
@@ -559,8 +582,8 @@
 		<gamemode>
 			<rounds>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.4375</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
@@ -572,8 +595,8 @@
 
 			<team>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.4375</pos_y>
 				<scale>1.0</scale>
 				<entries>23</entries>
 				<topcount>3</topcount>
@@ -581,8 +604,8 @@
 
 			<laps>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.64</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.325</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
@@ -590,8 +613,8 @@
 
 			<cup>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.4375</pos_y>
 				<scale>1.0</scale>
 				<entries>14</entries>
 				<topcount>3</topcount>
@@ -599,8 +622,8 @@
 
 			<team_attack>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>21.3</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>39.9375</pos_y>
 				<scale>1.0</scale>
 				<entries>23</entries>
 				<topcount>3</topcount>
@@ -608,8 +631,8 @@
 
 			<chase>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>23.7</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>44.4375</pos_y>
 				<scale>1.0</scale>
 				<entries>27</entries>
 				<topcount>3</topcount>
@@ -632,8 +655,8 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>39.5</pos_x>
-		<pos_y>-30.0</pos_y>
+		<pos_x>98.75</pos_x>
+		<pos_y>-56.25</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -649,8 +672,8 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>34.7</pos_x>
-		<pos_y>-30.0</pos_y>
+		<pos_x>86.75</pos_x>
+		<pos_y>-56.25</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -666,8 +689,8 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>29.9</pos_x>
-		<pos_y>-30.0</pos_y>
+		<pos_x>74.75</pos_x>
+		<pos_y>-56.25</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
@@ -708,8 +731,8 @@
 
 		<widget>
 			<title>Finish Winners</title>
-			<pos_x>9.5</pos_x>
-			<pos_y>-38.3</pos_y>
+			<pos_x>49</pos_x>
+			<pos_y>-65.8</pos_y>
 			<scale>1.0</scale>
 
 			<!-- If <background_color> is not empty then the style/substyle are ignored -->
@@ -750,8 +773,8 @@
 		<public_appreciation_threshold>50</public_appreciation_threshold>
 
 		<widget>
-			<pos_x>-47.74</pos_x>
-			<pos_y>26.5</pos_y>
+			<pos_x>-119.35</pos_x>
+			<pos_y>49.6875</pos_y>
 			<scale>1.0</scale>
 
 			<background_color>222233BB</background_color>
@@ -772,12 +795,12 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>24.58</pos_x>
-		<pos_y>43.2</pos_y>
+		<pos_x>61.449</pos_x>
+		<pos_y>81</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
-		<background_focus>004B7D99</background_focus>
+		<background_focus>0099FFFF</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -789,12 +812,12 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>29.38</pos_x>
-		<pos_y>43.2</pos_y>
+		<pos_x>73.45</pos_x>
+		<pos_y>81.0</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
-		<background_focus>004B7D99</background_focus>
+		<background_focus>0099FFFF</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -806,12 +829,12 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>34.18</pos_x>
-		<pos_y>43.2</pos_y>
+		<pos_x>85.45</pos_x>
+		<pos_y>81.0</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
-		<background_focus>004B7D99</background_focus>
+		<background_focus>0099FFFF</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -823,12 +846,12 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>38.98</pos_x>
-		<pos_y>43.2</pos_y>
+		<pos_x>97.449</pos_x>
+		<pos_y>81.0</pos_y>
 		<scale>1.0</scale>
 
 		<background_default>55556699</background_default>
-		<background_focus>004B7D99</background_focus>
+		<background_focus>0099FFFF</background_focus>
 
 		<background_style>BgsPlayerCard</background_style>
 		<background_substyle>ProgressBar</background_substyle>
@@ -841,21 +864,21 @@
 
 		<race>
 			<enabled>false</enabled>
-			<pos_x>43.78</pos_x>
-			<pos_y>36.38</pos_y>
+			<pos_x>109.45</pos_x>
+			<pos_y>68.2125</pos_y>
 			<scale>1.0</scale>
 			<background_default>55556699</background_default>
-			<background_focus>004B7D99</background_focus>
+			<background_focus>0099FFFF</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</race>
 		<score>
 			<enabled>true</enabled>
-			<pos_x>43</pos_x>
-			<pos_y>33.2</pos_y>
+			<pos_x>107.5</pos_x>
+			<pos_y>62.25</pos_y>
 			<scale>1.0</scale>
 			<background_default>222233BB</background_default>
-			<background_focus>004B7D99</background_focus>
+			<background_focus>0099FFFF</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</score>
@@ -868,20 +891,20 @@
 		<text_color>FFCC00FF</text_color>
 
 		<race>
-			<pos_x>43.78</pos_x>
-			<pos_y>43.2</pos_y>
+			<pos_x>109.45</pos_x>
+			<pos_y>81</pos_y>
 			<scale>1.0</scale>
 			<background_default>55556699</background_default>
-			<background_focus>004B7D99</background_focus>
+			<background_focus>0099FFFF</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</race>
 		<score>
-			<pos_x>-47.74</pos_x>
-			<pos_y>33.2</pos_y>
+			<pos_x>-119.35</pos_x>
+			<pos_y>62.25</pos_y>
 			<scale>1.0</scale>
 			<background_default>222233BB</background_default>
-			<background_focus>004B7D99</background_focus>
+			<background_focus>0099FFFF</background_focus>
 			<background_style>BgsPlayerCard</background_style>
 			<background_substyle>ProgressBar</background_substyle>
 		</score>
@@ -893,8 +916,8 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>-63.7</pos_x>
-		<pos_y>33.2</pos_y>
+		<pos_x>-159.25</pos_x>
+		<pos_y>62.25</pos_y>
 		<scale>1.0</scale>
 
 		<background_color>222233BB</background_color>
@@ -908,8 +931,8 @@
 		<enabled>true</enabled>
 		<text_color>FFCC00FF</text_color>
 
-		<pos_x>-52.5</pos_x>
-		<pos_y>33.2</pos_y>
+		<pos_x>-131.25</pos_x>
+		<pos_y>62.25</pos_y>
 		<scale>1.0</scale>
 
 		<background_color>222233BB</background_color>
@@ -923,8 +946,8 @@
 		<top_average_times>
 			<enabled>true</enabled>
 			<title>Average Last Round</title>
-			<pos_x>-63.7</pos_x>
-			<pos_y>26.5</pos_y>
+			<pos_x>-159.25</pos_x>
+			<pos_y>49.6875</pos_y>
 			<scale>1.0</scale>
 			<entries>8</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -934,8 +957,8 @@
 		<dedimania_records>
 			<enabled>true</enabled>
 			<title>Dedimania Records</title>
-			<pos_x>-63.7</pos_x>
-			<pos_y>-9.25</pos_y>
+			<pos_x>-159.25</pos_x>
+			<pos_y>-17.34375</pos_y>
 			<scale>1.0</scale>
 			<entries>8</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -945,8 +968,8 @@
 		<local_records>
 			<enabled>true</enabled>
 			<title>Local Records</title>
-			<pos_x>-63.7</pos_x>
-			<pos_y>8.6</pos_y>
+			<pos_x>-159.25</pos_x>
+			<pos_y>16.125</pos_y>
 			<scale>1.0</scale>
 			<entries>8</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -956,8 +979,8 @@
 		<top_rankings>
 			<enabled>true</enabled>
 			<title>Top Ranks</title>
-			<pos_x>-63.7</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>-159.25</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -967,8 +990,8 @@
 		<top_winners>
 			<enabled>true</enabled>
 			<title>Top Winners</title>
-			<pos_x>-47.78</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>-119.45</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons128x32_1</icon_style>
@@ -978,8 +1001,8 @@
 		<most_records>
 			<enabled>true</enabled>
 			<title>Most Records</title>
-			<pos_x>-31.86</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>-79.65</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons64x64_1</icon_style>
@@ -989,8 +1012,8 @@
 		<most_finished>
 			<enabled>true</enabled>
 			<title>Most Finished</title>
-			<pos_x>-15.94</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>-39.85</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons128x128_1</icon_style>
@@ -1000,8 +1023,8 @@
 		<top_playtime>
 			<enabled>true</enabled>
 			<title>Hours Played</title>
-			<pos_x>-0.02</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>-0.05</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons128x32_1</icon_style>
@@ -1011,8 +1034,8 @@
 		<top_donators>
 			<enabled>true</enabled>
 			<title>Top Donators</title>
-			<pos_x>15.9</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>39.75</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons128x128_1</icon_style>
@@ -1022,8 +1045,8 @@
 		<top_nations>
 			<enabled>true</enabled>
 			<title>Top Nations</title>
-			<pos_x>31.82</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>79.55</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons64x64_1</icon_style>
@@ -1033,8 +1056,8 @@
 		<top_continents>
 			<enabled>false</enabled>
 			<title>Top Continents</title>
-			<pos_x>31.82</pos_x>
-			<pos_y>47.5</pos_y>
+			<pos_x>79.55</pos_x>
+			<pos_y>89.0625</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons64x64_1</icon_style>
@@ -1044,8 +1067,8 @@
 		<top_maps>
 			<enabled>true</enabled>
 			<title>Top Maps</title>
-			<pos_x>47.8</pos_x>
-			<pos_y>22.3</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>41.8125</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons128x128_1</icon_style>
@@ -1055,8 +1078,8 @@
 		<top_voters>
 			<enabled>true</enabled>
 			<title>Top Voters</title>
-			<pos_x>47.8</pos_x>
-			<pos_y>8</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>15.0</pos_y>
 			<scale>1.0</scale>
 			<entries>6</entries>
 			<icon_style>Icons128x128_1</icon_style>
@@ -1066,8 +1089,8 @@
 		<top_visitors>
 			<enabled>false</enabled>
 			<title>Top Visitors</title>
-			<pos_x>47.8</pos_x>
-			<pos_y>-6.28</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>-11.775</pos_y>
 			<scale>1.0</scale>
 			<entries>7</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -1077,8 +1100,8 @@
 		<top_active_players>
 			<enabled>true</enabled>
 			<title>Top Active Players</title>
-			<pos_x>47.8</pos_x>
-			<pos_y>-6.28</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>-11.775</pos_y>
 			<scale>1.0</scale>
 			<entries>7</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -1088,8 +1111,8 @@
 		<top_winning_payouts>
 			<enabled>false</enabled>
 			<title>Top Finish Winners</title>
-			<pos_x>47.8</pos_x>
-			<pos_y>-6.28</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>-11.775</pos_y>
 			<scale>1.0</scale>
 			<entries>7</entries>
 			<icon_style>Icons128x128_1</icon_style>
@@ -1100,8 +1123,8 @@
 			<enabled>false</enabled>
 			<title>Top Betwins</title>
 			<display>average</display>			<!-- Want to see the 'average' of betwins, or the 'planets' the Players won? -->
-			<pos_x>47.8</pos_x>
-			<pos_y>-6.28</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>-11.775</pos_y>
 			<scale>1.0</scale>
 			<entries>7</entries>
 			<icon_style>Icons128x128_1</icon_style>
@@ -1112,8 +1135,8 @@
 		<top_roundscore>
 			<enabled>false</enabled>
 			<title>Top Roundscore</title>
-			<pos_x>47.8</pos_x>
-			<pos_y>-6.28</pos_y>
+			<pos_x>119.5</pos_x>
+			<pos_y>-11.775</pos_y>
 			<scale>1.0</scale>
 			<entries>7</entries>
 			<icon_style>BgRaceScore2</icon_style>
@@ -1132,6 +1155,7 @@
 	//-->
 	<placement_widget>
 		<enabled>true</enabled>
+		<!-- 	PLEASE NOTE: You have to setup positions and sizes in Manialink/V3 manner (V1 to V3: X * 2.5 and Y * 1.875) -->
 
 		<!--	Placeholder for <placement>'s
 			PLEASE NOTE: If a Map are not at MX, the <placement> with %MAP_MX_*% inside are not displayed!
@@ -1155,7 +1179,7 @@
 			<display>[rounds|time_attack|team|laps|cup|team_attack|chase|knockout|doppler|race|score|always]</display>
 			<pos_x>[signed/unsigned float]</pos_x>
 			<pos_y>[signed/unsigned float]</pos_y>
-			<layer>[signed/unsigned float]</layer>				from "-3" till "20"
+			<layer>[signed/unsigned float]</layer>				from "-3.0" till "20.0"
 			<width>[unsigned float]</width>
 			<height>[unsigned float]</height>
 			<background_color>[empty|RGBA]</background_color>
@@ -1186,12 +1210,12 @@
 		<placement>
 			<enabled>false</enabled>
 			<description>Dark Background at Score behind the Widgets</description>
-			<display>score</display>
-			<pos_x>-64</pos_x>
-			<pos_y>48</pos_y>
+			<display>race</display>
+			<pos_x>-160</pos_x>
+			<pos_y>90</pos_y>
 			<layer>-3</layer>
-			<width>128</width>
-			<height>96</height>
+			<width>320</width>
+			<height>180</height>
 			<image>http://www.abload.de/img/background-scoretablew1byd.png</image>
 		</placement>
 
@@ -1201,8 +1225,8 @@
 			<display>race</display>
 			<pos_x>0.0</pos_x>
 			<pos_y>0.0</pos_y>
-			<width>16</width>
-			<height>16</height>
+			<width>40</width>
+			<height>30</height>
 			<background_style>Bgs1InRace</background_style>
 			<background_substyle>NavButton</background_substyle>
 			<image>file://Skins/Avatars/Flags/GER.dds</image>
@@ -1216,8 +1240,8 @@
 			<display>race</display>
 			<pos_x>0.0</pos_x>
 			<pos_y>0.0</pos_y>
-			<width>16</width>
-			<height>16</height>
+			<width>40</width>
+			<height>30</height>
 			<background_style>Bgs1InRace</background_style>
 			<background_substyle>NavButton</background_substyle>
 			<image>file://Skins/Avatars/Flags/GER.dds</image>
@@ -1318,16 +1342,5 @@
 				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-night-focus.png</night>
 			</focus>
 		</mood>
-
-		<continents>
-			<africa>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-africa.png</africa>
-			<asia>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-asia.png</asia>
-			<europe>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-europe.png</europe>
-			<middle_east>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-middle-east.png</middle_east>
-			<north_america>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-north-america.png</north_america>
-			<south_america>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-south-america.png</south_america>
-			<oceania>http://maniacdn.net/undef.de/uaseco/records-eyepiece/continents-oceania.png</oceania>
-		</continents>
 	</images>
-
 </settings>

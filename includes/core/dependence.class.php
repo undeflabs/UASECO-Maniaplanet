@@ -6,10 +6,6 @@
  * » Based upon dependence.class.php from ASECO/2.2.0c
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2014-07-20
- * Copyright:	2014 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +34,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Dependence {
+class Dependence extends BaseClass {
 	public $classname;
 	public $permissions;
 	public $min_version;
@@ -55,6 +51,13 @@ class Dependence {
 	*/
 
 	public function __construct ($classname, $permissions = self::REQUIRED, $min_version = null, $max_version = null) {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Structure for dependencies of Plugins.');
+
 		$this->classname	= $classname;
 		$this->permissions	= $permissions;
 		$this->min_version	= $min_version;

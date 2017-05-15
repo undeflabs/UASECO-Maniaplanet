@@ -5,10 +5,6 @@
  * » Manages Player Ranking from the dedicated server.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +34,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class RankingList {
+class RankingList extends BaseClass {
 	public $ranking_list;
 
 	private $debug		= false;
@@ -51,8 +47,14 @@ class RankingList {
 	*/
 
 	public function __construct ($debug) {
-		$this->debug = $debug;
 
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Manages Player Ranking from the dedicated server.');
+
+		$this->debug = $debug;
 		$this->ranking_list = array();
 	}
 
@@ -68,16 +70,20 @@ class RankingList {
 		if ($player->id > 0) {
 			// Preset
 			$entry = new Ranking();
-			$entry->rank		= 0;
-			$entry->pid		= $player->pid;
-			$entry->login		= $player->login;
-			$entry->nickname	= $player->nickname;
-			$entry->time		= 0;
-			$entry->score		= 0;
-			$entry->cps		= array();
-			$entry->team		= $player->teamid;
-			$entry->spectator	= $player->is_spectator;
-			$entry->away		= false;
+			$entry->rank				= 0;
+			$entry->pid				= $player->pid;
+			$entry->login				= $player->login;
+			$entry->nickname			= $player->nickname;
+			$entry->round_points			= 0;
+			$entry->map_points			= 0;
+			$entry->match_points			= 0;
+			$entry->best_race_time			= 0;
+			$entry->best_race_respawns		= 0;
+			$entry->best_race_checkpoints		= array();
+			$entry->best_lap_time			= 0;
+			$entry->best_lap_respawns		= 0;
+			$entry->best_lap_checkpoints		= array();
+			$entry->stunts_score			= 0;
 
 			// Insert
 			$this->ranking_list[$player->login] = $entry;
@@ -98,41 +104,33 @@ class RankingList {
 	public function update ($item) {
 		global $aseco;
 
-		if ($entry = $aseco->server->rankings->getRankByLogin($item['login'])) {
-			// Update full player entry
-			$entry->rank				= $item['rank'];
-			$entry->login				= $item['login'];
-			$entry->nickname			= $item['nickname'];
-			$entry->time				= $item['time'];
-			$entry->score				= $item['score'];
-			$entry->cps				= $item['cps'];
-			$entry->team				= $item['team'];
-			$entry->spectator			= $item['spectator'];
-			$entry->away				= $item['away'];
-			$this->ranking_list[$entry->login]	= $entry;
-		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-			// Update team entry
-			$entry = new Ranking();
-			$entry->rank				= $item['rank'];
-			$entry->login				= $item['login'];
-			$entry->nickname			= $item['nickname'];
-			$entry->time				= $item['time'];
-			$entry->score				= $item['score'];
-			$entry->cps				= $item['cps'];
-			$entry->team				= $item['team'];
-			$entry->spectator			= $item['spectator'];
-			$entry->away				= $item['away'];
-			$this->ranking_list[$entry->login]	= $entry;
-		}
+		// Create a ranking entry
+		$entry = new Ranking();
+		$entry->rank				= $item['rank'];
+		$entry->login				= $item['login'];
+		$entry->nickname			= $item['nickname'];
+		$entry->round_points			= $item['round_points'];
+		$entry->map_points			= $item['map_points'];
+		$entry->match_points			= $item['match_points'];
+		$entry->best_race_time			= $item['best_race_time'];
+		$entry->best_race_respawns		= $item['best_race_respawns'];
+		$entry->best_race_checkpoints		= $item['best_race_checkpoints'];
+		$entry->best_lap_time			= $item['best_lap_time'];
+		$entry->best_lap_respawns		= $item['best_lap_respawns'];
+		$entry->best_lap_checkpoints		= $item['best_lap_checkpoints'];
+		$entry->stunts_score			= $item['stunts_score'];
+
+		// Update full entry
+		$this->ranking_list[$entry->login]	= $entry;
+
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 			$scores = array();
 			$times = array();
 			$pids = array();
-			foreach ($this->ranking_list as $key => &$row) {
-				$scores[$key] = $row->score;
-				$times[$key] = $row->time;
+			foreach ($this->ranking_list as $key => $row) {
+				$scores[$key] = $row->map_points;
+				$times[$key] = $row->best_race_time;
 				$pids[$key] = $row->pid;
 			}
 			unset($key, $row);
@@ -148,32 +146,32 @@ class RankingList {
 
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			$cps = array();
+			$best_lap_checkpoints = array();
 			$scores = array();
 			$pids = array();
-			foreach ($this->ranking_list as $key => &$row) {
-				$cps[$key]	= count($row->cps);
-				$scores[$key]	= $row->score;
-				$pids[$key]	= $row->pid;
+			foreach ($this->ranking_list as $key => $row) {
+				$best_lap_checkpoints[$key]	= count($row->best_lap_checkpoints);
+				$scores[$key]			= $row->map_points;
+				$pids[$key]			= $row->pid;
 			}
 			unset($key, $row);
 
 			// Sort order: AMOUNT_CHECKPOINTS, SCORE and PID
 			array_multisort(
-				$cps, SORT_NUMERIC, SORT_DESC,
+				$best_lap_checkpoints, SORT_NUMERIC, SORT_DESC,
 				$scores, SORT_NUMERIC, SORT_ASC,
 				$pids, SORT_NUMERIC, SORT_ASC,
 				$this->ranking_list
 			);
-			unset($cps, $scores, $pids);
+			unset($best_lap_checkpoints, $scores, $pids);
 		}
 		else {
 			$times = array();
-			foreach ($this->ranking_list as $key => &$row) {
-				if ($row->time <= 0) {
-					$row->time = PHP_INT_MAX;
+			foreach ($this->ranking_list as $key => $row) {
+				if ($row->best_race_time <= 0) {
+					$row->best_race_time = PHP_INT_MAX;
 				}
-				$times[$key] = $row->time;
+				$times[$key] = $row->best_race_time;
 			}
 			unset($key, $row);
 
@@ -186,10 +184,10 @@ class RankingList {
 		}
 
 		$i = 1;
-		foreach ($this->ranking_list as $login => &$data) {
+		foreach ($this->ranking_list as $login => $data) {
 			// Replace PHP_INT_MAX "times" to back "0"
-			if ($data->time == PHP_INT_MAX) {
-				$data->time = 0;
+			if ($data->best_race_time == PHP_INT_MAX) {
+				$data->best_race_time = 0;
 			}
 
 			// Give each Player a Rank

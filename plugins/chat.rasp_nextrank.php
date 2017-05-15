@@ -6,11 +6,6 @@
  * » Based upon plugin.rasp_nextrank.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Co-Authors:	askuri
- * Date:	2015-12-30
- * Copyright:	2014 - 2015 by undef.de, askuri
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.rasp.php
- *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -52,8 +43,11 @@ class PluginChatRaspNextrank extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setCoAuthors('askuri');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.rasp_nextrank', 'plugin_description'));
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -143,12 +137,12 @@ class PluginChatRaspNextrank extends Plugin {
 
 					// show chat message
 					$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['NEXTRANK'][0],
-						$aseco->stripColors($row3['Nickname']),
+						$aseco->stripStyles($row3['Nickname']),
 						$rank
 					);
 
 					$msg = new Message('plugin.rasp', 'nextrank');
-					$msg->addPlaceholders($aseco->stripColors($row3['Nickname']), $rank);
+					$msg->addPlaceholders($aseco->stripStyles($row3['Nickname']), $rank);
 					$message = $msg->finish($player->login);
 
 					// show difference in record positions too?
@@ -165,7 +159,7 @@ class PluginChatRaspNextrank extends Plugin {
 				}
 				else {
 					$msg = new Message('plugin.rasp', 'toprank');
-					$msg->addPlaceholders($aseco->stripColors($row3['Nickname']), $rank);
+					$msg->addPlaceholders($aseco->stripStyles($row3['Nickname']), $rank);
 					$msg->sendChatMessage($player->login);
 				}
 				$res2->free_result();

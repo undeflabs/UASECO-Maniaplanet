@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
 
 	<!-- Here you can setup the Name who send the greeting, supported are all from config.xml <colors> and colorcodes like $FF0 -->

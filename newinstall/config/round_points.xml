@@ -2,7 +2,7 @@
 <settings>
 
 	<!-- Setup own round points system, see list below at <id> -->
-	<default_system>motogp</default_system>
+	<default_system>highscore</default_system>
 
 	<!--
 	Define points systems, any Players finishing beyond the last points entry get

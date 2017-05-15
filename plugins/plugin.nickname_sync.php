@@ -5,14 +5,6 @@
  * » Keeps the Player Nicknames from the database in sync with the dedimania records.
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Original Author:	.anDy
- * Version:		1.2.1
- * Date:		2015-06-26
- * Copyright:		2011 - 2015 by .anDy and undef.de
- * System:		UASECO/0.9.5+
- * Game:		ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.local_records.php
- *  - plugins/plugin.dedimania.php
  *
  */
 
@@ -54,8 +42,11 @@ class PluginNicknameSync extends Plugin {
 
 	public function __construct () {
 
+		$this->setAuthor('undef.de');
+		$this->setCoAuthors('.anDy');
 		$this->setVersion('1.2.1');
-		$this->setAuthor('undef.de, .anDy');
+		$this->setBuild('2017-05-04');
+		$this->setCopyright('2011 - 2017 by undef.de');
 		$this->setDescription('Keeps the Player Nicknames from the database in sync with the dedimania records.');
 
 		$this->addDependence('PluginLocalRecords',		Dependence::REQUIRED,	'1.0.0', null);
@@ -74,8 +65,8 @@ class PluginNicknameSync extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[NicknameSync] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}

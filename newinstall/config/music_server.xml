@@ -31,7 +31,7 @@
 	<!-- http server must allow direct download of those files  -->
 	<!-- OR a path below the server's "GameData" directory (e.g.  -->
 	<!-- "Music/") which allows serving songs without webserver -->
-	<music_server>http://maniacdn.net/undef.de/shared/music/</music_server>
+	<music_server>YOUR_SERVER_URL</music_server>
 
 	<!--
 	For song files which are stored remotely you can setup how many bytes will be transfered to parse for OGG tags,
@@ -44,51 +44,10 @@
 	<!-- avoid spaces and special characters in the filenames and  -->
 	<!-- http link, and observe correct upper/lowercase characters -->
 	<song_files>
-		<song>Trackmania2-Canyon1.ogg</song>
-		<song>Trackmania2-Canyon1b.ogg</song>
-		<song>Trackmania2-Canyon2.ogg</song>
-		<song>Trackmania2-Canyon2b.ogg</song>
-		<song>Trackmania2-Canyon3.ogg</song>
-		<song>Trackmania2-Canyon3b.ogg</song>
-		<song>Trackmania2-Canyon4.ogg</song>
-		<song>Trackmania2-Canyon4b.ogg</song>
-		<song>Trackmania2-MenuMusic.ogg</song>
-		<song>Trackmania-Forever-Menu.ogg</song>
-		<song>Trackmania-Nations-ESWC-Menu.ogg</song>
-		<song>Trackmania-Nations-ESWC-Pulp.ogg</song>
-		<song>Trackmania-Nations-ESWC-Start-Off.ogg</song>
-		<song>Trackmania-Nations-ESWC-Tictac.ogg</song>
-		<song>Trackmania-United-Bay.ogg</song>
-		<song>Trackmania-United-Coast.ogg</song>
-		<song>Trackmania-United-Desert.ogg</song>
-		<song>Trackmania-United-Island.ogg</song>
-		<song>Trackmania-United-Rally.ogg</song>
-		<song>Trackmania-United-Snow.ogg</song>
-		<song>Trackmania-United-Stadium-Pulp-remix.ogg</song>
-		<song>Trackmania-United-Stadium-Start-Off-remix.ogg</song>
-		<song>Trackmania-United-Stadium-Tictac-remix.ogg</song>
-		<song>ManiaPlanet-Main.ogg</song>
-		<song>MenuMusic-SMStorm.ogg</song>
-		<song>MenuMusic-TMCanyon.ogg</song>
-		<song>MenuMusic-TMStadium.ogg</song>
-		<song>MenuMusic-TMValley.ogg</song>
-		<song>ShootmaniaStorm-DAY_01_Track_03.ogg</song>
-		<song>ShootmaniaStorm-DAY_02_Track_04.ogg</song>
-		<song>ShootmaniaStorm-DAY_03_Track_05.ogg</song>
-		<song>ShootmaniaStorm-NIGHT_01_Track_06.ogg</song>
-		<song>ShootmaniaStorm-NIGHT_02_Track_07.ogg</song>
-		<song>TMStadiumSountrack-AirTime.ogg</song>
-		<song>TMStadiumSountrack-Dashboard.ogg</song>
-		<song>TMStadiumSountrack-Hydroplane.ogg</song>
-		<song>TMStadiumSountrack-Tachmania.ogg</song>
-		<song>TMStadiumSountrack-TailLights.ogg</song>
-		<song>TMValley-1.SunriseForecast.ogg</song>
-		<song>TMValley-2.SunriseDayOrange.ogg</song>
-		<song>TMValley-3.DayVastVeridian.ogg</song>
-		<song>TMValley-4.Sunset-PerforatedLandscape.ogg</song>
-		<song>TMValley-5.Sunset-Setting.ogg</song>
-		<song>TMValley-6.NightExtraCologne.ogg</song>
-		<song>TMValley-7.NightRitual.ogg</song>
+		<song>YOUR_FIRST_SONG.ogg</song>
+		<song>YOUR_SECOND_SONG.mux</song>
+		<song>YOUR_THIRD_SONG.ogg</song>
+		<!-- and so on -->
 	</song_files>
 
 	<messages>

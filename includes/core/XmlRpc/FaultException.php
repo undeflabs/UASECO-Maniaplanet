@@ -24,6 +24,7 @@ class FaultException extends Exception
 			case 'No map currently loaded.':
 			case 'No replay to save':
 			case 'Internal error.':
+			case 'Flow control not enabled.':
 				return new UnavailableFeatureException($faultString, $faultCode);
 			case 'You must enable the callbacks to be able to do chat routing.':
 			case 'Chat routing not enabled.':
@@ -31,6 +32,7 @@ class FaultException extends Exception
 			case 'Already waiting for a vote.':
 			case 'You must stop server first.':
 				return new LockedFeatureException($faultString, $faultCode);
+			case 'Can\'t kick server.':
 			case 'Login or Uid unknown.':
 			case 'Login unknown.':
 			case 'Payer login unknown.':

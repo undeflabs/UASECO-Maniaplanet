@@ -6,10 +6,6 @@
  * » Based upon basic.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-09-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +22,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -39,7 +32,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class PlayerList {
+class PlayerList extends BaseClass {
 	public $player_list;
 
 	private $debug		= false;
@@ -53,6 +46,12 @@ class PlayerList {
 
 	public function __construct ($debug) {
 		$this->debug = $debug;
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-30');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
 		$this->player_list = array();
 	}
@@ -314,7 +313,7 @@ class PlayerList {
 					$target->nickname	= $row->Nickname;
 					$target->nation		= $row->Nation;
 					$target->wins		= $row->Wins;
-					$target->timeplayed	= $row->TimePlayed;
+					$target->time_played	= $row->TimePlayed;
 				}
 				$res->free_result();
 			}
@@ -371,8 +370,8 @@ class PlayerList {
 				if ($player->donations < $dbplayer->Donations) {
 					$player->donations = $dbplayer->Donations;
 				}
-				if ($player->timeplayed < $dbplayer->TimePlayed) {
-					$player->timeplayed = $dbplayer->TimePlayed;
+				if ($player->time_played < $dbplayer->TimePlayed) {
+					$player->time_played = $dbplayer->TimePlayed;
 				}
 
 				// Update Player data
@@ -380,7 +379,7 @@ class PlayerList {
 				UPDATE `%prefix%players` SET
 					`Nickname` = ". $aseco->db->quote($player->nickname) .",
 					`Zone` = ". $aseco->db->quote(implode('|', $player->zone)) .",
-					`Continent` = ". $aseco->db->quote($aseco->continent->continentToAbbr($player->continent)) .",
+					`Continent` = ". $aseco->db->quote($aseco->continent->continentToAbbreviation($player->continent)) .",
 					`Nation` = ". $aseco->db->quote($player->nation) .",
 					`LastVisit` = NOW()
 				WHERE `Login`= ". $aseco->db->quote($player->login) .";
@@ -414,7 +413,7 @@ class PlayerList {
 					". $aseco->db->quote($player->login) .",
 					". $aseco->db->quote($player->nickname) .",
 					". $aseco->db->quote(implode('|', $player->zone)) .",
-					". $aseco->db->quote($aseco->continent->continentToAbbr($player->continent)) .",
+					". $aseco->db->quote($aseco->continent->continentToAbbreviation($player->continent)) .",
 					". $aseco->db->quote($player->nation) .",
 					NOW(),
 					0,

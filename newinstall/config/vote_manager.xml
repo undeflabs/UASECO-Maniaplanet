@@ -1,30 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
-	<!-- THIS IS THE CONFIG FILE FOR THE TM2-PORT ONLY -->
+	<!-- THIS IS THE CONFIG FILE FOR THE UASECO-PORT ONLY -->
 
 	<widget>
 		<title>Incoming vote request</title>
 		<icon_style>Icons128x128_1</icon_style>
 		<icon_substyle>ServersSuggested</icon_substyle>
 
-		<pos_x>-40.1</pos_x>
-		<pos_y>30.45</pos_y>
-		<scale>0.6</scale>
-
-		<!-- Background-Color, Format: RGBA (A = Alphachanal, Opacity) -->
-		<background_color>3344</background_color>
-
-		<background_style>Bgs1</background_style>
-		<background_substyle>BgEmpty</background_substyle>
-
-		<border_style>Bgs1</border_style>
-		<border_substyle>BgTitleShadow</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', 'BgList' or 'BgEmpty' are useful) -->
-
-		<title_style>BgsPlayerCard</title_style>
-		<title_substyle>BgRacePlayerName</title_substyle>
-
-		<button_style>Bgs1InRace</button_style>
-		<button_substyle>BgButtonBig</button_substyle>
+		<pos_x>-100.5</pos_x>
+		<pos_y>60.0</pos_y>
+		<scale>1.0</scale>
 	</widget>
 
 	<!-- Here you can setup as many <login>s they are ignored from vote anything -->
@@ -66,22 +51,22 @@
 			~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			 - autoteambalance
 			 - ban
-			 - jumptomapindex
+			 - jumptomapident
 			 - kick
 			 - nextmap
 			 - restartmap
 			 - setmodescriptsettingsandcommands
-			 - setnextmapindex
+			 - setnextmapident
 		//-->
 		<disable_callvotes>true</disable_callvotes>	<!-- Set to 'true' to disable all votes like "Ban", "Kick", "RestartMap", "NextMap", otherwise set to 'false' -->
 		<ratio>
 			<!-- [0..1], or -1 to disable, e.g. "0.6" or "-1" -->
 			<default>0.6</default>
 			<ban>-1</ban>
-			<jumptomapindex>-1</jumptomapindex>
+			<jumptomapident>-1</jumptomapident>
 			<kick>-1</kick>
 			<setmodescriptsettingsandcommands>-1</setmodescriptsettingsandcommands>
-			<setnextmapindex>-1</setnextmapindex>
+			<setnextmapident>-1</setnextmapident>
 		</ratio>
 	</dedicated_server>
 

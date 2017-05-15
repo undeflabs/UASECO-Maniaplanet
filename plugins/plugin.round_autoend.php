@@ -6,10 +6,6 @@
  * » Based upon plugin.autoendround.php/1.0 written by -nocturne=-
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-11-08
- * Copyright:	2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - none
  *
  */
 
@@ -53,16 +46,18 @@ class PluginRoundAutoEnd extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-16');
+		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription('Ends the current round after a computed amount of time automatically.');
 
 		// Register functions for events
-		$this->registerEvent('onSync',		'onSync');
-		$this->registerEvent('onLoadingMap',	'onLoadingMap');
-		$this->registerEvent('onBeginRound',	'onBeginRound');
-		$this->registerEvent('onEverySecond',	'onEverySecond');
-		$this->registerEvent('onEndRound',	'onEndRound');
+		$this->registerEvent('onSync',			'onSync');
+		$this->registerEvent('onLoadingMap',		'onLoadingMap');
+		$this->registerEvent('onBeginRound',		'onBeginRound');
+		$this->registerEvent('onEverySecond',		'onEverySecond');
+		$this->registerEvent('onEndRound',		'onEndRound');
 	}
 
 	/*
@@ -93,7 +88,10 @@ class PluginRoundAutoEnd extends Plugin {
 	public function onEverySecond ($aseco) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			if ($this->timer > 0 && time() >= $this->timer) {
-				$aseco->client->query('TriggerModeScriptEvent', 'Rounds_ForceEndRound', '');
+				// Reset timer
+				$this->timer = 0;
+
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.ForceEndRound', array((string)time()));
 
 				$aseco->console('[RoundAutoEnd] Round automatically ended');
 
@@ -113,7 +111,7 @@ class PluginRoundAutoEnd extends Plugin {
 	public function onLoadingMap ($aseco, $map) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			$this->config['time_delta'] = ceil(($map->author_time / 1000) * $this->config['multiplicator']);
-			$aseco->console('[RoundAutoEnd] Setting round end time to '. $this->config['time_delta'] .' seconds, based upon author time '. $aseco->formatTime($map->author_time));
+			$aseco->console('[RoundAutoEnd] Setting round end time to ['. $this->config['time_delta'] .'] seconds, based upon author time ['. $aseco->formatTime($map->author_time) .']');
 
 			// On startup execute onBeginRound(), the ModeScript does this only when the round really begins!
 			if ($aseco->startup_phase == true) {

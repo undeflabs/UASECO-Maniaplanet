@@ -7,10 +7,6 @@
  * » Based upon plugin.checkpoints.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-28
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +23,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 /*
@@ -38,7 +31,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Checkpoint {
+class Checkpoint extends BaseClass {
 	public $tracking	= array();
 	public $best		= array();
 	public $current		= array();
@@ -51,6 +44,13 @@ class Checkpoint {
 	*/
 
 	public function __construct () {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Stores checkpoint information for Players.');
+
 		$this->tracking['local_records']	= -1;			// -1 = off, 0 = own/last rec, 1-max = rec #1-max
 		$this->tracking['dedimania_records']	= -1;			// -1 = off, 0 = own/last rec, 1-30 = rec #1-30
 		$this->best['timestamp']		= 0;

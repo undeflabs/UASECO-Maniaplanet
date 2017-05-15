@@ -2,13 +2,10 @@
 /*
  * Plugin: Mania Exchange
  * ~~~~~~~~~~~~~~~~~~~~~~
- * » Provides world record message at start of each map.
+ * » Handles maps from ManiaExchange and provides MX records message at start of each map.
  * » Based upon plugin.mxinfo.php from XAseco2/1.03 written by Xymph
+ * » and plugin.rasp_jukebox.php from XAseco2/1.03 written by Xymph and others
  *
- * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-08-23
- * Copyright:	2014 - 2015 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -26,10 +23,10 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - plugins/plugin.welcome_center.php
- *
  */
+
+	require_once('includes/maniaexchange/mxinfosearcher.inc.php');		// Provides MX searches
+
 
 	// Start the plugin
 	$_PLUGIN = new PluginManiaExchange();
@@ -51,16 +48,18 @@ class PluginManiaExchange extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
-		$this->setDescription('Provides world record message at start of each map.');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Handles maps from ManiaExchange and provides MX records message at start of each map.');
 
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 
-//		$this->registerChatCommand('mx', 'chat_mx', 'xxxxx', Player::MASTERADMINS);
+		$this->registerChatCommand('mxlist',		'chat_mxlist',		'Lists maps on ManiaExchange (see: /mxlist help)',		Player::PLAYERS);
 	}
 
 	/*
@@ -76,9 +75,9 @@ class PluginManiaExchange extends Plugin {
 		$settings = $settings['SETTINGS'];
 		unset($settings['SETTINGS']);
 
-		$this->config['show_records']		= (int)$settings['SHOW_RECORDS'][0];
+		$this->config['mx_section']		 = 'TM2';
 
-		$this->config['messages']['records']	= $settings['MESSAGES'][0]['RECORDS'][0];
+		$this->config['show_records']		= (int)$settings['SHOW_RECORDS'][0];
 
 //		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
 //			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Find the MX info for a map with the "/mxinfo" command!');
@@ -96,33 +95,91 @@ class PluginManiaExchange extends Plugin {
 		if ($aseco->server->maps->current->mx && !empty($aseco->server->maps->current->mx->recordlist)) {
 			// check whether to show MX record at start of map
 			if ($this->config['show_records'] > 0) {
-				$message = $aseco->formatText($this->config['messages']['records'],
+				$message = new Message('plugin.mania_exchange', 'chat_records');
+				$message->addPlaceholders(
 					$aseco->formatTime($aseco->server->maps->current->mx->recordlist[0]['replaytime']),
 					$aseco->server->maps->current->mx->recordlist[0]['username']
 				);
-				if ($this->config['show_records'] == 2) {
-					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
-				}
-				else {
-					$aseco->sendChatMessage($message);
-				}
+				$message->sendChatMessage();
+
+//				if ($this->config['show_records'] == 2) {
+//					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+//				}
+//				else {
+//					$aseco->sendChatMessage($message);
+//				}
 			}
 		}
 	}
 
-//	/*
-//	#///////////////////////////////////////////////////////////////////////#
-//	#									#
-//	#///////////////////////////////////////////////////////////////////////#
-//	*/
-//
-//	public function chat_mx ($aseco, $login, $chat_command, $chat_parameter) {
-//
-//		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-//			return;
-//		}
-//
-//	}
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_mxlist ($aseco, $login, $chat_command, $chat_parameter) {
+
+		$maps = new MXInfoSearcher($this->config['mx_section'], '', '', '', true);
+
+		// List all found maps
+		$data = array();
+		foreach ($maps as $row) {
+
+		}
+
+
+//	["id"]=>
+//	int(118768)
+//	["name"]=>
+//	string(7) "WBC_cbw"
+//	["author"]=>
+//	string(6) "papy54"
+//	["uploaded"]=>
+//	string(23) "2017-04-09T13:18:30.793"
+//	["updated"]=>
+//	string(23) "2017-04-09T13:18:30.793"
+//	["envir"]=>
+//	string(6) "Valley"
+//	["mood"]=>
+//	string(3) "Day"
+//	["laps"]=>
+//	int(1)
+//	["awards"]=>
+//	int(0)
+//	["pageurl"]=>
+//	string(48) "https://tm.mania-exchange.com/tracks/view/118768"
+//	["thumburl"]=>
+//	string(60) "https://tm.mania-exchange.com/tracks/screenshot/small/118768"
+//	["dloadurl"]=>
+//	string(52) "https://tm.mania-exchange.com/tracks/download/118768"
+
+
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons64x64_1,ToolLeague1',
+			'textcolors'		=> array('FF5F', 'FFFF'),
+		);
+		$settings_columns = array(
+			'columns'		=> 2,
+			'widths'		=> array(25, 75),
+			'textcolors'		=> array('FF5F', 'FFFF'),
+			'heading'		=> array('Image', 'Description'),
+		);
+		$settings_content = array(
+			'title'			=> new Message('plugin.mania_exchange', 'window_title_mxlist'),
+			'data'			=> $data,
+			'about'			=> 'MANIA EXCHANGE/'. $this->getVersion(),
+			'mode'			=> 'columns',
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
+	}
 }
 
 ?>

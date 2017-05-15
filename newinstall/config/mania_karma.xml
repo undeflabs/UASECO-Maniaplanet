@@ -26,6 +26,7 @@
 
 			<votes>
 				<bgcolor_disabled>9CFF</bgcolor_disabled>
+				<text_color_disabled>500F</text_color_disabled>
 				<bgcolor_vote>F70F</bgcolor_vote>
 			</votes>
 		</vote_buttons>
@@ -40,10 +41,10 @@
 			<background_color>5565</background_color>
 			<background_focus>5568</background_focus>
 
-			<background_style>Bgs1</background_style>
+			<background_style>Bgs1InRace</background_style>
 			<background_substyle>BgEmpty</background_substyle>
 
-			<border_style>Bgs1</border_style>
+			<border_style>Bgs1InRace</border_style>
 			<border_substyle>BgEmpty</border_substyle>	<!-- Only 'BgTitleGlow', 'BgTitleShadow', 'Shadow', 'BgList' or 'BgEmpty' are useful) -->
 
 			<!-- If <title_background> is not empty then the style/substyle are ignored -->
@@ -143,12 +144,12 @@
 
 		<!-- The position where the reminder window should be displayed -->
 		<race>
-			<pos_x>-41</pos_x>
-			<pos_y>-29.35</pos_y>
+			<pos_x>-97.0</pos_x>
+			<pos_y>-55.03125</pos_y>
 		</race>
 		<score>
-			<pos_x>-41</pos_x>
-			<pos_y>-26</pos_y>
+			<pos_x>-97.0</pos_x>
+			<pos_y>-55.03125</pos_y>
 		</score>
 	</reminder_window>
 
@@ -209,62 +210,62 @@
 		<gamemode>
 			<score>
 				<enabled>true</enabled>
-				<pos_x>47.8</pos_x>
-				<pos_y>33.2</pos_y>
+				<pos_x>119.5</pos_x>
+				<pos_y>62.25</pos_y>
 				<scale>1.0</scale>
 			</score>
 			<rounds>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</rounds>
 			<time_attack>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</time_attack>
 			<team>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</team>
 			<laps>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</laps>
 			<cup>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</cup>
 			<team_attack>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</team_attack>
 			<chase>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</chase>
 			<knockout>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</knockout>
 			<doppler>
 				<enabled>true</enabled>
-				<pos_x>48.64</pos_x>
-				<pos_y>34.6</pos_y>
+				<pos_x>121.6</pos_x>
+				<pos_y>64.875</pos_y>
 				<scale>1.0</scale>
 			</doppler>
 		</gamemode>
@@ -324,9 +325,6 @@
 		<mx_logo_normal>http://maniacdn.net/undef.de/uaseco/mania-karma/logo-maniaexchange-normal.png</mx_logo_normal>
 		<mx_logo_focus>http://maniacdn.net/undef.de/uaseco/mania-karma/logo-maniaexchange-focus.png</mx_logo_focus>
 
-		<button_normal>http://maniacdn.net/undef.de/uaseco/mania-karma/button-normal.png</button_normal>
-		<button_focus>http://maniacdn.net/undef.de/uaseco/mania-karma/button-focus.png</button_focus>
-
 		<cup_gold>http://maniacdn.net/undef.de/uaseco/mania-karma/cup_gold.png</cup_gold>
 		<cup_silver>http://maniacdn.net/undef.de/uaseco/mania-karma/cup_silver.png</cup_silver>
 
@@ -361,12 +359,12 @@
 		<api_auth>http://worldwide.mania-karma.com/api/maniaplanet-trackmania2-v4.php</api_auth>
 	</urls>
 
+	<!-- Timeout DNS, min. 10 sec. -->
+	<timeout_dns>10</timeout_dns>
+
+	<!-- Connect timeout, min. 10 sec. -->
+	<timeout_connect>10</timeout_connect>
+
 	<!-- Wait timeout, min. 40 sec. -->
-	<wait_timeout>40</wait_timeout>
-
-	<!-- Connect timeout, min. 30 sec. -->
-	<connect_timeout>30</connect_timeout>
-
-	<!-- Keep-Alive timeout, min. 100 sec. -->
-	<keepalive_min_timeout>100</keepalive_min_timeout>
+	<timeout>40</timeout>
 </mania_karma>

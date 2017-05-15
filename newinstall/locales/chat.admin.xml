@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2015-12-30
+	Version:	2017-04-17
 	Authors:	[EN] undef.de
 			[DE] askuri
 	//-->
+
+	<plugin_description>
+		<en>Provides regular admin commands</en>
+		<de>Bietet regulär Administrator Kommandos</de>
+	</plugin_description>
 
 	<help>
 		<en>Shows all available /admin commands (chat)</en>

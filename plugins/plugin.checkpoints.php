@@ -7,10 +7,6 @@
  * » Based upon plugin.checkpoints.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-29
-- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +23,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - includes/core/checkpoint.class.php
- *  - plugins/plugin.local_records.php
- *  - plugins/plugin.dedimania.php
- *
  */
 
 	// Start the plugin
@@ -47,10 +38,10 @@ class PluginCheckpoints extends Plugin {
 	public $config;
 
 	public $checkpoints	= array();
-	public $nbcheckpoints	= 0;
+	public $nb_checkpoints	= 0;
 	public $totalcps	= 0;
-	public $nblaps		= 0;
-	public $forcedlaps	= 0;
+	public $nb_laps		= 0;
+	public $forced_laps	= 0;
 
 
 	/*
@@ -61,8 +52,10 @@ class PluginCheckpoints extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-13');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
 		$this->addDependence('PluginLocalRecords',		Dependence::WANTED,	'1.0.0',	null);
@@ -75,6 +68,7 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
+		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerStartCountdown',		'onPlayerStartCountdown');
 		$this->registerEvent('onPlayerCheckpoint',		'onPlayerCheckpoint');
 		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishLap');
@@ -109,10 +103,10 @@ class PluginCheckpoints extends Plugin {
 
 		$this->config['CHEATER_ACTION'][0]				= (int)$this->config['CHEATER_ACTION'][0];
 
-		$this->nbcheckpoints	= 0;
+		$this->nb_checkpoints	= 0;
 		$this->totalcps		= 0;
-		$this->nblaps		= 0;
-		$this->forcedlaps	= 0;
+		$this->nb_laps		= 0;
+		$this->forced_laps	= 0;
 
 		if (isset($aseco->plugins['PluginDedimania'])) {
 			$this->registerChatCommand('dedicps', 'chat_dedicps', 'Sets dedimania record checkspoints tracking', Player::PLAYERS);
@@ -269,69 +263,69 @@ class PluginCheckpoints extends Plugin {
 
 
 		// Clean up storages
-		$this->nbcheckpoints	= 0;
+		$this->nb_checkpoints	= 0;
 		$this->totalcps		= 0;
-		$this->nblaps		= 0;
-		$this->forcedlaps	= 0;
+		$this->nb_laps		= 0;
+		$this->forced_laps	= 0;
 
 
 		// At Gamemode 'Laps' store the NbLabs from Dedicated-Server and NOT the
 		// value from the $map_item, because they does not match the reality!
 		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			$this->nblaps = $aseco->server->gameinfo->laps['ForceLapsNb'];
+			$this->nb_laps = $aseco->server->gameinfo->laps['ForceLapsNb'];
 		}
 		else {
-			$this->nblaps = $map->nblaps;
+			$this->nb_laps = $map->nb_laps;
 		}
 
 		// Store the amount of Checkpoints from the map
-		$this->nbcheckpoints = $map->nbcheckpoints;
+		$this->nb_checkpoints = $map->nb_checkpoints;
 
 		// Store the amount of Forced Laps
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
-			$this->forcedlaps = $aseco->server->gameinfo->rounds['ForceLapsNb'];
+			$this->forced_laps = $aseco->server->gameinfo->rounds['ForceLapsNb'];
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
-			$this->forcedlaps = $aseco->server->gameinfo->team['ForceLapsNb'];
+			$this->forced_laps = $aseco->server->gameinfo->team['ForceLapsNb'];
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
-			$this->forcedlaps = $aseco->server->gameinfo->laps['ForceLapsNb'];
+			$this->forced_laps = $aseco->server->gameinfo->laps['ForceLapsNb'];
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
-			$this->forcedlaps = $aseco->server->gameinfo->cup['ForceLapsNb'];
+			$this->forced_laps = $aseco->server->gameinfo->cup['ForceLapsNb'];
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
-			$this->forcedlaps = $aseco->server->gameinfo->chase['ForceLapsNb'];
+			$this->forced_laps = $aseco->server->gameinfo->chase['ForceLapsNb'];
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::KNOCKOUT) {
-			$this->forcedlaps = $aseco->server->gameinfo->knockout['ForceLapsNb'];
+			$this->forced_laps = $aseco->server->gameinfo->knockout['ForceLapsNb'];
 		}
 
 		// Setup the total count of Checkpoints
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE || $aseco->server->gameinfo->mode == Gameinfo::KNOCKOUT) {
-			if ($this->forcedlaps > 0) {
-				$this->totalcps = $this->nbcheckpoints * $this->forcedlaps;
+			if ($this->forced_laps > 0) {
+				$this->totalcps = $this->nb_checkpoints * $this->forced_laps;
 			}
-			else if ($this->nblaps > 0) {
-				$this->totalcps = $this->nbcheckpoints * $this->nblaps;
+			else if ($this->nb_laps > 0) {
+				$this->totalcps = $this->nb_checkpoints * $this->nb_laps;
 			}
 			else {
-				$this->totalcps = $this->nbcheckpoints;
+				$this->totalcps = $this->nb_checkpoints;
 			}
 		}
-		else if ($this->nblaps > 0 && $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		else if ($this->nb_laps > 0 && $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 			// In Laps.Script.txt Maps that are not multilaps are playable too,
 			// in that case do not do a multiplication with 'NbLaps'!
-			if ($aseco->server->maps->current->multilap == true) {
-				$this->totalcps = $this->nbcheckpoints * $this->nblaps;
+			if ($aseco->server->maps->current->multi_lap == true) {
+				$this->totalcps = $this->nb_checkpoints * $this->nb_laps;
 			}
 			else {
-				$this->totalcps = $this->nbcheckpoints;
+				$this->totalcps = $this->nb_checkpoints;
 			}
 		}
 		else {
 			// All other Gamemodes
-			$this->totalcps = $this->nbcheckpoints;
+			$this->totalcps = $this->nb_checkpoints;
 		}
 
 		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
@@ -421,6 +415,15 @@ class PluginCheckpoints extends Plugin {
 			$this->checkpoints[$player->login]->tracking['local_records'],
 			$this->checkpoints[$player->login]->tracking['dedimania_records']
 		);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerDisconnect ($aseco, $player) {
 
 		// free up memory
 		unset($this->checkpoints[$player->login]);
@@ -432,11 +435,11 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerStartCountdown ($aseco, $login) {
+	public function onPlayerStartCountdown ($aseco, $params) {
 
 		// Reset for next run in TimeAttack mode
 		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
-			$this->checkpoints[$login]->current['cps'] = array();
+			$this->checkpoints[$params['login']]->current['cps'] = array();
 		}
 	}
 
@@ -446,45 +449,35 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// $param = [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
-	public function onPlayerCheckpoint ($aseco, $param) {
+	public function onPlayerCheckpoint ($aseco, $params) {
 
 		// If undefined login, bail out too
-		if (!isset($this->checkpoints[$param[0]])) {
+		if (!isset($this->checkpoints[$params['login']])) {
 			return;
 		}
 
-		// Set the Login
-		$login = $param[0];
-
 		// Check for multilap Maps and unsupported Gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
-			// Set the "[4]=CurrentLapTime"
-			$time = (int)$param[4];
-
-			// Use "[5]=LapWaypointNumber"
-			$cpid = (int)$param[5];
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multi_lap === true) {
+			$time = (int)$params['lap_time'];
+			$cpid = (int)$params['checkpoint_in_lap'];
 
 			// Reset
-			$this->checkpoints[$login]->current['cps'] = array_slice($this->checkpoints[$login]->current['cps'], 0, $cpid, false);
-			$this->checkpoints[$login]->current['finish'] = PHP_INT_MAX;
+			$this->checkpoints[$params['login']]->current['cps'] = array_slice($this->checkpoints[$params['login']]->current['cps'], 0, $cpid, false);
+			$this->checkpoints[$params['login']]->current['finish'] = PHP_INT_MAX;
 		}
 		else {
-			// Set the "[2]=Time"
-			$time = (int)$param[2];
-
-			// Use "[3]=WaypointIndex"
-			$cpid = (int)$param[3];
+			$time = (int)$params['race_time'];
+			$cpid = (int)$params['checkpoint_in_race'];
 		}
 
 		// Store current checkpoint
-		$this->checkpoints[$login]->current['cps'][$cpid-1] = $time;
-		ksort($this->checkpoints[$login]->current['cps']);
+		$this->checkpoints[$params['login']]->current['cps'][$cpid - 1] = $time;
+		ksort($this->checkpoints[$params['login']]->current['cps']);
 
 		// Check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
-		if ($time <= 0 || ($cpid > 1 && $time < $this->checkpoints[$login]->current['cps'][$cpid-1])) {
-			$this->processCheater($login, $cpid, $time, false);
+		if ($time <= 0 || ($cpid > 1 && $time < $this->checkpoints[$params['login']]->current['cps'][$cpid - 1])) {
+			$this->processCheater($params['login'], $cpid, $time, false);
 		}
 	}
 
@@ -494,36 +487,26 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
-	public function onPlayerFinishLap ($aseco, $param) {
+	public function onPlayerFinishLap ($aseco, $params) {
 
 		// If undefined login, bail out too
-		if (!isset($this->checkpoints[$param[0]])) {
+		if (!isset($this->checkpoints[$params['login']])) {
 			return;
 		}
 
-		// Set the Login
-		$login = $param[0];
-
 		// Check for multilap Maps and unsupported Gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
-			// Set the "[4]=CurrentLapTime"
-			$time = (int)$param[4];
-
-			// Use "[5]=LapWaypointNumber"
-			$cpid = (int)$param[5];
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multi_lap === true) {
+			$time = (int)$params['lap_time'];
+			$cpid = (int)$params['checkpoint_in_lap'];
 		}
 		else {
-			// Set the "[2]=Time"
-			$time = (int)$param[2];
-
-			// Use "[3]=WaypointIndex"
-			$cpid = (int)$param[3];
+			$time = (int)$params['race_time'];
+			$cpid = (int)$params['checkpoint_in_race'];
 		}
 
 		// Store finish as checkpoint too
-		$this->checkpoints[$login]->current['cps'][$cpid-1] = $time;
-		ksort($this->checkpoints[$login]->current['cps']);
+		$this->checkpoints[$params['login']]->current['cps'][$cpid - 1] = $time;
+		ksort($this->checkpoints[$params['login']]->current['cps']);
 	}
 
 	/*
@@ -532,52 +515,42 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// [0]=Login, [1]=WaypointBlockId, [2]=Time, [3]=WaypointIndex, [4]=CurrentLapTime, [5]=LapWaypointNumber
-	public function onPlayerFinishLine ($aseco, $param) {
+	public function onPlayerFinishLine ($aseco, $params) {
 
-		// If undefined login, bail out too
-		if (!isset($this->checkpoints[$param[0]])) {
+		// If checkpoint is undefined, bail out
+		if (!isset($this->checkpoints[$params['login']])) {
 			return;
 		}
 
-		// Set the Login
-		$login = $param[0];
-
 		// Check for multilap Maps and unsupported Gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multilap === true) {
-			// Set the "[4]=CurrentLapTime"
-			$time = (int)$param[4];
-
-			// Use "[5]=LapWaypointNumber"
-			$cpid = (int)$param[5];
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->maps->current->multi_lap === true) {
+			$time = (int)$params['lap_time'];
+			$cpid = (int)$params['checkpoint_in_lap'];
 		}
 		else {
-			// Set the "[2]=Time"
-			$time = (int)$param[2];
-
-			// Use "[3]=WaypointIndex"
-			$cpid = (int)$param[3];
+			$time = (int)$params['race_time'];
+			$cpid = (int)$params['checkpoint_in_race'];
 		}
 
 		// Store finish as finish time
-		$this->checkpoints[$login]->current['finish'] = $time;
+		$this->checkpoints[$params['login']]->current['finish'] = $time;
 
 		// Store finish as checkpoint too
-		$this->checkpoints[$login]->current['cps'][$cpid-1] = $time;
-		ksort($this->checkpoints[$login]->current['cps']);
+		$this->checkpoints[$params['login']]->current['cps'][$cpid - 1] = $time;
+		ksort($this->checkpoints[$params['login']]->current['cps']);
 
 		// Check for improvement and update
-		if ($this->checkpoints[$login]->current['finish'] < $this->checkpoints[$login]->best['finish']) {
-			$this->checkpoints[$login]->best['finish'] = $this->checkpoints[$login]->current['finish'];
-			$this->checkpoints[$login]->best['cps'] = $this->checkpoints[$login]->current['cps'];
+		if ($this->checkpoints[$params['login']]->current['finish'] < $this->checkpoints[$params['login']]->best['finish']) {
+			$this->checkpoints[$params['login']]->best['finish'] = $this->checkpoints[$params['login']]->current['finish'];
+			$this->checkpoints[$params['login']]->best['cps'] = $this->checkpoints[$params['login']]->current['cps'];
 			// store timestamp for sorting in case of equal bests
-			$this->checkpoints[$login]->best['timestamp'] = microtime(true);
+			$this->checkpoints[$params['login']]->best['timestamp'] = microtime(true);
 		}
 
 		// Check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
-		if ($time <= 0 || $cpid != count($this->checkpoints[$login]->current['cps']) || ($cpid > 0 && $time < end($this->checkpoints[$login]->current['cps']))) {
-			$this->processCheater($login, $cpid, $time, true);
+		if ($time <= 0 || $cpid != count($this->checkpoints[$params['login']]->current['cps']) || ($cpid > 0 && $time < end($this->checkpoints[$params['login']]->current['cps']))) {
+			$this->processCheater($params['login'], $cpid, $time, true);
 		}
 	}
 
@@ -636,7 +609,7 @@ class PluginCheckpoints extends Plugin {
 		}
 
 		$colorbar_status	= (($this->config['TIME_DIFF_WIDGET'][0]['ENABLE_COLORBAR'][0] == true) ? 'True' : 'False');
-		$multilapmap		= (($aseco->server->maps->current->multilap == true) ? 'True' : 'False');
+		$multilapmap		= (($aseco->server->maps->current->multi_lap == true) ? 'True' : 'False');
 		$replace_time		= (($replace_time == true) ? 'True' : 'False');
 
 $maniascript = <<<EOL
@@ -810,11 +783,15 @@ main() {
 			}
 			else if (CurrentCheckpoint > 0 && CurrentCheckpoint < TotalCheckpoints) {
 				LabelCheckpointTimeDiff.Value = "\$OCP"^ CurrentCheckpoint ^": "^ TextColor ^ TimeToTextDiff(MathLib::Abs(TimeDifference));
-				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CurrentCheckpoint - 1]);
+				if (CheckpointTimes.count == TotalCheckpoints) {
+					LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CurrentCheckpoint - 1]);
+				}
 			}
 			else if (CurrentCheckpoint == TotalCheckpoints) {
 				LabelCheckpointTimeDiff.Value = "\$OFINISH: "^ TextColor ^ TimeToTextDiff(MathLib::Abs(TimeDifference));
-				LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CheckpointTimes.count - 1]);
+				if (CheckpointTimes.count == TotalCheckpoints) {
+					LabelBestTime.Value = TrackingLabel ^" "^ FormatTime(CheckpointTimes[CheckpointTimes.count - 1]);
+				}
 			}
 
 			// Check for a time improvement
@@ -842,21 +819,21 @@ main() {
 EOL;
 
 		// Build Manialink
-		$xml = '<manialink id="CheckpointTimeDiff" name="CheckpointTimeDiff">';
+		$xml = '<manialink id="CheckpointTimeDiff" name="CheckpointTimeDiff" version="3">';
 
-		$xml .= '<frame posn="70 -48 -40">';
-		$xml .= '<quad posn="0 0 0" sizen="140 15" style="BgsPlayerCard" substyle="BgRacePlayerLine" id="Colorbar" hidden="true"/>';
+		$xml .= '<frame pos="175 -90" z-index="-40">';
+		$xml .= '<quad pos="0 0" z-index="0" size="350 28.125" style="BgsPlayerCard" substyle="BgRacePlayerLine" id="Colorbar" hidden="true"/>';
 		$xml .= '</frame>';
 
-		$xml .= '<frame posn="'. $this->config['TIME_DIFF_WIDGET'][0]['POS_X'][0] .' '. $this->config['TIME_DIFF_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointTimeDiff">';
+		$xml .= '<frame pos="'. $this->config['TIME_DIFF_WIDGET'][0]['POS_X'][0] .' '. $this->config['TIME_DIFF_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="CheckpointTimeDiff">';
 		if ($this->config['TIME_DIFF_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
-			$xml .= '<quad posn="0 0 0.01" sizen="16 4" bgcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0.01" size="40 7.5" bgcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad posn="0 0 0.01" sizen="16 4" style="'. $this->config['TIME_DIFF_WIDGET'][0]['STYLE'][0] .'" substyle="'. $this->config['TIME_DIFF_WIDGET'][0]['SUBSTYLE'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0.01" size="40 7.5" style="'. $this->config['TIME_DIFF_WIDGET'][0]['STYLE'][0] .'" substyle="'. $this->config['TIME_DIFF_WIDGET'][0]['SUBSTYLE'][0] .'"/>';
 		}
-		$xml .= '<label posn="8 -0.65 0.02" sizen="20 2.0" textsize="2" scale="0.8" halign="center" textprefix="$T" textcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_CHECKPOINT'][0] .'" text="" id ="LabelCheckpointTimeDiff"/>';
-		$xml .= '<label posn="8 -2.5 0.02" sizen="20 1.4" textsize="1" scale="0.8" halign="center" textprefix="$T" textcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_BESTTIME'][0] .'" text="" id="LabelBestTime"/>';
+		$xml .= '<label pos="20 -1.21875" z-index="0.02" size="50 3.75" textsize="2" scale="0.8" halign="center" textprefix="$T" textcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_CHECKPOINT'][0] .'" text="" id ="LabelCheckpointTimeDiff"/>';
+		$xml .= '<label pos="20 -4.6875" z-index="0.02" size="50 2.625" textsize="1" scale="0.8" halign="center" textprefix="$T" textcolor="'. $this->config['TIME_DIFF_WIDGET'][0]['TEXTCOLORS'][0]['DEFAULT_BESTTIME'][0] .'" text="" id="LabelBestTime"/>';
 		$xml .= '</frame>';
 		$xml .= $maniascript;
 		$xml .= '</manialink>';
@@ -872,19 +849,19 @@ EOL;
 	public function buildCounterWidget ($checkpoint = -1, $login = false) {
 		global $aseco;
 
-		$xml = '<manialink id="CheckpointCounter" name="CheckpointCounter">';
-		$xml .= '<frame posn="'. $this->config['COUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['COUNT_WIDGET'][0]['POS_Y'][0] .' 0" id="CheckpointCounter">';
+		$xml = '<manialink id="CheckpointCounter" name="CheckpointCounter" version="3">';
+		$xml .= '<frame pos="'. $this->config['COUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['COUNT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="CheckpointCounter">';
 		if ($this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
-			$xml .= '<quad posn="0 0 0.001" sizen="16 4" bgcolor="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0.001" size="40 7.5" bgcolor="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad posn="0 0 0.001" sizen="16 4" style="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0.001" size="40 7.5" style="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		}
-		$xml .= '<label posn="8 -0.65 0.01" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="" id="CheckpointLine1"/>';
-		$xml .= '<label posn="8 -1.8 0.01" halign="center" textsize="2" scale="0.9" textcolor="'. $this->config['COUNT_WIDGET'][0]['TEXT_COLOR'][0] .'" text="" id="CheckpointLine2"/>';
-		$xml .= '<label posn="8 -1.8 0.01" halign="center" style="TextTitle2Blink" textsize="2" scale="0.9" textcolor="'. $this->config['COUNT_WIDGET'][0]['TEXT_COLOR'][0] .'" text="" id="CheckpointLine2Blink" ScriptEvents="1" hidden="true"/>';
+		$xml .= '<label pos="20 -1.21875" z-index="0.01" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="" id="CheckpointLine1"/>';
+		$xml .= '<label pos="20 -3.375" z-index="0.01" halign="center" textsize="2" scale="0.9" textcolor="'. $this->config['COUNT_WIDGET'][0]['TEXT_COLOR'][0] .'" text="" id="CheckpointLine2"/>';
+		$xml .= '<label pos="20 -3.375" z-index="0.01" halign="center" style="TextTitle2Blink" textsize="2" scale="0.9" textcolor="'. $this->config['COUNT_WIDGET'][0]['TEXT_COLOR'][0] .'" text="" id="CheckpointLine2Blink" ScriptEvents="1" hidden="true"/>';
 
-		$multilapmap = (($aseco->server->maps->current->multilap == true) ? 'True' : 'False');
+		$multilapmap = (($aseco->server->maps->current->multi_lap == true) ? 'True' : 'False');
 		$timeattack = (($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) ? 'True' : 'False');
 
 $maniascript = <<<EOL
@@ -898,7 +875,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main() {
-	declare CMlControl Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
 	Container.RelativeScale				= {$this->config['COUNT_WIDGET'][0]['SCALE'][0]};
 
 	declare LabelCheckpointLine1			<=> (Page.GetFirstChild("CheckpointLine1") as CMlLabel);
@@ -1264,9 +1241,9 @@ EOL;
 					$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} forced into free spectator! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 						$player->login,
 						$aseco->country->iocToCountry($player->nation),
-						$aseco->stripColors($player->nickname),
+						$aseco->stripStyles($player->nickname),
 						$player->ip,
-						$player->ladderrank,
+						$player->ladder_rank,
 						$player->id
 					);
 
@@ -1286,9 +1263,9 @@ EOL;
 				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} kicked! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 					$player->login,
 					$aseco->country->iocToCountry($player->nation),
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$player->ip,
-					$player->ladderrank,
+					$player->ladder_rank,
 					$player->id
 				);
 
@@ -1312,9 +1289,9 @@ EOL;
 				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} banned! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 					$player->login,
 					$aseco->country->iocToCountry($player->nation),
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$player->ip,
-					$player->ladderrank,
+					$player->ladder_rank,
 					$player->id
 				);
 
@@ -1342,9 +1319,9 @@ EOL;
 				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} blacklisted! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 					$player->login,
 					$aseco->country->iocToCountry($player->nation),
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$player->ip,
-					$player->ladderrank,
+					$player->ladder_rank,
 					$player->id
 				);
 
@@ -1385,9 +1362,9 @@ EOL;
 				$aseco->console('[Checkpoints] Cheater Player [{1}] from {2} blacklisted & banned! [Nick: {3}, IP: {4}, Rank: {5}, Id: {6}]',
 					$player->login,
 					$aseco->country->iocToCountry($player->nation),
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$player->ip,
-					$player->ladderrank,
+					$player->ladder_rank,
 					$player->id
 				);
 

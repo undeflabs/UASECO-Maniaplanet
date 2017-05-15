@@ -6,10 +6,6 @@
  * » Based upon plugin.panels.php from XAseco2/1.03 written by Xymph
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-07-03
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.rasp.php
- *  - plugins/plugin.donate.php
- *  - plugins/plugin.rasp_votes.php
  *
  */
 
@@ -57,8 +47,10 @@ class PluginPanels extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-08');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('DEPRECATED: Selects ManiaLink panel templates.');
 
 		$this->addDependence('PluginManialinks',		Dependence::REQUIRED,	'1.0.0', null);
@@ -331,7 +323,7 @@ class PluginPanels extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $data) {
+	public function onUnloadingMap ($aseco, $uid) {
 
 		$this->statspanels_off($aseco);
 	}
@@ -689,7 +681,7 @@ class PluginPanels extends Plugin {
 	 */
 	public function adminpanel_off ($aseco, $login) {
 
-		$xml = '<manialink id="UASECO-3"></manialink>';
+		$xml = '<manialink id="UASECO-3" name="UASECO-3" version="3"></manialink>';
 		$aseco->addManialink($xml, $login, 0, false);
 	}
 
@@ -731,7 +723,7 @@ class PluginPanels extends Plugin {
 	// Disables all Scoreboard Stats panels
 	public function statspanels_off ($aseco) {
 
-		$xml = '<manialink id="UASECO-9"></manialink>';
+		$xml = '<manialink id="UASECO-9" name="UASECO-9" version="3"></manialink>';
 		$aseco->addManialink($xml, false, 0);
 	}
 }

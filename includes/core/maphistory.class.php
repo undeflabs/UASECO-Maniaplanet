@@ -6,10 +6,6 @@
  *   handling of the history.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-09-19
- * Copyright:	2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +34,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class MapHistory {
+class MapHistory extends BaseClass {
 	public $settings	= array();
 	public $map_list	= array();
 
@@ -52,6 +48,12 @@ class MapHistory {
 
 	public function __construct ($debug, $max_history_entries) {
 		$this->debug = $debug;
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setDescription('Map history for the dedicated server and provides several methods for the required handling of the history.');
 
 		$this->settings['max_history_entries'] = $max_history_entries;
 	}
@@ -175,7 +177,7 @@ class MapHistory {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getPreviousMapFromHistory () {
+	public function getPreviousMap () {
 		global $aseco;
 
 		$last = $this->map_list;

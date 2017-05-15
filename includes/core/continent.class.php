@@ -6,10 +6,6 @@
  * » Based upon basic.inc.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2014-11-16
- * Copyright:	2014 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +22,6 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * Dependencies:
- *  - none
- *
  */
 
 
@@ -38,7 +31,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class Continent {
+class Continent extends BaseClass {
 
 	// Continent constants
 	const EUROPE		= 'EU';
@@ -56,8 +49,23 @@ class Continent {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function __construct () {
+
+		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-22');
+		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setDescription('Provides lists of Continents and converter methods.');
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	// Convert continent to abbreviation
-	public function continentToAbbr ($continent) {
+	public function continentToAbbreviation ($continent) {
 
 		switch ($continent) {
 			case 'Europe':
@@ -96,7 +104,7 @@ class Continent {
 	*/
 
 	// Convert abbreviation to continent
-	public function abbrToContinent ($abbreviation) {
+	public function abbreviationToContinent ($abbreviation) {
 
 		switch (strtoupper($abbreviation)) {
 			case self::EUROPE:

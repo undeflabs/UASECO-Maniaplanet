@@ -6,10 +6,6 @@
  * » Based upon plugin.rasp.php from XAseco2/1.03 written by Xymph and others
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-10-25
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/core/window.class.php
- *  - includes/core/gbxdatafetcher.class.php
- *  - plugins/plugin.manialinks.php
- *  - plugins/plugin.local_records.php
- *  - plugins/plugin.rasp_votes.php
- *  - plugins/plugin.rasp_jukebox.php
- *  - plugins/plugin.welcome_center.php
  *
  */
 
@@ -58,8 +45,10 @@ class PluginRasp extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-27');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -184,7 +173,7 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onUnloadingMap ($aseco, $map) {
+	public function onUnloadingMap ($aseco, $uid) {
 
 		// Check for relay server
 		if ($aseco->server->isrelay) {
@@ -321,7 +310,7 @@ class PluginRasp extends Plugin {
 				while ($row = $res->fetch_object()) {
 					$nickname = $row->Nickname;
 					if (!$aseco->settings['lists_colornicks']) {
-						$nickname = $aseco->stripColors($nickname);
+						$nickname = $aseco->stripStyles($nickname);
 					}
 					$recs[] = array(
 						$i .'.',
@@ -333,19 +322,27 @@ class PluginRasp extends Plugin {
 
 
 				// Setup settings for Window
-				$settings_title = array(
-					'icon'	=> 'BgRaceScore2,LadderRank',
+				$settings_styles = array(
+					'icon'			=> 'BgRaceScore2,LadderRank',
 				);
 				$settings_columns = array(
-					'columns'	=> 4,
-					'widths'	=> array(11, 19, 70),
-					'halign'	=> array('right', 'right', 'left'),
-					'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
+					'columns'		=> 4,
+					'widths'		=> array(12.5, 15, 72.5),
+					'halign'		=> array('right', 'center', 'left'),
+					'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+					'heading'		=> array('Rank', 'Score', 'Player'),
 				);
+				$settings_content = array(
+					'title'			=> 'Current TOP 100 Players',
+					'data'			=> $recs,
+					'about'			=> 'RASP/'. $this->getVersion(),
+					'mode'			=> 'columns',
+				);
+
 				$window = new Window();
-				$window->setLayoutTitle($settings_title);
+				$window->setStyles($settings_styles);
 				$window->setColumns($settings_columns);
-				$window->setContent('Current TOP 100 Players', $recs);
+				$window->setContent($settings_content);
 				$window->send($player, 0, false);
 			}
 			else {
@@ -386,7 +383,7 @@ class PluginRasp extends Plugin {
 				while ($row = $res->fetch_object()) {
 					$nickname = $row->Nickname;
 					if (!$aseco->settings['lists_colornicks']) {
-						$nickname = $aseco->stripColors($nickname);
+						$nickname = $aseco->stripStyles($nickname);
 					}
 					$wins[] = array(
 						$i .'.',
@@ -398,19 +395,26 @@ class PluginRasp extends Plugin {
 
 
 				// Setup settings for Window
-				$settings_title = array(
-					'icon'	=> 'BgRaceScore2,LadderRank',
+				$settings_styles = array(
+					'icon'			=> 'BgRaceScore2,LadderRank',
 				);
 				$settings_columns = array(
-					'columns'	=> 4,
-					'widths'	=> array(11, 19, 70),
-					'halign'	=> array('right', 'right', 'left'),
-					'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
+					'columns'		=> 4,
+					'widths'		=> array(12, 18, 70),
+					'halign'		=> array('right', 'right', 'left'),
+					'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
 				);
+				$settings_content = array(
+					'title'			=> 'Current TOP 100 Victors',
+					'data'			=> $wins,
+					'about'			=> 'RASP/'. $this->getVersion(),
+					'mode'			=> 'columns',
+				);
+
 				$window = new Window();
-				$window->setLayoutTitle($settings_title);
+				$window->setStyles($settings_styles);
 				$window->setColumns($settings_columns);
-				$window->setContent('Current TOP 100 Victors', $wins);
+				$window->setContent($settings_content);
 				$window->send($player, 0, false);
 			}
 			$res->free_result();
@@ -447,7 +451,7 @@ class PluginRasp extends Plugin {
 			while ($row = $res->fetch_object()) {
 				$nickname = $row->Nickname;
 				if (!$aseco->settings['lists_colornicks']) {
-					$nickname = $aseco->stripColors($nickname);
+					$nickname = $aseco->stripStyles($nickname);
 				}
 				$active[] = array(
 					$i .'.',
@@ -460,19 +464,26 @@ class PluginRasp extends Plugin {
 
 
 			// Setup settings for Window
-			$settings_title = array(
-				'icon'	=> 'BgRaceScore2,LadderRank',
+			$settings_styles = array(
+				'icon'			=> 'BgRaceScore2,LadderRank',
 			);
 			$settings_columns = array(
-				'columns'	=> 4,
-				'widths'	=> array(11, 19, 70),
-				'halign'	=> array('right', 'right', 'left'),
-				'textcolors'	=> array('EEEF', 'EEEF', 'FFFF'),
+				'columns'		=> 4,
+				'widths'		=> array(12, 18, 70),
+				'halign'		=> array('right', 'right', 'left'),
+				'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
 			);
+			$settings_content = array(
+				'title'			=> 'TOP 100 of the most active Players',
+				'data'			=> $active,
+				'about'			=> 'RASP/'. $this->getVersion(),
+				'mode'			=> 'columns',
+			);
+
 			$window = new Window();
-			$window->setLayoutTitle($settings_title);
+			$window->setStyles($settings_styles);
 			$window->setColumns($settings_columns);
-			$window->setContent('TOP 100 of the most active Players', $active);
+			$window->setContent($settings_content);
 			$window->send($player, 0, false);
 		}
 	}
@@ -485,11 +496,11 @@ class PluginRasp extends Plugin {
 
 	public function cleanData ($aseco) {
 
-		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['mysql']['table_prefix'] .'maps`.');
+		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['dbms']['table_prefix'] .'maps`.');
 		$sql = "DELETE FROM `%prefix%maps` WHERE `Uid` = '';";
 		$aseco->db->query($sql);
 
-		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['mysql']['table_prefix'] .'players`.');
+		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['dbms']['table_prefix'] .'players`.');
 		$sql = "DELETE FROM `%prefix%players` WHERE `Login` = '';";
 		$aseco->db->query($sql);
 
@@ -516,7 +527,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'records` for deleted maps: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['dbms']['table_prefix'] .'records` for deleted maps: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%records`
 			WHERE `MapId` IN (". implode(', ', $deletelist) .");
@@ -542,7 +553,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'records` for deleted players: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['dbms']['table_prefix'] .'records` for deleted players: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%records`
 			WHERE `PlayerId` IN (". implode(', ', $deletelist) .");
@@ -568,7 +579,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'times` for deleted maps: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['dbms']['table_prefix'] .'times` for deleted maps: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%times`
 			WHERE `MapId` IN (". implode(', ', $deletelist) .");
@@ -594,7 +605,7 @@ class PluginRasp extends Plugin {
 			}
 			$res->free_result();
 
-			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['mysql']['table_prefix'] .'times` for deleted players: '. implode(', ', $deletelist));
+			$aseco->console('[Rasp] » Deleting `'. $aseco->settings['dbms']['table_prefix'] .'times` for deleted players: '. implode(', ', $deletelist));
 			$sql = "
 			DELETE FROM `%prefix%times`
 			WHERE `PlayerId` IN (". implode(', ', $deletelist) .");

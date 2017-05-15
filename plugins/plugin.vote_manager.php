@@ -6,13 +6,6 @@
  * http://www.undef.name/UASECO/Vote-Manager.php
  *
  * ----------------------------------------------------------------------------------
- * Author:		undef.de
- * Version:		1.0.0
- * Date:		2015-11-11
- * Copyright:		2012 - 2015 by undef.de
- * System:		UASECO/0.9.5+
- * Game:		ManiaPlanet Trackmania2 (TM2)
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - plugins/plugin.rasp_votes.php
- *  - plugins/plugin.rasp_jukebox.php
- *  - plugins/plugin.dedimania.php
  *
  */
 
@@ -58,8 +46,10 @@ class PluginVoteManager extends Plugin {
 
 	public function __construct () {
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-05-04');
+		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
 		$this->addDependence('PluginRaspVotes',			Dependence::DISALLOWED,	null, null);
@@ -73,7 +63,7 @@ class PluginVoteManager extends Plugin {
 		$this->registerEvent('onEverySecond',			'onEverySecond');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
-		$this->registerEvent('onEndMap1',			'onEndMap1');
+		$this->registerEvent('onEndMapPrefix',			'onEndMapPrefix');
 		$this->registerEvent('onShutdown',			'onShutdown');
 
 		$this->registerChatCommand('votemanager',		'chat_votemanager',	'Command for MasterAdins',			Player::MASTERADMINS);
@@ -96,8 +86,8 @@ class PluginVoteManager extends Plugin {
 	public function onSync ($aseco) {
 
 		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.5';
-		if ( defined('UASECO_VERSION') ) {
+		$uaseco_min_version = '0.9.0';
+		if (defined('UASECO_VERSION')) {
 			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
 				trigger_error('[VoteManager] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
 			}
@@ -125,13 +115,16 @@ class PluginVoteManager extends Plugin {
 		$this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]				= ((strtoupper($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]) == 'TRUE') ? true : false);
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0];
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0];
-		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPIDENT'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPIDENT'][0];
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0];
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0]	= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0];
-		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0];
+		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPIDENT'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPIDENT'][0];
 		$this->config['NUMBER_FORMAT'][0]							= strtolower($this->config['NUMBER_FORMAT'][0]);
 		$this->config['MODE'][0]								= strtolower($this->config['MODE'][0]);
 
+		if (empty($this->config['WIDGET'][0]['SCALE'][0])) {
+			$this->config['WIDGET'][0]['SCALE'][0] = 1.0;
+		}
 
 		// Preset defaults
 		$this->config['TimeAttackTimelimit']			= -1;
@@ -208,10 +201,10 @@ class PluginVoteManager extends Plugin {
 				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0],
 			);
 		}
-		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0]) ) {
+		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPIDENT'][0]) ) {
 			$callvotes[] = array(
-				'Command'	=> 'JumpToMapIndex',
-				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPINDEX'][0],
+				'Command'	=> 'JumpToMapIdent',
+				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPIDENT'][0],
 			);
 		}
 		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['KICK'][0]) ) {
@@ -226,10 +219,10 @@ class PluginVoteManager extends Plugin {
 				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETMODESCRIPTSETTINGSANDCOMMANDS'][0],
 			);
 		}
-		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0]) ) {
+		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPIDENT'][0]) ) {
 			$callvotes[] = array(
-				'Command'	=> 'SetNextMapIndex',
-				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPINDEX'][0],
+				'Command'	=> 'SetNextMapIdent',
+				'Ratio'		=> (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['SETNEXTMAPIDENT'][0],
 			);
 		}
 		if ( is_float($this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0]) ) {
@@ -271,15 +264,13 @@ class PluginVoteManager extends Plugin {
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ($answer['Action'] == 'CloseHelpWindow') {
-			$xml = '<manialink id="VoteManagerHelpWindow"></manialink>';
-			$aseco->sendManialink($xml, $login, 0, false);
-		}
-		else if ($answer['Action'] == 'VoteYes') {
-			$aseco->releaseChatCommand('/yes', $login);
-		}
-		else if ($answer['Action'] == 'VoteNo') {
-			$aseco->releaseChatCommand('/no', $login);
+		if ($answer['Action'] == 'Vote') {
+			if ($answer['Value'] == 'Yes') {
+				$aseco->releaseChatCommand('/yes', $login);
+			}
+			else if ($answer['Value'] == 'No') {
+				$aseco->releaseChatCommand('/no', $login);
+			}
 		}
 	}
 
@@ -330,9 +321,6 @@ class PluginVoteManager extends Plugin {
 
 				// Hide all Widgets from all Players
 				$xml = '<manialink id="VoteManagerWidget"></manialink>';
-				$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
-				$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
-				$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 				$aseco->sendManialink($xml, false, 0, false);
 			}
 
@@ -359,9 +347,6 @@ class PluginVoteManager extends Plugin {
 
 				// Hide all Widgets from all Players
 				$xml = '<manialink id="VoteManagerWidget"></manialink>';
-				$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
-				$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
-				$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 				$aseco->sendManialink($xml, false, 0, false);
 			}
 
@@ -382,7 +367,7 @@ class PluginVoteManager extends Plugin {
 				// Countdown
 				$this->config['RunningVote']['Countdown'] --;
 
-				// Check if all Players has voted and end voting
+				// Check if all Players have voted and end voting
 				$stop = true;
 				foreach ($aseco->server->players->player_list as $player) {
 					if ( (!isset($this->config['RunningVote']['Votes']['Yes'][$player->login])) && (!isset($this->config['RunningVote']['Votes']['No'][$player->login])) ) {
@@ -393,22 +378,12 @@ class PluginVoteManager extends Plugin {
 				if ($stop == true) {
 					$this->config['RunningVote']['Countdown'] = 0;
 				}
-
-				// Add vote statistics
-				$xml = $this->buildWidgetVoteStatistics();
-
-				$aseco->sendManialink($xml, implode(',', $this->config['RunningVote']['Players']), 0, false);
 			}
-			else if ( ($this->config['RunningVote']['Countdown'] > -3) && ($this->config['RunningVote']['Countdown'] <= 0) ) {
+			else if ($this->config['RunningVote']['Countdown'] > -3 && $this->config['RunningVote']['Countdown'] <= 0) {
 
 				// Countdown
 				$this->config['RunningVote']['Countdown'] --;
 
-				// Add vote statistics
-				$xml = $this->buildWidgetCountdownFinished();
-				$xml .= $this->buildWidgetVoteStatistics();
-
-				$aseco->sendManialink($xml, implode(',', $this->config['RunningVote']['Players']), 0, false);
 			}
 			else {
 				// Turn off current running Vote
@@ -472,9 +447,6 @@ class PluginVoteManager extends Plugin {
 
 				// Hide all Widgets from all Players
 				$xml = '<manialink id="VoteManagerWidget"></manialink>';
-				$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
-				$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
-				$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 				$aseco->sendManialink($xml, false, 0, false);
 			}
 		}
@@ -488,7 +460,7 @@ class PluginVoteManager extends Plugin {
 
 	public function onPlayerChat ($aseco, $chat) {
 
-		if ( $aseco->isAnyAdminL($chat[1]) ) {
+		if ( $aseco->isAnyAdminByLogin($chat[1]) ) {
 			if (strtolower($chat[2]) == '/admin pass') {
 				// Admin has used "/admin pass" for the current Vote
 				$this->handleAdminAction('pass');
@@ -511,10 +483,10 @@ class PluginVoteManager extends Plugin {
 		// Send info message "Callvote disabled"
 		$aseco->sendChatMessage($this->config['MESSAGES'][0]['CALLVOTE_DISABLED'][0], $player->login);
 
-		// Preload the Thumbs-Images
-		$xml  = '<manialink id="VoteManagerPlayerVoteMarker">';
-		$xml .= '<quad posn="128 128 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_UP'][0] .'"/>';
-		$xml .= '<quad posn="128 128 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_DOWN'][0] .'"/>';
+		// Preload the Images
+		$xml  = '<manialink id="PreloadImages" version="3">';
+		$xml .= '<quad pos="320 240" z-index="1.1" size="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_UP'][0] .'"/>';
+		$xml .= '<quad pos="320 240" z-index="1.1" size="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_DOWN'][0] .'"/>';
 		$xml .= '</manialink>';
 		$aseco->sendManialink($xml, $player->login, 0, false);
 
@@ -569,7 +541,7 @@ class PluginVoteManager extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onRestartMap ($aseco, $map_item) {
+	public function onRestartMap ($aseco, $map) {
 
 		// -1 because the Admin has restarted
 		$this->config['Cache']['LastMap']['Runs'] --;
@@ -581,7 +553,7 @@ class PluginVoteManager extends Plugin {
 		$this->config['Cache']['Todo']['onEndMap'] = false;
 
 		// Emulate event onLoadingMap
-		$this->onLoadingMap($aseco, $map_item);
+		$this->onLoadingMap($aseco, $map);
 	}
 
 	/*
@@ -590,14 +562,10 @@ class PluginVoteManager extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onEndMap1 ($aseco, $data) {
+	public function onEndMapPrefix ($aseco, $data) {
 
 		// Hide all Widgets from all Players
 		$xml = '<manialink id="VoteManagerWidget"></manialink>';
-		$xml .= '<manialink id="VoteManagerCountdown"></manialink>';
-		$xml .= '<manialink id="VoteManagerStatistics"></manialink>';
-		$xml .= '<manialink id="VoteManagerHelpWindow"></manialink>';
-		$xml .= '<manialink id="VoteManagerPlayerVoteMarker"></manialink>';
 		$aseco->sendManialink($xml, false, 0, false);
 
 		// Reset all before votings if a running vote was interrupted (by Admin skip/restart)
@@ -643,7 +611,7 @@ class PluginVoteManager extends Plugin {
 			else {
 				$aseco->client->query('RestartMap');
 			}
-			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
+			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
 		else if ($mode == 'Replay') {
 			// prepend current map to start of jukebox
@@ -658,7 +626,7 @@ class PluginVoteManager extends Plugin {
 			$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['mx'] = false;
 			$aseco->plugins['PluginRaspJukebox']->jukebox[$uid]['uid'] = $uid;
 			$aseco->plugins['PluginRaspJukebox']->jukebox = array_reverse($aseco->plugins['PluginRaspJukebox']->jukebox, true);
-			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
+			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
 		else if ($mode == 'Skip') {
 			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
@@ -668,11 +636,11 @@ class PluginVoteManager extends Plugin {
 			else {
 				$aseco->client->query('NextMap');
 			}
-			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
+			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
 		else if ($mode == 'Balance') {
 			$aseco->client->query('AutoTeamBalance');
-			$aseco->console('[VoteManager] "'. $mode .'" the Teams on Map ['. $aseco->stripColors($aseco->server->maps->current->name) .']');
+			$aseco->console('[VoteManager] "'. $mode .'" the Teams on Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
 	}
 
@@ -711,9 +679,6 @@ class PluginVoteManager extends Plugin {
 			$this->config['RunningVote']['Votes'][$mode] ++;
 
 			$this->sendOutVote(false);
-
-			// Mark the Player Vote
-			$this->buildPlayerVoteMarker($login, 'Yes');
 		}
 		else {
 			// Limit reached
@@ -735,10 +700,9 @@ class PluginVoteManager extends Plugin {
 	public function sendOutVote ($login = false) {
 		global $aseco;
 
-		$xml = $this->buildWidgetCountdown();
-		$xml .= str_replace(
-			array('%USERNAME%', '%QUESTION%'),
-			array($this->handleSpecialChars($this->config['RunningVote']['StartedFrom']['Nickname']), $this->config['RunningVote']['Question']),
+		$xml = str_replace(
+			array('%LOGIN%', '%USERNAME%', '%QUESTION%'),
+			array($this->config['RunningVote']['StartedFrom']['Login'], $this->handleSpecialChars($this->config['RunningVote']['StartedFrom']['Nickname']), $this->config['RunningVote']['Question']),
 			$this->buildWidget()
 		);
 
@@ -759,105 +723,257 @@ class PluginVoteManager extends Plugin {
 	*/
 
 	public function buildWidget () {
+		global $aseco;
 
-		// Placeholder: %USERNAME%, %QUESTION%
-		$xml  = '<manialink id="VoteManagerWidget">';
-		$xml .= '<frame posn="'. $this->config['WIDGET'][0]['POS_X'][0] .' '. $this->config['WIDGET'][0]['POS_Y'][0] .' 0">';
-		$xml .= '<quad posn="0 0 0" sizen="41.9 11" bgcolor="'. $this->config['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
-		$xml .= '<quad posn="-0.2 0.3 0.001" sizen="42.3 11.6" style="'. $this->config['WIDGET'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BORDER_SUBSTYLE'][0] .'"/>';
-		$xml .= '<quad posn="0 0 0.002" sizen="42.3 11.6" style="'. $this->config['WIDGET'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
+		// Placeholder: %LOGIN%, %USERNAME%, %QUESTION%
+		$xml  = '<manialink name="VoteManagerWidget" id="VoteManagerWidget" version="3">';
+		$xml .= '<stylesheet>';
+		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
+		$xml .= '</stylesheet>';
+		$xml .= '<frame pos="'. $this->config['WIDGET'][0]['POS_X'][0] .' '. $this->config['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="VoteManagerFrame">';
+		$xml .= '<quad pos="0 -4" z-index="0" size="104.75 16.625" bgcolor="032942DD"/>';
 
 		// Icon and Title
-		$xml .= '<quad posn="0.4 -0.36 0.003" sizen="41.1 2" style="'. $this->config['WIDGET'][0]['TITLE_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['TITLE_SUBSTYLE'][0] .'"/>';
-		$xml .= '<quad posn="0.6 0 0.004" sizen="2.5 2.5" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="3.2 -0.65 0.004" sizen="37 0" textsize="1" text="'. $this->config['WIDGET'][0]['TITLE'][0] .'"/>';
-		$xml .= '<format textsize="1" textcolor="FFF"/>';
+		$xml .= '<quad pos="0 0" z-index="0.01" size="104.75 4" bgcolor="55556699" bgcolorfocus="555566BB" id="VoteManagerWidgetTitle" ScriptEvents="1"/>';
+		$xml .= '<quad pos="1 -0.5" z-index="0.02" size="2.75 2.75" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
+		$xml .= '<label pos="5 -0.9" z-index="0.02" size="188.5 5" class="labels" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="'. $this->config['WIDGET'][0]['TITLE'][0] .'"/>';
 
 		// BEGIN: Question
-		$xml .= '<frame posn="0 -3 0">';
-		$xml .= '<label posn="21 0 0.005" sizen="50 2.3" halign="center" textsize="3" scale="0.8" text="$S%USERNAME%$Z%QUESTION%"/>';
+		$xml .= '<frame pos="0 -5.625" z-index="0.02">';
+		$xml .= '<label pos="52.5 0" z-index="0.03" size="125 4.3125" class="labels" halign="center" textsize="2" text="$S%USERNAME%$Z%QUESTION%"/>';
 		$xml .= '</frame>';
 		// END: Question
 
-		// BEGIN: Ratio marker and Statistic-Background
-		$xml .= '<frame posn="8.5 -7.75 0">';
-		$xml .= '<quad posn="0 0 0.005" sizen="25 2.45" bgcolor="0003"/>';
-		$xml .= '<quad posn="'. (0.25 * ($this->config['VOTING'][0]['RATIO'][0] * 100)) .' 0.3 0.007" sizen="0.1 3.05" bgcolor="000A"/>';
-		$xml .= '<quad posn="'. (0.25 * ($this->config['VOTING'][0]['RATIO'][0] * 100) + 0.01) .' 0.3 0.007" sizen="0.1 3.05" bgcolor="FFFA"/>';
+		// BEGIN: Statistic-Background
+		$xml .= '<frame pos="21.25 -14" z-index="0.02">';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="62.5 5" bgcolor="FFFFFF33"/>';
+		$xml .= '</frame>';
+		// END: Statistic-Background
+
+		// BEGIN: Statistics
+		$xml .= '<frame pos="21.25 -14" z-index="0.03">';
+		$xml .= '<quad pos="0 0" z-index="0.06" size="0 2.5" bgcolor="339900FF" id="VoteManagerQuadBarYes"/>';
+		$xml .= '<label pos="5.25 -1.25" z-index="0.07" size="6 2.5" class="labels" halign="right" valign="center2" textsize="1" scale="0.7" text="0" id="VoteManagerLabelAmountYes"/>';
+		$xml .= '<label pos="16 -1.25" z-index="0.07" size="12.5 2.5" class="labels" halign="right" valign="center2" textsize="1" scale="0.7" text="0.0%" id="VoteManagerLabelPercentYes"/>';
+		$xml .= '</frame>';
+
+		$xml .= '<frame pos="21.25 -16.5" z-index="0.03">';
+		$xml .= '<quad pos="0 0" z-index="0.06" size="0 2.5" bgcolor="DD0022FF" id="VoteManagerQuadBarNo"/>';
+		$xml .= '<label pos="5.25 -1.25" z-index="0.07" size="6 2.5" class="labels" halign="right" valign="center2" textsize="1" scale="0.7" text="0" id="VoteManagerLabelAmountNo"/>';
+		$xml .= '<label pos="16 -1.25" z-index="0.07" size="12.5 2.5" class="labels" halign="right" valign="center2" textsize="1" scale="0.7" text="0.0%" id="VoteManagerLabelPercentNo"/>';
+		$xml .= '</frame>';
+		// END: Statistics
+
+		// BEGIN: Ratio marker
+		$xml .= '<frame pos="21.25 -13.5" z-index="0.04">';
+		$xml .= '<quad pos="'. (0.625 * ($this->config['VOTING'][0]['RATIO'][0] * 100)) .' 0.01" z-index="0.16" size="0.25 6" bgcolor="000000AA"/>';
+		$xml .= '<quad pos="'. (0.625 * ($this->config['VOTING'][0]['RATIO'][0] * 100) + 0.05) .' 0.01" z-index="0.17" size="0.25 6" bgcolor="FFFFFFAA"/>';
 		$xml .= '</frame>';
 		// END: Ratio marker
 
 		// BEGIN: YES Button
-		$xml .= '<frame posn="0.8 -7.5 0">';
-		$xml .= '<quad posn="0 0 0.005" sizen="7.1 2.9" action="PluginVoteManager?Action=VoteYes" actionkey="1" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="3.55 -0.9 0.006" sizen="7.1 0" halign="center" textsize="1" scale="0.8" text="$5B0$OYES / F5"/>';
+		$xml .= '<frame pos="2 -14.0625" z-index="0.02">';
+		$xml .= '<quad pos="0 0" z-index="0.03" size="17.75 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="VoteManagerButtonYes" ScriptEvents="1"/>';
+		$xml .= '<label pos="8.875 -2.5" z-index="0.04" size="17.75 0" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" text="$OYES (F5)"/>';
 		$xml .= '</frame>';
 		// END: YES Button
 
 		// BEGIN: NO Button
-		$xml .= '<frame posn="34.1 -7.5 0">';
-		$xml .= '<quad posn="0 0 0.005" sizen="7.1 2.9" action="PluginVoteManager?Action=VoteNo" actionkey="2" style="'. $this->config['WIDGET'][0]['BUTTON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['BUTTON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="3.55 -0.9 0.006" sizen="7.1 0" halign="center" textsize="1" scale="0.8" text="$C10$ONO / F6"/>';
+		$xml .= '<frame pos="85.25 -14.0625" z-index="0.02">';
+		$xml .= '<quad pos="0 0" z-index="0.03" size="17.75 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="VoteManagerButtonNo" ScriptEvents="1"/>';
+		$xml .= '<label pos="8.875 -2.5" z-index="0.04" size="17.75 0" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" text="$ONO (F6)"/>';
 		$xml .= '</frame>';
 		// END: NO Button
 
+		// BEGIN: Countdown
+		$xml .= '<frame pos="52.5 -10.3125" z-index="0.02">';
+		$xml .= '<label pos="0 0" z-index="0.01" size="100 2.8125" class="labels" halign="center" textsize="1" textcolor="FFFFFFFF" text="" id="VoteManagerLabelCountdown"/>';
 		$xml .= '</frame>';
-		$xml .= '</manialink>';
+		// END: Countdown
 
-		return $xml;
-	}
+		// BEGIN: Vote marker
+		$xml .= '<frame pos="0 -13.6875" z-index="0.04">';
+		$xml .= '<quad pos="-1.25 0" z-index="0.01" size="6 6" image="'. $this->config['IMAGES'][0]['THUMB_UP'][0] .'" id="VoteManagerMarkerThumbUp" hidden="true"/>';
+		$xml .= '<quad pos="99.75 0" z-index="0.01" size="6 6" image="'. $this->config['IMAGES'][0]['THUMB_DOWN'][0] .'" id="VoteManagerMarkerThumbDown" hidden="true"/>';
+		$xml .= '</frame>';
+		// END: Vote marker
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function buildWidgetCountdown () {
-		global $aseco;
-
-		$xml  = '<manialink id="VoteManagerCountdown" name="VoteManagerCountdown">';
-		$xml .= '<label posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 21) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 5.5) .' 1.01" sizen="40 1.5" halign="center" textsize="1" textcolor="FFFF" text="" id="VoteManagerLabelCountdown"/>';
+		$xml .= '</frame>';
 
 		$message = $aseco->formatText($this->config['MESSAGES'][0]['TIME_REMAINING'][0], '%1');
+
 $maniascript = <<<EOL
 <script><!--
- /*
+/*
  * ----------------------------------
- * Function:	Countdown @ plugin.vote_manager.php
+ * Function:	Widget @ plugin.vote_manager.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
  * ----------------------------------
  */
 #Include "TextLib" as TextLib
-main() {
-	declare LabelCountdown	<=> (Page.GetFirstChild("VoteManagerLabelCountdown") as CMlLabel);
-	declare PrevTime	= CurrentLocalDateText;
+#Include "MathLib" as MathLib
+Void MarkPlayer (Text _Login, Text _Vote) {
+	foreach (Player in Players) {
+		if (Player.User.Login == _Login) {
+			declare Text VoteManager_CurrentVote for Player = "None";
+			if (VoteManager_CurrentVote != _Vote) {
+				VoteManager_CurrentVote = _Vote;
+			}
+		}
+	}
+}
+main () {
+	declare FrameVoteManager		<=> (Page.GetFirstChild("VoteManagerFrame") as CMlFrame);
+	declare LabelCountdown			<=> (Page.GetFirstChild("VoteManagerLabelCountdown") as CMlLabel);
+	declare QuadMarkerThumbUp		<=> (Page.GetFirstChild("VoteManagerMarkerThumbUp") as CMlQuad);
+	declare QuadMarkerThumbDown		<=> (Page.GetFirstChild("VoteManagerMarkerThumbDown") as CMlQuad);
+	declare QuadBarYes			<=> (Page.GetFirstChild("VoteManagerQuadBarYes") as CMlQuad);
+	declare LabelAmountYes			<=> (Page.GetFirstChild("VoteManagerLabelAmountYes") as CMlLabel);
+	declare LabelPercentYes			<=> (Page.GetFirstChild("VoteManagerLabelPercentYes") as CMlLabel);
+	declare QuadBarNo			<=> (Page.GetFirstChild("VoteManagerQuadBarNo") as CMlQuad);
+	declare LabelAmountNo			<=> (Page.GetFirstChild("VoteManagerLabelAmountNo") as CMlLabel);
+	declare LabelPercentNo			<=> (Page.GetFirstChild("VoteManagerLabelPercentNo") as CMlLabel);
 
-	declare Countdown	= {$this->config['RunningVote']['Countdown']};
-	declare MessageCount	= "{$message}";
-	declare MessageFinish	= "{$this->config['MESSAGES'][0]['VOTE_FINISHED'][0]}";
+	declare Integer Countdown		= {$this->config['RunningVote']['Countdown']};
+	declare Integer RefreshInterval		= 250;
+	declare Integer RefreshTime		= CurrentTime;
+	declare Real MouseDistanceX		= 0.0;
+	declare Real MouseDistanceY		= 0.0;
+	declare Boolean MoveWindow		= False;
+	declare Text InitiatorLogin		= "%LOGIN%";
+	declare Text MessageCount		= "{$message}";
+	declare Text MessageFinish		= "{$this->config['MESSAGES'][0]['VOTE_FINISHED'][0]}";
+	declare Text PrevTime			= CurrentLocalDateText;
+
+	FrameVoteManager.RelativeScale		= {$this->config['WIDGET'][0]['SCALE'][0]};
 
 	while (True) {
 		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		if (InputPlayer.Login == InitiatorLogin && QuadMarkerThumbUp.Visible != True) {
+			MarkPlayer(InputPlayer.Login, "Yes");
+			QuadMarkerThumbUp.Visible = True;
+			QuadMarkerThumbDown.Visible = False;
+		}
+
+		if (MoveWindow == True) {
+			FrameVoteManager.RelativePosition_V3.X = (MouseDistanceX + MouseX);
+			FrameVoteManager.RelativePosition_V3.Y = (MouseDistanceY + MouseY);
+		}
+		if (MouseLeftButton == True) {
+			if (PendingEvents.count > 0) {
+				foreach (Event in PendingEvents) {
+					if (Event.ControlId == "VoteManagerWidgetTitle") {
+						MouseDistanceX = (FrameVoteManager.RelativePosition_V3.X - MouseX);
+						MouseDistanceY = (FrameVoteManager.RelativePosition_V3.Y - MouseY);
+						MoveWindow = True;
+					}
+				}
+			}
+		}
+		else {
+			MoveWindow = False;
+		}
 
 		// Throttling to work only on every second
 		if (PrevTime != CurrentLocalDateText) {
 			PrevTime = CurrentLocalDateText;
 
+			// Countdown
 			Countdown = Countdown - 1;
 			if (Countdown < 0) {
 				LabelCountdown.SetText(MessageFinish);
 				break;
 			}
-			LabelCountdown.SetText(TextLib::Compose(MessageCount, TextLib::ToText(Countdown)));
+			LabelCountdown.Value = TextLib::Compose(MessageCount, TextLib::ToText(Countdown));
+		}
+
+		// Throttling to work only on every "RefreshInterval"
+		if (CurrentTime > RefreshTime) {
+			// Reset RefreshTime
+			RefreshTime = (CurrentTime + RefreshInterval);
+
+			// Do vote statistics
+			declare Real VotesYes	= 0.0;
+			declare Real VotesNo	= 0.0;
+			declare Real VotesTotal	= 0.0;
+			foreach (Player in Players) {
+				declare Text VoteManager_CurrentVote for Player = "None";
+				if (VoteManager_CurrentVote == "Yes") {
+					VotesYes += 1.0;
+				}
+				else if (VoteManager_CurrentVote == "No") {
+					VotesNo += 1.0;
+				}
+			}
+			VotesTotal = VotesYes + VotesNo;
+			if (VotesTotal == 0.0) {
+				VotesTotal = 0.00000000000000001; // Division by Zero prevention
+			}
+
+			declare Real VotesYesPercent = (VotesYes / VotesTotal * 100);
+			QuadBarYes.Size.X = (0.625 * VotesYesPercent);
+			LabelAmountYes.Value = ""^ MathLib::FloorInteger(VotesYes);
+			LabelPercentYes.Value = TextLib::FormatReal(VotesYesPercent, 2, False, False) ^"%";
+
+			declare Real VotesNoPercent = (VotesNo / VotesTotal * 100);
+			QuadBarNo.Size.X = (0.625 * VotesNoPercent);
+			LabelAmountNo.Value = ""^ MathLib::FloorInteger(VotesNo);
+			LabelPercentNo.Value = TextLib::FormatReal(VotesNoPercent, 2, False, False) ^"%";
+		}
+
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::MouseOver : {
+					if (Event.ControlId == "VoteManagerButtonYes" ||Event.ControlId == "VoteManagerButtonNo") {
+						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
+					}
+				}
+				case CMlEvent::Type::MouseClick : {
+					// Prevent the initiator from changing his vote
+					if (InputPlayer.Login != InitiatorLogin) {
+						if (Event.ControlId == "VoteManagerButtonYes") {
+							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
+							MarkPlayer(InputPlayer.Login, "Yes");
+							QuadMarkerThumbUp.Visible = True;
+							QuadMarkerThumbDown.Visible = False;
+						}
+						else if (Event.ControlId == "VoteManagerButtonNo") {
+							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
+							MarkPlayer(InputPlayer.Login, "No");
+							QuadMarkerThumbUp.Visible = False;
+							QuadMarkerThumbDown.Visible = True;
+						}
+					}
+				}
+				case CMlEvent::Type::KeyPress : {
+					// Prevent the initiator from changing his vote
+					if (InputPlayer.Login != InitiatorLogin) {
+						if (Event.KeyName == "F5") {
+							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
+							MarkPlayer(InputPlayer.Login, "Yes");
+							QuadMarkerThumbUp.Visible = True;
+							QuadMarkerThumbDown.Visible = False;
+						}
+						else if (Event.KeyName == "F6") {
+							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
+							MarkPlayer(InputPlayer.Login, "No");
+							QuadMarkerThumbUp.Visible = False;
+							QuadMarkerThumbDown.Visible = True;
+						}
+					}
+				}
+			}
 		}
 	}
 }
 --></script>
 EOL;
-
 		$xml .= $maniascript;
 		$xml .= '</manialink>';
 
@@ -870,138 +986,55 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildWidgetCountdownFinished () {
+	public function buildHelpWindow ($player) {
 		global $aseco;
 
-		$xml  = '<manialink id="VoteManagerCountdown" name="VoteManagerCountdown">';
-		$xml .= '<label posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 21) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 5.5) .' 1.01" sizen="40 1.5" halign="center" textsize="1" textcolor="FFFF" text="'. $this->config['MESSAGES'][0]['VOTE_FINISHED'][0] .'"/>';
-		$xml .= '</manialink>';
-
-		return $xml;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function buildPlayerVoteMarker ($login, $vote) {
-		global $aseco;
-
-		$xml  = '<manialink id="VoteManagerPlayerVoteMarker">';
-		if ($vote == 'Yes') {
-			$xml .= '<quad posn="'. ($this->config['WIDGET'][0]['POS_X'][0] - 1) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 7.3) .' 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_UP'][0] .'"/>';
-		}
-		else {
-			$xml .= '<quad posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 39.9) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 7.3) .' 1.1" sizen="3.2 3.2" image="'. $this->config['IMAGES'][0]['THUMB_DOWN'][0] .'"/>';
-		}
-		$xml .= '</manialink>';
-
-		$aseco->sendManialink($xml, $login, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function buildWidgetVoteStatistics () {
-
-		$count_yes = count($this->config['RunningVote']['Votes']['Yes']);
-		$count_no = count($this->config['RunningVote']['Votes']['No']);
-		$totalvotes = $count_yes + $count_no;
-		if ($totalvotes == 0) {
-			$totalvotes = 0.0001;
-		}
-
-		$xml  = '<manialink id="VoteManagerStatistics">';
-		$xml .= '<frame posn="'. ($this->config['WIDGET'][0]['POS_X'][0] + 8.5) .' '. ($this->config['WIDGET'][0]['POS_Y'][0] - 7.75) .' 0">';
-
-		$percent_yes = ($count_yes / $totalvotes * 100);
-		$xml .= '<quad posn="0 0 0.006" sizen="'. (0.25 * $percent_yes).' 1.225" bgcolor="390F"/>';
-		$xml .= '<label posn="2.1 -0.05 0.007" sizen="2.4 1.225" halign="right" textsize="1" scale="0.8" text="$000'. $count_yes .'"/>';
-		$xml .= '<label posn="6.4 -0.05 0.007" sizen="5 1.225" halign="right" textsize="1" scale="0.8" text="$000'. number_format($percent_yes, 2, $this->config['NumberFormat'][$this->config['NUMBER_FORMAT'][0]]['decimal_sep'], $this->config['NumberFormat'][$this->config['NUMBER_FORMAT'][0]]['thousands_sep']) .'%"/>';
-
-		$percent_no = ($count_no / $totalvotes * 100);
-		$xml .= '<quad posn="0 -1.225 0.006" sizen="'. (0.25 * $percent_no).' 1.225" bgcolor="D02F"/>';
-		$xml .= '<label posn="2.1 -1.275 0.007" sizen="2.4 1.225" halign="right" textsize="1" scale="0.8" text="$000'. $count_no .'"/>';
-		$xml .= '<label posn="6.4 -1.275 0.007" sizen="5 1.225" halign="right" textsize="1" scale="0.8" text="$000'. number_format($percent_no, 2, $this->config['NumberFormat'][$this->config['NUMBER_FORMAT'][0]]['decimal_sep'], $this->config['NumberFormat'][$this->config['NUMBER_FORMAT'][0]]['thousands_sep']) .'%"/>';
-
-		$xml .= '</frame>';
-		$xml .= '</manialink>';
-
-		return $xml;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function buildHelpWindow ($login) {
-		global $aseco;
-
-		$xml = '<manialink id="VoteManagerHelpWindow">';
-		$xml .= '<frame posn="-40.8 30.55 18.50">';	// BEGIN: Window Frame
-		$xml .= '<quad posn="-0.2 0.2 0.01" sizen="81.8 59" style="Bgs1InRace" substyle="BgTitle2"/>';
-		$xml .= '<quad posn="1.8 -4.1 0.02" sizen="77.7 49.9" bgcolor="0018"/>';
-
-		// Header Line
-		$xml .= '<quad posn="-0.6 0.6 0.02" sizen="82.6 6" style="Bgs1InRace" substyle="BgTitle3_3"/>';
-		$xml .= '<quad posn="-0.6 0.6 0.03" sizen="82.6 6" style="Bgs1InRace" substyle="BgTitle3_3"/>';
-
-		// Title
-		$xml .= '<quad posn="1.8 -0.8 0.04" sizen="3.2 3.2" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label posn="5.5 -1.7 0.04" sizen="75.4 0" textsize="2" scale="0.9" textcolor="000F" text="Help for Vote Manager"/>';
-
-		// Close Button
-		$xml .= '<frame posn="76.7 -0.15 0.05">';
-		$xml .= '<quad posn="0 0 0.01" sizen="4.5 4.5" action="PluginVoteManager?Action=CloseHelpWindow" style="Icons64x64_1" substyle="ArrowUp"/>';
-		$xml .= '<quad posn="1.2 -1.2 0.02" sizen="2 2" bgcolor="EEEF"/>';
-		$xml .= '<quad posn="0.7 -0.7 0.03" sizen="3.1 3.1" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '</frame>';
-
-		// About
-		$xml .= '<label posn="6 -55.8 0.04" sizen="13 2" halign="center" valign="center" textsize="1" scale="0.7" url="http://www.undef.name/XAseco2/Vote-Manager.php" focusareacolor1="0000" focusareacolor2="FFF5" textcolor="000F" text="VOTE-MANAGER/'. $this->getVersion() .'"/>';
-
-		// Set the content
-		$xml .= '<frame posn="3 -6 0.01">';
-
-		$xml .= '<label posn="0 0 0.01" sizen="75 0" textsize="1" textcolor="FF0F" autonewline="1" text="With this Plugin you can start a Voting for restarting or skipping the current Map, please use one of the described commands below for a new vote.'. LF.LF .'A restart vote for a Map did not restart as soon as the vote passed, the restart is delayed until the end of the Race. If a restart vote passed and a Player want to start a skip vote, then this is rejected."/>';
+		$xml = '<frame pos="2.5 -2.5" z-index="0.02">';
+		$xml .= '<label pos="0 0" z-index="0.01" size="194.55 0" textsize="1" textcolor="FF0F" autonewline="1" text="With this Plugin you can start a Voting for restarting or skipping the current Map, please use one of the described commands below for a new vote.'. LF.LF .'A restart vote for a Map did not restart as soon as the vote passed, the restart is delayed until the end of the Race. If a restart vote passed and a Player want to start a skip vote, then this is rejected."/>';
 
 		// Command "/helpvote"
-		$xml .= '<label posn="0 -10 0.01" sizen="17 2" textsize="1" textcolor="FFFF" text="/helpvote"/>';
-		$xml .= '<label posn="19 -10 0.01" sizen="38 2" textsize="1" textcolor="FF0F" text="Display this help"/>';
+		$xml .= '<label pos="0 -18.75" z-index="0.01" size="42.5 3.75" textsize="1" textcolor="FFFF" text="/helpvote"/>';
+		$xml .= '<label pos="47.5 -18.75" z-index="0.01" size="95 3.75" textsize="1" textcolor="FF0F" text="Display this help"/>';
 
 		// Command "/restart" or "/res"
-		$xml .= '<label posn="0 -12 0.01" sizen="17 2" textsize="1" textcolor="FFFF" text="/restart $FF0or$FFF /res"/>';
-		$xml .= '<label posn="19 -12 0.01" sizen="38 2" textsize="1" textcolor="FF0F" text="Start a vote to restart the current Map"/>';
+		$xml .= '<label pos="0 -22.5" z-index="0.01" size="42.5 3.75" textsize="1" textcolor="FFFF" text="/restart $FF0or$FFF /res"/>';
+		$xml .= '<label pos="47.5 -22.5" z-index="0.01" size="95 3.75" textsize="1" textcolor="FF0F" text="Start a vote to restart the current Map"/>';
 
 		// Command "/skip" or "/next"
-		$xml .= '<label posn="0 -14 0.01" sizen="17 2" textsize="1" textcolor="FFFF" text="/skip $FF0or$FFF /next"/>';
-		$xml .= '<label posn="19 -14 0.01" sizen="38 2" textsize="1" textcolor="FF0F" text="Start a vote to skip the current Map"/>';
+		$xml .= '<label pos="0 -26.25" z-index="0.01" size="42.5 3.75" textsize="1" textcolor="FFFF" text="/skip $FF0or$FFF /next"/>';
+		$xml .= '<label pos="47.5 -26.25" z-index="0.01" size="95 3.75" textsize="1" textcolor="FF0F" text="Start a vote to skip the current Map"/>';
 
 		// Command "/yes" or F5
-		$xml .= '<label posn="0 -16 0.01" sizen="17 2" textsize="1" textcolor="FFFF" text="/yes $FF0or$FFF F5"/>';
-		$xml .= '<label posn="19 -16 0.01" sizen="38 2" textsize="1" textcolor="FF0F" text="Accept the current vote"/>';
+		$xml .= '<label pos="0 -30" z-index="0.01" size="42.5 3.75" textsize="1" textcolor="FFFF" text="/yes $FF0or$FFF F5"/>';
+		$xml .= '<label pos="47.5 -30" z-index="0.01" size="95 3.75" textsize="1" textcolor="FF0F" text="Accept the current vote"/>';
 
 		// Command "/no" or F6
-		$xml .= '<label posn="0 -18 0.01" sizen="17 2" textsize="1" textcolor="FFFF" text="/no $FF0or$FFF F6"/>';
-		$xml .= '<label posn="19 -18 0.01" sizen="38 2" textsize="1" textcolor="FF0F" text="Reject the current vote"/>';
+		$xml .= '<label pos="0 -33.75" z-index="0.01" size="42.5 3.75" textsize="1" textcolor="FFFF" text="/no $FF0or$FFF F6"/>';
+		$xml .= '<label pos="47.5 -33.75" z-index="0.01" size="95 3.75" textsize="1" textcolor="FF0F" text="Reject the current vote"/>';
 
 		// Command "/votemanager reload"
-		$xml .= '<label posn="0 -22 0.01" sizen="17 2" textsize="1" textcolor="FFFF" text="/votemanager reload"/>';
-		$xml .= '<label posn="19 -22 0.01" sizen="38 2" textsize="1" textcolor="FF0F" text="Reload the vote_manager.xml (for MasterAdmins only)"/>';
+		$xml .= '<label pos="0 -41.25" z-index="0.01" size="42.5 3.75" textsize="1" textcolor="FFFF" text="/votemanager reload"/>';
+		$xml .= '<label pos="47.5 -41.25" z-index="0.01" size="95 3.75" textsize="1" textcolor="FF0F" text="Reload the vote_manager.xml (for MasterAdmins only)"/>';
 
 		$xml .= '</frame>';
 
-		$xml .= '</frame>';	// Window
-		$xml .= '</manialink>';
 
-		$aseco->sendManialink($xml, $login, 0, false);
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'	=> $this->config['WIDGET'][0]['ICON_STYLE'][0] .','. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0],
+		);
+		$settings_content = array(
+			'title'			=> 'Help for Vote Manager',
+			'data'			=> array($xml),
+			'about'			=> 'VOTE MANAGER/'. $this->getVersion(),
+			'mode'			=> 'pages',
+			'add_background'	=> true,
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
 	}
 
 	/*
@@ -1037,28 +1070,25 @@ EOL;
 		global $aseco;
 
 		if ( ($this->config['RunningVote']['Active'] == true) && ($this->config['RunningVote']['Countdown'] > 0) ) {
-			// Do not allow to change the own started vote
-			if ($this->config['RunningVote']['StartedFrom']['Login'] == $login) {
-				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
-				return;
-			}
+//			// Do not allow to change the own started vote
+//			if ($this->config['RunningVote']['StartedFrom']['Login'] == $login) {
+//				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
+//				return;
+//			}
 
 			// Check if Player have already voted before
 			$not_voted = (($type == 'Yes') ? 'No' : 'Yes');
-			if ( isset($this->config['RunningVote']['Votes'][$type][$login]) ) {
+			if (isset($this->config['RunningVote']['Votes'][$type][$login])) {
 				// Player voted the same
 				return;
 			}
-			else if ( isset($this->config['RunningVote']['Votes'][$not_voted][$login]) ) {
+			else if (isset($this->config['RunningVote']['Votes'][$not_voted][$login])) {
 				// Player voted already but change his mind, so unset the old vote
 				unset($this->config['RunningVote']['Votes'][$not_voted][$login]);
 			}
 
 			// Store the current vote
 			$this->config['RunningVote']['Votes'][$type][$login] = true;
-
-			// Mark the Player Vote
-			$this->buildPlayerVoteMarker($login, $type);
 		}
 	}
 
@@ -1213,7 +1243,8 @@ EOL;
 	*/
 
 	public function chat_helpvote ($aseco, $login, $chat_command, $chat_parameter) {
-		$this->buildHelpWindow($login);
+		$player = $aseco->server->players->getPlayerByLogin($login);
+		$this->buildHelpWindow($player);
 	}
 
 	/*

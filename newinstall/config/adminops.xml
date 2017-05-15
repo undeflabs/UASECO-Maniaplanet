@@ -8,7 +8,7 @@
 
 	<admins>
 <!-- format:
-		<tmlogin>YOUR_ADMIN_LOGIN</tmlogin> <ipaddress></ipaddress>
+		<tmlogin>YOUR_OPERATOR_LOGIN</tmlogin> <ipaddress></ipaddress>
 -->
 	</admins>
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2017-04-09
+	Authors:	[EN] undef.de
+			[DE] undef.de
+	//-->
+
+	<chat_records>
+		<en>{#server}» {#record}MX World Record: {#highlite}{1}{#record} by {#highlite}{2}</en>
+		<de>{#server}» {#record}MX Weltrecord: {#highlite}{1}{#record} von {#highlite}{2}</de>
+	</chat_records>
+
+	<window_title_mxlist>
+		<en>Maps from mania-exchange.com</en>
+		<de>Strecken von mania-exchange.com</de>
+	</window_title_mxlist>
+</locales>

@@ -5,10 +5,6 @@
  * » Displays a message in the chat and can display a Welcome-Window on Player connects.
  *
  * ----------------------------------------------------------------------------------
- * Author:	undef.de
- * Date:	2015-12-30
- * Copyright:	2014 - 2015 by undef.de
- * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * ----------------------------------------------------------------------------------
- *
- * Dependencies:
- *  - includes/core/window.class.php
- *  - plugins/plugin.rasp.php
  *
  */
 
@@ -52,28 +44,22 @@ class PluginWelcomeCenter extends Plugin {
 	*/
 
 	public function __construct () {
+		global $aseco;
 
-		$this->setVersion('1.0.0');
 		$this->setAuthor('undef.de');
+		$this->setVersion('1.0.0');
+		$this->setBuild('2017-04-30');
+		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays a message in the chat and can display a Welcome-Window on Player connects.');
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 
-		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
 		$this->registerEvent('onEndMap',		'onEndMap');
 
 		$this->registerChatCommand('message', 'chat_message', 'Shows random informational message', Player::PLAYERS);
-	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onSync ($aseco) {
 
 		// Read Configuration
 		if (!$this->config = $aseco->parser->xmlToArray('config/welcome_center.xml', true, true)) {
@@ -106,10 +92,15 @@ class PluginWelcomeCenter extends Plugin {
 
 		// Get random message
 		$i = mt_rand(0, count($this->messages) - 1);
-		$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
+		if ($this->messages[$i] instanceof Message) {
+			$this->messages[$i]->sendChatMessage($login);
+		}
+		else if (is_string($this->messages[$i])) {
+			$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
 
-		// Send the message
-		$aseco->sendChatMessage($message, $login);
+			// Send the message
+			$aseco->sendChatMessage($message, $login);
+		}
 	}
 
 	/*
@@ -121,14 +112,14 @@ class PluginWelcomeCenter extends Plugin {
 	public function addInfoMessage ($message) {
 		global $aseco;
 
-		if (is_string($message)) {
-			$this->messages[] = $message;
-		}
-		else if ($message instanceof Message) {
+		if ($message instanceof Message) {
 			// Add prefix before message text
 			foreach ($message->translations as $lang => &$text) {
 				$text = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0]) . $text;
 			}
+			$this->messages[] = $message;
+		}
+		else if (is_string($message)) {
 			$this->messages[] = $message;
 		}
 	}
@@ -165,7 +156,7 @@ class PluginWelcomeCenter extends Plugin {
 				}
 
 				// Setup Ladderrank, Serverrank, Nation and Zone
-				$ladderrank = (($player->ladderrank >= 0) ? $aseco->formatNumber($player->ladderrank, 0) : 0);
+				$ladderrank = (($player->ladder_rank >= 0) ? $aseco->formatNumber($player->ladder_rank, 0) : 0);
 				$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
 				$zone = $player->zone;
 				array_shift($zone);		// Remove continent from $zone array
@@ -184,7 +175,7 @@ class PluginWelcomeCenter extends Plugin {
 					),
 					array(
 						$title,
-						$aseco->stripColors($player->nickname),
+						$aseco->stripStyles($player->nickname),
 						$player->continent,
 						$aseco->country->iocToCountry($player->nation),
 						implode(', ', $zone),
@@ -256,7 +247,7 @@ class PluginWelcomeCenter extends Plugin {
 					'{playtime}',
 				),
 				array(
-					$aseco->stripColors($player->nickname),
+					$aseco->stripStyles($player->nickname),
 					$player->continent,
 					$aseco->country->iocToCountry($player->nation),
 					implode(', ', $zone),
@@ -295,7 +286,10 @@ class PluginWelcomeCenter extends Plugin {
 
 		// Get random message
 		$i = mt_rand(0, count($this->messages) - 1);
-		if (is_string($this->messages[$i])) {
+		if ($this->messages[$i] instanceof Message) {
+			$this->messages[$i]->sendChatMessage();
+		}
+		else if (is_string($this->messages[$i])) {
 			$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
 
 			// Send the Message to all connected Players...
@@ -307,9 +301,6 @@ class PluginWelcomeCenter extends Plugin {
 				// ..into chat
 				$aseco->sendChatMessage($message, false);
 			}
-		}
-		else if (get_class($this->messages[$i]) == 'Message') {
-			$this->messages[$i]->sendChatMessage();
 		}
 	}
 
@@ -326,12 +317,12 @@ class PluginWelcomeCenter extends Plugin {
 
 		// Replace line break markers with line break
 		$message = str_replace('{br}', LF, $this->config['WELCOME_WINDOW'][0]['MESSAGE'][0]);
-		$message = str_replace('{server}', $aseco->handleSpecialChars($aseco->stripColors($aseco->server->name)), $message);
+		$message = str_replace('{server}', $aseco->handleSpecialChars($aseco->stripStyles($aseco->server->name)), $message);
 		$message = str_replace('{player}', $aseco->handleSpecialChars($player->nickname.'$Z'), $message);
 
 		// Set the content
 		if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['NORMAL'][0] != '') {
-			$xml .= '<quad posn="150 -11.25 0.02" sizen="45 87.1875" image="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['NORMAL'][0] .'"';
+			$xml .= '<quad pos="164.5 -1.5" z-index="0.03" size="34 87" image="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['NORMAL'][0] .'"';
 			if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['FOCUS'][0] != '') {
 	 			$xml .= ' imagefocus="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['FOCUS'][0] .'"';
 			}
@@ -339,20 +330,27 @@ class PluginWelcomeCenter extends Plugin {
 	 			$xml .= ' url="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['LINK'][0] .'"';
 			}
 			$xml .= '/>';
-			$xml .= '<label posn="7.5 -11.25 0.01" sizen="137.5 0" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
+			$xml .= '<label pos="2.5 -2.5" z-index="0.03" size="155.55 0" autonewline="1" textsize="1" textcolor="FFFF" text="'. $message .'"/>';
 		}
 		else {
-			$xml .= '<label posn="7.5 -11.25 0.01" sizen="181 0" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
+			$xml .= '<label pos="2.5 -2.5" z-index="0.03" size="194.55 0" autonewline="1" textsize="1" textcolor="FFFF" text="'. $message .'"/>';
 		}
 
-
 		// Setup settings for Window
-		$settings_title = array(
-			'icon'	=> $this->config['WELCOME_WINDOW'][0]['ICON_STYLE'][0] .','. $this->config['WELCOME_WINDOW'][0]['ICON_SUBSTYLE'][0],
+		$settings_styles = array(
+			'icon'			=> $this->config['WELCOME_WINDOW'][0]['ICON_STYLE'][0] .','. $this->config['WELCOME_WINDOW'][0]['ICON_SUBSTYLE'][0],
 		);
+		$settings_content = array(
+			'title'			=> 'Welcome to '. $aseco->stripStyles($aseco->server->name) .'!',
+			'data'			=> array($xml),
+			'about'			=> 'WELCOME CENTER/'. $this->getVersion(),
+			'mode'			=> 'pages',
+			'add_background'	=> true,
+		);
+
 		$window = new Window();
-		$window->setLayoutTitle($settings_title);
-		$window->setContent('Welcome to '. $aseco->stripColors($aseco->server->name) .'!', $xml);
+		$window->setStyles($settings_styles);
+		$window->setContent($settings_content);
 		$window->send($player, $this->config['WELCOME_WINDOW'][0]['AUTOHIDE'][0], false);
 	}
 }
