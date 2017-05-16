@@ -43,12 +43,12 @@
 
 	// Current project name, version and website
 	define('UASECO_NAME',		'UASECO');
-	define('UASECO_VERSION',	'0.9.2');
-	define('UASECO_BUILD',		'2017-05-15');
+	define('UASECO_VERSION',	'0.9.3');
+	define('UASECO_BUILD',		'2017-05-16');
 	define('UASECO_WEBSITE',	'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2017-05-12_21_00');
+	define('MANIAPLANET_BUILD',	'2017-05-16_19_00');
 	define('API_VERSION',		'2013-04-16');
 	define('MIN_PHP_VERSION',	'5.6.0');
 	define('MIN_MYSQL_VERSION',	'5.1.0');

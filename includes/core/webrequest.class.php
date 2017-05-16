@@ -50,7 +50,7 @@ class WebRequest extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-15');
+		$this->setBuild('2017-05-16');
 		$this->setCopyright('2016 - 2017 by undef.de');
 		$this->setDescription('Provides asynchronous and synchronous communication for HTTP GET-, POST- and HEAD-Requests.');
 
@@ -62,6 +62,24 @@ class WebRequest extends BaseClass {
 
 		// Make sure the directory exists
 		@mkdir($this->path, 0755, true);
+
+
+		// Check for instances of the worker process "webrequest.php"
+		$found = false;
+		if ($dir = opendir($this->path)) {
+			while ($entry = readdir($dir)) {
+				if ($entry == '.' || $entry == '..') {
+					continue;
+				}
+				if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, 'webrequest.pid.') !== false) {
+					$found = true;
+				}
+			}
+		}
+
+		if ($found === false) {
+			trigger_error('[WebRequest] Could not found any worker processes of "webrequest.php", can not life without some!', E_USER_ERROR);
+		}
 	}
 
 	/*
@@ -70,10 +88,24 @@ class WebRequest extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function destruct () {
+	public function __destruct () {
 
-		// Let the worker "webrequest.php" kill himself
-		file_put_contents($this->path .'worker.suicide', '');
+		$worker_pids = array();
+		if ($dir = opendir($this->path)) {
+			while ($entry = readdir($dir)) {
+				if ($entry == '.' || $entry == '..') {
+					continue;
+				}
+				if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, 'webrequest.pid.') !== false) {
+					$worker_pids[] = str_replace('webrequest.pid.', '', $entry);
+				}
+			}
+		}
+
+		// Let the worker(s) "webrequest.php" kill himselfs
+		foreach ($worker_pids as $pid) {
+			file_put_contents($this->path.'worker.suicide.'.$pid, '');
+		}
 	}
 
 	/*

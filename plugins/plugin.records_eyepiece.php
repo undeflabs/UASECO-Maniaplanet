@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-05-13');
+		$this->setBuild('2017-05-16');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -102,8 +102,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->registerEvent('onVotingRestartMap',		'onVotingRestartMap');		// from plugin.vote_manager.php
 
 		$this->registerChatCommand('eyepiece',			'chat_eyepiece',	'Displays the help for the Records-Eyepiece widgets (see: /eyepiece)',		Player::PLAYERS);
-		$this->registerChatCommand('list',			'chat_list',		'Lists maps currently on the server (see: /eyepiece)',				Player::PLAYERS);
-//		$this->registerChatCommand('elist',			'chat_elist',		'Lists maps currently on the server (see: /eyepiece)',				Player::PLAYERS);
+//		$this->registerChatCommand('list',			'chat_list',		'Lists maps currently on the server (see: /eyepiece)',				Player::PLAYERS);
+		$this->registerChatCommand('elist',			'chat_elist',		'Lists maps currently on the server (see: /eyepiece)',				Player::PLAYERS);
 		$this->registerChatCommand('estat',			'chat_estat',		'Display one of the MoreRankingLists (see: /eyepiece)',				Player::PLAYERS);
 
 		$this->registerChatCommand('eyeset',			'chat_eyeset',		'Adjust some settings for the Records-Eyepiece plugin (see: /eyepiece)',	Player::MASTERADMINS);

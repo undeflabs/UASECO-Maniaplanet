@@ -7,8 +7,8 @@
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
  * Copyright:	2017 by undef.de
- * Version:	1.0.0
- * Build:	2017-05-15
+ * Version:	1.0.1
+ * Build:	2017-05-16
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,10 @@ class WebRequestWorker {
 	public function __construct () {
 
 		// Store the current PID
-		file_put_contents($this->path .'webrequest.pid', getmypid(), LOCK_EX);
+		$pid = getmypid();
+		$pid_file = 'webrequest.pid.'.$pid;
+		$suicide_file = 'worker.suicide.'.$pid;
+		file_put_contents($this->path . $pid_file, $pid, LOCK_EX);
 
 		while (true) {
 			$starttime = microtime(true);
@@ -76,8 +79,9 @@ class WebRequestWorker {
 					}
 
 					// Got a kill signal?
-					if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && $entry == 'worker.suicide') {
-						unlink($this->path .'webrequest.pid');
+					if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && $entry == $suicide_file) {
+						unlink($this->path.$suicide_file);
+						unlink($this->path.$pid_file);
 						exit(0);
 					}
 				}
@@ -129,6 +133,10 @@ class WebRequestWorker {
 						),
 						'content'		=> $request->data,
 					),
+					'ftp'		=> array(
+						'overwrite'		=> true,
+						'resume_pos'		=> 0,
+					),
 				)
 			);
 		}
@@ -151,6 +159,10 @@ class WebRequestWorker {
 						'user_agent'		=> $request->user_agent,
 						'method'		=> 'GET',
 						'header'		=> $request->extra_headers,
+					),
+					'ftp'		=> array(
+						'overwrite'		=> true,
+						'resume_pos'		=> 0,
 					),
 				)
 			);

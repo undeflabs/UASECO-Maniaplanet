@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-15');
+		$this->setBuild('2017-05-16');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -128,7 +128,7 @@ class Helper extends BaseClass {
 				preg_replace('/[^A-Za-z0-9-]+/', $delimiter,
 					preg_replace('/[&]/', 'and',
 						preg_replace('/[\']/', '',
-							iconv('UTF-8', 'ASCII//TRANSLIT',
+							@iconv('UTF-8', 'ASCII//TRANSLIT',
 								trim(
 									$this->stripStyles(
 										$this->stripNewlines(

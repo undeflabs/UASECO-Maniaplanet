@@ -55,7 +55,7 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-05-16');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
@@ -81,7 +81,7 @@ class PluginRaspJukebox extends Plugin {
 		$this->registerEvent('onEndMap',	'onEndMap');
 		$this->registerEvent('onLoadingMap',	'onLoadingMap');
 
-//		$this->registerChatCommand('list',	'chat_list',		'Lists maps currently on the server (see: /list help)',		Player::PLAYERS);
+		$this->registerChatCommand('list',	'chat_list',		'Lists maps currently on the server (see: /list help)',		Player::PLAYERS);
 		$this->registerChatCommand('jukebox',	'chat_jukebox',		'Sets map to be played next (see: /jukebox help)',		Player::PLAYERS);
 		$this->registerChatCommand('autojuke',	'chat_autojuke',	'Jukeboxes map from /list (see: /autojuke help)',		Player::PLAYERS);
 		$this->registerChatCommand('add',	'chat_add',		'Adds a map directly from MX (<ID>)',				Player::PLAYERS);
@@ -524,142 +524,142 @@ class PluginRaspJukebox extends Plugin {
 		}
 	}
 
-//	/*
-//	#///////////////////////////////////////////////////////////////////////#
-//	#									#
-//	#///////////////////////////////////////////////////////////////////////#
-//	*/
-//
-//	public function chat_list ($aseco, $login, $chat_command, $chat_parameter) {
-//
-//		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-//			return;
-//		}
-//		$command['author'] = $player;
-//
-//		// check for relay server
-//		if ($aseco->server->isrelay) {
-//			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-//			$aseco->sendChatMessage($message, $login);
-//			return;
-//		}
-//
-//		// split params into array
-//		$arglist = preg_replace('/ +/', ' ', $chat_parameter);
-//		$command['params'] = explode(' ', $arglist);
-//		$cmdcount = count($command['params']);
-//
-//		if ($cmdcount == 1 && $command['params'][0] == 'help') {
-//			$header = '{#black}/list$g will show maps in rotation on the server:';
-//			$help = array();
-//			$help[] = array('...', '{#black}help',
-//			                'Displays this help information');
-//			$help[] = array('...', '{#black}nofinish',
-//			                'Shows maps you haven\'t completed');
-//			$help[] = array('...', '{#black}norank',
-//			                'Shows maps you don\'t have a rank on');
-//			$help[] = array('...', '{#black}nogold',
-//			                'Shows maps you didn\'t beat gold time on');
-//			$help[] = array('...', '{#black}noauthor',
-//			                'Shows maps you didn\'t beat author time on');
-//			$help[] = array('...', '{#black}norecent',
-//			                'Shows maps you didn\'t play recently');
-//			$help[] = array('...', '{#black}best$g/{#black}worst',
-//			                'Shows maps with your best/worst records');
-//			$help[] = array('...', '{#black}longest$g/{#black}shortest',
-//			                'Shows the longest/shortest maps');
-//			$help[] = array('...', '{#black}newest$g/{#black}oldest #',
-//			                'Shows newest/oldest # maps (def: 50)');
-//			$help[] = array('...', '{#black}xxx',
-//			                'Where xxx is part of a map or author name');
-//			if ($this->feature_karma) {
-//				$help[] = array('...', '{#black}novote',
-//				                'Shows maps you didn\'t karma vote for');
-//				$help[] = array('...', '{#black}karma +/-#',
-//				                'Shows all maps with karma >= or <=');
-//				$help[] = array('', '',
-//				                'given value (example: {#black}/list karma -3$g shows all');
-//				$help[] = array('', '',
-//				                'maps with karma equal or worse than -3)');
-//			}
-//			$help[] = array();
-//			$help[] = array('Pick an Id number from the list, and use {#black}/jukebox #');
-//
-//			// display ManiaLink message
-//			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(1.1, 0.05, 0.3, 0.75), 'OK');
-//			return;
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'nofinish') {
-//			$this->getMapsNoFinish($player);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'norank') {
-//			$this->getMapsNoRank($player);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'nogold') {
-//			$this->getMapsNoGold($player);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'noauthor') {
-//			$this->getMapsNoAuthor($player);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'norecent') {
-//			$this->getMapsNoRecent($player);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'best') {
-//			// avoid interference from possible parameters
-//			$command['params'] = '';
-//			// display player records, best first
-//			$aseco->plugins['PluginChatRecords']->displayRecords($aseco, $command, true);
-//			return;
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'worst') {
-//			// avoid interference from possible parameters
-//			$command['params'] = '';
-//			// display player records, worst first
-//			$aseco->plugins['PluginChatRecords']->displayRecords($aseco, $command, false);
-//			return;
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'longest') {
-//			$this->getMapsByLength($player, false);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'shortest') {
-//			$this->getMapsByLength($player, true);
-//		}
-//		else if ($cmdcount >= 1 && $command['params'][0] == 'newest') {
-//			$count = 50;  // default
-//			if ($cmdcount == 2 && is_numeric($command['params'][1]) && $command['params'][1] > 0) {
-//				$count = intval($command['params'][1]);
-//			}
-//			$this->getMapsByAdd($player, true, $count);
-//		}
-//		else if ($cmdcount >= 1 && $command['params'][0] == 'oldest') {
-//			$count = 50;  // default
-//			if ($cmdcount == 2 && is_numeric($command['params'][1]) && $command['params'][1] > 0) {
-//				$count = intval($command['params'][1]);
-//			}
-//			$this->getMapsByAdd($player, false, $count);
-//		}
-//		else if ($cmdcount == 1 && $command['params'][0] == 'novote' && $this->feature_karma) {
-//			$this->getMapsNoVote($player);
-//		}
-//		else if ($cmdcount == 2 && $command['params'][0] == 'karma' && $this->feature_karma) {
-//			$karmaval = intval($command['params'][1]);
-//			$this->getMapsByKarma($player, $karmaval);
-//		}
-//		else if ($cmdcount >= 1 && strlen($command['params'][0]) > 0) {
-//			$aseco->plugins['PluginRasp']->getAllMaps($player, $arglist, '*');  // wildcard
-//		}
-//		else {
-//			$aseco->plugins['PluginRasp']->getAllMaps($player, '*', '*');  // wildcards
-//		}
-//
-//		if (empty($player->maplist)) {
-//			$message = '{#server}» {#error}No maps found, try again!';
-//			$aseco->sendChatMessage($message, $login);
-//			return;
-//		}
-//		// display ManiaLink message
-//		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-//	}
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_list ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+		$command['author'] = $player;
+
+		// check for relay server
+		if ($aseco->server->isrelay) {
+			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
+			$aseco->sendChatMessage($message, $login);
+			return;
+		}
+
+		// split params into array
+		$arglist = preg_replace('/ +/', ' ', $chat_parameter);
+		$command['params'] = explode(' ', $arglist);
+		$cmdcount = count($command['params']);
+
+		if ($cmdcount == 1 && $command['params'][0] == 'help') {
+			$header = '{#black}/list$g will show maps in rotation on the server:';
+			$help = array();
+			$help[] = array('...', '{#black}help',
+			                'Displays this help information');
+			$help[] = array('...', '{#black}nofinish',
+			                'Shows maps you haven\'t completed');
+			$help[] = array('...', '{#black}norank',
+			                'Shows maps you don\'t have a rank on');
+			$help[] = array('...', '{#black}nogold',
+			                'Shows maps you didn\'t beat gold time on');
+			$help[] = array('...', '{#black}noauthor',
+			                'Shows maps you didn\'t beat author time on');
+			$help[] = array('...', '{#black}norecent',
+			                'Shows maps you didn\'t play recently');
+			$help[] = array('...', '{#black}best$g/{#black}worst',
+			                'Shows maps with your best/worst records');
+			$help[] = array('...', '{#black}longest$g/{#black}shortest',
+			                'Shows the longest/shortest maps');
+			$help[] = array('...', '{#black}newest$g/{#black}oldest #',
+			                'Shows newest/oldest # maps (def: 50)');
+			$help[] = array('...', '{#black}xxx',
+			                'Where xxx is part of a map or author name');
+			if ($this->feature_karma) {
+				$help[] = array('...', '{#black}novote',
+				                'Shows maps you didn\'t karma vote for');
+				$help[] = array('...', '{#black}karma +/-#',
+				                'Shows all maps with karma >= or <=');
+				$help[] = array('', '',
+				                'given value (example: {#black}/list karma -3$g shows all');
+				$help[] = array('', '',
+				                'maps with karma equal or worse than -3)');
+			}
+			$help[] = array();
+			$help[] = array('Pick an Id number from the list, and use {#black}/jukebox #');
+
+			// display ManiaLink message
+			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(1.1, 0.05, 0.3, 0.75), 'OK');
+			return;
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'nofinish') {
+			$this->getMapsNoFinish($player);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'norank') {
+			$this->getMapsNoRank($player);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'nogold') {
+			$this->getMapsNoGold($player);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'noauthor') {
+			$this->getMapsNoAuthor($player);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'norecent') {
+			$this->getMapsNoRecent($player);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'best') {
+			// avoid interference from possible parameters
+			$command['params'] = '';
+			// display player records, best first
+			$aseco->plugins['PluginChatRecords']->displayRecords($aseco, $command, true);
+			return;
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'worst') {
+			// avoid interference from possible parameters
+			$command['params'] = '';
+			// display player records, worst first
+			$aseco->plugins['PluginChatRecords']->displayRecords($aseco, $command, false);
+			return;
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'longest') {
+			$this->getMapsByLength($player, false);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'shortest') {
+			$this->getMapsByLength($player, true);
+		}
+		else if ($cmdcount >= 1 && $command['params'][0] == 'newest') {
+			$count = 50;  // default
+			if ($cmdcount == 2 && is_numeric($command['params'][1]) && $command['params'][1] > 0) {
+				$count = intval($command['params'][1]);
+			}
+			$this->getMapsByAdd($player, true, $count);
+		}
+		else if ($cmdcount >= 1 && $command['params'][0] == 'oldest') {
+			$count = 50;  // default
+			if ($cmdcount == 2 && is_numeric($command['params'][1]) && $command['params'][1] > 0) {
+				$count = intval($command['params'][1]);
+			}
+			$this->getMapsByAdd($player, false, $count);
+		}
+		else if ($cmdcount == 1 && $command['params'][0] == 'novote' && $this->feature_karma) {
+			$this->getMapsNoVote($player);
+		}
+		else if ($cmdcount == 2 && $command['params'][0] == 'karma' && $this->feature_karma) {
+			$karmaval = intval($command['params'][1]);
+			$this->getMapsByKarma($player, $karmaval);
+		}
+		else if ($cmdcount >= 1 && strlen($command['params'][0]) > 0) {
+			$aseco->plugins['PluginRasp']->getAllMaps($player, $arglist, '*');  // wildcard
+		}
+		else {
+			$aseco->plugins['PluginRasp']->getAllMaps($player, '*', '*');  // wildcards
+		}
+
+		if (empty($player->maplist)) {
+			$message = '{#server}» {#error}No maps found, try again!';
+			$aseco->sendChatMessage($message, $login);
+			return;
+		}
+		// display ManiaLink message
+		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

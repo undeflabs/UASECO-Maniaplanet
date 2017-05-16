@@ -162,7 +162,7 @@ Build, store and send the Window to the Player.
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 *	`$timeout`
 

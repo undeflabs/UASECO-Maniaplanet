@@ -116,7 +116,7 @@ Build, store and send the Dialog to the Player.
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 *	`$hideclick`
 

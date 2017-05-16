@@ -1,3 +1,36 @@
+## [Version 0.9.3](_#Version-0.9.3)
+
+
+
+### General changes
+* Requires a `Maniaplanet Dedicated Server` build `2017-05-16_19_00` or higher
+* Added FTP support into the WebRequestWorker `webrequest.php`
+* Added support for multiple instances of a WebRequestWorker `webrequest.php`, which has (currently) to be started manually (thanks oliverde8)
+* Added check for an existing WebRequestWorker worker(s), if none can be found start is aborted (thanks oliverde8)
+* Added the function to `/admin add 120328` to save the map as `Whatever_120328.Map.gbx` instead of (currently) `w-eve_120328.Map.gbx` on linux or `_120328.Map.gbx` on windows (thanks Phantom)
+
+
+### Changes at config files
+* None
+
+
+### Bug fixes
+* Fixed wrong named function from `destruct()` to `__destruct()` in `includes/core/webrequest.class.php`
+* Fixed instant exit from `webrequest.php` after `/admin shutdown` (because of the existing file `worker.suicide`)
+* Reverted `/list` back to the `plugin.rasp_jukebox.php` to enable `/admin remove 1` (thanks Tavernicole)
+* Fixed [UASECO Exception] Error returned: "Value of type INT supplied where type STRING was expected." [-501] at GbxRemote::query() for method "TriggerModeScriptEventArray" with arguments: "/setrpoints 6,5,4,3,2,1,0" (thanks mangoara)
+* Fixed [PHP Notice] iconv(): Detected an illegal character in input string on line 137 in file `[...]/includes/core/helper.class.php` (thanks Phantom)
+* Fixed [PHP Notice] Undefined index: Records on line 1157 in file `[...]plugins/plugin.checkpoints.php` (thanks elie520)
+
+
+
+
+***
+
+
+
+
+
 ## [Version 0.9.2](_#Version-0.9.2)
 
 
@@ -6,7 +39,7 @@
 * Requires a `Maniaplanet Dedicated Server` build `2017-05-12_21_00` or higher
 * wget is no longer required, it is replaced by the `includes/webrequest.php` (which has to be started as separate process)
 * Added new method `$aseco->generateManialinkId()` at class `UASECO`
-* Added the command "/tachometer reload" to `plugins/plugin.tachometer.php`
+Added the command `/tachometer reload` to `plugins/plugin.tachometer.php`
 * Added an new Dialog Class, with this you can setup dialogs to ask the player to confirm
   * New file added `includes/core/dialog.class.php`
   * New file added `newinstall/locales/class.dialog.xml`
@@ -30,8 +63,8 @@
 
 
 ### Bug fixes
-* Fixed deformated Window from "/admin pay PLAYER AMOUNT" window has been updated to the Manialink version 3
-* Fixed wrong versions check from "/uptodate"
+* Fixed deformated Window from `/admin pay PLAYER AMOUNT` window has been updated to the Manialink version 3
+* Fixed wrong versions check from `/uptodate`
 * Fixed [PHP Notice]: Undefined index: `UI_PROPERTIES` in `[...]/plugins/plugin.modescript_handler.php` on line 918 (thanks Krill)
 * Fixed hiding/showing of Records-Eyepiece Widgets by pressing `F9` (thanks phantom, elie520)
 * Fixed ManiaScript ERR [171, 95] Out of bounds access at [NUM] at CheckpointTimeDiff ()::Main() [171, 95]
@@ -43,7 +76,7 @@
 * Changed line-endings in `newinstall/uaseco.bat` into DOS format and redirecting errors to `nul`
 * Fixed vote buttons are not able to click in `[...]/plugins/plugin.mania_karma.php`
 * Fixed missing send of `<ui_properties><live_info>` from the file `newinstall/config/modescript_settings.xml` to the dedicated server
-* Fixed the LiveRanking Widget of `plugin.records_eyepiece.php` which doesn't update after the second run (thanks mixnetwork, orangina, Lutzif3r)
+* Fixed the LiveRanking Widget of `plugin.records_eyepiece.php` which does not update after the second run (thanks mixnetwork, orangina, Lutzif3r)
 
 
 
@@ -275,10 +308,10 @@
 * Removed chat command `/top10` from plugin.rasp.php, use `/top100` instead
 * Removed chat command `/clans` and `/topclans` from chat.player_infos.php
 * Removed the event onStatusChangeTo[1-4,6], because with the ModeScripts we have now more detailed callbacks
-* The default database charset is 'utf8mb4' and collate 'utf8mb4_unicode_ci'
+* The default database charset is `utf8mb4` and collate `utf8mb4_unicode_ci`
 * The folder `panels` has been moved into the `config` folder
 * The folder `styles` has been moved into the `config` folder
-* PLEASE NOTE: I only hope that this list are all differences, but I'm not really sure about this. I was starting too late to write this list, sorry!
+* PLEASE NOTE: I only hope that this list are all differences, but I am not really sure about this. I was starting too late to write this list, sorry!
 
 
 
