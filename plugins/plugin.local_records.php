@@ -48,12 +48,13 @@ class PluginLocalRecords extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-05-17');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Saves record into a local database.');
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
+		$this->registerEvent('onUnloadingMap',		'onUnloadingMap');
 		$this->registerEvent('onBeginMap',		'onBeginMap');
 		$this->registerEvent('onEndMapRanking',		'onEndMapRanking');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
@@ -190,9 +191,6 @@ class PluginLocalRecords extends Plugin {
 			return;
 		}
 
-		// Reset record list
-		$this->records->clear();
-
 		// on relay, ignore master server's map
 		if ($aseco->server->isrelay) {
 			return;
@@ -300,6 +298,18 @@ class PluginLocalRecords extends Plugin {
 				}
 			}
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onUnloadingMap ($aseco, $map) {
+
+		// Reset record list
+		$this->records->clear();
 	}
 
 	/*

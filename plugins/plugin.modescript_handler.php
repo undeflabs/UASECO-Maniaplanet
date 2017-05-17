@@ -41,8 +41,6 @@
 */
 
 class PluginModescriptHandler extends Plugin {
-
-	public $min_api_version;
 	public $callback_blocklist;
 	private $settings;
 	private $ui_properties;
@@ -57,16 +55,18 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-15');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2017-05-17');
 		$this->setCopyright('2014 - 2017 by undef.de');
-		$this->setDescription('Handle the Modescript Callbacks send by the dedicated server and related settings.');
+		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
 		$this->addDependence('PluginCheckpoints',		Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
 		$this->registerEvent('onShutdown',			'onShutdown');
+
+		$this->registerChatCommand('modescript',		'chat_modescript',		'Adjust some settings for the Modescript plugin (see: /modescript)',	Player::MASTERADMINS);
 
 		// Block some callbacks we did not want to use
 		$this->callback_blocklist = array(
@@ -108,9 +108,6 @@ class PluginModescriptHandler extends Plugin {
 
 		// Stores the <ui_properties>
 		$this->ui_properties		= array();
-
-		// Request minimal API version to use
-		$this->min_api_version		= '2.0.0';
 	}
 
 	/*
@@ -125,7 +122,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.EnableCallbacks', array('true'));
 
 		// Set the min. required ApiVersion
-		$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.SetApiVersion', array($this->min_api_version));
+		$aseco->client->query('TriggerModeScriptEventArray', 'XmlRpc.SetApiVersion', array(MODESCRIPT_API_VERSION));
 
 		// Write the ModeScript documentation?
 		if ($aseco->settings['developer']['write_documentation'] === true) {
@@ -172,15 +169,14 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->matchmaking['ProgressiveActivation_PlayersNbRatio']	= (int)$this->settings['MATCHMAKING'][0]['PROGRESSIVE_ACTIVATION_PLAYERS_NUMBER_RATIO'][0];
 
 		// ModeBase
-//		$aseco->server->gameinfo->modebase['UseScriptCallbacks']	= true;		// Turn on the script callbacks
-//		$aseco->server->gameinfo->modebase['UseLegacyCallbacks']	= false;	// Disable the legacy callbacks (default value: True)
 		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
 		$aseco->server->gameinfo->modebase['WarmUpDuration']		= (int)$this->settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
-//		$aseco->server->gameinfo->modebase['ScoresTableStylePath']	= $this->settings['MODEBASE'][0]['SCORES_TABLE_STYLE_PATH'][0];
 
 		// Rounds +RoundsBase
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
+		$aseco->server->gameinfo->rounds['RoundsPerMap']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['ROUNDS_PER_MAP'][0];
+		$aseco->server->gameinfo->rounds['MapsPerMatch']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['MAPS_PER_MATCH'][0];
 		$aseco->server->gameinfo->rounds['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->rounds['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_ALTERNATE_RULES'][0]);
 		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_LAPS_NUMBER'][0];
@@ -276,6 +272,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['CHAT'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHAT'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['GO'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['GO'][0]['VISIBLE'][0]) == 'TRUE')				? true : false);
@@ -288,10 +285,39 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 		$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
-		$this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 
 		// Send the UI settings
 		$this->setupUserInterface();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_modescript ($aseco, $login, $chat_command, $chat_parameter) {
+
+		// Check optional parameter
+		if (strtoupper($chat_parameter) == 'RELOAD') {
+
+			// Reload the config
+			$this->onSync($aseco, true);
+
+			// Throw 'synchronisation' event
+			$aseco->releaseEvent('onSync', null);
+
+			// Show chat message
+			$msg = new Message('plugin.modescript_handler', 'message_reload');
+			$msg->sendChatMessage();
+
+		}
+		else {
+			// Show chat message
+			$msg = new Message('plugin.modescript_handler', 'message_help');
+			$msg->sendChatMessage();
+		}
 	}
 
 	/*
@@ -738,7 +764,7 @@ class PluginModescriptHandler extends Plugin {
 							);
 
 							$rank = $aseco->server->rankings->getRankByLogin($item['login']);
-							if ($rank->best_race_time === 0 || $rank->best_lap_time === 0 || $rank->best_race_time > $update['best_race_time'] || $rank->best_lap_time > $update['best_lap_time']) {
+							if ($rank->best_race_time === 0 || $rank->map_points === 0  || $rank->match_points === 0 || $rank->best_lap_time === 0 || $rank->best_race_time > $update['best_race_time'] || $rank->map_points > $update['map_points'] || $rank->match_points > $update['match_points'] || $rank->best_lap_time > $update['best_lap_time']) {
 								// Update current ranking cache
 								$aseco->server->rankings->update($update);
 
@@ -921,6 +947,7 @@ class PluginModescriptHandler extends Plugin {
 			$this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['CHAT'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['CHAT'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 			$this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 			$this->ui_properties['GO'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['GO'][0]['VISIBLE'][0]) == 'TRUE')				? true : false);
@@ -933,7 +960,8 @@ class PluginModescriptHandler extends Plugin {
 			$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
 			$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
-			$this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+
 
 			// Send the UI settings
 			$this->setupUserInterface();
@@ -1060,6 +1088,7 @@ class PluginModescriptHandler extends Plugin {
 		$ui .= ' <opponents_info visible="'. $aseco->bool2string($this->ui_properties['OPPONENTS_INFO'][0]['VISIBLE'][0]) .'"/>';
 		$ui .= ' <chat visible="'. $aseco->bool2string($this->ui_properties['CHAT'][0]['VISIBLE'][0]) .'" offset="'. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHAT'][0]['OFFSET'][0]['Y'][0]) .'" linecount="'. $this->ui_properties['CHAT'][0]['LINECOUNT'][0] .'"/>';
 		$ui .= ' <checkpoint_list visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_LIST'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_LIST'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <checkpoint_ranking visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <round_scores visible="'. $aseco->bool2string($this->ui_properties['ROUND_SCORES'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['ROUND_SCORES'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <countdown visible="'. $aseco->bool2string($this->ui_properties['COUNTDOWN'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['COUNTDOWN'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <go visible="'. $aseco->bool2string($this->ui_properties['GO'][0]['VISIBLE'][0]) .'"/>';
@@ -1072,7 +1101,7 @@ class PluginModescriptHandler extends Plugin {
 		$ui .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'"/>';
 		$ui .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'"/>';
-		$ui .= ' <checkpoint_ranking visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_RANKING'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_RANKING'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <spectator_info visible="'. $aseco->bool2string($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= '</ui_properties>';
 
 		$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.UI.SetProperties', array($ui));
@@ -1131,12 +1160,11 @@ class PluginModescriptHandler extends Plugin {
 
 		$aseco->console('[ModescriptHandler] Generating documentation of the Methods from the dedicated server...');
 
-		$aseco->client->query('SetApiVersion', API_VERSION);
 		$methods = $aseco->client->query('system.listMethods');
 
 		$docs = LF;
 		$docs .= '# Dedicated Server' .LF;
-		$docs .= '###### Methods from API version: '. API_VERSION .LF.LF;
+		$docs .= '###### Methods from API version: '. XMLRPC_API_VERSION .LF.LF;
 		$docs .= '***' .LF.LF;
 		foreach ($methods as $method) {
 			$docs .= '### ['. $method .'](_#'. $method .')' .LF;
@@ -1194,12 +1222,9 @@ class PluginModescriptHandler extends Plugin {
 
 		// ModeBase
 		$modebase = array(
-//			'S_UseScriptCallbacks'			=> $aseco->server->gameinfo->modebase['UseScriptCallbacks'],
-//			'S_UseLegacyCallbacks'			=> $aseco->server->gameinfo->modebase['UseLegacyCallbacks'],
 			'S_ChatTime'				=> $aseco->server->gameinfo->modebase['ChatTime'],
 			'S_AllowRespawn'			=> $aseco->server->gameinfo->modebase['AllowRespawn'],
 			'S_WarmUpDuration'			=> $aseco->server->gameinfo->modebase['WarmUpDuration'],
-//			'S_ScoresTableStylePath'		=> $aseco->server->gameinfo->modebase['ScoresTableStylePath'],
 		);
 
 		$modesetup = array();
@@ -1208,6 +1233,8 @@ class PluginModescriptHandler extends Plugin {
 			$modesetup = array(
 				// RoundsBase
 				'S_PointsLimit'			=> $aseco->server->gameinfo->rounds['PointsLimit'],
+				'S_RoundsPerMap'		=> $aseco->server->gameinfo->rounds['RoundsPerMap'],
+				'S_MapsPerMatch'		=> $aseco->server->gameinfo->rounds['MapsPerMatch'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->rounds['FinishTimeout'],
 				'S_UseAlternateRules'		=> $aseco->server->gameinfo->rounds['UseAlternateRules'],
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->rounds['ForceLapsNb'],

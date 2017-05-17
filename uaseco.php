@@ -42,17 +42,18 @@
  */
 
 	// Current project name, version and website
-	define('UASECO_NAME',		'UASECO');
-	define('UASECO_VERSION',	'0.9.3');
-	define('UASECO_BUILD',		'2017-05-16');
-	define('UASECO_WEBSITE',	'http://www.UASECO.org');
+	define('UASECO_NAME',			'UASECO');
+	define('UASECO_VERSION',		'0.9.3');
+	define('UASECO_BUILD',			'2017-05-17');
+	define('UASECO_WEBSITE',		'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',	'2017-05-16_19_00');
-	define('API_VERSION',		'2013-04-16');
-	define('MIN_PHP_VERSION',	'5.6.0');
-	define('MIN_MYSQL_VERSION',	'5.1.0');
-	define('MIN_MARIADB_VERSION',	'5.5.20');
+	define('MANIAPLANET_BUILD',		'2017-05-16_19_00');
+	define('XMLRPC_API_VERSION',		'2013-04-16');
+	define('MODESCRIPT_API_VERSION',	'2.1.0');
+	define('MIN_PHP_VERSION',		'5.6.0');
+	define('MIN_MYSQL_VERSION',		'5.1.0');
+	define('MIN_MARIADB_VERSION',		'5.5.20');
 
 	// Setup misc.
 	define('CRLF',			PHP_EOL);
@@ -1745,7 +1746,7 @@ class UASECO extends Helper {
 			$this->waitServerReady();
 
 			// Setup API-Version
-			$this->client->query('SetApiVersion', API_VERSION);
+			$this->client->query('SetApiVersion', XMLRPC_API_VERSION);
 
 			// Connection established
 			return true;

@@ -8,10 +8,16 @@
 * Added support for multiple instances of a WebRequestWorker `webrequest.php`, which has (currently) to be started manually (thanks oliverde8)
 * Added check for an existing WebRequestWorker worker(s), if none can be found start is aborted (thanks oliverde8)
 * Added the function to `/admin add 120328` to save the map as `Whatever_120328.Map.gbx` instead of (currently) `w-eve_120328.Map.gbx` on linux or `_120328.Map.gbx` on windows (thanks Phantom)
+* Renamed constant in UASECO from `API_VERSION` to `XMLRPC_API_VERSION`
+* Added constant in UASECO `MODESCRIPT_API_VERSION`
+* Added chat command `/modescript reload` to reload the `config/modescript_settings.xml`
 
 
 ### Changes at config files
-* None
+* Added new properties `<ui_properties><spectator_info>` into `newinstall/config/modescript_settings.xml`
+* Added new properties `<modesetup><rounds><rounds_per_map>` into `newinstall/config/modescript_settings.xml`
+* Added new properties `<modesetup><rounds><maps_per_match>` into `newinstall/config/modescript_settings.xml`
+* Added new locales `newinstall/locales/plugin.modescript_settings.xml`
 
 
 ### Bug fixes
@@ -21,6 +27,10 @@
 * Fixed [UASECO Exception] Error returned: "Value of type INT supplied where type STRING was expected." [-501] at GbxRemote::query() for method "TriggerModeScriptEventArray" with arguments: "/setrpoints 6,5,4,3,2,1,0" (thanks mangoara)
 * Fixed [PHP Notice] iconv(): Detected an illegal character in input string on line 137 in file `[...]/includes/core/helper.class.php` (thanks Phantom)
 * Fixed [PHP Notice] Undefined index: Records on line 1157 in file `[...]plugins/plugin.checkpoints.php` (thanks elie520)
+* Fixed [Plugin] » Can not register chat command "/elist" because callback Method "chat_elist()" of class "PluginRecordsEyepiece" is not callable, ignoring! (thanks ramires)
+* Fixed ManiaScript ERR [30, 69] Persistent storage limit reached. MusicWidget ()::Main() [30, 69], by disable persistent storage
+* Fixed Checkpoint TimeDiffWidget is displaying a time from the map that was loaded before, if you have not already a Personal Best time on the current map (thanks elie520)
+
 
 
 

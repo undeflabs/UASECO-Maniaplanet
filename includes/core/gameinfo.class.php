@@ -67,8 +67,8 @@ class Gameinfo extends BaseClass {
 	public function __construct ($aseco, $clone = false) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-13');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-17');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
@@ -158,6 +158,8 @@ class Gameinfo extends BaseClass {
 				$this->rounds['UseAlternateRules']	= false;
 			}
 			$this->rounds['PointsLimit']			= $modescript['settings']['S_PointsLimit'];
+			$this->rounds['RoundsPerMap']			= $modescript['settings']['S_RoundsPerMap'];
+			$this->rounds['MapsPerMatch']			= $modescript['settings']['S_MapsPerMatch'];
 			$this->rounds['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->rounds['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
 			$this->rounds['DisplayTimeDiff']		= false;

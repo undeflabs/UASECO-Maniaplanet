@@ -50,7 +50,7 @@ class WebRequest extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-17');
 		$this->setCopyright('2016 - 2017 by undef.de');
 		$this->setDescription('Provides asynchronous and synchronous communication for HTTP GET-, POST- and HEAD-Requests.');
 
@@ -78,6 +78,9 @@ class WebRequest extends BaseClass {
 		}
 
 		if ($found === false) {
+//			if (function_exists('exec')) {
+//				exec($aseco->php .' webrequest.php');
+//			}
 			trigger_error('[WebRequest] Could not found any worker processes of "webrequest.php", can not life without some!', E_USER_ERROR);
 		}
 	}

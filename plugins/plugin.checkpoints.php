@@ -54,7 +54,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-13');
+		$this->setBuild('2017-05-17');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -618,7 +618,6 @@ $maniascript = <<<EOL
  * ----------------------------------
  * Function:	<time_diff_widget> @ plugin.checkpoints.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ----------------------------------
  */
@@ -870,7 +869,6 @@ $maniascript = <<<EOL
  * ----------------------------------
  * Function:	<count_widget> @ plugin.checkpoints.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ----------------------------------
  */
@@ -1079,6 +1077,7 @@ EOL;
 			}
 		}
 
+
 		// Check for specific record
 		if ($this->checkpoints[$login]->tracking['local_records'] > 0 && isset($aseco->plugins['PluginLocalRecords']) && $aseco->plugins['PluginLocalRecords']->records->count() > 0) {
 			// If specific record unavailable, use last one
@@ -1127,7 +1126,7 @@ EOL;
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
 			}
 		}
-		else if ($this->checkpoints[$login]->tracking['dedimania_records'] > 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map'])) {
+		else if ($this->checkpoints[$login]->tracking['dedimania_records'] > 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map']) && isset($aseco->plugins['PluginDedimania']->db['Map']['Records']) && !empty($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
 			// If specific record unavailable, use last one
 			$record = $this->checkpoints[$login]->tracking['dedimania_records'];
 			if ($record > count($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
@@ -1150,7 +1149,7 @@ EOL;
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Dedimania Record$>', false);
 			}
 		}
-		else if ($this->checkpoints[$login]->tracking['dedimania_records'] == 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map'])) {
+		else if ($this->checkpoints[$login]->tracking['dedimania_records'] == 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map']) && isset($aseco->plugins['PluginDedimania']->db['Map']['Records']) && !empty($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
 			// Search for own/last record
 			$record = 0;
 			$current = false;

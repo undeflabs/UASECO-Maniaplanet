@@ -48,7 +48,7 @@ class PluginVoteManager extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-04');
+		$this->setBuild('2017-05-16');
 		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
@@ -514,7 +514,7 @@ class PluginVoteManager extends Plugin {
 		$this->config['Cache']['Todo']['onEndMap'] = false;
 
 		// Store the Timelimit at TA
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->gameinfo->time_attack['TimeLimit'] > 0) {
 			$this->config['TimeAttackTimelimit'] = time() + $aseco->server->gameinfo->time_attack['TimeLimit'];
 		}
 		else {
@@ -572,8 +572,8 @@ class PluginVoteManager extends Plugin {
 		if ($this->config['RunningVote']['Active'] == true) {
 			$this->config['RunningVote'] = $this->cleanupCurrentVote();
 			$this->config['RunningVote']['Votes']['Restart']	= 0;
-			$this->config['RunningVote']['Votes']['Skip']	= 0;
-			$this->config['TimeAttackTimelimit']		= -1;
+			$this->config['RunningVote']['Votes']['Skip']		= 0;
+			$this->config['TimeAttackTimelimit']			= -1;
 		}
 
 		if ($this->config['Cache']['Todo']['onEndMap'] == 'Restart') {
@@ -1196,8 +1196,8 @@ EOL;
 			return false;
 		}
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->config['TimeAttackTimelimit'] != -1) {
-			if ($this->config['TimeAttackTimelimit'] > (time() + $this->config['VOTING'][0]['TIMEOUT_LIMIT'][0])) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
+			if ($this->config['TimeAttackTimelimit'] > (time() + $this->config['VOTING'][0]['TIMEOUT_LIMIT'][0]) || $aseco->server->gameinfo->time_attack['TimeLimit'] == 0) {
 				return true;
 			}
 			else {

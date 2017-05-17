@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2017-05-17
+	Authors:	[EN] undef.de
+			[DE] undef.de
+	//-->
+
+	<plugin_description>
+		<en>Handle the Modescript Callbacks send by the dedicated server and related settings.</en>
+		<de>Behandelt Spielmodus Rücksprungfunktionen die vom dedizierter Server gesendet werden und relevante Konfigurationen.</de>
+	</plugin_description>
+
+	<message_reload>
+		<en>{#admin}» Reload of the configuration "config/modescript_settings.xml" done.</en>
+		<de>{#admin}» Das neuladen der Konfiguration "config/modescript_settings.xml" erfolgreich erledigt.</de>
+	</message_reload>
+
+	<message_help>
+		<en>{#admin}» Use "/modescript reload" to reload "config/modescript_settings.xml".</en>
+		<de>{#admin}» Benutze "/modescript reload" um die Konfigurationdatei "config/modescript_settings.xml" neu einzulesen.</de>
+	</message_help>
+</locales>

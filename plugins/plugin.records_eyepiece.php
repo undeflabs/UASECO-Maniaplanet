@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-17');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -1364,7 +1364,7 @@ class PluginRecordsEyepiece extends Plugin {
 	*/
 
 	// Wrapper/Chat command for opening the MaplistWindow
-	public function chat_list ($aseco, $login, $chat_command, $chat_parameter) {
+	public function chat_elist ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Do not display at score
 		if ($aseco->server->gamestate == Server::RACE) {
@@ -7249,7 +7249,8 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	}
 }
 main () {
-	declare persistent Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
+//	declare persistent Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
+	declare Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
 
 	declare CMlFrame DedimaniaRecordsWidget	<=> (Page.GetFirstChild("DedimaniaRecordsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= DedimaniaRecordsWidget.RelativePosition_V3;
@@ -7413,7 +7414,8 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	}
 }
 main () {
-	declare persistent Boolean RecordsEyepieceLocalRecordsVisible = True;
+//	declare persistent Boolean RecordsEyepieceLocalRecordsVisible = True;
+	declare Boolean RecordsEyepieceLocalRecordsVisible = True;
 
 	declare CMlFrame LocalRecordsWidget	<=> (Page.GetFirstChild("LocalRecordsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= LocalRecordsWidget.RelativePosition_V3;
@@ -7642,7 +7644,8 @@ Text FormatTime (Integer MwTime) {
 	return FormatedTime;
 }
 main () {
-	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
+//	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
+	declare Boolean RecordsEyepieceLiveRankingsVisible = True;
 
 //	declare Text[Text] RecordsEyepiece;
 //	RecordsEyepiece["LiveRankings"] = [
@@ -8233,7 +8236,8 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	}
 }
 main () {
-	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
+//	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
+	declare Boolean RecordsEyepieceLiveRankingsVisible = True;
 
 	declare CMlFrame LiveRankingsWidget	<=> (Page.GetFirstChild("LiveRankingsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= LiveRankingsWidget.RelativePosition_V3;
@@ -13758,7 +13762,8 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	}
 }
 main () {
-	declare persistent Boolean RecordsEyepieceMusicWidgetVisible = True;
+//	declare persistent Boolean RecordsEyepieceMusicWidgetVisible = True;
+	declare Boolean RecordsEyepieceMusicWidgetVisible = True;
 
 	declare CMlFrame MusicWidget		<=> (Page.GetFirstChild("MusicWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= MusicWidget.RelativePosition_V3;

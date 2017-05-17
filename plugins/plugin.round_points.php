@@ -47,7 +47,7 @@ class PluginRoundPoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-26');
+		$this->setBuild('2017-05-16');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
@@ -81,7 +81,7 @@ class PluginRoundPoints extends Plugin {
 			$this->rounds_points[$system['ID'][0]] = array(
 				'id'		=> $system['ID'][0],
 				'label'		=> $system['LABEL'][0],
-				'points'	=> array_map('intval', explode(',', $system['POINTS'][0])),
+				'points'	=> array_map('strval', explode(',', $system['POINTS'][0])),
 				'limit'		=> $system['LIMIT'][0],
 			);
 		}
@@ -93,17 +93,14 @@ class PluginRoundPoints extends Plugin {
 			// Set configured default rounds points system
 			$system = $this->config['DEFAULT_SYSTEM'][0];
 
-			// Set original points system
+			// Set original points system (array of strings!)
 			$points = array('10', '6', '4', '3', '2', '1');
 
 			if (array_key_exists($system, $this->rounds_points)) {
 
 				// Convert int to string
 				$points = $this->rounds_points[$system]['points'];
-				foreach ($points as &$num) {
-					settype($num, 'string');
-				}
-				unset($num);
+				$points = array_map('strval', explode(',', $points));
 
 				try {
 					// Set new custom points
@@ -112,6 +109,7 @@ class PluginRoundPoints extends Plugin {
 						$this->rounds_points[$system]['label'],
 						implode(',', $this->rounds_points[$system]['points'])
 					);
+					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 
 					// Setup limits
 					if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
@@ -130,6 +128,7 @@ class PluginRoundPoints extends Plugin {
 			else if ($system == '') {
 				try {
 					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
+					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 				}
 				catch (Exception $exception) {
 					$aseco->console('[RoundPoints] Setting modescript default rounds points: {1} Error: {2}', $points, $exception->getMessage());
@@ -141,9 +140,8 @@ class PluginRoundPoints extends Plugin {
 
 
 			// Convent string (string are required by 'Trackmania.SetPointsRepartition') back to int
-			foreach ($points as &$num) {
-				settype($num, 'int');
-			}
+			$points = array_map('intval', explode(',', $points));
+
 			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 				$aseco->server->gameinfo->rounds['PointsRepartition'] = $points;
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
@@ -356,6 +354,7 @@ class PluginRoundPoints extends Plugin {
 
 			try {
 				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 			}
 			catch (Exception $exception) {
 				$aseco->console('[RoundPoints] Setting modescript default rounds points: {1} Error: {2}', $points, $exception->getMessage());
@@ -371,13 +370,17 @@ class PluginRoundPoints extends Plugin {
 			$aseco->sendChatMessage($message);
 		}
 		else if (preg_match('/^\d+,[\d,]*\d+$/', $chat_parameter)) {
-			// Set new custom points as array of ints
-			$points = array_map('intval', explode(',', $chat_parameter));
+			// Set new custom points as array of strings
+			$points = array_map('strval', explode(',', $chat_parameter));
 
 			try {
 				// Set new custom points
 				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
-				$aseco->console('[RoundPoints] [{1}] set new custom points: {2}', $login, $points);
+				$aseco->console('[RoundPoints] [{1}] set new custom points: {2}',
+					$login,
+					$chat_parameter
+				);
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 			}
 			catch (Exception $exception) {
 				$aseco->console('[RoundPoints] Invalid given rounds points: {1}, Error: {2}', $points, $exception->getMessage());
@@ -409,6 +412,7 @@ class PluginRoundPoints extends Plugin {
 					$login,
 					$this->rounds_points[$system]['label']
 				);
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 
 				// Setup limits
 				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
