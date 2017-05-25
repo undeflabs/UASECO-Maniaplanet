@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-05-17');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -76,7 +76,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerInfoChanged',		'onPlayerInfoChanged');
 		$this->registerEvent('onPlayerRankingUpdated',		'onPlayerRankingUpdated');
-		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
+		$this->registerEvent('onPlayerRoundFinish',		'onPlayerRoundFinish');
 		$this->registerEvent('onPlayerFinishPrefix',		'onPlayerFinishPrefix');
 		$this->registerEvent('onPlayerWins',			'onPlayerWins');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
@@ -2906,7 +2906,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Check for changed Jukebox and refresh if required
 		$actions = array('add', 'drop', 'play', 'replay', 'restart', 'skip', 'previous', 'nextenv');
-		if ( in_array($command[0], $actions) ) {
+		if (in_array($command[0], $actions)) {
 			// Is a Map in the Jukebox?
 			if (count($aseco->plugins['PluginRaspJukebox']->jukebox) > 0) {
 				foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $map) {
@@ -2920,13 +2920,11 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->cache['Map']['Jukebox'] = false;
 			}
 
-
 			// Rebuild the Widgets
-			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
+			$this->cache['MapWidget']['Score'] = $this->buildMapWidget('score');
 
 			// Check if we are at score and refresh the "Next Map" Widget
 			if ($aseco->server->gamestate == Server::SCORE) {
-
 				if ( ($command[0] == 'replay') || ($command[0] == 'restart') || ($command[0] == 'skip') || ($command[0] == 'previous') || ($command[0] == 'nextenv') ) {
 					// Display the MapWidget (if enabled)
 					$widgets .= (($this->cache['MapWidget']['Score'] != false) ? $this->cache['MapWidget']['Score'] : '');
@@ -3721,29 +3719,42 @@ class PluginRecordsEyepiece extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerFinishLine ($aseco, $params) {
+	public function onPlayerRoundFinish ($aseco, $params) {
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
 			// Get Player object
 			$player = $aseco->server->players->getPlayerByLogin($params['login']);
 
 			// Add the Score
-			$this->scores['RoundScore'][$player->login][] = array(
-				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-				'checkpointid'	=> ($params['checkpoint_in_race'] - 1),
-				'playerid'	=> $player->pid,
-				'login'		=> $player->login,
-				'nickname'	=> $this->handleSpecialChars($player->nickname),
-				'score'		=> $aseco->formatTime($params['race_time']),
-				'score_plain'	=> $params['race_time'],
-			);
-
-			// Store personal best round-score for sorting on equal times of more Players
-			if ( ( isset($this->scores['RoundScorePB'][$player->login]) ) && ($this->scores['RoundScorePB'][$player->login] > $params['race_time']) ) {
-				$this->scores['RoundScorePB'][$player->login] = $params['race_time'];
+			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+				$this->scores['RoundScore'][$player->login] = array(
+					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+					'checkpointid'	=> count($params['best_race_checkpoints']),
+					'playerid'	=> $player->pid,
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $aseco->formatTime($params['best_race_time']),
+					'score_plain'	=> $params['best_race_time'],
+				);
 			}
 			else {
-				$this->scores['RoundScorePB'][$player->login] = $params['race_time'];
+				$this->scores['RoundScore'][$player->login][] = array(
+					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+					'checkpointid'	=> count($params['best_race_checkpoints']),
+					'playerid'	=> $player->pid,
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $aseco->formatTime($params['best_race_time']),
+					'score_plain'	=> $params['best_race_time'],
+				);
+			}
+
+			// Store personal best round-score for sorting on equal times of more Players
+			if (isset($this->scores['RoundScorePB'][$player->login]) && $this->scores['RoundScorePB'][$player->login] > $params['best_race_time']) {
+				$this->scores['RoundScorePB'][$player->login] = $params['best_race_time'];
+			}
+			else {
+				$this->scores['RoundScorePB'][$player->login] = $params['best_race_time'];
 			}
 
 			// Display the Widget
@@ -4096,6 +4107,9 @@ class PluginRecordsEyepiece extends Plugin {
 		else if ($aseco->server->maps->next->environment == 'Valley') {
 			$env = '<quad pos="4.025 -1.3125" z-index="0.06" size="20 7.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'"/>';
 		}
+		else if ($aseco->server->maps->next->environment == 'Lagoon') {
+			$env = '<quad pos="4.025 -1.3125" z-index="0.06" size="20 7.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
+		}
 
 		$xml = str_replace(
 			'%icon%',
@@ -4318,6 +4332,8 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_STADIUM'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_VALLEY'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_LAGOON'][0] .'"/>';
 		}
 		else if ($part == 4) {
 			// <mood>
@@ -4465,7 +4481,7 @@ class PluginRecordsEyepiece extends Plugin {
 				'%borderwidth%',
 				'%widgetwidth%',
 				'%title_background_width%',
-				'%title%'
+				'%title%',
 			),
 			array(
 				'MusicWidget',
@@ -4484,7 +4500,7 @@ class PluginRecordsEyepiece extends Plugin {
 				($this->config['MUSIC_WIDGET'][0]['WIDTH'][0] + 1),
 				$this->config['MUSIC_WIDGET'][0]['WIDTH'][0],
 				($this->config['MUSIC_WIDGET'][0]['WIDTH'][0] - 2),
-				$this->config['MUSIC_WIDGET'][0]['TITLE'][0]
+				$this->config['MUSIC_WIDGET'][0]['TITLE'][0],
 			),
 			$this->templates['MUSIC_WIDGET']['HEADER']
 		);
@@ -4494,7 +4510,15 @@ class PluginRecordsEyepiece extends Plugin {
 //		if ($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0] == true) {
 //			$xml .= '<quad pos="23.75 -11.625" z-index="0.05" size="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripStyles($this->config['CurrentMusicInfos']['Artist'], true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
 //		}
-		$xml .= $this->templates['MUSIC_WIDGET']['FOOTER'];
+		$xml .= str_replace(
+			array(
+				'%manialinkid%',
+			),
+			array(
+				'MusicWidget',
+			),
+			$this->templates['MUSIC_WIDGET']['FOOTER']
+		);
 
 		return $xml;
 	}
@@ -6888,8 +6912,14 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 		}
 		$xml .= str_replace(
-			'%widgetscale%',
-			$settings['SCALE'][0],
+			array(
+				'%manialinkid%',
+				'%widgetscale%',
+			),
+			array(
+				$manialinkid,
+				$settings['SCALE'][0],
+			),
 			$this->templates['SCORETABLE_LISTS']['FOOTER']
 		);
 
@@ -6945,8 +6975,14 @@ class PluginRecordsEyepiece extends Plugin {
 			unset($item);
 		}
 		$xml .= str_replace(
-			'%widgetscale%',
-			$this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['SCALE'][0],
+			array(
+				'%manialinkid%',
+				'%widgetscale%',
+			),
+			array(
+				'TopNationsWidgetAtScore',
+				$this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['SCALE'][0],
+			),
 			$this->templates['SCORETABLE_LISTS']['FOOTER']
 		);
 
@@ -7026,8 +7062,14 @@ class PluginRecordsEyepiece extends Plugin {
 			unset($item);
 		}
 		$xml .= str_replace(
-			'%widgetscale%',
-			$this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['SCALE'][0],
+			array(
+				'%manialinkid%',
+				'%widgetscale%',
+			),
+			array(
+				'TopAverageTimesWidgetAtScore',
+				$this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['SCALE'][0],
+			),
 			$this->templates['SCORETABLE_LISTS']['FOOTER']
 		);
 
@@ -7252,7 +7294,7 @@ main () {
 //	declare persistent Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
 	declare Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
 
-	declare CMlFrame DedimaniaRecordsWidget	<=> (Page.GetFirstChild("DedimaniaRecordsWidget") as CMlFrame);
+	declare CMlFrame DedimaniaRecordsWidget	<=> (Page.GetFirstChild("Frame_DedimaniaRecordsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= DedimaniaRecordsWidget.RelativePosition_V3;
 
 	DedimaniaRecordsWidget.RelativeScale	= {$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
@@ -7417,7 +7459,7 @@ main () {
 //	declare persistent Boolean RecordsEyepieceLocalRecordsVisible = True;
 	declare Boolean RecordsEyepieceLocalRecordsVisible = True;
 
-	declare CMlFrame LocalRecordsWidget	<=> (Page.GetFirstChild("LocalRecordsWidget") as CMlFrame);
+	declare CMlFrame LocalRecordsWidget	<=> (Page.GetFirstChild("Frame_LocalRecordsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= LocalRecordsWidget.RelativePosition_V3;
 
 	LocalRecordsWidget.RelativeScale	= {$this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
@@ -7654,7 +7696,7 @@ main () {
 //	];
 //log(RecordsEyepiece);
 
-	declare CMlFrame LiveRankingsWidget	<=> (Page.GetFirstChild("LiveRankingsWidget") as CMlFrame);
+	declare CMlFrame LiveRankingsWidget	<=> (Page.GetFirstChild("Frame_LiveRankingsWidget") as CMlFrame);
 	declare CMlFrame LiveRankingsMarker	<=> (Page.GetFirstChild("RecordsEyepieceLiveRankingsMarker") as CMlFrame);
 	declare CMlQuad LiveRankingsMarkerBG	<=> (Page.GetFirstChild("RecordsEyepieceLiveRankingsBackgroundMarker") as CMlQuad);
 
@@ -8239,7 +8281,7 @@ main () {
 //	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
 	declare Boolean RecordsEyepieceLiveRankingsVisible = True;
 
-	declare CMlFrame LiveRankingsWidget	<=> (Page.GetFirstChild("LiveRankingsWidget") as CMlFrame);
+	declare CMlFrame LiveRankingsWidget	<=> (Page.GetFirstChild("Frame_LiveRankingsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= LiveRankingsWidget.RelativePosition_V3;
 
 	LiveRankingsWidget.RelativeScale	= {$this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0]};
@@ -8350,6 +8392,10 @@ EOL;
 					$round_score[] = $item;
 				}
 				unset($item);
+			}
+			else if ($gamemode == Gameinfo::ROUNDS) {
+				// No need to sort, it is already sorted by ModeScript "Rounds.Script.txt"
+				$round_score = $this->scores['RoundScore'];
 			}
 			else {
 				// Sort all the Scores, look for equal times and sort them with the
@@ -8599,8 +8645,14 @@ EOL;
 		}
 
 		$build['footer'] = str_replace(
-			'%widgetscale%',
-			$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0],
+			array(
+				'%manialinkid%',
+				'%widgetscale%',
+			),
+			array(
+				'RoundScoreWidget',
+				$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['SCALE'][0],
+			),
 			$this->templates['ROUNDSCOWIDGET']['FOOTER']
 		);
 
@@ -10471,7 +10523,7 @@ EOL;
 					$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
 					$xml .= '<label pos="15 -1.21875" z-index="0.05" size="18.25 0" class="labels" textsize="1" text="#'. ($i+1) .'"/>';
-					$xml .= '<quad pos="1.5 -0.9375" z-index="0.05" size="12.5 2.8125" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
+					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" text="'. strtoupper($map->environment) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
@@ -10484,7 +10536,7 @@ EOL;
 					$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
 					$xml .= '<label pos="15 -1.21875" z-index="0.05" size="18.25 0" class="labels" textsize="1" text="#'. ($i+1) .'"/>';
-					$xml .= '<quad pos="1.5 -0.9375" z-index="0.05" size="12.5 2.8125" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
+					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" text="'. strtoupper($map->environment) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
@@ -10499,7 +10551,7 @@ EOL;
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
 					$xml .= '<label pos="15 -1.21875" z-index="0.05" size="18.25 0" class="labels" textsize="1" textcolor="000F" text="#'. ($i+1) .'"/>';
-					$xml .= '<quad pos="1.5 -0.9375" z-index="0.05" size="12.5 2.8125" modulatecolor="000" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
+					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" textcolor="000" class="labels" text="'. strtoupper($map->environment) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
@@ -10514,7 +10566,7 @@ EOL;
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
 					$xml .= '<label pos="15 -1.21875" z-index="0.05" size="18.25 0" class="labels" textsize="1" textcolor="FFF8" text="#'. ($i+1) .'"/>';
-					$xml .= '<quad pos="1.5 -0.9375" z-index="0.05" size="12.5 2.8125" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'" opacity="0.3"/>';
+					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" text="'. strtoupper($map->environment) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
@@ -10534,7 +10586,7 @@ EOL;
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
 					$xml .= '<label pos="15 -1.21875" z-index="0.05" size="18.25 0" class="labels" textcolor="000F" textsize="1" text="#'. ($i+1) .'"/>';
-					$xml .= '<quad pos="1.5 -0.9375" z-index="0.05" size="12.5 2.8125" modulatecolor="000" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['LOGOS'][0][strtoupper($map->environment)][0] .'"/>';
+					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" textcolor="000" class="labels" text="'. strtoupper($map->environment) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
@@ -10872,6 +10924,14 @@ EOL;
 		}
 		else {
 			$xml .= '<quad pos="42.5625 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'"/>';
+		}
+
+		// 'Lagoon'
+		if ($this->cache['MaplistCounts']['Environment']['LAGOON'] > 0) {
+			$xml .= '<quad pos="63.09375 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyLagoonMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_LAGOON'][0] .'"/>';
+		}
+		else {
+			$xml .= '<quad pos="63.09375 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
 		}
 
 		$xml .= '<quad pos="63.09375 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
@@ -12643,7 +12703,7 @@ EOL;
 
 		// %amount_spectators%
 		$content  = '<manialink id="SpectatorInfoWidget" name="SpectatorInfoWidget" version="3">';
-		$content .= '<frame pos="'. $this->config['SPECTATOR_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['SPECTATOR_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="SpectatorInfoWidget">';
+		$content .= '<frame pos="'. $this->config['SPECTATOR_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['SPECTATOR_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_SpectatorInfoWidget">';
 		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['SPECTATOR_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		}
@@ -12666,7 +12726,7 @@ $content .= <<<EOL
  */
 main () {
 
-	declare CMlFrame Frame_SpectatorInfoWidget	<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Frame_SpectatorInfoWidget	<=> (Page.GetFirstChild("Frame_SpectatorInfoWidget") as CMlFrame);
 	declare CMlLabel Label_SpectatorAmount		<=> (Page.GetFirstChild("Label_SpectatorAmount") as CMlLabel);
 	declare Integer AmountSpectators		= %amount_spectators%;
 
@@ -12712,7 +12772,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %totallaps%
 		$content  = '<manialink id="MultiLapInfoWidget" name="MultiLapInfoWidget" version="3">';
-		$content .= '<frame pos="'. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="MultiLapInfoWidget">';
+		$content .= '<frame pos="'. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MultiLapInfoWidget">';
 		if ($this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		}
@@ -12736,7 +12796,7 @@ $content .= <<<EOL
  */
 #Include "TextLib" as TextLib
 Integer Blink (Text _ChildId, Integer _NextChange) {
-	declare Container <=> (Page.GetFirstChild(_ChildId) as CMlLabel);
+	declare CMlLabel Container <=> (Page.GetFirstChild(_ChildId) as CMlLabel);
 	declare Vec3 ColorDefault = TextLib::ToColor("888888");
 	declare Vec3 ColorBlink = TextLib::ToColor("FFF500");
 
@@ -12752,7 +12812,7 @@ Integer Blink (Text _ChildId, Integer _NextChange) {
 	return _NextChange;
 }
 main () {
-	declare CMlFrame Frame_MultiLapInfoWidget <=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Frame_MultiLapInfoWidget <=> (Page.GetFirstChild("Frame_MultiLapInfoWidget") as CMlFrame);
 	declare CMlLabel Label_LastLapInfo <=> (Page.GetFirstChild("Label_LastLapInfo") as CMlLabel);
 	declare CMlLabel Label_MultilapProgression <=> (Page.GetFirstChild("Label_MultilapProgression") as CMlLabel);
 
@@ -12810,7 +12870,7 @@ EOL;
 		// BEGIN: Widget for WarmUpInfo					//
 		//--------------------------------------------------------------//
 		$content  = '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget" version="3">';
-		$content .= '<frame pos="'. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="WarmUpInfoWidget">';
+		$content .= '<frame pos="'. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_WarmUpInfoWidget">';
 		if ($this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		}
@@ -12832,11 +12892,11 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare CMlFrame Frame_WarmUpInfoWidget <=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Frame_WarmUpInfoWidget <=> (Page.GetFirstChild("Frame_WarmUpInfoWidget") as CMlFrame);
 	declare CMlLabel Label_WarmUpProgression <=> (Page.GetFirstChild("Label_WarmUpProgression") as CMlLabel);
 
-	declare netread Integer Net_LibWU2_WarmUpPlayedNb for Teams[0];
-	declare netread Integer Net_LibWU2_WarmUpDuration for Teams[0];
+	declare netread Integer Net_LibWU3_WarmUpPlayedNb for Teams[0];
+	declare netread Integer Net_LibWU3_WarmUpDuration for Teams[0];
 
 	Frame_WarmUpInfoWidget.RelativeScale	= {$this->config['WARM_UP_INFO_WIDGET'][0]['SCALE'][0]};
 
@@ -12862,11 +12922,11 @@ main () {
 
 
 		if (CurrentTime > RefreshTime) {
-			if (PrevWarmUpPlayedNb != Net_LibWU2_WarmUpPlayedNb || PrevWarmUpDuration != Net_LibWU2_WarmUpDuration) {
-				PrevWarmUpPlayedNb = Net_LibWU2_WarmUpPlayedNb;
-				PrevWarmUpDuration = Net_LibWU2_WarmUpDuration;
+			if (PrevWarmUpPlayedNb != Net_LibWU3_WarmUpPlayedNb || PrevWarmUpDuration != Net_LibWU3_WarmUpDuration) {
+				PrevWarmUpPlayedNb = Net_LibWU3_WarmUpPlayedNb;
+				PrevWarmUpDuration = Net_LibWU3_WarmUpDuration;
 
-				Label_WarmUpProgression.Value = Net_LibWU2_WarmUpPlayedNb ^" of "^ Net_LibWU2_WarmUpDuration;
+				Label_WarmUpProgression.Value = Net_LibWU3_WarmUpPlayedNb ^" of "^ Net_LibWU3_WarmUpDuration;
 			}
 
 			// Reset RefreshTime
@@ -12909,7 +12969,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %widgetheight%
 		$header  = '<manialink id="DonationWidgetAtScore" name="DonationWidgetAtScore" version="3">';
-		$header .= '<frame pos="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="DonationWidgetAtScore">';
+		$header .= '<frame pos="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_DonationWidgetAtScore">';
 		if ($this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
 			$header .= '<quad pos="0 0" z-index="0.001" size="11.5 %widgetheight%" bgcolor="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -12931,7 +12991,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_DonationWidgetAtScore") as CMlFrame);
 	Container.RelativeScale		= {$this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -12960,7 +13020,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="WinningPayoutWidgetAtScore">';
+		$header .= '<frame pos="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_WinningPayoutWidgetAtScore">';
 		if ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
 			$header .= '<quad pos="0 0" z-index="0.001" size="63.75 '. ($this->config['LineHeight'] * 5.625 + 6.375) .'" bgcolor="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -12989,7 +13049,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_WinningPayoutWidgetAtScore") as CMlFrame);
 	Container.RelativeScale		= {$this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13022,7 +13082,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="%posx% %posy%" z-index="0" id="%manialinkid%">';
+		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
 		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] != '') {
 			$header .= '<quad pos="0 0" z-index="0.001" size="39.4 %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -13051,7 +13111,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
 	Container.RelativeScale		= %widgetscale%;
 }
 --></script>
@@ -13081,7 +13141,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="'. $this->config['MAP_WIDGET'][0]['RACE'][0]['POS_X'][0] .' '. $this->config['MAP_WIDGET'][0]['RACE'][0]['POS_Y'][0] .'" z-index="0" id="MapWidget">';
+		$header .= '<frame pos="'. $this->config['MAP_WIDGET'][0]['RACE'][0]['POS_X'][0] .' '. $this->config['MAP_WIDGET'][0]['RACE'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MapWidget">';
 		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 0.5) .' 15.65625" action="PluginRecordsEyepiece?Action=showLastCurrentNextMapWindow" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 		$header .= '<quad pos="-0.2 0.3" z-index="0.001" size="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] + 0.4) .' 17.15625" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="0 0" z-index="0.02" size="'. $this->config['MAP_WIDGET'][0]['WIDTH'][0] .' 16.03125" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
@@ -13114,7 +13174,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_MapWidget") as CMlFrame);
 	Container.RelativeScale		= {$this->config['MAP_WIDGET'][0]['RACE'][0]['SCALE'][0]};
 }
 --></script>
@@ -13145,7 +13205,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="'. $this->config['MAP_WIDGET'][0]['SCORE'][0]['POS_X'][0] .' '. $this->config['MAP_WIDGET'][0]['SCORE'][0]['POS_Y'][0] .'" z-index="0" id="MapWidget">';
+		$header .= '<frame pos="'. $this->config['MAP_WIDGET'][0]['SCORE'][0]['POS_X'][0] .' '. $this->config['MAP_WIDGET'][0]['SCORE'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MapWidget">';
 		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] != '') {
 			$header .= '<quad pos="0.25 -0.1875" z-index="0.001" size="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 0.5) .' 26.4375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -13201,7 +13261,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_MapWidget") as CMlFrame);
 	Container.RelativeScale		= {$this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0]};
 }
 --></script>
@@ -13228,7 +13288,7 @@ EOL;
 		// %posx%, %posy%, %widgetscale%
 		// %background%
 		$content  = '<manialink id="ClockWidget" name="ClockWidget" version="3">';
-		$content .= '<frame pos="%posx% %posy%" z-index="0" id="ClockWidget">';
+		$content .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_ClockWidget">';
 
 		// Content
 		$content .= '%background%';
@@ -13248,7 +13308,7 @@ $maniascript = <<<EOL
  */
 #Include "TextLib" as TextLib
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_ClockWidget") as CMlFrame);
 	Container.RelativeScale		= %widgetscale%;
 
 	declare LabelLocalTime		<=> (Page.GetFirstChild("RecordsEyepieceLabelLocalTime") as CMlLabel);
@@ -13286,7 +13346,7 @@ EOL;
 		// BEGIN: Widget for TopList					//
 		//--------------------------------------------------------------//
 		$content  = '<manialink id="ToplistWidget" name="ToplistWidget" version="3">';
-		$content .= '<frame pos="'. $this->config['TOPLIST_WIDGET'][0]['POS_X'][0] .' '. $this->config['TOPLIST_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="ToplistWidget">';
+		$content .= '<frame pos="'. $this->config['TOPLIST_WIDGET'][0]['POS_X'][0] .' '. $this->config['TOPLIST_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_ToplistWidget">';
 		if ($this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonToplistWidget"/>';
 		}
@@ -13309,7 +13369,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_ToplistWidget") as CMlFrame);
 	Container.RelativeScale		= {$this->config['TOPLIST_WIDGET'][0]['SCALE'][0]};
 	while (True) {
 		yield;
@@ -13350,7 +13410,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %icon%
 		$content  = '<manialink id="NextEnvironmentWidgetAtScore" name="NextEnvironmentWidgetAtScore" version="3">';
-		$content .= '<frame pos="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="NextEnvironmentWidgetAtScore">';
+		$content .= '<frame pos="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_NextEnvironmentWidgetAtScore">';
 		if ($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="27.75 12.19" bgcolor="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -13371,7 +13431,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_NextEnvironmentWidgetAtScore") as CMlFrame);
 	Container.RelativeScale		= {$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13393,7 +13453,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %icon_style%, %icon_substyle%
 		$content  = '<manialink id="NextGamemodeWidgetAtScore" name="NextGamemodeWidgetAtScore" version="3">';
-		$content .= '<frame pos="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="NextGamemodeWidgetAtScore">';
+		$content .= '<frame pos="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_NextGamemodeWidgetAtScore">';
 		if ($this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -13415,7 +13475,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_NextGamemodeWidgetAtScore") as CMlFrame);
 	Container.RelativeScale		= {$this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0]};
 }
 --></script>
@@ -13437,7 +13497,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %visitorcount%
 		$content  = '<manialink id="VisitorsWidget" name="VisitorsWidget" version="3">';
-		$content .= '<frame pos="'. $this->config['VISITORS_WIDGET'][0]['POS_X'][0] .' '. $this->config['VISITORS_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="VisitorsWidget">';
+		$content .= '<frame pos="'. $this->config['VISITORS_WIDGET'][0]['POS_X'][0] .' '. $this->config['VISITORS_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_VisitorsWidget">';
 		if ($this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonVisitorsWidget"/>';
 		}
@@ -13460,7 +13520,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_VisitorsWidget") as CMlFrame);
 	Container.RelativeScale		= {$this->config['VISITORS_WIDGET'][0]['SCALE'][0]};
 	while (True) {
 		yield;
@@ -13501,7 +13561,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %offline_record%, %text%
 		$header  = '<manialink id="ManiaExchangeWidget" name="ManiaExchangeWidget" version="3">';
-		$header .= '<frame pos="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_X'][0] .' '. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="ManiaExchangeWidget">';
+		$header .= '<frame pos="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_X'][0] .' '. $this->config['MANIAEXCHANGE_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_ManiaExchangeWidget">';
 
 		$footer = '<quad pos="5.75 -0.18" z-index="0.002" size="6.4 6.4" halign="center" modulatecolor="DDDDDD" image="'. $this->config['IMAGES'][0]['ICON_MANIA_EXCHANGE'][0] .'"/>';
 		$footer .= '<label pos="5.75 -6.775" z-index="0.1" size="10.6 2.5" halign="center" textsize="1" scale="0.95" text="%offline_record%"/>';
@@ -13518,7 +13578,7 @@ $footer .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_ManiaExchangeWidget") as CMlFrame);
 	Container.RelativeScale		= {$this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0]};
 	while (True) {
 		yield;
@@ -13559,7 +13619,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %mapcount%
 		$content  = '<manialink id="MapCountWidget" name="MapCountWidget" version="3">';
-		$content .= '<frame pos="'. $this->config['MAPCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['MAPCOUNT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="MapCountWidget">';
+		$content .= '<frame pos="'. $this->config['MAPCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['MAPCOUNT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MapCountWidget">';
 		if ($this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonMapCountWidget"/>';
 		}
@@ -13582,7 +13642,7 @@ $content .= <<<EOL
  * ----------------------------------
  */
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_MapCountWidget") as CMlFrame);
 	Container.RelativeScale		= {$this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0]};
 	while (True) {
 		yield;
@@ -13623,7 +13683,7 @@ EOL;
 		// %posx%, %posy%, %widgetscale%
 		// %background%
 		$content  = '<manialink id="AddToFavoriteWidget" name="AddToFavoriteWidget" version="3">';
-		$content .= '<frame pos="%posx% %posy%" z-index="0" id="AddToFavoriteWidget">';
+		$content .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_AddToFavoriteWidget">';
 		$content .= '%background%';
 		$content .= '<quad pos="-0.45 -8.625" z-index="0.002" size="5.25 3.9375" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';
 		$content .= '<quad pos="5.75 -0.18" z-index="0.002" size="6.4 6.4" halign="center" modulatecolor="DDDDDD" image="'. $this->config['IMAGES'][0]['ICON_FAVORITES'][0] .'" id="Quad_FavoIcon"/>';
@@ -13646,7 +13706,7 @@ $maniascript = <<<EOL
 #Include "TextLib" as TextLib
 #Include "AnimLib" as AnimLib
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_AddToFavoriteWidget") as CMlFrame);
 	declare Quad_FavoIcon		<=> (Page.GetFirstChild("Quad_FavoIcon") as CMlQuad);
 
 	declare Boolean Zoomed		= False;
@@ -13716,7 +13776,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="%posx% %posy%" z-index="0" id="%manialinkid%">';
+		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
 		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="%backgroundwidth% 15.65625" action="PluginRecordsEyepiece?Action=%actionid%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 		$header .= '<quad pos="-0.5 0.5625" z-index="0.001" size="%borderwidth% 17.15625" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="0 0" z-index="0.002" size="%widgetwidth% 16.03125" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
@@ -13765,7 +13825,7 @@ main () {
 //	declare persistent Boolean RecordsEyepieceMusicWidgetVisible = True;
 	declare Boolean RecordsEyepieceMusicWidgetVisible = True;
 
-	declare CMlFrame MusicWidget		<=> (Page.GetFirstChild("MusicWidget") as CMlFrame);
+	declare CMlFrame MusicWidget		<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= MusicWidget.RelativePosition_V3;
 
 	MusicWidget.RelativeScale		= {$this->config['MUSIC_WIDGET'][0]['SCALE'][0]};
@@ -13832,7 +13892,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="%posx% %posy%" z-index="0" id="%manialinkid%">';
+		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
 		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="%backgroundwidth% %backgroundheight%" action="PluginRecordsEyepiece?Action=%actionid%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 //		$header .= '<quad pos="-0.5 0.5625" z-index="0.001" size="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="0 0" z-index="0.002" size="%widgetwidth% %widgetheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
@@ -13882,7 +13942,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="%posx% %posy%" z-index="0" id="%manialinkid%">';
+		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
 		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="%widgetwidth% %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		$header .= '<quad pos="-0.5 0.5625" z-index="0.001" size="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="0 0" z-index="0.002" size="%widgetwidth% %widgetheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
@@ -13910,9 +13970,58 @@ $maniascript = <<<EOL
  * License:	GPLv3
  * ----------------------------------
  */
+Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
+	if (_ScrollOut == True) {
+		if (_Container.RelativePosition_V3.X >= 0) {
+			while (_Container.RelativePosition_V3.X < 200) {
+				_Container.RelativePosition_V3.X += 4.0;
+				yield;
+			}
+		}
+		else if (_Container.RelativePosition_V3.X < 0) {
+			while (_Container.RelativePosition_V3.X > -240) {
+				_Container.RelativePosition_V3.X -= 4.0;
+				yield;
+			}
+		}
+	}
+	else {
+		_Container.RelativePosition_V3 = _Position;
+	}
+}
 main () {
-	declare Container		<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
-	Container.RelativeScale		= %widgetscale%;
+//	declare persistent Boolean RecordsEyepieceRoundScoreVisible = True;
+	declare Boolean RecordsEyepieceRoundScoreVisible = True;
+
+	declare CMlFrame RoundScoreWidget	<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
+	declare Vec2 OriginalRelativePosition	= RoundScoreWidget.RelativePosition_V3;
+
+	RoundScoreWidget.RelativeScale		= {$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['SCALE'][0]};
+	RoundScoreWidget.Visible 		= RecordsEyepieceRoundScoreVisible;
+	while (True) {
+		yield;
+		if (!PageIsVisible || InputPlayer == Null) {
+			continue;
+		}
+
+		foreach (Event in PendingEvents) {
+			switch (Event.Type) {
+				case CMlEvent::Type::KeyPress : {
+					if (Event.KeyName == "F9") {
+						if (RoundScoreWidget.Visible == False) {
+							MoveIt(RoundScoreWidget, False, OriginalRelativePosition);
+							RecordsEyepieceRoundScoreVisible = True;
+						}
+						else {
+							MoveIt(RoundScoreWidget, True, OriginalRelativePosition);
+							RecordsEyepieceRoundScoreVisible = False;
+						}
+						RoundScoreWidget.Visible = RecordsEyepieceRoundScoreVisible;
+					}
+				}
+			}
+		}
+	}
 }
 --></script>
 EOL;
@@ -13949,7 +14058,7 @@ EOL;
 		else {
 			$header .= '<quad pos="-320 0" z-index="18.49" size="2.5 1.875" bgcolor="FFF0" id="Lightbox"/>';
 		}
-		$header .= '<frame pos="-102 57.28125" z-index="10.50" id="Window">';	// BEGIN: Window Frame
+		$header .= '<frame pos="-102 57.28125" z-index="10.50" id="Frame_Window">';	// BEGIN: Window Frame
 		$header .= '<quad pos="-0.5 0.375" z-index="0.01" size="204.5 110.625" style="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_SUBSTYLE'][0] .'" id="WindowBody" ScriptEvents="1"/>';
 		$header .= '<quad pos="4.5 -7.68749" z-index="0.02" size="194.25 93.5625" bgcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['CONTENT_BGCOLOR'][0] .'"/>';
 
@@ -14043,7 +14152,7 @@ Void Maximize (Text ChildId) {
 }
 main () {
 	declare Boolean RecordsEyepieceSubWindowVisible for UI = True;
-	declare CMlFrame Container <=> (Page.GetFirstChild("Window") as CMlFrame);
+	declare CMlFrame Container <=> (Page.GetFirstChild("Frame_Window") as CMlFrame);
 	declare CMlQuad Quad;
 	declare Boolean MoveWindow = False;
 	declare Boolean IsMinimized = False;
@@ -14125,7 +14234,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
 		$header .= '</stylesheet>';
-		$header .= '<frame pos="-49.5 30" z-index="21.5" id="RecordsEyepieceSubWindow">';	// BEGIN: Window Frame
+		$header .= '<frame pos="-49.5 30" z-index="21.5" id="Frame_SubWindow">';	// BEGIN: Window Frame
 		$header .= '<quad pos="-0.5 0.375" z-index="0.01" size="99.25 52.21875" style="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="4.5 -7.68749" z-index="0.02" size="89 33.28125" bgcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['CONTENT_BGCOLOR'][0] .'"/>';
 
@@ -14158,7 +14267,7 @@ $maniascript = <<<EOL
  */
 main () {
 	declare Boolean RecordsEyepieceSubWindowVisible for UI = True;
-	declare CMlFrame Container <=> (Page.GetFirstChild("RecordsEyepieceSubWindow") as CMlFrame);
+	declare CMlFrame Container <=> (Page.GetFirstChild("Frame_SubWindow") as CMlFrame);
 	RecordsEyepieceSubWindowVisible = True;
 
 	while (True) {
@@ -14304,6 +14413,7 @@ EOL;
 			'CANYON'	=> 0,
 			'STADIUM'	=> 0,
 			'VALLEY'	=> 0,
+			'LAGOON'	=> 0,
 		);
 		$this->cache['MaplistCounts']['Mood'] = array(
 			'SUNRISE'	=> 0,

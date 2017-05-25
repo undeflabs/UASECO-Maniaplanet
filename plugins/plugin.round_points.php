@@ -47,7 +47,7 @@ class PluginRoundPoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-24');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
@@ -98,9 +98,8 @@ class PluginRoundPoints extends Plugin {
 
 			if (array_key_exists($system, $this->rounds_points)) {
 
-				// Convert int to string
-				$points = $this->rounds_points[$system]['points'];
-				$points = array_map('strval', explode(',', $points));
+				// Convert (int) to (string)
+				$points = array_map('strval', $this->rounds_points[$system]['points']);
 
 				try {
 					// Set new custom points
@@ -140,7 +139,7 @@ class PluginRoundPoints extends Plugin {
 
 
 			// Convent string (string are required by 'Trackmania.SetPointsRepartition') back to int
-			$points = array_map('intval', explode(',', $points));
+			$points = array_map('intval', $points);
 
 			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 				$aseco->server->gameinfo->rounds['PointsRepartition'] = $points;

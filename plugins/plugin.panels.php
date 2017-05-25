@@ -49,7 +49,7 @@ class PluginPanels extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-08');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('DEPRECATED: Selects ManiaLink panel templates.');
 
@@ -484,7 +484,7 @@ class PluginPanels extends Plugin {
 				$player->maplist[] = $trkarr;
 
 				$list[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) . '.',
-				                array('{#black}' . $file, -6-$pid));  // action id
+				                array('{#black}' . $file, 'PluginPanels?Action='. (-6-$pid)));  // action id
 				$pid++;
 				if (++$lines > 14) {
 					$player->msgs[] = $list;

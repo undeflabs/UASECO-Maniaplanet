@@ -108,6 +108,11 @@ Event triggered when a Player finished the map. Main event for checkpoint handli
 Event triggered when a Player finished the map.
 
 
+## [onPlayerRoundFinish ($aseco, $params)](_#onPlayerRoundFinish)
+Event triggered when a Player finished the round, mostly used in rounds based Modescripts.
+`$params` contains the same array structure as the event `onPlayerRankingUpdated`.
+
+
 ## [onPlayerWins ($aseco, $player)](_#onPlayerWins)
 Event triggered before the Scoretable and only for that Player that wins this race.
 

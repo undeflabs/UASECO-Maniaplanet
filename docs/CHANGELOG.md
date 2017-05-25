@@ -1,9 +1,56 @@
+## [Version 0.9.4](_#Version-0.9.4)
+
+
+
+### General changes
+
+* Added new event `onPlayerRoundFinish` for use in rounds based ModeScripts and the RoundScoreWidget of `plugin.records_eyepiece.php`
+* Added the RoundScoreWidget to be hidden/shown when pressing the F9 key of `plugin.records_eyepiece.php` (thanks elie520)
+* The TimeDiff Widget of `plugin.checkpoints.php` reload when the player drove an new record and shows the next better local-, dedimania-record or personal best
+
+
+### Changes at config files
+
+* Updated the links to the official documentation in `newinstall/config/modescript_settings.xml`, all updated links are starting with `www.maniaplanet.com/documentation/`
+* Moved `<modebase><warm_up_duration>` to `<modesetup><rounds><warm_up_duration>` and changed the description too in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><rounds><warm_up_number>` in `newinstall/config/modescript_settings.xml`
+* Added extra 7 seconds to the `plugins/plugin.round_autoend.php` because sometimes the round was forced to end while showing the scoretable
+* Updated `newinstall/locales/plugin.round_autoend.xml` with several entries
+
+
+### Bug fixes
+
+* Fixed wrong ordering in the `RoundScore` Widget from `plugin.records_eyepiece.php`, only tested with `Rounds.Script.txt` (thanks elie520, speedychris)
+* Fixed not updating `LiveRanking` Widget from `plugin.records_eyepiece.php` (thanks speedychris)
+* Fixed in a multilap map only the first run will receive a record in `plugin.modescript_handler.php` (thanks speedychris)
+* Fixed [PHP Warning] explode() expects parameter 2 to be string, array given on line 103 in file `[...]plugins/plugin.round_points.php` (thanks speedychris)
+* Fixed [PHP Warning] array_map(): Argument #2 should be an array on line 103 in file `[...]plugins/plugin.round_points.php` (thanks speedychris)
+* Fixed [PHP Notice] Undefined index: truffeltje on line 2339 in file `[...]plugins/plugin.mania_karma.php` (thanks phantom)
+* Fixed wrong firing of `onPlayerFinish` in `Rounds.Script.txt` on a multilap map before all required laps has been driven
+* Fixed showing and loading the wrong next map after changing the next map with "/admin replay" or by jukeboxing a map (thanks elie520, phantom)
+* Fixed ModeScript changes require to change the map twice to take account (thanks maxi031, elie520)
+* Fixed double information after `/admin erase ID` (thanks phantom)
+* Fixed `/admin erase ID` does not change the MapList too (thanks phantom)
+* Fixed the clickbuttons `/admin panel list` (thanks Mysticman, rasmusdk)
+* Fixed ManiaScript parts in `plugin.records_eyepiece.php` which causes Widgets to be displayed only in parts while restarting
+
+
+
+
+
+***
+
+
+
+
+
 ## [Version 0.9.3](_#Version-0.9.3)
 
 
 
 ### General changes
-* Requires a `Maniaplanet Dedicated Server` build `2017-05-16_19_00` or higher
+
+* Requires a `Maniaplanet Dedicated Server` build `2017-05-22_21_00` or higher
 * Added FTP support into the WebRequestWorker `webrequest.php`
 * Added support for multiple instances of a WebRequestWorker `webrequest.php`, which has (currently) to be started manually (thanks oliverde8)
 * Added check for an existing WebRequestWorker worker(s), if none can be found start is aborted (thanks oliverde8)
@@ -11,16 +58,26 @@
 * Renamed constant in UASECO from `API_VERSION` to `XMLRPC_API_VERSION`
 * Added constant in UASECO `MODESCRIPT_API_VERSION`
 * Added chat command `/modescript reload` to reload the `config/modescript_settings.xml`
+* Added a check if a player is a MasterAdmin, to prevent a MasterAdmin/Admin/Operator ban (thanks L3cKy)
+* Updated to the gbxdatafetcher/2.10 which includes the `Lagoon` support (thanks Xymph)
+* Added `Lagoon` support into `plugin.records_eyepiece.php`
+* Added checks for trailing slashes at `<mapimages_path>` and `<dedicated_installation>` from `config/UASECO.xml` (thanks Tavernicole)
 
 
 ### Changes at config files
+
 * Added new properties `<ui_properties><spectator_info>` into `newinstall/config/modescript_settings.xml`
 * Added new properties `<modesetup><rounds><rounds_per_map>` into `newinstall/config/modescript_settings.xml`
 * Added new properties `<modesetup><rounds><maps_per_match>` into `newinstall/config/modescript_settings.xml`
+* Added new tag `<window_ui_properties>` into `newinstall/locales/plugin.modescript_settings.xml`
 * Added new locales `newinstall/locales/plugin.modescript_settings.xml`
+* Added new tag `<message_ban_masteradmin>` into `newinstall/locales/chat.admin.xml`
+* Changed URLs of `<images><mood>`, `<images><environment><enabled>`, `<images><environment><focus>` and added `Lagoon` at `newinstall/config/records_eyepiece.xml`
+* Removed tag group `<images><environment><logos>` at `newinstall/config/records_eyepiece.xml`
 
 
 ### Bug fixes
+
 * Fixed wrong named function from `destruct()` to `__destruct()` in `includes/core/webrequest.class.php`
 * Fixed instant exit from `webrequest.php` after `/admin shutdown` (because of the existing file `worker.suicide`)
 * Reverted `/list` back to the `plugin.rasp_jukebox.php` to enable `/admin remove 1` (thanks Tavernicole)
@@ -30,6 +87,7 @@
 * Fixed [Plugin] » Can not register chat command "/elist" because callback Method "chat_elist()" of class "PluginRecordsEyepiece" is not callable, ignoring! (thanks ramires)
 * Fixed ManiaScript ERR [30, 69] Persistent storage limit reached. MusicWidget ()::Main() [30, 69], by disable persistent storage
 * Fixed Checkpoint TimeDiffWidget is displaying a time from the map that was loaded before, if you have not already a Personal Best time on the current map (thanks elie520)
+* Fixed [PHP Notice] Trying to get property of non-object on line 767 in file `[...]plugins/plugin.modescript_handler.php` (thanks SSM.Speed...)
 
 
 
@@ -46,6 +104,7 @@
 
 
 ### General changes
+
 * Requires a `Maniaplanet Dedicated Server` build `2017-05-12_21_00` or higher
 * wget is no longer required, it is replaced by the `includes/webrequest.php` (which has to be started as separate process)
 * Added new method `$aseco->generateManialinkId()` at class `UASECO`
@@ -63,6 +122,7 @@ Added the command `/tachometer reload` to `plugins/plugin.tachometer.php`
 
 
 ### Changes at config files
+
 * Changed the URLs to [ManiaCDN](https://about.maniacdn.net/) in the `newinstall/config/tachometer.xml`
 * Changed the URLs to [ManiaCDN](https://about.maniacdn.net/) in the `newinstall/config/tachometer/template_classic.xml`
 * Changed inside `newinstall/config/donate.xml` at `<messages><payment>` the content (removed a space) for the new Class Dialog
@@ -73,6 +133,7 @@ Added the command `/tachometer reload` to `plugins/plugin.tachometer.php`
 
 
 ### Bug fixes
+
 * Fixed deformated Window from `/admin pay PLAYER AMOUNT` window has been updated to the Manialink version 3
 * Fixed wrong versions check from `/uptodate`
 * Fixed [PHP Notice]: Undefined index: `UI_PROPERTIES` in `[...]/plugins/plugin.modescript_handler.php` on line 918 (thanks Krill)

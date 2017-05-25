@@ -59,7 +59,7 @@ class Ranking extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
+		$this->setBuild('2017-05-24');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure of a ranking.');
 
@@ -70,11 +70,11 @@ class Ranking extends BaseClass {
 		$this->round_points		= 0;
 		$this->map_points		= 0;
 		$this->match_points		= 0;
-		$this->best_race_time		= 0;
-		$this->best_race_respawns	= 0;
+		$this->best_race_time		= -1;
+		$this->best_race_respawns	= -1;
 		$this->best_race_checkpoints	= array();
-		$this->best_lap_time		= 0;
-		$this->best_lap_respawns	= 0;
+		$this->best_lap_time		= -1;
+		$this->best_lap_respawns	= -1;
 		$this->best_lap_checkpoints	= array();
 		$this->stunts_score		= 0;
 	}

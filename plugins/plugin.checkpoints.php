@@ -37,11 +37,13 @@
 class PluginCheckpoints extends Plugin {
 	public $config;
 
-	public $checkpoints	= array();
-	public $nb_checkpoints	= 0;
-	public $totalcps	= 0;
-	public $nb_laps		= 0;
-	public $forced_laps	= 0;
+	public $checkpoints		= array();
+	public $nb_checkpoints		= 0;
+	public $totalcps		= 0;
+	public $nb_laps			= 0;
+	public $forced_laps		= 0;
+
+	private $update_tracking	= array();
 
 
 	/*
@@ -54,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-17');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -65,6 +67,7 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
+		$this->registerEvent('onBeginRound',			'onBeginRound');
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
@@ -75,6 +78,8 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
 		$this->registerEvent('onLocalRecordsLoaded',		'onLocalRecordsLoaded');
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
+		$this->registerEvent('onLocalRecord',			'onLocalRecord');
+		$this->registerEvent('onDedimaniaRecord',		'onDedimaniaRecord');
 
 		$this->registerChatCommand('cps', 			'chat_cps', 		'Sets local record checkpoints tracking', 	Player::PLAYERS);
 	}
@@ -382,6 +387,21 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function onBeginRound ($aseco) {
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true && count($this->update_tracking) > 0) {
+			foreach ($this->update_tracking as &$login) {
+				$this->handleCheckpointTracking($login);
+				unset($login);
+			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Init
@@ -585,6 +605,30 @@ class PluginCheckpoints extends Plugin {
 					$this->handleCheckpointTracking($player->login);
 				}
 			}
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onLocalRecord ($aseco, $finish) {
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			$this->update_tracking[] = $finish->player->login;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onDedimaniaRecord ($aseco, $record) {
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
+			$this->update_tracking[] = $record['Login'];
 		}
 	}
 
@@ -849,7 +893,7 @@ EOL;
 		global $aseco;
 
 		$xml = '<manialink id="CheckpointCounter" name="CheckpointCounter" version="3">';
-		$xml .= '<frame pos="'. $this->config['COUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['COUNT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="CheckpointCounter">';
+		$xml .= '<frame pos="'. $this->config['COUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['COUNT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_CheckpointCounter">';
 		if ($this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
 			$xml .= '<quad pos="0 0" z-index="0.001" size="40 7.5" bgcolor="'. $this->config['COUNT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
@@ -873,7 +917,7 @@ $maniascript = <<<EOL
  * ----------------------------------
  */
 main() {
-	declare CMlFrame Container			<=> (Page.GetFirstChild(Page.MainFrame.ControlId) as CMlFrame);
+	declare CMlFrame Container			<=> (Page.GetFirstChild("Frame_CheckpointCounter") as CMlFrame);
 	Container.RelativeScale				= {$this->config['COUNT_WIDGET'][0]['SCALE'][0]};
 
 	declare LabelCheckpointLine1			<=> (Page.GetFirstChild("CheckpointLine1") as CMlLabel);

@@ -290,7 +290,7 @@ class MapList extends BaseClass {
 				}
 			}
 			catch (Exception $exception) {
-				$aseco->console('[Admin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
+				$aseco->console('[ClassMaplist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
 				$done = true;
 				break;
 			}

@@ -68,7 +68,7 @@ class Gameinfo extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-17');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
@@ -132,15 +132,10 @@ class Gameinfo extends BaseClass {
 
 
 		// ModeBase
-//		$this->modebase['UseScriptCallbacks']	= $modescript['settings']['S_UseScriptCallbacks'];
-//		$this->modebase['UseLegacyCallbacks']	= $modescript['settings']['S_UseLegacyCallbacks'];
 		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
 		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
-		$this->modebase['WarmUpDuration']	= $modescript['settings']['S_WarmUpDuration'];
-//		$this->modebase['ScoresTableStylePath']	= $modescript['settings']['S_ScoresTableStylePath'];
 
-
-		// http://doc.maniaplanet.com/dedicated-server/settings-list.html
+		// https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
 		if ($this->mode == self::ROUNDS) {
 			// Rounds (+RoundsBase)
 			if ( isset($clone->rounds['PointsRepartition']) ) {
@@ -162,8 +157,9 @@ class Gameinfo extends BaseClass {
 			$this->rounds['MapsPerMatch']			= $modescript['settings']['S_MapsPerMatch'];
 			$this->rounds['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->rounds['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
-			$this->rounds['DisplayTimeDiff']		= false;
-
+			$this->rounds['DisplayTimeDiff']		= $modescript['settings']['S_DisplayTimeDiff'];
+			$this->rounds['WarmUpNumber']			= $modescript['settings']['S_WarmUpNb'];
+			$this->rounds['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
 			$this->rounds['UseTieBreak']			= $modescript['settings']['S_UseTieBreak'];
 		}
 		else if ($this->mode == self::TIME_ATTACK) {
@@ -188,7 +184,6 @@ class Gameinfo extends BaseClass {
 			$this->team['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->team['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
 			$this->team['DisplayTimeDiff']			= false;
-
 			$this->team['MaxPointsPerRound']		= $modescript['settings']['S_MaxPointsPerRound'];
 			$this->team['PointsGap']			= $modescript['settings']['S_PointsGap'];
 		}

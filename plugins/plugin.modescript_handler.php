@@ -42,8 +42,10 @@
 
 class PluginModescriptHandler extends Plugin {
 	public $callback_blocklist;
+
 	private $settings;
 	private $ui_properties;
+	private $forms;
 
 
 	/*
@@ -55,8 +57,8 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2017-05-17');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -64,6 +66,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
+		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onShutdown',			'onShutdown');
 
 		$this->registerChatCommand('modescript',		'chat_modescript',		'Adjust some settings for the Modescript plugin (see: /modescript)',	Player::MASTERADMINS);
@@ -108,6 +111,220 @@ class PluginModescriptHandler extends Plugin {
 
 		// Stores the <ui_properties>
 		$this->ui_properties		= array();
+
+		$this->forms = array(
+			true	=> array(
+				'textcolor'	=> '63A910',
+				'symbole'	=> '',
+				'text'		=> 'Enabled',
+			),
+			false	=> array(
+				'textcolor'	=> 'C62121',
+				'symbole'	=> '',
+				'text'		=> 'Disabled',
+			),
+		);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_modescript ($aseco, $login, $chat_command, $chat_parameter) {
+
+		// Check optional parameter
+		if (strtoupper($chat_parameter) == 'RELOAD') {
+
+			// Reload the config
+			$this->onSync($aseco, true);
+
+			// Show chat message
+			$msg = new Message('plugin.modescript_handler', 'message_reload');
+			$msg->sendChatMessage();
+
+		}
+//		else if (strtoupper($chat_parameter) == 'UI') {
+//
+//			if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+//				return;
+//			}
+//
+//			$xml = '';
+//
+//			$xml .= '<frame pos="0 0">';
+//				$declarations .= $this->buildFormScriptDeclarations('Chat');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Chat');
+//				$xml .= '<frame pos="0 0">';
+//				$xml .= $this->buildFormUI('Chat');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Chat Avatar');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Chat Avatar');
+//				$xml .= '<frame pos="0 -18.4">';
+//				$xml .= $this->buildFormUI('Chat Avatar');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Checkpoint List');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Checkpoint List');
+//				$xml .= '<frame pos="0 -36.8">';
+//				$xml .= $this->buildFormUI('Checkpoint List');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Checkpoint Ranking');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Checkpoint Ranking');
+//				$xml .= '<frame pos="0 -55.2">';
+//				$xml .= $this->buildFormUI('Checkpoint Ranking');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Checkpoint Time');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Checkpoint Time');
+//				$xml .= '<frame pos="0 -73.6">';
+//				$xml .= $this->buildFormUI('Checkpoint Time');
+//				$xml .= '</frame>';
+//			$xml .= '</frame>';
+//
+//
+//			$xml .= '<frame pos="50.5 0">';
+//				$declarations .= $this->buildFormScriptDeclarations('Chrono');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Chrono');
+//				$xml .= '<frame pos="0 0">';
+//				$xml .= $this->buildFormUI('Chrono');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Countdown');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Countdown');
+//				$xml .= '<frame pos="0 -18.4">';
+//				$xml .= $this->buildFormUI('Countdown');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Endmap Ladder Recap');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Endmap Ladder Recap');
+//				$xml .= '<frame pos="0 -36.8">';
+//				$xml .= $this->buildFormUI('Endmap Ladder Recap');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Go');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Go');
+//				$xml .= '<frame pos="0 -55.2">';
+//				$xml .= $this->buildFormUI('Go');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Live Info');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Live Info');
+//				$xml .= '<frame pos="0 -73.6">';
+//				$xml .= $this->buildFormUI('Live Info');
+//				$xml .= '</frame>';
+//			$xml .= '</frame>';
+//
+//
+//			$xml .= '<frame pos="101 0">';
+//				$declarations .= $this->buildFormScriptDeclarations('Map Info');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Map Info');
+//				$xml .= '<frame pos="0 0">';
+//				$xml .= $this->buildFormUI('Map Info');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Multilap Info');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Multilap Info');
+//				$xml .= '<frame pos="0 -18.4">';
+//				$xml .= $this->buildFormUI('Multilap Info');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Opponents Info');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Opponents Info');
+//				$xml .= '<frame pos="0 -36.8">';
+//				$xml .= $this->buildFormUI('Opponents Info');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Personal Best and Rank');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Personal Best and Rank');
+//				$xml .= '<frame pos="0 -55.2">';
+//				$xml .= $this->buildFormUI('Personal Best and Rank');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Position');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Position');
+//				$xml .= '<frame pos="0 -73.6">';
+//				$xml .= $this->buildFormUI('Position');
+//				$xml .= '</frame>';
+//			$xml .= '</frame>';
+//
+//
+//			$xml .= '<frame pos="151.5 0">';
+//				$declarations .= $this->buildFormScriptDeclarations('Round Scores');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Round Scores');
+//				$xml .= '<frame pos="0 0">';
+//				$xml .= $this->buildFormUI('Round Scores');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Spectator Info');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Spectator Info');
+//				$xml .= '<frame pos="0 -18.4">';
+//				$xml .= $this->buildFormUI('Spectator Info');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('Speed and Distance');
+//				$mouse_click .= $this->buildFormScriptMouseClick('Speed and Distance');
+//				$xml .= '<frame pos="0 -36.8">';
+//				$xml .= $this->buildFormUI('Speed and Distance');
+//				$xml .= '</frame>';
+//
+//				$declarations .= $this->buildFormScriptDeclarations('WarmUp');
+//				$mouse_click .= $this->buildFormScriptMouseClick('WarmUp');
+//				$xml .= '<frame pos="0 -55.2">';
+//				$xml .= $this->buildFormUI('WarmUp');
+//				$xml .= '</frame>';
+//
+////				$declarations .= $this->buildFormScriptDeclarations('');
+////				$mouse_click .= $this->buildFormScriptMouseClick('');
+//				$xml .= '<frame pos="0 -73.6">';
+//				$xml .= $this->buildFormUI('');
+//				$xml .= '</frame>';
+//			$xml .= '</frame>';
+//
+////	TriggerPageAction("PluginModescriptHandler?Action=Save&NAME="^ ID.Value);
+//
+//
+//
+//
+//			$settings_style = array(
+//				'textcolor'		=> '09FF',
+//				'seperatorcolor'	=> 'FFFF',
+//				'icon'			=> 'Icons64x64_1,ToolLeague1',
+//			);
+//			$settings_content = array(
+//				'title'			=> (new Message('plugin.modescript_handler', 'window_ui_properties'))->finish($player->login),
+//				'data'			=> array($xml),
+//				'mode'			=> 'pages',
+//			);
+//			$settings_footer = array(
+//				'about_title'		=> 'MODESCRIPT-HANDLER/'. $this->getVersion(),
+//			);
+//			$maniascript = array(
+//				'functions'		=> '',
+//				'declarations'		=> $declarations,
+//				'mainloop'		=> '',
+//				'mouse_click'		=> $mouse_click,
+//				'mouse_over'		=> '',
+//				'key_press'		=> '',
+//			);
+//
+//			// Create the Window
+//			$window = new Window();
+//			$window->setStyles($settings_style);
+//			$window->setContent($settings_content);
+//			$window->setFooter($settings_footer);
+//			$window->setManiascript($maniascript);
+//			$window->send($player, 0, false);
+//
+//		}
+		else {
+			// Show chat message
+			$msg = new Message('plugin.modescript_handler', 'message_help');
+			$msg->sendChatMessage();
+		}
 	}
 
 	/*
@@ -171,7 +388,6 @@ class PluginModescriptHandler extends Plugin {
 		// ModeBase
 		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
-		$aseco->server->gameinfo->modebase['WarmUpDuration']		= (int)$this->settings['MODEBASE'][0]['WARM_UP_DURATION'][0];
 
 		// Rounds +RoundsBase
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
@@ -182,6 +398,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->rounds['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['DISPLAY_TIME_DIFF'][0]);
 		$aseco->server->gameinfo->rounds['UseTieBreak']			= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_TIE_BREAK'][0]);
+		$aseco->server->gameinfo->rounds['WarmUpNumber']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['WARM_UP_NUMBER'][0];
+		$aseco->server->gameinfo->rounds['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['WARM_UP_DURATION'][0];
 
 		// TimeAttack
 		$aseco->server->gameinfo->time_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['TIME_LIMIT'][0];
@@ -297,26 +515,10 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function chat_modescript ($aseco, $login, $chat_command, $chat_parameter) {
+	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		// Check optional parameter
-		if (strtoupper($chat_parameter) == 'RELOAD') {
+		if ($answer['Action'] == 'Vote') {
 
-			// Reload the config
-			$this->onSync($aseco, true);
-
-			// Throw 'synchronisation' event
-			$aseco->releaseEvent('onSync', null);
-
-			// Show chat message
-			$msg = new Message('plugin.modescript_handler', 'message_reload');
-			$msg->sendChatMessage();
-
-		}
-		else {
-			// Show chat message
-			$msg = new Message('plugin.modescript_handler', 'message_help');
-			$msg->sendChatMessage();
 		}
 	}
 
@@ -418,12 +620,11 @@ class PluginModescriptHandler extends Plugin {
 						$aseco->releaseEvent('onPlayerFinishLine', $response);
 					}
 				}
-				if ($response['is_endrace'] === true || $response['is_endlap'] === true) {
+				if ($response['is_endrace'] === true) {
 					if ($aseco->warmup_phase == false && $aseco->server->gameinfo->mode != Gameinfo::TEAM) {
 						// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
 						$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 					}
-
 					$this->playerFinish($response);
 				}
 		    		break;
@@ -558,7 +759,10 @@ class PluginModescriptHandler extends Plugin {
 					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 				}
 
-				if ($params['restarted'] === true) {
+// BEGIN 2017-05-25 work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=285553#p285553
+				if ($params['restarted'] === true && $aseco->server->maps->current->uid == $params['map']['uid']) {
+//				if ($params['restarted'] === true) {
+// END
 					$aseco->restarting = true;							// Map was restarted
 				}
 				else {
@@ -586,8 +790,8 @@ class PluginModescriptHandler extends Plugin {
 				// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
 				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 
-				// Call 'Maniaplanet.WarmUp.GetStatus' to get 'Maniaplanet.WarmUp.Status'
-				$aseco->client->query('TriggerModeScriptEventArray', 'Maniaplanet.WarmUp.GetStatus', array((string)time()));
+				// Call 'Trackmania.WarmUp.GetStatus' to get 'Trackmania.WarmUp.Status'
+				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.WarmUp.GetStatus', array((string)time()));
 
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Begin Map');
@@ -764,12 +968,17 @@ class PluginModescriptHandler extends Plugin {
 							);
 
 							$rank = $aseco->server->rankings->getRankByLogin($item['login']);
-							if ($rank->best_race_time === 0 || $rank->map_points === 0  || $rank->match_points === 0 || $rank->best_lap_time === 0 || $rank->best_race_time > $update['best_race_time'] || $rank->map_points > $update['map_points'] || $rank->match_points > $update['match_points'] || $rank->best_lap_time > $update['best_lap_time']) {
+							if (($update['map_points'] > 0 || $rank->map_points > $update['map_points']) || ($update['match_points'] > 0 || $rank->match_points > $update['match_points']) || ($update['best_race_time'] > 0 || $rank->best_race_time > $update['best_race_time']) || ($update['best_lap_time'] > 0 || $rank->best_lap_time > $update['best_lap_time'])) {
 								// Update current ranking cache
 								$aseco->server->rankings->update($update);
 
 								// Lets send the event 'onPlayerRankingUpdated'
 								$found_improvement = true;
+							}
+
+							// Special handling for 'round_points', details at 'docs/nadeo/Detailed description of Trackmania.Scores.txt'
+							if ($update['round_points'] > 0) {
+								$aseco->releaseEvent('onPlayerRoundFinish', $update);
 							}
 						}
 					}
@@ -787,6 +996,7 @@ class PluginModescriptHandler extends Plugin {
 
 
 			case 'Maniaplanet.WarmUp.Status':
+			case 'Trackmania.WarmUp.Status':
 				if ($aseco->warmup_phase !== $params['active']) {
 					if ($aseco->settings['developer']['log_events']['common'] == true) {
 						$aseco->console('[Event] WarmUp Status Changed');
@@ -908,11 +1118,15 @@ class PluginModescriptHandler extends Plugin {
 			case 'Maniaplanet.StartServer_Start':
 				// When changing Gamemode force all Plugins to resync
 				if ($aseco->changing_to_gamemode !== false && $params['mode']['updated'] === true) {
-					$aseco->console('[ModescriptHandler] ########################################################');
-					$aseco->console('[ModescriptHandler] Gamemode change detected, forcing all Plugins to resync!');
-					$aseco->console('[ModescriptHandler] ########################################################');
-					$aseco->releaseEvent('onSync', null);
+					$aseco->console('[ModescriptHandler] Gamemode change detected, reloading configuration and setup...');
 
+					// Refresh server game info
+					$aseco->server->getCurrentGameInfo();
+
+					// Reload settings
+					$this->onSync($aseco, true);
+
+					// Trigger 'onModeScriptChanged' event
 					$aseco->releaseEvent('onModeScriptChanged', $params['mode']['name']);
 
 					// Reset status
@@ -961,7 +1175,6 @@ class PluginModescriptHandler extends Plugin {
 			$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
-
 
 			// Send the UI settings
 			$this->setupUserInterface();
@@ -1025,9 +1238,9 @@ class PluginModescriptHandler extends Plugin {
 
 		$aseco->console('[ModescriptHandler] Checking version from dedicated Server Modescripts...');
 
-		$path = $aseco->settings['dedicated_installation'] .'/GameData/Scripts/';
+		$path = $aseco->settings['dedicated_installation'] .'GameData/Scripts/';
 		if (!is_dir($path)) {
-			trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
+			trigger_error('[ModescriptHandler] Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
 		}
 		foreach ($this->settings['SCRIPTS'][0]['ENTRY'] as $item) {
 			list($script, $version) = explode('|', $item);
@@ -1216,7 +1429,7 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// http://doc.maniaplanet.com/dedicated-server/settings-list.html
+	// https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
 	public function setupModescriptSettings () {
 		global $aseco;
 
@@ -1224,24 +1437,23 @@ class PluginModescriptHandler extends Plugin {
 		$modebase = array(
 			'S_ChatTime'				=> $aseco->server->gameinfo->modebase['ChatTime'],
 			'S_AllowRespawn'			=> $aseco->server->gameinfo->modebase['AllowRespawn'],
-			'S_WarmUpDuration'			=> $aseco->server->gameinfo->modebase['WarmUpDuration'],
 		);
 
 		$modesetup = array();
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			// Rounds (+RoundsBase)
 			$modesetup = array(
-				// RoundsBase
 				'S_PointsLimit'			=> $aseco->server->gameinfo->rounds['PointsLimit'],
 				'S_RoundsPerMap'		=> $aseco->server->gameinfo->rounds['RoundsPerMap'],
 				'S_MapsPerMatch'		=> $aseco->server->gameinfo->rounds['MapsPerMatch'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->rounds['FinishTimeout'],
+				'S_UseTieBreak'			=> $aseco->server->gameinfo->rounds['UseTieBreak'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->rounds['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->rounds['WarmUpDuration'],
+
 				'S_UseAlternateRules'		=> $aseco->server->gameinfo->rounds['UseAlternateRules'],
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->rounds['ForceLapsNb'],
 				'S_DisplayTimeDiff'		=> $aseco->server->gameinfo->rounds['DisplayTimeDiff'],
-
-				// Rounds
-				'S_UseTieBreak'			=> $aseco->server->gameinfo->rounds['UseTieBreak'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
@@ -1354,6 +1566,141 @@ class PluginModescriptHandler extends Plugin {
 		if ($aseco->startup_phase != true) {
 			$aseco->releaseEvent('onModeScriptSettingsChanged', null);
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildFormUI ($name) {
+
+		$title = $name;
+		$id = str_replace(' ', '', $name);
+		$var = strtoupper(str_replace(' ', '_', $name));
+
+		$xml = '<quad pos="0 0" z-index="0" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0" size="48.5 4" bgcolor="0099FFFF"/>';
+		$xml .= '<label pos="1 -0.5" z-index="0.01" size="46.5 3.1" textsize="1.4" textfont="Oswald" text="'. $title .'"/>';
+
+		if (!empty($name)) {
+			// Checkbox
+			$xml .= '<frame pos="1 -5.5" z-index="0.02">';
+			$xml .= '<quad pos="0 0" z-index="0.01" size="14.8 4" bgcolor="FFFF" bgcolorfocus="DDDF" id="'. $id .'QuadBackground" scriptevents="1"/>';
+			$xml .= '<label pos="1 -2" z-index="0.02" size="4 3" valign="center2" textsize="1.5" textcolor="'. $this->forms[$this->ui_properties[$var][0]['VISIBLE'][0]]['textcolor'] .'" text="'. $this->forms[$this->ui_properties[$var][0]['VISIBLE'][0]]['symbole'] .'" id="'. $id .'CheckboxLabelIcon"/>';
+			$xml .= '<label pos="5 -2" z-index="0.02" size="9.8 3" valign="center2" textsize="0.6" textcolor="555555" textfont="Oswald" text="'. $this->forms[$this->ui_properties[$var][0]['VISIBLE'][0]]['text'] .'" id="'. $id .'CheckboxLabelValue"/>';
+			$xml .= '</frame>';
+		}
+
+		$pos = array(
+			'X'	=> 1,
+			'Y'	=> 16.8,
+			'Z'	=> 32.6,
+		);
+		if ($name == 'CHAT') {
+			foreach (array('X','Y') as $direction) {
+				if (isset($this->ui_properties[$var][0]['OFFSET'][0][$direction][0])) {
+					// Input for (int) or (float) with arrows
+					$xml .= '<frame pos="'. $pos[$direction] .' -10.8" z-index="0.02">';
+					$xml .= '<quad pos="0 0" z-index="0" size="14.8 4" bgcolor="FFFF"/>';
+					$xml .= '<entry pos="10.8 -2" z-index="0.01" size="10.8 4" halign="right" valign="center2" textcolor="555" textsize="0.1" textfont="Oswald" default="'. $this->ui_properties[$var][0]['OFFSET'][0][$direction][0] .' " id="'. $id .'EntryPos'. $direction .'"/>';
+					$xml .= '<label pos="1 -2" z-index="0.02" size="8 4" valign="center2" textsize="1" scale="0.6" textcolor="555555" textfont="Oswald" text="'. $direction .'"/>';
+					$xml .= '<frame pos="10.8 0" z-index="0.01">';
+					$xml .= '<quad pos="0 0" z-index="0.01" size="4 2" bgcolor="AAAF" bgcolorfocus="09FF" id="'. $id .'ButtonArrowUpPos'. $direction .'" scriptevents="1"/>';
+					$xml .= '<quad pos="0 -2" z-index="0.01" size="4 2" bgcolor="AAAF" bgcolorfocus="09FF" id="'. $id .'ButtonArrowDownPos'. $direction .'" scriptevents="1"/>';
+					$xml .= '<label pos="2.125 -0.9" z-index="0.02" size="4 2" halign="center" valign="center2" textsize="1" textcolor="FFF" text="⏶"/>';
+					$xml .= '<label pos="2.125 -2.8" z-index="0.02" size="4 2" halign="center" valign="center2" textsize="1" textcolor="FFF" text="⏷"/>';
+					$xml .= '</frame>';
+					$xml .= '</frame>';
+				}
+			}
+
+			// Input for (int) or (float) with arrows
+			$xml .= '<frame pos="'. $pos['Z'] .' -10.8" z-index="0.02">';
+			$xml .= '<quad pos="0 0" z-index="0" size="14.8 4" bgcolor="FFFF"/>';
+			$xml .= '<entry pos="10.8 -2" z-index="0.01" size="10.8 4" halign="right" valign="center2" textcolor="555" textsize="0.1" textfont="Oswald" default="'. $this->ui_properties[$var][0]['LINECOUNT'][0] .' " id="'. $id .'EntryPosLinecount"/>';
+			$xml .= '<label pos="1 -2" z-index="0.02" size="8 4" valign="center2" textsize="1" scale="0.6" textcolor="555555" textfont="Oswald" text="Lines"/>';
+			$xml .= '<frame pos="10.8 0" z-index="0.01">';
+			$xml .= '<quad pos="0 0" z-index="0.01" size="4 2" bgcolor="AAAF" bgcolorfocus="09FF" id="'. $id .'ButtonArrowUpPosLinecount" scriptevents="1"/>';
+			$xml .= '<quad pos="0 -2" z-index="0.01" size="4 2" bgcolor="AAAF" bgcolorfocus="09FF" id="'. $id .'ButtonArrowDownPosLinecount" scriptevents="1"/>';
+			$xml .= '<label pos="2.125 -0.9" z-index="0.02" size="4 2" halign="center" valign="center2" textsize="1" textcolor="FFF" text="⏶"/>';
+			$xml .= '<label pos="2.125 -2.8" z-index="0.02" size="4 2" halign="center" valign="center2" textsize="1" textcolor="FFF" text="⏷"/>';
+			$xml .= '</frame>';
+			$xml .= '</frame>';
+		}
+		else {
+			foreach (array('X','Y','Z') as $direction) {
+				if (isset($this->ui_properties[$var][0]['POS'][0][$direction][0])) {
+					// Input for (int) or (float) with arrows
+					$xml .= '<frame pos="'. $pos[$direction] .' -10.8" z-index="0.02">';
+					$xml .= '<quad pos="0 0" z-index="0" size="14.8 4" bgcolor="FFFF"/>';
+					$xml .= '<entry pos="10.8 -2" z-index="0.01" size="10.8 4" halign="right" valign="center2" textcolor="555" textsize="0.1" textfont="Oswald" default="'. $this->ui_properties[$var][0]['POS'][0][$direction][0] .' " id="'. $id .'EntryPos'. $direction .'"/>';
+					$xml .= '<label pos="1 -2" z-index="0.02" size="8 4" valign="center2" textsize="1" scale="0.6" textcolor="555555" textfont="Oswald" text="'. $direction .'"/>';
+					$xml .= '<frame pos="10.8 0" z-index="0.01">';
+					$xml .= '<quad pos="0 0" z-index="0.01" size="4 2" bgcolor="AAAF" bgcolorfocus="09FF" id="'. $id .'ButtonArrowUpPos'. $direction .'" scriptevents="1"/>';
+					$xml .= '<quad pos="0 -2" z-index="0.01" size="4 2" bgcolor="AAAF" bgcolorfocus="09FF" id="'. $id .'ButtonArrowDownPos'. $direction .'" scriptevents="1"/>';
+					$xml .= '<label pos="2.125 -0.9" z-index="0.02" size="4 2" halign="center" valign="center2" textsize="1" textcolor="FFF" text="⏶"/>';
+					$xml .= '<label pos="2.125 -2.8" z-index="0.02" size="4 2" halign="center" valign="center2" textsize="1" textcolor="FFF" text="⏷"/>';
+					$xml .= '</frame>';
+					$xml .= '</frame>';
+				}
+			}
+		}
+
+		return $xml;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildFormScriptDeclarations ($name) {
+		global $aseco;
+
+		$id = str_replace(' ', '', $name);
+		$var = strtoupper(str_replace(' ', '_', $name));
+
+		$boolean = ucfirst($aseco->bool2string($this->ui_properties[$var][0]['VISIBLE'][0]));
+
+$maniascript = <<<EOL
+	declare CMlLabel ModescriptHandler{$id}CheckboxLabelIcon <=> (Page.GetFirstChild("{$id}CheckboxLabelIcon") as CMlLabel);
+	declare CMlLabel ModescriptHandler{$id}CheckboxLabelValue <=> (Page.GetFirstChild("{$id}CheckboxLabelValue") as CMlLabel);
+	declare Boolean ModescriptHandler{$id}Visible = $boolean;
+EOL;
+		return $maniascript;
+	}
+
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildFormScriptMouseClick ($name) {
+
+		$id = str_replace(' ', '', $name);
+
+$maniascript = <<<EOL
+	if (Event.ControlId == "{$id}QuadBackground") {
+		if (ModescriptHandler{$id}Visible == True) {
+			ModescriptHandler{$id}CheckboxLabelIcon.TextColor	= TextLib::ToColor("{$this->forms[false]['textcolor']}");
+			ModescriptHandler{$id}CheckboxLabelIcon.Value		= "{$this->forms[false]['symbole']}";
+			ModescriptHandler{$id}CheckboxLabelValue.Value		= "{$this->forms[false]['text']}";
+			ModescriptHandler{$id}Visible = False;
+		}
+		else if (ModescriptHandler{$id}Visible == False) {
+			ModescriptHandler{$id}CheckboxLabelIcon.TextColor	= TextLib::ToColor("{$this->forms[true]['textcolor']}");
+			ModescriptHandler{$id}CheckboxLabelIcon.Value		= "{$this->forms[true]['symbole']}";
+			ModescriptHandler{$id}CheckboxLabelValue.Value		= "{$this->forms[true]['text']}";
+			ModescriptHandler{$id}Visible = True;
+		}
+	}
+EOL;
+		return $maniascript;
 	}
 
 	/*

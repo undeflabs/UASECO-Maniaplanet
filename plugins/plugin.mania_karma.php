@@ -75,7 +75,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2017-05-15');
+		$this->setBuild('2017-05-24');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -2336,7 +2336,7 @@ EOL;
 	public function buildPlayerVoteMarker ($player, $gamemode) {
 
 		// Bail out if Player is already disconnected
-		if (!isset($player->login) || !$this->karma['global']['players'][$player->login]) {
+		if (!isset($player->login) || !isset($this->karma['global']['players'][$player->login])) {
 			return;
 		}
 

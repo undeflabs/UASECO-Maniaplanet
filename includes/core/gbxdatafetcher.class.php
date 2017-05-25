@@ -1,6 +1,6 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » 2017-02-03: No changes made for UASECO */
+/* » 2017-05-23: No changes made for UASECO */
 
 /**
  * GBXDataFetcher - Fetch GBX challenge/map/replay/pack data for TrackMania (TM)
@@ -11,6 +11,7 @@
  * http://www.tm-forum.com/viewtopic.php?p=192817#p192817
  * and http://en.tm-wiki.org/wiki/PAK
  *
+ * v2.10: Add lookback string Lagoon
  * v2.9: Fix resource leak on PHP7
  * v2.8: Fix minor lookback strings bug
  * v2.7: Add class GBXPackHeaderFetcher for Included Packs info in GBXPackFetcher;
@@ -251,6 +252,8 @@ class GBXBaseFetcher
 				case 11:    $str = 'Valley';
 				            break;
 				case 12:    $str = 'Canyon';
+				            break;
+				case 13:    $str = 'Lagoon';
 				            break;
 				case 17:    $str = 'TMCommon';
 				            break;

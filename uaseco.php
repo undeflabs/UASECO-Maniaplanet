@@ -43,12 +43,12 @@
 
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
-	define('UASECO_VERSION',		'0.9.3');
-	define('UASECO_BUILD',			'2017-05-17');
+	define('UASECO_VERSION',		'0.9.4');
+	define('UASECO_BUILD',			'2017-05-25');
 	define('UASECO_WEBSITE',		'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',		'2017-05-16_19_00');
+	define('MANIAPLANET_BUILD',		'2017-05-22_21_00');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.1.0');
 	define('MIN_PHP_VERSION',		'5.6.0');
@@ -562,7 +562,7 @@ class UASECO extends Helper {
 		}
 		$this->console_text('» Title:         {1}', $this->server->title);
 		$this->console_text('» Gamemode:      "{1}" with script "{2}" version "{3}"', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
-		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
+		$this->console_text('» Dedicated:     {1}/{2} build {3}, using Method-API {4}, ModeScript-API {5}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version, MODESCRIPT_API_VERSION);
 		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
@@ -643,11 +643,11 @@ class UASECO extends Helper {
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» Server:        {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
 		if ($this->server->isrelay) {
-			$this->console_text('=> Relays:       {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
+			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:         {1}', $this->server->title);
 		$this->console_text('» Gamemode:      "{1}" with script "{2}" version "{3}"', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
-		$this->console_text('» Dedicated:     {1}/{2} build {3}, using API-Version {4}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version);
+		$this->console_text('» Dedicated:     {1}/{2} build {3}, using Method-API {4}, ModeScript-API {5}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version, MODESCRIPT_API_VERSION);
 		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
@@ -757,6 +757,10 @@ class UASECO extends Helper {
 
 			// Setup default storing path for the map images
 			$this->settings['mapimages_path'] = $settings['MAPIMAGES_PATH'][0];
+			if (substr($this->settings['mapimages_path'], -1) != '/' || substr($this->settings['mapimages_path'], -1) != '\\') {
+				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <mapimages_path> from [config/UASECO.xml]!');
+				$this->settings['mapimages_path'] = $this->settings['mapimages_path'] . DIRECTORY_SEPARATOR;
+			}
 
 			// Set multiple of win count to show global congrats message
 			$this->settings['global_win_multiple'] = ($settings['GLOBAL_WIN_MULTIPLE'][0] > 0 ? $settings['GLOBAL_WIN_MULTIPLE'][0] : 1);
@@ -819,6 +823,10 @@ class UASECO extends Helper {
 			$this->settings['dedicated_installation'] = $settings['DEDICATED_INSTALLATION'][0];
 			if (strtoupper($this->settings['dedicated_installation']) == 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
 				trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
+			}
+			if (substr($this->settings['dedicated_installation'], -1) != '/' || substr($this->settings['dedicated_installation'], -1) != '\\') {
+				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <dedicated_installation> from [config/UASECO.xml]!');
+				$this->settings['dedicated_installation'] = $this->settings['dedicated_installation'] . DIRECTORY_SEPARATOR;
 			}
 
 			// Log passwords in logfile?

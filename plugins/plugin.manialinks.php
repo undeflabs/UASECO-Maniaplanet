@@ -115,7 +115,7 @@ class PluginManialinks extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-14');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides simple ManiaLink windows, also handles special panels and custom UI changes.');
 
@@ -232,7 +232,7 @@ class PluginManialinks extends Plugin {
 							        ' 0.04" size="' . ($widths[$i+1]-0.03) . ' ' . ($bsize+0.000) .
 							        '" halign="left" style="' . $style['BUTTON'][0]['STYLE'][0] .
 							        '" substyle="' . $style['BUTTON'][0]['SUBSTYLE'][0] .
-							        '" action="' . $line[$i][1] . '"/>' . LF;
+							        '" action="'. $line[$i][1] .'"/>' . LF;
 							$xml .= '<label pos="' . (0.025+array_sum(array_slice($widths,1,$i))) .
 							        ' -' . ($hsize-0.008+$cnt*$bsize) .
 							        ' 0.05" size="' . ($widths[$i+1]-0.05) . ' ' . (0.02+$bsize) .

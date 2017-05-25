@@ -37,6 +37,7 @@ class Window extends BaseClass {
 	public $layout;
 	public $settings;
 	public $content;
+	public $script;
 
 
 	/*
@@ -50,7 +51,7 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-12');
+		$this->setBuild('2017-05-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -106,6 +107,17 @@ class Window extends BaseClass {
 			'halign'			=> array(),			// Inner columns
 			'heading'			=> array(),			// Inner columns
 			'textcolors'			=> array(),			// array('RRGGBBAA', [...])
+		);
+
+		$this->script = array(
+			'functions'			=> '',
+			'declarations'			=> '',
+			'mainloop'			=> '',
+			'events' => array(
+				'mouse_click'		=> '',
+				'mouse_over'		=> '',
+				'key_press'		=> '',
+			),
 		);
 
 		if ($unique_manialink_id === true) {
@@ -175,6 +187,35 @@ class Window extends BaseClass {
 		}
 		if (isset($param['button_link']) && $param['button_link']) {
 			$this->content['button_link'] = $param['button_link'];
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function setManiascript ($param = array()) {
+
+		if (isset($param['functions']) && $param['functions']) {
+			$this->script['functions'] = $param['functions'];
+		}
+		if (isset($param['declarations']) && $param['declarations']) {
+			$this->script['declarations'] = $param['declarations'];
+		}
+		if (isset($param['mainloop']) && $param['mainloop']) {
+			$this->script['mainloop'] = $param['mainloop'];
+		}
+
+		if (isset($param['mouse_click']) && $param['mouse_click']) {
+			$this->script['events']['mouse_click'] = $param['mouse_click'];
+		}
+		if (isset($param['mouse_over']) && $param['mouse_over']) {
+			$this->script['events']['mouse_over'] = $param['mouse_over'];
+		}
+		if (isset($param['key_press']) && $param['key_press']) {
+			$this->script['events']['key_press'] = $param['key_press'];
 		}
 	}
 
@@ -562,7 +603,7 @@ class Window extends BaseClass {
 		// Title
 		$xml .= '<quad pos="0 0" z-index="0.04" size="205 8" bgcolor="'. $this->layout['backgrounds']['title'] .'" bgcolorfocus="'. $this->layout['backgrounds']['title_hover'] .'" id="ClassWindowTitle" ScriptEvents="1"/>';
 		$xml .= '<quad pos="2.5 -1.075" z-index="0.05" size="5.5 5.5" style="'. $this->layout['title']['icon']['style'] .'" substyle="'. $this->layout['title']['icon']['substyle'] .'"/>';
-		$xml .= '<label pos="10 -2.575" z-index="0.05" size="188.5 3.75" class="labels" textsize="2" scale="0.9" textcolor="FFFFFFFF" text="'. $this->content['title'] .'"/>';
+		$xml .= '<label pos="8 -2.575" z-index="0.05" size="188.5 3.75" class="labels" textsize="2" scale="1" textcolor="FFFFFFFF" textfont="Oswald" text="'. $this->content['title'] .'"/>';
 
 		// Minimize Button
 		$xml .= '<frame pos="190 0.125" z-index="0.05">';
@@ -640,120 +681,136 @@ $maniascript = <<<EOL
  * License:	GPLv3
  * ----------------------------------
  */
+#Include "TextLib" as TextLib
+#Include "MathLib" as MathLib
 Void WipeOut (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container != Null) {
+	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild(ChildId) as CMlFrame);
+	if (ClassWindowFrame != Null) {
 		declare Real EndPosnX = 0.0;
 		declare Real EndPosnY = 0.0;
-		declare Real PosnDistanceX = (EndPosnX - Container.RelativePosition_V3.X);
-		declare Real PosnDistanceY = (EndPosnY - Container.RelativePosition_V3.Y);
+		declare Real PosnDistanceX = (EndPosnX - ClassWindowFrame.RelativePosition_V3.X);
+		declare Real PosnDistanceY = (EndPosnY - ClassWindowFrame.RelativePosition_V3.Y);
 
-		while (Container.RelativeScale > 0.0) {
-			Container.RelativePosition_V3.X += (PosnDistanceX / 20);
-			Container.RelativePosition_V3.Y += (PosnDistanceY / 20);
-			Container.RelativeScale -= 0.05;
+		while (ClassWindowFrame.RelativeScale > 0.0) {
+			ClassWindowFrame.RelativePosition_V3.X += (PosnDistanceX / 20);
+			ClassWindowFrame.RelativePosition_V3.Y += (PosnDistanceY / 20);
+			ClassWindowFrame.RelativeScale -= 0.05;
 			yield;
 		}
-		Container.Unload();
+		ClassWindowFrame.Unload();
 
 //		// Disable catching ESC key
 //		EnableMenuNavigationInputs = False;
 	}
 }
 Void Minimize (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container != Null) {
-		declare Real PosnDistanceX = ({$this->layout['position']['x']} - Container.RelativePosition_V3.X);
-		declare Real PosnDistanceY = ({$this->layout['position']['y']} - Container.RelativePosition_V3.Y);
+	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild(ChildId) as CMlFrame);
+	if (ClassWindowFrame != Null) {
+		declare Real PosnDistanceX = ({$this->layout['position']['x']} - ClassWindowFrame.RelativePosition_V3.X);
+		declare Real PosnDistanceY = ({$this->layout['position']['y']} - ClassWindowFrame.RelativePosition_V3.Y);
 
-		while (Container.RelativeScale > 0.2) {
-			Container.RelativePosition_V3.X += (PosnDistanceX / 16);
-			Container.RelativePosition_V3.Y += (PosnDistanceY / 16);
-			Container.RelativeScale -= 0.05;
+		while (ClassWindowFrame.RelativeScale > 0.2) {
+			ClassWindowFrame.RelativePosition_V3.X += (PosnDistanceX / 16);
+			ClassWindowFrame.RelativePosition_V3.Y += (PosnDistanceY / 16);
+			ClassWindowFrame.RelativeScale -= 0.05;
 			yield;
 		}
 	}
 }
 Void Maximize (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container != Null) {
+	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild(ChildId) as CMlFrame);
+	if (ClassWindowFrame != Null) {
 		declare Real EndPosnX = {$this->layout['position']['x']};
 		declare Real EndPosnY = {$this->layout['position']['y']};
-		declare Real PosnDistanceX = (EndPosnX - Container.RelativePosition_V3.X);
-		declare Real PosnDistanceY = (EndPosnY - Container.RelativePosition_V3.Y);
+		declare Real PosnDistanceX = (EndPosnX - ClassWindowFrame.RelativePosition_V3.X);
+		declare Real PosnDistanceY = (EndPosnY - ClassWindowFrame.RelativePosition_V3.Y);
 
-		while (Container.RelativeScale < 1.0) {
-			Container.RelativePosition_V3.X += (PosnDistanceX / 16);
-			Container.RelativePosition_V3.Y += (PosnDistanceY / 16);
-			Container.RelativeScale += 0.05;
+		while (ClassWindowFrame.RelativeScale < 1.0) {
+			ClassWindowFrame.RelativePosition_V3.X += (PosnDistanceX / 16);
+			ClassWindowFrame.RelativePosition_V3.Y += (PosnDistanceY / 16);
+			ClassWindowFrame.RelativeScale += 0.05;
 			yield;
 		}
 	}
 }
+
+// Custom functions
+{$this->script['functions']}
+
 main () {
-	declare CMlFrame Container <=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
-	declare Boolean MoveWindow = False;
-	declare Boolean IsMinimized = False;
-	declare Real MouseDistanceX = 0.0;
-	declare Real MouseDistanceY = 0.0;
+	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
+	declare Boolean ClassWindowMoveWindow = False;
+	declare Boolean ClassWindowIsMinimized = False;
+	declare Real ClassWindowMouseDistanceX = 0.0;
+	declare Real ClassWindowMouseDistanceY = 0.0;
+
+	// Custom declarations
+	{$this->script['declarations']}
 
 //	// Enable catching ESC key
 //	EnableMenuNavigationInputs = True;
 
 	while (True) {
 		yield;
-		if (MoveWindow == True) {
-			Container.RelativePosition_V3.X = (MouseDistanceX + MouseX);
-			Container.RelativePosition_V3.Y = (MouseDistanceY + MouseY);
+		if (ClassWindowMoveWindow == True) {
+			ClassWindowFrame.RelativePosition_V3.X = (ClassWindowMouseDistanceX + MouseX);
+			ClassWindowFrame.RelativePosition_V3.Y = (ClassWindowMouseDistanceY + MouseY);
 		}
 		if (MouseLeftButton == True) {
 			if (PendingEvents.count > 0) {
 				foreach (Event in PendingEvents) {
 					if (Event.ControlId == "ClassWindowTitle") {
-						MouseDistanceX = (Container.RelativePosition_V3.X - MouseX);
-						MouseDistanceY = (Container.RelativePosition_V3.Y - MouseY);
-						MoveWindow = True;
+						ClassWindowMouseDistanceX = (ClassWindowFrame.RelativePosition_V3.X - MouseX);
+						ClassWindowMouseDistanceY = (ClassWindowFrame.RelativePosition_V3.Y - MouseY);
+						ClassWindowMoveWindow = True;
 					}
 				}
 			}
 		}
 		else {
-			MoveWindow = False;
+			ClassWindowMoveWindow = False;
 		}
+
+		// Custom main loop
+		{$this->script['mainloop']}
+
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
 				case CMlEvent::Type::MouseClick : {
 					if (Event.ControlId == "ClassWindowButtonFirst") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowButtonPrevTwo") {
-						TriggerPageAction("WindowList?Action=ClassWindowPagePrevTwo&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPagePrevTwo&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowButtonPrev") {
-						TriggerPageAction("WindowList?Action=ClassWindowPagePrev&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPagePrev&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowButtonNext") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageNext&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageNext&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowButtonNextTwo") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageNextTwo&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageNextTwo&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowButtonLast") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageLast&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageLast&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowClose") {
 						WipeOut("ClassWindow");
 					}
-					else if (Event.ControlId == "ClassWindowMinimize" && IsMinimized == False) {
+					else if (Event.ControlId == "ClassWindowMinimize" && ClassWindowIsMinimized == False) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::ShowMenu, 0, 1.0);
 						Minimize("ClassWindow");
-						IsMinimized = True;
+						ClassWindowIsMinimized = True;
 					}
-					else if (Event.ControlId == "ClassWindowBody" && IsMinimized == True) {
+					else if (Event.ControlId == "ClassWindowBody" && ClassWindowIsMinimized == True) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::HideMenu, 0, 1.0);
 						Maximize("ClassWindow");
-						IsMinimized = False;
+						ClassWindowIsMinimized = False;
 					}
+
+					// Custom MouseClick
+					{$this->script['events']['mouse_click']}
 				}
 				case CMlEvent::Type::MouseOver : {
 					if (
@@ -769,37 +826,43 @@ main () {
 					) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
+
+					// Custom MouseOver
+					{$this->script['events']['mouse_over']}
 				}
 				case CMlEvent::Type::KeyPress : {
 					if (Event.KeyName == "Home") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.KeyName == "End") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageLast&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageLast&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.KeyName == "Prior") {
-						TriggerPageAction("WindowList?Action=ClassWindowPagePrev&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPagePrev&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.KeyName == "Next") {
-						TriggerPageAction("WindowList?Action=ClassWindowPageNext&X="^ Container.RelativePosition_V3.X ^"&Y="^ Container.RelativePosition_V3.Y);
+						TriggerPageAction("WindowList?Action=ClassWindowPageNext&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.KeyName == "Cut") {		// CTRL + X
 						WipeOut("ClassWindow");
 					}
-					else if (Event.KeyName == "NumpadSubstract" && IsMinimized == False) {
-						if (Container != Null) {
+					else if (Event.KeyName == "NumpadSubstract" && ClassWindowIsMinimized == False) {
+						if (ClassWindowFrame != Null) {
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::ShowMenu, 0, 1.0);
 							Minimize("ClassWindow");
-							IsMinimized = True;
+							ClassWindowIsMinimized = True;
 						}
 					}
-					else if (Event.KeyName == "NumpadAdd" && IsMinimized == True) {
-						if (Container != Null) {
+					else if (Event.KeyName == "NumpadAdd" && ClassWindowIsMinimized == True) {
+						if (ClassWindowFrame != Null) {
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::HideMenu, 0, 1.0);
 							Maximize("ClassWindow");
-							IsMinimized = False;
+							ClassWindowIsMinimized = False;
 						}
 					}
+
+					// Custom KeyPress
+					{$this->script['events']['key_press']}
 				}
 			}
 		}

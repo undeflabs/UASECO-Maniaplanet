@@ -50,7 +50,7 @@ class RankingList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
+		$this->setBuild('2017-05-24');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Player Ranking from the dedicated server.');
 
@@ -77,11 +77,11 @@ class RankingList extends BaseClass {
 			$entry->round_points			= 0;
 			$entry->map_points			= 0;
 			$entry->match_points			= 0;
-			$entry->best_race_time			= 0;
-			$entry->best_race_respawns		= 0;
+			$entry->best_race_time			= -1;
+			$entry->best_race_respawns		= -1;
 			$entry->best_race_checkpoints		= array();
-			$entry->best_lap_time			= 0;
-			$entry->best_lap_respawns		= 0;
+			$entry->best_lap_time			= -1;
+			$entry->best_lap_respawns		= -1;
 			$entry->best_lap_checkpoints		= array();
 			$entry->stunts_score			= 0;
 

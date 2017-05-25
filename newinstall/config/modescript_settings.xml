@@ -180,7 +180,7 @@
 
 
 	<!--
-	Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html#All%2D%2DModeBase%2D
+	Documentation: https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#all-mode-base
 	//-->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
@@ -188,9 +188,6 @@
 
 		<!-- Allow the players to respawn ('true') or not ('false') -->
 		<allow_respawn>true</allow_respawn>
-
-		<!-- Duration of the warm up phase in rounds (e.g. '2' for two warm up rounds), set to '-1' to disable warm up -->
-		<warm_up_duration>-1</warm_up_duration>
 
 		<!--
 		Path/URL to a scores table style from an XML file,
@@ -204,7 +201,7 @@
 	<modesetup>
 		<!--
 		Settings for TimeAttack.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#TimeAttack
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#time-attack
 		//-->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -215,10 +212,16 @@
 
 		<!--
 		Settings for Rounds.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#RoundsBase
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Rounds%2D%2D%2DRoundsBase%2D
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-base
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-rounds-base
 		//-->
 		<rounds>
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<warm_up_duration>-1</warm_up_duration>
+
+			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
+			<warm_up_number>0</warm_up_number>
+
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
 			<points_limit>99</points_limit>
 
@@ -252,8 +255,8 @@
 
 		<!--
 		Settings for Team.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#RoundsBase
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Team%2D%2D%2DRoundsBase%2D
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-base
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#team-rounds-base
 		//-->
 		<team>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
@@ -295,7 +298,7 @@
 
 		<!--
 		Settings for Laps.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Laps
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#laps
 		//-->
 		<laps>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -313,8 +316,8 @@
 
 		<!--
 		Settings for Cup.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#RoundsBase
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Cup%2D%2D%2DRoundsBase%2D
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-base
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#cup-rounds-base
 		//-->
 		<cup>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
@@ -353,7 +356,7 @@
 
 		<!--
 		Settings for TeamAttack.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#TeamAttack
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#team-attack
 		//-->
 		<teamattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -374,7 +377,7 @@
 
 		<!--
 		Settings for Chase.Script.txt
-		http://doc.maniaplanet.com/dedicated-server/settings-list.html#Chase
+		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#chase
 		//-->
 		<chase>
 			<!-- Time limit (0 to disable, < 0 automatic, based on author time) -->

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2017-05-17
+	Version:	2017-05-18
 	Authors:	[EN] undef.de
 			[DE] undef.de
 	//-->
@@ -20,4 +20,9 @@
 		<en>{#admin}» Use "/modescript reload" to reload "config/modescript_settings.xml".</en>
 		<de>{#admin}» Benutze "/modescript reload" um die Konfigurationdatei "config/modescript_settings.xml" neu einzulesen.</de>
 	</message_help>
+
+	<window_ui_properties>
+		<en>Setup of the user-interface properties</en>
+		<de>Einstellungen der Benutzeroberfläche</de>
+	</window_ui_properties>
 </locales>

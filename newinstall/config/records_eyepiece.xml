@@ -1311,35 +1311,32 @@
 		<progress_indicator>http://maniacdn.net/undef.de/uaseco/records-eyepiece/progress_bar_yellow_2D.webm</progress_indicator>
 
 		<environment>
-			<logos>
-				<canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-canyon.png</canyon>
-				<stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-stadium2.png</stadium>
-				<valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-valley.png</valley>
-			</logos>
 			<enabled>
-				<icon_canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-canyon-enabled.png</icon_canyon>
-				<icon_stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-stadium2-enabled.png</icon_stadium>
-				<icon_valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-valley-enabled.png</icon_valley>
+				<icon_canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-canyon-normal.png</icon_canyon>
+				<icon_stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-stadium-normal.png</icon_stadium>
+				<icon_valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-valley-normal.png</icon_valley>
+				<icon_lagoon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-lagoon-normal.png</icon_lagoon>
 			</enabled>
 			<focus>
-				<icon_canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-canyon-focus.png</icon_canyon>
-				<icon_stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-stadium2-focus.png</icon_stadium>
-				<icon_valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/env-valley-focus.png</icon_valley>
+				<icon_canyon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-canyon-focus.png</icon_canyon>
+				<icon_stadium>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-stadium-focus.png</icon_stadium>
+				<icon_valley>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-valley-focus.png</icon_valley>
+				<icon_lagoon>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/env-lagoon-focus.png</icon_lagoon>
 			</focus>
 		</environment>
 
 		<mood>
 			<enabled>
-				<sunrise>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunrise-normal.png</sunrise>
-				<day>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-day-normal.png</day>
-				<sunset>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunset-normal.png</sunset>
-				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-night-normal.png</night>
+				<sunrise>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-sunrise-normal.png</sunrise>
+				<day>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-day-normal.png</day>
+				<sunset>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-sunset-normal.png</sunset>
+				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-night-normal.png</night>
 			</enabled>
 			<focus>
-				<sunrise>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunrise-focus.png</sunrise>
-				<day>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-day-focus.png</day>
-				<sunset>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-sunset-focus.png</sunset>
-				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/mood-night-focus.png</night>
+				<sunrise>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-sunrise-focus.png</sunrise>
+				<day>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-day-focus.png</day>
+				<sunset>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-sunset-focus.png</sunset>
+				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-night-focus.png</night>
 			</focus>
 		</mood>
 	</images>

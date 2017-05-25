@@ -671,11 +671,15 @@
 		<de>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} hat Geistspieler {#highlite}{3}$z$s{#admin} entfernt!</de>
 	</message_kick_ghost>
 
+	<message_ban_masteradmin>
+		<en>{#server}» {#admin}MasterAdmins can not be banned!</en>
+		<de>{#server}» {#admin}MasterAdmins können nicht gesperrt werden!</de>
+	</message_ban_masteradmin>
+
 	<message_ban>
 		<en>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} bans {#highlite}{3}$z$s{#admin}!</en>
 		<de>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sperrt {#highlite}{3}$z$s{#admin}!</de>
 	</message_ban>
-
 
 	<message_unban>
 		<en>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-bans {#highlite}{3}</en>

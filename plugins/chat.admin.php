@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-25');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -552,9 +552,6 @@ class PluginChatAdmin extends Plugin {
 					// Tell server to set new game mode
 					$aseco->client->query('SetScriptName', $modeScript);
 
-					// Refresh server game info
-					$aseco->server->getCurrentGameInfo();
-
 					// log console message
 					$aseco->console('[ChatAdmin] {1} [{2}] set new game mode [{3}]', $logtitle, $login, $modeScript);
 
@@ -681,6 +678,9 @@ class PluginChatAdmin extends Plugin {
 				$msg->addPlaceholders($chattitle, $admin->nickname);
 				$msg->sendChatMessage();
 
+				// Setup next Map
+				$aseco->server->maps->next = $aseco->server->maps->getNextMap();
+
 				// throw 'jukebox changed' event
 				$aseco->releaseEvent('onJukeboxChanged', array('previous', $aseco->plugins['PluginRaspJukebox']->jukebox[$uid]));
 			}
@@ -753,6 +753,9 @@ class PluginChatAdmin extends Plugin {
 				$msg = new Message('chat.admin', 'message_nextenv');
 				$msg->addPlaceholders($chattitle, $admin->nickname, $aseco->server->maps->current->environment);
 				$msg->sendChatMessage();
+
+				// Setup next Map
+				$aseco->server->maps->next = $aseco->server->maps->getNextMap();
 
 				// throw 'jukebox changed' event
 				$aseco->releaseEvent('onJukeboxChanged', array('nextenv', $aseco->plugins['PluginRaspJukebox']->jukebox[$uid]));
@@ -835,6 +838,9 @@ class PluginChatAdmin extends Plugin {
 				$msg->addPlaceholders($chattitle, $admin->nickname);
 				$msg->sendChatMessage();
 
+				// Setup next Map
+				$aseco->server->maps->next = $aseco->server->maps->getNextMap();
+
 				// throw 'jukebox changed' event
 				$aseco->releaseEvent('onJukeboxChanged', array('replay', $aseco->plugins['PluginRaspJukebox']->jukebox[$uid]));
 			}
@@ -872,6 +878,9 @@ class PluginChatAdmin extends Plugin {
 					$msg->addPlaceholders($chattitle, $admin->nickname, $name);
 					$msg->sendChatMessage();
 
+					// Setup next Map
+					$aseco->server->maps->next = $aseco->server->maps->getNextMap();
+
 					// throw 'jukebox changed' event
 					$aseco->releaseEvent('onJukeboxChanged', array('drop', $drop));
 				}
@@ -902,6 +911,9 @@ class PluginChatAdmin extends Plugin {
 				$msg = new Message('chat.admin', 'message_clearjukebox');
 				$msg->addPlaceholders($chattitle, $admin->nickname);
 				$msg->sendChatMessage();
+
+				// Setup next Map
+				$aseco->server->maps->next = $aseco->server->maps->getNextMap();
 
 				// throw 'jukebox changed' event
 				$aseco->releaseEvent('onJukeboxChanged', array('clear', null));
@@ -1106,8 +1118,15 @@ class PluginChatAdmin extends Plugin {
 			 * Ban a player with the specified login/PlayerID.
 			 */
 
-			// get player information
-			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
+			if ($aseco->isAnyAdmin($target->login)) {
+
+				// show chat message
+				$msg = new Message('chat.admin', 'message_ban_masteradmin');
+				$msg->sendChatMessage();
+
+				$aseco->console('{1} [{2}] try to ban MasterAdmin {3}!', $logtitle, $login, $aseco->stripStyles($target->nickname, false));
+			}
+			else if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] bans player {3}!', $logtitle, $login, $aseco->stripStyles($target->nickname, false));
 
@@ -2098,11 +2117,12 @@ class PluginChatAdmin extends Plugin {
 					try {
 						$aseco->client->query('RemoveMap', $filename);
 
-						$msg = new Message('chat.admin', 'message_removemap');
-						$msg->addPlaceholders($chattitle, $admin->nickname, $name);
-						$msg->sendChatMessage();
-
-						if ($command['params'][0] == 'erase' && is_file($filename)) {
+						if ($command['params'][0] == 'remove') {
+							$msg = new Message('chat.admin', 'message_removemap');
+							$msg->addPlaceholders($chattitle, $admin->nickname, $name);
+							$msg->sendChatMessage();
+						}
+						else if ($command['params'][0] == 'erase' && is_file($filename)) {
 							if (unlink($filename)) {
 								$msg = new Message('chat.admin', 'message_erasemap');
 								$msg->addPlaceholders($chattitle, $admin->nickname, $name);
@@ -2115,6 +2135,9 @@ class PluginChatAdmin extends Plugin {
 							}
 						}
 
+						// Remove map from MapList too
+						$aseco->server->maps->removeMapByUid($admin->maplist[$tid]['uid']);
+
 						// log console message
 						$aseco->console('[ChatAdmin] {1} [{2}] '. $command['params'][0] .'d map {3}', $logtitle, $login, $aseco->stripStyles($name, false));
 
@@ -2124,9 +2147,16 @@ class PluginChatAdmin extends Plugin {
 					catch (Exception $exception) {
 						$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - RemoveMap');
 
-						$msg = new Message('chat.admin', 'message_removemap_failed');
-						$msg->addPlaceholders($filename);
-						$msg->sendChatMessage($login);
+						if ($command['params'][0] == 'remove') {
+							$msg = new Message('chat.admin', 'message_removemap_failed');
+							$msg->addPlaceholders($filename);
+							$msg->sendChatMessage($login);
+						}
+						else {
+							$msg = new Message('chat.admin', 'message_erasemap_failed');
+							$msg->addPlaceholders($chattitle, $admin->nickname, $name);
+							$msg->sendChatMessage($login);
+						}
 					}
 				}
 				else {
@@ -4211,6 +4241,9 @@ class PluginChatAdmin extends Plugin {
 									$msg->addPlaceholders($chattitle, $admin->nickname, ((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''), $map->name_stripped, $source);
 									$msg->sendChatMessage();
 
+									// Setup next Map
+									$aseco->server->maps->next = $aseco->server->maps->getNextMap();
+
 									// throw 'maplist changed' event
 									$aseco->releaseEvent('onMapListChanged', array('add', $partialdir));
 
@@ -4388,6 +4421,9 @@ class PluginChatAdmin extends Plugin {
 							$msg = new Message('chat.admin', 'message_map_added');
 							$msg->addPlaceholders($chattitle, $admin->nickname, ((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''), $aseco->stripStyles($mapinfo['Name']),	$aseco->stripStyles($mapinfo['Author']));
 							$msg->sendChatMessage();
+
+							// Setup next Map
+							$aseco->server->maps->next = $aseco->server->maps->getNextMap();
 
 							// throw 'maplist changed' event
 							$aseco->releaseEvent('onMapListChanged', array('add', $partialdir));

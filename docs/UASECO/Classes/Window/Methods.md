@@ -151,6 +151,52 @@ Setup the content of the title and the main content to display.
 
 
 
+### [setFooter](_#setFooter)
+Setup the footer to display.
+
+
+#### Description
+	void = setFooter ( array $params )
+
+
+#### Parameters
+*	`about_title`
+
+	Title which will be shown at the buttom left.
+
+*	`about_link`
+
+	Link for the `about_title`
+
+*	`button_title`
+
+	Title which will be shown at the center.
+
+*	`button_link`
+
+	Link for the `button_title`
+
+
+#### Example
+
+	// Setup footer
+	$settings_footer = array(
+		'about_title'		=> 'MANIA-KARMA/'. $this->getVersion(),
+		'about_link'		=> 'http://www.mania-karma.com,
+		'button_title'		=> 'MORE INFO ON MANIA-KARMA.COM',
+		'button_link'		=> 'http://www.mania-karma.com/goto?uid='. $this->karma['data']['uid'],
+	);
+
+	// Create the Window
+	$window = new Window();
+	$window->setFooter($settings_footer);
+
+
+
+***
+
+
+
 ### [send](_#send)
 Build, store and send the Window to the Player.
 
