@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-05-25');
+		$this->setBuild('2017-05-26');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -13960,6 +13960,11 @@ EOL;
 		$header .= '<quad pos="%posx_icon% %posy_icon%" z-index="0.004" size="3.75 3.75" halign="center" valign="center2" style="%icon_style%" substyle="%icon_substyle%"/>';
 		$header .= '<label pos="%posx_title% %posy_title%" z-index="0.004" size="32 2.6" class="labels" halign="%halign%" text="%title%"/>';
 
+		$scale = 1.0;
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['SCALE'][0])) {
+			$scale = $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['SCALE'][0];
+		}
+
 $maniascript = <<<EOL
 <script><!--
  /*
@@ -13996,7 +14001,7 @@ main () {
 	declare CMlFrame RoundScoreWidget	<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= RoundScoreWidget.RelativePosition_V3;
 
-	RoundScoreWidget.RelativeScale		= {$this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['SCALE'][0]};
+	RoundScoreWidget.RelativeScale		= {$scale};
 	RoundScoreWidget.Visible 		= RecordsEyepieceRoundScoreVisible;
 	while (True) {
 		yield;
@@ -14185,15 +14190,15 @@ main () {
 				case CMlEvent::Type::MouseClick : {
 					if (Event.ControlId == "WindowClose") {
 						RecordsEyepieceSubWindowVisible = False;
-						WipeOut("Window");
+						WipeOut("Frame_Window");
 						HideFrame("Lightbox");
 					}
 					else if (Event.ControlId == "WindowMinimize" && IsMinimized == False) {
-						Minimize("Window");
+						Minimize("Frame_Window");
 						IsMinimized = True;
 					}
 					else if (Event.ControlId == "WindowBody" && IsMinimized == True) {
-						Maximize("Window");
+						Maximize("Frame_Window");
 						IsMinimized = False;
 					}
 				}

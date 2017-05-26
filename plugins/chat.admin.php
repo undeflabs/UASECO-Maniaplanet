@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-25');
+		$this->setBuild('2017-05-26');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -4159,9 +4159,9 @@ class PluginChatAdmin extends Plugin {
 
 						// rename ID filename to map's name
 						$md5new = md5_file($localfile);
-						$response = new MXInfoFetcher('TM2', $map->uid, true);
+						$response = new MXInfoFetcher('TM2', $gbx->uid, true);
 						if ($response !== null && empty($response->error)) {
-							$filename = $response->name;
+							$filename = $aseco->slugify($response->name);
 						}
 						else {
 							$filename = $aseco->slugify($gbx->name);

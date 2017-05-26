@@ -16,6 +16,8 @@
 * Added `<modesetup><rounds><warm_up_number>` in `newinstall/config/modescript_settings.xml`
 * Added extra 7 seconds to the `plugins/plugin.round_autoend.php` because sometimes the round was forced to end while showing the scoretable
 * Updated `newinstall/locales/plugin.round_autoend.xml` with several entries
+* Added `<messages><chat_prefix_replacement>` in `newinstall/config/UASECO.xml`
+* Changed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml`
 
 
 ### Bug fixes
@@ -33,6 +35,8 @@
 * Fixed `/admin erase ID` does not change the MapList too (thanks phantom)
 * Fixed the clickbuttons `/admin panel list` (thanks Mysticman, rasmusdk)
 * Fixed ManiaScript parts in `plugin.records_eyepiece.php` which causes Widgets to be displayed only in parts while restarting
+* Fixed [PHP Notice] Undefined index: SCALE on line 13999 in file `[...]plugins/plugin.records_eyepiece.php` (thanks phantom)
+* Fixed emoji "speech bubble" - which replaces `»` in chat message - replace `»` everywhere and not only at the beginning of a chat message, e.g. in map names, nicknames... (thanks reaby)
 
 
 

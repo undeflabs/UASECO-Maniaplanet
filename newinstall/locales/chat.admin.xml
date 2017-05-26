@@ -1211,8 +1211,8 @@
 	</message_cannot_find_autosave_matchsettings>
 
 	<message_autosave_matchsettings_not_set_or_jukebox_disabled>
-		<en>{#server}» {#error}No autosave matchsettings file defined in {#highlite}$i [config/rasp.xml] or [plugin.rasp_jukebox.php] not enabled{#error}!</en>
-		<de>{#server}» {#error}Keine Datei zur automatischen Maplist Speicherung angegeben in {#highlite}$i[config/rasp.xml] oder [plugin.rasp_jukebox.php] nicht eingeschaltet{#error}!</de>
+		<en>{#server}» {#error}No autosave matchsettings file defined in $I{#highlite}config/rasp.xml{#error} or $I{#highlite}plugin.rasp_jukebox.php{#error} not enabled{#error}!</en>
+		<de>{#server}» {#error}Keine Datei zur automatischen Maplist Speicherung angegeben in $I{#highlite}config/rasp.xml{#error} oder $I{#highlite}plugin.rasp_jukebox.php{#error} nicht eingeschaltet{#error}!</de>
 	</message_autosave_matchsettings_not_set_or_jukebox_disabled>
 
 	<message_no_maplist_randomness>

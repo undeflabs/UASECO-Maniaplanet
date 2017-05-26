@@ -153,6 +153,9 @@
 	</colors>
 
 	<messages>
+		<!-- This entry will replace all '»' at the begin of each chat message -->
+		<chat_prefix_replacement></chat_prefix_replacement>
+
 		<!-- init messages -->
 		<startup>{#server}» {#highlite}UASECO/{1}{#server} build {#highlite}{2}{#server} running on {#highlite}{3}{#server}:{#highlite}{4}{#server}</startup>
 		<welcome>{#server}» {#welcome}Welcome {#highlite}{1}{#welcome} to {#highlite}{2}$z$s{br}{#server}» {#welcome}This server uses {#highlite}UASECO/{3}{#welcome} to manage your records.</welcome>

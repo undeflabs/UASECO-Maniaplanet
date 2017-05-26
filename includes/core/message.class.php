@@ -39,7 +39,7 @@ class Message extends BaseClass {
 		$this->setAuthor('askuri');
 		$this->setCoAuthors('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-03');
+		$this->setBuild('2017-05-26');
 		$this->setCopyright('2014 - 2017 by Martin Weber (askuri)');
 		$this->setDescription('Part of multilanguage support.');
 
@@ -178,7 +178,8 @@ class Message extends BaseClass {
 
 		$messages = array();
 		foreach ($this->translations as $lang => $text) {
-			$text = str_replace('»', '', $text);
+			$text = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
+			$text = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
 			if ($lang != 'en') {
 				// Replace all entities back to normal for chat.
 				// $text = $aseco->decodeEntities($this->replacePlaceholders($this->chooseTranslation($lang), $lang));
@@ -193,7 +194,8 @@ class Message extends BaseClass {
 		// Adding english to the end, because the last one is default
 		// $text = $aseco->decodeEntities($this->replacePlaceholders($this->chooseTranslation('en'), 'en'));		// Replace all entities back to normal for chat.
 		$text = $this->finish('en', false);
-		$text = str_replace('»', '', $text);
+		$text = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
+		$text = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
 		$messages[] = array(
 			'Lang' => 'en',
 			'Text' => $aseco->formatColors($text)

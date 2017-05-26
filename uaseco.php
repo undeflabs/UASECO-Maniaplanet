@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.4');
-	define('UASECO_BUILD',			'2017-05-25');
+	define('UASECO_BUILD',			'2017-05-26');
 	define('UASECO_WEBSITE',		'http://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -81,7 +81,7 @@
 	// Include required classes
 	require_once('includes/core/baseclass.class.php');		// Base class
 	require_once('includes/core/helper.class.php');			// Misc. functions for UASECO, e.g. $aseco->console()... based upon basic.inc.php
-	require_once('includes/core/XmlRpc/GbxRemote.php');
+	require_once('includes/core/XmlRpc/GbxRemote.php');		// https://github.com/maniaplanet/dedicated-server-api
 	require_once('includes/core/webrequest.class.php');
 	require_once('includes/core/xmlparser.class.php');
 	require_once('includes/core/gbxdatafetcher.class.php');		// Provides access to GBX data

@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-26');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -123,26 +123,28 @@ class Helper extends BaseClass {
 	 * "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöùúûüýÿ" will be changed to "AAAAAEAAAECEEEEIIIIDNOOOOOEUUUUEYssaaaaaeaaaeceeeeiiiidnoooooeuuuueyy"
 	 */
 	public function slugify ($string, $delimiter = '-') {
-		return trim(
-			preg_replace('/[\s-]+/', $delimiter,
-				preg_replace('/[^A-Za-z0-9-]+/', $delimiter,
-					preg_replace('/[&]/', 'and',
-						preg_replace('/[\']/', '',
-							@iconv('UTF-8', 'ASCII//TRANSLIT',
-								trim(
-									$this->stripStyles(
-										$this->stripNewlines(
-											$this->stripBOM($string)
-										),
-										true
+		return strtolower(
+			trim(
+				preg_replace('/[\s-]+/', $delimiter,
+					preg_replace('/[^A-Za-z0-9-]+/', $delimiter,
+						preg_replace('/[&]/', 'and',
+							preg_replace('/[\']/', '',
+								@iconv('UTF-8', 'ASCII//TRANSLIT',
+									trim(
+										$this->stripStyles(
+											$this->stripNewlines(
+												$this->stripBOM($string)
+											),
+											true
+										)
 									)
 								)
 							)
 						)
 					)
-				)
-			),
-			$delimiter
+				),
+				$delimiter
+			)
 		);
 	}
 
@@ -484,8 +486,9 @@ class Helper extends BaseClass {
 		if ($message != '') {
 			// Replace all entities back to normal for chat.
 			$message = $this->decodeEntities($message);
-			$message = str_replace('»', '', $message);
 
+			$message = preg_replace('/»/', $this->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
+			$message = preg_replace("/(\n{#.*?})»/", '${1}'.$this->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
 			if ($logins !== false) {
 				try {
 					// Remove whitespace and empty entries from the list
