@@ -48,8 +48,8 @@ class PlayerList extends BaseClass {
 		$this->debug = $debug;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-30');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -386,7 +386,7 @@ class PlayerList extends BaseClass {
 				";
 				$result = $aseco->db->query($query);
 				if (!$result) {
-					trigger_error('[Database] Could not update connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+					trigger_error('[PlayerList] Could not update connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 					return;
 				}
 			}
@@ -428,15 +428,178 @@ class PlayerList extends BaseClass {
 					$player->id = $aseco->db->lastid();
 				}
 				else {
-					trigger_error('[Database] Could not insert connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+					trigger_error('[PlayerList] Could not insert connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 					return;
 				}
 			}
 		}
 		else {
-			trigger_error('[Database] Could not get stats of connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
+			trigger_error('[PlayerList] Could not get stats of connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);
 			return;
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function recalculateRanks () {
+		global $aseco;
+
+		$players = array();
+		$aseco->console('[PlayerList] Calculating and updating server ranks for players...');
+		$amount_maps = count($aseco->server->maps->map_list);
+
+		// Erase old average data
+		$aseco->db->query('TRUNCATE TABLE `%prefix%rankings`;');
+
+		// Get list of players with at least $minrecs records (possibly unranked)
+		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
+
+		$query = '
+		SELECT
+			`PlayerId`,
+			COUNT(*) AS `AmountOfRecords`
+		FROM `%prefix%records`
+		GROUP BY `PlayerId`
+		HAVING `AmountOfRecords` >= '. $aseco->settings['server_rank_min_records'] .';
+		';
+
+		$res = $aseco->db->query($query);
+		if ($res) {
+			while ($row = $res->fetch_object()) {
+				$players[$row->PlayerId] = array(
+					'sum'	=> 0,
+					'count'	=> 0,
+				);
+			}
+			$res->free_result();
+
+			if (!empty($players)) {
+				$max_records = $aseco->plugins['PluginLocalRecords']->records->getMaxRecords();
+
+//				// RASP OLD: Get ranked records for all maps
+//				foreach ($aseco->server->maps->map_list as $map) {
+//					$query = "
+//					SELECT
+//						`PlayerId`
+//					FROM `%prefix%records`
+//					WHERE `MapId` = ". $map->id ."
+//					AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
+//					ORDER BY `Score` ASC, `Date` ASC
+//					LIMIT ". $max_records .";
+//					";
+//
+//					$res = $aseco->db->query($query);
+//					if ($res) {
+//						if ($res->num_rows > 0) {
+//							$i = 1;
+//							while ($row = $res->fetch_object()) {
+//								if (isset($players[$row->PlayerId])) {
+//									$players[$row->PlayerId]['sum'] += $i;
+//									$players[$row->PlayerId]['count'] ++;
+//								}
+//								$i++;
+//							}
+//						}
+//						$res->free_result();
+//					}
+//				}
+
+
+				// Get ranked records for all maps
+				$map_ids = array();
+				foreach ($aseco->server->maps->map_list as $map) {
+					$map_ids[] = $map->id;
+				}
+				sort($map_ids, SORT_NUMERIC);
+
+
+				$data = array();
+				$query = "
+				SELECT
+					`MapId`,
+					`PlayerId`
+				FROM `%prefix%records`
+				WHERE `GamemodeId` = ". $aseco->server->gameinfo->mode ."
+				AND `MapId` IN (". implode(',', $map_ids) .")
+				ORDER BY FIELD(`MapId`, ". implode(',', $map_ids) ."), `Score` ASC , `Date` ASC;
+				";
+				$res = $aseco->db->query($query);
+				if ($res) {
+					if ($res->num_rows > 0) {
+						while ($row = $res->fetch_object()) {
+							$data[$row->MapId][] = $row->PlayerId;
+						}
+					}
+					$res->free_result();
+				}
+				foreach ($data as $map_id => $player_ids) {
+					foreach ($player_ids as $pid) {
+						if (isset($players[$pid])) {
+							$players[$pid]['sum'] += count($data[$map_id]);
+							$players[$pid]['count'] ++;
+						}
+					}
+				}
+
+
+				$query = 'INSERT INTO `%prefix%rankings` (`PlayerId`, `Average`) VALUES ';
+				$entries = array();
+				foreach ($players as $pid => $ranked) {
+					// ranked maps sum + $max_records rank for all remaining maps
+					$avg = ($ranked['sum'] + ($amount_maps - $ranked['count']) * $max_records) / $amount_maps;
+					$entries[] = '('. $pid .','. round($avg * 10000) .')';
+				}
+				$query .= implode(',', $entries);
+				unset($entries);
+
+				// Check for size and warn
+				if (strlen($query) >= $aseco->db->settings['max_allowed_packet']) {
+					$aseco->console('[PlayerList][WARNING] SQL statement is larger then database "max_allowed_packet" of '. $aseco->db->settings['max_allowed_packet'] .' bytes! Please increase the database settings "max_allowed_packet" to a larger value!');
+				}
+
+				$result = $aseco->db->query($query);
+				if ($result === false) {
+					if ($aseco->db->affected_rows === -1) {
+						$aseco->console('[PlayerList][ERROR] Could not insert any player averages ('. $aseco->db->errmsg() .') for statement ['. $query .']');
+					}
+					else if ($aseco->db->affected_rows != count($players)) {
+						$aseco->console('[PlayerList][ERROR] Could not insert all '. count($players) .' player averages ('. $aseco->db->errmsg() .')! Please increase the database settings "max_allowed_packet" to a larger value!');
+					}
+				}
+				else {
+					$aseco->db->commit();
+
+					$query = '
+					SELECT
+						`PlayerId`,
+						`Average`
+					FROM `%prefix%rankings`
+					ORDER BY `Average` ASC, `PlayerId` ASC;
+					';
+					$res = $aseco->db->query($query);
+					if ($res) {
+						if ($res->num_rows > 0) {
+							$total = $res->num_rows;
+							$rank = 1;
+							while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
+								if ($pl = $this->getPlayerById($row['PlayerId'])) {
+									$pl->server_rank		= $rank;
+									$pl->server_rank_total		= $total;
+									$pl->server_rank_average	= sprintf('%4.1F', $row['Average'] / 10000);
+								}
+								$rank += 1;
+							}
+							$res->free_result();
+						}
+					}
+				}
+			}
+		}
+		$aseco->console('[PlayerList] ...finished!');
 	}
 }
 

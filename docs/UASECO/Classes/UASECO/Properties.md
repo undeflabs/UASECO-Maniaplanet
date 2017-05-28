@@ -46,3 +46,4 @@ Core Class of UASECO with many useful Methods.
 | `$aseco->changing_to_gamemode`					| If not false then this contains the upcoming name of the Gamemode
 | `$aseco->current_status`						| Dedicated Server status changes
 | `$aseco->uptime`							| Holds the UASECO start-up time
+| `$aseco->environments`						| Array of environments (e.g. 'Canyon', 'Stadium', 'Valley' and 'Lagoon')

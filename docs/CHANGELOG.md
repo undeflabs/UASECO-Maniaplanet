@@ -7,6 +7,15 @@
 * Added new event `onPlayerRoundFinish` for use in rounds based ModeScripts and the RoundScoreWidget of `plugin.records_eyepiece.php`
 * Added the RoundScoreWidget to be hidden/shown when pressing the F9 key of `plugin.records_eyepiece.php` (thanks elie520)
 * The TimeDiff Widget of `plugin.checkpoints.php` reload when the player drove an new record and shows the next better local-, dedimania-record or personal best
+* Better map name handling, now a map name like `ÐĘЯЯ@   MiNi LoL   21-5-17` results into a filename like `de-mini-lol-21-5-17_121209.Map.gbx` instead of `_121209.Map.gbx` (thanks phantom)
+* Added `$aseco->environments` which holds an array of environments, currently 'Canyon', 'Stadium', 'Valley' and 'Lagoon'
+* Map that are added from ManiaExchange (by e.g. `/admin add ID`) will now be separated into separate folders on disk, named as the map environment
+* Added support for [AdminServ](https://forum.maniaplanet.com/viewtopic.php?f=261&t=29509) callback `AdminServ.Map.Added` when a map has been added and `AdminServ.Map.Deleted` when a map has been removed
+* Added properties `$player->server_rank`, `$player->server_rank_total` and `$player->server_rank_average` to [Class Player](https://www.uaseco.org/development/classes/player.php)
+* Added property `$aseco->db->settings` to `includes/core/database.class.php`
+* Renamed property `$aseco->db->db_type` in `$aseco->db->type` from `includes/core/database.class.php`
+* Renamed property `$aseco->db->db_version` in `$aseco->db->version` from `includes/core/database.class.php`
+* Renamed property `$aseco->db->db_version_full` in `$aseco->db->version_full` from `includes/core/database.class.php`
 
 
 ### Changes at config files
@@ -18,6 +27,8 @@
 * Updated `newinstall/locales/plugin.round_autoend.xml` with several entries
 * Added `<messages><chat_prefix_replacement>` in `newinstall/config/UASECO.xml`
 * Changed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml`
+* Removed `<min_rank>` from `newinstall/config/rasp.xml`
+* Added `<server_rank_min_records>` to `newinstall/config/UASECO.xml`
 
 
 ### Bug fixes
@@ -36,7 +47,16 @@
 * Fixed the clickbuttons `/admin panel list` (thanks Mysticman, rasmusdk)
 * Fixed ManiaScript parts in `plugin.records_eyepiece.php` which causes Widgets to be displayed only in parts while restarting
 * Fixed [PHP Notice] Undefined index: SCALE on line 13999 in file `[...]plugins/plugin.records_eyepiece.php` (thanks phantom)
-* Fixed emoji "speech bubble" - which replaces `�` in chat message - replace `�` everywhere and not only at the beginning of a chat message, e.g. in map names, nicknames... (thanks reaby)
+* Fixed emoji "speech bubble" - which replaces `»` in chat message - was replacing `»` everywhere and not only at the beginning of a chat message, e.g. in map names, nicknames... (thanks reaby)
+* Fixed [PHP Notice] Undefined property: stdClass::$tracking on line 1657 in file `[...]plugins/plugin.dedimania.php` (thanks lyovav)
+* Fixed wrong (old) map size on `/admin addlocal ID` in `plugins/chat.admin.php`
+* Fixed `/xlist` contains map with all environments on a `TMStadium` Title only dedicated server
+* Fixed and optimized the map list refresh, now the thumbnails of a map is only stored on disk, when the thumbnail not already exists
+* Fixed [PHP Warning] get_class() expects parameter 1 to be object, boolean given on line 322 in file `[...]includes/core/plugin.class.php` (thanks phantom)
+* Fixed [UASECO Warning] Country::countryToIoc(): Could not map country: Bosnia and Herzegovina (thanks lyovav)
+* Fixed getting the message `Congratulations, you won your NUM. race!` even if you are playing alone (thanks rasmusdk)
+* Fixed wrong ordering of the server rank (players with same average now ordered by `PlayerId`) and optimized the rank calculation, also reduced the required SQL queries to get the results
+* Fixed team colors are wrong in RoundScore from `plugin.records_eyepiece.php` (thanks elie520)
 
 
 
@@ -88,7 +108,7 @@
 * Fixed [UASECO Exception] Error returned: "Value of type INT supplied where type STRING was expected." [-501] at GbxRemote::query() for method "TriggerModeScriptEventArray" with arguments: "/setrpoints 6,5,4,3,2,1,0" (thanks mangoara)
 * Fixed [PHP Notice] iconv(): Detected an illegal character in input string on line 137 in file `[...]/includes/core/helper.class.php` (thanks Phantom)
 * Fixed [PHP Notice] Undefined index: Records on line 1157 in file `[...]plugins/plugin.checkpoints.php` (thanks elie520)
-* Fixed [Plugin] � Can not register chat command "/elist" because callback Method "chat_elist()" of class "PluginRecordsEyepiece" is not callable, ignoring! (thanks ramires)
+* Fixed [Plugin] » Can not register chat command "/elist" because callback Method "chat_elist()" of class "PluginRecordsEyepiece" is not callable, ignoring! (thanks ramires)
 * Fixed ManiaScript ERR [30, 69] Persistent storage limit reached. MusicWidget ()::Main() [30, 69], by disable persistent storage
 * Fixed Checkpoint TimeDiffWidget is displaying a time from the map that was loaded before, if you have not already a Personal Best time on the current map (thanks elie520)
 * Fixed [PHP Notice] Trying to get property of non-object on line 767 in file `[...]plugins/plugin.modescript_handler.php` (thanks SSM.Speed...)

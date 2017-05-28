@@ -46,8 +46,8 @@ class PluginRasp extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
@@ -117,32 +117,47 @@ class PluginRasp extends Plugin {
 			$aseco->console('[Rasp] ...successfully done!');
 		}
 
-		$sepchar = substr($aseco->server->mapdir, -1, 1);
-		if ($sepchar == '\\') {
-			$this->mxdir = str_replace('/', $sepchar, $this->mxdir);
-		}
 
-		if (!file_exists($aseco->server->mapdir . $this->mxdir)) {
-			if (!mkdir($aseco->server->mapdir . $this->mxdir)) {
-				$aseco->console_text('[Rasp] ERROR: MX Directory (' . $aseco->server->mapdir . $this->mxdir . ') cannot be created');
+		$dir = $aseco->server->mapdir . $this->mxdir . DIRECTORY_SEPARATOR;
+		if (!file_exists($dir)) {
+			$aseco->console('[Rasp] Creating directory "'. $dir .'" for maps from ManiaExchange.');
+			if (!mkdir($dir, 0755)) {
+				$aseco->console('[Rasp] » Failed to create directory "'. $dir .'"!');
 			}
 		}
+		if (!is_writeable($dir)) {
+			$aseco->console('[Rasp] » Error directory "'. $dir .'" is not writable!');
+		}
 
-		if (!is_writeable($aseco->server->mapdir . $this->mxdir)) {
-			$aseco->console_text('[Rasp] ERROR: MX Directory (' . $aseco->server->mapdir . $this->mxdir . ') cannot be written to');
+
+		// Create the environments directories
+		$aseco->console('[Rasp] Checking for environment separation directories for maps from ManiaExchange...');
+		foreach ($aseco->environments as $env) {
+			$dir = $aseco->server->mapdir . $this->mxdir . DIRECTORY_SEPARATOR . $env . DIRECTORY_SEPARATOR;
+			if (!file_exists($dir)) {
+				if (!mkdir($dir, 0755, true)) {
+					$aseco->console('[Rasp] » Failed to create directory "'. $dir .'"!');
+				}
+				else {
+					$aseco->console('[Rasp] » Creating "'. $env .'"');
+				}
+			}
+			else {
+				$aseco->console('[Rasp] » Found "'. $env .'"');
+			}
 		}
 
 		// check if user /add votes are enabled
 		if ($this->feature_mxadd) {
 			if (!file_exists($aseco->server->mapdir . $this->mxtmpdir)) {
-				if (!mkdir($aseco->server->mapdir . $this->mxtmpdir)) {
-					$aseco->console_text('[Rasp] ERROR: MXtmp Directory (' . $aseco->server->mapdir . $this->mxtmpdir . ') cannot be created');
+				if (!mkdir($aseco->server->mapdir . $this->mxtmpdir, 0755)) {
+					$aseco->console('[Rasp] ERROR: MXtmp Directory (' . $aseco->server->mapdir . $this->mxtmpdir . ') cannot be created');
 					$this->feature_mxadd = false;
 				}
 			}
 
 			if (!is_writeable($aseco->server->mapdir . $this->mxtmpdir)) {
-				$aseco->console_text('[Rasp] ERROR: MXtmp Directory (' . $aseco->server->mapdir . $this->mxtmpdir . ') cannot be written to');
+				$aseco->console('[Rasp] ERROR: MXtmp Directory (' . $aseco->server->mapdir . $this->mxtmpdir . ') cannot be written to');
 				$this->feature_mxadd = false;
 			}
 		}
@@ -180,11 +195,11 @@ class PluginRasp extends Plugin {
 			return;
 		}
 
-		if ($this->feature_ranks) {
-			if (isset($aseco->plugins['PluginRaspJukebox']) && !$aseco->plugins['PluginRaspJukebox']->mxplayed) {
-				$this->resetRanks($aseco);
-			}
-		}
+//		if ($this->feature_ranks) {
+//			if (isset($aseco->plugins['PluginRaspJukebox']) && !$aseco->plugins['PluginRaspJukebox']->mxplayed) {
+//				$this->resetRanks($aseco);
+//			}
+//		}
 	}
 
 	/*
@@ -201,9 +216,6 @@ class PluginRasp extends Plugin {
 		}
 
 		if ($this->feature_ranks) {
-//			if (isset($aseco->plugins['PluginRaspJukebox']) && !$aseco->plugins['PluginRaspJukebox']->mxplayed) {
-//				$this->resetRanks($aseco);
-//			}
 			foreach ($aseco->server->players->player_list as $pl) {
 				$this->showRank($pl->login);
 			}
@@ -496,11 +508,11 @@ class PluginRasp extends Plugin {
 
 	public function cleanData ($aseco) {
 
-		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['dbms']['table_prefix'] .'maps`.');
+		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['dbms']['table_prefix'] .'maps`');
 		$sql = "DELETE FROM `%prefix%maps` WHERE `Uid` = '';";
 		$aseco->db->query($sql);
 
-		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['dbms']['table_prefix'] .'players`.');
+		$aseco->console('[Rasp] » Cleaning up `'. $aseco->settings['dbms']['table_prefix'] .'players`');
 		$sql = "DELETE FROM `%prefix%players` WHERE `Login` = '';";
 		$aseco->db->query($sql);
 
@@ -622,93 +634,6 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function resetRanks ($aseco) {
-
-		$players = array();
-		$aseco->console('[Rasp] Calculating ranks for each Player');
-		$maps = $aseco->server->maps->map_list;
-		$total = count($maps);
-
-		// Erase old average data
-		$aseco->db->query('TRUNCATE TABLE `%prefix%rankings`;');
-
-		// Get list of players with at least $minrecs records (possibly unranked)
-		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
-		$query = "
-		SELECT
-			`PlayerId`,
-			COUNT(*) AS `Cnt`
-		FROM `%prefix%records`
-		GROUP BY `PlayerId`
-		HAVING `Cnt` >= ". $this->minrank .";
-		";
-
-		$res = $aseco->db->query($query);
-		if ($res) {
-			while ($row = $res->fetch_object()) {
-				$players[$row->PlayerId] = array(0, 0);  // sum, count
-			}
-			$res->free_result();
-
-			if (!empty($players)) {
-				// Get ranked records for all maps
-				foreach ($maps as $map) {
-					$query = "
-					SELECT
-						`PlayerId`
-					FROM `%prefix%records`
-					WHERE `MapId` = ". $map->id ."
-					AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
-					ORDER BY `Score` ASC, `Date` ASC
-					LIMIT ". $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() .";
-					";
-
-					$res = $aseco->db->query($query);
-					if ($res) {
-						if ($res->num_rows > 0) {
-							$i = 1;
-							while ($row = $res->fetch_object()) {
-								$pid = $row->PlayerId;
-								if (isset($players[$pid])) {
-									$players[$pid][0] += $i;
-									$players[$pid][1] ++;
-								}
-								$i++;
-							}
-						}
-						$res->free_result();
-					}
-				}
-
-				// one-shot insert for queries up to 1 MB (default max_allowed_packet),
-				// or about 75K rows at 14 bytes/row (avg)
-				$query = 'INSERT INTO `%prefix%rankings` VALUES ';
-				// compute each player's new average score
-				foreach ($players as $player => $ranked) {
-					// ranked maps sum + $aseco->plugins['PluginLocalRecords']->records->getMaxRecords() rank for all remaining maps
-					$avg = ($ranked[0] + ($total - $ranked[1]) * $aseco->plugins['PluginLocalRecords']->records->getMaxRecords()) / $total;
-					$query .= '('. $player .','. round($avg * 10000) .'),';
-				}
-				$query = substr($query, 0, strlen($query)-1);  // strip trailing ','
-				$aseco->db->query($query);
-				if ($aseco->db->affected_rows === -1) {
-					trigger_error('[Rasp] ERROR: Could not insert any player averages! ('. $aseco->db->errmsg() .')', E_USER_WARNING);
-				}
-				else if ($aseco->db->affected_rows != count($players)) {
-					trigger_error('[Rasp] ERROR: Could not insert all '. count($players) .' player averages! ('. $aseco->db->errmsg() .')', E_USER_WARNING);
-					// increase MySQL's max_allowed_packet setting
-				}
-			}
-		}
-		$aseco->db->commit();
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function showPb ($player, $map, $always_show) {
 		global $aseco;
 
@@ -813,41 +738,20 @@ class PluginRasp extends Plugin {
 	public function showRank ($login) {
 		global $aseco;
 
-		$pid = $aseco->server->players->getPlayerIdByLogin($login);
-		$query = "
-		SELECT
-			`Average`
-		FROM `%prefix%rankings`
-		WHERE `PlayerId` = ". $pid .";
-		";
-		$res = $aseco->db->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				$row = $res->fetch_array(MYSQLI_ASSOC);
-				$query2 = 'SELECT `PlayerId` FROM `%prefix%rankings` ORDER BY `Average` ASC;';
-				$res2 = $aseco->db->query($query2);
-				if ($res2) {
-					$rank = 1;
-					while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
-						if ($row2['PlayerId'] == $pid) {
-							break;
-						}
-						$rank++;
-					}
-					$message = $aseco->formatText($this->messages['RANK'][0],
-						$rank,
-						$res2->num_rows,
-						sprintf("%4.1F", $row['Average'] / 10000)
-					);
-					$aseco->sendChatMessage($message, $login);
-					$res2->free_result();
-				}
-			}
-			else {
-				$message = $aseco->formatText($this->messages['RANK_NONE'][0], $this->minrank);
-				$aseco->sendChatMessage($message, $login);
-			}
-			$res->free_result();
+		$player = $aseco->server->players->getPlayerByLogin($login);
+		if ($player->server_rank > 0) {
+			$message = $aseco->formatText($this->messages['RANK'][0],
+				$player->server_rank,
+				$player->server_rank_total,
+				$player->server_rank_average
+			);
+			$aseco->sendChatMessage($message, $login);
+		}
+		else {
+			$message = $aseco->formatText($this->messages['RANK_NONE'][0],
+				$aseco->settings['server_rank_min_records']
+			);
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -860,45 +764,18 @@ class PluginRasp extends Plugin {
 	public function getRank ($login) {
 		global $aseco;
 
-		$pid = $aseco->server->players->getPlayerIdByLogin($login);
-		$query = "
-		SELECT
-			`Average`
-		FROM `%prefix%rankings`
-		WHERE `PlayerId` = ". $pid .";
-		";
-		$res = $aseco->db->query($query);
-		if ($res) {
-			if ($res->num_rows > 0) {
-				$row = $res->fetch_array(MYSQLI_ASSOC);
-				$query2 = "
-				SELECT
-					`PlayerId`
-				FROM `%prefix%rankings`
-				ORDER BY `Average` ASC;
-				";
-				$res2 = $aseco->db->query($query2);
-				if ($res2) {
-					$rank = 1;
-					while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
-						if ($row2['PlayerId'] == $pid) {
-							break;
-						}
-						$rank++;
-					}
-					$message = $aseco->formatText('{1}/{2} Average: {3}',
-						$rank,
-						$res2->num_rows,
-						sprintf("%4.1F", $row['Average'] / 10000)
-					);
-					$res2->free_result();
-				}
-			}
-			else {
-				$message = 'None';
-			}
-			$res->free_result();
-			return $message;
+		$player = $aseco->server->players->getPlayerByLogin($login);
+		if ($player->server_rank > 0) {
+			$message = $aseco->formatText('{1}/{2} Average: {3}',
+				$player->server_rank,
+				$player->server_rank_total,
+				$player->server_rank_average
+			);
+			$aseco->sendChatMessage($message, $login);
+		}
+		else {
+			$message = 'None';
+			$aseco->sendChatMessage($message, $login);
 		}
 	}
 
@@ -1171,13 +1048,6 @@ class PluginRasp extends Plugin {
 
 
 				/***************************** PERFORMANCE VARIABLES ***************************/
-				if (isset($xml['RASP']['MIN_RANK'][0])) {
-					$this->minrank = $xml['RASP']['MIN_RANK'][0];
-				}
-				else {
-					$this->minrank = 3;
-				}
-
 				if (isset($xml['RASP']['MAX_AVG'][0])) {
 					$this->maxavg = $xml['RASP']['MAX_AVG'][0];
 				}

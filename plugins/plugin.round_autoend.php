@@ -51,7 +51,7 @@ class PluginRoundAutoEnd extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-25');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.round_autoend', 'plugin_description'));
 
@@ -102,7 +102,9 @@ class PluginRoundAutoEnd extends Plugin {
 				$aseco->console('[RoundAutoEnd] Round automatically ended');
 
 				$message = new Message('plugin.round_autoend', 'message_round_end');
-				$message->addPlaceholders($this->time_delta + $this->time_scoreboard);
+				$message->addPlaceholders(
+					$aseco->formatTime(($this->time_delta + $this->time_scoreboard) * 1000)
+				);
 				$message->sendChatMessage();
 			}
 		}
@@ -122,7 +124,7 @@ class PluginRoundAutoEnd extends Plugin {
 
 			$message = new Message('plugin.round_autoend', 'message_round_info');
 			$message->addPlaceholders(
-				($this->time_delta + $this->time_scoreboard),
+				$aseco->formatTime(($this->time_delta + $this->time_scoreboard) * 1000),
 				$aseco->formatTime($map->author_time)
 			);
 			$message->sendChatMessage();

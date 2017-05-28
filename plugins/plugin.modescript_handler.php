@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.3');
-		$this->setBuild('2017-05-25');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -541,43 +541,6 @@ class PluginModescriptHandler extends Plugin {
 		}
 
 		switch($data[0]) {
-			case 'XmlRpc.Documentation':
-				// Called 'XmlRpc.GetDocumentation'
-				if (isset($data[1][1]) && !empty($data[1][1])) {
-					$aseco->console('[ModescriptHandler] Generating documentation of the Gamemode...');
-
-					@mkdir('docs/Gamemodes/', 0755, true);
-
-					$destination = 'docs/Gamemodes/'. $params['responseid'];
-					if (file_put_contents($destination, $data[1][1], LOCK_EX) !== false) {
-						$aseco->console('[ModescriptHandler] ... successfully written to "'. $destination .'"!');
-					}
-					else {
-						$aseco->console('[ModescriptHandler] ... could not write to "'. $destination .'"!');
-					}
-				}
-		    		break;
-
-
-
-
-
-			case 'Trackmania.Event.StartLine':
-				$aseco->releaseEvent('onPlayerStartLine', $params);
-		    		break;
-
-
-
-
-
-			case 'Trackmania.Event.StartCountdown':
-				$aseco->releaseEvent('onPlayerStartCountdown', $params);
-		    		break;
-
-
-
-
-
 			case 'Trackmania.Event.WayPoint':
 				$response = array(
 					'time'				=> $params['time'],				// Server time when the event occured
@@ -598,22 +561,30 @@ class PluginModescriptHandler extends Plugin {
 				if ($response['is_endrace'] === false && $response['is_endlap'] === false) {
 					$aseco->releaseEvent('onPlayerCheckpoint', $response);
 
+					// 2017-05-28: Maybe we can use 'checkpoint_in_lap' instead of calling 'Trackmania.GetScores'?
 					if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
 						// Call 'Trackmania.GetScores' to get 'Trackmania.Scores', required to be up-to-date on each Checkpoint in Laps
 						$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 					}
 				}
 				else {
-					if ($aseco->server->maps->current->multi_lap === true && ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE)) {
-						if ($response['is_endrace'] === false && $response['is_endlap'] === true) {
-							$aseco->releaseEvent('onPlayerFinishLap', $response);
+					if ($aseco->server->maps->current->multi_lap === true) {
+ 						if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
+							if ($response['is_endlap'] === true) {
+								$this->playerFinish($response);
+							}
 						}
-						else if ($response['is_endrace'] === true && $response['is_endlap'] === false) {
-							$aseco->releaseEvent('onPlayerFinishLine', $response);
-						}
-						else if ($response['is_endrace'] === true && $response['is_endlap'] === true) {
-							$aseco->releaseEvent('onPlayerFinishLap', $response);
-							$aseco->releaseEvent('onPlayerFinishLine', $response);
+						else if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::LAPS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+							if ($response['is_endrace'] === false && $response['is_endlap'] === true) {
+								$aseco->releaseEvent('onPlayerFinishLap', $response);
+							}
+							else if ($response['is_endrace'] === true && $response['is_endlap'] === false) {
+								$aseco->releaseEvent('onPlayerFinishLine', $response);
+							}
+							else if ($response['is_endrace'] === true && $response['is_endlap'] === true) {
+								$aseco->releaseEvent('onPlayerFinishLap', $response);
+								$aseco->releaseEvent('onPlayerFinishLine', $response);
+							}
 						}
 					}
 					else {
@@ -627,6 +598,22 @@ class PluginModescriptHandler extends Plugin {
 					}
 					$this->playerFinish($response);
 				}
+		    		break;
+
+
+
+
+
+			case 'Trackmania.Event.StartLine':
+				$aseco->releaseEvent('onPlayerStartLine', $params);
+		    		break;
+
+
+
+
+
+			case 'Trackmania.Event.StartCountdown':
+				$aseco->releaseEvent('onPlayerStartCountdown', $params);
 		    		break;
 
 
@@ -779,6 +766,7 @@ class PluginModescriptHandler extends Plugin {
 				if ($aseco->settings['developer']['log_events']['common'] == true) {
 					$aseco->console('[Event] Unloading Map');
 				}
+				$aseco->unLoadingMap($params['map']['uid']);
 				$aseco->releaseEvent('onUnloadingMap', $params['map']['uid']);
 		    		break;
 
@@ -1138,6 +1126,27 @@ class PluginModescriptHandler extends Plugin {
 
 
 
+			case 'XmlRpc.Documentation':
+				// Called 'XmlRpc.GetDocumentation'
+				if (isset($data[1][1]) && !empty($data[1][1])) {
+					$aseco->console('[ModescriptHandler] Generating documentation of the Gamemode...');
+
+					@mkdir('docs/Gamemodes/', 0755, true);
+
+					$destination = 'docs/Gamemodes/'. $params['responseid'];
+					if (file_put_contents($destination, $data[1][1], LOCK_EX) !== false) {
+						$aseco->console('[ModescriptHandler] ... successfully written to "'. $destination .'"!');
+					}
+					else {
+						$aseco->console('[ModescriptHandler] ... could not write to "'. $destination .'"!');
+					}
+				}
+		    		break;
+
+
+
+
+
 			default:
 				$aseco->console('[ModescriptHandler] Unsupported callback at onModeScriptCallbackArray() received: ['. $data[0] .'], please report this at '. UASECO_WEBSITE);
 		    		break;
@@ -1211,7 +1220,7 @@ class PluginModescriptHandler extends Plugin {
 		if ($response['is_endrace'] === true) {
 			$finish->score	= $response['race_time'];
 		}
-		else if ($response['is_endlap'] === true) {
+		else if ($response['is_endlap'] === true && $aseco->server->maps->current->multi_lap === true) {
 			$finish->score	= $response['lap_time'];
 		}
 		$finish->checkpoints	= (isset($aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]->current['cps'] : array());

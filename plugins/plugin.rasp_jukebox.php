@@ -55,7 +55,7 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
@@ -1644,7 +1644,7 @@ class PluginRaspJukebox extends Plugin {
 		else {
 			$name = '';
 			$auth = '';
-			$env = $aseco->server->title;
+			$env = preg_replace('/^(.*?)@.*$/', '${1}', $aseco->server->title);
 			// collect search parameters
 			foreach ($chat_parameter as $param) {
 				if (strtolower(substr($param, 0, 5)) == 'auth:') {
@@ -3017,13 +3017,6 @@ class PluginRaspJukebox extends Plugin {
 
 
 				/***************************** PERFORMANCE VARIABLES ***************************/
-				if (isset($xml['RASP']['MIN_RANK'][0])) {
-					$this->minrank = $xml['RASP']['MIN_RANK'][0];
-				}
-				else {
-					$this->minrank = 3;
-				}
-
 				if (isset($xml['RASP']['MAX_AVG'][0])) {
 					$this->maxavg = $xml['RASP']['MAX_AVG'][0];
 				}

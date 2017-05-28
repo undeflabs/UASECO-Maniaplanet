@@ -52,8 +52,8 @@ class PluginChatAdmin extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-26');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -4113,8 +4113,7 @@ class PluginChatAdmin extends Plugin {
 							$msg->sendChatMessage($login);
 							continue;
 						}
-						$sepchar = substr($aseco->server->mapdir, -1, 1);
-						$partialdir = $aseco->plugins['PluginRasp']->mxdir . $sepchar . $trkid .'.Map.gbx';
+						$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $trkid .'.Map.gbx';
 						$localfile = $aseco->server->mapdir . $partialdir;
 						if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
 							if (!unlink($nocasepath)) {
@@ -4166,7 +4165,7 @@ class PluginChatAdmin extends Plugin {
 						else {
 							$filename = $aseco->slugify($gbx->name);
 						}
-						$partialdir = $aseco->plugins['PluginRasp']->mxdir . $sepchar . $filename .'_'. $trkid .'.Map.gbx';
+						$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $gbx->envir . DIRECTORY_SEPARATOR . $filename .'_'. $trkid .'.Map.gbx';
 
 						// insure unique filename by incrementing sequence number,
 						// if not a duplicate map
@@ -4180,7 +4179,7 @@ class PluginChatAdmin extends Plugin {
 								break;
 							}
 							else {
-								$partialdir = $aseco->plugins['PluginRasp']->mxdir . $sepchar . $filename .'_'. $trkid .'-'. $i++ .'.Map.gbx';
+								$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $gbx->environment . DIRECTORY_SEPARATOR . $filename .'_'. $trkid .'-'. $i++ .'.Map.gbx';
 							}
 						}
 						if ($dupl) {

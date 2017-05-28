@@ -233,8 +233,9 @@ Event triggered when the server received a transaction from a Player to check th
 > $bill[3] = TransactionId
 
 
-## [onEcho ($aseco, $echo)](_#onEcho)
-TODO
+## [onEcho ($aseco, $command, $params)](_#onEcho)
+Event triggered when the server received a call from the [`Echo`](https://www.uaseco.org/dedicated-server/methods.php#Echo) method,
+e.g. from an external tool like [AdminServ](https://forum.maniaplanet.com/viewtopic.php?f=261&t=29509) which send `AdminServ.Map.Added` when a map has been added.
 
 
 ## [onTunnelDataReceived ($aseco, $data)](_#onTunnelDataReceived)

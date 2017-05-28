@@ -45,7 +45,7 @@ class PluginRaspKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Votes for a map and displays current score of it.');
 
@@ -571,13 +571,6 @@ class PluginRaspKarma extends Plugin {
 
 
 				/***************************** PERFORMANCE VARIABLES ***************************/
-				if (isset($xml['RASP']['MIN_RANK'][0])) {
-					$this->minrank = $xml['RASP']['MIN_RANK'][0];
-				}
-				else {
-					$this->minrank = 3;
-				}
-
 				if (isset($xml['RASP']['MAX_AVG'][0])) {
 					$this->maxavg = $xml['RASP']['MAX_AVG'][0];
 				}

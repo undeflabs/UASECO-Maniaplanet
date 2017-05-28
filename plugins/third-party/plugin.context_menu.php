@@ -47,7 +47,7 @@ class PluginContextMenu extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-12');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription('A configurable Right-Mouse-Button-Menu (Context-Menu).');
 
@@ -114,7 +114,7 @@ class PluginContextMenu extends Plugin {
 	public function simplexml2array ($xml) {
 		global $aseco;
 
-		if (is_object($xml) && get_class($xml) == 'SimpleXMLElement') {
+		if (isset($xml) && is_object($xml) && $xml instanceof SimpleXMLElement) {
 			$xml = get_object_vars($xml);
 		}
 		if (is_array($xml)) {

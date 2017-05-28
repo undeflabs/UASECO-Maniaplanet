@@ -64,8 +64,8 @@ class MapList extends BaseClass {
 	public function __construct ($debug, $force_maplist_update) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-08');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
@@ -315,7 +315,7 @@ class MapList extends BaseClass {
 		$database['filenames'] = array();
 		foreach ($maplist as $mapinfo) {
 			// Setup from database, if not present, add this to the list for adding into database
-			if ($this->force_maplist_update === true && isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename'])) {
+			if (isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename']) && $this->force_maplist_update === false) {
 				// Create a dummy Map and setup it with data from the database
 				$map			= new Map(null, null);
 				$map->id		= $dbinfos[$mapinfo['UId']]['mapid'];
@@ -357,13 +357,13 @@ class MapList extends BaseClass {
 
 				// Check for saved Thumbnail from the map, otherwise force to save it
 				if ($this->getThumbnailByUid($map->uid) === false) {
-					$this->parseMap($aseco->server->mapdir . $mapinfo['FileName']);
+					$this->parseMap($aseco->server->mapdir . $mapinfo['FileName'], false);
 				}
 
 			}
 			else {
 				// Retrieve MapInfo from GBXInfoFetcher
-				$gbx = $this->parseMap($aseco->server->mapdir . $mapinfo['FileName']);
+				$gbx = $this->parseMap($aseco->server->mapdir . $mapinfo['FileName'], true);
 
 				// Create Map object
 				$map = new Map($gbx, $mapinfo['FileName']);
@@ -398,7 +398,7 @@ class MapList extends BaseClass {
 		unset($maplist, $dbinfos);
 
 		// Override after finished
-		$this->force_maplist_update == false;
+		$this->force_maplist_update = false;
 
 
 		// Add Maps that are not yet stored in the database
@@ -431,6 +431,133 @@ class MapList extends BaseClass {
 
 		// Find the current running map
 		$this->current = $this->getCurrentMapInfo();
+
+		// Find the next map
+		$this->next = $this->getNextMap();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function addMapToListByUid ($uid) {
+		global $aseco;
+
+		// Get the MapList from Server
+		$maplist = array();
+		$newlist = array();
+		$done = false;
+		$size = 50;
+		$i = 0;
+		while (!$done) {
+			try {
+				// GetMapList response: Name, UId, FileName, Environnement, Author, GoldTime, CopperPrice, MapType, MapStyle.
+				$newlist = $aseco->client->query('GetMapList', $size, $i);
+				if (!empty($newlist)) {
+					// Add the new Maps
+					foreach ($newlist as $mapinfo) {
+						if ($mapinfo['UId'] == $uid) {
+							$maplist[] = $mapinfo;
+							$done = true;
+						}
+					}
+
+					if (count($newlist) < $size) {
+						// Got less than $size maps, might as well leave
+						$done = true;
+					}
+					else {
+						$i += $size;
+					}
+					$newlist = array();
+				}
+				else {
+					$done = true;
+				}
+			}
+			catch (Exception $exception) {
+				$aseco->console('[ClassMaplist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
+				$done = true;
+				break;
+			}
+		}
+		unset($newlist);
+
+
+		// Load map infos from Database for all maps
+		$dbinfos = $this->getDatabaseMapInfos(array($uid));
+
+		// Calculate karma for each map in database
+		$karma = $this->calculateRaspKarma();
+
+
+		$database = array();
+		$database['insert'] = array();
+		$database['update'] = array();
+		$database['filenames'] = array();
+		foreach ($maplist as $mapinfo) {
+			// Retrieve MapInfo from GBXInfoFetcher
+			$gbx = $this->parseMap($aseco->server->mapdir . $mapinfo['FileName'], true);
+
+			// Create Map object
+			$map = new Map($gbx, $mapinfo['FileName']);
+
+			if (!empty($dbinfos[$mapinfo['UId']])) {
+				// Update this Map in the database
+				$map->id = $dbinfos[$mapinfo['UId']]['mapid'];
+				$database['update'][] = $map;
+			}
+			else {
+				// Add this new Map to the database
+				$database['insert'][] = $map;
+			}
+
+			// Add calculated karma to map
+			if ( isset($karma[$map->uid]) ) {
+				$map->karma = $karma[$map->uid];
+			}
+			else {
+				$map->karma = array(
+					'value'	=> 0,
+					'votes'	=> 0,
+				);
+			}
+
+			// Add to the Maplist
+			if ($map->uid) {
+				$this->map_list[$map->uid] = $map;
+			}
+		}
+		unset($maplist, $dbinfos);
+
+		// Add Maps that are not yet stored in the database
+		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
+		foreach ($database['insert'] as $map) {
+			$new = $this->insertMapIntoDatabase($map);
+
+			// Update the Maplist
+			if ($new->id > 0) {
+				$this->map_list[$new->uid] = $new;
+			}
+		}
+
+		// Update Maps that are not up-to-date in the database
+		foreach ($database['update'] as $map) {
+			$result = $this->updateMapInDatabase($map);
+
+			// Update the Maplist
+			if ($result == true) {
+				$this->map_list[$map->uid] = $map;
+			}
+		}
+
+		// Update all current Filenames
+		$this->updateFilenamesInDatabase($database['filenames']);
+
+		$aseco->db->commit();
+		unset($database);
 
 		// Find the next map
 		$this->next = $this->getNextMap();
@@ -817,7 +944,7 @@ class MapList extends BaseClass {
 	// The_Big_Boo: Because Windows doesn't support UTF-8 filenames natively but the API used in the
 	// dedicated server has some workaround which needs the UTF-8 BOM to be prepended.
 	// = stripBOM() on filenames for PHP
-	public function parseMap ($file) {
+	public function parseMap ($file, $force_thumbnail = false) {
 		global $aseco;
 
 		$gbx = new GBXChallMapFetcher(true, true, false);
@@ -835,8 +962,10 @@ class MapList extends BaseClass {
 				$gbx->processFile($aseco->stripBOM($file));
 			}
 
-			// Store the thumbnail into the cache folder
-			$this->saveThumbnail($gbx);
+			// Check for saved Thumbnail from the map, otherwise save it (if not forced to do)
+			if ($force_thumbnail === true || $this->getThumbnailByUid($gbx->uid) === false) {
+				$this->saveThumbnail($gbx);
+			}
 		}
 		catch (Exception $e) {
 			trigger_error('[MapList] Could not read Map ['. $aseco->stripBOM($file) .']: '. $e->getMessage(), E_USER_WARNING);

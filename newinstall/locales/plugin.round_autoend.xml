@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2017-05-25
+	Version:	2017-05-28
 	Authors:	[EN] undef.de
 			[DE] undef.de
 	//-->
@@ -12,12 +12,12 @@
 	</plugin_description>
 
 	<message_round_info>
-		<en>{#server}» Round will be automatically ending after {#highlite}{1}{#server} second(s), based upon author time {#highlite}{2}{#server}.</en>
-		<de>{#server}» Die Runde wird automatisch beendet nach {#highlite}{1}{#server} Sekunden, basierend auf der Autorenzeit {#highlite}{2}{#server}.</de>
+		<en>{#server}» Round will be automatically ending after {#highlite}{1}{#server}, based upon author time {#highlite}{2}{#server}.</en>
+		<de>{#server}» Die Runde wird automatisch beendet nach {#highlite}{1}{#server}, basierend auf der Autorenzeit {#highlite}{2}{#server}.</de>
 	</message_round_info>
 
 	<message_round_end>
-		<en>{#server}» Round automatically ended after {#highlite}{1}{#server} second(s).</en>
-		<de>{#server}» Runde endete automatisch nach {#highlite}{1}{#server} Sekunde(n).</de>
+		<en>{#server}» Round automatically ended after {#highlite}{1}{#server}</en>
+		<de>{#server}» Runde endete automatisch nach {#highlite}{1}{#server}</de>
 	</message_round_end>
 </locales>

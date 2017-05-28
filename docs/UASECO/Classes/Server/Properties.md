@@ -36,7 +36,7 @@ Stores basic information of the server UASECO is running on.
 | `$aseco->server->game`						| ManiaPlanet
 | `$aseco->server->version`						| 3.3.0
 | `$aseco->server->build`						| 2014-07-11_18_00
-| `$aseco->server->title`						| TMCanyon
+| `$aseco->server->title`						| TMCanyon@nadeo
 | `$aseco->server->api_version`						| 2013-04-16
 
 

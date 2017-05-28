@@ -57,7 +57,7 @@ abstract class Plugin extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure for all plugins, extend this class to build your own one.');
 	}
@@ -319,7 +319,7 @@ abstract class Plugin extends BaseClass {
 	*/
 
 	public function getPlayerData ($player, $key) {
-		if (isset($player) && get_class($player) != 'Player') {
+		if (isset($player) && is_object($player) && $player instanceof Player) {
 			return;
 		}
 		if (!empty($key) && isset($player->data[$this->getClassname()][$key])) {

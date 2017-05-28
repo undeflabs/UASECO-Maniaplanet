@@ -140,11 +140,6 @@
 	//-->
 
 	<!--
-	Sets the minimum amount of records required for a player to be ranked: Higher = Faster
-	//-->
-	<min_rank>3</min_rank>
-
-	<!--
 	Sets the maximum number of records stored per map: Lower = Faster
 	//-->
 	<max_avg>10</max_avg>

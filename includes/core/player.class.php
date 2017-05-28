@@ -71,6 +71,9 @@ class Player extends BaseClass {
 	public $team_id;
 	public $allies;
 
+	public $server_rank;
+	public $server_rank_total;
+	public $server_rank_average;
 	public $ladder_rank;
 	public $ladder_score;
 	public $last_match_score;
@@ -126,7 +129,7 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-01');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -197,6 +200,7 @@ class Player extends BaseClass {
 			$this->nickname			= 'Unknown';
 			$this->language			= '';
 			$this->avatar			= '';
+			$this->clublink			= '';
 
 			$this->ipport			= '';
 			$this->ip			= '';
@@ -249,6 +253,46 @@ class Player extends BaseClass {
 		$this->maplist				= array();
 		$this->playerlist			= array();
 		$this->msgs				= array();
+
+		// Get rank and average on this server
+		list($this->server_rank, $this->server_rank_total, $this->server_rank_average) = $this->_getPlayerRankingById($this->id);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	private function _getPlayerRankingById ($id) {
+		global $aseco;
+
+		$rank = 0;
+		$average = 0;
+		$total = 0;
+
+		$query = '
+		SELECT
+			`PlayerId`,
+			`Average`
+		FROM `%prefix%rankings`
+		ORDER BY `Average` ASC, `PlayerId` ASC;
+		';
+		$res = $aseco->db->query($query);
+		if ($res) {
+			if ($res->num_rows > 0) {
+				$total = $res->num_rows;
+				while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
+					if ($row['PlayerId'] == $id) {
+						$average = sprintf('%4.1F', $row['Average'] / 10000);
+						break;
+					}
+					$rank += 1;
+				}
+				$res->free_result();
+			}
+		}
+		return array($rank, $total, $average);
 	}
 
 	/*
@@ -347,7 +391,7 @@ class Player extends BaseClass {
 			$this->is_official = false;
 		}
 
-		// Based upon https://github.com/NewboO/dedicated-server-api/blob/master/libraries/Maniaplanet/DedicatedServer/Structures/PlayerInfo.php
+		// Based upon https://github.com/maniaplanet/dedicated-server-api/blob/master/libraries/Maniaplanet/DedicatedServer/Structures/PlayerInfo.php
 		$this->is_referee			= (bool)(intval($info['Flags'] / 10) % 10);
 		$this->is_podium_ready			= (bool)(intval($info['Flags'] / 100) % 10);
 		$this->is_using_stereoscopy		= (bool)(intval($info['Flags'] / 1000) % 10);

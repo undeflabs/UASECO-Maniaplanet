@@ -77,6 +77,11 @@
 	<max_history_entries>20</max_history_entries>
 
 	<!--
+	Sets the minimum amount of records required for a player to be ranked: Higher = Faster
+	//-->
+	<server_rank_min_records>3</server_rank_min_records>
+
+	<!--
 	Setup a path where the image from each map will be stored (for later use in e.g. Records-Eyepiece).
 	//-->
 	<mapimages_path>/path/to/the/mapimages/</mapimages_path>

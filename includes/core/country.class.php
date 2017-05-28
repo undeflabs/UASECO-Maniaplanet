@@ -49,7 +49,7 @@ class Country extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-10');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides lists of Countries and IOC codes, and converter methods.');
 
@@ -77,6 +77,7 @@ class Country extends BaseClass {
 			'Bhutan'			=> 'BHU',
 			'Bolivia'			=> 'BOL',
 			'Bosnia&Herzegovina'		=> 'BIH',
+			'Bosnia and Herzegovina'	=> 'BIH',
 			'Botswana'			=> 'BOT',
 			'Brazil'			=> 'BRA',
 			'Brunei'			=> 'BRU',
@@ -275,7 +276,7 @@ class Country extends BaseClass {
 			'BER'	=> 'Bermuda',
 			'BHU'	=> 'Bhutan',
 			'BOL'	=> 'Bolivia',
-			'BIH'	=> 'Bosnia & Herzegovina',			// add space before and after &
+			'BIH'	=> 'Bosnia and Herzegovina',
 			'BOT'	=> 'Botswana',
 			'BRA'	=> 'Brazil',
 			'BRU'	=> 'Brunei',

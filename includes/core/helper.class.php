@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-26');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -192,6 +192,7 @@ class Helper extends BaseClass {
 		$xml .= '  <uptime>'. $this->server->networkstats['Uptime'] .'</uptime>'.LF;
 		$xml .= ' </dedicated>'.LF;
 		$xml .= ' <server>'.LF;
+		$xml .= '  <link>maniaplanet://#join='. $this->server->login .'@'. $this->server->title .'</link>'.LF;
 		$xml .= '  <admin_contact>'. $this->settings['admin_contact'] .'</admin_contact>'.LF;
 		$xml .= '  <login>'. $this->server->login .'</login>'.LF;
 		$xml .= '  <name>'. $this->stripStyles($this->server->name) .'</name>'.LF;

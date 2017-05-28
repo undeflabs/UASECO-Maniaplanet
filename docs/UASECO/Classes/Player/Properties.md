@@ -38,6 +38,9 @@ Structure of a Player, contains information from `GetPlayerInfo` and `GetDetaile
 | `$player->target_spectating`						| undef.de						| If not false, then this contains the login from a Player the current Player is spectating.
 | `$player->team_id`							| 1							| &nbsp;
 | `$player->allies`							| array()						| &nbsp;
+| `$player->server_rank`						| 14							| Server rank
+| `$player->server_rank_total`						| 7027							| Max. amount of server ranks
+| `$player->server_rank_average`					| 500.0							| Server average
 | `$player->ladder_rank`						| 575							| &nbsp;
 | `$player->ladder_score`						| 85340							| &nbsp;
 | `$player->last_match_score`						| 0							| The dedicated Server retrieves this value not on demand, it takes a while until this value is up-to-date

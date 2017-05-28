@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2017-04-14
+ * Date:	2017-05-28
  * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -37,10 +37,11 @@
 
 class Database extends mysqli {
 	public $debug			= false;
+	public $settings		= array();
 	public $table_prefix		= 'uaseco_';
-	public $db_type			= 'MySQL';
-	public $db_version		= '0.0.0';
-	public $db_version_full		= '0.0.0';
+	public $type			= 'MySQL';
+	public $version			= '0.0.0';
+	public $version_full		= '0.0.0';
 
 	// $placeholder will be replaced with $this->table_prefix at each query
 	private $placeholder		= '%prefix%';
@@ -80,27 +81,37 @@ class Database extends mysqli {
 		}
 
 
-		// Get the version of the database
-		$row = $this->select_one("SHOW VARIABLES LIKE 'version';");
-		$this->db_version_full = $row['Value'];
+		// Get the settings of the database
+		$res = $this->query('SHOW VARIABLES;');
+		if ($res) {
+			if ($res->num_rows > 0) {
+				while ($row = $res->fetch_object()) {
+					$this->settings[$row->Variable_name] = $row->Value;
+				}
+			}
+			$res->free_result();
+		}
+
+		// Create the version strings
+		$this->version_full = $this->settings['version'];
 
 		// Examples:
 		// MySQL:	"5.7.16", "5.7.17-0ubuntu1"
 		// MariaDB:	"10.0.27-MariaDB-0ubuntu0.16.04.1"
-		$this->db_version = explode('-', $this->db_version_full);
-		if (isset($this->db_version[0]) && !empty($this->db_version[0])) {
-			$this->db_version = $this->db_version[0];
+		$this->version = explode('-', $this->version_full);
+		if (isset($this->version[0]) && !empty($this->version[0])) {
+			$this->version = $this->version[0];
 		}
 		else {
-			$this->db_version = $this->db_version_full;
+			$this->version = $this->version_full;
 		}
 
 		// Get the type of the database
-		if (mb_stripos($this->db_version_full, 'mariadb') !== false) {
-			$this->db_type = 'MariaDB';
+		if (mb_stripos($this->version_full, 'mariadb') !== false) {
+			$this->type = 'MariaDB';
 		}
-//		else if (mb_stripos($this->db_version_full, 'percona') !== false) {
-//			$this->db_type = 'Percona-Server';
+//		else if (mb_stripos($this->version_full, 'percona') !== false) {
+//			$this->type = 'Percona-Server';
 //		}
 	}
 
@@ -386,7 +397,7 @@ class Database extends mysqli {
 
 	public function server_version () {
 		if ($this->stat() !== false) {
-			return $this->db_type .'/'. $this->db_version_full;
+			return $this->type .'/'. $this->version_full;
 		}
 	}
 

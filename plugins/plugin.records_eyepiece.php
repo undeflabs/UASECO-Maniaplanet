@@ -1994,11 +1994,27 @@ class PluginRecordsEyepiece extends Plugin {
 			return;
 		}
 
-		// Get current Gamemode
-		$gamemode = $aseco->server->gameinfo->mode;
 
 		// Get the Player object (possible required below)
 		$player = $aseco->server->players->player_list[$finish_item->player->login];
+
+
+		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+
+			// Add the Score
+			$this->scores['RoundScore'][$finish_item->score][] = array(
+				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+				'checkpointid'	=> count($finish_item->checkpoints) - 1,
+				'playerid'	=> $player->pid,
+				'login'		=> $player->login,
+				'nickname'	=> $this->handleSpecialChars($player->nickname),
+				'score'		=> $aseco->formatTime($finish_item->score),
+				'score_plain'	=> $finish_item->score,
+			);
+
+			// Display the Widget
+			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+		}
 
 
 		// Check if the Player has a better score as before
@@ -2023,7 +2039,7 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($refresh == true) {
 			// Player finished the Map, need to Update the 'LiveRanking',
 			// but not at Gamemode 'Rounds' - that are only updated at the event 'onEndRound'!
-			if ($gamemode != Gameinfo::ROUNDS) {
+			if ($aseco->server->gameinfo->mode != Gameinfo::ROUNDS) {
 				$this->config['States']['LiveRankings']['NeedUpdate'] = true;
 				$this->config['States']['LiveRankings']['NoRecordsFound'] = false;
 			}
@@ -3658,7 +3674,7 @@ class PluginRecordsEyepiece extends Plugin {
 			// Add the Score
 			$this->scores['RoundScore'][$player->login] = array(
 				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-				'checkpointid'	=> ($params['checkpoint_in_lap'] - 1),
+				'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
 				'playerid'	=> $player->pid,
 				'login'		=> $player->login,
 				'nickname'	=> $this->handleSpecialChars($player->nickname),
@@ -3693,7 +3709,7 @@ class PluginRecordsEyepiece extends Plugin {
 			// Add the Score
 			$this->scores['RoundScore'][$player->login] = array(
 				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-				'checkpointid'	=> ($params['checkpoint_in_lap'] - 1),
+				'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
 				'playerid'	=> $player->pid,
 				'login'		=> $player->login,
 				'nickname'	=> $this->handleSpecialChars($player->nickname),
@@ -3721,12 +3737,12 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function onPlayerRoundFinish ($aseco, $params) {
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
 			// Get Player object
 			$player = $aseco->server->players->getPlayerByLogin($params['login']);
 
 			// Add the Score
-			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+//			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 				$this->scores['RoundScore'][$player->login] = array(
 					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
 					'checkpointid'	=> count($params['best_race_checkpoints']),
@@ -3736,18 +3752,18 @@ class PluginRecordsEyepiece extends Plugin {
 					'score'		=> $aseco->formatTime($params['best_race_time']),
 					'score_plain'	=> $params['best_race_time'],
 				);
-			}
-			else {
-				$this->scores['RoundScore'][$player->login][] = array(
-					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-					'checkpointid'	=> count($params['best_race_checkpoints']),
-					'playerid'	=> $player->pid,
-					'login'		=> $player->login,
-					'nickname'	=> $this->handleSpecialChars($player->nickname),
-					'score'		=> $aseco->formatTime($params['best_race_time']),
-					'score_plain'	=> $params['best_race_time'],
-				);
-			}
+//			}
+//			else {
+//				$this->scores['RoundScore'][$player->login][] = array(
+//					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+//					'checkpointid'	=> count($params['best_race_checkpoints']),
+//					'playerid'	=> $player->pid,
+//					'login'		=> $player->login,
+//					'nickname'	=> $this->handleSpecialChars($player->nickname),
+//					'score'		=> $aseco->formatTime($params['best_race_time']),
+//					'score_plain'	=> $params['best_race_time'],
+//				);
+//			}
 
 			// Store personal best round-score for sorting on equal times of more Players
 			if (isset($this->scores['RoundScorePB'][$player->login]) && $this->scores['RoundScorePB'][$player->login] > $params['best_race_time']) {
@@ -8347,7 +8363,7 @@ EOL;
 			$position = (($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
 			// Adjust the Points to the connected Player count
-			if ( ($gamemode == Gameinfo::TEAM) && ($aseco->server->gameinfo->team['UseAlternateRules'] == true) ) {
+			if ($gamemode == Gameinfo::TEAM && $aseco->server->gameinfo->team['UseAlternateRules'] == true) {
 
 				// Get Playercount
 				$limit = count($aseco->server->players->player_list);

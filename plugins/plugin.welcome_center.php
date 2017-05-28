@@ -48,7 +48,7 @@ class PluginWelcomeCenter extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-30');
+		$this->setBuild('2017-05-28');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays a message in the chat and can display a Welcome-Window on Player connects.');
 
@@ -197,25 +197,7 @@ class PluginWelcomeCenter extends Plugin {
 		}
 
 		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] == true) {
-			$skip = false;
-			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == true) {
-				$query = "
-				SELECT
-					`Average`
-				FROM `%prefix%rankings`
-				WHERE `PlayerId` = ". $aseco->db->quote($player->id) ."
-				LIMIT 1;
-				";
-
-				$result = $aseco->db->query($query);
-				if ($result) {
-					if ($result->num_rows > 0) {
-						$skip = true;
-					}
-					$result->free_result();
-				}
-			}
-			if ($skip == false) {
+			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == false && $player->server_rank_average == 0) {
 				// Send it direct to the Player
 				$this->buildWelcomeWindow($player);
 			}

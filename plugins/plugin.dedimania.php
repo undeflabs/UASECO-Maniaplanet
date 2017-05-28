@@ -93,7 +93,7 @@ class PluginDedimania extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-02');
+		$this->setBuild('2017-05-27');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Handles interaction with the Dedimania world database and shows new/online Dedimania world records and their relations on the current track.');
 
@@ -1654,31 +1654,33 @@ class PluginDedimania extends Plugin {
 				// Set Dedimania record/checkpoints references
 				if ($aseco->plugins['PluginCheckpoints']->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
 					foreach ($aseco->plugins['PluginCheckpoints']->checkpoints as $login => $cp) {
-						$drec = $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->tracking['dedimania_records'] - 1;
+						if (isset($aseco->plugins['PluginCheckpoints']->checkpoints[$login]->tracking)) {
+							$drec = $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->tracking['dedimania_records'] - 1;
 
-						// check for specific record
-						if ($drec+1 > 0) {
-							// if specific record unavailable, use last one
-							if ($drec > count($this->db['Map']['Records']) - 1) {
-								$drec = count($this->db['Map']['Records']) - 1;
-							}
-							// store record/checkpoints reference
-							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
-							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
-						}
-						else if ($drec+1 == 0) {
-							// search for own/last record
-							$drec = 0;
-							while ($drec < count($this->db['Map']['Records'])) {
-								if ($this->db['Map']['Records'][$drec++]['Login'] == $login) {
-									break;
+							// check for specific record
+							if ($drec+1 > 0) {
+								// if specific record unavailable, use last one
+								if ($drec > count($this->db['Map']['Records']) - 1) {
+									$drec = count($this->db['Map']['Records']) - 1;
 								}
+								// store record/checkpoints reference
+								$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
+								$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
 							}
-							$drec--;
-							// store record/checkpoints reference
-							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
-							$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
-						}  // else -1
+							else if ($drec+1 == 0) {
+								// search for own/last record
+								$drec = 0;
+								while ($drec < count($this->db['Map']['Records'])) {
+									if ($this->db['Map']['Records'][$drec++]['Login'] == $login) {
+										break;
+									}
+								}
+								$drec--;
+								// store record/checkpoints reference
+								$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['finish'] = $this->db['Map']['Records'][$drec]['Best'];
+								$aseco->plugins['PluginCheckpoints']->checkpoints[$login]->best['cps'] = explode(',', $this->db['Map']['Records'][$drec]['Checks']);
+							}  // else -1
+						}
 					}
 				}
 				if ($this->debug > 4) {
