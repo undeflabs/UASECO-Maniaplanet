@@ -44,8 +44,8 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.4');
-	define('UASECO_BUILD',			'2017-05-26');
-	define('UASECO_WEBSITE',		'http://www.UASECO.org');
+	define('UASECO_BUILD',			'2017-05-28');
+	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
 	define('MANIAPLANET_BUILD',		'2017-05-22_21_00');
@@ -149,6 +149,13 @@ class UASECO extends Helper {
 	public $restarting;					// restarting map (true or false)
 	public $changing_to_gamemode;
 	public $current_status;					// server status changes
+
+	public $environments = array(
+		'Canyon',
+		'Stadium',
+		'Valley',
+		'Lagoon',
+	);
 
 	private $next_second;
 	private $next_tenth;
@@ -659,7 +666,7 @@ class UASECO extends Helper {
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
 		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
-		$this->console_text('»                Streams:  {1}', implode(', ', $wrappers));
+		$this->console_text('»                Streams: {1}', implode(', ', $wrappers));
 		$this->console_text('»                GD-Lib: Version: {1}, JPEG: {2}, PNG: {3}, FreeType: {4}', $gd['GD Version'], $this->bool2string($gd['JPEG Support']), $this->bool2string($gd['PNG Support']), $this->bool2string($gd['FreeType Support']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» Database:      Server:  {1}', $this->db->server_version());
@@ -728,13 +735,15 @@ class UASECO extends Helper {
 			// Set admin contact
 			$this->settings['admin_contact'] = $settings['ADMIN_CONTACT'][0];
 			if (strtolower($this->settings['admin_contact']) == 'your@email.com' || filter_var($this->settings['admin_contact'], FILTER_VALIDATE_EMAIL) === false) {
-				$this->console('[WARNING] You should setup a working mail to be able to contact you, change it in [config/UASECO.xml] at <admin_contact>!');
+				$this->console('[UASECO][WARNING] ###############################################################################################################');
+				$this->console('[UASECO][WARNING] You should setup a working mail to be able to contact you, change it in [config/UASECO.xml] at <admin_contact>!');
+				$this->console('[UASECO][WARNING] ###############################################################################################################');
 			}
 
 			// Set admin lock password
 			$this->settings['lock_password'] = $settings['LOCK_PASSWORD'][0];
 			if (empty($this->settings['lock_password'])) {
-				$this->console('[WARNING] To increase security you should setup a lock password at <lock_password> in [config/UASECO.xml]!');
+				$this->console('[UASECO][WARNING] To increase security you should setup a lock password at <lock_password> in [config/UASECO.xml]!');
 			}
 
 			// Show played time at end of map?
@@ -754,6 +763,9 @@ class UASECO extends Helper {
 
 			// Specifies how large the Map(List) history buffer is.
 			$this->settings['max_history_entries'] = (int)$settings['MAX_HISTORY_ENTRIES'][0];
+
+			// Sets the minimum amount of records required for a player to be ranked: Higher = Faster
+			$this->settings['server_rank_min_records'] = (int)$settings['SERVER_RANK_MIN_RECORDS'][0];
 
 			// Setup default storing path for the map images
 			$this->settings['mapimages_path'] = $settings['MAPIMAGES_PATH'][0];
@@ -1200,22 +1212,22 @@ class UASECO extends Helper {
 		$this->db = new Database($settings);
 
 		// Check for minimum required version of the Database-Server
-		if (strtolower($this->db->db_type) == 'mysql') {
-			if (version_compare($this->db->db_version, MIN_MYSQL_VERSION, '<')) {
-				$this->console('[ERROR] UASECO requires min. MySQL/'. MIN_MYSQL_VERSION .' and can not run with current MySQL/'. $this->db->db_version  .' ('. $this->db->db_version_full .'), please update MySQL!');
+		if (strtolower($this->db->type) == 'mysql') {
+			if (version_compare($this->db->version, MIN_MYSQL_VERSION, '<')) {
+				$this->console('[ERROR] UASECO requires min. MySQL/'. MIN_MYSQL_VERSION .' and can not run with current MySQL/'. $this->db->version  .' ('. $this->db->version_full .'), please update MySQL!');
 				die();
 			}
 			else {
-				$this->console('[Database] ...connection established successfully to a MySQL/'. $this->db->db_version .' server!');
+				$this->console('[Database] ...connection established successfully to a MySQL/'. $this->db->version .' server!');
 			}
 		}
-		else if (strtolower($this->db->db_type) == 'mariadb') {
-			if (version_compare($this->db->db_version, MIN_MARIADB_VERSION, '<')) {
-				$this->console('[ERROR] UASECO requires min. MariaDB/'. MIN_MARIADB_VERSION .' and can not run with current MariaDB/'. $this->db->db_version .' ('. $this->db->db_version_full .'), please update MariaDB!');
+		else if (strtolower($this->db->type) == 'mariadb') {
+			if (version_compare($this->db->version, MIN_MARIADB_VERSION, '<')) {
+				$this->console('[ERROR] UASECO requires min. MariaDB/'. MIN_MARIADB_VERSION .' and can not run with current MariaDB/'. $this->db->version .' ('. $this->db->version_full .'), please update MariaDB!');
 				die();
 			}
 			else {
-				$this->console('[Database] ...connection established successfully to a MariaDB/'. $this->db->db_version .' server!');
+				$this->console('[Database] ...connection established successfully to a MariaDB/'. $this->db->version .' server!');
 			}
 		}
 	}
@@ -1850,7 +1862,7 @@ class UASECO extends Helper {
 
 					case 'ManiaPlanet.PlayerDisconnect':
 						// [0] = string Login, [1] = string DisconnectionReason
-						$this->playerDisconnect($call[1][0], $call[1][0]);
+						$this->playerDisconnect($call[1][0], $call[1][1]);
 						break;
 
 //					case 'ManiaPlanet.StatusChanged':
@@ -1865,7 +1877,7 @@ class UASECO extends Helper {
 							$this->console('[MapList] Re-reading complete map list from server...');
 							$this->server->maps->readMapList();
 							$count = count($this->server->maps->map_list);
-							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count == 1 ? '' : 's') .' which matches server settings');
+							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count == 1 ? '' : 's') .' which matches server settings!');
 							$this->releaseEvent('onMapListChanged', array('read', null));
 						}
 						$this->releaseEvent('onMapListModified', $call[1]);
@@ -1893,7 +1905,17 @@ class UASECO extends Helper {
 
 					case 'ManiaPlanet.Echo':
 						// [0] = string Internal, [1] = string Public
-						$this->releaseEvent('onEcho', $call[1]);
+						if ($call[1][0] == 'AdminServ.Map.Added') {
+							// Add external added map to our MapList too
+							$param = json_decode($call[1][1]);
+							$this->server->maps->addMapToListByUid($param->map->uid);
+						}
+						else if ($call[1][0] == 'AdminServ.Map.Deleted') {
+							// Remove external removed map fromo our MapList too
+							$param = json_decode($call[1][1]);
+							$this->server->maps->removeMapByUid($param->map->uid);
+						}
+						$this->releaseEvent('onEcho', $call[1][0], $call[1][1]);
 						break;
 
 					case 'ManiaPlanet.VoteUpdated':
@@ -2077,6 +2099,17 @@ class UASECO extends Helper {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
+	public function unLoadingMap ($uid) {
+		// Recalculate ranks of each player
+		$this->server->players->recalculateRanks();
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
 	public function endMap () {
 
 		$this->server->gamestate = Server::SCORE;
@@ -2087,7 +2120,7 @@ class UASECO extends Helper {
 		if (!$this->server->isrelay) {
 
 			// Check out who won the current map and increment his/her wins by one.
-			if ($this->server->rankings->count() > 0) {
+			if ($this->server->rankings->count() > 1) {
 
 				$rank = $this->server->rankings->getRank(1);
 				if (($player = $this->server->players->getPlayerByLogin($rank->login)) !== false) {
@@ -2228,12 +2261,7 @@ class UASECO extends Helper {
 
 			// Get the current ranking for this player, required to have the rankings up-to-date on a running race,
 			// but not in TEAM mode (requires a special handling).
-			if ($this->server->gameinfo->mode == Gameinfo::TEAM) {
-				// Do not $this->server->rankings->addPlayer(), because it is a "Team" mode!
-				// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
-				$this->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
-			}
-			else {
+			if ($this->server->gameinfo->mode !== Gameinfo::TEAM) {
 				// Add to ranking list
 				$this->server->rankings->addPlayer($player);
 
