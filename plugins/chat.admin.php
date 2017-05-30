@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-27');
+		$this->setBuild('2017-05-30');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -1121,7 +1121,7 @@ class PluginChatAdmin extends Plugin {
 			if ($aseco->isAnyAdmin($target->login)) {
 
 				// show chat message
-				$msg = new Message('chat.admin', 'message_ban_masteradmin');
+				$msg = new Message('chat.admin', 'message_ban_any_admin');
 				$msg->sendChatMessage();
 
 				$aseco->console('{1} [{2}] try to ban MasterAdmin {3}!', $logtitle, $login, $aseco->stripStyles($target->nickname, false));
@@ -4217,7 +4217,9 @@ class PluginChatAdmin extends Plugin {
 											continue;
 										}
 									}
-									$aseco->server->maps->map_list[$map->uid] = $map;
+
+									// Add map to the MapList
+									$aseco->server->maps->addMapToListByUid($map->uid);
 
 									// check whether to jukebox as well
 									// overrules /add-ed but not yet played map
@@ -4295,7 +4297,12 @@ class PluginChatAdmin extends Plugin {
 	private function admin_addthis ($login, $command, $arglist, $logtitle, $chattitle) {
 		global $aseco;
 
-		if ( isset($aseco->plugins['PluginRaspJukebox']) ) {
+		if (isset($aseco->plugins['PluginRaspJukebox'])) {
+
+			if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
+				return;
+			}
+
 			// Check for MX /add-ed map
 			if ($aseco->plugins['PluginRaspJukebox']->mxplayed) {
 				try {
@@ -4366,6 +4373,10 @@ class PluginChatAdmin extends Plugin {
 	private function admin_addlocal ($login, $command, $arglist, $logtitle, $chattitle) {
 		global $aseco;
 
+		if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
 		// check for local map file
 		if ($arglist[1] != '') {
 			$sepchar = substr($aseco->server->mapdir, -1, 1);
@@ -4375,8 +4386,8 @@ class PluginChatAdmin extends Plugin {
 			}
 			$localfile = $aseco->server->mapdir . $partialdir;
 			if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
-				// check for maximum online map size (1024 KB)
-				if (filesize($nocasepath) >= 1024 * 1024) {
+				// check for maximum online map size
+				if (filesize($nocasepath) >= $aseco->server->maps->size_limit) {
 					$msg = new Message('chat.admin', 'map_too_large');
 					$msg->addPlaceholders(round(strlen($file) / $aseco->server->maps->size_limit));
 					$msg->sendChatMessage($login);
@@ -4414,12 +4425,15 @@ class PluginChatAdmin extends Plugin {
 							}
 
 							// log console message
-							$aseco->console('[ChatAdmin] {1} [{2}] adds local map {3} !', $logtitle, $login, $aseco->stripStyles($mapinfo['Name'], false));
+							$aseco->console('[ChatAdmin] {1} [{2}] adds local map {3}!', $logtitle, $login, $aseco->stripStyles($mapinfo['Name'], false));
 
 							// show chat message
 							$msg = new Message('chat.admin', 'message_map_added');
 							$msg->addPlaceholders($chattitle, $admin->nickname, ((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''), $aseco->stripStyles($mapinfo['Name']),	$aseco->stripStyles($mapinfo['Author']));
 							$msg->sendChatMessage();
+
+							// Add map to the MapList
+							$aseco->server->maps->addMapToListByUid($mapinfo['UId']);
 
 							// Setup next Map
 							$aseco->server->maps->next = $aseco->server->maps->getNextMap();

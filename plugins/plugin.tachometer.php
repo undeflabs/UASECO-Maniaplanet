@@ -47,7 +47,7 @@ class PluginTachometer extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('reaby');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-13');
+		$this->setBuild('2017-05-30');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays a smart tachometer on the HUD.');
 
@@ -476,7 +476,7 @@ main() {
 			PrevSettingsUpdate = Net_LibUI_SettingsUpdate;
 			foreach (SettingName => SettingValue in Net_LibUI_Settings) {
 				switch (SettingName) {
-					case "Countdown_CutOffTimeLimit": {
+					case "TMUIModule_Countdown_CutOffTimeLimit": {
 						CutOffTimeLimit = TextLib::ToInteger(SettingValue);
 					}
 				}

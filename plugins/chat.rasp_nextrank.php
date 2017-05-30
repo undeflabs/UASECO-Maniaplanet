@@ -46,7 +46,7 @@ class PluginChatRaspNextrank extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-05-30');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.rasp_nextrank', 'plugin_description'));
 
@@ -90,18 +90,19 @@ class PluginChatRaspNextrank extends Plugin {
 		}
 
 		if ($aseco->plugins['PluginRasp']->feature_ranks) {
-			// find current player's avg
-			$query = "
-			SELECT
-				`Average`
-			FROM `%prefix%rankings`
-			WHERE `PlayerId` = ". $player->id .";
-			";
-
-			$res = $aseco->db->query($query);
-			if ($res->num_rows > 0) {
-				$row = $res->fetch_array(MYSQLI_ASSOC);
-				$avg = $row['Average'];
+//			// find current player's avg
+//			$query = "
+//			SELECT
+//				`Average`
+//			FROM `%prefix%rankings`
+//			WHERE `PlayerId` = ". $player->id .";
+//			";
+//
+//			$res = $aseco->db->query($query);
+//			if ($res->num_rows > 0) {
+//				$row = $res->fetch_array(MYSQLI_ASSOC);
+//				$avg = $row['Average'];
+				$avg = $player->server_rank_average;
 
 				// find players with better avgs
 				$query = "
@@ -163,13 +164,13 @@ class PluginChatRaspNextrank extends Plugin {
 					$msg->sendChatMessage($player->login);
 				}
 				$res2->free_result();
-			}
-			else {
-				$msg = new Message('plugin.rasp', 'rank_none');
-				$msg->addPlaceholders($aseco->plugins['PluginRasp']->minrank);
-				$msg->sendChatMessage($player->login);
-			}
-			$res->free_result();
+//			}
+//			else {
+//				$msg = new Message('plugin.rasp', 'rank_none');
+//				$msg->addPlaceholders($aseco->plugins['PluginRasp']->minrank);
+//				$msg->sendChatMessage($player->login);
+//			}
+//			$res->free_result();
 		}
 	}
 }

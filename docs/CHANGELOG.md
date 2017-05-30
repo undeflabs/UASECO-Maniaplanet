@@ -16,6 +16,7 @@
 * Renamed property `$aseco->db->db_type` in `$aseco->db->type` from `includes/core/database.class.php`
 * Renamed property `$aseco->db->db_version` in `$aseco->db->version` from `includes/core/database.class.php`
 * Renamed property `$aseco->db->db_version_full` in `$aseco->db->version_full` from `includes/core/database.class.php`
+* Turned more windows from `plugin.records_eyepiece.php` into the class window style
 
 
 ### Changes at config files
@@ -27,6 +28,7 @@
 * Updated `newinstall/locales/plugin.round_autoend.xml` with several entries
 * Added `<messages><chat_prefix_replacement>` in `newinstall/config/UASECO.xml`
 * Changed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml`
+* Renamed tag `<message_ban_masteradmin>` to `<message_ban_any_admin>` into `newinstall/locales/chat.admin.xml`
 * Removed `<min_rank>` from `newinstall/config/rasp.xml`
 * Added `<server_rank_min_records>` to `newinstall/config/UASECO.xml`
 
@@ -49,7 +51,7 @@
 * Fixed [PHP Notice] Undefined index: SCALE on line 13999 in file `[...]plugins/plugin.records_eyepiece.php` (thanks phantom)
 * Fixed emoji "speech bubble" - which replaces `»` in chat message - was replacing `»` everywhere and not only at the beginning of a chat message, e.g. in map names, nicknames... (thanks reaby)
 * Fixed [PHP Notice] Undefined property: stdClass::$tracking on line 1657 in file `[...]plugins/plugin.dedimania.php` (thanks lyovav)
-* Fixed wrong (old) map size on `/admin addlocal ID` in `plugins/chat.admin.php`
+* Fixed wrong (old) map size check on `/admin addlocal ID` in `plugins/chat.admin.php`
 * Fixed `/xlist` contains map with all environments on a `TMStadium` Title only dedicated server
 * Fixed and optimized the map list refresh, now the thumbnails of a map is only stored on disk, when the thumbnail not already exists
 * Fixed [PHP Warning] get_class() expects parameter 1 to be object, boolean given on line 322 in file `[...]includes/core/plugin.class.php` (thanks phantom)
@@ -57,6 +59,8 @@
 * Fixed getting the message `Congratulations, you won your NUM. race!` even if you are playing alone (thanks rasmusdk)
 * Fixed wrong ordering of the server rank (players with same average now ordered by `PlayerId`) and optimized the rank calculation, also reduced the required SQL queries to get the results
 * Fixed team colors are wrong in RoundScore from `plugin.records_eyepiece.php` (thanks elie520)
+* Fixed [PHP Notice] Undefined variable: admin on line 4385 in file `[...]plugins/chat.admin.php` with `/admin addlocal {filename}` (thanks Tavernicole)
+* Fixed Fuel and Water display blinking when time is nearly over in `plugins/plugin.tachometer.php`
 
 
 

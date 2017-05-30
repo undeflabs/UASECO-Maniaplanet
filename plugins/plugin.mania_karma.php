@@ -75,7 +75,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2017-05-24');
+		$this->setBuild('2017-05-30');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -2510,7 +2510,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function sendConnectionStatus ($status = true, $gamemode) {
+	public function sendConnectionStatus ($status, $gamemode) {
 		global $aseco;
 
 		$xml = '<manialink id="'. $this->config['manialink_id'] .'06" name="ConnectionStatus" version="3">';
@@ -2571,7 +2571,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function sendLoadingIndicator ($status = true, $gamemode) {
+	public function sendLoadingIndicator ($status, $gamemode) {
 		global $aseco;
 
 		// Bail out on unsupported Gamemodes
@@ -3558,15 +3558,15 @@ EOL;
 
 		// If there no players, bail out immediately
 		if (count($aseco->server->players->player_list) == 0) {
-			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
-			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
+//			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
+//			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 			return;
 		}
 
 		// Bail out if map id was not found
 		if ($map->id === 0) {
-			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
-			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
+//			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
+//			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 			return;
 		}
 
