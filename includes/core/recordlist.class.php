@@ -45,7 +45,7 @@ class RecordList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages a list of records, add records to the list and remove them.');
 
@@ -159,7 +159,7 @@ class RecordList extends BaseClass {
 		}
 
 		// if the given object is a record
-		if (get_class($record) == 'Record') {
+		if (isset($record) && is_object($record) && $record instanceof Record) {
 
 			// if records are getting too much, drop the last from the list
 			if (count($this->record_list) >= $this->max_records) {

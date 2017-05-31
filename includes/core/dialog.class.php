@@ -47,7 +47,7 @@ class Dialog extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-12');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2017 by undef.de');
 		$this->setDescription(new Message('class.dialog', 'dialog_description'));
 
@@ -103,7 +103,7 @@ class Dialog extends BaseClass {
 	public function send ($player, $hideclick = true) {
 		global $aseco;
 
-		if (get_class($player) == 'Player' && $player->id > 0) {
+		if (isset($player) && is_object($player) && $player instanceof Player && $player->id > 0) {
 
 			// Concat all the elements
 			$xml = str_replace(

@@ -40,6 +40,7 @@ class Map extends BaseClass {
 	public $filename;
 	public $name;
 	public $name_stripped;
+	public $name_slug;
 	public $comment;
 
 	public $author;
@@ -91,8 +92,8 @@ class Map extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores information about a Map on the dedicated server.');
 
@@ -102,6 +103,7 @@ class Map extends BaseClass {
 			$this->filename		= $filename;
 			$this->name		= trim($aseco->stripNewlines($aseco->stripBOM($gbx->name)));
 			$this->name_stripped	= $aseco->stripStyles($this->name, true);
+			$this->name_slug	= $aseco->slugify($this->name_stripped);
 			$this->comment		= $gbx->comment;
 
 			if ($gbx->authorLogin) {
@@ -115,7 +117,7 @@ class Map extends BaseClass {
 			}
 
 			$this->author_nickname	= trim($gbx->authorNick);
-			if  (empty($this->author_zone) && $this->author == 'Nadeo') {
+			if (empty($this->author_zone) && $this->author == 'Nadeo') {
 				$this->author_zone	= array('Europe', 'France', 'Île-de-France', 'Paris');
 				$this->author_continent	= 'EU';
 				$this->author_nation	= 'FRA';
@@ -182,6 +184,7 @@ class Map extends BaseClass {
 			$this->filename		= $filename;
 			$this->name		= 'Unknown';
 			$this->name_stripped	= 'Unknown';
+			$this->name_slug	= 'Unknown';
 			$this->comment		= '';
 
 			$this->author		= 'Unknown';

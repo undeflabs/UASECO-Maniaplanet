@@ -56,8 +56,8 @@ abstract class Plugin extends BaseClass {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-28');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure for all plugins, extend this class to build your own one.');
 	}
@@ -304,10 +304,7 @@ abstract class Plugin extends BaseClass {
 	*/
 
 	public function storePlayerData ($player, $key, $data) {
-		if (isset($player) && get_class($player) != 'Player') {
-			return;
-		}
-		if (!empty($key)) {
+		if (isset($player) && is_object($player) && $player instanceof Player && !empty($key)) {
 			$player->data[$this->getClassname()][$key] = $data;
 		}
 	}
@@ -319,10 +316,7 @@ abstract class Plugin extends BaseClass {
 	*/
 
 	public function getPlayerData ($player, $key) {
-		if (isset($player) && is_object($player) && $player instanceof Player) {
-			return;
-		}
-		if (!empty($key) && isset($player->data[$this->getClassname()][$key])) {
+		if (isset($player) && is_object($player) && $player instanceof Player && !empty($key) && isset($player->data[$this->getClassname()][$key])) {
 			return $player->data[$this->getClassname()][$key];
 		}
 	}
@@ -334,10 +328,7 @@ abstract class Plugin extends BaseClass {
 	*/
 
 	public function removePlayerData ($player, $key) {
-		if (isset($player) && get_class($player) != 'Player') {
-			return;
-		}
-		if (!empty($key) && isset($player->data[$this->getClassname()][$key])) {
+		if (isset($player) && is_object($player) && $player instanceof Player && !empty($key) && isset($player->data[$this->getClassname()][$key])) {
 			unset($player->data[$this->getClassname()][$key]);
 		}
 	}

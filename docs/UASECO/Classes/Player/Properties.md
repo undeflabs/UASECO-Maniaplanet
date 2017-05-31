@@ -13,7 +13,9 @@ Structure of a Player, contains information from `GetPlayerInfo` and `GetDetaile
 | `$player->id`								| 1188							| ID of the Player in the Database
 | `$player->pid`							| 237							| ID of the Player at the dedicated Server
 | `$player->login`							| puennt_ennel						| &nbsp;
-| `$player->nickname`							| $S$W$F90Gιммє$FF0ツl					| &nbsp;
+| `$player->nickname`							| $I$09Fぎтяα¢кєяѕ$AAA|$FFFυηפєғ $W$000'$F00'$FF0'	| &nbsp;
+| `$player->nickname_stripped`						| ぎтяα¢кєяѕ|υηפєғ '''					| &nbsp;
+| `$player->nickname_slug`						| ぎtrackers|undef '''					| &nbsp;
 | `$player->language`							| de							| &nbsp;
 | `$player->avatar`							| Skins/Avatars/my-very-own-avatar.dds			| &nbsp;
 | `$player->clublink`							| http://www.example.com/clublink.xml			| &nbsp;

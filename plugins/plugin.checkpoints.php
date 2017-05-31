@@ -55,8 +55,8 @@ class PluginCheckpoints extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-25');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -642,7 +642,7 @@ class PluginCheckpoints extends Plugin {
 		global $aseco;
 
 		$cp_times = '';
-		if (count($this->checkpoints[$login]->best['cps']) > 0) {
+		if (isset($this->checkpoints[$login]->best['cps']) && count($this->checkpoints[$login]->best['cps']) > 0) {
 			$cp_times = implode(',', $this->checkpoints[$login]->best['cps']);
 		}
 		else {

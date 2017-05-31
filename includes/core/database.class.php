@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2017-05-28
+ * Date:	2017-05-31
  * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -304,7 +304,7 @@ class Database extends mysqli {
 	*/
 
 	public function disconnect () {
-		if (get_class($this) == 'Database' && $this->stat() !== false) {
+		if (isset($this) && is_object($this) && $this instanceof Database && $this->stat() !== false) {
 			$this->close();
 		}
 	}

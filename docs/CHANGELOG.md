@@ -1,3 +1,35 @@
+## [Version 0.9.5](_#Version-0.9.5)
+
+
+
+### General changes
+
+* Optimized again the map name handling: a map with a name like `ÐĘЯЯ@   MiNi LoL   21-5-17` results into a filename like `derra-mini-lol-21-5-17_121209.Map.gbx` instead of `de-mini-lol-21-5-17_121209.Map.gbx` (thanks askuri)
+* Added `$map->name_slug` to class `includes/core/map.class.php` which holds the slugified version of a map name
+* Added `$player->nickname_stripped` to class `includes/core/player.class.php` which holds the format and color stripped version of a nickname
+* Added `$player->nickname_slug` to class `includes/core/player.class.php` which holds the slugified version of a nickname
+
+
+### Changes at config files
+
+* none
+
+
+### Bug fixes
+
+* [PHP Notice] Undefined property: stdClass::$best on line 645 in file `plugins/plugin.checkpoints.php` (thanks phantom)
+* Fixed always return in `includes/core/plugin.class.php` in the method `getPlayerData()` which causes "You need to finish this map at least 1 time before being able to vote" in ManiaKarma and maybe more (thanks endbase for the research)
+
+
+
+
+
+***
+
+
+
+
+
 ## [Version 0.9.4](_#Version-0.9.4)
 
 
@@ -38,9 +70,9 @@
 * Fixed wrong ordering in the `RoundScore` Widget from `plugin.records_eyepiece.php`, only tested with `Rounds.Script.txt` (thanks elie520, speedychris)
 * Fixed not updating `LiveRanking` Widget from `plugin.records_eyepiece.php` (thanks speedychris)
 * Fixed in a multilap map only the first run will receive a record in `plugin.modescript_handler.php` (thanks speedychris)
-* Fixed [PHP Warning] explode() expects parameter 2 to be string, array given on line 103 in file `[...]plugins/plugin.round_points.php` (thanks speedychris)
-* Fixed [PHP Warning] array_map(): Argument #2 should be an array on line 103 in file `[...]plugins/plugin.round_points.php` (thanks speedychris)
-* Fixed [PHP Notice] Undefined index: truffeltje on line 2339 in file `[...]plugins/plugin.mania_karma.php` (thanks phantom)
+* Fixed [PHP Warning] explode() expects parameter 2 to be string, array given on line 103 in file `plugins/plugin.round_points.php` (thanks speedychris)
+* Fixed [PHP Warning] array_map(): Argument #2 should be an array on line 103 in file `plugins/plugin.round_points.php` (thanks speedychris)
+* Fixed [PHP Notice] Undefined index: truffeltje on line 2339 in file `plugins/plugin.mania_karma.php` (thanks phantom)
 * Fixed wrong firing of `onPlayerFinish` in `Rounds.Script.txt` on a multilap map before all required laps has been driven
 * Fixed showing and loading the wrong next map after changing the next map with "/admin replay" or by jukeboxing a map (thanks elie520, phantom)
 * Fixed ModeScript changes require to change the map twice to take account (thanks maxi031, elie520)
@@ -48,18 +80,18 @@
 * Fixed `/admin erase ID` does not change the MapList too (thanks phantom)
 * Fixed the clickbuttons `/admin panel list` (thanks Mysticman, rasmusdk)
 * Fixed ManiaScript parts in `plugin.records_eyepiece.php` which causes Widgets to be displayed only in parts while restarting
-* Fixed [PHP Notice] Undefined index: SCALE on line 13999 in file `[...]plugins/plugin.records_eyepiece.php` (thanks phantom)
+* Fixed [PHP Notice] Undefined index: SCALE on line 13999 in file `plugins/plugin.records_eyepiece.php` (thanks phantom)
 * Fixed emoji "speech bubble" - which replaces `»` in chat message - was replacing `»` everywhere and not only at the beginning of a chat message, e.g. in map names, nicknames... (thanks reaby)
-* Fixed [PHP Notice] Undefined property: stdClass::$tracking on line 1657 in file `[...]plugins/plugin.dedimania.php` (thanks lyovav)
+* Fixed [PHP Notice] Undefined property: stdClass::$tracking on line 1657 in file `plugins/plugin.dedimania.php` (thanks lyovav)
 * Fixed wrong (old) map size check on `/admin addlocal ID` in `plugins/chat.admin.php`
 * Fixed `/xlist` contains map with all environments on a `TMStadium` Title only dedicated server
 * Fixed and optimized the map list refresh, now the thumbnails of a map is only stored on disk, when the thumbnail not already exists
-* Fixed [PHP Warning] get_class() expects parameter 1 to be object, boolean given on line 322 in file `[...]includes/core/plugin.class.php` (thanks phantom)
+* Fixed [PHP Warning] get_class() expects parameter 1 to be object, boolean given on line 322 in file `includes/core/plugin.class.php` (thanks phantom)
 * Fixed [UASECO Warning] Country::countryToIoc(): Could not map country: Bosnia and Herzegovina (thanks lyovav)
 * Fixed getting the message `Congratulations, you won your NUM. race!` even if you are playing alone (thanks rasmusdk)
 * Fixed wrong ordering of the server rank (players with same average now ordered by `PlayerId`) and optimized the rank calculation, also reduced the required SQL queries to get the results
 * Fixed team colors are wrong in RoundScore from `plugin.records_eyepiece.php` (thanks elie520)
-* Fixed [PHP Notice] Undefined variable: admin on line 4385 in file `[...]plugins/chat.admin.php` with `/admin addlocal {filename}` (thanks Tavernicole)
+* Fixed [PHP Notice] Undefined variable: admin on line 4385 in file `plugins/chat.admin.php` with `/admin addlocal {filename}` (thanks Tavernicole)
 * Fixed Fuel and Water display blinking when time is nearly over in `plugins/plugin.tachometer.php`
 
 
@@ -110,12 +142,12 @@
 * Fixed instant exit from `webrequest.php` after `/admin shutdown` (because of the existing file `worker.suicide`)
 * Reverted `/list` back to the `plugin.rasp_jukebox.php` to enable `/admin remove 1` (thanks Tavernicole)
 * Fixed [UASECO Exception] Error returned: "Value of type INT supplied where type STRING was expected." [-501] at GbxRemote::query() for method "TriggerModeScriptEventArray" with arguments: "/setrpoints 6,5,4,3,2,1,0" (thanks mangoara)
-* Fixed [PHP Notice] iconv(): Detected an illegal character in input string on line 137 in file `[...]/includes/core/helper.class.php` (thanks Phantom)
-* Fixed [PHP Notice] Undefined index: Records on line 1157 in file `[...]plugins/plugin.checkpoints.php` (thanks elie520)
+* Fixed [PHP Notice] iconv(): Detected an illegal character in input string on line 137 in file `/includes/core/helper.class.php` (thanks Phantom)
+* Fixed [PHP Notice] Undefined index: Records on line 1157 in file `plugins/plugin.checkpoints.php` (thanks elie520)
 * Fixed [Plugin] » Can not register chat command "/elist" because callback Method "chat_elist()" of class "PluginRecordsEyepiece" is not callable, ignoring! (thanks ramires)
 * Fixed ManiaScript ERR [30, 69] Persistent storage limit reached. MusicWidget ()::Main() [30, 69], by disable persistent storage
 * Fixed Checkpoint TimeDiffWidget is displaying a time from the map that was loaded before, if you have not already a Personal Best time on the current map (thanks elie520)
-* Fixed [PHP Notice] Trying to get property of non-object on line 767 in file `[...]plugins/plugin.modescript_handler.php` (thanks SSM.Speed...)
+* Fixed [PHP Notice] Trying to get property of non-object on line 767 in file `plugins/plugin.modescript_handler.php` (thanks SSM.Speed...)
 
 
 
@@ -164,16 +196,16 @@ Added the command `/tachometer reload` to `plugins/plugin.tachometer.php`
 
 * Fixed deformated Window from `/admin pay PLAYER AMOUNT` window has been updated to the Manialink version 3
 * Fixed wrong versions check from `/uptodate`
-* Fixed [PHP Notice]: Undefined index: `UI_PROPERTIES` in `[...]/plugins/plugin.modescript_handler.php` on line 918 (thanks Krill)
+* Fixed [PHP Notice]: Undefined index: `UI_PROPERTIES` in `/plugins/plugin.modescript_handler.php` on line 918 (thanks Krill)
 * Fixed hiding/showing of Records-Eyepiece Widgets by pressing `F9` (thanks phantom, elie520)
 * Fixed ManiaScript ERR [171, 95] Out of bounds access at [NUM] at CheckpointTimeDiff ()::Main() [171, 95]
 * Fixed ManiaScript ERR [45, 82] Persistent storage limit reached at Tachometer ()::Main() [45, 82], by disable persistent storage
 * Fixed missing image from `plugin.customize_quit_dialog.php` (server side)
 * Fixed missing images from `plugin.welcome_center.php` (server side)
-* Fixed [PHP Fatal Error] Uncaught Error: Cannot use object of type WebRequestConstruct as array in `[...]/plugins/plugin.mania_karma.php`:3854
+* Fixed [PHP Fatal Error] Uncaught Error: Cannot use object of type WebRequestConstruct as array in `/plugins/plugin.mania_karma.php`:3854
 * Fixed [MusicServer] webrequest->get(): 404 - The given URL could not be found! (thanks MfGLucker)
 * Changed line-endings in `newinstall/uaseco.bat` into DOS format and redirecting errors to `nul`
-* Fixed vote buttons are not able to click in `[...]/plugins/plugin.mania_karma.php`
+* Fixed vote buttons are not able to click in `/plugins/plugin.mania_karma.php`
 * Fixed missing send of `<ui_properties><live_info>` from the file `newinstall/config/modescript_settings.xml` to the dedicated server
 * Fixed the LiveRanking Widget of `plugin.records_eyepiece.php` which does not update after the second run (thanks mixnetwork, orangina, Lutzif3r)
 
@@ -208,19 +240,19 @@ Added the command `/tachometer reload` to `plugins/plugin.tachometer.php`
 
 ### Bug fixes
 
-* [UASECO Exception] Error returned: "" [0] at GbxRemote::query() for method "SendDisplayManialinkPageToLogin" with arguments: [...] (thanks lyovav)
-* [PHP Notice] Undefined property: stdClass::$best on line 533 in file `[...]/plugin.checkpoints.php` (thanks lyovav)
-* [PHP Notice] Undefined property: stdClass::$tracking on line 1657 in file `[...]/plugins/plugin.dedimania.php` (thanks lyovav)
-* [PHP Notice] Undefined offset: 1 on line 412 in file `[...]/includes/core/window.class.php` (thanks lyovav)
-* [PHP Notice] Undefined offset: 2 on line 412 in file `[...]/includes/core/window.class.php` (thanks lyovav)
-* [PHP Notice] Undefined index: planets on line 125 in file `[...]/includes/core/locales.class.php`
-* [PHP Warning] Invalid argument supplied for foreach() on line 180 in file `[...]/includes/core/message.class.php`
+* [UASECO Exception] Error returned: "" [0] at GbxRemote::query() for method "SendDisplayManialinkPageToLogin" with arguments:  (thanks lyovav)
+* [PHP Notice] Undefined property: stdClass::$best on line 533 in file `/plugin.checkpoints.php` (thanks lyovav)
+* [PHP Notice] Undefined property: stdClass::$tracking on line 1657 in file `/plugins/plugin.dedimania.php` (thanks lyovav)
+* [PHP Notice] Undefined offset: 1 on line 412 in file `/includes/core/window.class.php` (thanks lyovav)
+* [PHP Notice] Undefined offset: 2 on line 412 in file `/includes/core/window.class.php` (thanks lyovav)
+* [PHP Notice] Undefined index: planets on line 125 in file `/includes/core/locales.class.php`
+* [PHP Warning] Invalid argument supplied for foreach() on line 180 in file `/includes/core/message.class.php`
 * [UASECO Warning] Country::countryToIoc(): Could not map country: South Korea: Renamed `Korea` to `South Korea` in `includes/core/country.class.php` (thanks lyovav)
-* Syntax error: `EOF in backquote substitution`, `Error in command substitution` or `newline unexpected (expecting word)` in `[...]includes/core/webrequest.class.php` (thanks lyovav)
-* [PHP Warning] file_get_contents(): failed to open stream: Connection timed out on line 156 in file `[...]/includes/core/webrequest.class.php` (thanks Tavernicole)
-* [PHP Notice] Undefined variable: `http_response_header` on line 159 in file `[...]/includes/core/webrequest.class.php` (thanks Tavernicole)
-* [PHP Warning] Invalid argument supplied for `foreach()` on line 159 in file `[...]/includes/core/webrequest.class.php` (thanks Tavernicole)
-* [PHP Notice] Undefined offset: `1` on line 534 in file `[...]/includes/core/webrequest.class.php` (thanks Tavernicole)
+* Syntax error: `EOF in backquote substitution`, `Error in command substitution` or `newline unexpected (expecting word)` in `includes/core/webrequest.class.php` (thanks lyovav)
+* [PHP Warning] file_get_contents(): failed to open stream: Connection timed out on line 156 in file `/includes/core/webrequest.class.php` (thanks Tavernicole)
+* [PHP Notice] Undefined variable: `http_response_header` on line 159 in file `/includes/core/webrequest.class.php` (thanks Tavernicole)
+* [PHP Warning] Invalid argument supplied for `foreach()` on line 159 in file `/includes/core/webrequest.class.php` (thanks Tavernicole)
+* [PHP Notice] Undefined offset: `1` on line 534 in file `/includes/core/webrequest.class.php` (thanks Tavernicole)
 
 
 

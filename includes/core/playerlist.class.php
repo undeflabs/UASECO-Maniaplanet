@@ -49,7 +49,7 @@ class PlayerList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-27');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -89,7 +89,7 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function addPlayer ($player) {
-		if (get_class($player) == 'Player' && $player->login != '') {
+		if (isset($player) && is_object($player) && $player instanceof Player && $player->login != '') {
 
 			// Check for existing Player, otherwise insert into Database
 			$this->checkDatabase($player);

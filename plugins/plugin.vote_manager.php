@@ -48,7 +48,7 @@ class PluginVoteManager extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-16');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
@@ -264,12 +264,14 @@ class PluginVoteManager extends Plugin {
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ($answer['Action'] == 'Vote') {
-			if ($answer['Value'] == 'Yes') {
-				$aseco->releaseChatCommand('/yes', $login);
-			}
-			else if ($answer['Value'] == 'No') {
-				$aseco->releaseChatCommand('/no', $login);
+		if ($this->config['RunningVote']['Active'] == true) {
+			if ($answer['Action'] == 'Vote') {
+				if ($answer['Value'] == 'Yes') {
+					$this->handleVote($login, 'Yes');
+				}
+				else if ($answer['Value'] == 'No') {
+					$this->handleVote($login, 'No');
+				}
 			}
 		}
 	}
@@ -445,9 +447,9 @@ class PluginVoteManager extends Plugin {
 				// Cleanup ended vote
 				$this->config['RunningVote'] = $this->cleanupCurrentVote();
 
-				// Hide all Widgets from all Players
-				$xml = '<manialink id="VoteManagerWidget"></manialink>';
-				$aseco->sendManialink($xml, false, 0, false);
+//				// Hide all Widgets from all Players
+//				$xml = '<manialink id="VoteManagerWidget"></manialink>';
+//				$aseco->sendManialink($xml, false, 0, false);
 			}
 		}
 	}
@@ -736,11 +738,11 @@ class PluginVoteManager extends Plugin {
 		// Icon and Title
 		$xml .= '<quad pos="0 0" z-index="0.01" size="104.75 4" bgcolor="55556699" bgcolorfocus="555566BB" id="VoteManagerWidgetTitle" ScriptEvents="1"/>';
 		$xml .= '<quad pos="1 -0.5" z-index="0.02" size="2.75 2.75" style="'. $this->config['WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
-		$xml .= '<label pos="5 -0.9" z-index="0.02" size="188.5 5" class="labels" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="'. $this->config['WIDGET'][0]['TITLE'][0] .'"/>';
+		$xml .= '<label pos="5 -0.9" z-index="0.02" size="100.75 2.5" class="labels" textsize="1" scale="0.9" textcolor="FFFFFFFF" text="'. $this->config['WIDGET'][0]['TITLE'][0] .'"/>';
 
 		// BEGIN: Question
 		$xml .= '<frame pos="0 -5.625" z-index="0.02">';
-		$xml .= '<label pos="52.5 0" z-index="0.03" size="125 4.3125" class="labels" halign="center" textsize="2" text="$S%USERNAME%$Z%QUESTION%"/>';
+		$xml .= '<label pos="52.375 0" z-index="0.03" size="100.75 4.3125" class="labels" halign="center" textsize="2" text="$S%USERNAME%$Z%QUESTION%"/>';
 		$xml .= '</frame>';
 		// END: Question
 
@@ -814,7 +816,7 @@ $maniascript = <<<EOL
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
-Void MarkPlayer (Text _Login, Text _Vote) {
+Void StorePlayerVote (Text _Login, Text _Vote) {
 	foreach (Player in Players) {
 		if (Player.User.Login == _Login) {
 			declare Text VoteManager_CurrentVote for Player = "None";
@@ -855,12 +857,6 @@ main () {
 			continue;
 		}
 
-		if (InputPlayer.Login == InitiatorLogin && QuadMarkerThumbUp.Visible != True) {
-			MarkPlayer(InputPlayer.Login, "Yes");
-			QuadMarkerThumbUp.Visible = True;
-			QuadMarkerThumbDown.Visible = False;
-		}
-
 		if (MoveWindow == True) {
 			FrameVoteManager.RelativePosition_V3.X = (MouseDistanceX + MouseX);
 			FrameVoteManager.RelativePosition_V3.Y = (MouseDistanceY + MouseY);
@@ -893,6 +889,12 @@ main () {
 			LabelCountdown.Value = TextLib::Compose(MessageCount, TextLib::ToText(Countdown));
 		}
 
+		if (InputPlayer.Login == InitiatorLogin && QuadMarkerThumbUp.Visible != True) {
+			StorePlayerVote(InputPlayer.Login, "Yes");
+			QuadMarkerThumbUp.Visible = True;
+			QuadMarkerThumbDown.Visible = False;
+		}
+
 		// Throttling to work only on every "RefreshInterval"
 		if (CurrentTime > RefreshTime) {
 			// Reset RefreshTime
@@ -910,6 +912,7 @@ main () {
 				else if (VoteManager_CurrentVote == "No") {
 					VotesNo += 1.0;
 				}
+log(Player.Login ^" -> "^ VoteManager_CurrentVote);
 			}
 			VotesTotal = VotesYes + VotesNo;
 			if (VotesTotal == 0.0) {
@@ -939,13 +942,13 @@ main () {
 					if (InputPlayer.Login != InitiatorLogin) {
 						if (Event.ControlId == "VoteManagerButtonYes") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
-							MarkPlayer(InputPlayer.Login, "Yes");
+							StorePlayerVote(InputPlayer.Login, "Yes");
 							QuadMarkerThumbUp.Visible = True;
 							QuadMarkerThumbDown.Visible = False;
 						}
 						else if (Event.ControlId == "VoteManagerButtonNo") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
-							MarkPlayer(InputPlayer.Login, "No");
+							StorePlayerVote(InputPlayer.Login, "No");
 							QuadMarkerThumbUp.Visible = False;
 							QuadMarkerThumbDown.Visible = True;
 						}
@@ -956,13 +959,13 @@ main () {
 					if (InputPlayer.Login != InitiatorLogin) {
 						if (Event.KeyName == "F5") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
-							MarkPlayer(InputPlayer.Login, "Yes");
+							StorePlayerVote(InputPlayer.Login, "Yes");
 							QuadMarkerThumbUp.Visible = True;
 							QuadMarkerThumbDown.Visible = False;
 						}
 						else if (Event.KeyName == "F6") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
-							MarkPlayer(InputPlayer.Login, "No");
+							StorePlayerVote(InputPlayer.Login, "No");
 							QuadMarkerThumbUp.Visible = False;
 							QuadMarkerThumbDown.Visible = True;
 						}
@@ -1070,11 +1073,11 @@ EOL;
 		global $aseco;
 
 		if ( ($this->config['RunningVote']['Active'] == true) && ($this->config['RunningVote']['Countdown'] > 0) ) {
-//			// Do not allow to change the own started vote
-//			if ($this->config['RunningVote']['StartedFrom']['Login'] == $login) {
-//				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
-//				return;
-//			}
+			// Do not allow to change the own started vote
+			if ($this->config['RunningVote']['StartedFrom']['Login'] == $login) {
+				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
+				return;
+			}
 
 			// Check if Player have already voted before
 			$not_voted = (($type == 'Yes') ? 'No' : 'Yes');

@@ -43,8 +43,8 @@
 
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
-	define('UASECO_VERSION',		'0.9.4');
-	define('UASECO_BUILD',			'2017-05-30');
+	define('UASECO_VERSION',		'0.9.5');
+	define('UASECO_BUILD',			'2017-05-31');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -149,6 +149,7 @@ class UASECO extends Helper {
 	public $restarting;					// restarting map (true or false)
 	public $changing_to_gamemode;
 	public $current_status;					// server status changes
+	public $characters;
 
 	public $environments = array(
 		'Canyon',
@@ -269,6 +270,42 @@ class UASECO extends Helper {
 			$this->console('[PHP] » Please enable the required PHP extensions and try again!');
 			die();
 		}
+
+		// Extended characters list from askuri: https://forum.maniaplanet.com/viewtopic.php?p=266201#p266201
+		$this->characters = array(
+			'a'	=> explode(' ', '@ 4 À Á Â Ã Ä Å ª à á â ã ä å ƛ Ǎ ǎ Ǟ ǟ Ǻ ǻ Ā ā Ă ă Ą ą А Д а д Ѧ ѧ ג Ά Α Δ Λ ά α λ'),
+			'b'	=> explode(' ', 'Þ ß þ ƀ Б В Ъ Ь в ь ъ ѣ Ѣ Β β ϐ'),
+			'c'	=> explode(' ', '¢ © Ç ç Ć ć Ĉ ĉ Ċ ċ Č č С с Ҁ ҁ Ҫ ҫ ζ ς'),
+			'd'	=> explode(' ', 'Ð ð Ď ď Đ đ δ の פ'),
+			'e'	=> explode(' ', 'È Ê É Ë è é ê ë Ə Ē ē Ĕ ĕ Ė ė Ę ę Ě ě Ё Є Е е ё є Ҽ ҽ Ҿ ҿ Έ Ε Ξ Σ έ ε ξ ミ ɛ ϵ'),
+			'f'	=> explode(' ', 'Ƒ ƒ Ŧ Ғ ғ'),
+			'g'	=> explode(' ', 'Ǥ Ǧ ǥ ǧ ǵ Ĝ ĝ Ğ ğ Ġ ġ Ģ ģ'),
+			'h'	=> explode(' ', 'Ĥ ĥ Ħ ħ Н Ч н ч ђ ћ Ң ң Ҥ ҥ Һ һ Ӈ ӈ Ή Η'),
+			'i'	=> explode(' ', 'Ì Í Î Ï ì í î ï Ǐ ǐ ǰ Ĩ ĩ Ī ī Ĭ ĭ Į į İ ı ĺ ļ ľ ŀ ł І Ї ї і ׀ Ί ΐ Ι Ϊ ί ι ϊ エ エ'),
+			'j'	=> explode(' ', 'ǰ ĵ Ĵ Ј ј'),
+			'k'	=> explode(' ', 'Ǩ ǩ ĸ ķ Ķ Ќ К к ќ Қ қ Ҝ ҝ Ҟ ҟ Ҡ ҡ Ӄ ӄ Κ κ'),
+			'l'	=> explode(' ', 'Ĺ ĺ Ļ ļ Ľ ľ Ŀ ŀ Ł ł І ׀ し じ ム レ'),
+			'm'	=> explode(' ', 'М м Μ'),
+			'n'	=> explode(' ', 'Ñ ñ Ń ń Ņ ņ Ň ň ŉ Ŋ ŋ Й И Л П и й л п ה ח מ ת Ν ή η'),
+			'o'	=> explode(' ', 'Ò Ó Ô Õ Ö Ø ð ò ó ô õ ö ø Ɵ Ơ ơ Ǒ ǒ ǫ Ǫ Ǭ ǭ Ǿ ǿ Ō ō Ŏ ŏ Ő ő Ф О о Ѳ ѳ Ѻ ѻ ט ס Ό Ώ Θ Ο Φ Ω θ ο σ φ ό ϕ 〇 °'),
+			'p'	=> explode(' ', 'Þ þ Р р ק Ρ ρ ア ァ ヤ ャ'),
+			'q'	=> explode(' ', 'Ǫ ǫ Ǭ ǭ'),
+			'r'	=> explode(' ', '® Ŕ ŕ Ŗ ŗ Ř ř Ѓ Г Я г я ѓ Γ'),
+			's'	=> explode(' ', '§ Ś ś Ŝ ŝ Ş ş Š š Ѕ ѕ ς'),
+			't'	=> explode(' ', 'Ɨ ƚ ƫ Ʈ ł Ţ ţ Ť ť ŧ Т т Ҭ ҭ ד Τ τ て 〒 〶 ィ イ'),
+			'u'	=> explode(' ', 'Ù Ú Û Ü ù ú û ü ý Ư ư Ǔ ǔ Ǖ ǖ Ǘ ǘ Ǚ ǚ ǜ Ǜ Ĳ Ũ ũ Ū ū Ŭ ŭ Ů ů Ű ű Ų ų Џ Ц ц ט ΰ μ υ ϋ ύ ひ び ぴ'),
+			'v'	=> explode(' ', 'Ѵ ѵ Ѷ ѷ ν'),
+			'w'	=> explode(' ', 'Ŵ ŵ Ш Щ ш щ Ѡ ѡ Ѽ ѽ Ѿ ѿ ω ώ ϖ'),
+			'x'	=> explode(' ', '× æ ǣ ǽ Ж Х ж х Җ җ Ҳ ҳ Ӂ ӂ Χ χ メ'),
+			'y'	=> explode(' ', '¥ Ý ÿ Ŷ ŷ Ÿ Ў У у ў Ү ү Ұ ұ ע ץ Ύ Ϋ γ ϒ ϓ ϔ'),
+			'z'	=> explode(' ', 'Ƶ ƶ Ʒ Ǯ ǯ Ź ź Ż ż Ž ž Ζ'),
+			'0'	=> explode(' ', 'º ʘ'),
+			'1'	=> explode(' ', '¹'),
+			'2'	=> explode(' ', '²'),
+			'3'	=> explode(' ', '³ Ʒ Ǯ ǯ З Э з Ѯ ѯ Ҙ ҙ ɝ ɜ ヨ ョ ʒ ʓ ϶'),
+			'4'	=> explode(' ', 'Ч ч'),
+			'6'	=> explode(' ', 'б'),
+		);
 	}
 
 	/*

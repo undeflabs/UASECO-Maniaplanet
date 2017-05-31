@@ -12,9 +12,10 @@ Stores information about a Map on the dedicated server.
 |-----------------------------------------------------------------------|---------------
 | `$map->id`								| 377
 | `$map->uid`								| g6BQJO4wlyolDbhsLvau7R7g7Ml
-| `$map->filename`							| MX/Hands on_ The Colors of _CSb__50376.Map.gbx
-| `$map->name`								| $S$FFFHands on: $555The Colors of $FFF»$FA0CSb$FFF¹
-| `$map->name_stripped`							| Hands on: The Colors of »CSb¹
+| `$map->filename`							| MX/derra-mini-lol-16-5-17_121280.Map.gbx
+| `$map->name`								| $c00$o$w$s$i$fffÐĘЯЯ@  $ff MiNi LoL $8  16-5-17
+| `$map->name_stripped`							| ÐĘЯЯ@   MiNi LoL   16-5-17
+| `$map->name_slug`							| derra   MiNi LoL   16-5-17
 | `$map->comment`							| This is my first dedicated map for the $L\[http://csb1.sbone.fr/]CSb¹ Team$L, enjoy it!
 | `$map->author`							| undef.de
 | `$map->author_nickname`						| $I$09Fぎтяα¢кєяѕ$AAA\|$FFFυηפєғ

@@ -45,7 +45,7 @@ class WindowList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('class.window', 'windowlist_description'));
 
@@ -189,7 +189,7 @@ class WindowList extends BaseClass {
 	public function send ($window, $player, $timeout = 0, $hideclick = false) {
 		global $aseco;
 
-		if (get_class($player) == 'Player' && $player->id > 0) {
+		if (isset($player) && is_object($player) && $player instanceof Player && $player->id > 0) {
 
 			// Make sure there are haligns for inner columns
 			if (count($window->settings['halign']) == 0) {

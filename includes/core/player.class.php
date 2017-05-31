@@ -40,6 +40,8 @@ class Player extends BaseClass {
 	public $pid;			// Dedicated Id
 	public $login;
 	public $nickname;
+	public $nickname_stripped;
+	public $nickname_slug;
 	public $language;
 	public $avatar;
 	public $clublink;
@@ -129,7 +131,7 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-28');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -138,6 +140,8 @@ class Player extends BaseClass {
 			$this->pid			= $data['PlayerId'];
 			$this->login			= $data['Login'];
 			$this->nickname			= $data['NickName'];
+			$this->nickname_stripped	= $aseco->stripStyles($this->nickname, true);
+			$this->nickname_slug		= $aseco->slugify($this->nickname_stripped);
 			$this->language			= $data['Language'];
 			$this->avatar			= $data['Avatar']['FileName'];
 			$this->clublink			= $data['ClubLink'];
@@ -198,6 +202,8 @@ class Player extends BaseClass {
 			$this->pid			= 0;
 			$this->login			= false;
 			$this->nickname			= 'Unknown';
+			$this->nickname_stripped	= 'Unknown';
+			$this->nickname_slug		= 'Unknown';
 			$this->language			= '';
 			$this->avatar			= '';
 			$this->clublink			= '';

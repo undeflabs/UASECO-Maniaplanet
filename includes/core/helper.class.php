@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-27');
+		$this->setBuild('2017-05-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -123,22 +123,41 @@ class Helper extends BaseClass {
 	 * "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöùúûüýÿ" will be changed to "AAAAAEAAAECEEEEIIIIDNOOOOOEUUUUEYssaaaaaeaaaeceeeeiiiidnoooooeuuuueyy"
 	 */
 	public function slugify ($string, $delimiter = '-') {
+
+		// Remove unwanted
+		$string = trim(
+			$this->stripStyles(
+				$this->stripNewlines(
+					$this->stripBOM($string)
+				),
+				true
+			)
+		);
+
+		// Perform our custom character list first
+		$translated = '';
+		foreach (preg_split('//u', $string) as $needle) {
+			$found = false;
+			foreach ($this->characters as $replacement => $crazychars) {
+				if (in_array($needle, $crazychars)) {
+					$translated .= $replacement;
+					$found = true;
+				}
+			}
+			if ($found == false) {
+				$translated .= $needle;
+			}
+		}
+		$string = $translated;
+
+		// Lets iconv() do his thing to find more/the rest
 		return strtolower(
 			trim(
 				preg_replace('/[\s-]+/', $delimiter,
 					preg_replace('/[^A-Za-z0-9-]+/', $delimiter,
 						preg_replace('/[&]/', 'and',
 							preg_replace('/[\']/', '',
-								@iconv('UTF-8', 'ASCII//TRANSLIT',
-									trim(
-										$this->stripStyles(
-											$this->stripNewlines(
-												$this->stripBOM($string)
-											),
-											true
-										)
-									)
-								)
+								@iconv('UTF-8', 'ASCII//TRANSLIT', $string)
 							)
 						)
 					)
