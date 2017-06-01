@@ -49,7 +49,7 @@ class PlayerList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-31');
+		$this->setBuild('2017-06-01');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -516,7 +516,6 @@ class PlayerList extends BaseClass {
 				}
 				sort($map_ids, SORT_NUMERIC);
 
-
 				$data = array();
 				$query = "
 				SELECT
@@ -537,9 +536,18 @@ class PlayerList extends BaseClass {
 					$res->free_result();
 				}
 				foreach ($data as $map_id => $player_ids) {
+					$rank = 0;
 					foreach ($player_ids as $pid) {
 						if (isset($players[$pid])) {
-							$players[$pid]['sum'] += count($data[$map_id]);
+							$count = 1;
+							foreach ($data[$map_id] as $ply_pid) {
+								if ($pid == $ply_pid) {
+									$rank = $count;
+									break;
+								}
+								$count += 1;
+							}
+							$players[$pid]['sum'] += $rank;
 							$players[$pid]['count'] ++;
 						}
 					}
@@ -555,6 +563,7 @@ class PlayerList extends BaseClass {
 				}
 				$query .= implode(',', $entries);
 				unset($entries);
+
 
 				// Check for size and warn
 				if (strlen($query) >= $aseco->db->settings['max_allowed_packet']) {

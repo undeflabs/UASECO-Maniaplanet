@@ -4,6 +4,7 @@
 
 ### General changes
 
+* Requires a `Maniaplanet Dedicated Server` build `2017-05-31_23_00` or higher
 * Optimized again the map name handling: a map with a name like `ÐĘЯЯ@   MiNi LoL   21-5-17` results into a filename like `derra-mini-lol-21-5-17_121209.Map.gbx` instead of `de-mini-lol-21-5-17_121209.Map.gbx` (thanks askuri)
 * Added `$map->name_slug` to class `includes/core/map.class.php` which holds the slugified version of a map name
 * Added `$player->nickname_stripped` to class `includes/core/player.class.php` which holds the format and color stripped version of a nickname
@@ -17,8 +18,9 @@
 
 ### Bug fixes
 
-* [PHP Notice] Undefined property: stdClass::$best on line 645 in file `plugins/plugin.checkpoints.php` (thanks phantom)
+* Fixed [PHP Notice] Undefined property: stdClass::$best on line 645 in file `plugins/plugin.checkpoints.php` (thanks phantom)
 * Fixed always return in `includes/core/plugin.class.php` in the method `getPlayerData()` which causes "You need to finish this map at least 1 time before being able to vote" in ManiaKarma and maybe more (thanks endbase for the research)
+* Fixed wrong calculation of a player ranking average (thanks rasmusdk)
 
 
 
