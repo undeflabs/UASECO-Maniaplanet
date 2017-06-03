@@ -131,7 +131,7 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-31');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -273,7 +273,7 @@ class Player extends BaseClass {
 	private function _getPlayerRankingById ($id) {
 		global $aseco;
 
-		$rank = 0;
+		$rank = 1;
 		$average = 0;
 		$total = 0;
 
@@ -295,8 +295,8 @@ class Player extends BaseClass {
 					}
 					$rank += 1;
 				}
-				$res->free_result();
 			}
+			$res->free_result();
 		}
 		return array($rank, $total, $average);
 	}

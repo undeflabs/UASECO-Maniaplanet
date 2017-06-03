@@ -7,12 +7,12 @@
 </frame>
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2017-04-18
- * ----------------------------------
+ * Version:	2017-06-03
+ * ==================================
  */
 #Include "AnimLib" as AnimLib
 main() {

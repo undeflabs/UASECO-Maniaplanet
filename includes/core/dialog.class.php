@@ -47,7 +47,7 @@ class Dialog extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-31');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2017 by undef.de');
 		$this->setDescription(new Message('class.dialog', 'dialog_description'));
 
@@ -296,12 +296,12 @@ class Dialog extends BaseClass {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Author:	undef.de
  * Website:	http://www.uaseco.org
  * Class:	dialog.class.php
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void WipeOut (Text ChildId) {
 	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);

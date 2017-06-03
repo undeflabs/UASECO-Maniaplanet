@@ -49,7 +49,7 @@ class PlayerList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-01');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -602,8 +602,8 @@ class PlayerList extends BaseClass {
 								}
 								$rank += 1;
 							}
-							$res->free_result();
 						}
+						$res->free_result();
 					}
 				}
 			}

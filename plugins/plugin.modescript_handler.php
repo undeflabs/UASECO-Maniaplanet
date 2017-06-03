@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.3');
-		$this->setBuild('2017-06-01');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -571,6 +571,7 @@ class PluginModescriptHandler extends Plugin {
 					if ($aseco->server->maps->current->multi_lap === true) {
  						if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 							if ($response['is_endlap'] === true) {
+								$aseco->releaseEvent('onPlayerFinishLine', $response);
 								$this->playerFinish($response);
 							}
 						}
@@ -1229,11 +1230,14 @@ class PluginModescriptHandler extends Plugin {
 		$finish->map		= clone $aseco->server->maps->current;
 		unset($finish->map->mx);	// reduce memory usage
 
-		// Throw prefix 'player finishes' event (checkpoints)
+		// Throw prefix 'player finishes' event
 		$aseco->releaseEvent('onPlayerFinishPrefix', $finish);
 
 		// Throw main 'player finishes' event
 		$aseco->releaseEvent('onPlayerFinish', $finish);
+
+		// Throw posfix 'player finishes' event (checkpoints)
+		$aseco->releaseEvent('onPlayerFinishPostfix', $finish);
 	}
 
 	/*

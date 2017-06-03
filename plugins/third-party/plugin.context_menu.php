@@ -47,7 +47,7 @@ class PluginContextMenu extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-28');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription('A configurable Right-Mouse-Button-Menu (Context-Menu).');
 
@@ -259,12 +259,12 @@ class PluginContextMenu extends Plugin {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	ContextMenu @ plugin.context_menu.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 main () {

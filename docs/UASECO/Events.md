@@ -101,11 +101,15 @@ Event triggered when a Player finished a lap on a multilap Map.
 
 
 ## [onPlayerFinishPrefix ($aseco, $finish)](_#onPlayerFinishPrefix)
-Event triggered when a Player finished the map. Main event for checkpoint handling.
+Event triggered when a Player finished the map, triggered before `onPlayerFinish`.
 
 
 ## [onPlayerFinish ($aseco, $finish)](_#onPlayerFinish)
 Event triggered when a Player finished the map.
+
+
+## [onPlayerFinishPostfix ($aseco, $finish)](_#onPlayerFinishPostfix)
+Event triggered when a Player finished the map, triggered after `onPlayerFinish`.
 
 
 ## [onPlayerRoundFinish ($aseco, $params)](_#onPlayerRoundFinish)

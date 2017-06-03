@@ -87,7 +87,7 @@
 			<message>Information about and download of this UASECO on $L[http://www.UASECO.org]http://www.UASECO.org$L</message>
 			<message>Please do not sound your horn throughout the entire map.</message>
 			<message>When going AFK, please set your character to Spectator mode.</message>
-			<message>Do not use Enter to skip intros, instead use Space & Enter</message>
+			<message>Do not use Enter to skip intros, instead use Space &amp; Enter</message>
 			<message>Check out the UASECO site at $L[http://www.UASECO.org]http://www.UASECO.org$L!</message>
 		</messages>
 	</info_messages>

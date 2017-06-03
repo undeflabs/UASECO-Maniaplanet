@@ -47,9 +47,9 @@ class PluginRecordRelations extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
-		$this->setDescription(new Message('chat.record_relations', 'plugin_description');
+		$this->setDescription(new Message('chat.record_relations', 'plugin_description'));
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 

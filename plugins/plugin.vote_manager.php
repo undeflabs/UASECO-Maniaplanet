@@ -48,7 +48,7 @@ class PluginVoteManager extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-31');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
@@ -807,12 +807,12 @@ class PluginVoteManager extends Plugin {
 $maniascript = <<<EOL
 <script><!--
 /*
- * ----------------------------------
+ * ==================================
  * Function:	Widget @ plugin.vote_manager.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
@@ -889,8 +889,8 @@ main () {
 			LabelCountdown.Value = TextLib::Compose(MessageCount, TextLib::ToText(Countdown));
 		}
 
-		if (InputPlayer.Login == InitiatorLogin && QuadMarkerThumbUp.Visible != True) {
-			StorePlayerVote(InputPlayer.Login, "Yes");
+		if (InputPlayer.User.Login == InitiatorLogin && QuadMarkerThumbUp.Visible != True) {
+			StorePlayerVote(InputPlayer.User.Login, "Yes");
 			QuadMarkerThumbUp.Visible = True;
 			QuadMarkerThumbDown.Visible = False;
 		}
@@ -939,16 +939,16 @@ log(Player.Login ^" -> "^ VoteManager_CurrentVote);
 				}
 				case CMlEvent::Type::MouseClick : {
 					// Prevent the initiator from changing his vote
-					if (InputPlayer.Login != InitiatorLogin) {
+					if (InputPlayer.User.Login != InitiatorLogin) {
 						if (Event.ControlId == "VoteManagerButtonYes") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
-							StorePlayerVote(InputPlayer.Login, "Yes");
+							StorePlayerVote(InputPlayer.User.Login, "Yes");
 							QuadMarkerThumbUp.Visible = True;
 							QuadMarkerThumbDown.Visible = False;
 						}
 						else if (Event.ControlId == "VoteManagerButtonNo") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
-							StorePlayerVote(InputPlayer.Login, "No");
+							StorePlayerVote(InputPlayer.User.Login, "No");
 							QuadMarkerThumbUp.Visible = False;
 							QuadMarkerThumbDown.Visible = True;
 						}
@@ -956,16 +956,16 @@ log(Player.Login ^" -> "^ VoteManager_CurrentVote);
 				}
 				case CMlEvent::Type::KeyPress : {
 					// Prevent the initiator from changing his vote
-					if (InputPlayer.Login != InitiatorLogin) {
+					if (InputPlayer.User.Login != InitiatorLogin) {
 						if (Event.KeyName == "F5") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
-							StorePlayerVote(InputPlayer.Login, "Yes");
+							StorePlayerVote(InputPlayer.User.Login, "Yes");
 							QuadMarkerThumbUp.Visible = True;
 							QuadMarkerThumbDown.Visible = False;
 						}
 						else if (Event.KeyName == "F6") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
-							StorePlayerVote(InputPlayer.Login, "No");
+							StorePlayerVote(InputPlayer.User.Login, "No");
 							QuadMarkerThumbUp.Visible = False;
 							QuadMarkerThumbDown.Visible = True;
 						}

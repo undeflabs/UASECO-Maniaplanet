@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-31');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -67,7 +67,6 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onLoadingMap',			'onLoadingMap');
 		$this->registerEvent('onRestartMap',			'onRestartMap');
-		$this->registerEvent('onBeginRound',			'onBeginRound');
 		$this->registerEvent('onEndMap',			'onEndMap');
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnectPrepare',	'onPlayerDisconnectPrepare');
@@ -76,6 +75,7 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onPlayerCheckpoint',		'onPlayerCheckpoint');
 		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishLap');
 		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
+		$this->registerEvent('onPlayerFinishPostfix',		'onPlayerFinishPostfix');
 		$this->registerEvent('onLocalRecordsLoaded',		'onLocalRecordsLoaded');
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 		$this->registerEvent('onLocalRecord',			'onLocalRecord');
@@ -387,7 +387,7 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onBeginRound ($aseco) {
+	public function onPlayerFinishPostfix ($aseco) {
 		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true && count($this->update_tracking) > 0) {
 			foreach ($this->update_tracking as &$login) {
 				$this->handleCheckpointTracking($login);
@@ -616,7 +616,9 @@ class PluginCheckpoints extends Plugin {
 
 	public function onLocalRecord ($aseco, $finish) {
 		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
-			$this->update_tracking[] = $finish->player->login;
+			if (!in_array($finish->player->login, $this->update_tracking)) {
+				$this->update_tracking[] = $finish->player->login;
+			}
 		}
 	}
 
@@ -628,7 +630,9 @@ class PluginCheckpoints extends Plugin {
 
 	public function onDedimaniaRecord ($aseco, $record) {
 		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true) {
-			$this->update_tracking[] = $record['Login'];
+			if (!in_array($record['Login'], $this->update_tracking)) {
+				$this->update_tracking[] = $record['Login'];
+			}
 		}
 	}
 
@@ -646,10 +650,11 @@ class PluginCheckpoints extends Plugin {
 			$cp_times = implode(',', $this->checkpoints[$login]->best['cps']);
 		}
 		else {
+			$tmp = array();
 			foreach (range(1,$this->totalcps) as $i) {
-				$cp_times .= '0,';
+				$tmp[] = 0;
 			}
-			$cp_times = substr($cp_times, 0, strlen($cp_times)-1);	// strip trailing ','
+			$cp_times = implode(',', $tmp);
 		}
 
 		$colorbar_status	= (($this->config['TIME_DIFF_WIDGET'][0]['ENABLE_COLORBAR'][0] == true) ? 'True' : 'False');
@@ -659,11 +664,11 @@ class PluginCheckpoints extends Plugin {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<time_diff_widget> @ plugin.checkpoints.php
  * Author:	undef.de
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
@@ -765,8 +770,6 @@ main() {
 					CurrentCheckpoint = LastCheckpointCount;
 				}
 			}
-//			log(Now ^" LR: " ^ InputPlayer.Login ^ ": Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ InputPlayer.CurrentNbLaps ^", CP-Times: "^ InputPlayer.CurRace.Checkpoints ^" MultiLap: "^ MultilapMap);
-
 			declare Integer CurrentRaceTime = 0;
 			if (MultilapMap == True) {
 				CurrentRaceTime = InputPlayer.CurCheckpointLapTime;
@@ -774,6 +777,9 @@ main() {
 			else {
 				CurrentRaceTime = InputPlayer.CurCheckpointRaceTime;
 			}
+
+//	log(Now ^" LR: " ^ InputPlayer.User.Login ^" CurrentRaceTime: "^ CurrentRaceTime ^" : Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ InputPlayer.CurrentNbLaps ^", CP-Times: "^ InputPlayer.CurRace.Checkpoints ^" MultiLap: "^ MultilapMap);
+
 
 			if (CurrentRaceTime > 0) {
 				if (CheckpointTimes.existskey(CurrentCheckpoint - 1) && CheckpointTimes[CurrentCheckpoint - 1] != 0) {
@@ -910,11 +916,11 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<count_widget> @ plugin.checkpoints.php
  * Author:	undef.de
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main() {
 	declare CMlFrame Container			<=> (Page.GetFirstChild("Frame_CheckpointCounter") as CMlFrame);
@@ -979,7 +985,7 @@ main() {
 
 		if (CurrentTime > RefreshTime) {
 			foreach (Player in Players) {
-				if (Player.Login != InputPlayer.Login) {
+				if (Player.Login != InputPlayer.User.Login) {
 					continue;
 				}
 
@@ -1107,7 +1113,7 @@ EOL;
 	public function handleCheckpointTracking ($login) {
 		global $aseco;
 
-		// Set personal or default Checkpoint tracking
+		// Get personal or default Checkpoint tracking
 		if ($setup = $this->getCheckpointSettings($login)) {
 			$this->checkpoints[$login]->tracking['local_records'] = $setup['LocalCheckpointTracking'];
 			$this->checkpoints[$login]->tracking['dedimania_records'] = $setup['DedimaniaCheckpointTracking'];

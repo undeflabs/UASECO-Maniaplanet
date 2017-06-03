@@ -9,11 +9,16 @@
 * Added `$map->name_slug` to class `includes/core/map.class.php` which holds the slugified version of a map name
 * Added `$player->nickname_stripped` to class `includes/core/player.class.php` which holds the format and color stripped version of a nickname
 * Added `$player->nickname_slug` to class `includes/core/player.class.php` which holds the slugified version of a nickname
+* ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 update new `InputPlayer.User.Login`
+* Added new event `onPlayerFinishPostfix` which is triggered after `onPlayerFinish`
 
 
 ### Changes at config files
 
-* none
+* Changed the files in `newinstall/config/effect_studio/` to make them XML compatible (thanks aca)
+* Changed `&` to `&amp;` in all `<info_messages><messages>` at `newinstall/config/welcome_center.xml` (thanks aca)
+* Added `newinstall/locales/plugin.info_bar.xml`
+* Added chat command `/infobar reload` in `plugins/plugin.info_bar.php` (suggested by perre.vl)
 
 
 ### Bug fixes
@@ -21,6 +26,11 @@
 * Fixed [PHP Notice] Undefined property: stdClass::$best on line 645 in file `plugins/plugin.checkpoints.php` (thanks phantom)
 * Fixed always return in `includes/core/plugin.class.php` in the method `getPlayerData()` which causes "You need to finish this map at least 1 time before being able to vote" in ManiaKarma and maybe more (thanks endbase for the research)
 * Fixed wrong calculation of a player ranking average (thanks rasmusdk)
+* Fixed missing `)` in `plugins/chat.record_relations.xml` (thanks aca)
+* Fixed [UASECO Exception] Error returned: "" [0] at GbxRemote::query() for method "SendDisplayManialinkPage" (thanks lyovav)
+* Fixed wrong rank counting in a private function `_getPlayerRankingById()` at `includes/core/player.class.php` (thanks rasmusdk)
+* Fixed a mem leak: placed wrong the mem freeing function of a sql resource at `includes/core/player.class.php` and `includes/core/playerlist.class.php` (maybe related to (speedychris report)[https://forum.maniaplanet.com/viewtopic.php?p=286526#p286526])
+* Fixed wrong storage of records in TimeAttack.Script.txt and multilaps map, the last checkpoint (the finishline) has not been stored (thanks speedychris)
 
 
 

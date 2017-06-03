@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.5');
-	define('UASECO_BUILD',			'2017-06-01');
+	define('UASECO_BUILD',			'2017-06-03');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version

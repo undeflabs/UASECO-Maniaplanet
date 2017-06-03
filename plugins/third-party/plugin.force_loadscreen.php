@@ -46,7 +46,7 @@ class PluginForceLoadscreen extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription('Displays randomized images between the Map change.');
 
@@ -127,12 +127,12 @@ class PluginForceLoadscreen extends Plugin {
 $maniascript = <<<EOL
 <script><!--
 /*
- * ----------------------------------
+ * ==================================
  * Function:	Preload @ plugin.force_loadscreen.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 PreloadImage("{$this->next_image_url}");
 --></script>
@@ -192,12 +192,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
 /*
- * ----------------------------------
+ * ==================================
  * Function:	ForceLoadscreen @ plugin.force_loadscreen.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void QuadFadeIn (Text ChildId, Real ParamEndOpacity) {
 	declare CMlQuad Quad <=> (Page.GetFirstChild(ChildId) as CMlQuad);

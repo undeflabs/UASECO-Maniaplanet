@@ -51,7 +51,7 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-18');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -674,12 +674,12 @@ class Window extends BaseClass {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Author:	undef.de
  * Website:	http://www.uaseco.org
  * Class:	window.class.php
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib

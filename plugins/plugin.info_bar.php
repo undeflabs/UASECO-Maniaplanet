@@ -49,9 +49,9 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-13');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
-		$this->setDescription('Displays a multi information bar.');
+		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDonate',			Dependence::REQUIRED,	'1.0.0', null);
@@ -71,6 +71,33 @@ class PluginInfoBar extends Plugin {
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 		$this->registerEvent('onManiaExchangeBestLoaded',	'onManiaExchangeBestLoaded');
 		$this->registerEvent('onModeScriptSettingsChanged',	'onModeScriptSettingsChanged');
+
+		$this->registerChatCommand('infobar',			'chat_infobar',	new Message('plugin.info_bar', 'chat_infobar'),	Player::PLAYERS);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_infobar ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
+		if (strtoupper($chat_parameter) == 'RELOAD') {
+			if ($aseco->isMasterAdmin($player)) {
+				$aseco->console('[InfoBar] MasterAdmin '. $player->login .' reloads the configuration.');
+
+				// Show chat message
+				$msg = new Message('plugin.info_bar', 'message_chat_infobar_reload');
+				$msg->sendChatMessage($player->login);
+
+				$this->onSync($aseco);
+			}
+		}
 	}
 
 	/*
@@ -421,12 +448,12 @@ class PluginInfoBar extends Plugin {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<clock> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 main() {
@@ -502,12 +529,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<gamemode> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main() {
 	while (True) {
@@ -618,12 +645,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<player_count> and <spectator_count> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 main() {
@@ -732,12 +759,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<donation> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "AnimLib" as AnimLib
@@ -872,12 +899,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<current_ranking> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main() {
 	declare CMlLabel LabelCurrentRanking <=> (Page.GetFirstChild("{$this->config['manialinkid']}LabelCurrentRanking") as CMlLabel);
@@ -902,7 +929,7 @@ main() {
 				CurrentPlayerRank += 1;
 
 				// Did the Player already finished the Map?
-				if (Score.User.Login == InputPlayer.Login) {
+				if (Score.User.Login == InputPlayer.User.Login) {
 					if (Score != Null && (Score.BestRace.Time > 0 || Score.Points > 0)) {
 						LabelCurrentRanking.SetText(CurrentPlayerRank ^"/"^ Players.count);
 					}
@@ -971,12 +998,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<best_time> and <last_time> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Text FormatTime (Integer _Time) {
@@ -1016,7 +1043,7 @@ main() {
 			NextUpdate = CurrentTime + 500;
 
 			foreach (Player in Players) {
-				if (Player.Login == InputPlayer.Login) {
+				if (Player.Login == InputPlayer.User.Login) {
 					if (Player.Score != Null) {
 						if (Player.Score.BestRace.Time > 0 && Player.Score.BestRace.Time != LastBestRace) {
 							LastBestRace = Player.Score.BestRace.Time;
@@ -1082,12 +1109,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<personal_best> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Text FormatTime (Integer _Time) {
@@ -1131,7 +1158,7 @@ main() {
 			foreach (Player in Players) {
 				if (Player.Score != Null && Player.Score.BestRace.Time > 0) {
 					// Check for improved PersonalBest of InputPlayer
-					if (Player.Login == InputPlayer.Login && (Player.Score.BestRace.Time < PersonalBestScore || PersonalBestScore == 0)) {
+					if (Player.Login == InputPlayer.User.Login && (Player.Score.BestRace.Time < PersonalBestScore || PersonalBestScore == 0)) {
 						PersonalBestScore = Player.Score.BestRace.Time;
 						LabelPersonalBest.SetText(FormatTime(PersonalBestScore));
 					}
@@ -1208,12 +1235,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<local_record> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Text FormatTime (Integer _Time) {
@@ -1329,12 +1356,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<dedimania_record> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Text FormatTime (Integer _Time) {
@@ -1444,12 +1471,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<mania_exchange> @ plugin.info_bar.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 main() {

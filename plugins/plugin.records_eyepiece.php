@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-05-30');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -6923,8 +6923,8 @@ class PluginRecordsEyepiece extends Plugin {
 			$offset = 5.625;
 			foreach ($list as $item) {
 				$xml .= '<label pos="5.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="4.25 3.1875" halign="right" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $item['rank'] .'."/>';
-				$xml .= '<label pos="14.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.5 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $item[$fieldnames[0]] .'"/>';
-				$xml .= '<label pos="14.75 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="25.5 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $item[$fieldnames[1]] .'"/>';
+				$xml .= '<label pos="14.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.5 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($item[$fieldnames[0]]) .'"/>';
+				$xml .= '<label pos="14.75 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="25.5 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($item[$fieldnames[1]]) .'"/>';
 
 				$line ++;
 
@@ -7289,12 +7289,12 @@ class PluginRecordsEyepiece extends Plugin {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<dedimania_records> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	if (_ScrollOut == True) {
@@ -7458,12 +7458,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<local_records> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	if (_ScrollOut == True) {
@@ -7682,12 +7682,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<live_rankings> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
@@ -8291,12 +8291,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<live_rankings> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	if (_ScrollOut == True) {
@@ -12488,12 +12488,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<spectator_info_widget> (getter) @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare Integer RefreshInterval		= 1000;
@@ -12510,7 +12510,7 @@ main () {
 		if (CurrentTime > RefreshTime) {
 			// https://forum.maniaplanet.com/viewtopic.php?p=228759#p228759
 			if (GUIPlayer != Null) {
-				if (GUIPlayer.Login != InputPlayer.Login) {
+				if (GUIPlayer.Login != InputPlayer.User.Login) {
 					CurrentStatus = ""^ GUIPlayer.Login;
 				}
 				else {
@@ -12522,7 +12522,7 @@ main () {
 			}
 			if (CurrentStatus != PreviousStatus) {
 				PreviousStatus = CurrentStatus;
-				TriggerPageAction("PluginRecordsEyepiece?Action=spectatorUpdate&Spectator="^ InputPlayer.Login ^"&Target="^ CurrentStatus);
+				TriggerPageAction("PluginRecordsEyepiece?Action=spectatorUpdate&Spectator="^ InputPlayer.User.Login ^"&Target="^ CurrentStatus);
 			}
 
 			// Reset RefreshTime
@@ -12555,12 +12555,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<spectator_info_widget> (widget) @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 
@@ -12625,12 +12625,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<multilap_info_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Integer Blink (Text _ChildId, Integer _NextChange) {
@@ -12722,12 +12722,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<warm_up_info_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Frame_WarmUpInfoWidget <=> (Page.GetFirstChild("Frame_WarmUpInfoWidget") as CMlFrame);
@@ -12821,12 +12821,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<donation_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_DonationWidgetAtScore") as CMlFrame);
@@ -12879,12 +12879,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<winning_payout> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_WinningPayoutWidgetAtScore") as CMlFrame);
@@ -12941,12 +12941,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<scoretable_lists> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
@@ -13004,12 +13004,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<map_widget><race> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_MapWidget") as CMlFrame);
@@ -13091,12 +13091,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<map_widget><score> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_MapWidget") as CMlFrame);
@@ -13137,12 +13137,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<clock_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 main () {
@@ -13199,12 +13199,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<toplist_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_ToplistWidget") as CMlFrame);
@@ -13261,12 +13261,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<next_environment_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_NextEnvironmentWidgetAtScore") as CMlFrame);
@@ -13305,12 +13305,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<next_gamemode_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_NextGamemodeWidgetAtScore") as CMlFrame);
@@ -13350,12 +13350,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<visitors_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_VisitorsWidget") as CMlFrame);
@@ -13408,12 +13408,12 @@ EOL;
 $footer .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<maniaexchange_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_ManiaExchangeWidget") as CMlFrame);
@@ -13472,12 +13472,12 @@ EOL;
 $content .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<mapcount_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_MapCountWidget") as CMlFrame);
@@ -13534,12 +13534,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<favorite_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "AnimLib" as AnimLib
@@ -13574,7 +13574,7 @@ main () {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
 				case CMlEvent::Type::MouseClick : {
-					OpenLink("$url" ^ InputPlayer.Login ^"&nickname="^ TextLib::URLEncode(InputPlayer.Name), CMlScript::LinkType::ManialinkBrowser);
+					OpenLink("$url" ^ InputPlayer.User.Login ^"&nickname="^ TextLib::URLEncode(InputPlayer.Name), CMlScript::LinkType::ManialinkBrowser);
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
 			}
@@ -13635,12 +13635,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<music_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	if (_ScrollOut == True) {
@@ -13811,12 +13811,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	<round_score> @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 	if (_ScrollOut == True) {
@@ -13939,12 +13939,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	Window @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Void HideFrame (Text ChildId) {
@@ -14107,12 +14107,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	SubWindow @ plugin.records_eyepiece.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare Boolean RecordsEyepieceSubWindowVisible for UI = True;

@@ -45,7 +45,7 @@ class PluginLazyButtons extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-13');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2012 - 2017 by undef.de');
 		$this->setDescription('A buttons Widget for lazy Players.');
 
@@ -141,12 +141,12 @@ class PluginLazyButtons extends Plugin {
 $xml .= <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	Widget @ plugin.lazy_buttons.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 Void Scrolling(Text ChildId, Boolean Direction) {

@@ -47,7 +47,7 @@ class PluginTachometer extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('reaby');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-30');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays a smart tachometer on the HUD.');
 
@@ -266,12 +266,12 @@ class PluginTachometer extends Plugin {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	Tachmeter @ plugin.tachometer.php
  * Authors:	undef.de, reaby
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib

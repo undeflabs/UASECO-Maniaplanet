@@ -75,7 +75,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2017-05-30');
+		$this->setBuild('2017-06-03');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -1739,12 +1739,12 @@ class PluginManiaKarma extends Plugin {
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	KarmaWidget @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container <=> (Page.GetFirstChild("{$this->config['manialink_id']}03MainFrame") as CMlFrame);
@@ -1899,12 +1899,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	KarmaCupsValue @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container <=> (Page.GetFirstChild("{$this->config['manialink_id']}05MainFrame") as CMlFrame);
@@ -2483,12 +2483,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	PlayerVoteMarker @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare CMlFrame Container <=> (Page.GetFirstChild("{$this->config['manialink_id']}04MainFrame") as CMlFrame);
@@ -2527,12 +2527,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	ConnectionStatus @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare LabelTooltip <=> (Page.GetFirstChild("ManiaKarmaTooltipMessage") as CMlLabel);
@@ -2592,12 +2592,12 @@ EOL;
 $maniascript = <<<EOL
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Function:	LoadingIndicator @ plugin.mania_karma.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * ----------------------------------
+ * ==================================
  */
 main () {
 	declare LabelTooltip <=> (Page.GetFirstChild("ManiaKarmaTooltipMessage") as CMlLabel);

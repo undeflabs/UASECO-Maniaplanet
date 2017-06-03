@@ -1,12 +1,12 @@
 <manialink id="EffectStudioPersonalMedalSound" name="EffectStudioPersonalMedalSound" version="3">
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2017-04-18
- * ----------------------------------
+ * Version:	2017-06-03
+ * ==================================
  */
 Void USleep (Integer _Wait) {
 	declare Integer Start = Now;

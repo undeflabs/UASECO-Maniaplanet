@@ -2,12 +2,12 @@
 <quad pos="-160 90" z-index="20" size="320 180" bgcolor="F00F" hidden="true" opacity="0.5" id="QuadFlash"/>
 <script><!--
  /*
- * ----------------------------------
+ * ==================================
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2017-04-12
- * ----------------------------------
+ * Version:	2017-06-03
+ * ==================================
  */
 Void Flashlight () {
 	declare CMlQuad QuadFlash <=> (Page.GetFirstChild("QuadFlash") as CMlQuad);
