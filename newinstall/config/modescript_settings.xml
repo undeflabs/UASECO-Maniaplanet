@@ -565,5 +565,12 @@
 		<entry>Libs/domino54/UpdateChecker.Script.txt|2015-06-27</entry>
 		<entry>Modes/TrackMania/Doppler.Script.txt|2015-08-29</entry>
 		<entry>Modes/TrackMania/Knockout.Script.txt|2015-06-27</entry>
+		<entry>Modes/TrackMania/Rounds.Script.txt|2017-05-31</entry>
+		<entry>Modes/TrackMania/TimeAttack.Script.txt|2017-05-29</entry>
+		<entry>Modes/TrackMania/Team.Script.txt|2017-05-29</entry>
+		<entry>Modes/TrackMania/Laps.Script.txt|2017-05-30</entry>
+		<entry>Modes/TrackMania/Cup.Script.txt|2017-05-31</entry>
+		<entry>Modes/TrackMania/TeamAttack.Script.txt|2016-04-13</entry>
+		<entry>Modes/TrackMania/Chase.Script.txt|2017-05-26</entry>
 	</scripts>
 </settings>

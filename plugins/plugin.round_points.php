@@ -47,7 +47,7 @@ class PluginRoundPoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-24');
+		$this->setBuild('2017-06-04');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
@@ -55,6 +55,7 @@ class PluginRoundPoints extends Plugin {
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
+		$this->registerEvent('onModeScriptChanged',		'onModeScriptChanged');
 
 		$this->registerChatCommand('setrpoints',	'chat_setrpoints',	'Sets custom Rounds points (see: /setrpoints help)',	Player::ADMINS);
 		$this->registerChatCommand('rpoints',		'chat_rpoints',		'Shows current Rounds points system.',			Player::PLAYERS);
@@ -156,6 +157,16 @@ class PluginRoundPoints extends Plugin {
 				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
 			}
 		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onModeScriptChanged ($aseco, $mode) {
+		$this->onSync($aseco);						// Reload settings
 	}
 
 	/*

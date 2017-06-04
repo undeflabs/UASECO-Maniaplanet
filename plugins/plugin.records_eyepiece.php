@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-06-03');
+		$this->setBuild('2017-06-04');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -76,7 +76,6 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->registerEvent('onPlayerDisconnect',		'onPlayerDisconnect');
 		$this->registerEvent('onPlayerInfoChanged',		'onPlayerInfoChanged');
 		$this->registerEvent('onPlayerRankingUpdated',		'onPlayerRankingUpdated');
-		$this->registerEvent('onPlayerRoundFinish',		'onPlayerRoundFinish');
 		$this->registerEvent('onPlayerFinishPrefix',		'onPlayerFinishPrefix');
 		$this->registerEvent('onPlayerWins',			'onPlayerWins');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
@@ -2004,10 +2003,10 @@ class PluginRecordsEyepiece extends Plugin {
 		$player = $aseco->server->players->player_list[$finish_item->player->login];
 
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true) {
 
 			// Add the Score
-			$this->scores['RoundScore'][$finish_item->score][] = array(
+			$this->scores['RoundScore'][$finish_item->score] = array(
 				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
 				'checkpointid'	=> count($finish_item->checkpoints) - 1,
 				'playerid'	=> $player->pid,
@@ -3732,55 +3731,6 @@ class PluginRecordsEyepiece extends Plugin {
 			// Let the LiveRankings refresh, when a Player drive through one
 			$this->config['States']['LiveRankings']['NeedUpdate']		= true;
 			$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onPlayerRoundFinish ($aseco, $params) {
-
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::CUP || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
-			// Get Player object
-			$player = $aseco->server->players->getPlayerByLogin($params['login']);
-
-			// Add the Score
-//			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
-				$this->scores['RoundScore'][$player->login] = array(
-					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-					'checkpointid'	=> count($params['best_race_checkpoints']),
-					'playerid'	=> $player->pid,
-					'login'		=> $player->login,
-					'nickname'	=> $this->handleSpecialChars($player->nickname),
-					'score'		=> $aseco->formatTime($params['best_race_time']),
-					'score_plain'	=> $params['best_race_time'],
-				);
-//			}
-//			else {
-//				$this->scores['RoundScore'][$player->login][] = array(
-//					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-//					'checkpointid'	=> count($params['best_race_checkpoints']),
-//					'playerid'	=> $player->pid,
-//					'login'		=> $player->login,
-//					'nickname'	=> $this->handleSpecialChars($player->nickname),
-//					'score'		=> $aseco->formatTime($params['best_race_time']),
-//					'score_plain'	=> $params['best_race_time'],
-//				);
-//			}
-
-			// Store personal best round-score for sorting on equal times of more Players
-			if (isset($this->scores['RoundScorePB'][$player->login]) && $this->scores['RoundScorePB'][$player->login] > $params['best_race_time']) {
-				$this->scores['RoundScorePB'][$player->login] = $params['best_race_time'];
-			}
-			else {
-				$this->scores['RoundScorePB'][$player->login] = $params['best_race_time'];
-			}
-
-			// Display the Widget
-			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
 		}
 	}
 
@@ -8412,58 +8362,59 @@ EOL;
 
 			// BEGIN: Sort the times
 			$round_score = array();
+			$round_score = $this->scores['RoundScore'];
 
-			if ($gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::CHASE) {
-				$cps = array();
-				$scores = array();
-				$pids = array();
-				foreach ($this->scores['RoundScore'] as $key => $row) {
-					$cps[$key]	= $row['checkpointid'];
-					$scores[$key]	= $row['score_plain'];
-					$pids[$key]	= $row['playerid'];
-				}
-				unset($key, $row);
-
-				// Sort order: CHECKPOINTID, SCORE and PID
-				array_multisort($cps, SORT_NUMERIC, SORT_DESC, $scores, SORT_NUMERIC, $pids, SORT_NUMERIC, $this->scores['RoundScore']);
-				unset($cps, $scores, $pids);
-
-				foreach ($this->scores['RoundScore'] as $item) {
-					// Merge the score arrays together
-					$round_score[] = $item;
-				}
-				unset($item);
-			}
-			else if ($gamemode == Gameinfo::ROUNDS) {
-				// No need to sort, it is already sorted by ModeScript "Rounds.Script.txt"
-				$round_score = $this->scores['RoundScore'];
-			}
-			else {
-				// Sort all the Scores, look for equal times and sort them with the
-				// personal best from this whole round and pid where required
-				ksort($this->scores['RoundScore']);
-				foreach ($this->scores['RoundScore'] as $item) {
-
-					// Sort only times which was more then once driven
-					if (count($item) > 1) {
-						$scores = array();
-						$pbs = array();
-						$pids = array();
-						foreach ($item as $key => $row) {
-							$scores[$key]	= $row['score_plain'];
-							$pbs[$key]  	= $this->scores['RoundScorePB'][$row['login']];
-							$pids[$key]	= $row['playerid'];
-						}
-						// Sort order: SCORE, PB and PID, like the same way the dedicated server does
-						array_multisort($scores, SORT_NUMERIC, $pbs, SORT_NUMERIC, $pids, SORT_NUMERIC, $item);
-						unset($scores, $pbs, $pids, $row);
-					}
-					// Merge the score arrays together
-					$round_score = array_merge($round_score, $item);
-				}
-				unset($item, $row);
-			}
-			// END: Sort the times
+//			if ($gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::CHASE) {
+//				$cps = array();
+//				$scores = array();
+//				$pids = array();
+//				foreach ($this->scores['RoundScore'] as $key => $row) {
+//					$cps[$key]	= $row['checkpointid'];
+//					$scores[$key]	= $row['score_plain'];
+//					$pids[$key]	= $row['playerid'];
+//				}
+//				unset($key, $row);
+//
+//				// Sort order: CHECKPOINTID, SCORE and PID
+//				array_multisort($cps, SORT_NUMERIC, SORT_DESC, $scores, SORT_NUMERIC, $pids, SORT_NUMERIC, $this->scores['RoundScore']);
+//				unset($cps, $scores, $pids);
+//
+//				foreach ($this->scores['RoundScore'] as $item) {
+//					// Merge the score arrays together
+//					$round_score[] = $item;
+//				}
+//				unset($item);
+//			}
+//			else if ($gamemode == Gameinfo::ROUNDS) {
+//				// No need to sort, it is already sorted by ModeScript "Rounds.Script.txt"
+//				$round_score = $this->scores['RoundScore'];
+//			}
+//			else {
+//				// Sort all the Scores, look for equal times and sort them with the
+//				// personal best from this whole round and pid where required
+//				ksort($this->scores['RoundScore']);
+//				foreach ($this->scores['RoundScore'] as $item) {
+//
+//					// Sort only times which was more then once driven
+//					if (count($item) > 1) {
+//						$scores = array();
+//						$pbs = array();
+//						$pids = array();
+//						foreach ($item as $key => $row) {
+//							$scores[$key]	= $row['score_plain'];
+//							$pbs[$key]  	= $this->scores['RoundScorePB'][$row['login']];
+//							$pids[$key]	= $row['playerid'];
+//						}
+//						// Sort order: SCORE, PB and PID, like the same way the dedicated server does
+//						array_multisort($scores, SORT_NUMERIC, $pbs, SORT_NUMERIC, $pids, SORT_NUMERIC, $item);
+//						unset($scores, $pbs, $pids, $row);
+//					}
+//					// Merge the score arrays together
+//					$round_score = array_merge($round_score, $item);
+//				}
+//				unset($item, $row);
+//			}
+//			// END: Sort the times
 
 //	$aseco->dump('RoundScore', $this->scores['RoundScore'], $round_score);
 

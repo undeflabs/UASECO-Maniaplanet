@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.3');
-		$this->setBuild('2017-06-03');
+		$this->setBuild('2017-06-04');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -585,7 +585,7 @@ class PluginModescriptHandler extends Plugin {
 							else if ($response['is_endrace'] === true && $response['is_endlap'] === true) {
 								$aseco->releaseEvent('onPlayerFinishLap', $response);
 								$aseco->releaseEvent('onPlayerFinishLine', $response);
-							}
+						}
 						}
 					}
 					else {
@@ -1107,13 +1107,13 @@ class PluginModescriptHandler extends Plugin {
 			case 'Maniaplanet.StartServer_Start':
 				// When changing Gamemode force all Plugins to resync
 				if ($aseco->changing_to_gamemode !== false && $params['mode']['updated'] === true) {
-					$aseco->console('[ModescriptHandler] Gamemode change detected, reloading configuration and setup...');
+					$aseco->console('[ModescriptHandler] Gamemode change detected, running "'. $aseco->server->gameinfo->getModeScriptName() .'"...');
 
 					// Refresh server game info
 					$aseco->server->getCurrentGameInfo();
 
-					// Reload settings
-					$this->onSync($aseco, true);
+//					// Reload settings
+//					$this->onSync($aseco, true);
 
 					// Trigger 'onModeScriptChanged' event
 					$aseco->releaseEvent('onModeScriptChanged', $params['mode']['name']);

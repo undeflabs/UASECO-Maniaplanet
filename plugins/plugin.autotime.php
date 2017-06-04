@@ -48,7 +48,7 @@ class PluginAutotime extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-06-04');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.autotime', 'plugin_description'));
 
@@ -166,12 +166,12 @@ class PluginAutotime extends Plugin {
 				);
 				$msg->sendChatMessage();
 
-//				if ($this->config['DISPLAY'][0] == 2) {
-//					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
-//				}
-//				else if ($this->config['DISPLAY'][0] > 0) {
-//					$aseco->sendChatMessage($message);
-//				}
+				if ($this->config['DISPLAY'][0] == 2) {
+					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
+				}
+				else if ($this->config['DISPLAY'][0] > 0) {
+					$aseco->sendChatMessage($message);
+				}
 			}
 		}
 	}

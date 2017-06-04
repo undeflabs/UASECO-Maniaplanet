@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.5');
-	define('UASECO_BUILD',			'2017-06-03');
+	define('UASECO_BUILD',			'2017-06-04');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -429,6 +429,9 @@ class UASECO extends Helper {
 		// Load plugins and register chat commands
 		$this->console('[Plugin] Loading plugins [config/plugins.xml]');
 		$this->loadPlugins();
+
+		// Register own onShutdown() function
+		$this->registerEvent('onShutdown', array($this, 'onShutdown'));
 
 		// Log admin lock message
 		if ($this->settings['lock_password'] != '') {
@@ -2566,6 +2569,20 @@ class UASECO extends Helper {
 		$player->updateInfo($playerinfo);
 
 		$this->releaseEvent('onPlayerInfoChanged', $playerinfo['Login']);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onShutdown ($aseco) {
+
+		// Simulate a "playerDisconnect"
+		foreach ($this->server->players->player_list as $player) {
+			$this->playerDisconnect($player->login, '');
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 * Added `$player->nickname_slug` to class `includes/core/player.class.php` which holds the slugified version of a nickname
 * ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 update new `InputPlayer.User.Login`
 * Added new event `onPlayerFinishPostfix` which is triggered after `onPlayerFinish`
+* The chat command `/admin shutdown` (and `/admin shutdownall`) stores now all player settings into the database
 
 
 ### Changes at config files
@@ -19,6 +20,7 @@
 * Changed `&` to `&amp;` in all `<info_messages><messages>` at `newinstall/config/welcome_center.xml` (thanks aca)
 * Added `newinstall/locales/plugin.info_bar.xml`
 * Added chat command `/infobar reload` in `plugins/plugin.info_bar.php` (suggested by perre.vl)
+* Added `Rounds.Script.txt`, `TimeAttack.Script.txt`, `Team.Script.txt`, `Laps.Script.txt`, `Cup.Script.txt`, `TeamAttack.Script.txt` and `Chase.Script.txt` to `<scripts>` in `newinstall/config/modescript_settings.xml` for checking the version
 
 
 ### Bug fixes
@@ -31,6 +33,10 @@
 * Fixed wrong rank counting in a private function `_getPlayerRankingById()` at `includes/core/player.class.php` (thanks rasmusdk)
 * Fixed a mem leak: placed wrong the mem freeing function of a sql resource at `includes/core/player.class.php` and `includes/core/playerlist.class.php` (maybe related to [speedychris report](https://forum.maniaplanet.com/viewtopic.php?p=286526#p286526))
 * Fixed wrong storage of records in TimeAttack.Script.txt and multilaps map, the last checkpoint (the finishline) has not been stored (thanks speedychris)
+* Fixed the RoundScoreWidget always displays the players best race time, instead of the current time of the round (thanks speedychris)
+* Fixed chat command `/dedicps` was not registered the right way
+* Fixed [PHP Warning] explode() expects parameter 2 to be string, array given on line 1208 in file `plugins/plugin.checkpoints.php` (thanks elie520)
+* Fixed messed up positions of the default HUD elements after a ModeScript and map change
 
 
 

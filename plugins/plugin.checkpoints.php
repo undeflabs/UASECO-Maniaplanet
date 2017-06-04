@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-03');
+		$this->setBuild('2017-06-04');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -114,7 +114,7 @@ class PluginCheckpoints extends Plugin {
 		$this->forced_laps	= 0;
 
 		if (isset($aseco->plugins['PluginDedimania'])) {
-			$this->registerChatCommand('dedicps', 'chat_dedicps', 'Sets dedimania record checkspoints tracking', Player::PLAYERS);
+			$aseco->registerChatCommand('dedicps', array($this, 'chat_dedicps'), 'Sets dedimania record checkspoints tracking', Player::PLAYERS);
 		}
 	}
 
@@ -1145,7 +1145,8 @@ EOL;
 
 			// Send Widget
 			if ($current->player->login == $login) {
-				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Local Record ($>', false);
 			}
 			else {
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
@@ -1170,7 +1171,8 @@ EOL;
 
 			// Send Widget
 			if ($current->player->login == $login) {
-				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Local Record$>', false);
 			}
 			else {
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
@@ -1185,7 +1187,6 @@ EOL;
 			$current = $aseco->plugins['PluginDedimania']->db['Map']['Records'][$record - 1];
 
 			// Check for valid checkpoints
-			$current['Checks'] = explode(',', $current['Checks']);
 			if (!empty($current['Checks']) && $current['Best'] == end($current['Checks'])) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
 				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
@@ -1193,7 +1194,8 @@ EOL;
 
 			// Send Widget
 			if ($current['Login'] == $login) {
-				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Dedimania Record$>', false);
 			}
 			else {
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Dedimania Record$>', false);
@@ -1211,7 +1213,6 @@ EOL;
 			}
 
 			// Check for valid checkpoints
-			$current['Checks'] = explode(',', $current['Checks']);
 			if (!empty($current['Checks']) && $current['Best'] == end($current['Checks'])) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
 				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
@@ -1219,7 +1220,8 @@ EOL;
 
 			// Send Widget
 			if ($current['Login'] == $login) {
-				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Dedimania Record$>', false);
 			}
 			else {
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Dedimania Record$>', false);
