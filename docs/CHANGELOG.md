@@ -29,7 +29,7 @@
 * Fixed missing `)` in `plugins/chat.record_relations.xml` (thanks aca)
 * Fixed [UASECO Exception] Error returned: "" [0] at GbxRemote::query() for method "SendDisplayManialinkPage" (thanks lyovav)
 * Fixed wrong rank counting in a private function `_getPlayerRankingById()` at `includes/core/player.class.php` (thanks rasmusdk)
-* Fixed a mem leak: placed wrong the mem freeing function of a sql resource at `includes/core/player.class.php` and `includes/core/playerlist.class.php` (maybe related to (speedychris report)[https://forum.maniaplanet.com/viewtopic.php?p=286526#p286526])
+* Fixed a mem leak: placed wrong the mem freeing function of a sql resource at `includes/core/player.class.php` and `includes/core/playerlist.class.php` (maybe related to [speedychris report](https://forum.maniaplanet.com/viewtopic.php?p=286526#p286526))
 * Fixed wrong storage of records in TimeAttack.Script.txt and multilaps map, the last checkpoint (the finishline) has not been stored (thanks speedychris)
 
 
