@@ -12,6 +12,9 @@
 * ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 update new `InputPlayer.User.Login`
 * Added new event `onPlayerFinishPostfix` which is triggered after `onPlayerFinish`
 * The chat command `/admin shutdown` (and `/admin shutdownall`) stores now all player settings into the database
+* Removed chat command `/ranks` from `chat.player_infos.php`, because `plugin/plugin.records_eyepiece.php` has a better list with `/estat topranks`
+* Added method `getFormatedRank()` in `includes/core/player.class.php`
+* Removed method `getRank()` from `plugin/plugin.rasp.php` (replaced by `getFormatedRank()` from `includes/core/player.class.php`)
 
 
 ### Changes at config files
@@ -37,6 +40,8 @@
 * Fixed chat command `/dedicps` was not registered the right way
 * Fixed [PHP Warning] explode() expects parameter 2 to be string, array given on line 1208 in file `plugins/plugin.checkpoints.php` (thanks elie520)
 * Fixed messed up positions of the default HUD elements after a ModeScript and map change
+* Fixed buggy welcome message since the rank calculation changes (thanks rasmusdk)
+* Fixed adding maps with `/admin add ID` does not setup a database ID which causes no records and mania karma endless loading (thanks mistertl)
 
 
 

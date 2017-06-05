@@ -65,7 +65,7 @@ class MapList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-27');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
@@ -486,17 +486,8 @@ class MapList extends BaseClass {
 		unset($newlist);
 
 
-		// Load map infos from Database for all maps
-		$dbinfos = $this->getDatabaseMapInfos(array($uid));
-
-		// Calculate karma for each map in database
-		$karma = $this->calculateRaspKarma();
-
-
-		$database = array();
-		$database['insert'] = array();
-		$database['update'] = array();
-		$database['filenames'] = array();
+		// Add Map
+		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
 		foreach ($maplist as $mapinfo) {
 			// Retrieve MapInfo from GBXInfoFetcher
 			$gbx = $this->parseMap($aseco->server->mapdir . $mapinfo['FileName'], true);
@@ -504,63 +495,25 @@ class MapList extends BaseClass {
 			// Create Map object
 			$map = new Map($gbx, $mapinfo['FileName']);
 
-			if (!empty($dbinfos[$mapinfo['UId']])) {
-				// Update this Map in the database
-				$map->id = $dbinfos[$mapinfo['UId']]['mapid'];
-				$database['update'][] = $map;
-			}
-			else {
-				// Add this new Map to the database
-				$database['insert'][] = $map;
-			}
+			// New map, no votes yet
+			$map->karma = array(
+				'value'	=> 0,
+				'votes'	=> 0,
+			);
 
-			// Add calculated karma to map
-			if ( isset($karma[$map->uid]) ) {
-				$map->karma = $karma[$map->uid];
-			}
-			else {
-				$map->karma = array(
-					'value'	=> 0,
-					'votes'	=> 0,
-				);
-			}
-
-			// Add to the Maplist
-			if ($map->uid) {
-				$this->map_list[$map->uid] = $map;
-			}
-		}
-		unset($maplist, $dbinfos);
-
-		// Add Maps that are not yet stored in the database
-		$aseco->db->begin_transaction();				// Require PHP >= 5.5.0
-		foreach ($database['insert'] as $map) {
-			$new = $this->insertMapIntoDatabase($map);
+			// Add this new Map to the database
+			$map = $this->insertMapIntoDatabase($map);
 
 			// Update the Maplist
-			if ($new->id > 0) {
-				$this->map_list[$new->uid] = $new;
-			}
+			$this->map_list[$map->uid] = $map;
 		}
-
-		// Update Maps that are not up-to-date in the database
-		foreach ($database['update'] as $map) {
-			$result = $this->updateMapInDatabase($map);
-
-			// Update the Maplist
-			if ($result == true) {
-				$this->map_list[$map->uid] = $map;
-			}
-		}
-
-		// Update all current Filenames
-		$this->updateFilenamesInDatabase($database['filenames']);
-
+		unset($maplist);
 		$aseco->db->commit();
-		unset($database);
 
 		// Find the next map
 		$this->next = $this->getNextMap();
+
+		return $map;
 	}
 
 	/*

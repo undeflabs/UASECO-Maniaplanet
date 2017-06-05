@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-30');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -2063,7 +2063,7 @@ class PluginChatAdmin extends Plugin {
 				}
 
 				// log console message
-				$aseco->console('[ChatAdmin] {1} [{2}] wrote map list: {3} !', $logtitle, $login, $filename);
+				$aseco->console('[ChatAdmin] {1} [{2}] wrote map list: [{3}]!', $logtitle, $login, $mapsfile.$filename);
 
 				$message = new Message('chat.admin', 'message_written_detailed');
 				$message->addPlaceholders($aseco->server->mapdir .'MatchSettings/'. $filename);
@@ -4207,19 +4207,9 @@ class PluginChatAdmin extends Plugin {
 
 									// Create Map object
 									$map = new Map($gbx, $mapinfo['FileName']);
-									$result = $aseco->server->maps->insertMapIntoDatabase($map);
-									if ($result->id == 0) {
-										// Map maybe already present in database, try to update
-										$result = $aseco->server->maps->updateMapInDatabase($map);
-										if ($result == false) {
-											$message = '[ChatAdmin] Can not insert/update Map ['. $aseco->stripStyles($gbx->name) .'] in Database!';
-											$aseco->sendChatMessage($message, $login);
-											continue;
-										}
-									}
 
 									// Add map to the MapList
-									$aseco->server->maps->addMapToListByUid($map->uid);
+									$map = $aseco->server->maps->addMapToListByUid($map->uid);
 
 									// check whether to jukebox as well
 									// overrules /add-ed but not yet played map
@@ -4433,7 +4423,7 @@ class PluginChatAdmin extends Plugin {
 							$msg->sendChatMessage();
 
 							// Add map to the MapList
-							$aseco->server->maps->addMapToListByUid($mapinfo['UId']);
+							$map = $aseco->server->maps->addMapToListByUid($mapinfo['UId']);
 
 							// Setup next Map
 							$aseco->server->maps->next = $aseco->server->maps->getNextMap();

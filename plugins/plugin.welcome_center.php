@@ -48,11 +48,9 @@ class PluginWelcomeCenter extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-28');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays a message in the chat and can display a Welcome-Window on Player connects.');
-
-		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
@@ -156,8 +154,6 @@ class PluginWelcomeCenter extends Plugin {
 				}
 
 				// Setup Ladderrank, Serverrank, Nation and Zone
-				$ladderrank = (($player->ladder_rank >= 0) ? $aseco->formatNumber($player->ladder_rank, 0) : 0);
-				$serverrank = $aseco->plugins['PluginRasp']->getRank($player->login);
 				$zone = $player->zone;
 				array_shift($zone);		// Remove continent from $zone array
 
@@ -180,8 +176,8 @@ class PluginWelcomeCenter extends Plugin {
 						$aseco->country->iocToCountry($player->nation),
 						implode(', ', $zone),
 						$player->visits,
-						$ladderrank,
-						$serverrank,
+						($player->ladder_rank >= 0 ? $aseco->formatNumber($player->ladder_rank, 0) : 0),
+						$player->getRankFormated(),
 					),
 					$this->config['JOIN_LEAVE_INFO'][0]['JOIN_MESSAGE'][0]
 				);

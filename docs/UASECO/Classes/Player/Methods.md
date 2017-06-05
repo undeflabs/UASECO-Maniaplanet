@@ -100,3 +100,45 @@ Returns a list of Map UIDs and the related records from a Player.
 	  ["HQG7iA23WP_79vJeNghQwicWiCh"]=>
 	  int(43)
 	}
+
+
+
+***
+
+
+
+### [getRankFormated](_#getRankFormated)
+Returns a formated server ranking string.
+
+
+#### Description
+	string = getRankFormated ( void )
+
+
+#### Example
+	$rank = $player->getRankFormated();
+
+
+#### Return Values
+	12/29,871 Average: 14.00
+
+
+
+***
+
+
+
+### [getSpectatorStatus](_#getSpectatorStatus)
+Returns a value to check if the player is currently spectaing.
+
+
+#### Description
+	boolean = getSpectatorStatus ( void )
+
+
+#### Example
+	$status = $player->getSpectatorStatus();
+
+
+#### Return Values
+	false

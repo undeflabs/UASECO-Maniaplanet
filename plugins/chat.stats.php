@@ -47,11 +47,10 @@ class PluginChatStats extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-30');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.stats', 'plugin_description'));
 
-		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
@@ -154,14 +153,12 @@ class PluginChatStats extends Plugin {
 		}
 		$stats[] = array('Time Played', $value);
 		$stats[] = array('Last Online', '{#black}' . preg_replace('/:\d\d$/', '', $laston[0]));
-		if ($aseco->plugins['PluginRasp']->feature_ranks) {
-			$value = '{#black}' . $aseco->plugins['PluginRasp']->getRank($target->login);
-			// add clickable button
-			if ($aseco->settings['clickable_lists']) {
-				$value = array($value, 'PluginManialinks?Action=-6');  // action id
-			}
-			$stats[] = array('Server Rank', $value);
+		$value = '{#black}'. $target->getRankFormated();
+		// add clickable button
+		if ($aseco->settings['clickable_lists']) {
+			$value = array($value, 'PluginManialinks?Action=-6');  // action id
 		}
+		$stats[] = array('Server Rank', $value);
 		$value = '{#black}' . $records;
 		// add clickable button
 		if ($aseco->settings['clickable_lists']) {

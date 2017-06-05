@@ -131,7 +131,7 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -194,7 +194,7 @@ class Player extends BaseClass {
 			// Work on Player flags...
 			$this->updateInfo($data);
 
-			$this->data			= $this->getDatabasePlayerSettings();
+			$this->data			= $this->_getDatabasePlayerSettings();
 		}
 		else {
 			// Set empty defaults
@@ -261,7 +261,7 @@ class Player extends BaseClass {
 		$this->msgs				= array();
 
 		// Get rank and average on this server
-		list($this->server_rank, $this->server_rank_total, $this->server_rank_average) = $this->_getPlayerRankingById($this->id);
+		list($this->server_rank, $this->server_rank_total, $this->server_rank_average) = $this->_getDatabasePlayerRanking();
 	}
 
 	/*
@@ -270,9 +270,10 @@ class Player extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function _getPlayerRankingById ($id) {
+	private function _getDatabasePlayerRanking () {
 		global $aseco;
 
+		$found = false;
 		$rank = 1;
 		$average = 0;
 		$total = 0;
@@ -289,8 +290,9 @@ class Player extends BaseClass {
 			if ($res->num_rows > 0) {
 				$total = $res->num_rows;
 				while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
-					if ($row['PlayerId'] == $id) {
+					if ($row['PlayerId'] == $this->id) {
 						$average = sprintf('%4.1F', $row['Average'] / 10000);
+						$found = true;
 						break;
 					}
 					$rank += 1;
@@ -298,7 +300,12 @@ class Player extends BaseClass {
 			}
 			$res->free_result();
 		}
-		return array($rank, $total, $average);
+		if ($found == true) {
+			return array($rank, $total, $average);
+		}
+		else {
+			return array(0, 0, 0);
+		}
 	}
 
 	/*
@@ -307,7 +314,7 @@ class Player extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getDatabasePlayerSettings () {
+	private function _getDatabasePlayerSettings () {
 		global $aseco;
 
 		$settings = array();
@@ -331,6 +338,23 @@ class Player extends BaseClass {
 			$result->free_result();
 		}
 		return $settings;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function getRankFormated () {
+		global $aseco;
+
+		if ($this->server_rank > 0) {
+			return $this->server_rank .'/'. $aseco->formatNumber($this->server_rank_total, 0) .' Average: '. $aseco->formatNumber($this->server_rank_average, 2);
+		}
+		else {
+			return 'None';
+		}
 	}
 
 	/*

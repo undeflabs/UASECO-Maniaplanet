@@ -46,7 +46,7 @@ class PluginChatRaspNextrank extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-30');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('chat.rasp_nextrank', 'plugin_description'));
 
@@ -85,93 +85,72 @@ class PluginChatRaspNextrank extends Plugin {
 		if ($aseco->server->isrelay) {
 			$msg = new Message('chat.rasp_nextrank', 'notonrelay');
 			$msg->sendChatMessage($player->login);
-
 			return;
 		}
 
-		if ($aseco->plugins['PluginRasp']->feature_ranks) {
-//			// find current player's avg
-//			$query = "
-//			SELECT
-//				`Average`
-//			FROM `%prefix%rankings`
-//			WHERE `PlayerId` = ". $player->id .";
-//			";
-//
-//			$res = $aseco->db->query($query);
-//			if ($res->num_rows > 0) {
-//				$row = $res->fetch_array(MYSQLI_ASSOC);
-//				$avg = $row['Average'];
-				$avg = $player->server_rank_average;
+		$rank = $player->server_rank;
+		$avg = $player->server_rank_average;
 
-				// find players with better avgs
-				$query = "
-				SELECT
-					`PlayerId`,
-					`Average`
-				FROM `%prefix%rankings`
-				WHERE `Average` <". $avg ."
-				ORDER BY `Average`;
-				";
+		// find players with better avgs
+		$query = "
+		SELECT
+			`PlayerId`,
+			`Average`
+		FROM `%prefix%rankings`
+		WHERE `Average` <". $avg ."
+		ORDER BY `Average`;
+		";
 
-				$res2 = $aseco->db->query($query);
-				if ($res2->num_rows > 0) {
-					// find last player before current one
-					while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
-						$pid = $row2['PlayerId'];
-						$avg2 = $row2['Average'];
-					}
+		$res2 = $aseco->db->query($query);
+		if ($res2->num_rows > 0) {
+			// find last player before current one
+			while ($row2 = $res2->fetch_array(MYSQLI_ASSOC)) {
+				$pid = $row2['PlayerId'];
+				$avg2 = $row2['Average'];
+			}
 
-					// obtain next player's info
-					$query = "
-					SELECT
-						`Login`,
-						`Nickname`
-					FROM `%prefix%players`
-					WHERE `PlayerId` = ". $pid .";
-					";
-					$res3 = $aseco->db->query($query);
-					$row3 = $res3->fetch_array(MYSQLI_ASSOC);
+			// obtain next player's info
+			$query = "
+			SELECT
+				`Login`,
+				`Nickname`
+			FROM `%prefix%players`
+			WHERE `PlayerId` = ". $pid .";
+			";
+			$res3 = $aseco->db->query($query);
+			$row3 = $res3->fetch_array(MYSQLI_ASSOC);
 
-					$rank = $aseco->plugins['PluginRasp']->getRank($row3['Login']);
-					$rank = preg_replace('|^(\d+)/|', '{#rank}$1{#record}/{#highlite}', $rank);
+			$pl = $aseco->server->players->getPlayerByLogin($login)
+			$rank = $pl->server_rank;
 
-					// show chat message
-					$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['NEXTRANK'][0],
-						$aseco->stripStyles($row3['Nickname']),
-						$rank
-					);
+			// show chat message
+			$message = $aseco->formatText($aseco->plugins['PluginRasp']->messages['NEXTRANK'][0],
+				$aseco->stripStyles($row3['Nickname']),
+				$rank
+			);
 
-					$msg = new Message('plugin.rasp', 'nextrank');
-					$msg->addPlaceholders($aseco->stripStyles($row3['Nickname']), $rank);
-					$message = $msg->finish($player->login);
+			$msg = new Message('plugin.rasp', 'nextrank');
+			$msg->addPlaceholders($aseco->stripStyles($row3['Nickname']), $rank);
+			$message = $msg->finish($player->login);
 
-					// show difference in record positions too?
-					if ($aseco->plugins['PluginRasp']->nextrank_show_rp) {
-						// compute difference in record positions
-						$diff = ($avg - $avg2) / 10000 * count($aseco->server->maps->map_list);
+			// show difference in record positions too?
+			if ($aseco->plugins['PluginRasp']->nextrank_show_rp) {
+				// compute difference in record positions
+				$diff = ($avg - $avg2) / 10000 * count($aseco->server->maps->map_list);
 
-						$msg = new Message('plugin.rasp', 'nextrank_rp');
-						$msg->addPlaceholders(ceil($diff));
-						$message .= $msg->finish($player->login);
-					}
-					$aseco->sendChatMessage($message, $player->login);
-					$res3->free_result();
-				}
-				else {
-					$msg = new Message('plugin.rasp', 'toprank');
-					$msg->addPlaceholders($aseco->stripStyles($row3['Nickname']), $rank);
-					$msg->sendChatMessage($player->login);
-				}
-				$res2->free_result();
-//			}
-//			else {
-//				$msg = new Message('plugin.rasp', 'rank_none');
-//				$msg->addPlaceholders($aseco->plugins['PluginRasp']->minrank);
-//				$msg->sendChatMessage($player->login);
-//			}
-//			$res->free_result();
+				$msg = new Message('plugin.rasp', 'nextrank_rp');
+				$msg->addPlaceholders(ceil($diff));
+				$message .= $msg->finish($player->login);
+			}
+			$aseco->sendChatMessage($message, $player->login);
+			$res3->free_result();
 		}
+		else {
+			$msg = new Message('plugin.rasp', 'toprank');
+			$msg->addPlaceholders($aseco->stripStyles($row3['Nickname']), $rank);
+			$msg->sendChatMessage($player->login);
+		}
+		$res2->free_result();
 	}
 }
 

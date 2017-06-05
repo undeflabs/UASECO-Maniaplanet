@@ -761,30 +761,6 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getRank ($login) {
-		global $aseco;
-
-		$player = $aseco->server->players->getPlayerByLogin($login);
-		if ($player->server_rank > 0) {
-			$message = $aseco->formatText('{1}/{2} Average: {3}',
-				$player->server_rank,
-				$player->server_rank_total,
-				$player->server_rank_average
-			);
-			$aseco->sendChatMessage($message, $login);
-		}
-		else {
-			$message = 'None';
-			$aseco->sendChatMessage($message, $login);
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function insertTime ($time, $cps) {
 		global $aseco;
 

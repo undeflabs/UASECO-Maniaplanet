@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.0');
-		$this->setBuild('2017-06-04');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -2915,6 +2915,8 @@ class PluginRecordsEyepiece extends Plugin {
 	// $command[1] = map data (or 'null' for the 'clear' action)
 	public function onJukeboxChanged ($aseco, $command) {
 
+//$aseco->dump('onJukeboxChanged: ', $command);
+
 		// Init
 		$widgets = '';
 
@@ -2922,11 +2924,11 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->cache['Map']['Jukebox'] = false;
 
 			// Rebuild the Widgets
-			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
+			$this->cache['MapWidget']['Score'] = $this->buildMapWidget('score');
 		}
 
 		// Check for changed Jukebox and refresh if required
-		$actions = array('add', 'drop', 'play', 'replay', 'restart', 'skip', 'previous', 'nextenv');
+		$actions = array('add', 'drop', 'replay', 'restart', 'skip', 'previous', 'nextenv');		// No action on 'play'
 		if (in_array($command[0], $actions)) {
 			// Is a Map in the Jukebox?
 			if (count($aseco->plugins['PluginRaspJukebox']->jukebox) > 0) {
@@ -2942,14 +2944,13 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			// Rebuild the Widgets
+			$this->cache['MapWidget']['Race'] = $this->buildMapWidget('race');
 			$this->cache['MapWidget']['Score'] = $this->buildMapWidget('score');
 
-			// Check if we are at score and refresh the "Next Map" Widget
-			if ($aseco->server->gamestate == Server::SCORE) {
-				if ( ($command[0] == 'replay') || ($command[0] == 'restart') || ($command[0] == 'skip') || ($command[0] == 'previous') || ($command[0] == 'nextenv') ) {
-					// Display the MapWidget (if enabled)
-					$widgets .= (($this->cache['MapWidget']['Score'] != false) ? $this->cache['MapWidget']['Score'] : '');
-				}
+			// Refresh the "Next Map" Widget
+			if ($command[0] == 'replay' || $command[0] == 'restart' || $command[0] == 'skip' || $command[0] == 'previous' || $command[0] == 'nextenv') {
+				// Display the MapWidget (if enabled)
+				$widgets .= $this->cache['MapWidget']['Score'];
 			}
 		}
 
@@ -2970,6 +2971,7 @@ class PluginRecordsEyepiece extends Plugin {
 	// $command[1] = filename of Map (or 'null' for the 'write' or 'read' action)
 	public function onMapListChanged ($aseco, $command) {
 
+//$aseco->dump('onMapListChanged: ', $command);
 
 		// Init
 		$widgets = '';
@@ -3048,6 +3050,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 	// $data[0]=CurChallengeIndex, $data[1]=NextChallengeIndex, $data[2]=IsListModified
 	public function onMapListModified ($aseco, $data) {
+
+//$aseco->dump('onMapListModified: ', $data);
 
 		// Reload the Maplist now
 		if ($data[2] !== false) {
@@ -6508,7 +6512,7 @@ class PluginRecordsEyepiece extends Plugin {
 				return (!empty($map->author_nickname) ? $map->author_nickname : $map->author);
 			}
 			else {
-				return (!empty($map->author_nickname) ? $aseco->handleSpecialChars($map->author_nickname) : $map->author);
+				return (!empty($map->author_nickname) ? $this->handleSpecialChars($map->author_nickname) : $map->author);
 			}
 		}
 		else {
@@ -14492,7 +14496,7 @@ EOL;
 			$string = preg_replace('/\${1}(000|111|222|333|444|555)/i', '\$AAA', $string);
 		}
 
-		$string = $aseco->encodeEntities($string);
+//		$string = $aseco->encodeEntities($string);
 		$string = $aseco->stripNewlines($string);
 
 		return $aseco->validateUTF8String($string);

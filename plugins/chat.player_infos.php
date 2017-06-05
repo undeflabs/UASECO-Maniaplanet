@@ -51,18 +51,16 @@ class PluginPlayerInfos extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
+		$this->setBuild('2017-05-06');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays current list of nicks/logins.');
 
-		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 
 		// Handles action id's "2001"-"2200" for /stats
 		$this->registerEvent('onPlayerManialinkPageAnswer', 'onPlayerManialinkPageAnswer');
 
 		$this->registerChatCommand('players',	'chat_players',		'Displays current list of nicks/logins',	Player::PLAYERS);
-		$this->registerChatCommand('ranks',	'chat_ranks',		'Displays list of online ranks/nicks',		Player::PLAYERS);
 	}
 
 	/*
@@ -161,54 +159,6 @@ class PluginPlayerInfos extends Plugin {
 			// == 1
 			$aseco->sendChatMessage('{#server}» {#error}No player(s) found!', $player->login);
 		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_ranks ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-			return;
-		}
-		$ranks = array();
-
-		// sort players by rank, insuring rankless are last by sorting on INT_MAX
-		foreach ($aseco->server->players->player_list as $pl) {
-			$rank = $aseco->plugins['PluginRasp']->getRank($pl->login);
-			$ranks[$pl->login] = $rank != 'None' ? (integer) preg_replace('/\/.*/', '', $rank) : PHP_INT_MAX;
-		}
-		asort($ranks);
-
-		// compile the message
-		$head = 'Online Ranks ({#login}rank $g/{#nick} nick$g):';
-		$msg = array();
-		$lines = 0;
-		$player->msgs = array();
-		$player->msgs[0] = array(1, $head, array(0.8, 0.15, 0.65), array('Icons128x128_1', 'Buddies'));
-		foreach ($ranks as $pl => $rk) {
-			if ($play = $aseco->server->players->getPlayerByLogin($pl)) {
-				$msg[] = array('{#login}'. ($rk != PHP_INT_MAX ? $rk : '{#grey}<none>'),
-					'{#black}'. $play->nickname
-				);
-			}
-			if (++$lines > 14) {
-				$player->msgs[] = $msg;
-				$lines = 0;
-				$msg = array();
-			}
-		}
-
-		// add if last batch exists
-		if (!empty($msg)) {
-			$player->msgs[] = $msg;
-		}
-
-		// display ManiaLink message
-		$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 	}
 }
 

@@ -49,7 +49,7 @@ class PluginPanels extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-25');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('DEPRECATED: Selects ManiaLink panel templates.');
 
@@ -301,9 +301,8 @@ class PluginPanels extends Plugin {
 
 				// display stats panels for all these players
 				foreach ($aseco->server->players->player_list as $pl) {
-					$rank = $aseco->plugins['PluginRasp']->getRank($pl->login);
-					$avg = preg_replace('/.+ Avg: /', '', $rank);
-					$rank = preg_replace('/ Avg: .+/', '', $rank);
+					$rank = $pl->server_rank .'/'. $pl->server_rank_total;
+					$avg = $pl->server_rank_average;
 					$recs = (isset($recslist[$pl->login]) ? $recslist[$pl->login] : 0);
 					$wins = ($pl->getWins() > $pl->wins ? $pl->getWins() : $pl->wins);
 					$play = $aseco->formatTime($pl->getTimeOnline() * 1000, false);

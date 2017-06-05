@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-04');
+		$this->setBuild('2017-06-05');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -75,7 +75,6 @@ class PluginCheckpoints extends Plugin {
 		$this->registerEvent('onPlayerCheckpoint',		'onPlayerCheckpoint');
 		$this->registerEvent('onPlayerFinishLap',		'onPlayerFinishLap');
 		$this->registerEvent('onPlayerFinishLine',		'onPlayerFinishLine');
-		$this->registerEvent('onPlayerFinishPostfix',		'onPlayerFinishPostfix');
 		$this->registerEvent('onLocalRecordsLoaded',		'onLocalRecordsLoaded');
 		$this->registerEvent('onDedimaniaRecordsLoaded',	'onDedimaniaRecordsLoaded');
 		$this->registerEvent('onLocalRecord',			'onLocalRecord');
@@ -387,21 +386,6 @@ class PluginCheckpoints extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function onPlayerFinishPostfix ($aseco) {
-		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true && count($this->update_tracking) > 0) {
-			foreach ($this->update_tracking as &$login) {
-				$this->handleCheckpointTracking($login);
-				unset($login);
-			}
-		}
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Init
@@ -456,6 +440,13 @@ class PluginCheckpoints extends Plugin {
 	*/
 
 	public function onPlayerStartCountdown ($aseco, $params) {
+
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] == true && count($this->update_tracking) > 0) {
+			foreach ($this->update_tracking as &$login) {
+				$this->handleCheckpointTracking($login);
+				unset($login);
+			}
+		}
 
 		// Reset for next run in TimeAttack mode
 		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
