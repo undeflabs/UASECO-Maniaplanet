@@ -15,6 +15,8 @@
 * Removed chat command `/ranks` from `chat.player_infos.php`, because `plugin/plugin.records_eyepiece.php` has a better list with `/estat topranks`
 * Added method `getFormatedRank()` in `includes/core/player.class.php`
 * Removed method `getRank()` from `plugin/plugin.rasp.php` (replaced by `getFormatedRank()` from `includes/core/player.class.php`)
+* Added chat command `/infobar reload` in `plugins/plugin.info_bar.php` (suggested by perre.vl)
+* Turned `Top Rankings Window`, `Dedimania Records Window`, `Local Records Window`, `Live Rankings Window`, `Top Continent Window` from `plugin.records_eyepiece.php` into the class window style
 
 
 ### Changes at config files
@@ -22,7 +24,6 @@
 * Changed the files in `newinstall/config/effect_studio/` to make them XML compatible (thanks aca)
 * Changed `&` to `&amp;` in all `<info_messages><messages>` at `newinstall/config/welcome_center.xml` (thanks aca)
 * Added `newinstall/locales/plugin.info_bar.xml`
-* Added chat command `/infobar reload` in `plugins/plugin.info_bar.php` (suggested by perre.vl)
 * Added `Rounds.Script.txt`, `TimeAttack.Script.txt`, `Team.Script.txt`, `Laps.Script.txt`, `Cup.Script.txt`, `TeamAttack.Script.txt` and `Chase.Script.txt` to `<scripts>` in `newinstall/config/modescript_settings.xml` for checking the version
 
 
