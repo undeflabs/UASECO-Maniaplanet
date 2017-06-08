@@ -60,7 +60,7 @@
 	required for the checking routine of the dedicated server scripts.
 	E.g.: "/home/user/bin/GameServer/"
 	//-->
-	<dedicated_installation>/path/to/the/GameServer</dedicated_installation>
+	<dedicated_installation>/path/to/the/GameServer/</dedicated_installation>
 
 	<!--
 	Maplist used by the dedicated server, typical located in "UserData/Maps/MatchSettings/"

@@ -57,8 +57,8 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.3');
-		$this->setBuild('2017-06-05');
+		$this->setVersion('1.0.4');
+		$this->setBuild('2017-06-08');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -391,18 +391,20 @@ class PluginModescriptHandler extends Plugin {
 
 		// Rounds +RoundsBase
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];
-		$aseco->server->gameinfo->rounds['RoundsPerMap']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['ROUNDS_PER_MAP'][0];
-		$aseco->server->gameinfo->rounds['MapsPerMatch']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['MAPS_PER_MATCH'][0];
 		$aseco->server->gameinfo->rounds['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->rounds['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_ALTERNATE_RULES'][0]);
 		$aseco->server->gameinfo->rounds['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->rounds['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['DISPLAY_TIME_DIFF'][0]);
+		$aseco->server->gameinfo->rounds['RoundsPerMap']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['ROUNDS_PER_MAP'][0];
+		$aseco->server->gameinfo->rounds['MapsPerMatch']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['MAPS_PER_MATCH'][0];
 		$aseco->server->gameinfo->rounds['UseTieBreak']			= $aseco->string2bool($this->settings['MODESETUP'][0]['ROUNDS'][0]['USE_TIE_BREAK'][0]);
 		$aseco->server->gameinfo->rounds['WarmUpNumber']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['WARM_UP_NUMBER'][0];
 		$aseco->server->gameinfo->rounds['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['WARM_UP_DURATION'][0];
 
 		// TimeAttack
 		$aseco->server->gameinfo->time_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['TIME_LIMIT'][0];
+		$aseco->server->gameinfo->time_attack['WarmUpNumber']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['WARM_UP_NUMBER'][0];
+		$aseco->server->gameinfo->time_attack['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['WARM_UP_DURATION'][0];
 
 		// Team +RoundsBase
 		$aseco->server->gameinfo->team['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_LIMIT'][0];
@@ -412,14 +414,17 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->team['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['DISPLAY_TIME_DIFF'][0]);
 		$aseco->server->gameinfo->team['MaxPointsPerRound']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_POINTS_PER_ROUND'][0];
 		$aseco->server->gameinfo->team['PointsGap']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_GAP'][0];
-		$aseco->server->gameinfo->team['UsePlayerClublinks']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['USE_PLAYER_CLUBLINKS'][0]);
+		$aseco->server->gameinfo->team['WarmUpNumber']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['WARM_UP_NUMBER'][0];
+		$aseco->server->gameinfo->team['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['WARM_UP_DURATION'][0];
 		$aseco->server->gameinfo->team['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_PLAYERS_PER_TEAM'][0];
 		$aseco->server->gameinfo->team['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MIN_PLAYERS_PER_TEAM'][0];
 
 		// Laps
 		$aseco->server->gameinfo->laps['TimeLimit']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['TIME_LIMIT'][0];
-		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->laps['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FORCE_LAPS_NUMBER'][0];
+		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
+		$aseco->server->gameinfo->laps['WarmUpNumber']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['WARM_UP_NUMBER'][0];
+		$aseco->server->gameinfo->laps['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['WARM_UP_DURATION'][0];
 
 		// Cup +RoundsBase
 		$aseco->server->gameinfo->cup['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['POINTS_LIMIT'][0];
@@ -427,11 +432,15 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->cup['UseAlternateRules']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CUP'][0]['USE_ALTERNATE_RULES'][0]);
 		$aseco->server->gameinfo->cup['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->cup['DisplayTimeDiff']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CUP'][0]['DISPLAY_TIME_DIFF'][0]);
+
 		$aseco->server->gameinfo->cup['RoundsPerMap']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['ROUNDS_PER_MAP'][0];
 		$aseco->server->gameinfo->cup['NbOfWinners']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['NUMBER_OF_WINNERS'][0];
+		$aseco->server->gameinfo->cup['NbOfPlayersMax']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MAX_PLAYERS_NUMBER'][0];
+		$aseco->server->gameinfo->cup['NbOfPlayersMin']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MIN_PLAYERS_NUMBER'][0];
+		$aseco->server->gameinfo->cup['WarmUpNumber']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['WARM_UP_NUMBER'][0];
 		$aseco->server->gameinfo->cup['WarmUpDuration']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['WARM_UP_DURATION'][0];
-		$aseco->server->gameinfo->cup['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MAX_PLAYERS_NUMBER'][0];
-		$aseco->server->gameinfo->cup['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MIN_PLAYERS_NUMBER'][0];
+		$aseco->server->gameinfo->cup['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MAX_PLAYERS_PER_TEAM'][0];
+		$aseco->server->gameinfo->cup['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CUP'][0]['MIN_PLAYERS_PER_TEAM'][0];
 
 		// TeamAttack
 		$aseco->server->gameinfo->team_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TEAMATTACK'][0]['TIME_LIMIT'][0];
@@ -449,13 +458,14 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->chase['ForceLapsNb']			= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['FORCE_LAPS_NUMBER'][0];
 		$aseco->server->gameinfo->chase['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->chase['DisplayWarning']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['DISPLAY_WARNING'][0]);
-		$aseco->server->gameinfo->chase['UsePlayerClublinks']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['USE_PLAYER_CLUBLINKS'][0]);
-		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MAX_NUMBER_PLAYERS_PER_TEAM'][0];
-		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MIN_NUMBER_PLAYERS_PER_TEAM'][0];
 		$aseco->server->gameinfo->chase['CompetitiveMode']		= $aseco->string2bool($this->settings['MODESETUP'][0]['CHASE'][0]['COMPETITIVE_MODE'][0]);
-		$aseco->server->gameinfo->chase['WaypointEventDelay']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WAYPOINT_EVENT_DELAY'][0];
 		$aseco->server->gameinfo->chase['PauseBetweenRound']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['PAUSE_BETWEEN_ROUND'][0];
 		$aseco->server->gameinfo->chase['WaitingTimeMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WAITING_TIME_MAX'][0];
+		$aseco->server->gameinfo->chase['WaypointEventDelay']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WAYPOINT_EVENT_DELAY'][0];
+		$aseco->server->gameinfo->chase['WarmUpNumber']			= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WARM_UP_NUMBER'][0];
+		$aseco->server->gameinfo->chase['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['WARM_UP_DURATION'][0];
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MAX_NUMBER_PLAYERS_PER_TEAM'][0];
+		$aseco->server->gameinfo->chase['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['CHASE'][0]['MIN_NUMBER_PLAYERS_PER_TEAM'][0];
 
 		// Knockout
 		$aseco->server->gameinfo->knockout['FinishTimeout']		= (int)$this->settings['MODESETUP'][0]['KNOCKOUT'][0]['FINISH_TIMEOUT'][0];
@@ -1205,6 +1215,11 @@ class PluginModescriptHandler extends Plugin {
 			return;
 		}
 
+		// Bail out if in warm-up (method "GetValidationReplay" returns "Not in race." in warm-up)
+		if ($aseco->warmup_phase === true) {
+			return;
+		}
+
 		// If relay server or not in Play status, bail out immediately
 		if ($aseco->server->isrelay || $aseco->current_status != 4) {
 			return;
@@ -1456,23 +1471,27 @@ class PluginModescriptHandler extends Plugin {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			// Rounds (+RoundsBase)
 			$modesetup = array(
+				// RoundsBase
 				'S_PointsLimit'			=> $aseco->server->gameinfo->rounds['PointsLimit'],
-				'S_RoundsPerMap'		=> $aseco->server->gameinfo->rounds['RoundsPerMap'],
-				'S_MapsPerMatch'		=> $aseco->server->gameinfo->rounds['MapsPerMatch'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->rounds['FinishTimeout'],
-				'S_UseTieBreak'			=> $aseco->server->gameinfo->rounds['UseTieBreak'],
-				'S_WarmUpNb'			=> $aseco->server->gameinfo->rounds['WarmUpNumber'],
-				'S_WarmUpDuration'		=> $aseco->server->gameinfo->rounds['WarmUpDuration'],
-
 				'S_UseAlternateRules'		=> $aseco->server->gameinfo->rounds['UseAlternateRules'],
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->rounds['ForceLapsNb'],
 				'S_DisplayTimeDiff'		=> $aseco->server->gameinfo->rounds['DisplayTimeDiff'],
+
+				// Rounds
+				'S_RoundsPerMap'		=> $aseco->server->gameinfo->rounds['RoundsPerMap'],
+				'S_MapsPerMatch'		=> $aseco->server->gameinfo->rounds['MapsPerMatch'],
+				'S_UseTieBreak'			=> $aseco->server->gameinfo->rounds['UseTieBreak'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->rounds['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->rounds['WarmUpDuration'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
 			// TimeAttack
 			$modesetup = array(
 				'S_TimeLimit'			=> $aseco->server->gameinfo->time_attack['TimeLimit'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->time_attack['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->time_attack['WarmUpDuration'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
@@ -1488,6 +1507,8 @@ class PluginModescriptHandler extends Plugin {
 				// Team
 				'S_MaxPointsPerRound'		=> $aseco->server->gameinfo->team['MaxPointsPerRound'],
 				'S_PointsGap'			=> $aseco->server->gameinfo->team['PointsGap'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->team['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->team['WarmUpDuration'],
 				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->team['NbPlayersPerTeamMax'],
 				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->team['NbPlayersPerTeamMin'],
 
@@ -1499,6 +1520,8 @@ class PluginModescriptHandler extends Plugin {
 				'S_TimeLimit'			=> $aseco->server->gameinfo->laps['TimeLimit'],
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->laps['ForceLapsNb'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->laps['FinishTimeout'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->laps['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->laps['WarmUpDuration'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
@@ -1514,9 +1537,12 @@ class PluginModescriptHandler extends Plugin {
 				// Cup
 				'S_RoundsPerMap'		=> $aseco->server->gameinfo->cup['RoundsPerMap'],
 				'S_NbOfWinners'			=> $aseco->server->gameinfo->cup['NbOfWinners'],
-				'S_WarmUpDuration'		=> $aseco->server->gameinfo->cup['WarmUpDuration'],
 				'S_NbOfPlayersMax'		=> $aseco->server->gameinfo->cup['NbOfPlayersMax'],
 				'S_NbOfPlayersMin'		=> $aseco->server->gameinfo->cup['NbOfPlayersMin'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->cup['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->cup['WarmUpDuration'],
+				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->cup['NbPlayersPerTeamMax'],
+				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->cup['NbPlayersPerTeamMin'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK) {
@@ -1540,12 +1566,14 @@ class PluginModescriptHandler extends Plugin {
 				'S_ForceLapsNb'			=> $aseco->server->gameinfo->chase['ForceLapsNb'],
 				'S_FinishTimeout'		=> $aseco->server->gameinfo->chase['FinishTimeout'],
 				'S_DisplayWarning'		=> $aseco->server->gameinfo->chase['DisplayWarning'],
-				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMax'],
-				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMin'],
 				'S_CompetitiveMode'		=> $aseco->server->gameinfo->chase['CompetitiveMode'],
-				'S_WaypointEventDelay'		=> $aseco->server->gameinfo->chase['WaypointEventDelay'],
 				'S_PauseBetweenRound'		=> $aseco->server->gameinfo->chase['PauseBetweenRound'],
 				'S_WaitingTimeMax'		=> $aseco->server->gameinfo->chase['WaitingTimeMax'],
+				'S_WaypointEventDelay'		=> $aseco->server->gameinfo->chase['WaypointEventDelay'],
+				'S_WarmUpNb'			=> $aseco->server->gameinfo->chase['WarmUpNumber'],
+				'S_WarmUpDuration'		=> $aseco->server->gameinfo->chase['WarmUpDuration'],
+				'S_NbPlayersPerTeamMax'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMax'],
+				'S_NbPlayersPerTeamMin'		=> $aseco->server->gameinfo->chase['NbPlayersPerTeamMin'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode == Gameinfo::KNOCKOUT) {

@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2017-06-06');
+		$this->setBuild('2017-06-08');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -291,7 +291,7 @@ class PluginRecordsEyepiece extends Plugin {
 			if ( (!isset($this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0])) || ($this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0] > 1.0)) {
 				$this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0] = 1.0;
 			}
-			$this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0] = sprintf("%.1f", $this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0]);
+			$this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0] = $aseco->formatFloat($this->config['SCORETABLE_LISTS'][0][$widget][0]['SCALE'][0]);
 		}
 		unset($widget);
 		unset($scorelists);
@@ -405,62 +405,62 @@ class PluginRecordsEyepiece extends Plugin {
 			if ( (!isset($this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0])) || ($this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0] > 1.0)) {
 				$this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0] = 1.0;
 			}
-			$this->config['MAP_WIDGET'][0]['RACE'][0]['SCALE'][0] = sprintf("%.1f", $this->config['MAP_WIDGET'][0]['RACE'][0]['SCALE'][0]);
-			$this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0] = sprintf("%.1f", $this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0]);
+			$this->config['MAP_WIDGET'][0]['RACE'][0]['SCALE'][0] = $aseco->formatFloat($this->config['MAP_WIDGET'][0]['RACE'][0]['SCALE'][0]);
+			$this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0] = $aseco->formatFloat($this->config['MAP_WIDGET'][0]['SCORE'][0]['SCALE'][0]);
 		}
 
 		if ( (!isset($this->config['MUSIC_WIDGET'][0]['SCALE'][0])) || ($this->config['MUSIC_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['MUSIC_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['MUSIC_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['MUSIC_WIDGET'][0]['SCALE'][0]);
+		$this->config['MUSIC_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['MUSIC_WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0])) || ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0]);
+		$this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0])) || ($this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0]);
+		$this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['DONATION_WIDGET'][0]['WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0])) || ($this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0]);
+		$this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['MANIAEXCHANGE_WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['TOPLIST_WIDGET'][0]['SCALE'][0])) || ($this->config['TOPLIST_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['TOPLIST_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['TOPLIST_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['TOPLIST_WIDGET'][0]['SCALE'][0]);
+		$this->config['TOPLIST_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['TOPLIST_WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0])) || ($this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0]);
+		$this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['MAPCOUNT_WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['VISITORS_WIDGET'][0]['SCALE'][0])) || ($this->config['VISITORS_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['VISITORS_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['VISITORS_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['VISITORS_WIDGET'][0]['SCALE'][0]);
+		$this->config['VISITORS_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['VISITORS_WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0])) || ($this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0] > 1.0)) {
 			$this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0] = sprintf("%.1f", $this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0]);
+		$this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0] = $aseco->formatFloat($this->config['CLOCK_WIDGET'][0]['RACE'][0]['SCALE'][0]);
 		if ( (!isset($this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0])) || ($this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0] > 1.0)) {
 			$this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0] = sprintf("%.1f", $this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0]);
+		$this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0] = $aseco->formatFloat($this->config['CLOCK_WIDGET'][0]['SCORE'][0]['SCALE'][0]);
 		if ( (!isset($this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0])) || ($this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0] > 1.0)) {
 			$this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0] = sprintf("%.1f", $this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0]);
+		$this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0] = $aseco->formatFloat($this->config['FAVORITE_WIDGET'][0]['RACE'][0]['SCALE'][0]);
 		if ( (!isset($this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0])) || ($this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0] > 1.0)) {
 			$this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0] = sprintf("%.1f", $this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0]);
+		$this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0] = $aseco->formatFloat($this->config['FAVORITE_WIDGET'][0]['SCORE'][0]['SCALE'][0]);
 		if ( (!isset($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0])) || ($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0]);
+		$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['SCALE'][0]);
 		if ( (!isset($this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0])) || ($this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0] > 1.0)) {
 			$this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0] = 1.0;
 		}
-		$this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0] = sprintf("%.1f", $this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0]);
+		$this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0]);
 
 		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
 			// Check setup Limits
@@ -2003,7 +2003,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$player = $aseco->server->players->player_list[$finish_item->player->login];
 
 
-		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true) {
+		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == false) {
 
 			// Add the Score
 			$this->scores['RoundScore'][$finish_item->score] = array(
@@ -3194,7 +3194,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$widget = '';
 		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == false) {
-//			$widget .= '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget" version="3"></manialink>';
+			$widget .= '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget" version="3"></manialink>';
 		}
 		else if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == true) {
 			$widget .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
@@ -3671,22 +3671,24 @@ class PluginRecordsEyepiece extends Plugin {
 
 		if (($aseco->server->gameinfo->mode == Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) || ($aseco->server->gameinfo->mode == Gameinfo::CHASE && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] == true)) {
 
-			// Get the Player object
-			$player = $aseco->server->players->player_list[$params['login']];
+			if ($this->config['States']['WarmUpPhase'] == false) {
+				// Get the Player object
+				$player = $aseco->server->players->player_list[$params['login']];
 
-			// Add the Score
-			$this->scores['RoundScore'][$player->login] = array(
-				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-				'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
-				'playerid'	=> $player->pid,
-				'login'		=> $player->login,
-				'nickname'	=> $this->handleSpecialChars($player->nickname),
-				'score'		=> $aseco->formatTime($params['lap_time']),
-				'score_plain'	=> $params['lap_time'],
-			);
+				// Add the Score
+				$this->scores['RoundScore'][$player->login] = array(
+					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+					'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
+					'playerid'	=> $player->pid,
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $aseco->formatTime($params['lap_time']),
+					'score_plain'	=> $params['lap_time'],
+				);
 
-			// Display the Widget
-			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+				// Display the Widget
+				$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+			}
 		}
 
 		// Only work at 'Laps' or 'Chase'
@@ -3706,22 +3708,24 @@ class PluginRecordsEyepiece extends Plugin {
 	public function onPlayerFinishLap ($aseco, $params) {
 
 		if (($aseco->server->gameinfo->mode == Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) || ($aseco->server->gameinfo->mode == Gameinfo::CHASE && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] == true)) {
-			// Get the Player object
-			$player = $aseco->server->players->player_list[$params['login']];
+			if ($this->config['States']['WarmUpPhase'] == false) {
+				// Get the Player object
+				$player = $aseco->server->players->player_list[$params['login']];
 
-			// Add the Score
-			$this->scores['RoundScore'][$player->login] = array(
-				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-				'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
-				'playerid'	=> $player->pid,
-				'login'		=> $player->login,
-				'nickname'	=> $this->handleSpecialChars($player->nickname),
-				'score'		=> $aseco->formatTime($params['lap_time']),
-				'score_plain'	=> $params['lap_time'],
-			);
+				// Add the Score
+				$this->scores['RoundScore'][$player->login] = array(
+					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
+					'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
+					'playerid'	=> $player->pid,
+					'login'		=> $player->login,
+					'nickname'	=> $this->handleSpecialChars($player->nickname),
+					'score'		=> $aseco->formatTime($params['lap_time']),
+					'score_plain'	=> $params['lap_time'],
+				);
 
-			// Display the Widget
-			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+				// Display the Widget
+				$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
+			}
 		}
 
 		// Only work at 'Laps' or 'Chase'
@@ -5803,7 +5807,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->scores['TopRankings'][$i]['rank']	= ($i+1);
 					$this->scores['TopRankings'][$i]['login']	= $row->Login;
 					$this->scores['TopRankings'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
-					$this->scores['TopRankings'][$i]['score']	= sprintf("%.1f", $row->Average);
+					$this->scores['TopRankings'][$i]['score']	= $aseco->formatFloat($row->Average, 1);
 
 					$i++;
 				}
@@ -6244,7 +6248,7 @@ class PluginRecordsEyepiece extends Plugin {
 						$this->scores['TopBetwins'][$i]['rank']		= ($i+1);
 						$this->scores['TopBetwins'][$i]['login']	= $row->Login;
 						$this->scores['TopBetwins'][$i]['nickname']	= $this->handleSpecialChars($row->Nickname);
-						$this->scores['TopBetwins'][$i]['won']		= sprintf("%.2f", $row->won);
+						$this->scores['TopBetwins'][$i]['won']		= $aseco->formatFloat($row->won, 2);
 
 						$i++;
 					}

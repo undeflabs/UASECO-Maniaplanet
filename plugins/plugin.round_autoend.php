@@ -40,6 +40,8 @@ class PluginRoundAutoEnd extends Plugin {
 	public $time_scoreboard;
 	public $time_countdown;
 
+	private $player_finished;
+
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -50,8 +52,8 @@ class PluginRoundAutoEnd extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-28');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2017-06-08');
 		$this->setCopyright('2015 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.round_autoend', 'plugin_description'));
 
@@ -61,6 +63,7 @@ class PluginRoundAutoEnd extends Plugin {
 		$this->registerEvent('onBeginRound',		'onBeginRound');
 		$this->registerEvent('onEverySecond',		'onEverySecond');
 		$this->registerEvent('onEndRound',		'onEndRound');
+		$this->registerEvent('onPlayerFinishPrefix',	'onPlayerFinishPrefix');
 	}
 
 	/*
@@ -79,10 +82,11 @@ class PluginRoundAutoEnd extends Plugin {
 		unset($xml);
 
 		// Init
-		$this->timer = 0;
-		$this->time_delta = 0;
-		$this->time_scoreboard = 7;					// Add 7 seconds for the scoreboard
-		$this->time_countdown = 4;					// Add 4 seconds for the 3-2-1-GO!
+		$this->timer		= 0;
+		$this->time_delta	= 0;
+		$this->time_scoreboard	= 7;					// Add 7 seconds for the scoreboard
+		$this->time_countdown	= 4;					// Add 4 seconds for the 3-2-1-GO!
+		$this->player_finished	= array();
 	}
 
 	/*
@@ -145,6 +149,7 @@ class PluginRoundAutoEnd extends Plugin {
 	public function onBeginRound ($aseco) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			$this->timer = (time() + $this->time_delta + $this->time_countdown + $this->time_scoreboard);
+			$this->player_finished = array();
 		}
 	}
 
@@ -157,6 +162,22 @@ class PluginRoundAutoEnd extends Plugin {
 	public function onEndRound ($aseco) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			$this->timer = 0;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onPlayerFinishPrefix ($aseco, $finish) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+			$this->player_finished[] = $finish->player->login;
+
+			if (count($this->player_finished) == count($aseco->server->players->player_list)) {
+				$this->timer = 0;
+			}
 		}
 	}
 }

@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.5');
-	define('UASECO_BUILD',			'2017-06-05');
+	define('UASECO_BUILD',			'2017-06-08');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -661,6 +661,7 @@ class UASECO extends Helper {
 		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') == 1 ? '' : 's');
 		$wrappers = stream_get_wrappers();
 		sort($wrappers, SORT_STRING);
+		$gd = gd_info();
 
 		$this->console_text('####[DEBUG]##########################################################################');
 		$this->console_text('» StartupPhase:  {1}', $this->bool2string($this->startup_phase));
@@ -809,7 +810,7 @@ class UASECO extends Helper {
 
 			// Setup default storing path for the map images
 			$this->settings['mapimages_path'] = $settings['MAPIMAGES_PATH'][0];
-			if (substr($this->settings['mapimages_path'], -1) != '/' || substr($this->settings['mapimages_path'], -1) != '\\') {
+			if ((OPERATING_SYSTEM == 'POSIX' && substr($this->settings['mapimages_path'], -1) != '/') || (OPERATING_SYSTEM == 'WINDOWS' && substr($this->settings['mapimages_path'], -1) != '\\')) {
 				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <mapimages_path> from [config/UASECO.xml]!');
 				$this->settings['mapimages_path'] = $this->settings['mapimages_path'] . DIRECTORY_SEPARATOR;
 			}
@@ -876,7 +877,7 @@ class UASECO extends Helper {
 			if (strtoupper($this->settings['dedicated_installation']) == 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
 				trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
 			}
-			if (substr($this->settings['dedicated_installation'], -1) != '/' || substr($this->settings['dedicated_installation'], -1) != '\\') {
+			if ((OPERATING_SYSTEM == 'POSIX' && substr($this->settings['dedicated_installation'], -1) != '/') || (OPERATING_SYSTEM == 'WINDOWS' && substr($this->settings['dedicated_installation'], -1) != '\\')) {
 				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <dedicated_installation> from [config/UASECO.xml]!');
 				$this->settings['dedicated_installation'] = $this->settings['dedicated_installation'] . DIRECTORY_SEPARATOR;
 			}

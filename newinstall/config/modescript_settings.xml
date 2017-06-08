@@ -206,6 +206,12 @@
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
 			<time_limit>300</time_limit>
+
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<warm_up_duration>-1</warm_up_duration>
+
+			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
+			<warm_up_number>0</warm_up_number>
 		</timeattack>
 
 
@@ -232,7 +238,7 @@
 			<maps_per_match>-1</maps_per_match>
 
 			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' for automatic (based on author time) -->
-			<finish_timeout>10</finish_timeout>
+			<finish_timeout>-1</finish_timeout>
 
 			<!--
 			Set to 'true' to use alternate rules, otherwise 'false',
@@ -283,8 +289,11 @@
 			<!-- The number of points lead a team must have to win the Map -->
 			<points_gap>1</points_gap>
 
-			<!-- Set to 'true' to use the Players clublinks, or otherwise use the default teams, otherwise 'false' -->
-			<use_player_clublinks>false</use_player_clublinks>
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<warm_up_duration>-1</warm_up_duration>
+
+			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
+			<warm_up_number>0</warm_up_number>
 
 			<!-- Maximum number of players per team in matchmaking -->
 			<max_players_per_team>5</max_players_per_team>
@@ -309,6 +318,12 @@
 
 			<!-- Force number of laps, '-1' to disable -->
 			<force_laps_number>5</force_laps_number>
+
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<warm_up_duration>-1</warm_up_duration>
+
+			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
+			<warm_up_number>0</warm_up_number>
 		</laps>
 
 
@@ -341,6 +356,9 @@
 			<!-- Defines the number of winners determined by victory with the finalist's status -->
 			<number_of_winners>3</number_of_winners>
 
+			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
+			<warm_up_number>0</warm_up_number>
+
 			<!-- Duration of the warm up phase in rounds (e.g. '2' for two warm up rounds), set to '-1' to disable warm up -->
 			<warm_up_duration>2</warm_up_duration>
 
@@ -349,6 +367,12 @@
 
 			<!-- Minimum number of players in matchmaking -->
 			<min_players_number>4</min_players_number>
+
+			<!-- Maximum number of players per team in matchmaking -->
+			<max_players_per_team>4</max_players_per_team>
+
+			<!-- Minimum number of players per team in matchmaking -->
+			<min_players_per_team>4</min_players_per_team>
 		</cup>
 
 
@@ -406,9 +430,6 @@
 
 			<!-- Display a big red message in the middle of the screen of the player that crosses a checkpoint when it wasn't it's turn. -->
 			<display_warning>true</display_warning>
-
-			<!-- Use the players' clublinks, or otherwise use the default teams -->
-			<use_player_clublinks>false</use_player_clublinks>
 
 			<!-- Maximum number of players per team in matchmaking -->
 			<max_number_players_per_team>3</max_number_players_per_team>

@@ -15,8 +15,9 @@
 * Removed chat command `/ranks` from `chat.player_infos.php`, because `plugin/plugin.records_eyepiece.php` has a better list with `/estat topranks`
 * Added method `getFormatedRank()` in `includes/core/player.class.php`
 * Removed method `getRank()` from `plugin/plugin.rasp.php` (replaced by `getFormatedRank()` from `includes/core/player.class.php`)
-* Added chat command `/infobar reload` in `plugins/plugin.info_bar.php` (suggested by perre.vl)
 * Turned `Top Rankings Window`, `Dedimania Records Window`, `Local Records Window`, `Live Rankings Window`, `Top Continent Window` from `plugin.records_eyepiece.php` into the class window style
+* Changed some `sprintf("%.1f"...)` to `$aseco->formatFloat()` in `plugin.records_eyepiece.php` (thanks elie520)
+* No local- and dedimania-records while within warm-up to prevent cheats, because of method "GetValidationReplay" returns "Not in race.", which means the race can not be validated
 
 
 ### Changes at config files
@@ -24,7 +25,22 @@
 * Changed the files in `newinstall/config/effect_studio/` to make them XML compatible (thanks aca)
 * Changed `&` to `&amp;` in all `<info_messages><messages>` at `newinstall/config/welcome_center.xml` (thanks aca)
 * Added `newinstall/locales/plugin.info_bar.xml`
+* Added chat command `/infobar reload` in `plugins/plugin.info_bar.php` (suggested by perre.vl)
 * Added `Rounds.Script.txt`, `TimeAttack.Script.txt`, `Team.Script.txt`, `Laps.Script.txt`, `Cup.Script.txt`, `TeamAttack.Script.txt` and `Chase.Script.txt` to `<scripts>` in `newinstall/config/modescript_settings.xml` for checking the version
+* Added trailing `/` in `<dedicated_installation>` from `newinstall/config/UASECO.xml` (thanks Shrike)
+* Added `<modesetup><timeattack><warm_up_duration>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><timeattack><warm_up_number>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><team><warm_up_duration>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><team><warm_up_number>` in `newinstall/config/modescript_settings.xml`
+* Removed `<modesetup><team><use_player_clublinks>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><laps><warm_up_duration>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><laps><warm_up_number>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><cup><warm_up_number>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><cup><max_players_per_team>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><cup><min_players_per_team>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><chase><warm_up_duration>` in `newinstall/config/modescript_settings.xml`
+* Added `<modesetup><chase><warm_up_number>` in `newinstall/config/modescript_settings.xml`
+* Removed `<modesetup><chase><use_player_clublinks>` in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes
@@ -43,6 +59,10 @@
 * Fixed messed up positions of the default HUD elements after a ModeScript and map change
 * Fixed buggy welcome message since the rank calculation changes (thanks rasmusdk)
 * Fixed adding maps with `/admin add ID` does not setup a database ID which causes no records and mania karma endless loading (thanks mistertl)
+* Fixed [PHP Notice] Undefined variable: gd on line 710 in file `uaseco.php` (thanks soehest)
+* Fixed message `Adding missing trailing "/"` for `<mapimages_path>` and `<dedicated_installation>` (thanks Shrike)
+* Fixed the WarmUp widget stays on the screen thoughout all the following non warm-up rounds (thanks elie520)
+* Fixed the forced autoend of a round if all players have finished the round, but the timeout has reached while showing the score
 
 
 
