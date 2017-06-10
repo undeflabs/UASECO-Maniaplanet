@@ -48,7 +48,7 @@ class PluginAutotime extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-04');
+		$this->setBuild('2017-06-09');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.autotime', 'plugin_description'));
 
@@ -157,20 +157,20 @@ class PluginAutotime extends Plugin {
 					$aseco->formatTime($map->author_time)
 				);
 
-				// Display timelimit (strip .000 sec)
-				$msg->addPlaceholders(
-					$aseco->stripStyles($map->name),
-					substr($aseco->formatTime($newtime * 1000), 0, -4),
-					new Message('common', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
-					$aseco->formatTime($map->author_time)
-				);
-				$msg->sendChatMessage();
 
-				if ($this->config['DISPLAY'][0] == 2) {
-					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
-				}
-				else if ($this->config['DISPLAY'][0] > 0) {
-					$aseco->sendChatMessage($message);
+//				if ($this->config['DISPLAY'][0] == 2) {
+//					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
+//				}
+//				else if ($this->config['DISPLAY'][0] > 0) {
+				if ($this->config['DISPLAY'][0] > 0) {
+					// Display timelimit (strip .000 sec)
+					$msg->addPlaceholders(
+						$aseco->stripStyles($map->name),
+						substr($aseco->formatTime($newtime * 1000), 0, -4),
+						new Message('common', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
+						$aseco->formatTime($map->author_time)
+					);
+					$msg->sendChatMessage();
 				}
 			}
 		}

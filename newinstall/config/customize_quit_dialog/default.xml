@@ -13,13 +13,13 @@
 <quad pos="0 0" z-index="-20.0" size="320 180" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/customize-quit-dialog/night-sky-with-maniaplanet-1920x1080.jpg"/>
 <script><!--
 /*
- * ----------------------------------
+ * ==================================
  * Function:	Preload @ plugin.customize_quit_dialog.php
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2017-04-18
- * ----------------------------------
+ * Version:	2017-06-09
+ * ==================================
  */
 main() {
 	declare Frame_UASECO			<=> (Page.GetFirstChild("Frame_UASECO") as CMlFrame);

@@ -1,3 +1,37 @@
+## [Version 0.9.6](_#Version-0.9.6)
+
+
+
+### General changes
+
+* none
+
+
+### Changes at config files
+
+* Added missing `<modesetup><chase><warm_up_duration>` from 0.9.5 release in `newinstall/config/modescript_settings.xml` (thanks speedychris)
+* Added missing `<modesetup><chase><warm_up_number>` from 0.9.5 release in `newinstall/config/modescript_settings.xml` (thanks speedychris)
+* Changed `&` to `&amp;` in `<messages><cheater_blacklisted_and_banned>` at `newinstall/config/welcome_center.xml` (thanks aca)
+* Change all `-----` to `=====` in `newinstall/config/tachometer/template_classic.xml` to make them XML compatible (thanks aca)
+* Change all `-----` to `=====` in `newinstall/config/customize_quit_dialog/default.xml` to make them XML compatible (thanks aca)
+
+
+### Bug fixes
+
+* Fixed [UASECO Exception] Error returned: "Invalid Manialink page: XML Error at [NUM, NUM]: Parsing attribute " ATTRIBUTE " [-1000] at GbxRemote::query() for method "SendDisplayManialinkPageToLogin" with arguments[...] in `plugins/plugin.records_eyepiece.php` (thanks rasmusdk)
+* Fixed setting `<settings><display>` to `0` does still display the message in the chat (thanks rasmusdk)
+* Fixed PHP Parse error:  syntax error, unexpected '$rank' (T_VARIABLE) in `plugins/chat.rasp_nextrank.php` on line 124 (thanks aca)
+
+
+
+
+
+***
+
+
+
+
+
 ## [Version 0.9.5](_#Version-0.9.5)
 
 

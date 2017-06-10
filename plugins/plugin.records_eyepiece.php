@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2017-06-08');
+		$this->setBuild('2017-06-09');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -14244,7 +14244,7 @@ EOL;
 			$string = preg_replace('/\${1}(000|111|222|333|444|555)/i', '\$AAA', $string);
 		}
 
-//		$string = $aseco->encodeEntities($string);
+		$string = $aseco->encodeEntities($string);
 		$string = $aseco->stripNewlines($string);
 
 		return $aseco->validateUTF8String($string);

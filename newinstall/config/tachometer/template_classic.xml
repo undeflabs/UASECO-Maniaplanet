@@ -1,12 +1,12 @@
 <!--
  * Template of a classic speedometer
- * ----------------------------------------------------------------------------------
+ * ==================================================================================
  * Authors:	undef.de
- * Date:	2017-05-12
+ * Date:	2017-06-09
  * Copyright:	2014 - 2017 by undef.de
- * ----------------------------------------------------------------------------------
+ * ==================================================================================
  * You have to use the Manialink V3 syntax, attributes, position and sizes!
- * ----------------------------------------------------------------------------------
+ * ==================================================================================
 -->
 <frame pos="-115 -15" z-index="20.1" id="FrameSpeedStatistic" hidden="true">
 	<label pos="0 -41.3" z-index="0.05" size="60 4" textsize="1" scale="0.8" text="" textcolor="FFFFFF" id="LabelSpeedStatistic"/>
@@ -33,31 +33,31 @@
 	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="FF0000" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-11.png" id="QuadTachoscale11"/>
 	<quad pos="0 0" z-index="0.04" size="95.5 95.5" halign="center" valign="center" modulatecolor="FF0000" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-12.png" id="QuadTachoscale12"/>
 	<quad pos="0 0" z-index="0.05" size="95.5 95.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/tachometer-scale-overlay.png" id="QuadTachoscaleOverlay"/>
-	<label pos="0 4.2" z-index="0.04" size="20 4" halign="center" valign="center2" style="TextButtonSmall" textsize="1.5" text=" " id="LabelVelocityUnit" scriptevents="1"/>
-	<label pos="0 11" z-index="0.04" size="80 20" halign="center" valign="center2" style="TextButtonBig" textsize="10" text="0" id="LabelSpeed"/>
+	<label pos="0 4.2" z-index="0.06" size="20 4" halign="center" valign="center2" style="TextButtonSmall" textsize="1.5" text=" " id="LabelVelocityUnit" scriptevents="1"/>
+	<label pos="0 11" z-index="0.06" size="80 20" halign="center" valign="center2" style="TextButtonBig" textsize="10" text="0" id="LabelSpeed"/>
 
-	<label pos="0 20" z-index="0.04" halign="center" valign="center2" style="TextButtonSmall" textsize="1" textcolor="777777FF" text="RPM X 1000"/>
+	<label pos="0 20" z-index="0.06" halign="center" valign="center2" style="TextButtonSmall" textsize="1" textcolor="777777FF" text="RPM X 1000"/>
 
-	<frame pos="-11.1 -1.9" z-index="0.04">
-		<label pos="0 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance1"/>
-		<label pos="4.5 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance2"/>
-		<label pos="9 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance3"/>
-		<label pos="13.5 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance4"/>
-		<label pos="18 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance5"/>
-		<label pos="22.5 0" z-index="0.04" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance6"/>
+	<frame pos="-11.1 -1.9" z-index="0.05">
+		<label pos="0 0" z-index="0.01" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance1"/>
+		<label pos="4.5 0" z-index="0.01" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance2"/>
+		<label pos="9 0" z-index="0.01" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance3"/>
+		<label pos="13.5 0" z-index="0.01" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance4"/>
+		<label pos="18 0" z-index="0.01" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance5"/>
+		<label pos="22.5 0" z-index="0.01" size="8 4" halign="center" valign="center2" style="TextButtonSmall" textsize="2" text="0" id="LabelDistance6"/>
 	</frame>
 
-	<frame pos="-3 -10.5" z-index="0.04">
-		<quad pos="0 0" z-index="0.04" size="6 6" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-gears.png"/>
-		<quad pos="8.5 0" z-index="0.04" size="8 7" halign="center" valign="center" bgcolor="FFFFFF"/>
-		<label pos="8.5 -0.15" z-index="0.05" size="6 6" halign="center" valign="center2" style="TextButtonNav" textsize="5" textcolor="000000" text="P" id="LabelGear"/>
+	<frame pos="-3 -10.5" z-index="0.05">
+		<quad pos="0 0" z-index="0.01" size="6 6" halign="center" valign="center" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-gears.png"/>
+		<quad pos="8.5 0" z-index="0.01" size="8 7" halign="center" valign="center" bgcolor="FFFFFF"/>
+		<label pos="8.5 -0.15" z-index="0.02" size="6 6" halign="center" valign="center2" style="TextButtonNav" textsize="5" textcolor="000000" text="P" id="LabelGear"/>
 	</frame>
 
-	<frame pos="-12 -21.5" z-index="0.04">
-		<quad pos="0 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-statistics.png" scriptevents="1" id="QuadIconStatistics"/>
-		<quad pos="6 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-sounds.png" scriptevents="1" id="QuadIconSounds"/>
-		<quad pos="12 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-lights.png" scriptevents="1" id="QuadIconLights"/>
-		<quad pos="18 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-fuel.png" scriptevents="1" id="QuadIconFuel"/>
-		<quad pos="24 0" z-index="0.04" size="5.5 5.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-temperature.png" scriptevents="1" id="QuadIconTemperature"/>
+	<frame pos="-12 -21.5" z-index="0.05">
+		<quad pos="0 0" z-index="0.01" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-statistics.png" scriptevents="1" id="QuadIconStatistics"/>
+		<quad pos="6 0" z-index="0.01" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-sounds.png" scriptevents="1" id="QuadIconSounds"/>
+		<quad pos="12 0" z-index="0.01" size="5.5 5.5" halign="center" valign="center" modulatecolor="888888" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-lights.png" scriptevents="1" id="QuadIconLights"/>
+		<quad pos="18 0" z-index="0.01" size="5.5 5.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-fuel.png" scriptevents="1" id="QuadIconFuel"/>
+		<quad pos="24 0" z-index="0.01" size="5.5 5.5" halign="center" valign="center" modulatecolor="FFFFFF" image="http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/icon-temperature.png" scriptevents="1" id="QuadIconTemperature"/>
 	</frame>
 </frame>

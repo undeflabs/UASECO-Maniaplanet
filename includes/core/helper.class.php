@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-04');
+		$this->setBuild('2017-06-09');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -212,9 +212,9 @@ class Helper extends BaseClass {
 		$xml .= ' </dedicated>'.LF;
 		$xml .= ' <server>'.LF;
 		$xml .= '  <link>maniaplanet://#join='. $this->server->login .'@'. $this->server->title .'</link>'.LF;
-		$xml .= '  <admin_contact>'. $this->settings['admin_contact'] .'</admin_contact>'.LF;
+		$xml .= '  <admin_contact>'. $this->handleSpecialChars($this->settings['admin_contact']) .'</admin_contact>'.LF;
 		$xml .= '  <login>'. $this->server->login .'</login>'.LF;
-		$xml .= '  <name>'. $this->stripStyles($this->server->name) .'</name>'.LF;
+		$xml .= '  <name>'. $this->handleSpecialChars($this->stripStyles($this->server->name)) .'</name>'.LF;
 		$xml .= '  <continent>'. $this->server->zone[0] .'</continent>'.LF;
 		$xml .= '  <country>'. $this->server->zone[1] .'</country>'.LF;
 		$xml .= '  <protected>'. ((!empty($this->server->options['Password'])) ? 'true' : 'false') .'</protected>'.LF;

@@ -448,6 +448,12 @@
 
 			<!--  Allow the players who are waiting for a match to play on different maps, default are 600 sec. -->
 			<waiting_time_max>600</waiting_time_max>
+
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<warm_up_duration>-1</warm_up_duration>
+
+			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
+			<warm_up_number>0</warm_up_number>
 		</chase>
 
 

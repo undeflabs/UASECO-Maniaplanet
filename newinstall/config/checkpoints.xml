@@ -83,6 +83,6 @@
 		<cheater_kicked>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} kicked!</cheater_kicked>
 		<cheater_banned>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} banned!</cheater_banned>
 		<cheater_blacklisted>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} blacklisted!</cheater_blacklisted>
-		<cheater_blacklisted_and_banned>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} blacklisted & banned!</cheater_blacklisted_and_banned>
+		<cheater_blacklisted_and_banned>{#server}» {#admin}Cheater {#highlite}{1}$Z$S{#admin} blacklisted &amp; banned!</cheater_blacklisted_and_banned>
 	</messages>
 </settings>
