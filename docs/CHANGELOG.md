@@ -4,7 +4,12 @@
 
 ### General changes
 
-* none
+* Requires a `Maniaplanet Dedicated Server` build `2017-06-15_16_00` or higher
+* The logfile from UASECO has been renamed to `2017-06-15-uaseco-current.txt` or `2017-06-15-14-31-12-uaseco.txt` for older logfiles
+* The `webrequest.php` uses an own logfile named `2017-06-15-webrequest-current.txt` or `2017-06-15-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
+* Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
+* Changed `newinstall/uaseco.sh` and `newinstall/uaseco.bat` to redirect errors into normal logfile from UASECO
+* Added a better error diagnostic message in `includes/core/locales.class.php`
 
 
 ### Changes at config files
@@ -14,13 +19,15 @@
 * Changed `&` to `&amp;` in `<messages><cheater_blacklisted_and_banned>` at `newinstall/config/welcome_center.xml` (thanks aca)
 * Change all `-----` to `=====` in `newinstall/config/tachometer/template_classic.xml` to make them XML compatible (thanks aca)
 * Change all `-----` to `=====` in `newinstall/config/customize_quit_dialog/default.xml` to make them XML compatible (thanks aca)
+* Added `<sounds><enabled>` in `newinstall/config/tachometer.xml` to enable or disable sounds by default (wished by hacki65)
 
 
 ### Bug fixes
 
 * Fixed [UASECO Exception] Error returned: "Invalid Manialink page: XML Error at [NUM, NUM]: Parsing attribute " ATTRIBUTE " [-1000] at GbxRemote::query() for method "SendDisplayManialinkPageToLogin" with arguments[...] in `plugins/plugin.records_eyepiece.php` (thanks rasmusdk)
-* Fixed setting `<settings><display>` to `0` does still display the message in the chat (thanks rasmusdk)
+* Fixed setting `<settings><display>` to `0` in `config/autotime.xml` does still display the message in the chat (thanks rasmusdk)
 * Fixed PHP Parse error:  syntax error, unexpected '$rank' (T_VARIABLE) in `plugins/chat.rasp_nextrank.php` on line 124 (thanks aca)
+* Fixed [PHP Warning] Invalid argument supplied for foreach() on line 951 in file `plugins/plugin.modescript_handler.php` (thanks lyovav)
 
 
 

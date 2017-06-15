@@ -46,8 +46,8 @@ class PluginTachometer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('reaby');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-06-15');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Displays a smart tachometer on the HUD.');
 
@@ -85,81 +85,14 @@ class PluginTachometer extends Plugin {
 			),
 
 			'sounds' => array(
-				'drive_backward'			=> $settings['SOUNDS'][0]['DRIVE_BACKWARD'][0],
-				'gear_shift'				=> $settings['SOUNDS'][0]['GEAR_SHIFT'][0],
+				'enabled'				=> ($aseco->string2bool($settings['SOUNDS'][0]['ENABLED'][0]) == true ? 'True' : 'False'),
+
+				'drive_backward_url'			=> $settings['SOUNDS'][0]['DRIVE_BACKWARD'][0],
+				'gear_shift_url'			=> $settings['SOUNDS'][0]['GEAR_SHIFT'][0],
 			),
-
-
-//			'position' => array(
-//				'x'					=> $aseco->formatFloat($settings['POSITION'][0]['X'][0]),
-//				'y'					=> $aseco->formatFloat($settings['POSITION'][0]['Y'][0]),
-//				'z'					=> $aseco->formatFloat($settings['POSITION'][0]['Z'][0]),
-//			),
-//			'sizes' => array(
-//				'scale'					=> $aseco->formatFloat($settings['SCALE'][0]),
-//				'background' => array(
-//					'x'				=> 95.5,
-//					'y'				=> 95.5,
-//				),
-//				'needle' => array(
-//					'x'				=> 87.625,
-//					'y'				=> 87.625,
-//				),
-//			),
-//			'images' => array(
-//				'background' 				=> $settings['IMAGES'][0]['BACKGROUND'][0],
-//				'needle'				=> $settings['IMAGES'][0]['NEEDLE'][0],
-////				'needle'				=> 'http://maniacdn.net/undef.de/uaseco/tachometer/needle-dark.png',
-////				'needle'				=> 'http://maniacdn.net/undef.de/uaseco/tachometer/needle-test.png',
-//				'scale' => array(
-//					'colorscale'			=> $settings['IMAGES'][0]['SCALE'][0]['COLORSCALE'][0],
-//					'overlay'			=> $settings['IMAGES'][0]['SCALE'][0]['OVERLAY'][0],
-//					'tiles' => array(
-//						1			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE01'][0],
-//						2			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE02'][0],
-//						3			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE03'][0],
-//						4			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE04'][0],
-//						5			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE05'][0],
-//						6			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE06'][0],
-//						7			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE07'][0],
-//						8			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE08'][0],
-//						9			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE09'][0],
-//						10			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE10'][0],
-//						11			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE11'][0],
-//						12			=> $settings['IMAGES'][0]['SCALE'][0]['TILES'][0]['TILE12'][0],
-//					),
-//				),
-//				'icons' => array(
-//					'statistics'			=> $settings['IMAGES'][0]['ICONS'][0]['STATISTICS'][0],
-//					'sounds'			=> $settings['IMAGES'][0]['ICONS'][0]['SOUNDS'][0],
-//					'lights'			=> $settings['IMAGES'][0]['ICONS'][0]['LIGHTS'][0],
-//					'fuel'				=> $settings['IMAGES'][0]['ICONS'][0]['FUEL'][0],
-//					'temperature'			=> $settings['IMAGES'][0]['ICONS'][0]['TEMPERATURE'][0],
-//				),
-//			),
-//			'modulation' => array(
-//				'colorscale'				=> $settings['MODULATION'][0]['COLORSCALE'][0],
-//				'needle'				=> $settings['MODULATION'][0]['NEEDLE'][0],
-//				'overlay'				=> $settings['MODULATION'][0]['OVERLAY'][0],
-//				'tiles' => array(
-//					1				=> $settings['MODULATION'][0]['TILES'][0]['TILE01'][0],
-//					2				=> $settings['MODULATION'][0]['TILES'][0]['TILE02'][0],
-//					3				=> $settings['MODULATION'][0]['TILES'][0]['TILE03'][0],
-//					4				=> $settings['MODULATION'][0]['TILES'][0]['TILE04'][0],
-//					5				=> $settings['MODULATION'][0]['TILES'][0]['TILE05'][0],
-//					6				=> $settings['MODULATION'][0]['TILES'][0]['TILE06'][0],
-//					7				=> $settings['MODULATION'][0]['TILES'][0]['TILE07'][0],
-//					8				=> $settings['MODULATION'][0]['TILES'][0]['TILE08'][0],
-//					9				=> $settings['MODULATION'][0]['TILES'][0]['TILE09'][0],
-//					10				=> $settings['MODULATION'][0]['TILES'][0]['TILE10'][0],
-//					11				=> $settings['MODULATION'][0]['TILES'][0]['TILE11'][0],
-//					12				=> $settings['MODULATION'][0]['TILES'][0]['TILE12'][0],
-//				),
-//			),
-
 		);
 
-		$this->config['manialinkid']				= 'Tachometer';
+		$this->config['manialinkid'] = 'Tachometer';
 
 		// Disable parts of the UI
 		$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('position', false);
@@ -358,8 +291,9 @@ main() {
 	declare CMlQuad QuadIconFuel		<=> (Page.GetFirstChild("QuadIconFuel") as CMlQuad);
 	declare CMlQuad QuadIconTemperature	<=> (Page.GetFirstChild("QuadIconTemperature") as CMlQuad);
 
-	declare SoundDriveBackward		= Audio.CreateSound("{$this->config['tachometer']['sounds']['drive_backward']}", 1.0, False, True, False);
-	declare SoundGearShift			= Audio.CreateSound("{$this->config['tachometer']['sounds']['gear_shift']}", 1.0, False, False, False);
+	declare Boolean SoundsEnabled		= {$this->config['tachometer']['sounds']['enabled']};
+	declare SoundDriveBackward		= Audio.CreateSound("{$this->config['tachometer']['sounds']['drive_backward_url']}", 1.0, False, True, False);
+	declare SoundGearShift			= Audio.CreateSound("{$this->config['tachometer']['sounds']['gear_shift_url']}", 1.0, False, False, False);
 	declare Text LastGear			= "P";
 	declare Text[] VelocityUnits		= ["KPH", "KP/H", "KMH", "KM/H", "MPH", "MP/H", "MIH", "MI/H", "SPH", "SP/H"];
 	declare Text[] ModulateColors		= ["777777", "555555", "FFFFFF", "FEFFC5", "ACC720", "005893", "FFF700", "FFA700", "E74F3C", "F74BD3"];
@@ -387,6 +321,9 @@ main() {
 	}
 
 	// Turn sounds on/off
+	if (SoundsEnabled == False) {
+		TachometerSoundStatus		= False;
+	}
 	if (TachometerSoundStatus == True) {
 		QuadIconSounds.ModulateColor = TextLib::ToColor("FFFFFF");
 	}

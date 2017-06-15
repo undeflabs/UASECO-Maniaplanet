@@ -44,11 +44,11 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2017-06-09');
+	define('UASECO_BUILD',			'2017-06-15');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',		'2017-05-31_23_00');
+	define('MANIAPLANET_BUILD',		'2017-06-15_16_00');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.1.1');
 	define('MIN_PHP_VERSION',		'5.6.0');
@@ -2009,7 +2009,7 @@ class UASECO extends Helper {
 		$this->server->gamestate = Server::RACE;
 
 		// Check for changing the daily logfile
-		if ($this->logfile['file'] != './logs'. DIRECTORY_SEPARATOR . date('Y-m-d') .'-current.txt') {
+		if ($this->logfile['file'] != './logs'. DIRECTORY_SEPARATOR . date('Y-m-d') .'-uaseco-current.log') {
 			// Setup new logfile
 			$this->setupLogfile();
 			$this->sendHeader();

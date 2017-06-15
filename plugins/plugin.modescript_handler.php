@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.4');
-		$this->setBuild('2017-06-08');
+		$this->setBuild('2017-06-15');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -889,7 +889,7 @@ class PluginModescriptHandler extends Plugin {
 
 
 			case 'Trackmania.Scores':
-				if ($aseco->server->gameinfo->mode === Gameinfo::TEAM) {
+				if ($aseco->server->gameinfo->mode === Gameinfo::TEAM && isset($params['teams']) && is_array($params['teams'])) {
 					$rank_blue = PHP_INT_MAX;
 					$rank_red = PHP_INT_MAX;
 
@@ -948,36 +948,38 @@ class PluginModescriptHandler extends Plugin {
 				}
 				else {
 					$found_improvement = false;
-					foreach ($params['players'] as $item) {
-						if ($player = $aseco->server->players->getPlayerByLogin($item['login'])) {
-							$update = array(
-								'rank'				=> $item['rank'],
-								'login'				=> $player->login,
-								'nickname'			=> $player->nickname,
-								'round_points'			=> $item['roundpoints'],
-								'map_points'			=> $item['mappoints'],
-								'match_points'			=> $item['matchpoints'],
-								'best_race_time'		=> $item['bestracetime'],		// Best race time in milliseconds
-								'best_race_respawns'		=> $item['bestracerespawns'],		// Number of respawn during best race
-								'best_race_checkpoints'		=> $item['bestracecheckpoints'],	// Checkpoints times during best race
-								'best_lap_time'			=> $item['bestlaptime'],		// Best lap time in milliseconds
-								'best_lap_respawns'		=> $item['bestlaprespawns'],		// Number of respawn during best lap
-								'best_lap_checkpoints'		=> $item['bestlapcheckpoints'],		// Checkpoints times during best lap
-								'stunts_score'			=> $item['stuntsscore'],
-							);
+					if (isset($params['players']) && is_array($params['players'])) {
+						foreach ($params['players'] as $item) {
+							if ($player = $aseco->server->players->getPlayerByLogin($item['login'])) {
+								$update = array(
+									'rank'				=> $item['rank'],
+									'login'				=> $player->login,
+									'nickname'			=> $player->nickname,
+									'round_points'			=> $item['roundpoints'],
+									'map_points'			=> $item['mappoints'],
+									'match_points'			=> $item['matchpoints'],
+									'best_race_time'		=> $item['bestracetime'],		// Best race time in milliseconds
+									'best_race_respawns'		=> $item['bestracerespawns'],		// Number of respawn during best race
+									'best_race_checkpoints'		=> $item['bestracecheckpoints'],	// Checkpoints times during best race
+									'best_lap_time'			=> $item['bestlaptime'],		// Best lap time in milliseconds
+									'best_lap_respawns'		=> $item['bestlaprespawns'],		// Number of respawn during best lap
+									'best_lap_checkpoints'		=> $item['bestlapcheckpoints'],		// Checkpoints times during best lap
+									'stunts_score'			=> $item['stuntsscore'],
+								);
 
-							$rank = $aseco->server->rankings->getRankByLogin($item['login']);
-							if (($update['map_points'] > 0 || $rank->map_points > $update['map_points']) || ($update['match_points'] > 0 || $rank->match_points > $update['match_points']) || ($update['best_race_time'] > 0 || $rank->best_race_time > $update['best_race_time']) || ($update['best_lap_time'] > 0 || $rank->best_lap_time > $update['best_lap_time'])) {
-								// Update current ranking cache
-								$aseco->server->rankings->update($update);
+								$rank = $aseco->server->rankings->getRankByLogin($item['login']);
+								if (($update['map_points'] > 0 || $rank->map_points > $update['map_points']) || ($update['match_points'] > 0 || $rank->match_points > $update['match_points']) || ($update['best_race_time'] > 0 || $rank->best_race_time > $update['best_race_time']) || ($update['best_lap_time'] > 0 || $rank->best_lap_time > $update['best_lap_time'])) {
+									// Update current ranking cache
+									$aseco->server->rankings->update($update);
 
-								// Lets send the event 'onPlayerRankingUpdated'
-								$found_improvement = true;
-							}
+									// Lets send the event 'onPlayerRankingUpdated'
+									$found_improvement = true;
+								}
 
-							// Special handling for 'round_points', details at 'docs/nadeo/Detailed description of Trackmania.Scores.txt'
-							if ($update['round_points'] > 0) {
-								$aseco->releaseEvent('onPlayerRoundFinish', $update);
+								// Special handling for 'round_points', details at 'docs/nadeo/Detailed description of Trackmania.Scores.txt'
+								if ($update['round_points'] > 0) {
+									$aseco->releaseEvent('onPlayerRoundFinish', $update);
+								}
 							}
 						}
 					}

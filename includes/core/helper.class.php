@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-09');
+		$this->setBuild('2017-06-15');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -1920,15 +1920,15 @@ class Helper extends BaseClass {
 		// Create logs/ directory if needed
 		$dir = './logs';
 		if (!file_exists($dir)) {
-			mkdir($dir);
+			mkdir($dir, 0755, true);
 		}
 
 		// Define daily file inside dir
-		$this->logfile['file'] = $dir . DIRECTORY_SEPARATOR . date('Y-m-d') .'-current.txt';
+		$this->logfile['file'] = $dir . DIRECTORY_SEPARATOR . date('Y-m-d') .'-uaseco-current.log';
 
 		// On stop or crash replace old logfile
 		if (file_exists($this->logfile['file']) && !$this->logfile['handle']) {
-			@rename($this->logfile['file'], $dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s') .'.txt');
+			@rename($this->logfile['file'], $dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s') .'-uaseco.log');
 		}
 
 		// Check for logfiles from the past
@@ -1943,12 +1943,12 @@ class Helper extends BaseClass {
 						unlink($dir . DIRECTORY_SEPARATOR . $logfile);
 					}
 
-					$result = preg_match('/-current\.txt$/', $logfile);
+					$result = preg_match('/-uaseco-current\.log$/', $logfile);
 					if ($result !== false && $result >= 1) {
-						// Rename all logfiles marked with "-current.txt" and older then one hour
+						// Rename all logfiles marked with "-uaseco-current.log" and older then one hour
 						@rename(
 							$dir . DIRECTORY_SEPARATOR . $logfile,
-							$dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s', $lastmodified) .'.txt'
+							$dir . DIRECTORY_SEPARATOR . date('Y-m-d-H-i-s', $lastmodified) .'-uaseco.log'
 						);
 					}
 				}

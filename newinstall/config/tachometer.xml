@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
+	<!-- Located in the folder "config/tachometer/" -->
 	<template>template_classic.xml</template>
 
 	<!-- Change the scale factor, 1.0 = 100% -->
 	<scale>0.53</scale>
 
 	<sounds>
+		<enabled>true</enabled>
+
 		<drive_backward>http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/biep-biep-biep.ogg</drive_backward>
 		<gear_shift>http://maniacdn.net/undef.de/uaseco/tachometer/templates/classic2017/gear-shift.ogg</gear_shift>
 	</sounds>

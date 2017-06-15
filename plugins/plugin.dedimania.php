@@ -93,7 +93,7 @@ class PluginDedimania extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-27');
+		$this->setBuild('2017-06-15');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Handles interaction with the Dedimania world database and shows new/online Dedimania world records and their relations on the current track.');
 
@@ -1117,7 +1117,7 @@ class PluginDedimania extends Plugin {
 					// check/create validation replays directory
 					if ($this->db['KeepVReplays']) {
 						if (!file_exists($aseco->server->gamedir .'Replays/'. $this->vreplay_dir)) {
-							if (!mkdir($aseco->server->gamedir .'Replays/'. $this->vreplay_dir)) {
+							if (!mkdir($aseco->server->gamedir .'Replays/'. $this->vreplay_dir, 0755, true)) {
 								$aseco->console('[Dedimania] Validation Replays Directory ('. $aseco->server->gamedir .'Replays/'. $this->vreplay_dir .') cannot be created');
 							}
 						}

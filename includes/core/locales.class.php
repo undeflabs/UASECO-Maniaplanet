@@ -44,8 +44,8 @@ class Locales extends BaseClass {
 
 		$this->setAuthor('askuri');
 		$this->setCoAuthors('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2017-06-15');
 		$this->setCopyright('2014 - 2017 by Martin Weber (askuri)');
 		$this->setDescription('Provides multilanguage support.');
 
@@ -57,7 +57,7 @@ class Locales extends BaseClass {
 
 			$xml = simplexml_load_file($filename);
 			if (!$xml) {
-				trigger_error('[LOCALES] Unable to parse '. $filename. '! Please check its syntax and the encoding (has to be UTF8!)', E_USER_ERROR);
+				trigger_error('[ClassLocales] Unable to parse '. $filename. '! Please check its syntax and the encoding (has to be UTF8!)', E_USER_ERROR);
 			}
 
 			// Remove comments
@@ -112,7 +112,14 @@ class Locales extends BaseClass {
 	*/
 
 	public function getSingleTranslation ($sourcefile, $id, $lang) {
-		return $this->locales[$sourcefile][$id][$lang];
+		global $aseco;
+
+		if (isset($this->locales[$sourcefile]) && isset($this->locales[$sourcefile][$id]) && isset($this->locales[$sourcefile][$id][$lang])) {
+			return $this->locales[$sourcefile][$id][$lang];
+		}
+		else {
+			$aseco->console('[ClassLocales][ERROR] getSingleTranslation(): Translation file [locales/'. $sourcefile .'.xml] does not contain the requested entry <'. $id .'> or language <'. $lang .'>!');
+		}
 	}
 
 	/*
@@ -122,7 +129,14 @@ class Locales extends BaseClass {
 	*/
 
 	public function getAllTranslations ($sourcefile, $id) {
-		return $this->locales[$sourcefile][$id];
+		global $aseco;
+
+		if (isset($this->locales[$sourcefile]) && isset($this->locales[$sourcefile][$id])) {
+			return $this->locales[$sourcefile][$id];
+		}
+		else {
+			$aseco->console('[ClassLocales][ERROR] getAllTranslations(): Translation file [locales/'. $sourcefile .'.xml] does not contain the requested entry <'. $id .'>!');
+		}
 	}
 
 	/*
@@ -151,7 +165,7 @@ class Locales extends BaseClass {
 			return $message;
 		}
 		else {
-			trigger_error('[LOCALES] handleMessage() is unable to handle the following message due to an invalid datatype:', E_USER_WARNING);
+			trigger_error('[ClassLocales] handleMessage(): unable to handle the following message due to an invalid datatype:', E_USER_WARNING);
 		}
 	}
 }
