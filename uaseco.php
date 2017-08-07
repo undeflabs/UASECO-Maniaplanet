@@ -2080,9 +2080,6 @@ class UASECO extends Helper {
 			}
 		}
 
-		// Report usage back to home website and store file for the "stripling.php"
-		$this->reportServerInfo();
-
 		// Refresh game info
 		$this->server->getCurrentGameInfo();
 
@@ -2132,6 +2129,9 @@ class UASECO extends Helper {
 			$param[1][0] = json_encode($data);
 			$this->plugins['PluginModescriptHandler']->onModeScriptCallbackArray($this, $param);
 		}
+
+		// Report usage back to home website and store file for the "stripling.php"
+		$this->reportServerInfo();
 	}
 
 	/*
@@ -2348,6 +2348,8 @@ class UASECO extends Helper {
 			// Throw postfix 'player connects' event (access control)
 			$this->releaseEvent('onPlayerConnectPostfix', $player);
 		}
+			// Report usage back to home website and store file for the "stripling.php"
+			$this->reportServerInfo();
 	}
 
 	/*
@@ -2399,6 +2401,9 @@ class UASECO extends Helper {
 
 		// Throw 'player disconnects' event
 		$this->releaseEvent('onPlayerDisconnect', $player);
+
+		// Report usage back to home website and store file for the "stripling.php"
+		$this->reportServerInfo();
 	}
 
 	/*
