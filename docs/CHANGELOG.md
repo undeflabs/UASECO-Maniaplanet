@@ -4,7 +4,7 @@
 
 ### General changes
 
-* Requires a `Maniaplanet Dedicated Server` build `2017-06-15_16_00` or higher
+* Requires a `Maniaplanet Dedicated Server` build 2017-08-04_11_00 or higher
 * The logfile from UASECO has been renamed to `2017-06-15-uaseco-current.txt` or `2017-06-15-14-31-12-uaseco.txt` for older logfiles
 * The `webrequest.php` uses an own logfile named `2017-06-15-webrequest-current.txt` or `2017-06-15-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
@@ -20,6 +20,7 @@
 * Change all `-----` to `=====` in `newinstall/config/tachometer/template_classic.xml` to make them XML compatible (thanks aca)
 * Change all `-----` to `=====` in `newinstall/config/customize_quit_dialog/default.xml` to make them XML compatible (thanks aca)
 * Added `<sounds><enabled>` in `newinstall/config/tachometer.xml` to enable or disable sounds by default (wished by hacki65)
+* Added new entry `Stadium SUPER Trucks` at `<points_systems><system>` in `newinstall/config/round_points.xml`
 
 
 ### Bug fixes
@@ -28,7 +29,14 @@
 * Fixed setting `<settings><display>` to `0` in `config/autotime.xml` does still display the message in the chat (thanks rasmusdk)
 * Fixed PHP Parse error:  syntax error, unexpected '$rank' (T_VARIABLE) in `plugins/chat.rasp_nextrank.php` on line 124 (thanks aca)
 * Fixed [PHP Warning] Invalid argument supplied for foreach() on line 951 in file `plugins/plugin.modescript_handler.php` (thanks lyovav)
-
+* Fixed Wrong Time in the chat with the plugin.autotime.php and configured bronze time (thanks Flighthigh)
+* Fixed [PHP Notice] Undefined offset: 1 on line 632 in file `includes/core/helper.class.php` (thanks Plateo)
+* Fixed [PHP Notice] Trying to get property of non-object on line 970 in file `plugins/plugin.modescript_handler.php` (thanks hackie)
+* Fixed [PHP Notice] Undefined offset: 0 on line 8471 in file `plugins/plugin.records_eyepiece.php` (thanks Tavernicole)
+* Fixed [PHP Warning] end() expects parameter 1 to be array, string given on line 1207 in file `plugins/plugin.checkpoints.php` (thanks fl3kzZ)
+* Fixed not working `/infobar reload` (thanks hackie)
+* Fixed [PHP Warning] Declaration of Database::query($sql) should be compatible with mysqli::query($query, $resultmode = NULL) in `includes/core/database.class.php` on line 431 (thanks hacki65)
+* Fixed [PHP Warning] array_key_exists(): The first argument should be either a string or an integer on line 709 in file path to `plugins/plugin.rasp_jukebox.php` (thanks hackie)
 
 
 

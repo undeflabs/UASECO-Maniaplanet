@@ -48,7 +48,7 @@ class PluginAutotime extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-09');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.autotime', 'plugin_description'));
 
@@ -98,15 +98,19 @@ class PluginAutotime extends Plugin {
 				// Setup calculation base
 				if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'AUTHOR') {
 					$newtime = substr((int)$map->author_time, 0, -3);
+					$basedtime = (int)$map->author_time;
 				}
 				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'GOLD') {
 					$newtime = substr((int)$map->gold_time, 0, -3);
+					$basedtime = (int)$map->gold_time;
 				}
 				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'SILVER') {
 					$newtime = substr((int)$map->silver_time, 0, -3);
+					$basedtime = (int)$map->silver_time;
 				}
 				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'BRONZE') {
 					$newtime = substr((int)$map->bronze_time, 0, -3);
+					$basedtime = (int)$map->bronze_time;
 				}
 
 				// Compute new timelimit
@@ -154,7 +158,7 @@ class PluginAutotime extends Plugin {
 					$aseco->stripStyles($map->name, false),
 					substr($aseco->formatTime($newtime * 1000), 0, -4),
 					strtolower($this->config['CALCULATION_BASE'][0]),
-					$aseco->formatTime($map->author_time)
+					$aseco->formatTime($basedtime)
 				);
 
 
@@ -168,7 +172,7 @@ class PluginAutotime extends Plugin {
 						$aseco->stripStyles($map->name),
 						substr($aseco->formatTime($newtime * 1000), 0, -4),
 						new Message('common', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
-						$aseco->formatTime($map->author_time)
+						$aseco->formatTime($basedtime)
 					);
 					$msg->sendChatMessage();
 				}

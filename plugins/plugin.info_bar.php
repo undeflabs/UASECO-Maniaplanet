@@ -49,7 +49,7 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
@@ -96,6 +96,9 @@ class PluginInfoBar extends Plugin {
 				$msg->sendChatMessage($player->login);
 
 				$this->onSync($aseco);
+
+				// Send Info-Bar to all Players
+				$this->sendInfoBar(false, true);
 			}
 		}
 	}
@@ -178,7 +181,7 @@ class PluginInfoBar extends Plugin {
 		$this->players[$player->login]['dedimania_record']	= $this->records['dedimania_record'];
 		$this->players[$player->login]['mania_exchange']	= $this->records['mania_exchange'];
 
-		// Send Info-Bar to all Players
+		// Send Info-Bar to Player
 		$this->sendInfoBar($player->login, true);
 	}
 

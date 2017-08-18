@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-15');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -613,31 +613,24 @@ class Helper extends BaseClass {
 
 	// Created by Xymph: Case-insensitive file_exists replacement function.
 	// Returns matching path, otherwise false.
+	// Updated by undef.de to use the pathinfo() function instead of preg_match()
 	public function fileExistsNoCase ($filepath) {
 
-		// try case-sensitive path first
+		// Try case-sensitive path first
 		if (file_exists($filepath)) {
 			return $filepath;
 		}
 
-		// extract directory path
-		if (DIRECTORY_SEPARATOR == '/') {
-			preg_match('|^(.+/)([^/]+)$|', $filepath, $paths);
-		}
-		else {
-			// '\'
-			preg_match('|^(.+\\\\)([^\\\\]+)$|', $filepath, $paths);
-		}
+		// Split path and filename
+		$pathparts = pathinfo($filepath);
 
-		$dirpath = $paths[1];
-
-		// collect all files inside directory
-		$checkpaths = glob($dirpath . '*');
+		// Collect all files inside directory
+		$checkpaths = glob($pathparts['dirname'] . '*');
 		if ($checkpaths === false || empty($checkpaths)) {
 			return false;
 		}
 
-		// check case-insensitive paths
+		// Check case-insensitive paths
 		foreach ($checkpaths as $path) {
 			if (strtolower($filepath) == strtolower($path)) {
 				return $path;

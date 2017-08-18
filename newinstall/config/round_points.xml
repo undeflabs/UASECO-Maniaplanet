@@ -104,6 +104,14 @@
 			<points>250,200,160,130,110,100,90,80,70,60,50,40,30,20,10</points>
 			<limit>990</limit>
 		</system>
+
+		<system>
+			<!-- Stadium SUPER Trucks: Main Event Point System: http://stadiumsupertrucks.com/rules/ -->
+			<id>supertrucks</id>
+			<label>Stadium SUPER Trucks</label>
+			<points>25,22,20,18,16,15,14,13,12,11,10,9,8,7,6</points>
+			<limit>99</limit>
+		</system>
 	</points_systems>
 
 	<messages>

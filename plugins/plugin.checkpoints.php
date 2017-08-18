@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-05');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -1204,7 +1204,7 @@ EOL;
 			}
 
 			// Check for valid checkpoints
-			if (!empty($current['Checks']) && $current['Best'] == end($current['Checks'])) {
+			if (!empty($current['Checks']) && !is_array($current['Checks']) && $current['Best'] == end($current['Checks'])) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
 				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
 			}

@@ -50,7 +50,7 @@ class RankingList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-24');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Player Ranking from the dedicated server.');
 
@@ -72,7 +72,7 @@ class RankingList extends BaseClass {
 			$entry = new Ranking();
 			$entry->rank				= 0;
 			$entry->pid				= $player->pid;
-			$entry->login				= $player->login;
+			$entry->login				= (string)$player->login;
 			$entry->nickname			= $player->nickname;
 			$entry->round_points			= 0;
 			$entry->map_points			= 0;
@@ -107,7 +107,7 @@ class RankingList extends BaseClass {
 		// Create a ranking entry
 		$entry = new Ranking();
 		$entry->rank				= $item['rank'];
-		$entry->login				= $item['login'];
+		$entry->login				= (string)$item['login'];
 		$entry->nickname			= $item['nickname'];
 		$entry->round_points			= $item['round_points'];
 		$entry->map_points			= $item['map_points'];
@@ -235,6 +235,7 @@ class RankingList extends BaseClass {
 	*/
 
 	public function getRankByLogin ($login) {
+		$login = (string)$login;
 		if (!empty($login) && isset($this->ranking_list[$login])) {
 			return $this->ranking_list[$login];
 		}

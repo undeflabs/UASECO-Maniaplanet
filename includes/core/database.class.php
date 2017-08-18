@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2017-05-31
+ * Date:	2017-08-18
  * Copyright:	2014 - 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -131,9 +131,9 @@ class Database extends mysqli {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function query ($sql) {
+	public function query ($sql, $resultmode = MYSQLI_STORE_RESULT) {
 		$sql = str_replace($this->placeholder, $this->table_prefix, $sql);
-		return parent::query($sql);
+		return parent::query($sql, $resultmode);
 	}
 
 	/*

@@ -55,7 +55,7 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-27');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
@@ -706,7 +706,7 @@ class PluginRaspJukebox extends Plugin {
 				if (array_key_exists($jid, $player->maplist)) {
 					$uid = $player->maplist[$jid]['uid'];
 					// check if map is already queued in jukebox
-					if (array_key_exists($uid, $this->jukebox)) {  // find by uid in jukebox
+					if (!empty($uid) && array_key_exists($uid, $this->jukebox)) {  // find by uid in jukebox
 						$message = $this->messages['JUKEBOX_DUPL'][0];
 						$aseco->sendChatMessage($message, $login);
 						return;

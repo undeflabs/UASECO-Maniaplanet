@@ -49,7 +49,7 @@ class PlayerList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-03');
+		$this->setBuild('2017-08-18');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -126,6 +126,7 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function getPlayerByLogin ($login) {
+		$login = (string)$login;
 		if (!empty($login) && isset($this->player_list[$login])) {
 			return $this->player_list[$login];
 		}
