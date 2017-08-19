@@ -44,11 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2017-08-18');
+	define('UASECO_BUILD',			'2017-08-19');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD',		'2017-08-04_11_00');
+	define('MANIAPLANET_BUILD_POSIX',	'2017-08-04_11_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2017-08-02_17_02');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.1.1');
 	define('MIN_PHP_VERSION',		'5.6.0');
@@ -60,10 +61,12 @@
 	define('LF',			"\n");
 
 	if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
-		define('OPERATING_SYSTEM', 'WINDOWS');
+		define('OPERATING_SYSTEM',	'WINDOWS');
+		define('MANIAPLANET_BUILD',	MANIAPLANET_BUILD_WINDOWS);
 	}
 	else {
-		define('OPERATING_SYSTEM', 'POSIX');
+		define('OPERATING_SYSTEM',	'POSIX');
+		define('MANIAPLANET_BUILD',	MANIAPLANET_BUILD_POSIX);
 	}
 
 	// Report all
