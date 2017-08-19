@@ -10,6 +10,8 @@
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
 * Changed `newinstall/uaseco.sh` and `newinstall/uaseco.bat` to redirect errors into normal logfile from UASECO
 * Added a better error diagnostic message in `includes/core/locales.class.php`
+* Added changes for plugin.pay2play.php [submitted from hacki65 at github](https://github.com/undeflabs/UASECO/pull/25/files)
+* Added support for songs with space in the filename for `plugin/plugin.music_server.php` (thanks Phenom1994)
 
 
 ### Changes at config files
@@ -21,6 +23,11 @@
 * Change all `-----` to `=====` in `newinstall/config/customize_quit_dialog/default.xml` to make them XML compatible (thanks aca)
 * Added `<sounds><enabled>` in `newinstall/config/tachometer.xml` to enable or disable sounds by default (wished by hacki65)
 * Added new entry `Stadium SUPER Trucks` at `<points_systems><system>` in `newinstall/config/round_points.xml`
+* Changed `<settings><replay><posx>` from `-120.95` to `-121.3` in `newinstall/config/pay2play.xml` (thanks hacki65)
+* Changed `<settings><replay><posy>` from `81.1875` to `81` in `newinstall/config/pay2play.xml` (thanks hacki65)
+* Changed `<settings><skip><posx>` from `-108.949` to `-109.3` in `newinstall/config/pay2play.xml` (thanks hacki65)
+* Changed `<settings><skip><posy>` from `81.1875` to `81` in `newinstall/config/pay2play.xml` (thanks hacki65)
+* Changed `<settings><style><background_focus>` from `004B7D99` to `0099FFFF` in `newinstall/config/pay2play.xml` (thanks hacki65)
 
 
 ### Bug fixes
@@ -37,6 +44,9 @@
 * Fixed not working `/infobar reload` (thanks hackie)
 * Fixed [PHP Warning] Declaration of Database::query($sql) should be compatible with mysqli::query($query, $resultmode = NULL) in `includes/core/database.class.php` on line 431 (thanks hacki65)
 * Fixed [PHP Warning] array_key_exists(): The first argument should be either a string or an integer on line 709 in file path to `plugins/plugin.rasp_jukebox.php` (thanks hackie)
+* Fixed strippling.xml holds the wrong map because of the too early call of the function `reportServerInfo()` at `loadingMap()` in `uaseco.php` (thanks hacki65)
+* Fixed multiple encoded special chars in windows (thanks hackie)
+
 
 
 

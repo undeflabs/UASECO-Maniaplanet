@@ -51,7 +51,7 @@
 	define('MANIAPLANET_BUILD_POSIX',	'2017-08-04_11_00');
 	define('MANIAPLANET_BUILD_WINDOWS',	'2017-08-02_17_02');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
-	define('MODESCRIPT_API_VERSION',	'2.1.1');
+	define('MODESCRIPT_API_VERSION',	'2.3.0');
 	define('MIN_PHP_VERSION',		'5.6.0');
 	define('MIN_MYSQL_VERSION',		'5.1.0');
 	define('MIN_MARIADB_VERSION',		'5.5.20');
@@ -2083,9 +2083,6 @@ class UASECO extends Helper {
 			}
 		}
 
-		// Report usage back to home website and store file for the "stripling.php"
-		$this->reportServerInfo();
-
 		// Refresh game info
 		$this->server->getCurrentGameInfo();
 
@@ -2129,12 +2126,14 @@ class UASECO extends Helper {
 
 		// Simulate 'Maniaplanet.StartMap_Start' while start-up phase
 		if ($this->startup_phase === true) {
-
 			$data['map']['uid'] = $map->uid;
 			$param[0] = 'Maniaplanet.StartMap_Start';
 			$param[1][0] = json_encode($data);
 			$this->plugins['PluginModescriptHandler']->onModeScriptCallbackArray($this, $param);
 		}
+
+		// Report usage back to home website and store file for the "stripling.php"
+		$this->reportServerInfo();
 	}
 
 	/*
