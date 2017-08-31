@@ -194,6 +194,16 @@
 		see for details: http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
 		//-->
 		<scores_table_style_path></scores_table_style_path>
+
+		<!--
+		Further details: https://forum.maniaplanet.com/viewtopic.php?p=290478#p290478
+		0: mode default
+		1: normal
+		2: do nothing
+		3: give up before first CP
+		4: always give up
+		//-->
+		<respawn_behaviour>0</respawn_behaviour>
 	</modebase>
 
 
@@ -592,12 +602,12 @@
 		<entry>Libs/domino54/UpdateChecker.Script.txt|2015-06-27</entry>
 		<entry>Modes/TrackMania/Doppler.Script.txt|2015-08-29</entry>
 		<entry>Modes/TrackMania/Knockout.Script.txt|2015-06-27</entry>
-		<entry>Modes/TrackMania/Rounds.Script.txt|2017-05-31</entry>
-		<entry>Modes/TrackMania/TimeAttack.Script.txt|2017-05-29</entry>
-		<entry>Modes/TrackMania/Team.Script.txt|2017-05-29</entry>
-		<entry>Modes/TrackMania/Laps.Script.txt|2017-05-30</entry>
-		<entry>Modes/TrackMania/Cup.Script.txt|2017-05-31</entry>
+		<entry>Modes/TrackMania/Rounds.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/TimeAttack.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/Team.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/Laps.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/Cup.Script.txt|2017-07-12</entry>
 		<entry>Modes/TrackMania/TeamAttack.Script.txt|2016-04-13</entry>
-		<entry>Modes/TrackMania/Chase.Script.txt|2017-05-26</entry>
+		<entry>Modes/TrackMania/Chase.Script.txt|2017-08-11</entry>
 	</scripts>
 </settings>

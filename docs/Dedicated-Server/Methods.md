@@ -1165,7 +1165,7 @@ Get the current and next network vehicle quality on server. The struct returned 
 ***
 
 ### [SetServerOptions](_#SetServerOptions)
-Set new server options using the struct passed as parameters. This struct must contain the following fields : `Name`, `Comment`, `Password`, `PasswordForSpectator`, `NextMaxPlayers`, `NextMaxSpectators`, `IsP2PUpload`, `IsP2PDownload`, `NextLadderMode`, `NextVehicleNetQuality`, `NextCallVoteTimeOut`, `CallVoteRatio`, `AllowMapDownload`, `AutoSaveReplays`, and optionally for forever: `RefereePassword`, `RefereeMode`, `AutoSaveValidationReplays`, `HideServer`, `UseChangingValidationSeed`, `ClientInputsMaxLatency`, `DisableHorns`, `DisableServiceAnnounces`, `KeepPlayerSlots`. Only available to Admin. A change of NextMaxPlayers, NextMaxSpectators, NextLadderMode, NextVehicleNetQuality, NextCallVoteTimeOut or UseChangingValidationSeed requires a map restart to be taken into account.
+Set new server options using the struct passed as parameters. This struct must contain the following fields : `Name`, `Comment`, `Password`, `PasswordForSpectator`, `NextMaxPlayers`, `NextMaxSpectators`, `IsP2PUpload`, `IsP2PDownload`, `NextLadderMode`, `NextVehicleNetQuality`, `NextCallVoteTimeOut`, `CallVoteRatio`, `AllowMapDownload`, `AutoSaveReplays`, and optionally for forever: `RefereePassword`, `RefereeMode`, `AutoSaveValidationReplays`, `HideServer`, `UseChangingValidationSeed`, `ClientInputsMaxLatency`, `DisableHorns`, `DisableServiceAnnounces`, `KeepPlayerSlots`, `ServerPlugin`. Only available to Admin. A change of NextMaxPlayers, NextMaxSpectators, NextLadderMode, NextVehicleNetQuality, NextCallVoteTimeOut or UseChangingValidationSeed requires a map restart to be taken into account.
 
 #### Description
 	boolean SetServerOptions(struct)
@@ -1281,6 +1281,22 @@ Get the referee validation mode.
 
 #### Description
 	int GetRefereeMode()
+
+***
+
+### [SetServerPlugin](_#SetServerPlugin)
+Set a the ServerPlugin settings. Parameters: `ForceReload` to reload from disk, optionnally: `Name` the filename relative to Scripts/ directory, `Settings` the script #Settings to apply. Only available to Admin.
+
+#### Description
+	boolean SetServerPlugin(boolean, string, struct)
+
+***
+
+### [GetServerPlugin](_#GetServerPlugin)
+Get the ServerPlugin current settings.
+
+#### Description
+	struct GetServerPlugin()
 
 ***
 

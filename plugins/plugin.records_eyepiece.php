@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2017-08-19');
+		$this->setBuild('2017-08-31');
 		$this->setCopyright('2009 - 2017 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -6876,7 +6876,7 @@ class PluginRecordsEyepiece extends Plugin {
 			foreach ($list as $item) {
 				$xml .= '<label pos="5.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="4.25 3.1875" halign="right" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $item['rank'] .'."/>';
 				$xml .= '<label pos="14.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.5 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($item[$fieldnames[0]]) .'"/>';
-				$xml .= '<label pos="14.75 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="25.5 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($item[$fieldnames[1]]) .'"/>';
+				$xml .= '<label pos="14.75 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="25.5 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $item[$fieldnames[1]] .'"/>';
 
 				$line ++;
 
@@ -7005,7 +7005,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$score = floor( array_sum($this->scores['TopAverageTimes'][$player->login]) / count($this->scores['TopAverageTimes'][$player->login]) );
 					$data[] = array(
 						'score'		=> $score,
-						'nickname'	=> $this->handleSpecialChars($player->nickname)
+						'nickname'	=> $player->nickname
 					);
 				}
 			}

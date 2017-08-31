@@ -28,6 +28,8 @@
 * Changed `<settings><skip><posx>` from `-108.949` to `-109.3` in `newinstall/config/pay2play.xml` (thanks hacki65)
 * Changed `<settings><skip><posy>` from `81.1875` to `81` in `newinstall/config/pay2play.xml` (thanks hacki65)
 * Changed `<settings><style><background_focus>` from `004B7D99` to `0099FFFF` in `newinstall/config/pay2play.xml` (thanks hacki65)
+* Changed all `<entry>Modes/TrackMania/` lines with official modescripts at `<scripts>` in `newinstall/config/modescript_settings.xml`
+* Added `<modebase><respawn_behaviour>` in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes
@@ -44,8 +46,8 @@
 * Fixed not working `/infobar reload` (thanks hackie)
 * Fixed [PHP Warning] Declaration of Database::query($sql) should be compatible with mysqli::query($query, $resultmode = NULL) in `includes/core/database.class.php` on line 431 (thanks hacki65)
 * Fixed [PHP Warning] array_key_exists(): The first argument should be either a string or an integer on line 709 in file path to `plugins/plugin.rasp_jukebox.php` (thanks hackie)
-* Fixed strippling.xml holds the wrong map because of the too early call of the function `reportServerInfo()` at `loadingMap()` in `uaseco.php` (thanks hacki65)
-* Fixed multiple encoded special chars in windows (thanks hackie)
+* Fixed `strippling.xml` which holds the wrong map because of the too early call of the function `reportServerInfo()` at `loadingMap()` in `uaseco.php` (thanks hacki65)
+* Fixed multiple encoded special chars in windows and in Records Eyepiece (thanks hackie)
 
 
 

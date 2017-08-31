@@ -67,8 +67,8 @@ class Gameinfo extends BaseClass {
 	public function __construct ($aseco, $clone = false) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2017-06-08');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2017-08-31');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
@@ -134,6 +134,7 @@ class Gameinfo extends BaseClass {
 		// ModeBase
 		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
 		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
+		$this->modebase['RespawnBehaviour']	= $modescript['settings']['S_RespawnBehaviour'];
 
 		// https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
 		if ($this->mode == self::ROUNDS) {

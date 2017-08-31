@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - August 2017 by undef.de
+ * Copyright:	May 2014 - September 2017 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2017-08-19');
+	define('UASECO_BUILD',			'2017-09-01');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2017-08-04_11_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2017-08-02_17_02');
+	define('MANIAPLANET_BUILD_POSIX',	'2017-08-30_14_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2017-08-30_18_16');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.3.0');
 	define('MIN_PHP_VERSION',		'5.6.0');
@@ -57,8 +57,8 @@
 	define('MIN_MARIADB_VERSION',		'5.5.20');
 
 	// Setup misc.
-	define('CRLF',			PHP_EOL);
-	define('LF',			"\n");
+	define('CRLF',				PHP_EOL);
+	define('LF',				"\n");
 
 	if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
 		define('OPERATING_SYSTEM',	'WINDOWS');
@@ -2132,7 +2132,10 @@ class UASECO extends Helper {
 			$this->plugins['PluginModescriptHandler']->onModeScriptCallbackArray($this, $param);
 		}
 
-		// Report usage back to home website and store file for the "stripling.php"
+		// Store usage into "stripling.xml" file
+		$this->buildStriplingInfo();
+
+		// Report usage back to home website from "stripling.xml" file
 		$this->reportServerInfo();
 	}
 
@@ -2344,6 +2347,9 @@ class UASECO extends Helper {
 			$message = str_replace('{br}', LF, $message);
 			$this->sendChatMessage(str_replace(LF.LF, LF, $message), $player->login);
 
+			// Store usage into "stripling.xml" file
+			$this->buildStriplingInfo();
+
 			// Throw main 'player connects' event
 			$this->releaseEvent('onPlayerConnect', $player);
 
@@ -2398,6 +2404,9 @@ class UASECO extends Helper {
 			$player->ladder_rank,
 			$player->id
 		);
+
+		// Store usage into "stripling.xml" file
+		$this->buildStriplingInfo();
 
 		// Throw 'player disconnects' event
 		$this->releaseEvent('onPlayerDisconnect', $player);

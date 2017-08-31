@@ -175,116 +175,129 @@ class Helper extends BaseClass {
 
 	public function reportServerInfo () {
 
-		$amount_players = $this->server->players->count();
-		$amount_spectators = 0;
-		foreach ($this->server->players->player_list as $player) {
-				if ($player->is_spectator) {
-					$amount_spectators++;
-				}
+		if (!$xml = @file_get_contents($this->settings['stripling_path'])) {
+			$this->logMessage('Could not read "stripling" file ['. $this->settings['stripling_path'] .']!');
 		}
-		$amount_players = $amount_players - $amount_spectators;
-
-		// Create Server informations
-		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'.LF;
-		$xml .= '<info>'.LF;
-		$xml .= ' <timestamp>'. time() .'</timestamp>'.LF;
-		$xml .= ' <date>'. date('Y-m-d H:i:s', time()) .'</date>'.LF;
-		$xml .= ' <system>'.LF;
-		$xml .= '  <os>'.LF;
-		$xml .= '   <name>'. php_uname('s') .'</name>'.LF;
-		$xml .= '   <release>'. php_uname('r') .'</release>'.LF;
-		$xml .= '   <version>'. php_uname('v') .'</version>'.LF;
-		$xml .= '   <machine>'. php_uname('m') .'</machine>'.LF;
-		$xml .= '  </os>'.LF;
-		$xml .= '  <php>PHP/'. phpversion() .'</php>'.LF;
-		$xml .= '  <mysql>'. $this->db->server_version() .'</mysql>'.LF;
-		$xml .= ' </system>'.LF;
-		$xml .= ' <uaseco>'.LF;
-		$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
-		$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;
-		$xml .= '  <uptime>'. (time() - $this->uptime) .'</uptime>'.LF;
-		$xml .= '  <processid>'. getmypid() .'</processid>'.LF;
-		$xml .= ' </uaseco>'.LF;
-		$xml .= ' <dedicated>'.LF;
-		$xml .= '  <version>'. $this->server->version .'</version>'.LF;
-		$xml .= '  <build>'. $this->server->build .'</build>'.LF;
-		$xml .= '  <uptime>'. $this->server->networkstats['Uptime'] .'</uptime>'.LF;
-		$xml .= ' </dedicated>'.LF;
-		$xml .= ' <server>'.LF;
-		$xml .= '  <link>maniaplanet://#join='. $this->server->login .'@'. $this->server->title .'</link>'.LF;
-		$xml .= '  <admin_contact>'. $this->handleSpecialChars($this->settings['admin_contact']) .'</admin_contact>'.LF;
-		$xml .= '  <login>'. $this->server->login .'</login>'.LF;
-		$xml .= '  <name>'. $this->handleSpecialChars($this->stripStyles($this->server->name)) .'</name>'.LF;
-		$xml .= '  <continent>'. $this->server->zone[0] .'</continent>'.LF;
-		$xml .= '  <country>'. $this->server->zone[1] .'</country>'.LF;
-		$xml .= '  <protected>'. ((!empty($this->server->options['Password'])) ? 'true' : 'false') .'</protected>'.LF;
-		$xml .= '  <mode>'.LF;
-		$xml .= '   <title>'. $this->server->title .'</title>'.LF;
-		$xml .= '   <script>'.LF;
-		$xml .= '    <name>'. $this->server->gameinfo->getModeScriptName() .'</name>'.LF;
-		$xml .= '    <version>'. $this->server->gameinfo->getModeVersion() .'</version>'.LF;
-		$xml .= '   </script>'.LF;
-		$xml .= '  </mode>'.LF;
-		$xml .= '  <players>'.LF;
-		$xml .= '   <current>'. $amount_players .'</current>'.LF;
-		$xml .= '   <maximum>'. $this->server->options['CurrentMaxPlayers'] .'</maximum>'.LF;
-		$xml .= '  </players>'.LF;
-		$xml .= '  <spectators>'.LF;
-		$xml .= '   <current>'. $amount_spectators .'</current>'.LF;
-		$xml .= '   <maximum>'. $this->server->options['CurrentMaxSpectators'] .'</maximum>'.LF;
-		$xml .= '  </spectators>'.LF;
-		$xml .= '  <ladder>'.LF;
-		$xml .= '   <minimum>'. $this->server->ladder_limit_min .'</minimum>'.LF;
-		$xml .= '   <maximum>'. $this->server->ladder_limit_max .'</maximum>'.LF;
-		$xml .= '  </ladder>'.LF;
-		$xml .= ' </server>'.LF;
-		$xml .= ' <current>'.LF;
-		$xml .= '  <map>'.LF;
-		$xml .= '   <uid>'. $this->server->maps->current->uid .'</uid>'.LF;
-		$xml .= '   <name>'. $this->handleSpecialChars($this->server->maps->current->name_stripped) .'</name>'.LF;
-		$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
-		$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
-		$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
-		$xml .= '   <authortime>'. $this->server->maps->current->author_time .'</authortime>'.LF;
-		$xml .= '   <goldtime>'. $this->server->maps->current->gold_time .'</goldtime>'.LF;
-		$xml .= '   <silvertime>'. $this->server->maps->current->silver_time .'</silvertime>'.LF;
-		$xml .= '   <bronzetime>'. $this->server->maps->current->bronze_time .'</bronzetime>'.LF;
-		$xml .= '   <mxurl>'. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .'</mxurl>'.LF;
-		$xml .= '  </map>'.LF;
-		$xml .= '  <players>'.LF;
-		foreach ($this->server->players->player_list as $player) {
-				$xml .= '   <player>'.LF;
-				$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripStyles($player->nickname)) .'</nickname>'.LF;
-				$xml .= '     <login>'. $player->login .'</login>'.LF;
-				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
-				$xml .= '     <ladder>'. $player->ladder_rank .'</ladder>'.LF;
-				$xml .= '     <spectator>'. $this->bool2string($player->is_spectator) .'</spectator>'.LF;
-				$xml .= '   </player>'.LF;
+		else {
+			try {
+				// Send and ignore response
+				$params = array(
+					'url'			=> UASECO_WEBSITE .'/usagereport.php',
+					'callback'		=> null,
+					'sync'			=> false,
+					'data'			=> $xml,
+					'user_agent'		=> USER_AGENT,
+				);
+				$this->webrequest->POST($params);
+			}
+			catch (Exception $exception) {
+				$this->console('[UASECO] webrequest->post(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+			}
 		}
-		$xml .= '  </players>'.LF;
-		$xml .= ' </current>'.LF;
-		$xml .= '</info>'.LF;
+	}
 
-		// Store this information too.
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function buildStriplingInfo () {
+
 		if (!empty($this->settings['stripling_path'])) {
+			$amount_players = $this->server->players->count();
+			$amount_spectators = 0;
+			foreach ($this->server->players->player_list as $player) {
+					if ($player->is_spectator) {
+						$amount_spectators++;
+					}
+			}
+			$amount_players = $amount_players - $amount_spectators;
+
+			// Create Server informations
+			$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'.LF;
+			$xml .= '<info>'.LF;
+			$xml .= ' <timestamp>'. time() .'</timestamp>'.LF;
+			$xml .= ' <date>'. date('Y-m-d H:i:s', time()) .'</date>'.LF;
+			$xml .= ' <system>'.LF;
+			$xml .= '  <os>'.LF;
+			$xml .= '   <name>'. php_uname('s') .'</name>'.LF;
+			$xml .= '   <release>'. php_uname('r') .'</release>'.LF;
+			$xml .= '   <version>'. php_uname('v') .'</version>'.LF;
+			$xml .= '   <machine>'. php_uname('m') .'</machine>'.LF;
+			$xml .= '  </os>'.LF;
+			$xml .= '  <php>PHP/'. phpversion() .'</php>'.LF;
+			$xml .= '  <mysql>'. $this->db->server_version() .'</mysql>'.LF;
+			$xml .= ' </system>'.LF;
+			$xml .= ' <uaseco>'.LF;
+			$xml .= '  <version>'. UASECO_VERSION .'</version>'.LF;
+			$xml .= '  <build>'. UASECO_BUILD .'</build>'.LF;
+			$xml .= '  <uptime>'. (time() - $this->uptime) .'</uptime>'.LF;
+			$xml .= '  <processid>'. getmypid() .'</processid>'.LF;
+			$xml .= ' </uaseco>'.LF;
+			$xml .= ' <dedicated>'.LF;
+			$xml .= '  <version>'. $this->server->version .'</version>'.LF;
+			$xml .= '  <build>'. $this->server->build .'</build>'.LF;
+			$xml .= '  <uptime>'. $this->server->networkstats['Uptime'] .'</uptime>'.LF;
+			$xml .= ' </dedicated>'.LF;
+			$xml .= ' <server>'.LF;
+			$xml .= '  <link>maniaplanet://#join='. $this->server->login .'@'. $this->server->title .'</link>'.LF;
+			$xml .= '  <admin_contact>'. $this->handleSpecialChars($this->settings['admin_contact']) .'</admin_contact>'.LF;
+			$xml .= '  <login>'. $this->server->login .'</login>'.LF;
+			$xml .= '  <name>'. $this->handleSpecialChars($this->stripStyles($this->server->name)) .'</name>'.LF;
+			$xml .= '  <continent>'. $this->server->zone[0] .'</continent>'.LF;
+			$xml .= '  <country>'. $this->server->zone[1] .'</country>'.LF;
+			$xml .= '  <protected>'. ((!empty($this->server->options['Password'])) ? 'true' : 'false') .'</protected>'.LF;
+			$xml .= '  <mode>'.LF;
+			$xml .= '   <title>'. $this->server->title .'</title>'.LF;
+			$xml .= '   <script>'.LF;
+			$xml .= '    <name>'. $this->server->gameinfo->getModeScriptName() .'</name>'.LF;
+			$xml .= '    <version>'. $this->server->gameinfo->getModeVersion() .'</version>'.LF;
+			$xml .= '   </script>'.LF;
+			$xml .= '  </mode>'.LF;
+			$xml .= '  <players>'.LF;
+			$xml .= '   <current>'. $amount_players .'</current>'.LF;
+			$xml .= '   <maximum>'. $this->server->options['CurrentMaxPlayers'] .'</maximum>'.LF;
+			$xml .= '  </players>'.LF;
+			$xml .= '  <spectators>'.LF;
+			$xml .= '   <current>'. $amount_spectators .'</current>'.LF;
+			$xml .= '   <maximum>'. $this->server->options['CurrentMaxSpectators'] .'</maximum>'.LF;
+			$xml .= '  </spectators>'.LF;
+			$xml .= '  <ladder>'.LF;
+			$xml .= '   <minimum>'. $this->server->ladder_limit_min .'</minimum>'.LF;
+			$xml .= '   <maximum>'. $this->server->ladder_limit_max .'</maximum>'.LF;
+			$xml .= '  </ladder>'.LF;
+			$xml .= ' </server>'.LF;
+			$xml .= ' <current>'.LF;
+			$xml .= '  <map>'.LF;
+			$xml .= '   <uid>'. $this->server->maps->current->uid .'</uid>'.LF;
+			$xml .= '   <name>'. $this->handleSpecialChars($this->server->maps->current->name_stripped) .'</name>'.LF;
+			$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
+			$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
+			$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
+			$xml .= '   <authortime>'. $this->server->maps->current->author_time .'</authortime>'.LF;
+			$xml .= '   <goldtime>'. $this->server->maps->current->gold_time .'</goldtime>'.LF;
+			$xml .= '   <silvertime>'. $this->server->maps->current->silver_time .'</silvertime>'.LF;
+			$xml .= '   <bronzetime>'. $this->server->maps->current->bronze_time .'</bronzetime>'.LF;
+			$xml .= '   <mxurl>'. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .'</mxurl>'.LF;
+			$xml .= '  </map>'.LF;
+			$xml .= '  <players>'.LF;
+			foreach ($this->server->players->player_list as $player) {
+					$xml .= '   <player>'.LF;
+					$xml .= '     <nickname>'. $this->handleSpecialChars($this->stripStyles($player->nickname)) .'</nickname>'.LF;
+					$xml .= '     <login>'. $player->login .'</login>'.LF;
+					$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
+					$xml .= '     <ladder>'. $player->ladder_rank .'</ladder>'.LF;
+					$xml .= '     <spectator>'. $this->bool2string($player->is_spectator) .'</spectator>'.LF;
+					$xml .= '   </player>'.LF;
+			}
+			$xml .= '  </players>'.LF;
+			$xml .= ' </current>'.LF;
+			$xml .= '</info>'.LF;
+
 			if (!@file_put_contents($this->settings['stripling_path'], $xml)) {
 				$this->logMessage('Could not write into "stripling" file ['. $this->settings['stripling_path'] .']!');
 			}
-		}
-
-		try {
-			// Send and ignore response
-			$params = array(
-				'url'			=> UASECO_WEBSITE .'/usagereport.php',
-				'callback'		=> null,
-				'sync'			=> false,
-				'data'			=> $xml,
-				'user_agent'		=> USER_AGENT,
-			);
-			$this->webrequest->POST($params);
-		}
-		catch (Exception $exception) {
-			$this->console('[UASECO] webrequest->post(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
 		}
 	}
 

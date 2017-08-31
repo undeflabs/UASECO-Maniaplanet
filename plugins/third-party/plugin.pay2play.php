@@ -48,7 +48,7 @@ class PluginPay2Play extends Plugin {
 		$this->setAuthor('leigham');
 		$this->setCoAuthors('undef.de, hacki65');
 		$this->setVersion('1.0.2');
-		$this->setBuild('2017-08-19');
+		$this->setBuild('2017-08-31');
 		$this->setCopyright('2012 - 2017 by leigham');
 		$this->setDescription('Charges planets to skip or replay a map.');
 
@@ -277,7 +277,7 @@ class PluginPay2Play extends Plugin {
 			<label pos="5.75 -1.40625" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.8" textcolor="FFFF" text="REPLAY"/>
 			<label pos="5.75 -4.3125" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="DISABLED"/>
 			<label pos="5.75 -6.65625" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.8" textcolor="FFFF" text="SKIP"/>
-			<label pos="5.75 -9.375" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="INCOMING!"
+			<label pos="5.75 -9.375" z-index="0.1" size="12.5 3.75" halign="center" textsize="1" scale="0.6" textcolor="FC0F" text="INCOMING!"/>
  			</frame>
 			</manialink>';
 

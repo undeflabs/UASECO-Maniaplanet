@@ -65,7 +65,7 @@ class PluginMusicServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-15');
+		$this->setBuild('2017-08-19');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription('Handles all server-controlled music.');
 
@@ -145,7 +145,7 @@ class PluginMusicServer extends Plugin {
 
 		$this->songs = array();
 		foreach ($settings['SONG_FILES'][0]['SONG'] as $song) {
-			$this->songs[] = $song;
+			$this->songs[] = str_replace(' ', '%20', $song);
 		}
 
 		// remove duplicates
