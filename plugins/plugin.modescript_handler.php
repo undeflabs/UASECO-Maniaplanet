@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.4');
-		$this->setBuild('2017-08-31');
+		$this->setBuild('2017-09-02');
 		$this->setCopyright('2014 - 2017 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -388,7 +388,7 @@ class PluginModescriptHandler extends Plugin {
 		// ModeBase
 		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
-		$aseco->server->gameinfo->modebase['RespawnBehaviour']		= $aseco->string2bool($this->settings['MODEBASE'][0]['RESPAWN_BEHAVIOUR'][0]);
+		$aseco->server->gameinfo->modebase['RespawnBehaviour']		= (int)$this->settings['MODEBASE'][0]['RESPAWN_BEHAVIOUR'][0];
 
 		// Rounds +RoundsBase
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];

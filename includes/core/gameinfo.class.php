@@ -130,7 +130,6 @@ class Gameinfo extends BaseClass {
 				break;
 		}
 
-
 		// ModeBase
 		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
 		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
