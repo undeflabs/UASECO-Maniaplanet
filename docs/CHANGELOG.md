@@ -4,7 +4,7 @@
 
 ### General changes
 
-* Requires a `Maniaplanet Dedicated Server` build 2017-08-04_11_00 or higher
+* Requires a `Maniaplanet Dedicated Server` build `2017-11-14_17_00 (Linux)` / `2017-11-15_16_36 (Windows)` or higher
 * The logfile from UASECO has been renamed to `2017-06-15-uaseco-current.txt` or `2017-06-15-14-31-12-uaseco.txt` for older logfiles
 * The `webrequest.php` uses an own logfile named `2017-06-15-webrequest-current.txt` or `2017-06-15-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
@@ -49,6 +49,7 @@
 * Fixed `strippling.xml` which holds the wrong map because of the too early call of the function `reportServerInfo()` at `loadingMap()` in `uaseco.php` (thanks hacki65)
 * Fixed multiple encoded special chars in windows and in Records Eyepiece (thanks hackie)
 * Fixed [UASECO Exception] Error returned: "Wrong setting type for `S_RespawnBehaviour`" [-1000] at GbxRemote::query() for method `SetModeScriptSettings` with arguments: (thanks hackie)
+* Fixed [PHP Warning] end() expects parameter 1 to be array, string given on line 1207 in file `plugins/plugin.checkpoints.php` (thanks endbase)
 
 
 
