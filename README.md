@@ -7,4 +7,4 @@ UASECO is a fork of the XAseco2/1.03 controller for Trackmania and has been over
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
