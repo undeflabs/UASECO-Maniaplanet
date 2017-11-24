@@ -111,7 +111,7 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function removePlayer ($login) {
-		if (isset($this->player_list[$login])) {
+		if (array_key_exists($login, $this->player_list)) {
 			$this->player_list[$login];
 			unset($this->player_list[$login]);
 			return true;
@@ -126,13 +126,11 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function getPlayerByLogin ($login) {
-		$login = (string)$login;
-		if (!empty($login) && isset($this->player_list[$login])) {
+		if (array_key_exists($login, $this->player_list)) {
 			return $this->player_list[$login];
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/*
@@ -149,9 +147,8 @@ class PlayerList extends BaseClass {
 				}
 			}
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/*
@@ -168,9 +165,8 @@ class PlayerList extends BaseClass {
 				}
 			}
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/*
@@ -181,31 +177,7 @@ class PlayerList extends BaseClass {
 
 	// Finds a player ID from its login.
 	public function getPlayerIdByLogin ($login, $forcequery = false) {
-		global $aseco;
-
-		if (isset($this->server->players->player_list[$login]) && $this->server->players->player_list[$login]->id > 0 && !$forcequery) {
-			return $this->server->players->player_list[$login]->id;
-		}
-		else {
-			$id = 0;
-			$query = "
-			SELECT
-				`PlayerId`
-			FROM `%prefix%players`
-			WHERE `Login` = ". $aseco->db->quote($login) ."
-			LIMIT 1;
-			";
-
-			$res = $aseco->db->query($query);
-			if ($res) {
-				if ($res->num_rows > 0) {
-					$row = $res->fetch_row();
-					$id = $row[0];
-				}
-				$res->free_result();
-			}
-			return $id;
-		}
+		return $this->getPlayerByLogin($login)->id;
 	}
 
 	/*
@@ -216,31 +188,7 @@ class PlayerList extends BaseClass {
 
 	// Finds a player Nickname from its login.
 	public function getPlayerNickname ($login, $forcequery = false) {
-		global $aseco;
-
-		if (isset($this->server->players->player_list[$login]) && $this->server->players->player_list[$login]->nickname != '' && !$forcequery) {
-			return $this->server->players->player_list[$login]->nickname;
-		}
-		else {
-			$nickname = 'Unknown';
-			$query = "
-			SELECT
-				`Nickname`
-			FROM `%prefix%players`
-			WHERE `Login` = ". $aseco->db->quote($login) ."
-			LIMIT 1;
-			";
-
-			$res = $aseco->db->query($query);
-			if ($res) {
-				if ($res->num_rows > 0) {
-					$row = $res->fetch_row();
-					$nickname = $row[0];
-				}
-				$res->free_result();
-			}
-			return $nickname;
-		}
+        return $this->getPlayerByLogin($login)->nickname;
 	}
 
 	/*
@@ -285,39 +233,6 @@ class PlayerList extends BaseClass {
 		else {
 			// Otherwise login string, check online players list
 			$target = $this->getPlayerByLogin($param);
-		}
-
-		// Not found and offline allowed?
-		if (!$target && $offline) {
-			// Check offline players database
-			$query = "
-			SELECT
-				`PlayerId`,
-				`Login`,
-				`Nickname`,
-				`Nation`,
-				`Wins`,
-				`TimePlayed`
-			FROM `%prefix%players`
-			WHERE `Login` = ". $aseco->db->quote($param) ."
-			LIMIT 1;
-			";
-
-			$res = $aseco->db->query($query);
-			if ($res) {
-				if ($res->num_rows > 0) {
-					$row = $res->fetch_object();
-
-					$target = new Player();
-					$target->id		= $row->Id;
-					$target->login		= $row->Login;
-					$target->nickname	= $row->Nickname;
-					$target->nation		= $row->Nation;
-					$target->wins		= $row->Wins;
-					$target->time_played	= $row->TimePlayed;
-				}
-				$res->free_result();
-			}
 		}
 
 		// Found anyone anywhere?
