@@ -1,7 +1,7 @@
 {
 	"name":		"undeflabs/uaseco",
 	"type":		"project",
-	"description":	"UASECO is a fork of the XAseco2/1.03 controller for Trackmania and has been overhauled to support the Modescript Gamemodes of Trackmania² in Maniaplanet and changed to run with PHP/7.x or newer.",
+	"description":	"UASECO is a fork of the XAseco2/1.03 controller for Trackmania and has been overhauled to support the Modescript Gamemodes of Trackmaniaï¿½ in Maniaplanet and changed to run with PHP/7.x or newer.",
 	"keywords":		["UASECO", "Controller", "Maniaplanet", "Trackmania"],
 	"homepage":		"http://www.uaseco.org/",
 		"license":	"GPL-3.0",
@@ -22,5 +22,9 @@
 	"support": {
 		"docs":		"https://www.uaseco.org/documentation/installation.php",
 		"forum":	"https://forum.maniaplanet.com/viewforum.php?f=522"
+	},
+	"require": {
+		"php": ">=7.1.0",
+		"guzzlehttp/guzzle": "^6.2.2"
 	}
 }

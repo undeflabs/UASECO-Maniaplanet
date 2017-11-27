@@ -80,6 +80,8 @@
 	list($usec, $sec) = explode(' ', microtime());
 	mt_srand((float) $sec + ((float) $usec * 100000));
 
+	require('vendor/autoload.php');
+
 
 	// Include required classes
 	require_once('includes/core/baseclass.class.php');		// Base class
@@ -175,7 +177,6 @@ class UASECO extends Helper {
 
 	// Initializes the server.
 	public function __construct () {
-
 		// Error function, report errors in a regular way.
 		$this->logfile['handle'] = false;
 		set_error_handler(array($this, 'customErrorHandler'));

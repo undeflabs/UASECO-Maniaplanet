@@ -122,7 +122,34 @@ class PluginDedimania extends Plugin {
 		$this->registerChatCommand('dedistats',		'chat_dedistats',	'Displays Dedimania track statistics',			Player::PLAYERS);
 //		$this->registerChatCommand('dedicptms',		'chat_dedicptms',	'Displays all Dedimania records\' checkpoint times',	Player::PLAYERS);
 //		$this->registerChatCommand('dedisectms',	'chat_dedisectms',	'Displays all Dedimania records\' sector times',	Player::PLAYERS);
+
+        try{
+            $this->client = new \GuzzleHttp\Client();
+            $this->discord = new SimpleXMLElement(file_get_contents('config/discord.xml'));
+        }catch(\Exception $e){
+            $this->discord = null;
+            trigger_error('[Discord] Could not read/parse config file [config/discord.xml]!', E_USER_ERROR);
+        }
 	}
+
+    private function sendDiscordMessage($message){
+        if(!$this->discord){
+            return;
+        }
+
+        $message = preg_replace('/{#\w+}/', '', $message);
+
+        $options = [
+            'form_params' => [
+                'content' => $message
+            ]
+        ];
+
+        $channel_id = $this->discord->channel_id;
+        $token = $this->discord->token;
+
+        $this->client->request('POST', "https://discordapp.com/api/webhooks/$channel_id/$token", $options);
+    }
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -2138,6 +2165,8 @@ class PluginDedimania extends Plugin {
 						}
 					}
 				}
+
+				$this->sendDiscordMessage($message);
 
 				// log a new Dedimania record (not an equalled one)
 				if (isset($dedi_recs[$i]['NewBest']) && $dedi_recs[$i]['NewBest']) {
