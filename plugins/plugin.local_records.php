@@ -36,6 +36,8 @@
 class PluginLocalRecords extends Plugin {
 	public $settings;
 	public $records;
+	private $client;
+	private $discord;
 
 
 	/*
@@ -61,6 +63,33 @@ class PluginLocalRecords extends Plugin {
 		$this->registerEvent('onPlayerDisconnect',	'onPlayerDisconnect');
 		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 		$this->registerEvent('onPlayerWins',		'onPlayerWins');
+
+        try{
+            $this->client = new \GuzzleHttp\Client();
+            $this->discord = new SimpleXMLElement(file_get_contents('config/discord.xml'));
+		}catch(\Exception $e){
+            $this->discord = null;
+            trigger_error('[Discord] Could not read/parse config file [config/discord.xml]!', E_USER_ERROR);
+		}
+	}
+
+	private function sendDiscordMessage($message){
+		if(!$this->discord){
+			return;
+		}
+
+		$message = preg_replace('/{#\w+}/', '', $message);
+
+        $options = [
+            'form_params' => [
+                'content' => $message
+            ]
+        ];
+
+        $channel_id = $this->discord->channel_id;
+        $token = $this->discord->token;
+
+        $this->client->request('POST', "https://discordapp.com/api/webhooks/$channel_id/$token", $options);
 	}
 
 	/*
@@ -107,6 +136,13 @@ class PluginLocalRecords extends Plugin {
 
 		// Initiate records list
 		$this->records = new RecordList($this->settings['max_records']);
+
+        $aseco->console('[Discord] Load config file [config/discord.xml]');
+        if (!$discord_settings = $aseco->parser->xmlToArray('config/discord.xml', true, true)) {
+            trigger_error('[Discord] Could not read/parse config file [config/discord.xml]!', E_USER_ERROR);
+        }
+
+        $this->settings['discord'] = $discord_settings['discord'][0];
 	}
 
 	/*
@@ -572,6 +608,8 @@ class PluginLocalRecords extends Plugin {
 						}
 					}
 				}
+
+                $this->sendDiscordMessage($message);
 
 				// log records when debugging is set to true
 				//if ($aseco->debug) $aseco->console('onPlayerFinish records:' . CRLF . print_r($this->records, true));

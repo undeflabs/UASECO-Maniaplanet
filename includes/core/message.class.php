@@ -177,7 +177,7 @@ class Message extends BaseClass {
 		global $aseco;
 
 		$messages = array();
-		foreach ($this->translations as $lang => $text) {
+		foreach ($this->translations ?: [] as $lang => $text) {
 			$text = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
 			$text = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
 			if ($lang != 'en') {
