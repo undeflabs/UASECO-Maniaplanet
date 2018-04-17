@@ -6,9 +6,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	2017 by undef.de
+ * Copyright:	2017 - 2018 by undef.de
  * Version:	1.0.2
- * Build:	2017-06-15
+ * Build:	2018-02-11
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ class WebRequestWorker {
 					if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.job') !== false) {
 
 						$file = str_replace('.job', '', $this->path.DIRECTORY_SEPARATOR.$entry);
-						if (rename($this->path.DIRECTORY_SEPARATOR.$entry, $file.'.working')) {
+						if (@rename($this->path.DIRECTORY_SEPARATOR.$entry, $file.'.working')) {
 
 							// Ok, no other Worker has taken this job...
 							$request = json_decode(file_get_contents($file.'.working'));
@@ -96,7 +96,7 @@ class WebRequestWorker {
 
 							file_put_contents($file.'.working', $response, LOCK_EX);
 
-							rename($file.'.working', $file.'.done');
+							@rename($file.'.working', $file.'.done');
 						}
 					}
 

@@ -65,8 +65,8 @@ class MapList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-05');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-04-17');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
 		$this->debug			= $debug;
@@ -290,7 +290,7 @@ class MapList extends BaseClass {
 				}
 			}
 			catch (Exception $exception) {
-				$aseco->console('[ClassMaplist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
+				$aseco->console('[MapList] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
 				$done = true;
 				break;
 			}
@@ -308,6 +308,9 @@ class MapList extends BaseClass {
 		// Calculate karma for each map in database
 		$karma = $this->calculateRaspKarma();
 
+
+		$count = 0;
+		$aseco->logMessage('['. date('Y-m-d H:i:s') .'] [MapList] Progressing maps: ');
 
 		$database = array();
 		$database['insert'] = array();
@@ -394,8 +397,14 @@ class MapList extends BaseClass {
 			if ($map->uid) {
 				$this->map_list[$map->uid] = $map;
 			}
+
+			if ($count % 50 == 0) {
+				$aseco->logMessage($count .'.. ');
+			}
+			$count += 1;
 		}
-		unset($maplist, $dbinfos);
+		unset($maplist, $dbinfos, $count);
+		$aseco->logMessage(LF);
 
 		// Override after finished
 		$this->force_maplist_update = false;
@@ -478,7 +487,7 @@ class MapList extends BaseClass {
 				}
 			}
 			catch (Exception $exception) {
-				$aseco->console('[ClassMaplist] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
+				$aseco->console('[MapList] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - GetMapList: Error getting the current map list from the dedicated Server!');
 				$done = true;
 				break;
 			}

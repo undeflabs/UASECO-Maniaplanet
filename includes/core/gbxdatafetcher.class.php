@@ -1,16 +1,17 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
-/* » 2017-05-23: No changes made for UASECO */
+/* » 2018-04-10: No changes made for UASECO */
 
 /**
  * GBXDataFetcher - Fetch GBX challenge/map/replay/pack data for TrackMania (TM)
  *                  & ManiaPlanet (MP) files
  * Created by Xymph <tm@gamers.org>
  * Thanks to Electron for additional input, prototyping & testing
- * Based on information at http://en.tm-wiki.org/wiki/GBX,
+ * Based on information at https://wiki.xaseco.org/wiki/GBX,
  * http://www.tm-forum.com/viewtopic.php?p=192817#p192817
- * and http://en.tm-wiki.org/wiki/PAK
+ * and https://wiki.xaseco.org/wiki/PAK
  *
+ * v2.11: Update GBXPackHeaderFetcher $nestLevel to $inclDepth
  * v2.10: Add lookback string Lagoon
  * v2.9: Fix resource leak on PHP7
  * v2.8: Fix minor lookback strings bug
@@ -1499,7 +1500,7 @@ class GBXPackFetcher extends GBXBaseFetcher
  */
 class GBXPackHeaderFetcher extends GBXBaseFetcher
 {
-	public $name, $infoMlUrl, $creatDate, $nestLevel;
+	public $name, $infoMlUrl, $creatDate, $inclDepth;
 
 	private $_headerVersn;
 
@@ -1517,7 +1518,7 @@ class GBXPackHeaderFetcher extends GBXBaseFetcher
 		$this->name      = '';
 		$this->infoMlUrl = '';
 		$this->creatDate = -1;
-		$this->nestLevel = 0;
+		$this->inclDepth = 0;
 
 		$this->setError('GBX pack header error: ');
 
@@ -1563,7 +1564,7 @@ class GBXPackHeaderFetcher extends GBXBaseFetcher
 		$this->name = $this->readString();  // duplicate
 
 		if ($this->_headerVersn >= 11)
-			$this->nestLevel = $this->readInt32();
+			$this->inclDepth = $this->readInt32();
 	}  // processGBX
 
 }  // class GBXPackHeaderFetcher

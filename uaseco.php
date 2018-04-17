@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - November 2017 by undef.de
+ * Copyright:	May 2014 - April 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,14 +44,14 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2017-11-16');
+	define('UASECO_BUILD',			'2018-04-17');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2017-11-14_17_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2017-11-15_16_36');
+	define('MANIAPLANET_BUILD_POSIX',	'2018-03-29_21_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2018-03-29_21_43');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
-	define('MODESCRIPT_API_VERSION',	'2.3.0');
+	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'5.6.0');
 	define('MIN_MYSQL_VERSION',		'5.1.0');
 	define('MIN_MARIADB_VERSION',		'5.5.20');
@@ -184,8 +184,7 @@ class UASECO extends Helper {
 		// Setup logfile
 		$this->setupLogfile();
 
-		$this->console('###############################################################################');
-		$this->console('[UASECO] Initializing...');
+		$this->console('####[INIT]###########################################################################');
 
 		if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<')) {
 			$this->console('[ERROR] UASECO requires min. PHP/'. MIN_PHP_VERSION .' and can not run with current PHP/'. PHP_VERSION .', please update PHP!');
@@ -605,7 +604,7 @@ class UASECO extends Helper {
 		sort($wrappers, SORT_STRING);
 		$gd = gd_info();
 
-		$this->console_text('####[UASECO]#########################################################################');
+		$this->console_text('####[ABOUT]##########################################################################');
 		$this->console_text('» Server:        {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
 		if ($this->server->isrelay) {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
@@ -728,7 +727,7 @@ class UASECO extends Helper {
 
 	private function logDebugPluginUsage ($list) {
 
-		$this->console_text('#### DEBUG ##########################################################################');
+		$this->console_text('####[DEBUG]##########################################################################');
 		$this->console_text('» Plugin memory usage on initialization:');
 		foreach ($list as $plugin => $usage) {
 			$this->console_text('» {1} {2} bytes', str_pad('['.$plugin.']', 30, ' ', STR_PAD_RIGHT), str_pad($this->formatNumber($usage, 0, '.', '.'), 15, ' ', STR_PAD_LEFT));

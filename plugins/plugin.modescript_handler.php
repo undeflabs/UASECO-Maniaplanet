@@ -57,9 +57,9 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.4');
-		$this->setBuild('2017-09-02');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setVersion('1.0.5');
+		$this->setBuild('2018-04-17');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
 		$this->addDependence('PluginCheckpoints',		Dependence::REQUIRED,	'1.0.0', null);
@@ -515,6 +515,9 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 		$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['SCORESTABLE'][0]['ALT_VISIBLE'][0]	= ((strtoupper($this->ui_properties['SCORESTABLE'][0]['ALT_VISIBLE'][0]) == 'TRUE')		? true : false);
+		$this->ui_properties['SCORESTABLE'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SCORESTABLE'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+		$this->ui_properties['VIEWERS_COUNT'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['VIEWERS_COUNT'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 
 		// Send the UI settings
 		$this->setupUserInterface();
@@ -920,7 +923,11 @@ class PluginModescriptHandler extends Plugin {
 						'best_lap_time'			=> 0,
 						'best_lap_respawns'		=> 0,
 						'best_lap_checkpoints'		=> array(),
+						'prev_race_time'		=> -1,
+						'prev_race_respawns'		=> -1,
+						'prev_race_checkpoints'		=> array(),
 						'stunts_score'			=> 0,
+						'prev_stunts_score'		=> 0,
 					);
 					$aseco->server->rankings->update($update);
 
@@ -938,7 +945,11 @@ class PluginModescriptHandler extends Plugin {
 						'best_lap_time'			=> 0,
 						'best_lap_respawns'		=> 0,
 						'best_lap_checkpoints'		=> array(),
+						'prev_race_time'		=> -1,
+						'prev_race_respawns'		=> -1,
+						'prev_race_checkpoints'		=> array(),
 						'stunts_score'			=> 0,
+						'prev_stunts_score'		=> 0,
 					);
 					$aseco->server->rankings->update($update);
 
@@ -965,7 +976,11 @@ class PluginModescriptHandler extends Plugin {
 									'best_lap_time'			=> $item['bestlaptime'],		// Best lap time in milliseconds
 									'best_lap_respawns'		=> $item['bestlaprespawns'],		// Number of respawn during best lap
 									'best_lap_checkpoints'		=> $item['bestlapcheckpoints'],		// Checkpoints times during best lap
+									'prev_race_time'		=> $item['prevracetime'],
+									'prev_race_respawns'		=> $item['prevracerespawns'],
+									'prev_race_checkpoints'		=> $item['prevracecheckpoints'],
 									'stunts_score'			=> $item['stuntsscore'],
+									'prev_stunts_score'		=> $item['prevstuntsscore'],
 								);
 
 								$rank = $aseco->server->rankings->getRankByLogin($item['login']);
@@ -1198,6 +1213,9 @@ class PluginModescriptHandler extends Plugin {
 			$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 			$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['SCORESTABLE'][0]['ALT_VISIBLE'][0]	= ((strtoupper($this->ui_properties['SCORESTABLE'][0]['ALT_VISIBLE'][0]) == 'TRUE')		? true : false);
+			$this->ui_properties['SCORESTABLE'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SCORESTABLE'][0]['VISIBLE'][0]) == 'TRUE')			? true : false);
+			$this->ui_properties['VIEWERS_COUNT'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['VIEWERS_COUNT'][0]['VISIBLE'][0]) == 'TRUE')		? true : false);
 
 			// Send the UI settings
 			$this->setupUserInterface();
@@ -1346,6 +1364,8 @@ class PluginModescriptHandler extends Plugin {
 		$ui .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'"/>';
 		$ui .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'"/>';
 		$ui .= ' <spectator_info visible="'. $aseco->bool2string($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <scorestable alt_visible="'. $aseco->bool2string($this->ui_properties['SCORESTABLE'][0]['ALT_VISIBLE'][0]) .'" visible="'. $aseco->bool2string($this->ui_properties['SCORESTABLE'][0]['VISIBLE'][0]) .'"/>';
+		$ui .= ' <viewers_count visible="'. $aseco->bool2string($this->ui_properties['VIEWERS_COUNT'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['VIEWERS_COUNT'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['VIEWERS_COUNT'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['VIEWERS_COUNT'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= '</ui_properties>';
 
 		$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.UI.SetProperties', array($ui));
@@ -1359,7 +1379,7 @@ class PluginModescriptHandler extends Plugin {
 
 	public function setUserInterfaceVisibility ($field, $value = true) {
 
-		if ( array_key_exists(strtoupper($field), $this->ui_properties) ) {
+		if (array_key_exists(strtoupper($field), $this->ui_properties)) {
 			$this->ui_properties[strtoupper($field)][0]['VISIBLE'][0] = $value;
 		}
 	}

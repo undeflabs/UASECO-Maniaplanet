@@ -52,8 +52,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2017-08-31');
-		$this->setCopyright('2009 - 2017 by undef.de');
+		$this->setBuild('2018-04-17');
+		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -5604,7 +5604,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->scores['LocalRecords'][$i]['rank']	= ($i+1);
 				$this->scores['LocalRecords'][$i]['login']	= $entry->player->login;
 				$this->scores['LocalRecords'][$i]['nickname']	= $this->handleSpecialChars($entry->player->nickname);
-				$this->scores['LocalRecords'][$i]['score'] = $aseco->formatTime($entry->score);
+				$this->scores['LocalRecords'][$i]['score'] 	= $aseco->formatTime($entry->score);
 				$i++;
 			}
 			unset($entry);
@@ -14119,7 +14119,6 @@ EOL;
 				$res->free_result();
 			}
 		}
-
 
 		// Add Karma to Maplist
 		foreach ($aseco->server->maps->map_list as &$map) {

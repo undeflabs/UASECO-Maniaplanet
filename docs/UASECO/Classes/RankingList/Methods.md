@@ -84,7 +84,11 @@ Update the ranking list with an new ranking from a Player.
 		'best_lap_time'			=> 0,					// Best lap time in milliseconds (only in ModeScript "Laps")
 		'best_lap_respawns'		=> 0,					// Number of respawn during best lap (only in ModeScript "Laps")
 		'best_lap_checkpoints'		=> 0,					// Checkpoints times during best lap (only in ModeScript "Laps")
+		'prev_race_time'		=> 7411,				// Best race time in milliseconds of the previous race
+		'prev_race_respawns'		=> 3,					// Number of respawn of the previous race
+		'prev_race_checkpoints'		=> array(2871,3012,4587,7411),		// Checkpoints times of the previous race
 		'stunts_score'			=> 50,
+		'prev_stunts_score'		=> 125,
 	);
 	$result = $aseco->server->rankings->update($update);
 

@@ -51,8 +51,8 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-04-17');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
 		// Empty content by default
@@ -648,8 +648,13 @@ class Window extends BaseClass {
 
 		// Button
 		if (!empty($this->content['button_title']) && !empty($this->content['button_link'])) {
+			$protocol = explode('://', $this->content['button_link']);
+			$attr = 'manialink';
+			if (in_array($protocol[0], array('http', 'ftp'))) {
+				$attr = 'url';
+			}
 			$xml .= '<frame pos="101.5 -104.4" z-index="0.04">';
-			$xml .= '<label pos="0 0" z-index="0.02" size="75 4.875" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" focusareacolor1="0099FFFF" focusareacolor2="DDDDDDFF" manialink="'. $this->content['button_link'] .'" text="'. $this->content['button_title'] .'"/>';
+			$xml .= '<label pos="0 0" z-index="0.02" size="75 4.875" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" focusareacolor1="0099FFFF" focusareacolor2="DDDDDDFF" '. $attr .'="'. $this->content['button_link'] .'" text="'. $this->content['button_title'] .'"/>';
 			$xml .= '</frame>';
 		}
 

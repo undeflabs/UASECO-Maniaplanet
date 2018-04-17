@@ -175,6 +175,22 @@
 				<z>5.0</z>
 			</pos>
 		</spectator_info>
+
+		<!-- Scores table displayed in the middle of the screen -->
+		<scorestable>
+			<alt_visible>false</alt_visible>		<!-- Show scoretable when pressing the ALT-Key -->
+			<visible>true</visible>			<!-- General value -->
+		</scorestable>
+
+		<!-- Number of players spectating us displayed at the bottom right of the screen -->
+		<viewers_count>
+			<visible>true</visible>
+			<pos>
+				<x>157.0</x>
+				<y>-40.0</y>
+				<z>5.0</z>
+			</pos>
+		</viewers_count>
 	</ui_properties>
 
 

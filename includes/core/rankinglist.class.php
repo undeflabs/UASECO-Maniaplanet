@@ -49,9 +49,9 @@ class RankingList extends BaseClass {
 	public function __construct ($debug) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-08-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2018-04-17');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Player Ranking from the dedicated server.');
 
 		$this->debug = $debug;
@@ -73,7 +73,7 @@ class RankingList extends BaseClass {
 			$entry->rank				= 0;
 			$entry->pid				= $player->pid;
 			$entry->login				= (string)$player->login;
-			$entry->nickname			= $player->nickname;
+			$entry->nickname			= (string)$player->nickname;
 			$entry->round_points			= 0;
 			$entry->map_points			= 0;
 			$entry->match_points			= 0;
@@ -83,10 +83,14 @@ class RankingList extends BaseClass {
 			$entry->best_lap_time			= -1;
 			$entry->best_lap_respawns		= -1;
 			$entry->best_lap_checkpoints		= array();
+			$entry->prev_race_time			= -1;
+			$entry->prev_race_respawns		= -1;
+			$entry->prev_race_checkpoints		= array();
 			$entry->stunts_score			= 0;
+			$entry->prev_stunts_score		= 0;
 
 			// Insert
-			$this->ranking_list[$player->login] = $entry;
+			$this->ranking_list[$entry->login]	= $entry;
 
 			return true;
 		}
@@ -108,7 +112,7 @@ class RankingList extends BaseClass {
 		$entry = new Ranking();
 		$entry->rank				= $item['rank'];
 		$entry->login				= (string)$item['login'];
-		$entry->nickname			= $item['nickname'];
+		$entry->nickname			= (string)$item['nickname'];
 		$entry->round_points			= $item['round_points'];
 		$entry->map_points			= $item['map_points'];
 		$entry->match_points			= $item['match_points'];
@@ -118,7 +122,11 @@ class RankingList extends BaseClass {
 		$entry->best_lap_time			= $item['best_lap_time'];
 		$entry->best_lap_respawns		= $item['best_lap_respawns'];
 		$entry->best_lap_checkpoints		= $item['best_lap_checkpoints'];
+		$entry->prev_race_time			= $item['prev_race_time'];
+		$entry->prev_race_respawns		= $item['prev_race_respawns'];
+		$entry->prev_race_checkpoints		= $item['prev_race_checkpoints'];
 		$entry->stunts_score			= $item['stunts_score'];
+		$entry->prev_stunts_score		= $item['prev_stunts_score'];
 
 		// Update full entry
 		$this->ranking_list[$entry->login]	= $entry;
