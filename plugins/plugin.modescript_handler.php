@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2018-04-17');
+		$this->setBuild('2018-04-19');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -912,6 +912,7 @@ class PluginModescriptHandler extends Plugin {
 					// Store "Team Blue"
 					$update = array(
 						'rank'				=> $rank_blue,
+						'pid'				=> 0,
 						'login'				=> '*team:blue',
 						'nickname'			=> '$08FTeam Blue',
 						'round_points'			=> $params['teams'][0]['roundpoints'],
@@ -934,6 +935,7 @@ class PluginModescriptHandler extends Plugin {
 					// Store "Team Red"
 					$update = array(
 						'rank'				=> $rank_red,
+						'pid'				=> 1,
 						'login'				=> '*team:red',
 						'nickname'			=> '$F50Team Red',
 						'round_points'			=> $params['teams'][1]['roundpoints'],
@@ -965,6 +967,7 @@ class PluginModescriptHandler extends Plugin {
 							if ($player = $aseco->server->players->getPlayerByLogin($item['login'])) {
 								$update = array(
 									'rank'				=> $item['rank'],
+									'pid'				=> $player->pid,
 									'login'				=> $player->login,
 									'nickname'			=> $player->nickname,
 									'round_points'			=> $item['roundpoints'],

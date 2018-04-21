@@ -178,7 +178,7 @@
 
 		<!-- Scores table displayed in the middle of the screen -->
 		<scorestable>
-			<alt_visible>false</alt_visible>		<!-- Show scoretable when pressing the ALT-Key -->
+			<alt_visible>true</alt_visible>		<!-- Show scoretable when pressing the ALT-Key -->
 			<visible>true</visible>			<!-- General value -->
 		</scorestable>
 
@@ -616,14 +616,15 @@
 		<entry>Libs/domino54/SentenceBank.Script.txt|2015-06-27</entry>
 		<entry>Libs/domino54/Translations.Script.txt|2015-06-27</entry>
 		<entry>Libs/domino54/UpdateChecker.Script.txt|2015-06-27</entry>
+		<entry>Libs/Nadeo/TrackMania/Scores.Script.txt|2018-03-12</entry>
 		<entry>Modes/TrackMania/Doppler.Script.txt|2015-08-29</entry>
 		<entry>Modes/TrackMania/Knockout.Script.txt|2015-06-27</entry>
-		<entry>Modes/TrackMania/Rounds.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/Rounds.Script.txt|2018-03-08</entry>
 		<entry>Modes/TrackMania/TimeAttack.Script.txt|2017-07-12</entry>
-		<entry>Modes/TrackMania/Team.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/Team.Script.txt|2018-03-08</entry>
 		<entry>Modes/TrackMania/Laps.Script.txt|2017-07-12</entry>
-		<entry>Modes/TrackMania/Cup.Script.txt|2017-07-12</entry>
+		<entry>Modes/TrackMania/Cup.Script.txt|2018-03-08</entry>
 		<entry>Modes/TrackMania/TeamAttack.Script.txt|2016-04-13</entry>
-		<entry>Modes/TrackMania/Chase.Script.txt|2017-08-11</entry>
+		<entry>Modes/TrackMania/Chase.Script.txt|2018-02-12</entry>
 	</scripts>
 </settings>

@@ -55,8 +55,8 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-08-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-04-20');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -1476,6 +1476,9 @@ class PluginRaspJukebox extends Plugin {
 						$aseco->console('[RaspJukebox] Vote by {1} replays map after finish!',
 							$aseco->plugins['PluginRaspVotes']->chatvote['login']
 						);
+
+						// Setup next Map (which is the current one in this case)
+						$aseco->server->maps->next = $aseco->server->maps->current;
 
 						// throw 'jukebox changed' event
 						$aseco->releaseEvent('onJukeboxChanged', array('replay', $this->jukebox[$uid]));

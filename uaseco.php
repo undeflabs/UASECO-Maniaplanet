@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-04-17');
+	define('UASECO_BUILD',			'2018-04-21');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -250,7 +250,8 @@ class UASECO extends Helper {
 			),
 		);
 
-		$this->console('[PHP] Checking for required and wanted PHP extensions...');
+		$this->console('[PHP] Checking for required PHP extensions...');
+		$this->console('[PHP] PHP is using "'. php_ini_loaded_file() .'"');
 		$pass = true;
 		foreach ($extensions as $item) {
 			$found = extension_loaded($item['extension']);
@@ -628,6 +629,7 @@ class UASECO extends Helper {
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» PHP:           PHP/{1}', phpversion());
+		$this->console_text('»                INI-File: {1}', php_ini_loaded_file());
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
 		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
@@ -706,6 +708,7 @@ class UASECO extends Helper {
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» PHP:           PHP/{1}', phpversion());
+		$this->console_text('»                INI-File: {1}', php_ini_loaded_file());
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
 		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));

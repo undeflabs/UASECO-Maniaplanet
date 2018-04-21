@@ -15,6 +15,7 @@
 * Updated to the gbxdatafetcher/2.11 (thanks Xymph)
 * Updated to the ModeScriptApi version `[2.5.0](https://github.com/maniaplanet/script-xmlrpc/releases)`
 * Added a map list progress indicator for the logfile while starting sequence
+* Updated `plugins/plugin.round_autoend.php` to work also while a WarmUp is running (thanks speedychris)
 
 
 ### Changes at config files
@@ -35,6 +36,8 @@
 * Added `<modebase><respawn_behaviour>` in `newinstall/config/modescript_settings.xml`
 * Added `<ui_properties><scorestable>` in `newinstall/config/modescript_settings.xml`
 * Added `<ui_properties><viewers_count>` in `newinstall/config/modescript_settings.xml`
+* Updated `<scripts><*>` in `newinstall/config/modescript_settings.xml` to require the actual versions
+* Added `<message_warmup_round_end>` in `newinstall/locales/plugin.round_autoend.xml`
 
 
 ### Bug fixes
@@ -55,7 +58,11 @@
 * Fixed multiple encoded special chars in windows and in Records Eyepiece (thanks hackie)
 * Fixed [UASECO Exception] Error returned: "Wrong setting type for `S_RespawnBehaviour`" [-1000] at GbxRemote::query() for method `SetModeScriptSettings` with arguments: (thanks hackie)
 * Fixed not working Dedimania link in the Dedimania Window which does load in the internal ManialinkBrowser instead of the external Browser (thanks Guenni71)
-* Fixed players with only numbers as login lets the LiveRankingWidget from `plugins/plugin.records_eyepiece.php` display wrong sorting and multiple entrys (thanks speedychris)
+* Fixed players with only numbers as login lets the LiveRankingWidget from `plugins/plugin.records_eyepiece.php` display wrong sorting and multiple entrys (thanks speedychris, endbase)
+* Fixed RankingList lost PID from players when using `$aseco->server->rankings->update()`
+* Fixed displaying of the CurrentMapWidget from score while in race after using "/replay" (thanks aca)
+* Fixed LastNextCurrentWindow does not display the correct next map when changing the Jukebox (thanks aca)
+* Fixed adding a map at score the CurrentMapWidget does not display the correct map (thanks speedychris)
 
 
 
