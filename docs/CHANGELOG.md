@@ -58,7 +58,7 @@
 * Fixed multiple encoded special chars in windows and in Records Eyepiece (thanks hackie)
 * Fixed [UASECO Exception] Error returned: "Wrong setting type for `S_RespawnBehaviour`" [-1000] at GbxRemote::query() for method `SetModeScriptSettings` with arguments: (thanks hackie)
 * Fixed not working Dedimania link in the Dedimania Window which does load in the internal ManialinkBrowser instead of the external Browser (thanks Guenni71)
-* Fixed players with only numbers as login lets the LiveRankingWidget from `plugins/plugin.records_eyepiece.php` display wrong sorting and multiple entrys (thanks speedychris, endbase)
+* Fixed players with only numbers as login lets the LiveRankingWidget from `plugins/plugin.records_eyepiece.php` display wrong sorting and multiple entrys (thanks speedychris, endbase and special thanks to NADEO)
 * Fixed RankingList lost PID from players when using `$aseco->server->rankings->update()`
 * Fixed displaying of the CurrentMapWidget from score while in race after using "/replay" (thanks aca)
 * Fixed LastNextCurrentWindow does not display the correct next map when changing the Jukebox (thanks aca)

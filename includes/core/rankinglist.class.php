@@ -37,7 +37,7 @@
 class RankingList extends BaseClass {
 	public $ranking_list;
 
-	private $debug		= false;
+	private $debug = false;
 
 
 	/*
@@ -50,7 +50,7 @@ class RankingList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-04-19');
+		$this->setBuild('2018-04-23');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Player Ranking from the dedicated server.');
 
@@ -70,27 +70,27 @@ class RankingList extends BaseClass {
 		if ($player->id > 0) {
 			// Preset
 			$entry = new Ranking();
-			$entry->rank					= 0;
-			$entry->pid					= $player->pid;
-			$entry->login					= (string)$player->login;
-			$entry->nickname				= (string)$player->nickname;
-			$entry->round_points				= 0;
-			$entry->map_points				= 0;
-			$entry->match_points				= 0;
-			$entry->best_race_time				= -1;
-			$entry->best_race_respawns			= -1;
-			$entry->best_race_checkpoints			= array();
-			$entry->best_lap_time				= -1;
-			$entry->best_lap_respawns			= -1;
-			$entry->best_lap_checkpoints			= array();
-			$entry->prev_race_time				= -1;
-			$entry->prev_race_respawns			= -1;
-			$entry->prev_race_checkpoints			= array();
-			$entry->stunts_score				= 0;
-			$entry->prev_stunts_score			= 0;
+			$entry->rank				= 0;
+			$entry->pid				= $player->pid;
+			$entry->login				= $player->login;
+			$entry->nickname			= $player->nickname;
+			$entry->round_points			= 0;
+			$entry->map_points			= 0;
+			$entry->match_points			= 0;
+			$entry->best_race_time			= -1;
+			$entry->best_race_respawns		= -1;
+			$entry->best_race_checkpoints		= array();
+			$entry->best_lap_time			= -1;
+			$entry->best_lap_respawns		= -1;
+			$entry->best_lap_checkpoints		= array();
+			$entry->prev_race_time			= -1;
+			$entry->prev_race_respawns		= -1;
+			$entry->prev_race_checkpoints		= array();
+			$entry->stunts_score			= 0;
+			$entry->prev_stunts_score		= 0;
 
-			// Insert
-			$this->ranking_list[(string)$entry->login]	= $entry;
+			// Insert, added "XX" to make sure the key is a string and not a integer, type casting like (string)$entry do not work
+			$this->ranking_list[$entry->login."XX"] = $entry;
 
 			return true;
 		}
@@ -110,37 +110,36 @@ class RankingList extends BaseClass {
 
 		// Create a ranking entry
 		$entry = new Ranking();
-		$entry->rank					= $item['rank'];
-		$entry->pid					= $item['pid'];
-		$entry->login					= (string)$item['login'];
-		$entry->nickname				= (string)$item['nickname'];
-		$entry->round_points				= $item['round_points'];
-		$entry->map_points				= $item['map_points'];
-		$entry->match_points				= $item['match_points'];
-		$entry->best_race_time				= $item['best_race_time'];
-		$entry->best_race_respawns			= $item['best_race_respawns'];
-		$entry->best_race_checkpoints			= $item['best_race_checkpoints'];
-		$entry->best_lap_time				= $item['best_lap_time'];
-		$entry->best_lap_respawns			= $item['best_lap_respawns'];
-		$entry->best_lap_checkpoints			= $item['best_lap_checkpoints'];
-		$entry->prev_race_time				= $item['prev_race_time'];
-		$entry->prev_race_respawns			= $item['prev_race_respawns'];
-		$entry->prev_race_checkpoints			= $item['prev_race_checkpoints'];
-		$entry->stunts_score				= $item['stunts_score'];
-		$entry->prev_stunts_score			= $item['prev_stunts_score'];
+		$entry->rank				= $item['rank'];
+		$entry->pid				= $item['pid'];
+		$entry->login				= $item['login'];
+		$entry->nickname			= $item['nickname'];
+		$entry->round_points			= $item['round_points'];
+		$entry->map_points			= $item['map_points'];
+		$entry->match_points			= $item['match_points'];
+		$entry->best_race_time			= $item['best_race_time'];
+		$entry->best_race_respawns		= $item['best_race_respawns'];
+		$entry->best_race_checkpoints		= $item['best_race_checkpoints'];
+		$entry->best_lap_time			= $item['best_lap_time'];
+		$entry->best_lap_respawns		= $item['best_lap_respawns'];
+		$entry->best_lap_checkpoints		= $item['best_lap_checkpoints'];
+		$entry->prev_race_time			= $item['prev_race_time'];
+		$entry->prev_race_respawns		= $item['prev_race_respawns'];
+		$entry->prev_race_checkpoints		= $item['prev_race_checkpoints'];
+		$entry->stunts_score			= $item['stunts_score'];
+		$entry->prev_stunts_score		= $item['prev_stunts_score'];
 
 		// Update full entry
-		$this->ranking_list[(string)$entry->login]	= $entry;
-
+		$this->ranking_list[$entry->login."XX"] = $entry;
 
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
 			$scores = array();
 			$times = array();
 			$pids = array();
 			foreach ($this->ranking_list as $key => $row) {
-				$scores[(string)$key]	= $row->map_points;
-				$times[(string)$key]	= $row->best_race_time;
-				$pids[(string)$key]	= $row->pid;
+				$scores[$key]	= $row->map_points;
+				$times[$key]	= $row->best_race_time;
+				$pids[$key]	= $row->pid;
 			}
 			unset($key, $row);
 
@@ -159,9 +158,9 @@ class RankingList extends BaseClass {
 			$scores = array();
 			$pids = array();
 			foreach ($this->ranking_list as $key => $row) {
-				$best_lap_checkpoints[(string)$key]	= count($row->best_lap_checkpoints);
-				$scores[(string)$key]			= $row->map_points;
-				$pids[(string)$key]			= $row->pid;
+				$best_lap_checkpoints[$key]	= count($row->best_lap_checkpoints);
+				$scores[$key]			= $row->map_points;
+				$pids[$key]			= $row->pid;
 			}
 			unset($key, $row);
 
@@ -180,7 +179,7 @@ class RankingList extends BaseClass {
 				if ($row->best_race_time <= 0) {
 					$row->best_race_time = PHP_INT_MAX;
 				}
-				$times[(string)$key] = $row->best_race_time;
+				$times[$key] = $row->best_race_time;
 			}
 			unset($key, $row);
 
@@ -190,6 +189,7 @@ class RankingList extends BaseClass {
 				$this->ranking_list
 			);
 			unset($times);
+
 		}
 
 		$i = 1;
@@ -244,9 +244,8 @@ class RankingList extends BaseClass {
 	*/
 
 	public function getRankByLogin ($login) {
-		$login = (string)$login;
-		if (!empty($login) && isset($this->ranking_list[(string)$login])) {
-			return $this->ranking_list[(string)$login];
+		if (!empty($login) && isset($this->ranking_list[$login."XX"])) {
+			return $this->ranking_list[$login."XX"];
 		}
 		else {
 			return false;
@@ -295,7 +294,7 @@ class RankingList extends BaseClass {
 		$count = 1;
 		$top = array();
 		foreach ($this->ranking_list as $item) {
-			$top[(string)$item->login] = $item;
+			$top[$item->login] = $item;
 			if ($count == 3) {
 				break;
 			}
@@ -315,7 +314,7 @@ class RankingList extends BaseClass {
 		$count = 1;
 		$top = array();
 		foreach ($this->ranking_list as $item) {
-			$top[(string)$item->login] = $item;
+			$top[$item->login] = $item;
 			if ($count == 10) {
 				break;
 			}
@@ -335,7 +334,7 @@ class RankingList extends BaseClass {
 		$count = 1;
 		$top = array();
 		foreach ($this->ranking_list as $item) {
-			$top[(string)$item->login] = $item;
+			$top[$item->login] = $item;
 			if ($count == 50) {
 				break;
 			}

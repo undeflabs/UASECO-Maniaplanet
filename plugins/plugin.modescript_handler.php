@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2018-04-19');
+		$this->setBuild('2018-04-23');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 

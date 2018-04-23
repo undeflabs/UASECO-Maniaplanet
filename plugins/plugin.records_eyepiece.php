@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-04-21');
+		$this->setBuild('2018-04-23');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -1982,7 +1982,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Update LiveRankings only
 		$this->config['States']['LiveRankings']['NeedUpdate']		= true;
 		$this->config['States']['LiveRankings']['UpdateDisplay']	= true;
-		$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => true));
+//		$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => true));
 	}
 
 	/*

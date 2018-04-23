@@ -1,7 +1,7 @@
 <?php
 /*
- * Plugin: Rounds
- * ~~~~~~~~~~~~~~
+ * Plugin: RoundAutoEnd
+ * ~~~~~~~~~~~~~~~~~~~~
  * » Ends the current round after a computed amount of time automatically.
  * » Based upon plugin.autoendround.php/1.0 written by -nocturne=-
  *
@@ -39,6 +39,7 @@ class PluginRoundAutoEnd extends Plugin {
 	public $time_delta;
 	public $time_scoreboard;
 	public $time_countdown;
+	public $rounds_per_map;
 
 	private $player_finished;
 
@@ -52,9 +53,9 @@ class PluginRoundAutoEnd extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2017-06-08');
-		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2018-04-21');
+		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.round_autoend', 'plugin_description'));
 
 		// Register functions for events
@@ -63,6 +64,7 @@ class PluginRoundAutoEnd extends Plugin {
 		$this->registerEvent('onBeginRound',		'onBeginRound');
 		$this->registerEvent('onEverySecond',		'onEverySecond');
 		$this->registerEvent('onEndRound',		'onEndRound');
+		$this->registerEvent('onWarmUpStatusChanged',	'onWarmUpStatusChanged');
 		$this->registerEvent('onPlayerFinishPrefix',	'onPlayerFinishPrefix');
 	}
 
@@ -86,6 +88,7 @@ class PluginRoundAutoEnd extends Plugin {
 		$this->time_delta	= 0;
 		$this->time_scoreboard	= 7;					// Add 7 seconds for the scoreboard
 		$this->time_countdown	= 4;					// Add 4 seconds for the 3-2-1-GO!
+		$this->rounds_per_map	= 0;
 		$this->player_finished	= array();
 	}
 
@@ -98,17 +101,42 @@ class PluginRoundAutoEnd extends Plugin {
 	public function onEverySecond ($aseco) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			if ($this->timer > 0 && time() >= $this->timer) {
-				// Reset timer
-				$this->timer = 0;
 
-				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.ForceEndRound', array((string)time()));
+				$message = '';
+				if ($aseco->warmup_phase === true) {
+					if ($this->rounds_per_map > 0) {
+						$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.WarmUp.ForceStopRound', array((string)time()));
+						$this->rounds_per_map -= 1;
+					}
+					else {
+						$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.WarmUp.ForceStop', array((string)time()));
 
-				$aseco->console('[RoundAutoEnd] Round automatically ended');
+						// Reset
+						$this->timer = 0;
+						$this->rounds_per_map = 0;
+					}
+					$aseco->console('[RoundAutoEnd] WarmUpRound automatically ended');
 
-				$message = new Message('plugin.round_autoend', 'message_round_end');
-				$message->addPlaceholders(
-					$aseco->formatTime(($this->time_delta + $this->time_scoreboard) * 1000)
-				);
+					$message = new Message('plugin.round_autoend', 'message_warmup_round_end');
+					$message->addPlaceholders(
+						$aseco->formatTime(($this->time_delta + $this->time_scoreboard) * 1000)
+					);
+				}
+				else {
+					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.ForceEndRound', array((string)time()));
+
+					// Reset
+					$this->timer = 0;
+					$this->rounds_per_map = 0;
+
+					$aseco->console('[RoundAutoEnd] Round automatically ended');
+
+					$message = new Message('plugin.round_autoend', 'message_round_end');
+					$message->addPlaceholders(
+						$aseco->formatTime(($this->time_delta + $this->time_scoreboard) * 1000)
+					);
+				}
+
 				$message->sendChatMessage();
 			}
 		}
@@ -162,6 +190,26 @@ class PluginRoundAutoEnd extends Plugin {
 	public function onEndRound ($aseco) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
 			$this->timer = 0;
+		}
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function onWarmUpStatusChanged ($aseco) {
+		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+			$this->rounds_per_map = $aseco->server->gameinfo->rounds['RoundsPerMap'];
+
+			if ($aseco->warmup_phase === true) {
+				$this->timer = (time() + $this->time_delta + $this->time_countdown + $this->time_scoreboard);
+				$this->player_finished = array();
+			}
+			else {
+				$this->timer = 0;
+			}
 		}
 	}
 
