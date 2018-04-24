@@ -238,7 +238,7 @@ class MXInfoFetcher {
 	private function getData ($isuid) {
 
 		// get map info
-		if ($this->prefix == 'tm') {
+		if ($this->prefix === 'tm') {
 			$dir = 'tracks';
 		}
 		else {
@@ -274,7 +274,7 @@ class MXInfoFetcher {
 
 		$mx = $mx[0];
 		if ($isuid) {
-			$this->id      = ($this->prefix == 'tm') ? $mx->TrackID : $mx->MapID;
+			$this->id      = ($this->prefix === 'tm') ? $mx->TrackID : $mx->MapID;
 		}
 
 		$this->name			= $mx->Name;
@@ -338,7 +338,7 @@ class MXInfoFetcher {
 
 		// fetch records too?
 		$this->recordlist = array();
-		if ($this->prefix == 'tm' && $this->records) {
+		if ($this->prefix === 'tm' && $this->records) {
 			$limit = 25;
 			$url = 'http://api.mania-exchange.com/' . $this->prefix . '/replays/' . $this->id . '/' . $limit . '/';
 			$file = $this->getFile($url);

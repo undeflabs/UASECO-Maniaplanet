@@ -145,7 +145,7 @@ else
 			if(!$xml)
 				throw new ParseException();
 
-			if($xml->getName() == 'methodResponse')
+			if($xml->getName() === 'methodResponse')
 			{
 				if($xml->fault)
 					return array('fault', self::decodeValue($xml->fault->value));

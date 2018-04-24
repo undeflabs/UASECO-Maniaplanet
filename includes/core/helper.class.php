@@ -1578,11 +1578,11 @@ class Helper extends BaseClass {
 				// check for complete list IP
 				$match = ($playerip == $ip);
 			}
-			else if (substr($ip, -4) == '.*.*') {
+			else if (substr($ip, -4) === '.*.*') {
 				// check class B wildcard
 				$match = (preg_replace('/\.\d+\.\d+$/', '', $playerip) == substr($ip, 0, -4));
 			}
-			else if (substr($ip, -2) == '.*') {
+			else if (substr($ip, -2) === '.*') {
 				// check class C wildcard
 				$match = (preg_replace('/\.\d+$/', '', $playerip) == substr($ip, 0, -2));
 			}

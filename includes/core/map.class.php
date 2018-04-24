@@ -117,7 +117,7 @@ class Map extends BaseClass {
 			}
 
 			$this->author_nickname	= trim($gbx->authorNick);
-			if (empty($this->author_zone) && $this->author == 'Nadeo') {
+			if (empty($this->author_zone) && $this->author === 'Nadeo') {
 				$this->author_zone	= array('Europe', 'France', 'Île-de-France', 'Paris');
 				$this->author_continent	= 'EU';
 				$this->author_nation	= 'FRA';

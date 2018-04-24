@@ -285,7 +285,7 @@ class GBXBaseFetcher
 			$val = utf8_decode($val);
 		//echo 'startTag: ' . $name . "\n"; print_r($attribs);
 		array_push($this->_parsestack, $name);
-		if ($name == 'DEP') {
+		if ($name === 'DEP') {
 			$this->xmlParsed['DEPS'][] = $attribs;
 		} elseif (count($this->_parsestack) <= 2) {
 			// HEADER, IDENT, DESC, TIMES, CHALLENGE/MAP, DEPS, CHECKPOINTS
@@ -798,7 +798,7 @@ class GBXChallMapFetcher extends GBXBaseFetcher
 				$this->lightmap = (int)$this->xmlParsed['HEADER']['LIGHTMAP'];
 			if ($this->authorZone == '' && isset($this->xmlParsed['IDENT']['AUTHORZONE']))
 				$this->authorZone = $this->xmlParsed['IDENT']['AUTHORZONE'];
-			if ($this->envir == 'UNKNOWN' && isset($this->xmlParsed['DESC']['ENVIR']))
+			if ($this->envir === 'UNKNOWN' && isset($this->xmlParsed['DESC']['ENVIR']))
 				$this->envir = $this->xmlParsed['DESC']['ENVIR'];
 			if ($this->nbLaps == 0 && isset($this->xmlParsed['DESC']['NBLAPS']))
 				$this->nbLaps = (int)$this->xmlParsed['DESC']['NBLAPS'];

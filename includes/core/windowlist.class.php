@@ -100,19 +100,19 @@ class WindowList extends BaseClass {
 
 
 		$send = false;
-		if ($answer['Action'] == 'StripStyles') {
+		if ($answer['Action'] === 'StripStyles') {
 
 			$window->settings['stripcodes'] = true;
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'DefaultStyles') {
+		else if ($answer['Action'] === 'DefaultStyles') {
 
 			$window->settings['stripcodes'] = false;
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowPagePrev') {
+		else if ($answer['Action'] === 'ClassWindowPagePrev') {
 
 			$window->content['page'] -= 1;
 			if ($window->content['page'] < 0) {
@@ -121,7 +121,7 @@ class WindowList extends BaseClass {
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowPagePrevTwo') {
+		else if ($answer['Action'] === 'ClassWindowPagePrevTwo') {
 
 			$window->content['page'] -= 2;
 			if ($window->content['page'] < 0) {
@@ -130,13 +130,13 @@ class WindowList extends BaseClass {
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowPageFirst') {
+		else if ($answer['Action'] === 'ClassWindowPageFirst') {
 
 			$window->content['page'] = 0;
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowPageNext') {
+		else if ($answer['Action'] === 'ClassWindowPageNext') {
 
 			$window->content['page'] += 1;
 			if ($window->content['page'] > $window->content['maxpage']) {
@@ -145,7 +145,7 @@ class WindowList extends BaseClass {
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowPageNextTwo') {
+		else if ($answer['Action'] === 'ClassWindowPageNextTwo') {
 
 			$window->content['page'] += 2;
 			if ($window->content['page'] > $window->content['maxpage']) {
@@ -154,13 +154,13 @@ class WindowList extends BaseClass {
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowPageLast') {
+		else if ($answer['Action'] === 'ClassWindowPageLast') {
 
 			$window->content['page'] = $window->content['maxpage'];
 			$send = true;
 
 		}
-		else if ($answer['Action'] == 'ClassWindowRefreshPage') {
+		else if ($answer['Action'] === 'ClassWindowRefreshPage') {
 
 			// Just send the current Page again
 			$send = true;
@@ -223,7 +223,7 @@ class WindowList extends BaseClass {
 			$this->storePlayerData($player, 'ClassWindow', $window);
 
 			// Concat all the elements
-			if ($window->settings['mode'] == 'columns') {
+			if ($window->settings['mode'] === 'columns') {
 				$xml = str_replace(
 					array(
 						'%content%',
@@ -238,7 +238,7 @@ class WindowList extends BaseClass {
 					$window->buildWindow($player->login)
 				);
 			}
-			else if ($window->settings['mode'] == 'pages') {
+			else if ($window->settings['mode'] === 'pages') {
 				$xml = str_replace(
 					array(
 						'%content%',

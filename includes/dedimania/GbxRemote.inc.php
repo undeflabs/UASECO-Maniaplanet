@@ -83,13 +83,13 @@ class IXR_Value {
 			$type = $this->calculateType();
 		}
 		$this->type = $type;
-		if ($type == 'struct') {
+		if ($type === 'struct') {
 			// Turn all the values in the array into new IXR_Value objects
 			foreach ($this->data as $key => $value) {
 				$this->data[$key] = new IXR_Value($value);
 			}
 		}
-		if ($type == 'array') {
+		if ($type === 'array') {
 			for ($i = 0, $j = count($this->data); $i < $j; $i++) {
 				$this->data[$i] = new IXR_Value($this->data[$i]);
 			}
@@ -220,7 +220,7 @@ class IXR_Message {
 		xml_parser_free($this->_parser);
 		unset($this->_parser);
 		// Grab the error messages, if any
-		if ($this->messageType == 'fault') {
+		if ($this->messageType === 'fault') {
 			$this->faultCode = $this->params[0]['faultCode'];
 			$this->faultString = $this->params[0]['faultString'];
 		}
@@ -322,7 +322,7 @@ class IXR_Message {
 			*/
 			if (count($this->_arraystructs) > 0) {
 				// Add value to struct or array
-				if ($this->_arraystructstypes[count($this->_arraystructstypes)-1] == 'struct') {
+				if ($this->_arraystructstypes[count($this->_arraystructstypes)-1] === 'struct') {
 					// Add to struct
 					$this->_arraystructs[count($this->_arraystructs)-1][$this->_currentStructName[count($this->_currentStructName)-1]] = $value;
 				} else {
@@ -521,9 +521,9 @@ class IXR_Client_Gbx {
 			return false;
 		}
 		$handshake = fread($this->socket, $size);
-		if ($handshake == 'GBXRemote 1') {
+		if ($handshake === 'GBXRemote 1') {
 			$this->protocol = 1;
-		} else if ($handshake == 'GBXRemote 2') {
+		} else if ($handshake === 'GBXRemote 2') {
 			$this->protocol = 2;
 		} else {
 			$this->error = new IXR_Error(-32300, 'transport error - wrong lowlevel protocol version');
@@ -640,7 +640,7 @@ class IXR_Client_Gbx {
 			return false;
 		}
 		// Is the message a fault?
-		if ($this->message->messageType == 'fault') {
+		if ($this->message->messageType === 'fault') {
 			$this->error = new IXR_Error($this->message->faultCode, $this->message->faultString);
 			return false;
 		}
