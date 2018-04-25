@@ -206,12 +206,6 @@
 		<allow_respawn>true</allow_respawn>
 
 		<!--
-		Path/URL to a scores table style from an XML file,
-		see for details: http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
-		//-->
-		<scores_table_style_path></scores_table_style_path>
-
-		<!--
 		Further details: https://forum.maniaplanet.com/viewtopic.php?p=290478#p290478
 		0: mode default
 		1: normal

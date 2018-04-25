@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2018-04-23');
+		$this->setBuild('2018-04-24');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -66,7 +66,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onModeScriptCallbackArray',	'onModeScriptCallbackArray');
-		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
+//		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onShutdown',			'onShutdown');
 
 		$this->registerChatCommand('modescript',		'chat_modescript',		'Adjust some settings for the Modescript plugin (see: /modescript)',	Player::MASTERADMINS);
@@ -484,13 +484,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->doppler['ModuleBestPlayersPosition']	= $this->settings['MODESETUP'][0]['DOPPLER'][0]['MODULE_BEST_PLAYERS_POSITION'][0];
 
 
-
 		// Store the settings at the dedicated Server
 		$this->setupModescriptSettings();
-
-		// Setup the custom Scoretable
-//		$this->setupCustomScoretable();
-
 
 		// Setup the UI
 		$this->ui_properties = $this->settings['UI_PROPERTIES'][0];
@@ -523,18 +518,18 @@ class PluginModescriptHandler extends Plugin {
 		$this->setupUserInterface();
 	}
 
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
-
-		if ($answer['Action'] == 'Vote') {
-
-		}
-	}
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
+//
+//		if ($answer['Action'] == 'Vote') {
+//
+//		}
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
@@ -1769,105 +1764,6 @@ $maniascript = <<<EOL
 	}
 EOL;
 		return $maniascript;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
-	private function setupCustomScoretable () {
-		global $aseco;
-
-//		$aseco->client->query('DisconnectFakePlayer', '*');
-//		foreach (range(0,50) as $id) {
-//			$aseco->client->query('ConnectFakePlayer');
-//		}
-
-		// http://doc.maniaplanet.com/dedicated-server/customize-scores-table.html
-		$xml = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
-		$xml .= '<scorestable version="1">';
-		$xml .= ' <properties>';
-		$xml .= '  <position x="0.0" y="51.0" z="20.0"/>';
-		$xml .= '  <headersize x="70.0" y="8.7"/>';
-		$xml .= '  <modeicon icon="Bgs1|BgEmpty"/>';
-		$xml .= '  <tablesize x="182.0" y="67.0"/>';
-		$xml .= '  <taleformat columns="2" lines="8"/>';
-		$xml .= '  <footersize x="180.0" y="17.0"/>';
-		$xml .= '</properties>';
-
-		$xml .= ' <settings>';
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
-			$xml .= '  <setting name="TeamsMode" value="True"/>';
-			$xml .= '  <setting name="TeamsScoresVisibility" value="True"/>';
-			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False"/>';
-		}
-		else {
-			$xml .= '  <setting name="TeamsMode" value="False"/>';
-			$xml .= '  <setting name="TeamsScoresVisibility" value="False"/>';
-			$xml .= '  <setting name="RevertPlayerCardInTeamsMode" value="False"/>';
-		}
-		$xml .= '  <setting name="PlayerDarkening" value="True"/>';
-		$xml .= '  <setting name="PlayerInfoVisibility" value="True"/>';
-		$xml .= '  <setting name="ServerNameVisibility" value="True"/>';
-		$xml .= ' </settings>';
-
-		$xml .= '<images>';
-		$xml .= ' <background>';
-		$xml .= '  <position x="0.0" y="6.0"/>';
-		$xml .= '  <size width="240.0" height="108.0"/>';
-//		$xml .= '  <collection>';
-//		$xml .= '   <image environment="Canyon" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds"/>';
-//		$xml .= '   <image environment="Valley" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds"/>';
-//		$xml .= '   <image environment="Stadium" path="http://maniacdn.net/undef.de/dedicated-server/ScoresTable2.Script.txt/uaseco-bg-canyon.dds"/>';
-////		$xml .= '   <image environment="Canyon" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-canyon.dds"/>';
-////		$xml .= '   <image environment="Valley" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-valley.dds"/>';
-////		$xml .= '   <image environment="Stadium" path="file://Media/Manialinks/Trackmania/ScoresTable/bg-stadium.dds"/>';
-//		$xml .= '  </collection>';
-		$xml .= ' </background>';
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::TEAM_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::CHASE) {
-			$xml .= ' <team1>';
-			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-left.dds"/>';
-			$xml .= '  <position x="0.0" y="3.8"/>';
-			$xml .= '  <size width="120.0" height="25.0"/>';
-			$xml .= ' </team1>';
-			$xml .= ' <team2>';
-			$xml .= '  <image path="file://Media/Manialinks/Trackmania/ScoresTable/teamversus-right.dds"/>';
-			$xml .= '  <position x="0.0" y="3.8v';
-			$xml .= '  <size width="120.0" height="25.0"/>';
-			$xml .= ' </team2>';
-		}
-		$xml .= '</images>';
-
-//		$xml .= '<columns>';
-//		$xml .= ' <column id="LibST_Avatar" action="createv';
-//		$xml .= ' <column id="LibST_Name" action="create"/>';
-//		$xml .= ' <column id="LibST_ManiaStars" action="create"/>';
-//		$xml .= ' <column id="LibST_Tools" action="create"/>';
-//		$xml .= ' <column id="LibST_TMBestTime" action="destroy"/>';
-//		$xml .= ' <column id="LibST_PrevTime" action="destroy"/>';
-//		$xml .= ' <column id="LibST_TMStunts" action="destroyv';
-//		$xml .= ' <column id="LibST_TMRespawns" action="destroy"/>';
-//		$xml .= ' <column id="LibST_TMCheckpoints" action="destroy"/>';
-//		$xml .= ' <column id="LibST_TMPoints" action="create"/>';
-//		$xml .= ' <column id="LibST_TMPrevRaceDeltaPoints" action="destroy"/>';
-//
-//		$xml .= ' <column id="LibST_Avatar" action="create">';
-//		$xml .= '  <legend>TestFull</legend>';
-//		$xml .= '  <defaultvalue>DefaultValue</defaultvalue>';
-//		$xml .= '  <width>20.0</width>';
-//		$xml .= '  <weight>20.0</weight>';
-//		$xml .= '  <textstyle>TextRaceMessageBig</textstyle>';
-//		$xml .= '  <textsize>1</textsize>';
-//		$xml .= '  <textalign>left</textalign>';
-//		$xml .= ' </column>';
-//		$xml .= '</columns>';
-
-		$xml .= '</scorestable>';
-
-		$aseco->client->query('TriggerModeScriptEventArray', 'LibScoresTable2_SetStyleFromXml', array('TM', $xml));
 	}
 }
 

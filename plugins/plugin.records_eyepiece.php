@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-04-23');
+		$this->setBuild('2018-04-24');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -6534,7 +6534,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Get current song and strip server path
 		$current = $aseco->client->query('GetForcedMusic');
-		if ( ($current['Url'] != '') || ($current['File'] != '')) {
+		if (($current['Url'] != '') || ($current['File'] != '')) {
 			if (isset($aseco->plugins['PluginMusicServer'])) {
 				$songname = str_replace(strtolower($aseco->plugins['PluginMusicServer']->server), '', ($current['Url'] != '' ? strtolower($current['Url']) : strtolower($current['File'])));
 			}

@@ -65,8 +65,8 @@ class PluginMusicServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-08-19');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-04-24');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles all server-controlled music.');
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
@@ -145,8 +145,9 @@ class PluginMusicServer extends Plugin {
 
 		$this->songs = array();
 		foreach ($settings['SONG_FILES'][0]['SONG'] as $song) {
-			$this->songs[] = str_replace(' ', '%20', $song);
+			$this->songs[] = $song;
 		}
+		unset($settings['SONG_FILES'][0]['SONG']);
 
 		// remove duplicates
 		$this->songs = array_values(array_unique($this->songs));
@@ -302,10 +303,10 @@ class PluginMusicServer extends Plugin {
 						$fileparts = false;
 						if ($this->maxlen > 0) {
 							// Get only the configured bytes from the song/file
-							$fileparts = file_get_contents($server.$song, false, $this->stream_context, 0, $this->maxlen);
+							$fileparts = file_get_contents($server.str_replace(' ', '%20', $song), false, $this->stream_context, 0, $this->maxlen);
 						}
 						else {
-							$fileparts = file_get_contents($server.$song, false, $this->stream_context);
+							$fileparts = file_get_contents($server.str_replace(' ', '%20', $song), false, $this->stream_context);
 						}
 						if ($fileparts !== false) {
 							$tmpfname = tempnam('./', $song .'_');

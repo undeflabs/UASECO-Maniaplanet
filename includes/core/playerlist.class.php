@@ -35,7 +35,7 @@
 class PlayerList extends BaseClass {
 	public $player_list;
 
-	private $debug		= false;
+	private $debug = false;
 
 
 	/*
@@ -48,9 +48,10 @@ class PlayerList extends BaseClass {
 		$this->debug = $debug;
 
 		$this->setAuthor('undef.de');
+		$this->setContributors(array('brakerb'));
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-08-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-04-25');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
 		$this->player_list = array();
@@ -99,9 +100,7 @@ class PlayerList extends BaseClass {
 
 			return true;
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	/*
@@ -111,8 +110,7 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function removePlayer ($login) {
-		if (isset($this->player_list[$login])) {
-			$this->player_list[$login];
+		if (array_key_exists($login, $this->player_list)) {
 			unset($this->player_list[$login]);
 			return true;
 		}
@@ -126,13 +124,10 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function getPlayerByLogin ($login) {
-		$login = (string)$login;
-		if (!empty($login) && isset($this->player_list[$login])) {
+		if (array_key_exists($login, $this->player_list)) {
 			return $this->player_list[$login];
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	/*
@@ -149,9 +144,7 @@ class PlayerList extends BaseClass {
 				}
 			}
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	/*
@@ -168,9 +161,7 @@ class PlayerList extends BaseClass {
 				}
 			}
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	/*
@@ -183,8 +174,8 @@ class PlayerList extends BaseClass {
 	public function getPlayerIdByLogin ($login, $forcequery = false) {
 		global $aseco;
 
-		if (isset($this->server->players->player_list[$login]) && $this->server->players->player_list[$login]->id > 0 && !$forcequery) {
-			return $this->server->players->player_list[$login]->id;
+		if (array_key_exists($login, $this->player_list) && $this->player_list[$login]->id > 0 && $forcequery === false) {
+			return $this->player_list[$login]->id;
 		}
 		else {
 			$id = 0;
@@ -218,8 +209,8 @@ class PlayerList extends BaseClass {
 	public function getPlayerNickname ($login, $forcequery = false) {
 		global $aseco;
 
-		if (isset($this->server->players->player_list[$login]) && $this->server->players->player_list[$login]->nickname != '' && !$forcequery) {
-			return $this->server->players->player_list[$login]->nickname;
+		if (array_key_exists($login, $this->player_list) && $this->player_list[$login]->id > 0 && $forcequery === false) {
+			return $this->player_list[$login]->nickname;
 		}
 		else {
 			$nickname = 'Unknown';
