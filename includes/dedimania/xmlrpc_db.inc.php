@@ -327,7 +327,7 @@ class XmlrpcDB {
 				                       'globalTTR' => $ttr
 				                      );
 
-				if ($methodresponse === 'dedimania.WarningsAndTTR') {
+				if ($methodresponse == 'dedimania.WarningsAndTTR') {
 					if ($this->_debug > 1) {
 						$aseco->console_text('XmlrpcDB->_makeResponseDatas() - param' . CRLF . print_r($param, true));
 						$aseco->console_text('XmlrpcDB->_makeResponseDatas() - params2' . CRLF . print_r($params2, true));

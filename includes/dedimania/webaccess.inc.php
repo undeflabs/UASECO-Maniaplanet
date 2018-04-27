@@ -239,7 +239,7 @@ class Webaccess {
 				$i = $this->_findWebaccessSocket($socket);
 				if ($i !== false) {
 					if (isset($this->_WebaccessList[$i]->_spool[0]['State']) &&
-					    $this->_WebaccessList[$i]->_spool[0]['State'] === 'OPEN')
+					    $this->_WebaccessList[$i]->_spool[0]['State'] == 'OPEN')
 						$this->_WebaccessList[$i]->_open();
 					else
 						$this->_WebaccessList[$i]->_send();
@@ -274,7 +274,7 @@ class Webaccess {
 	private function _getWebaccessReadSockets($socks) {
 
 		foreach ($this->_WebaccessList as $key => $wau) {
-			if ($wau->_state === 'OPENED' && $wau->_socket)
+			if ($wau->_state == 'OPENED' && $wau->_socket)
 				$socks[] = $wau->_socket;
 		}
 		return $socks;
@@ -285,14 +285,14 @@ class Webaccess {
 
 		foreach ($this->_WebaccessList as $key => $wau) {
 			if (isset($wau->_spool[0]['State']) &&
-			    ($wau->_spool[0]['State'] === 'OPEN' ||
-			     $wau->_spool[0]['State'] === 'BAD' ||
-			     $wau->_spool[0]['State'] === 'SEND')) {
+			    ($wau->_spool[0]['State'] == 'OPEN' ||
+			     $wau->_spool[0]['State'] == 'BAD' ||
+			     $wau->_spool[0]['State'] == 'SEND')) {
 
-				if (($wau->_state === 'CLOSED' || $wau->_state === 'BAD') && !$wau->_socket)
+				if (($wau->_state == 'CLOSED' || $wau->_state == 'BAD') && !$wau->_socket)
 					$wau->_open();
 
-				if ($wau->_state === 'OPENED' && $wau->_socket)
+				if ($wau->_state == 'OPENED' && $wau->_socket)
 					$socks[] = $wau->_socket;
 			}
 		}
@@ -305,9 +305,9 @@ class Webaccess {
 		$num = 0;
 		$bad = 0;
 		foreach ($this->_WebaccessList as $key => $wau) {
-			if ($wau->_state === 'OPENED' || $wau->_state === 'CLOSED')
+			if ($wau->_state == 'OPENED' || $wau->_state == 'CLOSED')
 				$num += count($wau->_spool);
-			elseif ($wau->_state === 'BAD')
+			elseif ($wau->_state == 'BAD')
 				$bad += count($wau->_spool);
 		}
 		return array($num, $bad);
@@ -374,9 +374,9 @@ class WebaccessUrl {
 		$this->_agent = $agent;
 
 		// request compression setting
-		if ($_web_access_compress_xmlrpc_request === 'accept')
+		if ($_web_access_compress_xmlrpc_request == 'accept')
 			$this->_compress_request = 'accept';
-		elseif ($_web_access_compress_xmlrpc_request === 'force') {
+		elseif ($_web_access_compress_xmlrpc_request == 'force') {
 			if (function_exists('gzencode'))
 				$this->_compress_request = 'gzip';
 			elseif (function_exists('gzdeflate'))
@@ -384,9 +384,9 @@ class WebaccessUrl {
 			else
 				$this->_compress_request = false;
 		}
-		elseif ($_web_access_compress_xmlrpc_request === 'force-gzip' && function_exists('gzencode'))
+		elseif ($_web_access_compress_xmlrpc_request == 'force-gzip' && function_exists('gzencode'))
 			$this->_compress_request = 'gzip';
-		elseif ($_web_access_compress_xmlrpc_request === 'force-deflate' && function_exists('gzdeflate'))
+		elseif ($_web_access_compress_xmlrpc_request == 'force-deflate' && function_exists('gzdeflate'))
 			$this->_compress_request = 'deflate';
 		else
 			$this->_compress_request = false;
@@ -444,7 +444,7 @@ class WebaccessUrl {
 	function retry() {
 		global $_web_access_retry_timeout;
 
-		if ($this->_state === 'BAD') {
+		if ($this->_state == 'BAD') {
 			$this->_bad_time = time();
 			$this->_bad_timeout = 0;
 		}
@@ -475,7 +475,7 @@ class WebaccessUrl {
 		$query['Times'] = array('open' => array(-1.0,-1.0), 'send' => array(-1.0,-1.0), 'receive' => array(-1.0,-1.0,0));
 
 		// if asynch, in error, and maximal timeout, then forget the request and return false
-		if (($query['Callback'] != null) && ($this->_state === 'BAD')) {
+		if (($query['Callback'] != null) && ($this->_state == 'BAD')) {
 			if ($this->_bad_timeout > $_web_access_retry_timeout_max) {
 				$aseco->console($this->_webaccess_str . 'Request refused for consecutive errors (' . $this->_bad_timeout . ' / ' . $_web_access_retry_timeout_max . ')');
 				return false;
@@ -529,10 +529,10 @@ class WebaccessUrl {
 						$msg .= "Content-type: text/xml; charset=UTF-8\r\n";
 					}
 
-					if ($this->_compress_request === 'gzip' && function_exists('gzencode')) {
+					if ($this->_compress_request == 'gzip' && function_exists('gzencode')) {
 						$msg .= "Content-Encoding: gzip\r\n";
 						$query['QueryData'] = gzencode($query['QueryData']);
-					} elseif ($this->_compress_request === 'deflate' && function_exists('gzdeflate')) {
+					} elseif ($this->_compress_request == 'deflate' && function_exists('gzdeflate')) {
 						$msg .= "Content-Encoding: deflate\r\n";
 						$query['QueryData'] = gzdeflate($query['QueryData']);
 					}
@@ -625,7 +625,7 @@ class WebaccessUrl {
 		$time = time();
 
 		// if asynch, in error, then return false until timeout or if >max)
-		if (!$this->_wait && $this->_state === 'BAD' &&
+		if (!$this->_wait && $this->_state == 'BAD' &&
 		    (($this->_bad_timeout > $_web_access_retry_timeout_max) ||
 		    (($time - $this->_bad_time) < $this->_bad_timeout))) {
 			//$aseco->console($this->_webaccess_str . 'wait to retry (' . ($time - $this->_bad_time) . ' / ' . $this->_bad_timeout . ')');
@@ -633,7 +633,7 @@ class WebaccessUrl {
 		}
 
 		// if the socket is probably in timeout, close it
-		if ($this->_socket && $this->_state === 'OPENED' &&
+		if ($this->_socket && $this->_state == 'OPENED' &&
 		    ($this->_serv_keepalive_timeout <= ($time - $this->_query_time))) {
 			//$aseco->console($this->_webaccess_str . 'timeout, close it!');
 			$this->_state = 'CLOSED';
@@ -654,22 +654,22 @@ class WebaccessUrl {
 				@stream_set_timeout($this->_socket, 0, 10000);  // timeout 10 ms
 
 				while (isset($this->_spool[0]['State']) &&
-				       ($this->_spool[0]['State'] === 'OPEN' ||
-				        $this->_spool[0]['State'] === 'SEND' ||
-				        $this->_spool[0]['State'] === 'RECEIVE')) {
+				       ($this->_spool[0]['State'] == 'OPEN' ||
+				        $this->_spool[0]['State'] == 'SEND' ||
+				        $this->_spool[0]['State'] == 'RECEIVE')) {
 					//echo 'State=' . $this->_spool[0]['State'] . " (" . count($this->_spool) . ")\n";
 					if (!$this->_socket || $this->_state != 'OPENED')
 						$this->_open_socket($opentimeout);
 
 						$query_state = $this->_spool[0]['State'];
-						if ($this->_spool[0]['State'] === 'OPEN') {
+						if ($this->_spool[0]['State'] == 'OPEN') {
 							$time = microtime(true);
 							$this->_spool[0]['Times']['send'][0] = $time;
 							$this->_send($waittimeout);
 						}
-						elseif ($this->_spool[0]['State'] === 'SEND')
+						elseif ($this->_spool[0]['State'] == 'SEND')
 							$this->_send($waittimeout);
-						elseif ($this->_spool[0]['State'] === 'RECEIVE')
+						elseif ($this->_spool[0]['State'] == 'RECEIVE')
 							$this->_receive($waittimeout*4);
 
 						// if timeout then error
@@ -683,7 +683,7 @@ class WebaccessUrl {
 			}
 
 			// else just do a send on the current
-			elseif (isset($this->_spool[0]['State']) && $this->_spool[0]['State'] === 'OPEN') {
+			elseif (isset($this->_spool[0]['State']) && $this->_spool[0]['State'] == 'OPEN') {
 				@stream_set_timeout($this->_socket, 0, 2000);  // timeout 2 ms
 				$this->_send($waittimeout);
 			}
@@ -697,7 +697,7 @@ class WebaccessUrl {
 			return;
 
 		// if OPEN then become SEND
-		if ($this->_spool[0]['State'] === 'OPEN') {
+		if ($this->_spool[0]['State'] == 'OPEN') {
 
 			$this->_spool[0]['State'] = 'SEND';
 			$time = microtime(true);
@@ -785,7 +785,7 @@ class WebaccessUrl {
 			}
 
 			// if not async-callback then continue until all is sent
-		} while ($this->_wait && isset($this->_spool[0]['State']) && ($this->_spool[0]['State'] === 'SEND'));
+		} while ($this->_wait && isset($this->_spool[0]['State']) && ($this->_spool[0]['State'] == 'SEND'));
 	}  // _send
 
 
@@ -812,7 +812,7 @@ class WebaccessUrl {
 				if (count($r) > 0) {
 					$res = @stream_socket_recvfrom($this->_socket, 8192);
 
-					if ($res === '') {  // should not happen habitually, but...
+					if ($res == '') {  // should not happen habitually, but...
 						break;
 					} elseif ($res !== false) {
 						$this->_response .= $res;
@@ -1028,7 +1028,7 @@ class WebaccessUrl {
 		}
 
 		// get real message when reply is chunked
-		elseif (isset($headers['transfer-encoding'][0]) && $headers['transfer-encoding'][0] === 'chunked') {
+		elseif (isset($headers['transfer-encoding'][0]) && $headers['transfer-encoding'][0] == 'chunked') {
 
 			// get chunk size and make message with chunks data
 			$size = -1;
@@ -1103,26 +1103,26 @@ class WebaccessUrl {
 
 		// if Content-Encoding: gzip  or  Content-Encoding: deflate
 		if (isset($headers['content-encoding'][0])) {
-			if ($headers['content-encoding'][0] === 'gzip')
+			if ($headers['content-encoding'][0] == 'gzip')
 				$message = @gzdecode($message);
-			elseif ($headers['content-encoding'][0] === 'deflate')
+			elseif ($headers['content-encoding'][0] == 'deflate')
 				$message = @gzinflate($message);
 		}
 
 		// if Accept-Encoding: gzip or deflate
-		if ($this->_compress_request === 'accept' && isset($headers['accept-encoding'][0])) {
+		if ($this->_compress_request == 'accept' && isset($headers['accept-encoding'][0])) {
 			foreach ($headers['accept-encoding'] as $comp) {
 				$comp = trim($comp);
-				if ($comp === 'gzip' && function_exists('gzencode')) {
+				if ($comp == 'gzip' && function_exists('gzencode')) {
 					$this->_compress_request = 'gzip';
 					break;
 				}
-				elseif ($comp === 'deflate' && function_exists('gzdeflate')) {
+				elseif ($comp == 'deflate' && function_exists('gzdeflate')) {
 					$this->_compress_request = 'deflate';
 					break;
 				}
 			}
-			if ($this->_compress_request === 'accept')
+			if ($this->_compress_request == 'accept')
 				$this->_compress_request = false;
 
 			$aseco->console($this->_webaccess_str
@@ -1156,7 +1156,7 @@ class WebaccessUrl {
 		}
 
 		// if the server reply ask to close, then close
-		if (!isset($headers['connection'][0]) || $headers['connection'][0] === 'close') {
+		if (!isset($headers['connection'][0]) || $headers['connection'][0] == 'close') {
 			//if (!$this->_spool[0]['Close'])
 			// $aseco->console($this->_webaccess_str . 'server ask to close connection');
 			$this->_spool[0]['Close'] = true;

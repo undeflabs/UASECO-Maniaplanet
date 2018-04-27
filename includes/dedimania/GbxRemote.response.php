@@ -32,7 +32,7 @@
 function xmlrpc_request($method, $params = null) {
 
 	// in case the first level array was forgotten in a multicall then add it...
-	if ($method === 'system.multicall' && isset($params[0]['methodName']))
+	if ($method == 'system.multicall' && isset($params[0]['methodName']))
 		$params = array($params);
 
 	$xml = '<?xml version="1.0" encoding="UTF-8" ?>'
@@ -173,7 +173,7 @@ class IXR_RequestStd {
 
 		$this->method = $method;
 		// in case the first level array was forgotten in a multicall then add it...
-		if ($method === 'system.multicall' && isset($params[0]['methodName']))
+		if ($method == 'system.multicall' && isset($params[0]['methodName']))
 			$this->params = array($params);
 		else
 			$this->params = $params;

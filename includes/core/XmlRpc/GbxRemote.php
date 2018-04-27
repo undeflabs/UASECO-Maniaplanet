@@ -186,7 +186,7 @@ class GbxRemote {
 		$args = func_get_args();
 		$method = array_shift($args);
 
-		if (isset($aseco->server->gameinfo->mode) && $aseco->server->gameinfo->mode == Gameinfo::CUP && ($method === 'RestartMap' || $method === 'NextMap')) {
+		if (isset($aseco->server->gameinfo->mode) && $aseco->server->gameinfo->mode == Gameinfo::CUP && ($method == 'RestartMap' || $method == 'NextMap')) {
 			$aseco->console('[GbxRemote] Method [{1}] does not work while running Modescript "Cup.Script.txt"!', $method);
 		}
 		else {
