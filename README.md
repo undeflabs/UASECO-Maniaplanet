@@ -24,4 +24,5 @@ Official website
 ================
 
 For more details, please visit the official website at http://www.UASECO.org/
+
 The official forum for UASECO can be found at http://forum.maniaplanet.com/viewforum.php?f=522
