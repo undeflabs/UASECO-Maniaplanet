@@ -120,11 +120,16 @@ class PluginChatServer extends Plugin {
 
 		// Create list of all MasterAdmins
 		$data = array();
-		foreach ($aseco->masteradmin_list['TMLOGIN'] as $lgn) {
-			// Skip any LAN logins
-			if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
-				$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+		if (count($aseco->masteradmin_list) > 0 && $aseco->masteradmin_list['TMLOGIN'] !== null) {
+			foreach ($aseco->masteradmin_list['TMLOGIN'] as $lgn) {
+				// Skip any LAN logins
+				if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
+					$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+				}
 			}
+		}
+		else {
+			$data[] = array('NO MASTERADMINS CONFIGURED');
 		}
 
 		// Setup settings for Window
@@ -163,11 +168,16 @@ class PluginChatServer extends Plugin {
 
 		// Create list of all Admins
 		$data = array();
-		foreach ($aseco->admin_list['TMLOGIN'] as $lgn) {
-			// Skip any LAN logins
-			if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
-				$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+		if (count($aseco->admin_list) > 0 && $aseco->admin_list['TMLOGIN'] !== null) {
+			foreach ($aseco->admin_list['TMLOGIN'] as $lgn) {
+				// Skip any LAN logins
+				if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
+					$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+				}
 			}
+		}
+		else {
+			$data[] = array('NO ADMINS CONFIGURED');
 		}
 
 		// Setup settings for Window
@@ -206,11 +216,16 @@ class PluginChatServer extends Plugin {
 
 		// Create list of all Operator
 		$data = array();
-		foreach ($aseco->operator_list['TMLOGIN'] as $lgn) {
-			// Skip any LAN logins
-			if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
-				$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+		if (count($aseco->operator_list) > 0 && $aseco->operator_list['TMLOGIN'] !== null) {
+			foreach ($aseco->operator_list['TMLOGIN'] as $lgn) {
+				// Skip any LAN logins
+				if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
+					$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+				}
 			}
+		}
+		else {
+			$data[] = array('NO OPERATORS CONFIGURED');
 		}
 
 		// Setup settings for Window

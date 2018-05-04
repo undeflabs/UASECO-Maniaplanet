@@ -9,6 +9,7 @@
 	<plugin>plugin.rasp.php</plugin>
 	<plugin>chat.admin.php</plugin>
 	<plugin>chat.server.php</plugin>
+	<plugin>chat.help.php</plugin>
 	<plugin>plugin.panels.php</plugin>
 
 	<!-- Optional plugins -->
@@ -35,7 +36,6 @@
 	<plugin>plugin.uptodate.php</plugin>
 
 	<!-- Optional chat related plugins -->
-	<plugin>chat.help.php</plugin>
 	<plugin>chat.records.php</plugin>
 	<plugin>chat.rasp.php</plugin>
 <!--

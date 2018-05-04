@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-04-20');
+		$this->setBuild('2018-05-04');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -245,7 +245,7 @@ class PluginChatAdmin extends Plugin {
 				}
 				else {
 					// write warning in console
-					$aseco->console($login .' tried to use admin chat command (no permission!): '. $arglist[0] .' '. $arglist[1]);
+					$aseco->console('[ChatAdmin] Player ['. $login .'] tried to use admin chat command (no permission!): '. $arglist[0] .' '. $arglist[1]);
 					// show chat message
 					$aseco->client->query('ChatSendToLogin', $aseco->formatColors((new Message('common', 'insufficient_rights'))->finish($login)), $login);
 					return false;
@@ -254,10 +254,10 @@ class PluginChatAdmin extends Plugin {
 		}
 
 		// check for unlocked password (or unlock command)
-		if ($aseco->settings['lock_password'] != '' && !$admin->unlocked &&
-		    $command['params'][0] != 'unlock') {
+		if ($aseco->settings['lock_password'] != '' && !$admin->unlocked && $command['params'][0] != 'unlock') {
 			// write warning in console
-			$aseco->console($login .' tried to use admin chat command (not unlocked!): '. $arglist[0] .' '. $arglist[1]);
+			$aseco->console('[ChatAdmin] Player ['. $login .'] tried to use admin chat command, but was not unlocked: '. $arglist[0] .' '. $arglist[1]);
+
 			// show chat message
 			$aseco->client->query('ChatSendToLogin', $aseco->formatColors((new Message('common', 'insufficient_rights'))->finish($login)), $login);
 			return false;
@@ -370,7 +370,7 @@ class PluginChatAdmin extends Plugin {
 
 			if ($arglist[1] != '') {
 				// log console message
-				$aseco->console('[ChatAdmin] {1} [{2}] set new player password [{3}]', $logtitle, $login, $arglist[1]);
+				$aseco->console('[ChatAdmin] {1} [{2}] set new player password [{3}] (masked password)', $logtitle, $login, preg_replace('#.#', '*', $arglist[1]));
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_setplayerpwd');
@@ -397,7 +397,7 @@ class PluginChatAdmin extends Plugin {
 
 			if ($arglist[1] != '') {
 				// log console message
-				$aseco->console('[ChatAdmin] {1} [{2}] set new spectator password [{3}]', $logtitle, $login, $arglist[1]);
+				$aseco->console('[ChatAdmin] {1} [{2}] set new spectator password [{3}] (masked password)', $logtitle, $login, preg_replace('#.#', '*', $arglist[1]));
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_setplayerpwd');
@@ -424,7 +424,7 @@ class PluginChatAdmin extends Plugin {
 
 			if ($arglist[1] != '') {
 				// log console message
-				$aseco->console('[ChatAdmin] {1} [{2}] set new referee password [{3}]', $logtitle, $login, $arglist[1]);
+				$aseco->console('[ChatAdmin] {1} [{2}] set new referee password [{3}] (masked password)', $logtitle, $login, preg_replace('#.#', '*', $arglist[1]));
 
 				// show chat message
 				/* Players shouldnt know about that

@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - April 2018 by undef.de
+ * Copyright:	May 2014 - May 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-04-25');
+	define('UASECO_BUILD',			'2018-05-04');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -257,11 +257,11 @@ class UASECO extends Helper {
 			$found = extension_loaded($item['extension']);
 
 			$msg = '[PHP] » Checking "'. $item['name'] .'" ('. $item['extension'] .'): ';
-			if ($found === false && $item['required'] == true) {
+			if ($found === false && $item['required'] === true) {
 				$msg .= 'extension not loaded, it is REQUIRED to enable this extension.. See "'. $item['link'] .'" for installation details.';
 				$pass = false;
 			}
-			else if ($found === false && $item['required'] == false) {
+			else if ($found === false && $item['required'] === false) {
 				$msg .= 'extension not loaded, it is RECOMMENDED to enable this extension. See "'. $item['link'] .'" for installation details.';
 			}
 			else if ($found === true) {
@@ -373,15 +373,15 @@ class UASECO extends Helper {
 
 		// Setup PHP memory_limit
 		$limit = $this->shorthand2bytes(ini_get('memory_limit'));
-		if ($limit != -1) {
+		if ($limit !== -1) {
 			ini_set('memory_limit', $this->settings['memory_limit']);
 		}
 		$limit = $this->shorthand2bytes(ini_get('memory_limit'));
-		if ($limit != -1 && $limit < 256 * 1048576) {
+		if ($limit !== -1 && $limit < 256 * 1048576) {
 			ini_set('memory_limit', '256M');
 		}
 		$limit = $this->shorthand2bytes(ini_get('memory_limit'));
-		if ($limit == -1) {
+		if ($limit === -1) {
 			$this->console('[PHP] Setup memory limit to unlimited');
 		}
 		else {
@@ -390,7 +390,7 @@ class UASECO extends Helper {
 
 		// Setup PHP script_timeout
 		@set_time_limit($this->settings['script_timeout']);
-		$this->console('[PHP] Setup script timeout to '. $this->settings['script_timeout'] .' second'. ($this->settings['script_timeout'] == 1 ? '' : 's'));
+		$this->console('[PHP] Setup script timeout to '. $this->settings['script_timeout'] .' second'. ($this->settings['script_timeout'] === 1 ? '' : 's'));
 
 		// Connect to Trackmania Dedicated Server
 		if (!$this->connectDedicated()) {
@@ -405,7 +405,7 @@ class UASECO extends Helper {
 
 		// Connect to the database
 		$this->displayLoadStatus('Connecting to database...', 0.0);
-		if ($this->settings['mask_password'] == true) {
+		if ($this->settings['mask_password'] === true) {
 			$this->console("[Database] Try to connect to database server on [{1}] with database [{2}], login [{3}] and password [{4}] (masked password)",
 				$this->settings['dbms']['host'],
 				$this->settings['dbms']['database'],
@@ -437,8 +437,8 @@ class UASECO extends Helper {
 		$this->registerEvent('onShutdown', array($this, 'onShutdown'));
 
 		// Log admin lock message
-		if ($this->settings['lock_password'] != '') {
-			if ($this->settings['mask_password'] == true) {
+		if ($this->settings['lock_password'] !== '') {
+			if ($this->settings['mask_password'] === true) {
 				$this->console('[Config] Locked admin commands and features with password "{1}" (masked password)',
 					preg_replace('#.#', '*', $this->settings['lock_password'])
 				);
@@ -475,7 +475,7 @@ class UASECO extends Helper {
 
 
 		// Get current game infos if server loaded a map yet
-		if ($this->current_status == 100) {
+		if ($this->current_status === 100) {
 			$this->console('[UASECO] Waiting for the server to start a map...');
 		}
 		else {
@@ -492,7 +492,7 @@ class UASECO extends Helper {
 		while (true) {
 			$starttime = microtime(true);
 
-			if ($this->shutdown_phase == false) {
+			if ($this->shutdown_phase === false) {
 				// Get callbacks from the server
 				$this->executeCallbacks();
 
@@ -511,7 +511,7 @@ class UASECO extends Helper {
 
 			if (time() >= $this->next_tenth) {
 				// Check for Database connection and reconnect on lost connection
-				if ($this->db->ping() == false) {
+				if ($this->db->ping() === false) {
 					$this->console('[Database] Lost connection, try to reconnect...');
 					$this->connectDatabase();
 				}
@@ -564,7 +564,7 @@ class UASECO extends Helper {
 		}
 
 		// Check server build
-		if (strlen($this->server->build) == 0 || ($this->server->game == 'ManiaPlanet' && strcmp($this->server->build, MANIAPLANET_BUILD) < 0)) {
+		if (strlen($this->server->build) === 0 || ($this->server->game === 'ManiaPlanet' && strcmp($this->server->build, MANIAPLANET_BUILD) < 0)) {
 			trigger_error("Obsolete server build '". $this->server->build ."' - must be at least '". MANIAPLANET_BUILD ."'!", E_USER_ERROR);
 		}
 
@@ -580,7 +580,7 @@ class UASECO extends Helper {
 		$this->console('[MapList] Reading complete map list from server...');
 		$this->server->maps->readMapList();
 		$count = count($this->server->maps->map_list);
-		$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count == 1 ? '' : 's') .' which matches server settings!');
+		$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count === 1 ? '' : 's') .' which matches server settings!');
 
 		// Load MapHistory
 		$this->console('[Playlist] Reading map history...');
@@ -600,7 +600,7 @@ class UASECO extends Helper {
 	// Sends program header to console and ingame chat.
 	private function sendHeader () {
 
-		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') == 1 ? '' : 's');
+		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') === 1 ? '' : 's');
 		$wrappers = stream_get_wrappers();
 		sort($wrappers, SORT_STRING);
 		$gd = gd_info();
@@ -632,7 +632,7 @@ class UASECO extends Helper {
 		$this->console_text('»                INI-File: {1}', php_ini_loaded_file());
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
-		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
+		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') === 1 ? true : false)));
 		$this->console_text('»                Streams: {1}', implode(', ', $wrappers));
 		$this->console_text('»                GD-Lib: Version: {1}, JPEG: {2}, PNG: {3}, FreeType: {4}', $gd['GD Version'], $this->bool2string($gd['JPEG Support']), $this->bool2string($gd['PNG Support']), $this->bool2string($gd['FreeType Support']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
@@ -662,7 +662,7 @@ class UASECO extends Helper {
 
 	private function logDebugInformations () {
 
-		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') == 1 ? '' : 's');
+		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') === 1 ? '' : 's');
 		$wrappers = stream_get_wrappers();
 		sort($wrappers, SORT_STRING);
 		$gd = gd_info();
@@ -711,7 +711,7 @@ class UASECO extends Helper {
 		$this->console_text('»                INI-File: {1}', php_ini_loaded_file());
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
-		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') == 1 ? true : false)));
+		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') === 1 ? true : false)));
 		$this->console_text('»                Streams: {1}', implode(', ', $wrappers));
 		$this->console_text('»                GD-Lib: Version: {1}, JPEG: {2}, PNG: {3}, FreeType: {4}', $gd['GD Version'], $this->bool2string($gd['JPEG Support']), $this->bool2string($gd['PNG Support']), $this->bool2string($gd['FreeType Support']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
@@ -774,13 +774,13 @@ class UASECO extends Helper {
 					$this->masteradmin_list['IPADDRESS'] = array_fill(0, $cnt, '');
 			}
 			else {
-				if (count($this->masteradmin_list['TMLOGIN']) != count($this->masteradmin_list['IPADDRESS']))
+				if (count($this->masteradmin_list['TMLOGIN']) !== count($this->masteradmin_list['IPADDRESS']))
 					trigger_error("MasterAdmin mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
 			}
 
 			// Set admin contact
 			$this->settings['admin_contact'] = $settings['ADMIN_CONTACT'][0];
-			if (strtolower($this->settings['admin_contact']) == 'your@email.com' || filter_var($this->settings['admin_contact'], FILTER_VALIDATE_EMAIL) === false) {
+			if (strtolower($this->settings['admin_contact']) === 'your@email.com' || filter_var($this->settings['admin_contact'], FILTER_VALIDATE_EMAIL) === false) {
 				$this->console('[UASECO][WARNING] ###############################################################################################################');
 				$this->console('[UASECO][WARNING] You should setup a working mail to be able to contact you, change it in [config/UASECO.xml] at <admin_contact>!');
 				$this->console('[UASECO][WARNING] ###############################################################################################################');
@@ -815,7 +815,7 @@ class UASECO extends Helper {
 
 			// Setup default storing path for the map images
 			$this->settings['mapimages_path'] = $settings['MAPIMAGES_PATH'][0];
-			if ((OPERATING_SYSTEM == 'POSIX' && substr($this->settings['mapimages_path'], -1) != '/') || (OPERATING_SYSTEM == 'WINDOWS' && substr($this->settings['mapimages_path'], -1) != '\\')) {
+			if ((OPERATING_SYSTEM === 'POSIX' && substr($this->settings['mapimages_path'], -1) !== '/') || (OPERATING_SYSTEM === 'WINDOWS' && substr($this->settings['mapimages_path'], -1) !== '\\')) {
 				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <mapimages_path> from [config/UASECO.xml]!');
 				$this->settings['mapimages_path'] = $this->settings['mapimages_path'] . DIRECTORY_SEPARATOR;
 			}
@@ -879,10 +879,10 @@ class UASECO extends Helper {
 
 			// Set dedicated Server installation path
 			$this->settings['dedicated_installation'] = $settings['DEDICATED_INSTALLATION'][0];
-			if (strtoupper($this->settings['dedicated_installation']) == 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
+			if (strtoupper($this->settings['dedicated_installation']) === 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
 				trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
 			}
-			if ((OPERATING_SYSTEM == 'POSIX' && substr($this->settings['dedicated_installation'], -1) != '/') || (OPERATING_SYSTEM == 'WINDOWS' && substr($this->settings['dedicated_installation'], -1) != '\\')) {
+			if ((OPERATING_SYSTEM === 'POSIX' && substr($this->settings['dedicated_installation'], -1) !== '/') || (OPERATING_SYSTEM === 'WINDOWS' && substr($this->settings['dedicated_installation'], -1) !== '\\')) {
 				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <dedicated_installation> from [config/UASECO.xml]!');
 				$this->settings['dedicated_installation'] = $this->settings['dedicated_installation'] . DIRECTORY_SEPARATOR;
 			}
@@ -919,10 +919,10 @@ class UASECO extends Helper {
 				trigger_error('Server init timeout not specified in [config/UASECO.xml]!', E_USER_WARNING);
 			}
 
-			if ($this->settings['admin_client'] != '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['admin_client']) != 1 || $this->settings['admin_client'] == '2.11.10') {
+			if ($this->settings['admin_client'] !== '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['admin_client']) !== 1 || $this->settings['admin_client'] === '2.11.10') {
 				trigger_error('Invalid admin client version: '. $this->settings['admin_client'] .'!', E_USER_ERROR);
 			}
-			if ($this->settings['player_client'] != '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['player_client']) != 1 || $this->settings['player_client'] == '2.11.10') {
+			if ($this->settings['player_client'] !== '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['player_client']) !== 1 || $this->settings['player_client'] === '2.11.10') {
 				trigger_error('Invalid player client version: '. $this->settings['player_client'] .'!', E_USER_ERROR);
 			}
 		}
@@ -968,7 +968,7 @@ class UASECO extends Helper {
 					require_once('plugins/'. $plugin);
 
 					// Load only plugins that were configured right...
-					if (!isset($_PLUGIN) || get_parent_class($_PLUGIN) != 'Plugin') {
+					if (!isset($_PLUGIN) || get_parent_class($_PLUGIN) !== 'Plugin') {
 						trigger_error('require_once() does not load the file [plugins/'. $plugin .'] from <plugin> position '. ($count + 1) .', which means that this Plugin is probably an old version or it is added twice at [config/plugins.xml]!', E_USER_WARNING);
 						continue;
 					}
@@ -1056,11 +1056,11 @@ class UASECO extends Helper {
 				// Check for plugin required version?
 				$check_version = false;
 
-				if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions == Dependence::REQUIRED) {
+				if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::REQUIRED) {
 					// Check if required dependence exists...
 					trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, disclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!', E_USER_ERROR);
 				}
-				else if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions == Dependence::WANTED) {
+				else if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::WANTED) {
 					// Check if wanted dependence exists...
 //					$this->console('[Plugin] The Plugin ['. $plugin->getClassname() .'] wants the Plugin ['. $dependence->classname .'] to run full featured, if you want, add the wanted Plugin in [config/plugins.xml].');
 				}
@@ -1069,11 +1069,11 @@ class UASECO extends Helper {
 				}
 
 				// Check if disallowed dependence exists...
-				if (isset($this->plugins[$dependence->classname]) && $dependence->permissions == Dependence::DISALLOWED) {
+				if (isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::DISALLOWED) {
 					trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], disclude this or the disallowed Plugin in [config/plugins.xml] to continue!', E_USER_ERROR);
 				}
 
-				if ($check_version == true) {
+				if ($check_version === true) {
 					// Check if dependence has min version...
 					if (isset($dependence->min_version) && isset($this->plugins[$dependence->classname]) && $this->versionCheck($this->plugins[$dependence->classname]->getVersion(), $dependence->min_version, '<')) {
 						trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] requires a more recent version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->min_version .')!', E_USER_ERROR);
@@ -1118,7 +1118,7 @@ class UASECO extends Helper {
 
 		// Executes registered event functions, if there are any events for that type
 		if ( !empty($this->registered_events[$event_type]) ) {
-			if ( ($this->settings['developer']['log_events']['registered_types'] == true) && ($this->settings['developer']['log_events']['all_types'] == false) ) {
+			if ( ($this->settings['developer']['log_events']['registered_types'] === true) && ($this->settings['developer']['log_events']['all_types'] === false) ) {
 				$skip = array(
 					'onEverySecond',
 					'onMainLoop',
@@ -1130,27 +1130,27 @@ class UASECO extends Helper {
 			}
 
 			$caller = false;
-			if ($event_type == 'onPlayerManialinkPageAnswer') {
+			if ($event_type === 'onPlayerManialinkPageAnswer') {
 				$caller = explode('?', $callback_param[2]);
 			}
 
 			// For each registered function of this type
-			if ($this->startup_phase == true) {
+			if ($this->startup_phase === true) {
 				$count = 0;
 				$amount = count($this->registered_events[$event_type]);
 			}
 			foreach ($this->registered_events[$event_type] as $callback_func) {
 				// If function for the specified player connect event can be found
 				if (is_callable($callback_func)) {
-					if ($this->startup_phase == true) {
+					if ($this->startup_phase === true) {
 						$count ++;
 						$ratio = (1.0 / $amount) * $count;
 						$this->displayLoadStatus('Event '. $event_type .' calls '. get_class($callback_func[0]) .'...', $ratio);
 					}
 
-					if ($event_type == 'onPlayerManialinkPageAnswer') {
+					if ($event_type === 'onPlayerManialinkPageAnswer') {
 						$class = get_class($callback_func[0]);
-						if ($class == $caller[0]) {
+						if ($class === $caller[0]) {
 							// Parse get parameter and add them...
 							parse_str(str_replace($class.'?', '', $callback_param[2]), $param);
 
@@ -1258,7 +1258,7 @@ class UASECO extends Helper {
 		$this->db = new Database($settings);
 
 		// Check for minimum required version of the Database-Server
-		if (strtolower($this->db->type) == 'mysql') {
+		if (strtolower($this->db->type) === 'mysql') {
 			if (version_compare($this->db->version, MIN_MYSQL_VERSION, '<')) {
 				$this->console('[ERROR] UASECO requires min. MySQL/'. MIN_MYSQL_VERSION .' and can not run with current MySQL/'. $this->db->version  .' ('. $this->db->version_full .'), please update MySQL!');
 				die();
@@ -1267,7 +1267,7 @@ class UASECO extends Helper {
 				$this->console('[Database] ...connection established successfully to a MySQL/'. $this->db->version .' server!');
 			}
 		}
-		else if (strtolower($this->db->type) == 'mariadb') {
+		else if (strtolower($this->db->type) === 'mariadb') {
 			if (version_compare($this->db->version, MIN_MARIADB_VERSION, '<')) {
 				$this->console('[ERROR] UASECO requires min. MariaDB/'. MIN_MARIADB_VERSION .' and can not run with current MariaDB/'. $this->db->version .' ('. $this->db->version_full .'), please update MariaDB!');
 				die();
@@ -1772,18 +1772,18 @@ class UASECO extends Helper {
 			}
 
 			// Check login
-			if ($this->server->xmlrpc['login'] != 'SuperAdmin') {
+			if ($this->server->xmlrpc['login'] !== 'SuperAdmin') {
 				trigger_error("[Dedicated] Invalid login '". $this->server->xmlrpc['login'] ."' - must be 'SuperAdmin' in [config/UASECO.xml]!", E_USER_WARNING);
 				return false;
 			}
 
 			// Check password
-			if ($this->server->xmlrpc['pass'] == 'SuperAdmin') {
+			if ($this->server->xmlrpc['pass'] === 'SuperAdmin') {
 				trigger_error("[Dedicated] Insecure (default) password '" . $this->server->xmlrpc['pass'] . "' - should be changed in dedicated config and [config/UASECO.xml]!", E_USER_WARNING);
 			}
 
 			// Log console message
-			if ($this->settings['mask_password'] == true) {
+			if ($this->settings['mask_password'] === true) {
 				$this->console("[Dedicated] Try to authenticate with login [{1}] and password [{2}] (masked password)",
 					$this->server->xmlrpc['login'],
 					preg_replace('#.#', '*', $this->server->xmlrpc['pass'])
@@ -1832,15 +1832,15 @@ class UASECO extends Helper {
 	// Waits for the server to be ready (status 4, 'Running - Play')
 	private function waitServerReady () {
 		$status = $this->client->query('GetStatus');
-		if ($status['Code'] != 4) {
+		if ($status['Code'] !== 4) {
 			$this->console("[Dedicated] » Waiting for dedicated server to reach status 'Running - Play'...");
 			$this->console('[Dedicated] » Status: ['. $status['Code'] .'] '. $status['Name']);
 			$timeout = 0;
 			$laststatus = $status['Name'];
-			while ($status['Code'] != 4) {
+			while ($status['Code'] !== 4) {
 				sleep(1);
 				$status = $this->client->query('GetStatus');
-				if ($laststatus != $status['Name']) {
+				if ($laststatus !== $status['Name']) {
 					$this->console('[Dedicated] » Status: ['. $status['Code'] .'] '. $status['Name']);
 					$laststatus = $status['Name'];
 				}
@@ -1919,11 +1919,11 @@ class UASECO extends Helper {
 
 					case 'ManiaPlanet.MapListModified':
 						// [0] = int CurMapIndex, [1] = int NextMapIndex, [2] = bool IsListModified
-						if ($call[1][2] == true && $this->settings['automatic_refresh_maplist'] == true) {
+						if ($call[1][2] === true && $this->settings['automatic_refresh_maplist'] === true) {
 							$this->console('[MapList] Re-reading complete map list from server...');
 							$this->server->maps->readMapList();
 							$count = count($this->server->maps->map_list);
-							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count == 1 ? '' : 's') .' which matches server settings!');
+							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count === 1 ? '' : 's') .' which matches server settings!');
 							$this->releaseEvent('onMapListChanged', array('read', null));
 						}
 						$this->releaseEvent('onMapListModified', $call[1]);
@@ -1951,12 +1951,12 @@ class UASECO extends Helper {
 
 					case 'ManiaPlanet.Echo':
 						// [0] = string Internal, [1] = string Public
-						if ($call[1][0] == 'AdminServ.Map.Added') {
+						if ($call[1][0] === 'AdminServ.Map.Added') {
 							// Add external added map to our MapList too
 							$param = json_decode($call[1][1]);
 							$this->server->maps->addMapToListByUid($param->map->uid);
 						}
-						else if ($call[1][0] == 'AdminServ.Map.Deleted') {
+						else if ($call[1][0] === 'AdminServ.Map.Deleted') {
 							// Remove external removed map fromo our MapList too
 							$param = json_decode($call[1][1]);
 							$this->server->maps->removeMapByUid($param->map->uid);
@@ -1994,7 +1994,7 @@ class UASECO extends Helper {
 		}
 		catch (Exception $exception) {
 			$errmsg = $exception->getMessage();
-			if ($errmsg != 'Login unknown.') {
+			if ($errmsg !== 'Login unknown.') {
 				$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - executeMulticall()');
 			}
 		}
@@ -2014,7 +2014,7 @@ class UASECO extends Helper {
 		$this->server->gamestate = Server::RACE;
 
 		// Check for changing the daily logfile
-		if ($this->logfile['file'] != './logs'. DIRECTORY_SEPARATOR . date('Y-m-d') .'-uaseco-current.log') {
+		if ($this->logfile['file'] !== './logs'. DIRECTORY_SEPARATOR . date('Y-m-d') .'-uaseco-current.log') {
 			// Setup new logfile
 			$this->setupLogfile();
 			$this->sendHeader();
@@ -2027,9 +2027,9 @@ class UASECO extends Helper {
 		$map = $this->server->maps->getCurrentMapInfo();
 
 		// Check for restarting map
-		if ($this->restarting == true) {
+		if ($this->restarting === true) {
 			// Throw postfix 'restart map' event
-			if ($this->settings['developer']['log_events']['common'] == true) {
+			if ($this->settings['developer']['log_events']['common'] === true) {
 				$this->console('[Event] Restart Map');
 			}
 			$this->releaseEvent('onRestartMap', $map);
@@ -2097,7 +2097,7 @@ class UASECO extends Helper {
 		}
 
 		// Log console message
-		if ($this->server->maps->current->uid == $map->uid) {
+		if ($this->server->maps->current->uid === $map->uid) {
 			$this->console("[Map] Running on Map [{1}] made by [{2}] [Env: {3}, Uid: {4}, Id: {5}]",
 				$map->name_stripped,
 				$map->author,
@@ -2120,7 +2120,7 @@ class UASECO extends Helper {
 		$this->server->maps->current = $map;
 
 		// Throw main 'loading map' event
-		if ($this->settings['developer']['log_events']['common'] == true) {
+		if ($this->settings['developer']['log_events']['common'] === true) {
 			$this->console('[Event] Loading Map');
 		}
 		$this->releaseEvent('onLoadingMap', $map);
@@ -2183,7 +2183,7 @@ class UASECO extends Helper {
 							$player->getWins()
 						);
 
-						if ($player->getWins() % $this->settings['global_win_multiple'] == 0) {
+						if ($player->getWins() % $this->settings['global_win_multiple'] === 0) {
 							// Replace parameters
 							$message = $this->formatText($this->getChatMessage('WIN_MULTI'),
 								$this->stripStyles($player->nickname),
@@ -2210,7 +2210,7 @@ class UASECO extends Helper {
 			}
 		}
 
-		if ($this->settings['developer']['log_events']['common'] == true) {
+		if ($this->settings['developer']['log_events']['common'] === true) {
 			$this->console('[Event] End Map');
 		}
 
@@ -2237,9 +2237,9 @@ class UASECO extends Helper {
 		unset($details, $info);
 
 		// Check for Server
-		if (isset($data['Flags']) && floor($data['Flags'] / 100000) % 10 != 0) {
+		if (isset($data['Flags']) && floor($data['Flags'] / 100000) % 10 !== 0) {
 			// Register relay server
-			if (!$this->server->isrelay && $data['Login'] != $this->server->login) {
+			if (!$this->server->isrelay && $data['Login'] !== $this->server->login) {
 				$this->server->relay_list[$data['Login']] = $data;
 
 				// log console message
@@ -2250,14 +2250,14 @@ class UASECO extends Helper {
 			}
 			// else: DO NOTHING on master server connect
 		}
-		else if (isset($data['Flags']) && $this->server->isrelay && floor($data['Flags'] / 10000) % 10 != 0) {
+		else if (isset($data['Flags']) && $this->server->isrelay && floor($data['Flags'] / 10000) % 10 !== 0) {
 			// DO NOTHING on player from master server on relay
 		}
 		else {
 			$ipaddr = isset($data['IPAddress']) ? preg_replace('/:\d+/', '', $data['IPAddress']) : '';  // strip port
 
 			// if no data fetched, notify & kick the player
-			if (!isset($data['Login']) || $data['Login'] == '') {
+			if (!isset($data['Login']) || $data['Login'] === '') {
 				$message = str_replace('{br}', LF, $this->getChatMessage('CONNECT_ERROR'));
 				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
 				sleep(5);  // allow time to connect and see the notice
@@ -2279,13 +2279,13 @@ class UASECO extends Helper {
 			else {
 				// client version checking, extract version number
 				$version = str_replace(')', '', preg_replace('/.*\(/', '', $data['ClientVersion']));
-				if ($version == '') {
+				if ($version === '') {
 					$version = '3.3.0';
 				}
 				$message = str_replace('{br}', LF, $this->getChatMessage('CLIENT_ERROR'));
 
 				// if invalid version, notify & kick the player
-				if ($this->settings['player_client'] != '' && strcmp($version, $this->settings['player_client']) < 0) {
+				if ($this->settings['player_client'] !== '' && strcmp($version, $this->settings['player_client']) < 0) {
 					$this->sendChatMessage($message, $login);
 					sleep(5);  // allow time to connect and see the notice
 					$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG')));
@@ -2294,7 +2294,7 @@ class UASECO extends Helper {
 				}
 
 				// if invalid version, notify & kick the admin
-				if ($this->settings['admin_client'] != '' && $this->isAnyAdminByLogin($data['Login']) && strcmp($version, $this->settings['admin_client']) < 0) {
+				if ($this->settings['admin_client'] !== '' && $this->isAnyAdminByLogin($data['Login']) && strcmp($version, $this->settings['admin_client']) < 0) {
 					$this->sendChatMessage($message, $login);
 					sleep(5);  // allow time to connect and see the notice
 					$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG')));
@@ -2423,7 +2423,7 @@ class UASECO extends Helper {
 	// Receives chat messages and reacts on them, reactions are done by the chat plugins.
 	public function playerChat ($chat) {
 		// Verify login
-		if ($chat[1] == '' || $chat[1] == '???') {
+		if ($chat[1] === '' || $chat[1] === '???') {
 			$this->console('[Chat] WARN: PlayerUid [{1}], with login [{2}] attempted to use chat command "{3}"',
 				$chat[0],
 				$chat[1],
@@ -2433,13 +2433,13 @@ class UASECO extends Helper {
 		}
 
 		// Ignore master server messages on relay
-		if ($this->server->isrelay && $chat[1] == $this->server->relaymaster['Login']) {
+		if ($this->server->isrelay && $chat[1] === $this->server->relaymaster['Login']) {
 			return;
 		}
 
 		// Check for chat command '/' prefix
 		$command = $chat[2];
-		if ($command != '' && $command[0] == '/') {
+		if ($command !== '' && $command[0] === '/') {
 			// Remove '/' prefix
 			$command = substr($command, 1);
 
@@ -2477,7 +2477,7 @@ class UASECO extends Helper {
 						// Chat command is only allowed for MasterAdmins
 						$allowed = true;
 					}
-					if ($allowed == true) {
+					if ($allowed === true) {
 						// log console message
 						if (empty($params[1])) {
 							$this->console('[Chat] Player [{1}] used command "/{2}"',
@@ -2486,11 +2486,26 @@ class UASECO extends Helper {
 							);
 						}
 						else {
-							$this->console('[Chat] Player [{1}] used command "/{2} {3}"',
-								$caller->login,
-								$command,
-								$params[1]
-							);
+							$masked_password = false;
+							$exploded = explode(' ', strtolower($params[1]));
+							if (in_array($exploded[0], array('unlock'))) {
+								$params[1] = $exploded[0] .' '. preg_replace('#.#', '*', $exploded[1]);
+								$masked_password = true;
+							}
+							if ($masked_password === true) {
+								$this->console('[Chat] Player [{1}] used command "/{2} {3}" (masked password)',
+									$caller->login,
+									$command,
+									$params[1]
+								);
+							}
+							else {
+								$this->console('[Chat] Player [{1}] used command "/{2} {3}"',
+									$caller->login,
+									$command,
+									$params[1]
+								);
+							}
 						}
 
 						// call the function which belongs to the command
@@ -2520,7 +2535,7 @@ class UASECO extends Helper {
 						);
 					}
 				}
-				else if ($params[0] == 'version' || $params[0] == 'serverlogin') {
+				else if ($params[0] === 'version' || $params[0] === 'serverlogin') {
 					// Log built-in commands fomr dedicated server
 					$this->console('[Chat] Player [{1}] used built-in command "/{2}"',
 						$caller->login,
@@ -2547,7 +2562,7 @@ class UASECO extends Helper {
 		else {
 			// optionally log all normal chat too
 			if ($this->settings['log_all_chat']) {
-				if ($chat[2] != '') {
+				if ($chat[2] !== '') {
 					$this->console('[Chat] NOTICE: Player [{1}] (Id: {2}) attempted to use command "{3}"',
 						$chat[1],
 						$chat[0],
@@ -2570,7 +2585,7 @@ class UASECO extends Helper {
 	public function playerInfoChanged ($playerinfo) {
 
 		// On relay, check for player from master server
-		if ($this->server->isrelay && floor($playerinfo['Flags'] / 10000) % 10 != 0) {
+		if ($this->server->isrelay && floor($playerinfo['Flags'] / 10000) % 10 !== 0) {
 			return;
 		}
 

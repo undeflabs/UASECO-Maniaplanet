@@ -16,6 +16,8 @@
 * Updated to the ModeScriptApi version `[2.5.0](https://github.com/maniaplanet/script-xmlrpc/releases)`
 * Added a map list progress indicator for the logfile while starting sequence
 * Updated `plugins/plugin.round_autoend.php` to work also while a WarmUp is running (thanks speedychris)
+* Added some optimations into `includes/core/playerlist.class.php` (thanks brakerb)
+* Updated `includes/musicserver/getid3` to version `1.9.15` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
 
 
 ### Changes at config files
@@ -38,6 +40,8 @@
 * Added `<ui_properties><viewers_count>` in `newinstall/config/modescript_settings.xml`
 * Updated `<scripts><*>` in `newinstall/config/modescript_settings.xml` to require the actual versions
 * Added `<message_warmup_round_end>` in `newinstall/locales/plugin.round_autoend.xml`
+* Removed `<modebase><scores_table_style_path>` from `newinstall/config/modescript_settings.xml`, because this has been removed from the game with MP4
+* Moved the plugin `chat.help.php` into the required section in `newinstall/config/plugins.xml` (thanks speedychris)
 
 
 ### Bug fixes
@@ -63,6 +67,9 @@
 * Fixed displaying of the CurrentMapWidget from score while in race after using "/replay" (thanks aca)
 * Fixed LastNextCurrentWindow does not display the correct next map when changing the Jukebox (thanks aca)
 * Fixed adding a map at score the CurrentMapWidget does not display the correct map (thanks speedychris)
+* Fixed wrong display of songs with spaces, "%20" instead of " " in `plugins/plugin.music_server.php` (thanks speedychris)
+* Fixed several password representations in the logfile with a mask `******` (thanks xenicle)
+* Fixed [PHP Notice] Undefined index: TMLOGIN on line 166 in file `plugins/chat.server.php` (thanks xenicle)
 
 
 
