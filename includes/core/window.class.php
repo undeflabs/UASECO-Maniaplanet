@@ -410,10 +410,10 @@ class Window extends BaseClass {
 					if (is_array($value) && isset($value['image']) && !empty($value['image'])) {
 						$posx = ($last_element_width + $offset);
 						if (isset($this->settings['halign'][$innercol])) {
-							if (strtolower($this->settings['halign'][$innercol]) == 'center') {
+							if (strtolower($this->settings['halign'][$innercol]) === 'center') {
 								$posx += ($element_width / 2);
 							}
-							else if (strtolower($this->settings['halign'][$innercol]) == 'right') {
+							else if (strtolower($this->settings['halign'][$innercol]) === 'right') {
 								$posx += $element_width;
 							}
 						}
@@ -425,10 +425,10 @@ class Window extends BaseClass {
 						$sizew		= ($element_width - ($inner_gap / 2));
 						$posx		= (($inner_gap / 2) + $last_element_width + $offset);
 						$posy		= -($line_height * $row + 1.45);
-						if (isset($this->settings['halign'][$innercol]) && strtolower($this->settings['halign'][$innercol]) == 'center') {
+						if (isset($this->settings['halign'][$innercol]) && strtolower($this->settings['halign'][$innercol]) === 'center') {
 							$posx += ($sizew / 2);
 						}
-						else if (isset($this->settings['halign'][$innercol]) && strtolower($this->settings['halign'][$innercol]) == 'right') {
+						else if (isset($this->settings['halign'][$innercol]) && strtolower($this->settings['halign'][$innercol]) === 'right') {
 							$posx += ($sizew - $inner_gap);
 						}
 
@@ -488,11 +488,11 @@ class Window extends BaseClass {
 	public function buildButtons () {
 		global $aseco;
 
-		if ($this->settings['mode'] == 'columns') {
+		if ($this->settings['mode'] === 'columns') {
 			$totalentries			= count($this->content['data']);
 			$this->content['maxpage']	= ceil($totalentries / ($this->settings['columns'] * 25)) - 1;
 		}
-		else if ($this->settings['mode'] == 'pages') {
+		else if ($this->settings['mode'] === 'pages') {
 			$this->content['maxpage']	= count($this->content['data']) - 1;
 		}
 
