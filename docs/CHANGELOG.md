@@ -18,6 +18,7 @@
 * Updated `plugins/plugin.round_autoend.php` to work also while a WarmUp is running (thanks speedychris)
 * Added some optimations into `includes/core/playerlist.class.php` (thanks brakerb)
 * Updated `includes/musicserver/getid3` to version `1.9.15` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
+* Changed parameter structure of the events `onPlayerFinishPrefix`, `onPlayerFinish` and `onPlayerFinishPostfix`
 
 
 ### Changes at config files
@@ -42,6 +43,10 @@
 * Added `<message_warmup_round_end>` in `newinstall/locales/plugin.round_autoend.xml`
 * Removed `<modebase><scores_table_style_path>` from `newinstall/config/modescript_settings.xml`, because this has been removed from the game with MP4
 * Moved the plugin `chat.help.php` into the required section in `newinstall/config/plugins.xml` (thanks speedychris)
+* Moved the plugin `plugin.map.php`, `plugin.panels.php` and `plugin.rasp.php` into the `Optional plugins` section in `newinstall/config/plugins.xml`
+* Splited the section `Required plugins` into `Minimal required plugins` and `Maximal required plugins` in `newinstall/config/plugins.xml`
+* Changed `<message_nextenv_failed>`, `<message_activate_localrecords>` and `<message_activate_addthis>` in `newinstall\locales\chat.admin.xml`
+* Added `<message_activate_rasp>` in `newinstall\locales\chat.admin.xml`
 
 
 ### Bug fixes

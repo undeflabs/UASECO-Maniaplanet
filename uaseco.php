@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-05-04');
+	define('UASECO_BUILD',			'2018-05-06');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -2131,7 +2131,9 @@ class UASECO extends Helper {
 			$data['map']['uid'] = $map->uid;
 			$param[0] = 'Maniaplanet.StartMap_Start';
 			$param[1][0] = json_encode($data);
-			$this->plugins['PluginModescriptHandler']->onModeScriptCallbackArray($this, $param);
+			if (isset($aseco->plugins['PluginModescriptHandler']) === true) {
+				$this->plugins['PluginModescriptHandler']->onModeScriptCallbackArray($this, $param);
+			}
 		}
 
 		// Store usage into "stripling.xml" file

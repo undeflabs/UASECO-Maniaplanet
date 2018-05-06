@@ -51,8 +51,8 @@ class PluginEffectStudio extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-04');
-		$this->setCopyright('2012 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
@@ -266,7 +266,7 @@ class PluginEffectStudio extends Plugin {
 	public function onPlayerFinishPrefix ($aseco, $finish) {
 		if ($finish->score > 0) {
 			if (isset($this->config['EventActions']['onPlayerFinish'])) {
-				$this->eventHandler('auditive', $finish->player->login, 'onPlayerFinish');
+				$this->eventHandler('auditive', $finish->player_login, 'onPlayerFinish');
 			}
 		}
 	}

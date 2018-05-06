@@ -75,8 +75,8 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2009 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
 		$this->addDependence('PluginRaspKarma', Dependence::DISALLOWED, '1.0.0', null);
@@ -1108,33 +1108,35 @@ class PluginManiaKarma extends Plugin {
 			return;
 		}
 
+		$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
+
 		// Check if finishes are required
 		if ($this->config['require_finish'] > 0) {
 			// Save that the player finished this map
-			$this->storePlayerData($finish_item->player, 'FinishedMapCount', ($this->getPlayerData($finish_item->player, 'FinishedMapCount') + 1));
+			$this->storePlayerData($player, 'FinishedMapCount', ($this->getPlayerData($player, 'FinishedMapCount') + 1));
 
 			// Enable the vote possibilities for this player
-			$this->sendWidgetCombination(array('player_marker'), $finish_item->player);
+			$this->sendWidgetCombination(array('player_marker'), $player);
 		}
 
 		// If no finish reminders, bail out too (does not need to check $this->getPlayerData($player, 'FinishedMapCount'), because actually finished ;)
 		if ( ($this->config['remind_to_vote'] == 'FINISHED') || ($this->config['remind_to_vote'] == 'ALWAYS') ) {
 
 			// Check whether player already voted
-			if ( ($this->karma['global']['players'][$finish_item->player->login]['vote'] == 0) && ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] <= $this->getPlayerData($finish_item->player, 'FinishedMapCount')) ) ) {
+			if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] <= $this->getPlayerData($player, 'FinishedMapCount')) ) ) {
 				if ( ($this->config['reminder_window']['display'] == 'FINISHED') || ($this->config['reminder_window']['display'] == 'ALWAYS') ) {
 					// Show reminder window
-					$this->showReminderWindow($finish_item->player->login);
-					$this->storePlayerData($finish_item->player, 'ReminderWindow', true);
+					$this->showReminderWindow($player->login);
+					$this->storePlayerData($player, 'ReminderWindow', true);
 				}
 				else {
 					// Show reminder message
 					$message = $this->config['messages']['karma_remind'];
 					if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
-						send_window_message($aseco, $message, $finish_item->player);
+						send_window_message($aseco, $message, $player);
 					}
 					else {
-						$aseco->sendChatMessage($message, $finish_item->player->login);
+						$aseco->sendChatMessage($message, $player->login);
 					}
 				}
 			}

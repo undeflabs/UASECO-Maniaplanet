@@ -49,14 +49,12 @@ class PluginPanels extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-05');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('DEPRECATED: Selects ManiaLink panel templates.');
 
 		$this->addDependence('PluginManialinks',		Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginRasp',			Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginDonate',			Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginRaspVotes',			Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',				'onSync');
 		$this->registerEvent('onEndMap',			'onEndMap');

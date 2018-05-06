@@ -48,9 +48,11 @@ class PluginLocalRecords extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-17');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Saves record into a local database.');
+
+		$this->addDependence('PluginCheckpoints',	Dependence::REQUIRED,	'1.0.0', null);
 
 		$this->registerEvent('onSync',			'onSync');
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
@@ -234,8 +236,7 @@ class PluginLocalRecords extends Plugin {
 					$record_item->player = $player_item;
 
 					// add the map information to the record object
-					$record_item->map = clone $map;
-					unset($record_item->map->mx);	// reduce memory usage
+					$record_item->map_id = $map->id;
 
 					// add the created record to the list
 					$this->records->addRecord($record_item);
@@ -422,11 +423,11 @@ class PluginLocalRecords extends Plugin {
 //			return;
 //		}
 
-		$login = $finish_item->player->login;
-		$nickname = $aseco->stripStyles($finish_item->player->nickname);
+		$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
 
 		// reset lap 'Finish' flag & add checkpoints
-		$finish_item->new = false;
+		$recordfinish = new Record();
+		$recordfinish->new = false;
 
 		// drove a new record?
 		// go through each of the XX records
@@ -442,7 +443,7 @@ class PluginLocalRecords extends Plugin {
 				for ($rank = 0; $rank < $this->records->count(); $rank++) {
 					$rec = $this->records->getRecord($rank);
 
-					if ($rec->player->login == $login) {
+					if ($rec->player->login == $player->login) {
 
 						// new record worse than old one
 						if ($finish_item->score > $rec->score) {
@@ -469,8 +470,15 @@ class PluginLocalRecords extends Plugin {
 
 					// update record if improved
 					if ($diff > 0) {
-						$finish_item->new = true;
-						$this->records->setRecord($cur_rank, $finish_item);
+						// Build a record object with the current finish information
+						$recordfinish->player		= $player;
+						$recordfinish->score		= $finish_item->score;
+						$recordfinish->checkpoints	= (isset($aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]->current['cps'] : array());
+						$recordfinish->date		= strftime('%Y-%m-%d %H:%M:%S');
+						$recordfinish->new		= true;
+						$recordfinish->map_id		= $aseco->server->maps->current->id;
+
+						$this->records->setRecord($cur_rank, $recordfinish);
 					}
 
 					// player moved up in LR list
@@ -481,7 +489,7 @@ class PluginLocalRecords extends Plugin {
 
 						// do a player improved his/her LR rank message
 						$message = $aseco->formatText($this->settings['messages']['RECORD_NEW_RANK'][0],
-							$nickname,
+							$aseco->stripStyles($player->nickname),
 							$i + 1,
 							$finish_time,
 							$cur_rank + 1,
@@ -500,7 +508,7 @@ class PluginLocalRecords extends Plugin {
 							}
 							else {
 								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->sendChatMessage($message, $login);
+								$aseco->sendChatMessage($message, $player->login);
 							}
 						}
 
@@ -510,7 +518,7 @@ class PluginLocalRecords extends Plugin {
 						if ($diff == 0) {
 							// do a player equaled his/her record message
 							$message = $aseco->formatText($this->settings['messages']['RECORD_EQUAL'][0],
-								$nickname,
+								$aseco->stripStyles($player->nickname),
 								$cur_rank + 1,
 								$finish_time
 							);
@@ -518,7 +526,7 @@ class PluginLocalRecords extends Plugin {
 						else {
 							// do a player secured his/her record message
 							$message = $aseco->formatText($this->settings['messages']['RECORD_NEW'][0],
-								$nickname,
+								$aseco->stripStyles($player->nickname),
 								$i + 1,
 								$finish_time,
 								$cur_rank + 1,
@@ -538,20 +546,27 @@ class PluginLocalRecords extends Plugin {
 							}
 							else {
 								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->sendChatMessage($message, $login);
+								$aseco->sendChatMessage($message, $player->login);
 							}
 						}
 					}
 				}
 				else {  // player hasn't got a record yet
 
+					// Build a record object with the current finish information
+					$recordfinish->player		= $player;
+					$recordfinish->score		= $finish_item->score;
+					$recordfinish->checkpoints	= (isset($aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$player->login]->current['cps'] : array());
+					$recordfinish->date		= strftime('%Y-%m-%d %H:%M:%S');
+					$recordfinish->new		= true;
+					$recordfinish->map_id		= $aseco->server->maps->current->id;
+
 					// insert new record at the specified position
-					$finish_item->new = true;
-					$this->records->addRecord($finish_item, $i);
+					$this->records->addRecord($recordfinish, $i);
 
 					// do a player drove first record message
 					$message = $aseco->formatText($this->settings['messages']['RECORD_FIRST'][0],
-						$nickname,
+						$aseco->stripStyles($player->nickname),
 						$i + 1,
 						$finish_time
 					);
@@ -568,7 +583,7 @@ class PluginLocalRecords extends Plugin {
 						}
 						else {
 							$message = str_replace('{#server}» ', '{#server}» ', $message);
-							$aseco->sendChatMessage($message, $login);
+							$aseco->sendChatMessage($message, $player->login);
 						}
 					}
 				}
@@ -577,19 +592,19 @@ class PluginLocalRecords extends Plugin {
 				//if ($aseco->debug) $aseco->console('onPlayerFinish records:' . CRLF . print_r($this->records, true));
 
 				// insert and log a new local record (not an equalled one)
-				if ($finish_item->new) {
-					$this->insertRecord($finish_item);
+				if ($recordfinish->new) {
+					$this->insertRecord($recordfinish);
 
 					// Log record message in console
 					$aseco->console('[LocalRecords] Player [{1}] finished with [{2}] and took the {3}. Local Record!',
-						$login,
+						$player->login,
 						$aseco->formatTime($finish_item->score),
 						$i+1
 					);
 
 					// Throw 'local record' event
 					$finish_item->position = $i + 1;
-					$aseco->releaseEvent('onLocalRecord', $finish_item);
+					$aseco->releaseEvent('onLocalRecord', $recordfinish);
 				}
 
 				// Got the record, now stop!
@@ -645,7 +660,7 @@ class PluginLocalRecords extends Plugin {
 			`Checkpoints`
 		)
 		VALUES (
-			". $record->map->id .",
+			". $record->map_id .",
 			". $record->player->id .",
 			". $aseco->server->gameinfo->mode .",
 			". $aseco->db->quote(date('Y-m-d H:i:s', time() - date('Z'))) .",
@@ -781,8 +796,7 @@ class PluginLocalRecords extends Plugin {
 					$record_item->player = $player_item;
 
 					// add the map information to the record object
-					$record_item->map = clone $aseco->server->maps->current;
-					unset($record_item->map->mx);
+					$record_item->map_id = $aseco->server->maps->current->id;
 
 					// add the created record to the list
 					$this->records->addRecord($record_item);

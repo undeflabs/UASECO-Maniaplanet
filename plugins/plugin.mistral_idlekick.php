@@ -55,8 +55,8 @@ class PluginMistralIdlekick extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-08');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Kick idle Players to let waiting spectators play.');
 
 		$this->registerEvent('onPlayerConnect',			'onPlayerConnect');
@@ -178,7 +178,7 @@ class PluginMistralIdlekick extends Plugin {
 			return;
 		}
 
-		$player = $finish_item->player;
+		$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
 		$this->storePlayerData($player, 'IdleCount', 0);
 		if ($this->debug) {
 			$aseco->console('[MistralIdlekick] Player [{1}] reset on finish.', $player->login);

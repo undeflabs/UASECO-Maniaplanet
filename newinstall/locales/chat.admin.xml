@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2017-04-17
+	Version:	2018-05-06
 	Authors:	[EN] undef.de
 			[DE] askuri
 	//-->
@@ -607,8 +607,8 @@
 	</message_nextenv>
 
 	<message_nextenv_failed>
-		<en>{#server}» {#admin}Load next map with same environment unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]</en>
-		<de>{#server}» {#admin}Laden der Map der selben Umgebung nicht möglich - bitte plugin.rasp_jukebox.php in [config/plugins.xml] eintragen</de>
+		<en>{#server}» {#admin}Load next map with same environment unavailable - include plugin.rasp_jukebox.php and plugin.rasp.php in [config/plugins.xml]</en>
+		<de>{#server}» {#admin}Laden der Map der selben Umgebung nicht möglich - bitte plugin.rasp_jukebox.php und plugin.rasp.php in [config/plugins.xml] eintragen</de>
 	</message_nextenv_failed>
 
 	<message_restartmap>
@@ -947,8 +947,8 @@
 	</message_invalid_record>
 
 	<message_activate_localrecords>
-		<en>{#server}» {#admin}Local records unavailable - include plugin.local_records.php in [config/plugins.xml]</en>
-		<de>{#server}» {#admin}Lokale Rekorde nicht verfügbar - bitte plugin.local_records.php in [config/plugins.xml] einbinden</de>
+		<en>{#server}» {#admin}Local records unavailable - include plugin.local_records.php and plugin.rasp.php in [config/plugins.xml]</en>
+		<de>{#server}» {#admin}Lokale Rekorde nicht verfügbar - bitte plugin.local_records.php und plugin.rasp.php in [config/plugins.xml] einbinden</de>
 	</message_activate_localrecords>
 
 	<message_records_on_map_deleted>
@@ -1166,6 +1166,11 @@
 		<de>{#server}» {#highlite}{1}{#error} ist keine gültige MX-ID!</de>
 	</message_invalid_mxid>
 
+	<message_activate_rasp>
+		<en>{#server}» {#admin}Local records unavailable - include plugin.rasp.php in [config/plugins.xml]</en>
+		<de>{#server}» {#admin}Lokale Rekorde nicht verfügbar - bitte plugin.rasp.php in [config/plugins.xml] einbinden</de>
+	</message_activate_rasp>
+
 	<message_add_permanent>
 		<en>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}permanently adds current map: {#highlite}{3}</en>
 		<de>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}fügt dauerhaft Map: {#highlite}{3}{#admin} dauerhaft hinzu</de>
@@ -1182,8 +1187,8 @@
 	</message_already_perm_added_map>
 
 	<message_activate_addthis>
-		<en>{#server}» {#admin}Addthis unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]</en>
-		<de>{#server}» {#admin}Addthis nicht verfügbar - bitte plugin.rasp_jukebox.php in [config/plugins.xml] einbinden</de>
+		<en>{#server}» {#admin}Addthis unavailable - include plugin.rasp_jukebox.php and plugin.rasp.php in [config/plugins.xml]</en>
+		<de>{#server}» {#admin}Addthis nicht verfügbar - bitte plugin.rasp_jukebox.php und plugin.rasp.php in [config/plugins.xml] einbinden</de>
 	</message_activate_addthis>
 
 	<message_not_found>

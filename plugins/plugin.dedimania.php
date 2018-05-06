@@ -93,8 +93,8 @@ class PluginDedimania extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-15');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles interaction with the Dedimania world database and shows new/online Dedimania world records and their relations on the current track.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -1947,8 +1947,9 @@ class PluginDedimania extends Plugin {
 //			return;
 //		}
 
-		$login = $finish_item->player->login;
-		$nickname = $aseco->stripStyles($finish_item->player->nickname);
+		$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
+		$login = $player->login;
+		$nickname = $aseco->stripStyles($player->nickname);
 
 		// if LAN login, bail out immediately
 		if ($aseco->isLANLogin($login)) {
@@ -2108,7 +2109,7 @@ class PluginDedimania extends Plugin {
 					// ignore 'Rank' field - not used in /dedi* commands
 					$record = array(
 						'Login'		=> $login,
-						'NickName'	=> $finish_item->player->nickname,
+						'NickName'	=> $nickname,
 						'Best'		=> $finish_item->score,
 						'Checks'	=> $aseco->plugins['PluginCheckpoints']->checkpoints[$login]->current['cps'],
 						'NewBest'	=> true

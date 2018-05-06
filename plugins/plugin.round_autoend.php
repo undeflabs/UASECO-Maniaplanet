@@ -54,7 +54,7 @@ class PluginRoundAutoEnd extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.3');
-		$this->setBuild('2018-04-21');
+		$this->setBuild('2018-05-06');
 		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.round_autoend', 'plugin_description'));
 
@@ -221,7 +221,7 @@ class PluginRoundAutoEnd extends Plugin {
 
 	public function onPlayerFinishPrefix ($aseco, $finish) {
 		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
-			$this->player_finished[] = $finish->player->login;
+			$this->player_finished[] = $finish->player_login;
 
 			if (count($this->player_finished) == count($aseco->server->players->player_list)) {
 				$this->timer = 0;

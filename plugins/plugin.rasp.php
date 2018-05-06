@@ -47,8 +47,8 @@ class PluginRasp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-28');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -245,11 +245,13 @@ class PluginRasp extends Plugin {
 
 	public function onPlayerFinish ($aseco, $finish_item) {
 
+		$checkpoints = (isset($aseco->plugins['PluginCheckpoints']->checkpoints[$finish_item->player_login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$finish_item->player_login]->current['cps'] : array());
+
 		// check for actual finish & no Laps mode
-		if ($this->feature_stats && $finish_item->score > 0 && $aseco->server->gameinfo->mode != Gameinfo::LAPS) {
+		if ($this->feature_stats && $finish_item->score > 0 && $aseco->server->gameinfo->mode !== Gameinfo::LAPS) {
 			$this->insertTime(
 				$finish_item,
-				isset($finish_item->checkpoints) ? implode(',', $finish_item->checkpoints) : ''
+				isset($checkpoints) ? implode(',', $checkpoints) : ''
 			);
 		}
 	}
@@ -764,8 +766,9 @@ class PluginRasp extends Plugin {
 	public function insertTime ($time, $cps) {
 		global $aseco;
 
-		$pid = $time->player->id;
-		if ($pid != 0) {
+		$player = $aseco->server->players->getPlayerByLogin($time->player_login);
+		$map = $aseco->server->maps->getMapByUid($time->map_uid);
+		if ($player->pid != 0) {
 			$query = "
 			INSERT INTO `%prefix%times` (
 				`MapId`,
@@ -776,8 +779,8 @@ class PluginRasp extends Plugin {
 				`Checkpoints`
 			)
 			VALUES (
-				". $time->map->id .",
-				". $pid .",
+				". $map->id .",
+				". $player->pid .",
 				". $aseco->server->gameinfo->mode .",
 				". $aseco->db->quote(date('Y-m-d H:i:s', time() - date('Z'))) .",
 				". $time->score .",
@@ -794,7 +797,7 @@ class PluginRasp extends Plugin {
 			}
 		}
 		else {
-			trigger_error('[Rasp] ERROR: Could not get Player ID for ['. $time->player->login .']!', E_USER_WARNING);
+			trigger_error('[Rasp] ERROR: Could not get Player ID for ['. $player->login .']!', E_USER_WARNING);
 		}
 	}
 

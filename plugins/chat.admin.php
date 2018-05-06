@@ -53,11 +53,10 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-04');
+		$this->setBuild('2018-05-06');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
-		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginAccessControl',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginAutotime',		Dependence::WANTED,	'1.0.0', null);
@@ -65,6 +64,7 @@ class PluginChatAdmin extends Plugin {
 		$this->addDependence('PluginLocalRecords',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginDedimania',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginPanels',		Dependence::WANTED,	'1.0.0', null);
+		$this->addDependence('PluginRasp',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
 		$this->addDependence('PluginUptodate',		Dependence::WANTED,	'1.0.0', null);
@@ -254,7 +254,7 @@ class PluginChatAdmin extends Plugin {
 		}
 
 		// check for unlocked password (or unlock command)
-		if ($aseco->settings['lock_password'] != '' && !$admin->unlocked && $command['params'][0] != 'unlock') {
+		if ($aseco->settings['lock_password'] !== '' && !$admin->unlocked && $command['params'][0] !== 'unlock') {
 			// write warning in console
 			$aseco->console('[ChatAdmin] Player ['. $login .'] tried to use admin chat command, but was not unlocked: '. $arglist[0] .' '. $arglist[1]);
 
@@ -264,7 +264,7 @@ class PluginChatAdmin extends Plugin {
 		}
 
 		$command['params'][0] = strtolower($command['params'][0]);
-		if ($command['params'][0] == 'help') {
+		if ($command['params'][0] === 'help') {
 			/**
 			 * Show admin help.
 			 */
@@ -287,7 +287,7 @@ class PluginChatAdmin extends Plugin {
 					// Chat command is only allowed for MasterAdmins
 					$allowed = true;
 				}
-				if ( ($allowed == true) && ($aseco->allowAbility($admin, $name)) ) {
+				if ( ($allowed === true) && ($aseco->allowAbility($admin, $name)) ) {
 					$active_commands[$name] = $cc;
 				}
 			}
@@ -295,7 +295,7 @@ class PluginChatAdmin extends Plugin {
 			// Show active admin commands on command line
 			$aseco->showHelp($aseco, $login, $active_commands, $logtitle, true, false);
 		}
-		else if ($command['params'][0] == 'helpall') {
+		else if ($command['params'][0] === 'helpall') {
 			/**
 			 * Display admin help.
 			 */
@@ -318,7 +318,7 @@ class PluginChatAdmin extends Plugin {
 					// Chat command is only allowed for MasterAdmins
 					$allowed = true;
 				}
-				if ( ($allowed == true) && ($aseco->allowAbility($admin, $name)) ) {
+				if ( ($allowed === true) && ($aseco->allowAbility($admin, $name)) ) {
 					$active_commands[$name] = $cc;
 				}
 			}
@@ -326,7 +326,7 @@ class PluginChatAdmin extends Plugin {
 			// Display active admin commands in popup with descriptions
 			$aseco->showHelp($aseco, $login, $active_commands, $logtitle, true, true, 0.42);
 		}
-		else if ($command['params'][0] == 'setservername' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'setservername' && $command['params'][1] !== '') {
 			/**
 			 * Sets a new server name (on the fly).
 			 */
@@ -344,7 +344,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->sendChatMessage();
 
 		}
-		else if ($command['params'][0] == 'setcomment' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'setcomment' && $command['params'][1] !== '') {
 			/**
 			 * Sets a new server comment (on the fly).
 			 */
@@ -360,7 +360,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($chattitle, $admin->nickname,	$arglist[1]);
 			$msg->sendChatMessage();
 		}
-		else if ($command['params'][0] == 'setpwd') {
+		else if ($command['params'][0] === 'setpwd') {
 			/**
 			 * Sets a new player password (on the fly).
 			 */
@@ -368,7 +368,7 @@ class PluginChatAdmin extends Plugin {
 			// set a new player password
 			$aseco->client->query('SetServerPassword', $arglist[1]);
 
-			if ($arglist[1] != '') {
+			if ($arglist[1] !== '') {
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] set new player password [{3}] (masked password)', $logtitle, $login, preg_replace('#.#', '*', $arglist[1]));
 
@@ -387,7 +387,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'setspecpwd') {
+		else if ($command['params'][0] === 'setspecpwd') {
 			/**
 			 * Sets a new spectator password (on the fly).
 			 */
@@ -395,7 +395,7 @@ class PluginChatAdmin extends Plugin {
 			// set a new spectator password
 			$aseco->client->query('SetServerPasswordForSpectator', $arglist[1]);
 
-			if ($arglist[1] != '') {
+			if ($arglist[1] !== '') {
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] set new spectator password [{3}] (masked password)', $logtitle, $login, preg_replace('#.#', '*', $arglist[1]));
 
@@ -414,7 +414,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'setrefpwd') {
+		else if ($command['params'][0] === 'setrefpwd') {
 			/**
 			 * Sets a new referee password (on the fly).
 			 */
@@ -422,7 +422,7 @@ class PluginChatAdmin extends Plugin {
 			// set a new referee password
 			$aseco->client->query('SetRefereePassword', $arglist[1]);
 
-			if ($arglist[1] != '') {
+			if ($arglist[1] !== '') {
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] set new referee password [{3}] (masked password)', $logtitle, $login, preg_replace('#.#', '*', $arglist[1]));
 
@@ -450,7 +450,7 @@ class PluginChatAdmin extends Plugin {
 				*/
 			}
 		}
-		else if ($command['params'][0] == 'setmaxplayers' && is_numeric($command['params'][1]) && $command['params'][1] > 0) {
+		else if ($command['params'][0] === 'setmaxplayers' && is_numeric($command['params'][1]) && $command['params'][1] > 0) {
 			/**
 			 * Sets a new player maximum that is able to connect to the server.
 			 */
@@ -466,7 +466,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($chattitle, $admin->nickname,	$command['params'][1]);
 			$msg->sendChatMessage();
 		}
-		else if ($command['params'][0] == 'setmaxspecs' && is_numeric($command['params'][1]) && $command['params'][1] >= 0) {
+		else if ($command['params'][0] === 'setmaxspecs' && is_numeric($command['params'][1]) && $command['params'][1] >= 0) {
 			/**
 			 * Sets a new spectator maximum that is able to connect to the server.
 			 */
@@ -482,7 +482,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($chattitle, $admin->nickname,	$command['params'][1]);
 			$msg->sendChatMessage();
 		}
-		else if ($command['params'][0] == 'setgamemode' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'setgamemode' && $command['params'][1] !== '') {
 			/**
 			 * Sets new game mode that will be active upon the next map.
 			 */
@@ -572,13 +572,13 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'setrefmode') {
+		else if ($command['params'][0] === 'setrefmode') {
 			/**
 			 * Sets new referee mode (0 = top3, 1 = all).
 			 */
 
-			if (($mode = $command['params'][1]) != '') {
-				if (is_numeric($mode) && ($mode == 0 || $mode == 1)) {
+			if (($mode = $command['params'][1]) !== '') {
+				if (is_numeric($mode) && ($mode === 0 || $mode === 1)) {
 					// tell server to set new referee mode
 					$aseco->client->query('SetRefereeMode', (int) $mode);
 
@@ -602,11 +602,11 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_getrefmode');
-				$msg->addPlaceholders($mode == 1 ? 'All' : 'Top-3');
+				$msg->addPlaceholders($mode === 1 ? 'All' : 'Top-3');
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'nextmap' || $command['params'][0] == 'next' || $command['params'][0] == 'skipmap' || $command['params'][0] == 'skip') {
+		else if ($command['params'][0] === 'nextmap' || $command['params'][0] === 'next' || $command['params'][0] === 'skipmap' || $command['params'][0] === 'skip') {
 			/**
 			 * Forces the server to load next map.
 			 */
@@ -614,7 +614,7 @@ class PluginChatAdmin extends Plugin {
 			try {
 				// Load the next map
 				// don't clear scores if in Cup mode
-				if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+				if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 					$aseco->client->query('NextMap', true);
 				}
 				else {
@@ -636,7 +636,7 @@ class PluginChatAdmin extends Plugin {
 			}
 
 		}
-		else if ($command['params'][0] == 'previous' || $command['params'][0] == 'prev') {
+		else if ($command['params'][0] === 'previous' || $command['params'][0] === 'prev') {
 			if (isset($aseco->plugins['PluginRaspJukebox'])) {
 				/**
 				 * Forces the server to load previous map.
@@ -663,7 +663,7 @@ class PluginChatAdmin extends Plugin {
 
 				// load the previous map
 				// don't clear scores if in Cup mode
-				if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+				if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 					$aseco->client->query('NextMap', true);
 				}
 				else {
@@ -690,8 +690,8 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'nextenv') {
-			if (isset($aseco->plugins['PluginRaspJukebox'])) {
+		else if ($command['params'][0] === 'nextenv') {
+			if (isset($aseco->plugins['PluginRaspJukebox']) === true && isset($aseco->plugins['PluginRasp']) === true) {
 				/**
 				 * Loads the next map in the same environment.
 				 */
@@ -708,7 +708,7 @@ class PluginChatAdmin extends Plugin {
 						$next = $map;
 						break;
 					}
-					if ($map['uid'] == $aseco->server->maps->current->uid) {
+					if ($map['uid'] === $aseco->server->maps->current->uid) {
 						$found = true;
 					}
 				}
@@ -739,7 +739,7 @@ class PluginChatAdmin extends Plugin {
 
 				// load the next environment map
 				// don't clear scores if in Cup mode
-				if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+				if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 					$aseco->client->query('NextMap', true);
 				}
 				else {
@@ -766,7 +766,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'restartmap' || $command['params'][0] == 'restart' || $command['params'][0] == 'res') {
+		else if ($command['params'][0] === 'restartmap' || $command['params'][0] === 'restart' || $command['params'][0] === 'res') {
 			/**
 			 * Restarts the currently running map.
 			 */
@@ -777,7 +777,7 @@ class PluginChatAdmin extends Plugin {
 			}
 
 			// Do not clear scores if in Cup mode
-			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 				$aseco->client->query('RestartMap', true);
 			}
 			else {
@@ -792,7 +792,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($chattitle, $admin->nickname);
 			$msg->sendChatMessage();
 		}
-		else if ($command['params'][0] == 'replaymap' || $command['params'][0] == 'replay') {
+		else if ($command['params'][0] === 'replaymap' || $command['params'][0] === 'replay') {
 			if (isset($aseco->plugins['PluginRaspJukebox'])) {
 				/**
 				 * Replays the current map (queues it at start of jukebox).
@@ -800,8 +800,8 @@ class PluginChatAdmin extends Plugin {
 
 				// cancel possibly ongoing replay/restart vote
 				$aseco->client->query('CancelVote');
-				if ( isset($aseco->plugins['PluginRaspVotes']) ) {
-					if (!empty($aseco->plugins['PluginRaspVotes']->chatvote) && $aseco->plugins['PluginRaspVotes']->chatvote['type'] == 2) {
+				if (isset($aseco->plugins['PluginRaspVotes']) === true) {
+					if (!empty($aseco->plugins['PluginRaspVotes']->chatvote) && $aseco->plugins['PluginRaspVotes']->chatvote['type'] === 2) {
 						$aseco->plugins['PluginRaspVotes']->chatvote = array();
 					}
 				}
@@ -850,7 +850,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'dropjukebox' || $command['params'][0] == 'djb') {
+		else if ($command['params'][0] === 'dropjukebox' || $command['params'][0] === 'djb') {
 			if (isset($aseco->plugins['PluginRaspJukebox'])) {
 				/**
 				 * Drops a map from the jukebox (for use with rasp jukebox plugin).
@@ -861,7 +861,7 @@ class PluginChatAdmin extends Plugin {
 				    $command['params'][1] >= 1 && $command['params'][1] <= count($aseco->plugins['PluginRaspJukebox']->jukebox)) {
 					$i = 1;
 					foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
-						if ($i++ == $command['params'][1]) {
+						if ($i++ === $command['params'][1]) {
 							$name = $aseco->stripStyles($item['Name']);
 							$uid = $item['uid'];
 							break;
@@ -895,7 +895,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'clearjukebox' || $command['params'][0] == 'cjb') {
+		else if ($command['params'][0] === 'clearjukebox' || $command['params'][0] === 'cjb') {
 			if (isset($aseco->plugins['PluginRaspJukebox'])) {
 				/**
 				 * Clears the jukebox (for use with rasp jukebox plugin).
@@ -924,20 +924,20 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-//		else if ($command['params'][0] == 'clearhist') {
+//		else if ($command['params'][0] === 'clearhist') {
 //			if (isset($aseco->plugins['PluginRaspJukebox'])) {
 //				/**
 //				 * Clears (part of) map history.
 //				 */
 //
 //				// check for optional portion (pos = newest, neg = oldest)
-//				if ($command['params'][1] != '' && is_numeric($command['params'][1]) && $command['params'][1] != 0) {
+//				if ($command['params'][1] !== '' && is_numeric($command['params'][1]) && $command['params'][1] !== 0) {
 //					$clear = intval($command['params'][1]);
 //
 //					// log console message
 //					$aseco->console('[ChatAdmin] {1} [{2}] clears {3} map{4} from history!', $logtitle, $login,
 //						($clear > 0 ? 'newest ' : 'oldest ') . abs($clear),
-//						(abs($clear) == 1 ? '' : 's')
+//						(abs($clear) === 1 ? '' : 's')
 //					);
 //
 //					// show chat message
@@ -945,11 +945,11 @@ class PluginChatAdmin extends Plugin {
 //						$chattitle,
 //						$admin->nickname,
 //						($clear > 0 ? 'newest {#highlite}' : 'oldest {#highlite}') . abs($clear),
-//						(abs($clear) == 1 ? '' : 's')
+//						(abs($clear) === 1 ? '' : 's')
 //					);
 //					$aseco->sendChatMessage($message);
 //				}
-//				else if (strtolower($command['params'][1]) == 'all') {  // entire history
+//				else if (strtolower($command['params'][1]) === 'all') {  // entire history
 //					$clear = $aseco->plugins['PluginRaspJukebox']->buffersize;
 //
 //					// log console message
@@ -967,7 +967,7 @@ class PluginChatAdmin extends Plugin {
 //					$message = $aseco->formatText('{#server}» {#admin}The map history contains {#highlite}{3}{#admin} map{4}',
 //						$chattitle,
 //						$admin->nickname,
-//						count($aseco->plugins['PluginRaspJukebox']->jb_buffer), (count($aseco->plugins['PluginRaspJukebox']->jb_buffer) == 1 ? '' : 's')
+//						count($aseco->plugins['PluginRaspJukebox']->jb_buffer), (count($aseco->plugins['PluginRaspJukebox']->jb_buffer) === 1 ? '' : 's')
 //					);
 //					$aseco->sendChatMessage($message, $login);
 //					return;
@@ -998,14 +998,14 @@ class PluginChatAdmin extends Plugin {
 //				$aseco->sendChatMessage($message, $login);
 //			}
 //		}
-		else if ($command['params'][0] == 'add') {
+		else if ($command['params'][0] === 'add') {
 			/**
 			 * Adds MX maps to the map rotation.
 			 */
 			$this->admin_add($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if ($command['params'][0] == 'addthis') {
+		else if ($command['params'][0] === 'addthis') {
 			/**
 			 * Adds current /add-ed map permanently to server's map list
 			 * by preventing its removal that normally occurs afterwards
@@ -1013,14 +1013,14 @@ class PluginChatAdmin extends Plugin {
 			$this->admin_addthis($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if ($command['params'][0] == 'addlocal') {
+		else if ($command['params'][0] === 'addlocal') {
 			/**
 			 * Add a local map to the map rotation.
 			 */
 			$this->admin_addlocal($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if ($command['params'][0] == 'warn' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'warn' && $command['params'][1] !== '') {
 			/**
 			 * Warns a player with the specified login/PlayerID.
 			 */
@@ -1073,7 +1073,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'kick' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'kick' && $command['params'][1] !== '') {
 			/**
 			 * Kicks a player with the specified login/PlayerID.
 			 */
@@ -1092,7 +1092,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('Kick', $target->login);
 			}
 		}
-		else if ($command['params'][0] == 'kickghost' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'kickghost' && $command['params'][1] !== '') {
 			/**
 			 * Kicks a ghost player with the specified login.
 			 * This variant for ghost players that got disconnected doesn't
@@ -1113,7 +1113,7 @@ class PluginChatAdmin extends Plugin {
 			// kick the ghost player
 			$aseco->client->query('Kick', $target);
 		}
-		else if ($command['params'][0] == 'ban' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'ban' && $command['params'][1] !== '') {
 			/**
 			 * Ban a player with the specified login/PlayerID.
 			 */
@@ -1143,7 +1143,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->client->query('Ban', $target->login);
 			}
 		}
-		else if ($command['params'][0] == 'unban' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'unban' && $command['params'][1] !== '') {
 			/**
 			 * Un-bans player with the specified login/PlayerID.
 			 */
@@ -1176,7 +1176,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'banip' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'banip' && $command['params'][1] !== '') {
 			/**
 			 * Ban a player with the specified IP address.
 			 */
@@ -1216,7 +1216,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'unbanip' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'unbanip' && $command['params'][1] !== '') {
 			/**
 			 * Un-bans player with the specified IP address.
 			 */
@@ -1241,7 +1241,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'black' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'black' && $command['params'][1] !== '') {
 			/**
 			 * Blacklists a player with the specified login/PlayerID.
 			 */
@@ -1282,7 +1282,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'unblack' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'unblack' && $command['params'][1] !== '') {
 			/**
 			 * Un-blacklists player with the specified login/PlayerID.
 			 */
@@ -1322,7 +1322,7 @@ class PluginChatAdmin extends Plugin {
 			if ($target !== false) {
 				$target->login = $param;
 				$target->nickname = $aseco->server->players->getPlayerNickname($param);
-				if ($target->nickname == '') {
+				if ($target->nickname === '') {
 					$target->nickname = $param;
 				}
 
@@ -1360,7 +1360,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'addguest' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'addguest' && $command['params'][1] !== '') {
 			/**
 			 * Adds a guest player with the specified login/PlayerID.
 			 */
@@ -1393,7 +1393,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'removeguest' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'removeguest' && $command['params'][1] !== '') {
 			/**
 			 * Removes a guest player with the specified login/PlayerID.
 			 */
@@ -1430,7 +1430,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'pass') {
+		else if ($command['params'][0] === 'pass') {
 			/**
 			 * Passes a chat-based or MX /add vote.
 			 */
@@ -1465,7 +1465,7 @@ class PluginChatAdmin extends Plugin {
 			// enter the last vote
 			$aseco->releaseChatCommand('/y', $login);
 		}
-		else if ($command['params'][0] == 'cancel' || $command['params'][0] == 'can') {
+		else if ($command['params'][0] === 'cancel' || $command['params'][0] === 'can') {
 			/**
 			 * Cancels any vote.
 			 */
@@ -1487,14 +1487,14 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($chattitle, $admin->nickname);
 			$msg->sendChatMessage();
 		}
-		else if ($command['params'][0] == 'endround' || $command['params'][0] == 'er') {
+		else if ($command['params'][0] === 'endround' || $command['params'][0] === 'er') {
 			/**
 			 * Forces end of current round.
 			 */
 
 			// cancel possibly ongoing endround vote
 			if ( isset($aseco->plugins['PluginRaspVotes']) ) {
-				if (!empty($aseco->plugins['PluginRaspVotes']->chatvote) && $aseco->plugins['PluginRaspVotes']->chatvote['type'] == 0) {
+				if (!empty($aseco->plugins['PluginRaspVotes']->chatvote) && $aseco->plugins['PluginRaspVotes']->chatvote['type'] === 0) {
 					$aseco->plugins['PluginRaspVotes']->chatvote = array();
 				}
 			}
@@ -1510,7 +1510,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($chattitle, $admin->nickname);
 			$msg->sendChatMessage();
 		}
-		else if ($command['params'][0] == 'players') {
+		else if ($command['params'][0] === 'players') {
 			/**
 			 * Displays the live or known players (on/offline) list.
 			 * Player management inspired by Mistral.
@@ -1518,7 +1518,7 @@ class PluginChatAdmin extends Plugin {
 			$this->admin_players($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if ($command['params'][0] == 'showbanlist' || $command['params'][0] == 'listbans') {
+		else if ($command['params'][0] === 'showbanlist' || $command['params'][0] === 'listbans') {
 			/**
 			 * Displays the ban list.
 			 * TODO: Port to new framework and translate
@@ -1578,11 +1578,11 @@ class PluginChatAdmin extends Plugin {
 			if (count($admin->msgs) > 1) {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 			}
-			else {  // == 1
+			else {  // === 1
 				$aseco->sendChatMessage('{#server}» {#error}No banned player(s) found!', $login);
 			}
 		}
-		else if ($command['params'][0] == 'showiplist' || $command['params'][0] == 'listips') {
+		else if ($command['params'][0] === 'showiplist' || $command['params'][0] === 'listips') {
 			/**
 			 * Displays the banned IPs list.
 			 * TODO: Port to new framework and translate
@@ -1610,7 +1610,7 @@ class PluginChatAdmin extends Plugin {
 			$lines = 0;
 			$admin->msgs[0] = array(1, $head, array(0.6, 0.1, 0.5), array('Icons64x64_1', 'NotBuddy'));
 			foreach ($newlist as $ip) {
-				if ($ip != '') {
+				if ($ip !== '') {
 					$plarr = array();
 					$plarr['ip'] = $ip;
 					$admin->playerlist[] = $plarr;
@@ -1647,11 +1647,11 @@ class PluginChatAdmin extends Plugin {
 			if (count($admin->msgs) > 1) {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 			}
-			else {  // == 1
+			else {  // === 1
 				$aseco->sendChatMessage('{#server}» {#error}No banned IP(s) found!', $login);
 			}
 		}
-		else if ($command['params'][0] == 'showblacklist' || $command['params'][0] == 'listblacks') {
+		else if ($command['params'][0] === 'showblacklist' || $command['params'][0] === 'listblacks') {
 			/**
 			 * Displays the black list.
 			 * TODO: Port to new framework and translate
@@ -1711,11 +1711,11 @@ class PluginChatAdmin extends Plugin {
 			if (count($admin->msgs) > 1) {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 			}
-			else {  // == 1
+			else {  // === 1
 				$aseco->sendChatMessage('{#server}» {#error}No blacklisted player(s) found!', $login);
 			}
 		}
-		else if ($command['params'][0] == 'showguestlist' || $command['params'][0] == 'listguests') {
+		else if ($command['params'][0] === 'showguestlist' || $command['params'][0] === 'listguests') {
 			/**
 			 * Displays the guest list.
 			 * TODO: Port to new framework and translate
@@ -1775,11 +1775,11 @@ class PluginChatAdmin extends Plugin {
 			if (count($admin->msgs) > 1) {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 			}
-			else {  // == 1
+			else {  // === 1
 				$aseco->sendChatMessage('{#server}» {#error}No guest player(s) found!', $login);
 			}
 		}
-		else if ($command['params'][0] == 'writeiplist') {
+		else if ($command['params'][0] === 'writeiplist') {
 			/**
 			 * Saves the banned IPs list to bannedips.xml (default).
 			 */
@@ -1799,7 +1799,7 @@ class PluginChatAdmin extends Plugin {
 			$message->addPlaceholders($filename);
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'readiplist') {
+		else if ($command['params'][0] === 'readiplist') {
 			/**
 			 * Loads the banned IPs list from bannedips.xml (default).
 			 */
@@ -1819,7 +1819,7 @@ class PluginChatAdmin extends Plugin {
 			$message->addPlaceholders($filename);
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'writeblacklist') {
+		else if ($command['params'][0] === 'writeblacklist') {
 			/**
 			 * Saves the black list to blacklist.txt (default).
 			 */
@@ -1842,7 +1842,7 @@ class PluginChatAdmin extends Plugin {
 			$message->addPlaceholders($filename);
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'readblacklist') {
+		else if ($command['params'][0] === 'readblacklist') {
 			/**
 			 * Loads the black list from blacklist.txt (default).
 			 */
@@ -1865,7 +1865,7 @@ class PluginChatAdmin extends Plugin {
 			$message->addPlaceholders($filename);
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'writeguestlist') {
+		else if ($command['params'][0] === 'writeguestlist') {
 			/**
 			 * Saves the guest list to guestlist.txt (default).
 			 */
@@ -1889,7 +1889,7 @@ class PluginChatAdmin extends Plugin {
 			$message->addPlaceholders($filename);
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'readguestlist') {
+		else if ($command['params'][0] === 'readguestlist') {
 			/**
 			 * Loads the guest list from guestlist.txt (default).
 			 */
@@ -1912,7 +1912,7 @@ class PluginChatAdmin extends Plugin {
 			$message->addPlaceholders($filename);
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'cleanbanlist') {
+		else if ($command['params'][0] === 'cleanbanlist') {
 			/**
 			 * Cleans the ban list.
 			 */
@@ -1927,7 +1927,7 @@ class PluginChatAdmin extends Plugin {
 			$message = new Message('chat.admin', 'message_clean_banlist');
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'cleaniplist') {
+		else if ($command['params'][0] === 'cleaniplist') {
 			/**
 			 * Cleans the banned IPs list.
 			 */
@@ -1943,7 +1943,7 @@ class PluginChatAdmin extends Plugin {
 			$message = new Message('chat.admin', 'message_cleaned_bannediplist');
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'cleanblacklist') {
+		else if ($command['params'][0] === 'cleanblacklist') {
 			/**
 			 * Cleans the black list.
 			 */
@@ -1958,7 +1958,7 @@ class PluginChatAdmin extends Plugin {
 			$message = new Message('chat.admin', 'message_cleaned_blacklist');
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'cleanguestlist') {
+		else if ($command['params'][0] === 'cleanguestlist') {
 			/**
 			 * Cleans the guest list.
 			 */
@@ -1973,13 +1973,13 @@ class PluginChatAdmin extends Plugin {
 			$message = new Message('chat.admin', 'message_cleaned_guestlist');
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'mergegbl') {
+		else if ($command['params'][0] === 'mergegbl') {
 			/**
 			 * Merges a global black list.
 			 */
 
 			if ( isset($aseco->plugins['PluginUptodate']) ) {
-				if (isset($command['params'][1]) && $command['params'][1] != '') {
+				if (isset($command['params'][1]) && $command['params'][1] !== '') {
 					if (preg_match('/^https?:\/\/[-\w:.]+\//i', $command['params'][1])) {
 						// from plugin.uptodate.php
 						$aseco->plugins['PluginUptodate']->admin_mergegbl($aseco, $logtitle, $login, true, $command['params'][1]);
@@ -2001,7 +2001,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if ($command['params'][0] == 'access') {
+		else if ($command['params'][0] === 'access') {
 			/**
 			 * Shows/reloads player access control.
 			 */
@@ -2015,14 +2015,14 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'writemaplist') {
+		else if ($command['params'][0] === 'writemaplist') {
 			/**
 			 * Saves the map list to maplist.txt (default).
 			 */
 
 			$filename = $aseco->settings['default_maplist'];
 			// check for optional alternate filename
-			if ($command['params'][1] != '') {
+			if ($command['params'][1] !== '') {
 				$filename = $command['params'][1];
 				if (!stristr($filename, '.txt')) {
 					$filename .= '.txt';
@@ -2079,21 +2079,21 @@ class PluginChatAdmin extends Plugin {
 
 			$message->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'readmaplist') {
+		else if ($command['params'][0] === 'readmaplist') {
 			/**
 			 * Loads the map list from maplist.txt (default).
 			 */
 			$this->admin_readmaplist($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if ($command['params'][0] == 'shuffle' || $command['params'][0] == 'shufflemaps') {
+		else if ($command['params'][0] === 'shuffle' || $command['params'][0] === 'shufflemaps') {
 			/**
 			 * Randomizes current maps list.
 			 */
 			$this->admin_shufflemaps($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if (($command['params'][0] == 'remove' && $command['params'][1] != '') || ($command['params'][0] == 'erase' && $command['params'][1] != '')) {
+		else if (($command['params'][0] === 'remove' && $command['params'][1] !== '') || ($command['params'][0] === 'erase' && $command['params'][1] !== '')) {
 			/**
 			 * Remove a map from the active rotation, optionally erase map file too.
 			 * Doesn't update match settings unfortunately - command 'writemaplist' will though.
@@ -2117,12 +2117,12 @@ class PluginChatAdmin extends Plugin {
 					try {
 						$aseco->client->query('RemoveMap', $filename);
 
-						if ($command['params'][0] == 'remove') {
+						if ($command['params'][0] === 'remove') {
 							$msg = new Message('chat.admin', 'message_removemap');
 							$msg->addPlaceholders($chattitle, $admin->nickname, $name);
 							$msg->sendChatMessage();
 						}
-						else if ($command['params'][0] == 'erase' && is_file($filename)) {
+						else if ($command['params'][0] === 'erase' && is_file($filename)) {
 							if (unlink($filename)) {
 								$msg = new Message('chat.admin', 'message_erasemap');
 								$msg->addPlaceholders($chattitle, $admin->nickname, $name);
@@ -2147,7 +2147,7 @@ class PluginChatAdmin extends Plugin {
 					catch (Exception $exception) {
 						$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - RemoveMap');
 
-						if ($command['params'][0] == 'remove') {
+						if ($command['params'][0] === 'remove') {
 							$msg = new Message('chat.admin', 'message_removemap_failed');
 							$msg->addPlaceholders($filename);
 							$msg->sendChatMessage($login);
@@ -2169,7 +2169,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'removethis' || $command['params'][0] == 'erasethis') {
+		else if ($command['params'][0] === 'removethis' || $command['params'][0] === 'erasethis') {
 			/**
 			 * Remove current map from the active rotation, optionally erase map file too.
 			 * Doesn't update match settings unfortunately - command 'writemaplist' will though.
@@ -2191,7 +2191,7 @@ class PluginChatAdmin extends Plugin {
 				$msg = new Message('chat.admin', 'message_removemap');
 				$msg->addPlaceholders($chattitle, $admin->nickname, $name);
 
-				if ($command['params'][0] == 'erasethis') {
+				if ($command['params'][0] === 'erasethis') {
 					if (is_file($filename) && unlink($filename)) {
 						$message = $aseco->formatText('{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}erases current map: {#highlite}{3}',
 							$chattitle,
@@ -2217,7 +2217,7 @@ class PluginChatAdmin extends Plugin {
 				try {
 					// Force to load the next map,
 					// don't clear scores if in Cup mode
-					if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+					if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 						$aseco->client->query('NextMap', true);
 					}
 					else {
@@ -2245,7 +2245,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if (($command['params'][0] == 'mute' || $command['params'][0] == 'ignore') && $command['params'][1] != '') {
+		else if (($command['params'][0] === 'mute' || $command['params'][0] === 'ignore') && $command['params'][1] !== '') {
 			/**
 			 * Adds a player to global mute/ignore list
 			 */
@@ -2271,7 +2271,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage();
 			}
 		}
-		else if (($command['params'][0] == 'unmute' || $command['params'][0] == 'unignore') && $command['params'][1] != '') {
+		else if (($command['params'][0] === 'unmute' || $command['params'][0] === 'unignore') && $command['params'][1] !== '') {
 			/**
 			 * Removes a player from global mute/ignore list
 			 */
@@ -2302,7 +2302,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'mutelist' || $command['params'][0] == 'listmutes' || $command['params'][0] == 'ignorelist' || $command['params'][0] == 'listignores') {
+		else if ($command['params'][0] === 'mutelist' || $command['params'][0] === 'listmutes' || $command['params'][0] === 'ignorelist' || $command['params'][0] === 'listignores') {
 			/**
 			 * Displays the global mute/ignore list.
 			 */
@@ -2361,17 +2361,17 @@ class PluginChatAdmin extends Plugin {
 			if (count($admin->msgs) > 1) {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 			}
-			else {  // == 1
+			else {  // === 1
 				$msg = new Message('chat.admin', 'message_nobody_muted');
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'cleanmutes' ||
+		else if ($command['params'][0] === 'cleanmutes' ||
 			/**
 			 * Cleans the global mute/ignore list.
 			 */
 
-			$command['params'][0] == 'cleanignores') {
+			$command['params'][0] === 'cleanignores') {
 
 			// clean internal and server list
 			$aseco->server->mutelist = array();
@@ -2384,7 +2384,7 @@ class PluginChatAdmin extends Plugin {
 			$msg = new Message('chat.admin', 'message_mutelist_cleaned');
 			$msg->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'addadmin' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'addadmin' && $command['params'][1] !== '') {
 			/**
 			 * Adds a new admin.
 			 */
@@ -2413,7 +2413,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'removeadmin' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'removeadmin' && $command['params'][1] !== '') {
 			/**
 			 * Removes an admin.
 			 */
@@ -2442,7 +2442,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'addop' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'addop' && $command['params'][1] !== '') {
 			/**
 			 * Adds a new operator.
 			 */
@@ -2471,7 +2471,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'removeop' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'removeop' && $command['params'][1] !== '') {
 			/**
 			 * Removes an operator.
 			 */
@@ -2500,7 +2500,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'listmasters') {
+		else if ($command['params'][0] === 'listmasters') {
 			/**
 			 * Displays the masteradmins list.
 			 */
@@ -2516,7 +2516,7 @@ class PluginChatAdmin extends Plugin {
 			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
 			foreach ($aseco->masteradmin_list['TMLOGIN'] as $player) {
 				// skip any LAN logins
-				if ($player != '' && !$aseco->isLANLogin($player)) {
+				if ($player !== '' && !$aseco->isLANLogin($player)) {
 					$plarr = array();
 					$plarr['login'] = $player;
 					$admin->playerlist[] = $plarr;
@@ -2543,12 +2543,12 @@ class PluginChatAdmin extends Plugin {
 			if (count($admin->msgs) > 1) {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 			}
-			else {  // == 1
+			else {  // === 1
 				$msg = new Message('chat.admin', 'message_no_masteradmins_found');
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'listadmins') {
+		else if ($command['params'][0] === 'listadmins') {
 			/**
 			 * Displays the admins list.
 			 */
@@ -2569,7 +2569,7 @@ class PluginChatAdmin extends Plugin {
 			$lines = 0;
 			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
 			foreach ($aseco->admin_list['TMLOGIN'] as $player) {
-				if ($player != '') {
+				if ($player !== '') {
 					$plarr = array();
 					$plarr['login'] = $player;
 					$admin->playerlist[] = $plarr;
@@ -2595,7 +2595,7 @@ class PluginChatAdmin extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 		}
-		else if ($command['params'][0] == 'listops') {
+		else if ($command['params'][0] === 'listops') {
 			/**
 			 * Displays the operators list.
 			 */
@@ -2616,7 +2616,7 @@ class PluginChatAdmin extends Plugin {
 			$lines = 0;
 			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
 			foreach ($aseco->operator_list['TMLOGIN'] as $player) {
-				if ($player != '') {
+				if ($player !== '') {
 					$plarr = array();
 					$plarr['login'] = $player;
 					$admin->playerlist[] = $plarr;
@@ -2642,28 +2642,28 @@ class PluginChatAdmin extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 		}
-		else if ($command['params'][0] == 'adminability') {
+		else if ($command['params'][0] === 'adminability') {
 			/**
 			 * Show/change an admin ability
 			 */
 
 			// check for ability parameter
-			if ($command['params'][1] != '') {
+			if ($command['params'][1] !== '') {
 				// map to uppercase before checking list
 				$ability = strtoupper($command['params'][1]);
 
 				// check for valid ability
 				if (isset($aseco->admin_abilities[$ability])) {
-					if (isset($command['params'][2]) && $command['params'][2] != '') {
+					if (isset($command['params'][2]) && $command['params'][2] !== '') {
 						// update ability
-						if (strtoupper($command['params'][2]) == 'ON') {
+						if (strtoupper($command['params'][2]) === 'ON') {
 							$aseco->admin_abilities[$ability][0] = true;
 							$aseco->writeLists();
 
 							// log console message
 							$aseco->console('[ChatAdmin] {1} [{2}] set new Admin ability: {3} ON', $logtitle, $login, strtolower($ability));
 						}
-						else if (strtoupper($command['params'][2]) == 'OFF') {
+						else if (strtoupper($command['params'][2]) === 'OFF') {
 							$aseco->admin_abilities[$ability][0] = false;
 							$aseco->writeLists();
 
@@ -2691,28 +2691,28 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'opability') {
+		else if ($command['params'][0] === 'opability') {
 			/**
 			 * Show/change an operator ability
 			 */
 
 			// check for ability parameter
-			if ($command['params'][1] != '') {
+			if ($command['params'][1] !== '') {
 				// map to uppercase before checking list
 				$ability = strtoupper($command['params'][1]);
 
 				// check for valid ability
 				if (isset($aseco->operator_abilities[$ability])) {
-					if (isset($command['params'][2]) && $command['params'][2] != '') {
+					if (isset($command['params'][2]) && $command['params'][2] !== '') {
 						// update ability
-						if (strtoupper($command['params'][2]) == 'ON') {
+						if (strtoupper($command['params'][2]) === 'ON') {
 							$aseco->operator_abilities[$ability][0] = true;
 							$aseco->writeLists();
 
 							// log console message
 							$aseco->console('[ChatAdmin] {1} [{2}] set new Operator ability: {3} ON', $logtitle, $login, strtolower($ability));
 						}
-						else if (strtoupper($command['params'][2]) == 'OFF') {
+						else if (strtoupper($command['params'][2]) === 'OFF') {
 							$aseco->operator_abilities[$ability][0] = false;
 							$aseco->writeLists();
 
@@ -2740,7 +2740,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'listabilities') {
+		else if ($command['params'][0] === 'listabilities') {
 			/**
 			 * Displays Admin and Operator abilities
 			 * Isn't this incomplete? //Askuri
@@ -2748,7 +2748,7 @@ class PluginChatAdmin extends Plugin {
 
 			$master = false;
 			if ($aseco->isMasterAdminByLogin($login)) {
-				if ($command['params'][1] == '') {
+				if ($command['params'][1] === '') {
 					$master = true;
 					$abilities = $aseco->admin_abilities;
 					$title = 'MasterAdmin';
@@ -2897,7 +2897,7 @@ class PluginChatAdmin extends Plugin {
 			$window->setContent($settings_content);
 			$window->send($aseco->server->players->getPlayerByLogin($login), 0, false);
 		}
-		else if ($command['params'][0] == 'writeabilities') {
+		else if ($command['params'][0] === 'writeabilities') {
 			/**
 			 * Saves the admins/operators/abilities list to adminops.xml (default).
 			 */
@@ -2916,7 +2916,7 @@ class PluginChatAdmin extends Plugin {
 			// show chat message
 			$aseco->sendChatMessage($message, $login);
 		}
-		else if ($command['params'][0] == 'readabilities') {
+		else if ($command['params'][0] === 'readabilities') {
 			/**
 			 * Loads the admins/operators/abilities list from adminops.xml (default).
 			 */
@@ -2935,15 +2935,15 @@ class PluginChatAdmin extends Plugin {
 			// show chat message
 			$aseco->sendChatMessage($message, $login);
 		}
-		else if ($command['params'][0] == 'wall' ||
+		else if ($command['params'][0] === 'wall' ||
 			/**
 			 * Display message in pop-up to all players
 			 */
 
-		          $command['params'][0] == 'mta') {
+		          $command['params'][0] === 'mta') {
 
 			// check for non-empty message
-			if ($arglist[1] != '') {
+			if ($arglist[1] !== '') {
 				$header = '{#black}'. $chattitle .' '. $admin->nickname .'$z :';
 				// insure window doesn't become too wide
 				$message = wordwrap('{#welcome}'. $arglist[1], 40, LF .'{#welcome}');
@@ -2964,12 +2964,12 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'delrec' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'delrec' && $command['params'][1] !== '') {
 			/**
 			 * Delete `records` and `times` database entries for specific record & sync.
 			 */
 
-			if ( isset($aseco->plugins['PluginLocalRecords']) ) {
+			if (isset($aseco->plugins['PluginLocalRecords']) === true && isset($aseco->plugins['PluginRasp']) === true) {
 
 				// verify parameter
 				$param = $command['params'][1];
@@ -3007,7 +3007,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'prunerecs' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'prunerecs' && $command['params'][1] !== '') {
 			/**
 			 * Prune `records` and `times` database entries for specific map.
 			 */
@@ -3059,14 +3059,14 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'amdl') {
+		else if ($command['params'][0] === 'amdl') {
 			/**
 			 * Shows or sets AllowMapDownload status.
 			 */
 
 			$param = strtolower($command['params'][1]);
-			if ($param == 'on' || $param == 'off') {
-				$enabled = ($param == 'on');
+			if ($param === 'on' || $param === 'off') {
+				$enabled = ($param === 'on');
 				$aseco->client->query('AllowMapDownload', $enabled);
 
 				// log console message
@@ -3086,7 +3086,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'autotime') {
+		else if ($command['params'][0] === 'autotime') {
 			/**
 			 * Shows or sets Auto TimeLimit status.
 			 */
@@ -3094,10 +3094,10 @@ class PluginChatAdmin extends Plugin {
 			// check for autotime plugin
 			if ( isset($aseco->plugins['PluginAutotime']) ) {
 				$param = strtolower($command['params'][1]);
-				if ($param == 'on' || $param == 'off') {
+				if ($param === 'on' || $param === 'off') {
 
 					// from plugin.autotime.php
-					$aseco->plugins['PluginAutotime']->active = ($param == 'on');
+					$aseco->plugins['PluginAutotime']->active = ($param === 'on');
 
 					// log console message
 					$aseco->console('[ChatAdmin] {1} [{2}] set Auto TimeLimit {3} !', $logtitle, $login, ($aseco->plugins['PluginAutotime']->active ? 'ON' : 'OFF'));
@@ -3123,14 +3123,14 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'disablerespawn') {
+		else if ($command['params'][0] === 'disablerespawn') {
 			/**
 			 * Shows or sets DisableRespawn status.
 			 */
 
 			$param = strtolower($command['params'][1]);
-			if ($param == 'on' || $param == 'off') {
-				$enabled = ($param == 'on');
+			if ($param === 'on' || $param === 'off') {
+				$enabled = ($param === 'on');
 				$aseco->client->query('SetDisableRespawn', $enabled);
 
 				// log console message
@@ -3150,14 +3150,14 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'forceshowopp') {
+		else if ($command['params'][0] === 'forceshowopp') {
 			/**
 			 * Shows or sets ForceShowAllOpponents status.
 			 */
 
 			$param = strtolower($command['params'][1]);
-			if ($param == 'all' || $param == 'off') {
-				$enabled = ($param == 'all' ? 1 : 0);
+			if ($param === 'all' || $param === 'off') {
+				$enabled = ($param === 'all' ? 1 : 0);
 				$aseco->client->query('SetForceShowAllOpponents', $enabled);
 
 				// log console message
@@ -3185,7 +3185,7 @@ class PluginChatAdmin extends Plugin {
 				$enabled = $enabled['CurrentValue'];
 
 				// show chat message
-				$message = '{#server}» {#admin}ForceShowAllOpponents is set to: {#highlite}'. ($enabled != 0 ? ($enabled > 1 ? $enabled : 'All') : 'Off');
+				$message = '{#server}» {#admin}ForceShowAllOpponents is set to: {#highlite}'. ($enabled !== 0 ? ($enabled > 1 ? $enabled : 'All') : 'Off');
 				$aseco->sendChatMessage($message, $login);
 
 				$msg = new Message('chat.admin', 'message_get_forceshowopp');
@@ -3193,14 +3193,14 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'scorepanel') {
+		else if ($command['params'][0] === 'scorepanel') {
 			/**
 			 * Shows or sets Automatic ScorePanel status.
 			 */
 
 			$param = strtolower($command['params'][1]);
-			if ($param == 'on' || $param == 'off') {
-				$aseco->plugins['PluginManialinks']->auto_scorepanel = ($param == 'on');
+			if ($param === 'on' || $param === 'off') {
+				$aseco->plugins['PluginManialinks']->auto_scorepanel = ($param === 'on');
 
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] set Automatic ScorePanel {3} !', $logtitle, $login, ($aseco->plugins['PluginManialinks']->auto_scorepanel ? 'ON' : 'OFF'));
@@ -3217,14 +3217,14 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'roundsfinish') {
+		else if ($command['params'][0] === 'roundsfinish') {
 			/**
 			 * Shows or sets Rounds Finishpanel status.
 			 */
 
 			$param = strtolower($command['params'][1]);
-			if ($param == 'on' || $param == 'off') {
-				$aseco->plugins['PluginManialinks']->rounds_finishpanel = ($param == 'on');
+			if ($param === 'on' || $param === 'off') {
+				$aseco->plugins['PluginManialinks']->rounds_finishpanel = ($param === 'on');
 
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] set Rounds Finishpanel {3} !', $logtitle, $login, ($aseco->plugins['PluginManialinks']->rounds_finishpanel ? 'ON' : 'OFF'));
@@ -3244,23 +3244,23 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'forceteam' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'forceteam' && $command['params'][1] !== '') {
 			/**
 			 * Forces a player into Blue or Red team.
 			 */
 
 			// check for Team mode
-			if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+			if ($aseco->server->gameinfo->mode === Gameinfo::TEAM) {
 				// get player information
 				if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
 					// get player's team
 					$info = $aseco->client->query('GetPlayerInfo', $target->login);
 					// check for new team
-					if (isset($command['params'][2]) && $command['params'][2] != '') {
+					if (isset($command['params'][2]) && $command['params'][2] !== '') {
 						$team = strtolower($command['params'][2]);
 
 						if (strpos('blue', $team) === 0) {
-							if ($info['TeamId'] != 0) {
+							if ($info['TeamId'] !== 0) {
 								// set player to Blue team
 								$aseco->client->query('ForcePlayerTeam', $target->login, 0);
 
@@ -3279,7 +3279,7 @@ class PluginChatAdmin extends Plugin {
 
 						}
 						else if (strpos('red', $team) === 0) {
-							if ($info['TeamId'] != 1) {
+							if ($info['TeamId'] !== 1) {
 								// set player to Red team
 								$aseco->client->query('ForcePlayerTeam', $target->login, 1);
 
@@ -3307,7 +3307,7 @@ class PluginChatAdmin extends Plugin {
 						// show current team
 						$message = '{#server}» {#admin}Player {#highlite}'.
 						           $aseco->stripStyles($target->nickname) .'{#admin} is in '.
-						           ($info['TeamId'] == 0 ? '$00fBlue' : '$f00Red') .
+						           ($info['TeamId'] === 0 ? '$00fBlue' : '$f00Red') .
 						           '{#admin} team';
 						$aseco->sendChatMessage($message, $login);
 					}
@@ -3318,7 +3318,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'forcespec' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'forcespec' && $command['params'][1] !== '') {
 			/**
 			 * Forces player into free camera spectator.
 			 */
@@ -3368,7 +3368,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'specfree' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'specfree' && $command['params'][1] !== '') {
 			/**
 			 * Forces a spectator into free camera mode.
 			 */
@@ -3399,7 +3399,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'panel') {
+		else if ($command['params'][0] === 'panel') {
 			/**
 			 * Selects default window style.
 			 */
@@ -3414,12 +3414,12 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'admpanel' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'admpanel' && $command['params'][1] !== '') {
 			/**
 			 * Selects default admin panel.
 			 */
 
-			if (strtolower($command['params'][1]) == 'off') {
+			if (strtolower($command['params'][1]) === 'off') {
 				$aseco->panels['admin'] = '';
 				$aseco->settings['admin_panel'] = 'Off';
 
@@ -3436,7 +3436,7 @@ class PluginChatAdmin extends Plugin {
 			else {
 				// added file prefix
 				$panel = $command['params'][1];
-				if (strtolower(substr($command['params'][1], 0, 5)) != 'admin') {
+				if (strtolower(substr($command['params'][1], 0, 5)) !== 'admin') {
 					$panel = 'Admin'. $panel;
 				}
 				$panel_file = 'panels/'. $panel .'.xml';
@@ -3463,14 +3463,14 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'panelbg' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'panelbg' && $command['params'][1] !== '') {
 			/**
 			 * Selects default panel background.
 			 */
 
 			// added file prefix
 			$panel = $command['params'][1];
-			if (strtolower(substr($command['params'][1], 0, 7)) != 'panelbg') {
+			if (strtolower(substr($command['params'][1], 0, 7)) !== 'panelbg') {
 				$panel = 'PanelBG'. $panel;
 			}
 			$panelbg_file = 'panels/'. $panel .'.xml';
@@ -3496,7 +3496,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 			}
 		}
-		else if ($command['params'][0] == 'planets') {
+		else if ($command['params'][0] === 'planets') {
 			/**
 			 * Shows server's planets amount.
 			 */
@@ -3507,7 +3507,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->sendChatMessage($login);
 
 		}
-		else if ($command['params'][0] == 'pay') {
+		else if ($command['params'][0] === 'pay') {
 			/**
 			 * Pays server planets to login.
 			 */
@@ -3531,7 +3531,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'relays') {
+		else if ($command['params'][0] === 'relays') {
 			/**
 			 * Displays relays list or shows relay master.
 			 */
@@ -3561,7 +3561,7 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] == 'server') {
+		else if ($command['params'][0] === 'server') {
 			/**
 			 * Shows server's detailed settings.
 			 */
@@ -3600,7 +3600,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			else {
 				$stats[] = array('Master to', '{#black}'. count($aseco->server->relay_list) .
-				                 ' $grelay'. (count($aseco->server->relay_list) == 1 ? '' : 's'));
+				                 ' $grelay'. (count($aseco->server->relay_list) === 1 ? '' : 's'));
 			}
 			$stats[] = array();
 
@@ -3610,7 +3610,7 @@ class PluginChatAdmin extends Plugin {
 			$stats[] = array('{#black}GetServerOptions:', '');
 			foreach ($options as $key => $val) {
 				// show only Current values, not Next ones
-				if ($key != 'Name' && $key != 'Comment' && substr($key, 0, 4) != 'Next') {
+				if ($key !== 'Name' && $key !== 'Comment' && substr($key, 0, 4) !== 'Next') {
 					if (is_bool($val)) {
 						$stats[] = array($key, '{#black}'. $aseco->bool2string($val));
 					}
@@ -3630,7 +3630,7 @@ class PluginChatAdmin extends Plugin {
 					$stats[] = array($key, '{#black}'. $aseco->bool2string($val));
 				}
 				else {
-					if ($key == 'GameMode') {
+					if ($key === 'GameMode') {
 						$stats[] = array($key, '{#black}'. $val .'$g  ('. str_replace('_', ' ', $aseco->server->gameinfo->getModeName()) .')');
 					}
 					else {
@@ -3649,7 +3649,7 @@ class PluginChatAdmin extends Plugin {
 			$stats[] = array();
 			$stats[] = array('{#black}GetNetworkStats:', '');
 			foreach ($network as $key => $val) {
-				if ($key != 'PlayerNetInfos')
+				if ($key !== 'PlayerNetInfos')
 					$stats[] = array($key, '{#black}'. $val);
 			}
 
@@ -3672,14 +3672,14 @@ class PluginChatAdmin extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 
 		}
-		else if ($command['params'][0] == 'pm') {
+		else if ($command['params'][0] === 'pm') {
 			/**
 			 * Send private message to all available admins.
 			 */
 			global $pmbuf, $pmlen;
 
 			// check for non-empty message
-			if ($arglist[1] != '') {
+			if ($arglist[1] !== '') {
 				// drop oldest pm line if buffer full
 				if (count($pmbuf) >= $pmlen) {
 					array_shift($pmbuf);
@@ -3693,7 +3693,7 @@ class PluginChatAdmin extends Plugin {
 				$msg = '{#error}-pm-$g['. $nick .'$z$s$i->{#logina}Admins$g]$i {#interact}'. $arglist[1];
 				foreach ($aseco->server->players->player_list as $pl) {
 					// check for admin ability
-					if ($pl->login != $login && $aseco->allowAbility($pl, 'pm')) {
+					if ($pl->login !== $login && $aseco->allowAbility($pl, 'pm')) {
 						$nicks .= str_ireplace('$w', '', $pl->nickname) .'$z$s$i,';
 						$aseco->sendChatMessage($msg, $pl->login);
 
@@ -3735,7 +3735,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'pmlog') {
+		else if ($command['params'][0] === 'pmlog') {
 			/**
 			 * Displays log of recent private admin messages.
 			 */
@@ -3775,7 +3775,7 @@ class PluginChatAdmin extends Plugin {
 				$msg->sendChatMessage($login);
 			}
 		}
-		else if ($command['params'][0] == 'call') {
+		else if ($command['params'][0] === 'call') {
 			/**
 			 * Executes direct server call
 			 */
@@ -3793,9 +3793,9 @@ class PluginChatAdmin extends Plugin {
 //			}
 //
 //			// check parameter(s)
-//			if ($command['params'][1] != '') {
-//				if ($command['params'][1] == 'help') {
-//					if (isset($command['params'][2]) && $command['params'][2] != '') {
+//			if ($command['params'][1] !== '') {
+//				if ($command['params'][1] === 'help') {
+//					if (isset($command['params'][2]) && $command['params'][2] !== '') {
 //						// generate help message for method
 //						$method = $command['params'][2];
 //						$sign = $aseco->client->addCall('system.methodSignature', $method);
@@ -3860,7 +3860,7 @@ class PluginChatAdmin extends Plugin {
 //					}
 //
 //				}
-//				else if ($command['params'][1] == 'list') {
+//				else if ($command['params'][1] === 'list') {
 //					// get list of methods
 //					$aseco->client->query('system.listMethods');
 //					$methods = $aseco->client->getResponse();
@@ -3902,10 +3902,10 @@ class PluginChatAdmin extends Plugin {
 //					$multistr = '';
 //					$in_multi = false;
 //					for ($i = 2; $i < count($command['params']); $i++) {
-//						if (!$in_multi && strtolower($command['params'][$i]) == 'true') {
+//						if (!$in_multi && strtolower($command['params'][$i]) === 'true') {
 //							$args[] = true;
 //						}
-//						else if (!$in_multi && strtolower($command['params'][$i]) == 'false') {
+//						else if (!$in_multi && strtolower($command['params'][$i]) === 'false') {
 //							$args[] = false;
 //						}
 //						else if (!$in_multi && is_numeric($command['params'][$i])) {
@@ -3914,7 +3914,7 @@ class PluginChatAdmin extends Plugin {
 //						else {
 //							// check for multi-word strings
 //							if ($in_multi) {
-//								if (substr($command['params'][$i], -1) == '"') {
+//								if (substr($command['params'][$i], -1) === '"') {
 //									$args[] = $multistr .' '. substr($command['params'][$i], 0, -1);
 //									$multistr = '';
 //									$in_multi = false;
@@ -3924,7 +3924,7 @@ class PluginChatAdmin extends Plugin {
 //								}
 //							}
 //							else {
-//								if (substr($command['params'][$i], 0, 1) == '"') {
+//								if (substr($command['params'][$i], 0, 1) === '"') {
 //									$multistr = substr($command['params'][$i], 1);
 //									$in_multi = true;
 //								}
@@ -3993,13 +3993,13 @@ class PluginChatAdmin extends Plugin {
 //				$aseco->sendChatMessage($message, $login);
 //			}
 		}
-		else if ($command['params'][0] == 'unlock' && $command['params'][1] != '') {
+		else if ($command['params'][0] === 'unlock' && $command['params'][1] !== '') {
 			/**
 			 * Unlocks admin commands & features.
 			 */
 
 			// check unlock password
-			if ($aseco->settings['lock_password'] == $command['params'][1]) {
+			if ($aseco->settings['lock_password'] === $command['params'][1]) {
 				$admin->unlocked = true;
 				$msg = new Message('chat.admin', 'message_password_accepted');
 			}
@@ -4008,7 +4008,7 @@ class PluginChatAdmin extends Plugin {
 			}
 			$msg->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'debug') {
+		else if ($command['params'][0] === 'debug') {
 			/**
 			 * Toggle debug on/off.
 			 */
@@ -4019,7 +4019,7 @@ class PluginChatAdmin extends Plugin {
 			$msg->addPlaceholders($aseco->debug ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
 			$msg->sendChatMessage($login);
 		}
-		else if ($command['params'][0] == 'shutdown') {
+		else if ($command['params'][0] === 'shutdown') {
 			/**
 			 * Shuts down UASECO.
 			 */
@@ -4037,14 +4037,14 @@ class PluginChatAdmin extends Plugin {
 
 			exit(0);
 		}
-		else if ($command['params'][0] == 'shutdownall') {
+		else if ($command['params'][0] === 'shutdownall') {
 			/**
 			 * Shuts down Server & UASECO.
 			 */
 			$this->admin_shutdownall($login, $command, $arglist, $logtitle, $chattitle);
 
 		}
-		else if ($command['params'][0] == 'uptodate') {
+		else if ($command['params'][0] === 'uptodate') {
 			/**
 			 * Checks current version of UASECO.
 			 */
@@ -4076,205 +4076,212 @@ class PluginChatAdmin extends Plugin {
 	private function admin_add ($login, $command, $arglist, $logtitle, $chattitle) {
 		global $aseco;
 
-		$source = 'MX';
-		$remotelink = 'http://tm.mania-exchange.com/tracks/download/';
+		if (isset($aseco->plugins['PluginRasp']) === true) {
+			$source = 'MX';
+			$remotelink = 'http://tm.mania-exchange.com/tracks/download/';
 
-		if (count($command['params']) == 1) {
-			$msg = new Message('chat.admin', 'message_mxid_required');
-			$msg->sendChatMessage($login);
-			return;
-		}
+			if (count($command['params']) === 1) {
+				$msg = new Message('chat.admin', 'message_mxid_required');
+				$msg->sendChatMessage($login);
+				return;
+			}
 
-		if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
-			return;
-		}
+			if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
+				return;
+			}
 
-		// try all specified maps
-		for ($id = 1; $id < count($command['params']); $id++) {
-			// check for valid MX ID
-			if (is_numeric($command['params'][$id]) && $command['params'][$id] >= 0) {
-				$trkid = ltrim($command['params'][$id], '0');
+			// try all specified maps
+			for ($id = 1; $id < count($command['params']); $id++) {
+				// check for valid MX ID
+				if (is_numeric($command['params'][$id]) && $command['params'][$id] >= 0) {
+					$trkid = ltrim($command['params'][$id], '0');
 
-				try {
-					// Start sync GET request
-					$params = array(
-						'url'			=> $remotelink . $trkid,
-						'sync'			=> true,
-						'user_agent'		=> USER_AGENT,
-					);
-					$request = $aseco->webrequest->GET($params);
-					if (isset($request->response['header']['code']) && $request->response['header']['code'] == 200) {
-						$file = $request->response['content'];
+					try {
+						// Start sync GET request
+						$params = array(
+							'url'			=> $remotelink . $trkid,
+							'sync'			=> true,
+							'user_agent'		=> USER_AGENT,
+						);
+						$request = $aseco->webrequest->GET($params);
+						if (isset($request->response['header']['code']) && $request->response['header']['code'] === 200) {
+							$file = $request->response['content'];
 
-						// check for maximum online map size
-						if (strlen($file) >= $aseco->server->maps->size_limit) {
-							$msg = new Message('chat.admin', 'map_too_large');
-							$msg->addPlaceholders(round(strlen($file) / $aseco->server->maps->size_limit));
-							$msg->sendChatMessage($login);
-							continue;
-						}
-						$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $trkid .'.Map.gbx';
-						$localfile = $aseco->server->mapdir . $partialdir;
-						if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
-							if (!unlink($nocasepath)) {
-								$msg = new Message('chat.admin', 'message_error_erasing');
+							// check for maximum online map size
+							if (strlen($file) >= $aseco->server->maps->size_limit) {
+								$msg = new Message('chat.admin', 'map_too_large');
+								$msg->addPlaceholders(round(strlen($file) / $aseco->server->maps->size_limit));
+								$msg->sendChatMessage($login);
+								continue;
+							}
+							$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $trkid .'.Map.gbx';
+							$localfile = $aseco->server->mapdir . $partialdir;
+							if ($nocasepath = $aseco->fileExistsNoCase($localfile)) {
+								if (!unlink($nocasepath)) {
+									$msg = new Message('chat.admin', 'message_error_erasing');
+									$msg->addPlaceholders($localfile);
+									$msg->sendChatMessage($login);
+									continue;
+								}
+							}
+							if (!$lfile = @fopen($localfile, 'wb')) {
+								$msg = new Message('chat.admin', 'message_error_create_file');
 								$msg->addPlaceholders($localfile);
 								$msg->sendChatMessage($login);
 								continue;
 							}
-						}
-						if (!$lfile = @fopen($localfile, 'wb')) {
-							$msg = new Message('chat.admin', 'message_error_create_file');
-							$msg->addPlaceholders($localfile);
-							$msg->sendChatMessage($login);
-							continue;
-						}
-						if (!fwrite($lfile, $file)) {
-							$msg = new Message('chat.admin', 'message_error_write_file');
-							$msg->addPlaceholders($localfile);
-							$msg->sendChatMessage($login);
+							if (!fwrite($lfile, $file)) {
+								$msg = new Message('chat.admin', 'message_error_write_file');
+								$msg->addPlaceholders($localfile);
+								$msg->sendChatMessage($login);
+								fclose($lfile);
+								continue;
+							}
 							fclose($lfile);
-							continue;
-						}
-						fclose($lfile);
 
-						$gbx = $aseco->server->maps->parseMap($localfile);
-						if ( !isset($gbx->uid) ) {
-							$msg = new Message('chat.admin', 'message_is_no_map');
-							$msg->addPlaceholders($source);
-							$msg->sendChatMessage($login);
-							unlink($localfile);
-							continue;
-						}
+							$gbx = $aseco->server->maps->parseMap($localfile);
+							if ( !isset($gbx->uid) ) {
+								$msg = new Message('chat.admin', 'message_is_no_map');
+								$msg->addPlaceholders($source);
+								$msg->sendChatMessage($login);
+								unlink($localfile);
+								continue;
+							}
 
-						// Check for map presence on server
-						$tmp = $aseco->server->maps->getMapByUid($gbx->uid);
-						if ($tmp->uid == $gbx->uid) {
-							$msg = new Message('plugin.rasp', 'add_present');
-							$msg->sendChatMessage($login);
-							unlink($localfile);
-							continue;
-						}
+							// Check for map presence on server
+							$tmp = $aseco->server->maps->getMapByUid($gbx->uid);
+							if ($tmp->uid === $gbx->uid) {
+								$msg = new Message('plugin.rasp', 'add_present');
+								$msg->sendChatMessage($login);
+								unlink($localfile);
+								continue;
+							}
 
-						// rename ID filename to map's name
-						$md5new = md5_file($localfile);
-						$response = new MXInfoFetcher('TM2', $gbx->uid, true);
-						if ($response !== null && empty($response->error)) {
-							$filename = $aseco->slugify($response->name);
-						}
-						else {
-							$filename = $aseco->slugify($gbx->name);
-						}
-						$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $gbx->envir . DIRECTORY_SEPARATOR . $filename .'_'. $trkid .'.Map.gbx';
-
-						// insure unique filename by incrementing sequence number,
-						// if not a duplicate map
-						$i = 1;
-						$dupl = false;
-						while ($nocasepath = $aseco->fileExistsNoCase($aseco->server->mapdir . $partialdir)) {
-							$md5old = md5_file($nocasepath);
-							if ($md5old == $md5new) {
-								$dupl = true;
-								$partialdir = str_replace($aseco->server->mapdir, '', $nocasepath);
-								break;
+							// rename ID filename to map's name
+							$md5new = md5_file($localfile);
+							$response = new MXInfoFetcher('TM2', $gbx->uid, true);
+							if ($response !== null && empty($response->error)) {
+								$filename = $aseco->slugify($response->name);
 							}
 							else {
-								$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $gbx->environment . DIRECTORY_SEPARATOR . $filename .'_'. $trkid .'-'. $i++ .'.Map.gbx';
+								$filename = $aseco->slugify($gbx->name);
 							}
-						}
-						if ($dupl) {
-							unlink($localfile);
-						}
-						else {
-							rename($localfile, $aseco->server->mapdir . $partialdir);
-						}
+							$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $gbx->envir . DIRECTORY_SEPARATOR . $filename .'_'. $trkid .'.Map.gbx';
 
-						// Check map vs. server settings
-						try {
-							$aseco->client->query('CheckMapForCurrentServerParams', $partialdir);
-
-							// Permanently add the map to the server list
-							try {
-								$aseco->client->query('AddMap', $partialdir);
-								$mapinfo = $aseco->client->query('GetMapInfo', $partialdir);
-								if (!$mapinfo) {
-									$message = 'Method [GetMapInfo]: Error getting info on Map ['. $aseco->stripStyles($gbx->name) .']!';
-									$aseco->console('[ChatAdmin] '. $message);
-									$aseco->sendChatMessage($message, $login);
+							// insure unique filename by incrementing sequence number,
+							// if not a duplicate map
+							$i = 1;
+							$dupl = false;
+							while ($nocasepath = $aseco->fileExistsNoCase($aseco->server->mapdir . $partialdir)) {
+								$md5old = md5_file($nocasepath);
+								if ($md5old === $md5new) {
+									$dupl = true;
+									$partialdir = str_replace($aseco->server->mapdir, '', $nocasepath);
+									break;
 								}
 								else {
-									$mapinfo['Name'] = $aseco->stripNewlines($mapinfo['Name']);
+									$partialdir = $aseco->plugins['PluginRasp']->mxdir . DIRECTORY_SEPARATOR . $gbx->environment . DIRECTORY_SEPARATOR . $filename .'_'. $trkid .'-'. $i++ .'.Map.gbx';
+								}
+							}
+							if ($dupl) {
+								unlink($localfile);
+							}
+							else {
+								rename($localfile, $aseco->server->mapdir . $partialdir);
+							}
 
-									// Create Map object
-									$map = new Map($gbx, $mapinfo['FileName']);
+							// Check map vs. server settings
+							try {
+								$aseco->client->query('CheckMapForCurrentServerParams', $partialdir);
 
-									// Add map to the MapList
-									$map = $aseco->server->maps->addMapToListByUid($map->uid);
-
-									// check whether to jukebox as well
-									// overrules /add-ed but not yet played map
-									if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['FileName'] = $map->filename;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Name'] = $map->name;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Env'] = $map->environment;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Login'] = $login;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Nick'] = $admin->nickname;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['source'] = $source;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['mx'] = false;
-										$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['uid'] = $map->uid;
+								// Permanently add the map to the server list
+								try {
+									$aseco->client->query('AddMap', $partialdir);
+									$mapinfo = $aseco->client->query('GetMapInfo', $partialdir);
+									if (!$mapinfo) {
+										$message = 'Method [GetMapInfo]: Error getting info on Map ['. $aseco->stripStyles($gbx->name) .']!';
+										$aseco->console('[ChatAdmin] '. $message);
+										$aseco->sendChatMessage($message, $login);
 									}
+									else {
+										$mapinfo['Name'] = $aseco->stripNewlines($mapinfo['Name']);
 
-									// log console message
-									$aseco->console('[ChatAdmin] {1} [{2}] adds map [{3}] from {4}!', $logtitle, $login, $map->name_stripped, $source);
+										// Create Map object
+										$map = new Map($gbx, $mapinfo['FileName']);
 
-									// show chat message
-									$msg = new Message('chat.admin', 'message_map_added');
-									$msg->addPlaceholders($chattitle, $admin->nickname, ((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''), $map->name_stripped, $source);
-									$msg->sendChatMessage();
+										// Add map to the MapList
+										$map = $aseco->server->maps->addMapToListByUid($map->uid);
 
-									// Setup next Map
-									$aseco->server->maps->next = $aseco->server->maps->getNextMap();
+										// check whether to jukebox as well
+										// overrules /add-ed but not yet played map
+										if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['FileName'] = $map->filename;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Name'] = $map->name;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Env'] = $map->environment;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Login'] = $login;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['Nick'] = $admin->nickname;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['source'] = $source;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['mx'] = false;
+											$aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]['uid'] = $map->uid;
+										}
 
-									// throw 'maplist changed' event
-									$aseco->releaseEvent('onMapListChanged', array('add', $partialdir));
+										// log console message
+										$aseco->console('[ChatAdmin] {1} [{2}] adds map [{3}] from {4}!', $logtitle, $login, $map->name_stripped, $source);
 
-									// throw 'jukebox changed' event
-									if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
-										$aseco->releaseEvent('onJukeboxChanged', array('add', $aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]));
+										// show chat message
+										$msg = new Message('chat.admin', 'message_map_added');
+										$msg->addPlaceholders($chattitle, $admin->nickname, ((isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) ? '& jukeboxes ' : ''), $map->name_stripped, $source);
+										$msg->sendChatMessage();
+
+										// Setup next Map
+										$aseco->server->maps->next = $aseco->server->maps->getNextMap();
+
+										// throw 'maplist changed' event
+										$aseco->releaseEvent('onMapListChanged', array('add', $partialdir));
+
+										// throw 'jukebox changed' event
+										if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->jukebox_adminadd) {
+											$aseco->releaseEvent('onJukeboxChanged', array('add', $aseco->plugins['PluginRaspJukebox']->jukebox[$map->uid]));
+										}
 									}
+								}
+								catch (Exception $exception) {
+									$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - AddMap: Map ['. $aseco->stripStyles($gbx->name) .']');
+									$message = $aseco->formatText('{#server}» {#error}Could not add Map {#highlite}{1}$Z$S{#error}: {2}!',
+										$aseco->stripStyles($gbx->name),
+										$exception->getMessage()
+									);
+									$aseco->sendChatMessage($message, $login);
 								}
 							}
 							catch (Exception $exception) {
-								$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - AddMap: Map ['. $aseco->stripStyles($gbx->name) .']');
-								$message = $aseco->formatText('{#server}» {#error}Could not add Map {#highlite}{1}$Z$S{#error}: {2}!',
-									$aseco->stripStyles($gbx->name),
-									$exception->getMessage()
-								);
-								$aseco->sendChatMessage($message, $login);
+								$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - CheckMapForCurrentServerParams: Map ['. $aseco->stripStyles($gbx->name) .']');
+
+								$msg = new Message('chat.admin', 'message_map_not_added_incompatible');
+								$msg->addPlaceholders($aseco->stripStyles($gbx->name));
+								$msg->sendChatMessage($login);
 							}
 						}
-						catch (Exception $exception) {
-							$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - CheckMapForCurrentServerParams: Map ['. $aseco->stripStyles($gbx->name) .']');
-
-							$msg = new Message('chat.admin', 'message_map_not_added_incompatible');
-							$msg->addPlaceholders($aseco->stripStyles($gbx->name));
+						else {
+							$msg = new Message('chat.admin', 'message_mx_download_error');
 							$msg->sendChatMessage($login);
 						}
 					}
-					else {
-						$msg = new Message('chat.admin', 'message_mx_download_error');
-						$msg->sendChatMessage($login);
+					catch (Exception $exception) {
+						$aseco->console('[ChatAdmin] webrequest->get(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
 					}
 				}
-				catch (Exception $exception) {
-					$aseco->console('[ChatAdmin] webrequest->get(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
+				else {
+					$msg = new Message('chat.admin', 'message_invalid_mxid');
+					$msg->addPlaceholders($command['params'][$id]);
+					$msg->sendChatMessage($login);
 				}
 			}
-			else {
-				$msg = new Message('chat.admin', 'message_invalid_mxid');
-				$msg->addPlaceholders($command['params'][$id]);
-				$msg->sendChatMessage($login);
-			}
+		}
+		else {
+			// show chat message
+			$msg = new Message('chat.admin', 'message_activate_rasp');
+			$msg->sendChatMessage($login);
 		}
 	}
 
@@ -4287,7 +4294,7 @@ class PluginChatAdmin extends Plugin {
 	private function admin_addthis ($login, $command, $arglist, $logtitle, $chattitle) {
 		global $aseco;
 
-		if (isset($aseco->plugins['PluginRaspJukebox'])) {
+		if (isset($aseco->plugins['PluginRaspJukebox']) === true && isset($aseco->plugins['PluginRasp']) === true) {
 
 			if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
 				return;
@@ -4368,7 +4375,7 @@ class PluginChatAdmin extends Plugin {
 		}
 
 		// check for local map file
-		if ($arglist[1] != '') {
+		if ($arglist[1] !== '') {
 			$sepchar = substr($aseco->server->mapdir, -1, 1);
 			$partialdir = 'Downloaded'. $sepchar . $arglist[1];
 			if (!stristr($partialdir, '.Map.gbx')) {
@@ -4477,7 +4484,7 @@ class PluginChatAdmin extends Plugin {
 		$filename = $aseco->settings['default_maplist'];
 
 		// Check for optional alternate filename
-		if ($command['params'][1] != '') {
+		if ($command['params'][1] !== '') {
 			$filename = $command['params'][1];
 			if (!stristr($filename, '.txt')) {
 				$filename .= '.txt';
@@ -4588,7 +4595,7 @@ class PluginChatAdmin extends Plugin {
 
 		// Remember players parameter for possible refresh
 		$admin->panels['plyparam'] = $command['params'][1];
-		$onlineonly = (strtolower($command['params'][1]) == 'live');
+		$onlineonly = (strtolower($command['params'][1]) === 'live');
 
 		// Get current ignore/ban/black/guest lists
 		$ignores = $this->getIgnorelist($aseco);
@@ -4604,7 +4611,7 @@ class PluginChatAdmin extends Plugin {
 			$players = $aseco->client->query('GetPlayerList', 300, 0, 1);
 			foreach ($players as $pl) {
 				// on relay, check for player from master server
-				if (!$aseco->server->isrelay || floor($pl['Flags'] / 10000) % 10 == 0) {
+				if (!$aseco->server->isrelay || floor($pl['Flags'] / 10000) % 10 === 0) {
 					$onlinelist[$pl['Login']] = array(
 						'login'	=> $pl['Login'],
 						'nick'	=> $pl['NickName'],
@@ -4791,7 +4798,7 @@ class PluginChatAdmin extends Plugin {
 				if (count($admin->msgs) > 1) {
 					$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
 				}
-				else {  // == 1
+				else {  // === 1
 					$msg = new Message('chat.admin', 'message_no_players_found');
 					$msg->sendChatMessage($login);
 				}
@@ -5309,7 +5316,7 @@ class PluginChatAdmin extends Plugin {
 			if (!$empty = empty($aseco->banned_ips)) {
 				$empty = true;
 				for ($i = 0; $i < count($aseco->banned_ips); $i++) {
-					if ($aseco->banned_ips[$i] != '') {
+					if ($aseco->banned_ips[$i] !== '') {
 						$empty = false;
 						break;
 					}

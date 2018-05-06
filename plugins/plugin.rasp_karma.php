@@ -45,8 +45,8 @@ class PluginRaspKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Votes for a map and displays current score of it.');
 
 		$this->registerEvent('onSync',		'onSync');
@@ -321,13 +321,15 @@ class PluginRaspKarma extends Plugin {
 			return;
 		}
 
+		$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
+
 		// check whether player already voted
 		$query = "
 		SELECT
 			`MapId`,
 			`Score`
 		FROM `%prefix%ratings`
-		WHERE `PlayerId` = ". $finish_item->player->id ."
+		WHERE `PlayerId` = ". $player->id ."
 		AND `MapId` = ". $aseco->server->maps->current->id .";
 		";
 
@@ -335,7 +337,7 @@ class PluginRaspKarma extends Plugin {
 		if ($res->num_rows == 0) {
 			// show reminder message
 			$message = $this->messages['KARMA_REMIND'][0];
-			$aseco->sendChatMessage($message, $finish_item->player->login);
+			$aseco->sendChatMessage($message, $player->login);
 		}
 		$res->free_result();
 	}

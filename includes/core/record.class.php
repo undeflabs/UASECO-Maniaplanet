@@ -33,7 +33,7 @@
 
 class Record extends BaseClass {
 	public $player;
-	public $map;
+	public $map_id;
 	public $score;
 	public $date;
 	public $checkpoints;
@@ -49,9 +49,9 @@ class Record extends BaseClass {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Structure of a Record.');
 	}
 }

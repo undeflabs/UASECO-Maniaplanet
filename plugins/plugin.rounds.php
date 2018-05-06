@@ -49,8 +49,8 @@ class PluginRounds extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Reports finishes in each individual round.');
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
@@ -188,19 +188,22 @@ class PluginRounds extends Plugin {
 	public function onPlayerFinish ($aseco, $finish_item) {
 
 		// if Rounds/Team/Cup mode & actual finish, then store time & PB
-		if (($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) && $finish_item->score > 0) {
+		if (($aseco->server->gameinfo->mode === Gameinfo::ROUNDS || $aseco->server->gameinfo->mode === Gameinfo::TEAM || $aseco->server->gameinfo->mode === Gameinfo::CUP) && $finish_item->score > 0) {
+
+			$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
+
 			$this->round_times[$finish_item->score][] = array(
-				'playerid'	=> $finish_item->player->pid,
-				'login'		=> $finish_item->player->login,
+				'playerid'	=> $player->player->pid,
+				'login'		=> $player->player->login,
 				'score'		=> $finish_item->score,
 			);
-			if (isset($this->round_pbs[$finish_item->player->login])) {
-				if ($this->round_pbs[$finish_item->player->login] > $finish_item->score) {
-					$this->round_pbs[$finish_item->player->login] = $finish_item->score;
+			if (isset($this->round_pbs[$player->login])) {
+				if ($this->round_pbs[$player->login] > $finish_item->score) {
+					$this->round_pbs[$player->login] = $finish_item->score;
 				}
 			}
 			else {
-				$this->round_pbs[$finish_item->player->login] = $finish_item->score;
+				$this->round_pbs[$player->login] = $finish_item->score;
 			}
 		}
 	}

@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-04-24');
+		$this->setBuild('2018-05-06');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -2000,7 +2000,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Get the Player object (possible required below)
-		$player = $aseco->server->players->player_list[$finish_item->player->login];
+		$player = $aseco->server->players->player_list[$finish_item->player_login];
 
 
 		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == false) {
@@ -2008,7 +2008,7 @@ class PluginRecordsEyepiece extends Plugin {
 			// Add the Score
 			$this->scores['RoundScore'][$finish_item->score] = array(
 				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-				'checkpointid'	=> count($finish_item->checkpoints) - 1,
+				'checkpointid'	=> count((isset($aseco->plugins['PluginCheckpoints']->checkpoints[$finish_item->player_login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$finish_item->player_login]->current['cps'] : array())) - 1,
 				'playerid'	=> $player->pid,
 				'login'		=> $player->login,
 				'nickname'	=> $player->nickname,

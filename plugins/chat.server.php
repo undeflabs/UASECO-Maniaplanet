@@ -44,15 +44,10 @@ class PluginChatServer extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2018-05-06');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.server', 'plugin_description'));
-
-		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
-		$this->addDependence('PluginLocalRecords',	Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginRaspVotes',		Dependence::WANTED,	'1.0.0', null);
-		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
 
 		$this->registerChatCommand('uaseco',		'chat_uaseco',		new Message('chat.server', 'slash_uaseco_description'),		Player::PLAYERS);
 		$this->registerChatCommand('contact',		'chat_contact',		new Message('chat.server', 'slash_contact_description'),	Player::PLAYERS);

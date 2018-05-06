@@ -50,7 +50,7 @@ class PlayerList extends BaseClass {
 		$this->setAuthor('undef.de');
 		$this->setContributors(array('brakerb'));
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-04-25');
+		$this->setBuild('2018-05-06');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -470,7 +470,12 @@ class PlayerList extends BaseClass {
 			$res->free_result();
 
 			if (!empty($players)) {
-				$max_records = $aseco->plugins['PluginLocalRecords']->records->getMaxRecords();
+				if (isset($aseco->plugins['PluginLocalRecords']) === true) {
+					$max_records = $aseco->plugins['PluginLocalRecords']->records->getMaxRecords();
+				}
+				else {
+					$max_records = 500;	// Use a default value
+				}
 
 //				// RASP OLD: Get ranked records for all maps
 //				foreach ($aseco->server->maps->map_list as $map) {
