@@ -45,8 +45,8 @@ class PluginNicknameSync extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('.anDy');
 		$this->setVersion('1.2.1');
-		$this->setBuild('2017-05-04');
-		$this->setCopyright('2011 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2011 - 2018 by undef.de');
 		$this->setDescription('Keeps the Player Nicknames from the database in sync with the dedimania records.');
 
 		$this->addDependence('PluginLocalRecords',		Dependence::REQUIRED,	'1.0.0', null);
@@ -111,9 +111,9 @@ class PluginNicknameSync extends Plugin {
 
 			// Search Nickname of Player in Local Records
 			foreach ($aseco->plugins['PluginLocalRecords']->records->record_list as &$local) {
-				if ($local->player->login == $public[$keyLogin]) {
+				if ($local->player->login === $public[$keyLogin]) {
 					// Check for different Nickname
-					if ($local->player->nickname != $public[$keyNick]) {
+					if ($local->player->nickname !== $public[$keyNick]) {
 						// Update Nickname in local Records (impermanent, only for showing new Nickname in Widgets)
 						$local->player->nickname = $public[$keyNick];
 
@@ -137,7 +137,7 @@ class PluginNicknameSync extends Plugin {
 
 			foreach ($playersKnownLocal as $login => &$nick) {
 				// Check for different Nickname
-				if ($playersUnknownPublic[$login] != $nick) {
+				if ($playersUnknownPublic[$login] !== $nick) {
 					// Add it to update list to make it permament
 					$playersToUpdate[$login] = $playersUnknownPublic[$login];
 				}
@@ -173,7 +173,7 @@ class PluginNicknameSync extends Plugin {
 				";
 
 				$result = $aseco->db->query($query);
-				if ($aseco->db->affected_rows == -1) {
+				if ($aseco->db->affected_rows === -1) {
 					trigger_error('[NicknameSync] Could not update Player from '. $database .' Database! ('. $aseco->db->errmsg() .') for statement ['. $query .']', E_USER_WARNING);
 				}
 			}

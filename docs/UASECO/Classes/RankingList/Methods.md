@@ -57,21 +57,21 @@ Returns the amount of rankings.
 
 
 ### [update](_#update)
-Update the ranking list with an new ranking from a Player.
+Update the ranking list with an new rankings from a Player or multiple Players.
 
 
 #### Description
-	void = update ( array $update )
+	void = update ( array $data )
 
 
 #### Parameters
-*	`$update`
+*	`$data`
 
 	A array with ranking informations for the ranking list.
 
 
 #### Example
-	$update = array(
+	$update[] = array(
 		'rank'				=> 1,
 		'login'				=> 'puennt_ennel',
 		'nickname'			=> '$S$W$F90Gιммє$FF0ツ',
@@ -90,7 +90,7 @@ Update the ranking list with an new ranking from a Player.
 		'stunts_score'			=> 50,
 		'prev_stunts_score'		=> 125,
 	);
-	$result = $aseco->server->rankings->update($update);
+	$result = $aseco->server->rankings->update($data);
 
 
 

@@ -45,8 +45,8 @@ class PluginGreetingDude extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-04');
-		$this->setCopyright('2012 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('Automated greeting robot for new connected Players.');
 
 		$this->registerEvent('onSync',			'onSync');
@@ -84,8 +84,8 @@ class PluginGreetingDude extends Plugin {
 
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
-		$this->config['ONLY_PERSONAL_GREETINGS'][0]	= ((strtoupper($this->config['ONLY_PERSONAL_GREETINGS'][0]) == 'TRUE')	? true : false);
-		$this->config['PUBLIC_GREETINGS'][0]		= ((strtoupper($this->config['PUBLIC_GREETINGS'][0]) == 'TRUE')		? true : false);
+		$this->config['ONLY_PERSONAL_GREETINGS'][0]	= ((strtoupper($this->config['ONLY_PERSONAL_GREETINGS'][0]) === 'TRUE')	? true : false);
+		$this->config['PUBLIC_GREETINGS'][0]		= ((strtoupper($this->config['PUBLIC_GREETINGS'][0]) === 'TRUE')		? true : false);
 
 
 		// Build the array of personal greetings for special Players
@@ -113,13 +113,13 @@ class PluginGreetingDude extends Plugin {
 			$message = $this->config['GREETER_NAME'][0] .'$Z '. $this->config['TEXT_FORMATTING'][0] . $this->config['PersonalMessages'][$player->login];
 			$message = str_replace('{nickname}', $nickname, $message);
 		}
-		else if ($this->config['ONLY_PERSONAL_GREETINGS'][0] == false) {
+		else if ($this->config['ONLY_PERSONAL_GREETINGS'][0] === false) {
 			// Setup the global greeting
 			$message = $this->config['GREETER_NAME'][0] .'$Z '. $this->config['TEXT_FORMATTING'][0] . $this->config['MESSAGES'][0]['GREETING'][rand(0,count($this->config['MESSAGES'][0]['GREETING'])-1)];
 			$message = str_replace('{nickname}', $nickname, $message);
 		}
-		if ($message != false) {
-			if ($this->config['PUBLIC_GREETINGS'][0] == true) {
+		if ($message !== false) {
+			if ($this->config['PUBLIC_GREETINGS'][0] === true) {
 				$aseco->sendChatMessage($message, false);
 			}
 			else {

@@ -46,8 +46,8 @@ class PluginForceLoadscreen extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription('Displays randomized images between the Map change.');
 
 		$this->registerEvent('onSync',		'onSync');
@@ -88,7 +88,7 @@ class PluginForceLoadscreen extends Plugin {
 
 		$this->config['images'] = array();
 		foreach ($config->images->image as $image) {
-			if (strtolower((string)$image['enabled']) == 'true') {
+			if (strtolower((string)$image['enabled']) === 'true') {
 				$list = strtolower((string)$image['env']);
 				if (empty($list)) {
 					$this->config['images'][] = array(
@@ -116,7 +116,7 @@ class PluginForceLoadscreen extends Plugin {
 
 		$urls = array();
 		foreach ($this->config['images'] as $image) {
-			if (in_array(strtolower($map->environment), $image['env']) === true || count($image['env']) == 0) {
+			if (in_array(strtolower($map->environment), $image['env']) === true || count($image['env']) === 0) {
 				$urls[] = $image['url'];
 			}
 		}

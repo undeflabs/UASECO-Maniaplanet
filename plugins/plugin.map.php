@@ -47,8 +47,8 @@ class PluginMap extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Times playing time of a map, provides map and time info and shows (file)names of current map\'s and song mod.');
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
@@ -74,7 +74,7 @@ class PluginMap extends Plugin {
 	public function chat_map ($aseco, $login, $chat_command, $chat_parameter) {
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
-		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
+		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
 			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
 
@@ -113,7 +113,7 @@ class PluginMap extends Plugin {
 
 			// Use only first parameter
 			$chat_parameter = explode(' ', $chat_parameter, 2);
-			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->song_url) {
+			if ((strtolower($chat_parameter[0]) === 'url' || strtolower($chat_parameter[0]) === 'loc') && $aseco->server->maps->current->song_url) {
 				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->song_url .']'. $aseco->server->maps->current->song_url .'$l';
 			}
 		}
@@ -149,7 +149,7 @@ class PluginMap extends Plugin {
 			);
 			// Use only first parameter
 			$chat_parameter = explode(' ', $chat_parameter, 2);
-			if ((strtolower($chat_parameter[0]) == 'url' || strtolower($chat_parameter[0]) == 'loc') && $aseco->server->maps->current->mod_url) {
+			if ((strtolower($chat_parameter[0]) === 'url' || strtolower($chat_parameter[0]) === 'loc') && $aseco->server->maps->current->mod_url) {
 				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->mod_url .']'. $aseco->server->maps->current->mod_url .'$l';
 			}
 		}
@@ -208,7 +208,7 @@ class PluginMap extends Plugin {
 	public function chat_playtime ($aseco, $login, $chat_command, $chat_parameter) {
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
-		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
+		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
 			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name . '$l';
 		}
 
@@ -220,7 +220,7 @@ class PluginMap extends Plugin {
 		if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->replays_total > 0) {
 			$message .= $aseco->formatText($aseco->getChatMessage('PLAYTIME_REPLAY'),
 				$aseco->plugins['PluginRaspJukebox']->replays_total,
-				($aseco->plugins['PluginRaspJukebox']->replays_total == 1 ? '' : 's'),
+				($aseco->plugins['PluginRaspJukebox']->replays_total === 1 ? '' : 's'),
 				$aseco->timeString(time() - $aseco->server->starttime, true)
 			);
 		}
@@ -257,7 +257,7 @@ class PluginMap extends Plugin {
 		// Check for divider message
 		if ($aseco->settings['show_curmap'] > 0) {
 			$name = $aseco->stripStyles($map->name);
-			if (isset($map->mx->error) && $map->mx->error == '') {
+			if (isset($map->mx->error) && $map->mx->error === '') {
 				$name = '$l[http://' . $map->mx->prefix .'.mania-exchange.com/tracks/view/'. $map->mx->id .']'. $name . '$l';
 			}
 
@@ -269,7 +269,7 @@ class PluginMap extends Plugin {
 			);
 
 			// show chat message
-			if ($aseco->settings['show_curmap'] == 2) {
+			if ($aseco->settings['show_curmap'] === 2) {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 			}
 			else {
@@ -299,12 +299,12 @@ class PluginMap extends Plugin {
 	public function onEndMap ($aseco, $data) {
 
 		// Skip if TimeAttack mode (always same playing time), or if disabled
-		if ($aseco->settings['show_playtime'] == 0 || $aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
+		if ($aseco->settings['show_playtime'] === 0 || $aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK) {
 			return;
 		}
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
-		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
+		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
 			$name = '$l[http://' . $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
 
@@ -320,12 +320,12 @@ class PluginMap extends Plugin {
 		if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->replays_total > 0) {
 			$message .= $aseco->formatText($aseco->getChatMessage('PLAYTIME_REPLAY'),
 				$aseco->plugins['PluginRaspJukebox']->replays_total,
-				($aseco->plugins['PluginRaspJukebox']->replays_total == 1 ? '' : 's'),
+				($aseco->plugins['PluginRaspJukebox']->replays_total === 1 ? '' : 's'),
 				$totaltime
 			);
 		}
 
-		if ($aseco->settings['show_playtime'] == 2) {
+		if ($aseco->settings['show_playtime'] === 2) {
 			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 		}
 		else {
@@ -334,7 +334,7 @@ class PluginMap extends Plugin {
 
 		if ( isset($aseco->plugins['PluginRaspJukebox']) ) {
 			// Log console message
-			if ($aseco->plugins['PluginRaspJukebox']->replays_total == 0) {
+			if ($aseco->plugins['PluginRaspJukebox']->replays_total === 0) {
 				$aseco->console('[Map] The Map [{1}] finished after {2}',
 					$aseco->stripStyles($aseco->server->maps->current->name, false),
 					$playtime
@@ -345,7 +345,7 @@ class PluginMap extends Plugin {
 					$aseco->stripStyles($aseco->server->maps->current->name, false),
 					$playtime,
 					$aseco->plugins['PluginRaspJukebox']->replays_total,
-					($aseco->plugins['PluginRaspJukebox']->replays_total == 1 ? '' : 's'),
+					($aseco->plugins['PluginRaspJukebox']->replays_total === 1 ? '' : 's'),
 					$totaltime
 				);
 			}

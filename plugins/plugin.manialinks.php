@@ -115,8 +115,8 @@ class PluginManialinks extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-25');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides simple ManiaLink windows, also handles special panels and custom UI changes.');
 
 

@@ -50,8 +50,8 @@ class PluginDonate extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-12');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Processes planet donations to and payments from the server.');
 
 		$this->registerEvent('onSync',				'onSync');
@@ -95,7 +95,7 @@ class PluginDonate extends Plugin {
 		$planets = $chat_parameter;
 
 		// check for valid amount
-		if ($planets != '' && is_numeric($planets)) {
+		if ($planets !== '' && is_numeric($planets)) {
 			$planets = (int) $planets;
 			// check for minimum donation
 			if ($planets >= $this->mindonation) {
@@ -140,7 +140,7 @@ class PluginDonate extends Plugin {
 			`Nickname`,
 			`Donations`
 		FROM `%prefix%players`
-		WHERE `Donations` != 0
+		WHERE `Donations` !== 0
 		ORDER BY `Donations` DESC
 		LIMIT ". $top .";
 		";
@@ -207,9 +207,9 @@ class PluginDonate extends Plugin {
 	public function admin_payment ($aseco, $login, $target, $amount) {
 
 		// check parameters
-		if ($target != '' && $amount != '' && is_numeric($amount) && $amount > 0) {
+		if ($target !== '' && $amount !== '' && is_numeric($amount) && $amount > 0) {
 			// check for this server
-			if ($target != $aseco->server->login) {
+			if ($target !== $aseco->server->login) {
 				// get current server planets
 				$planets = $aseco->client->query('GetServerPlanets');
 
@@ -327,11 +327,11 @@ class PluginDonate extends Plugin {
 		}
 
 		// PluginDonate?Action=Payout&Answer=[Confirm|Cancel]
-		if ($param['Action'] == 'Payout' && $param['Answer'] == 'Confirm') {
+		if ($param['Action'] === 'Payout' && $param['Answer'] === 'Confirm') {
 			$aseco->console('[Donate] Player [{1}] confirmed command "/admin pay"', $player->login);
 			$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, true);
 		}
-		else if ($param['Action'] == 'Payout' && $param['Answer'] == 'Cancel') {
+		else if ($param['Action'] === 'Payout' && $param['Answer'] === 'Cancel') {
 			$aseco->console('[Donate] Player [{1}] cancelled command "/admin pay"', $player->login);
 			$aseco->plugins['PluginDonate']->admin_pay($aseco, $player->login, false);
 		}
@@ -405,7 +405,7 @@ class PluginDonate extends Plugin {
 
 				case 6:  // Error
 					$message = '{#server}» {#error}Transaction failed: {#highlite}$i ' . $bill[2];
-					if ($login != '') {
+					if ($login !== '') {
 						$aseco->sendChatMessage($message, $login);
 					}
 					else {

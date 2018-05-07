@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -784,7 +784,7 @@ class PluginModescriptHandler extends Plugin {
 
 			case 'Maniaplanet.StartMap_Start':
 				// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
-				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
+//				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 
 				// Call 'Trackmania.WarmUp.GetStatus' to get 'Trackmania.WarmUp.Status'
 				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.WarmUp.GetStatus', array((string)time()));
@@ -886,79 +886,13 @@ class PluginModescriptHandler extends Plugin {
 
 
 			case 'Trackmania.Scores':
-				if ($aseco->server->gameinfo->mode === Gameinfo::TEAM && isset($params['teams']) && is_array($params['teams'])) {
-					$rank_blue = PHP_INT_MAX;
-					$rank_red = PHP_INT_MAX;
-
-					// Check which team has a higher score
-					if ($params['teams'][0]['mappoints'] > $params['teams'][1]['mappoints']) {
-						// Set "Team Blue" to Rank 1 and "Team Red" to 2
-						$rank_blue = 1;
-						$rank_red = 2;
-					}
-					else {
-						// Set "Team Blue" to Rank 2 and "Team Red" to 1
-						$rank_blue = 2;
-						$rank_red = 1;
-					}
-
-					// Store "Team Blue"
-					$update = array(
-						'rank'				=> $rank_blue,
-						'pid'				=> 0,
-						'login'				=> '*team:blue',
-						'nickname'			=> '$08FTeam Blue',
-						'round_points'			=> $params['teams'][0]['roundpoints'],
-						'map_points'			=> $params['teams'][0]['mappoints'],
-						'match_points'			=> $params['teams'][0]['matchpoints'],
-						'best_race_time'		=> 0,
-						'best_race_respawns'		=> 0,
-						'best_race_checkpoints'		=> array(),
-						'best_lap_time'			=> 0,
-						'best_lap_respawns'		=> 0,
-						'best_lap_checkpoints'		=> array(),
-						'prev_race_time'		=> -1,
-						'prev_race_respawns'		=> -1,
-						'prev_race_checkpoints'		=> array(),
-						'stunts_score'			=> 0,
-						'prev_stunts_score'		=> 0,
-					);
-					$aseco->server->rankings->update($update);
-
-					// Store "Team Red"
-					$update = array(
-						'rank'				=> $rank_red,
-						'pid'				=> 1,
-						'login'				=> '*team:red',
-						'nickname'			=> '$F50Team Red',
-						'round_points'			=> $params['teams'][1]['roundpoints'],
-						'map_points'			=> $params['teams'][1]['mappoints'],
-						'match_points'			=> $params['teams'][1]['matchpoints'],
-						'best_race_time'		=> 0,
-						'best_race_respawns'		=> 0,
-						'best_race_checkpoints'		=> array(),
-						'best_lap_time'			=> 0,
-						'best_lap_respawns'		=> 0,
-						'best_lap_checkpoints'		=> array(),
-						'prev_race_time'		=> -1,
-						'prev_race_respawns'		=> -1,
-						'prev_race_checkpoints'		=> array(),
-						'stunts_score'			=> 0,
-						'prev_stunts_score'		=> 0,
-					);
-					$aseco->server->rankings->update($update);
-
-					if ($aseco->settings['developer']['log_events']['common'] === true) {
-						$aseco->console('[Event] Player Ranking Updated (Team)');
-					}
-					$aseco->releaseEvent('onPlayerRankingUpdated', null);
-				}
-				else {
+				if ($aseco->server->gameinfo->mode !== Gameinfo::TEAM) {
 					$found_improvement = false;
 					if (isset($params['players']) && is_array($params['players'])) {
+						$updates = array();
 						foreach ($params['players'] as $item) {
 							if ($player = $aseco->server->players->getPlayerByLogin($item['login'])) {
-								$update = array(
+								$entry = array(
 									'rank'				=> $item['rank'],
 									'pid'				=> $player->pid,
 									'login'				=> $player->login,
@@ -980,24 +914,97 @@ class PluginModescriptHandler extends Plugin {
 								);
 
 								$rank = $aseco->server->rankings->getRankByLogin($item['login']);
-								if (($update['map_points'] > 0 || $rank->map_points > $update['map_points']) || ($update['match_points'] > 0 || $rank->match_points > $update['match_points']) || ($update['best_race_time'] > 0 || $rank->best_race_time > $update['best_race_time']) || ($update['best_lap_time'] > 0 || $rank->best_lap_time > $update['best_lap_time'])) {
-									// Update current ranking cache
-									$aseco->server->rankings->update($update);
-
-									// Lets send the event 'onPlayerRankingUpdated'
+								if (($entry['map_points'] > 0 || $rank->map_points > $entry['map_points']) || ($entry['match_points'] > 0 || $rank->match_points > $entry['match_points']) || ($entry['best_race_time'] > 0 || $rank->best_race_time > $entry['best_race_time']) || ($entry['best_lap_time'] > 0 || $rank->best_lap_time > $entry['best_lap_time'])) {
+									// Lets update
+									$updates[] = $entry;
 									$found_improvement = true;
 								}
 
 								// Special handling for 'round_points', details at 'docs/nadeo/Detailed description of Trackmania.Scores.txt'
-								if ($update['round_points'] > 0) {
-									$aseco->releaseEvent('onPlayerRoundFinish', $update);
+								if ($entry['round_points'] > 0) {
+									$aseco->releaseEvent('onPlayerRoundFinish', $entry);
 								}
 							}
 						}
 					}
 					if ($found_improvement === true) {
+						// Update current ranking cache
+						$aseco->server->rankings->update($updates);
+
 						if ($aseco->settings['developer']['log_events']['common'] === true) {
 							$aseco->console('[Event] Player Ranking Updated (Players)');
+						}
+						$aseco->releaseEvent('onPlayerRankingUpdated', null);
+					}
+				}
+				else {
+					if (isset($params['teams']) && is_array($params['teams'])) {
+						$rank_blue = PHP_INT_MAX;
+						$rank_red = PHP_INT_MAX;
+
+						// Check which team has a higher score
+						if ($params['teams'][0]['mappoints'] > $params['teams'][1]['mappoints']) {
+							// Set "Team Blue" to Rank 1 and "Team Red" to 2
+							$rank_blue = 1;
+							$rank_red = 2;
+						}
+						else {
+							// Set "Team Blue" to Rank 2 and "Team Red" to 1
+							$rank_blue = 2;
+							$rank_red = 1;
+						}
+
+						$update = array();
+
+						// Store "Team Blue"
+						$update[] = array(
+							'rank'				=> $rank_blue,
+							'pid'				=> 0,
+							'login'				=> '*team:blue',
+							'nickname'			=> '$08FTeam Blue',
+							'round_points'			=> $params['teams'][0]['roundpoints'],
+							'map_points'			=> $params['teams'][0]['mappoints'],
+							'match_points'			=> $params['teams'][0]['matchpoints'],
+							'best_race_time'		=> 0,
+							'best_race_respawns'		=> 0,
+							'best_race_checkpoints'		=> array(),
+							'best_lap_time'			=> 0,
+							'best_lap_respawns'		=> 0,
+							'best_lap_checkpoints'		=> array(),
+							'prev_race_time'		=> -1,
+							'prev_race_respawns'		=> -1,
+							'prev_race_checkpoints'		=> array(),
+							'stunts_score'			=> 0,
+							'prev_stunts_score'		=> 0,
+						);
+
+						// Store "Team Red"
+						$update[] = array(
+							'rank'				=> $rank_red,
+							'pid'				=> 1,
+							'login'				=> '*team:red',
+							'nickname'			=> '$F50Team Red',
+							'round_points'			=> $params['teams'][1]['roundpoints'],
+							'map_points'			=> $params['teams'][1]['mappoints'],
+							'match_points'			=> $params['teams'][1]['matchpoints'],
+							'best_race_time'		=> 0,
+							'best_race_respawns'		=> 0,
+							'best_race_checkpoints'		=> array(),
+							'best_lap_time'			=> 0,
+							'best_lap_respawns'		=> 0,
+							'best_lap_checkpoints'		=> array(),
+							'prev_race_time'		=> -1,
+							'prev_race_respawns'		=> -1,
+							'prev_race_checkpoints'		=> array(),
+							'stunts_score'			=> 0,
+							'prev_stunts_score'		=> 0,
+						);
+
+						// Update both teams
+						$aseco->server->rankings->update($update);
+
+						if ($aseco->settings['developer']['log_events']['common'] === true) {
+							$aseco->console('[Event] Player Ranking Updated (Team)');
 						}
 						$aseco->releaseEvent('onPlayerRankingUpdated', null);
 					}

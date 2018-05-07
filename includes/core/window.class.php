@@ -51,7 +51,7 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-04-17');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -319,7 +319,7 @@ class Window extends BaseClass {
 			$inner_gap = 0.625;
 			$offset = 0;
 			$line_height = 3.5;			// Default
-			if ($headings == true) {
+			if ($headings === true) {
 				$line_height = 3.4;		// Reduced because of the heading
 				$xml .= '<frame pos="2.5 -1.6" z-index="0.01">';
 				foreach (range(0, ($this->settings['columns'] - 1)) as $i) {
@@ -371,7 +371,7 @@ class Window extends BaseClass {
 
 				foreach ($this->content['data'][$i] as $value) {
 					if (is_array($value) && isset($value['login'])) {
-						if ($value['login'] == $login) {
+						if ($value['login'] === $login) {
 							$xml .= '<quad pos="'. $offset .' -'. ($line_height * $row) .'" z-index="0.02" size="'. ($column_width - ($inner_gap * 2)) .' 3.2" bgcolor="'. $this->layout['highlite']['self'] .'"/>';
 						}
 						else if (in_array($value['login'], $players)) {
@@ -619,7 +619,7 @@ class Window extends BaseClass {
 
 		// Content
 		$xml .= '<frame pos="2.5 -10.5" z-index="0.05">';
-		if ($this->settings['add_background'] == true) {
+		if ($this->settings['add_background'] === true) {
 			$xml .= '<quad pos="0 0" z-index="0" size="200 90" bgcolor="FFFFFF33"/>';
 		}
 		$xml .= '%content%';
@@ -887,7 +887,7 @@ EOL;
 	public function normalizeString ($string) {
 		global $aseco;
 
-		if ($this->settings['stripcodes'] == true) {
+		if ($this->settings['stripcodes'] === true) {
 			// Remove all formating codes
 			$string = $aseco->stripStyles($string);
 		}

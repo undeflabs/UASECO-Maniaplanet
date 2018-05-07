@@ -45,7 +45,7 @@ class PluginChatServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.server', 'plugin_description'));
 
@@ -88,7 +88,7 @@ class PluginChatServer extends Plugin {
 	public function chat_contact ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Show chat message
-		if (strtolower($aseco->settings['admin_contact']) != 'your@email.com') {
+		if (strtolower($aseco->settings['admin_contact']) !== 'your@email.com') {
 			$msg = new Message('chat.server', 'slash_contact_chat_message');
 			$msg->addPlaceholders(
 				$aseco->settings['admin_contact']

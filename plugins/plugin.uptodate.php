@@ -48,8 +48,8 @@ class PluginUptodate extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-15');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.uptodate', 'plugin_description'));
 
 		$this->addDependence('PluginChatAdmin',	Dependence::WANTED,	'1.0.0', null);
@@ -94,13 +94,13 @@ class PluginUptodate extends Plugin {
 		}
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
-		$this->config['UPTODATE_CHECK'][0] = ((strtoupper($this->config['UPTODATE_CHECK'][0]) == 'TRUE') ? true : false);
+		$this->config['UPTODATE_CHECK'][0] = ((strtoupper($this->config['UPTODATE_CHECK'][0]) === 'TRUE') ? true : false);
 
 		// Setup defaults, if required
-		if ($this->config['UPTODATE_URL'][0] == '') {
+		if ($this->config['UPTODATE_URL'][0] === '') {
 			$this->config['UPTODATE_URL'][0] = UASECO_WEBSITE .'/uptodate/current_release.txt';
 		}
-		if ($this->config['GLOBAL_BLACKLIST_URL'][0] == '') {
+		if ($this->config['GLOBAL_BLACKLIST_URL'][0] === '') {
 			$this->config['GLOBAL_BLACKLIST_URL'][0] = UASECO_WEBSITE .'/uptodate/trackmania_blacklist_dedimania.xml';
 		}
 	}
@@ -116,12 +116,12 @@ class PluginUptodate extends Plugin {
 		// Check for a MasterAdmin
 		if ($aseco->isMasterAdmin($player)) {
 			// Check version
-			if ($this->config['UPTODATE_CHECK'][0] == true) {
+			if ($this->config['UPTODATE_CHECK'][0] === true) {
 				$this->checkUasecoUptodate($player->login);
 			}
 
 			// Check whether to merge global black list
-			if ($this->config['GLOBAL_BLACKLIST_MERGE'][0] == true) {
+			if ($this->config['GLOBAL_BLACKLIST_MERGE'][0] === true) {
 				$this->admin_mergegbl($aseco, 'MasterAdmin', $player->login, false);
 			}
 		}
@@ -158,7 +158,7 @@ class PluginUptodate extends Plugin {
 	public function handleWebrequest ($request, $login = false) {
 		global $aseco;
 
-		if ($request->response['header']['code'] == 200) {
+		if ($request->response['header']['code'] === 200) {
 			if ($request->response['content']) {
 				// Compare versions
 				if ($aseco->versionCheck($request->response['content'], UASECO_VERSION, '>') === true) {
@@ -195,7 +195,7 @@ class PluginUptodate extends Plugin {
 			return;
 		}
 
-		if ($url == false) {
+		if ($url === false) {
 			$url = $this->config['GLOBAL_BLACKLIST_URL'][0];
 		}
 
@@ -207,7 +207,7 @@ class PluginUptodate extends Plugin {
 				'user_agent'		=> USER_AGENT,
 			);
 			$request = $aseco->webrequest->GET($params);
-			if (isset($request->response['header']['code']) && $request->response['header']['code'] == 200) {
+			if (isset($request->response['header']['code']) && $request->response['header']['code'] === 200) {
 				if ($request->response['content']) {
 					if ($globals = $aseco->parser->xmlToArray($request->response['content'], false)) {
 

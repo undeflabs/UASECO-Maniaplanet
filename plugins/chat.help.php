@@ -45,8 +45,8 @@ class PluginChatHelp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.help', 'plugin_description'));
 
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
@@ -78,7 +78,7 @@ class PluginChatHelp extends Plugin {
 		foreach ($commands as $name => $cc) {
 			// collect either admin or non-admin commands
 			$allowed = false;
-			if ($showadmin == true) {
+			if ($showadmin === true) {
 				if ($cc['rights'] & Player::OPERATORS) {
 					// Chat command is only allowed for Operators, Admins or MasterAdmins
 					$allowed = true;
@@ -91,7 +91,7 @@ class PluginChatHelp extends Plugin {
 					// Chat command is only allowed for MasterAdmins
 					$allowed = true;
 				}
-				if ($allowed == true) {
+				if ($allowed === true) {
 					foreach ($cc['params'] as $cmd => $description) {
 						$data[] = array('/'. $cmd, $description);
 					}
@@ -144,7 +144,7 @@ class PluginChatHelp extends Plugin {
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
 
-		if ($params['Action'] == 'ReleaseChatCommand') {
+		if ($params['Action'] === 'ReleaseChatCommand') {
 			$aseco->releaseChatCommand($params['command'], $login);
 		}
 	}

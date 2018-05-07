@@ -45,8 +45,8 @@ class PluginRaspIrc extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides IRC bot to link the server to a channel on an IRC server.');
 
 		$this->registerEvent('onSync',		'onSync');
@@ -94,7 +94,7 @@ class PluginRaspIrc extends Plugin {
 
 				// If the server is PINGing, then PONG. This is to tell the server that
 				// we are still here, and have not lost the connection
-				if (substr($this->irc->con['buffer']['all'], 0, 6) == 'PING :') {
+				if (substr($this->irc->con['buffer']['all'], 0, 6) === 'PING :') {
 					// PONG : is followed by the line that the server sent us when PINGing
 					$this->irc_send('PONG :'.substr($this->irc->con['buffer']['all'], 6));
 
@@ -109,8 +109,8 @@ class PluginRaspIrc extends Plugin {
 					// Make sure that we have a NEW line of chats to analyse. If we don't,
 					// there is no need to parse the data again
 				}
-				else if ($old_buffer != $this->irc->con['buffer']['all']) {
-					if (strpos($this->irc->con['buffer']['all'], ':End of /NAMES list.') != false) {
+				else if ($old_buffer !== $this->irc->con['buffer']['all']) {
+					if (strpos($this->irc->con['buffer']['all'], ':End of /NAMES list.') !== false) {
 						$aseco->console('[RaspIRC] ...successfully connected to IRC!');
 						break;
 					}
@@ -157,7 +157,7 @@ class PluginRaspIrc extends Plugin {
 				$msg_buffer = explode(' ', str_replace('\'', '', $buffer), 4);
 				$player = substr($name_buffer[0], 1, strpos($name_buffer['0'], '!')-1);
 				$text = substr($msg_buffer[3], 1);
-				if ($player != $this->irc->nick && strlen($player) > 0) {
+				if ($player !== $this->irc->nick && strlen($player) > 0) {
 					$player = '$f00'.$player;
 					$msg = '$0f0-IRC-$fff['.$player.'$fff] '.$text;
 					$aseco->sendChatMessage($msg);

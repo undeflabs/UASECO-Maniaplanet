@@ -52,8 +52,8 @@ class PluginAccessControl extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Controls player access by zone.');
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
@@ -95,10 +95,10 @@ class PluginAccessControl extends Plugin {
 			if (isset($settings['ACCESS']['ORDER'][0])) {
 				// strip all spaces
 				$order = str_replace(' ', '', strtolower($settings['ACCESS']['ORDER'][0]));
-				if ($order == 'allow,deny') {
+				if ($order === 'allow,deny') {
 					$this->access_control['order'] = true;
 				}
-				else if ($order == 'deny,allow') {
+				else if ($order === 'deny,allow') {
 					$this->access_control['order'] = false;
 				}
 				else {
@@ -116,7 +116,7 @@ class PluginAccessControl extends Plugin {
 				// check/store From entry(ies)
 				if (isset($settings['ACCESS']['ALLOW'][0]['FROM'])) {
 					foreach ($settings['ACCESS']['ALLOW'][0]['FROM'] as $from) {
-						if ($from == 'all') {
+						if ($from === 'all') {
 							if (count($settings['ACCESS']['ALLOW'][0]['FROM']) > 1) {
 								$error = 'Access control config \'allow\' section contains more besides "all" value';
 								break;
@@ -126,13 +126,13 @@ class PluginAccessControl extends Plugin {
 							}
 						}
 						else {
-							// != 'all'
+							// !== 'all'
 							if (in_array($from, $this->access_control['allow'])) {
 								$error = 'Access control config \'allow\' section contains duplicate value: ' . $from;
 								break;
 							}
 							else {
-								if ($from != '') {
+								if ($from !== '') {
 									// ignore empty entries
 									$this->access_control['allow'][] = $from;
 								}
@@ -155,7 +155,7 @@ class PluginAccessControl extends Plugin {
 				// check/store From entry(ies)
 				if (isset($settings['ACCESS']['DENY'][0]['FROM'])) {
 					foreach ($settings['ACCESS']['DENY'][0]['FROM'] as $from) {
-						if ($from == 'all') {
+						if ($from === 'all') {
 							if (count($settings['ACCESS']['DENY'][0]['FROM']) > 1) {
 								$error = 'Access control config \'deny\' section contains more besides "all" value';
 								break;
@@ -165,13 +165,13 @@ class PluginAccessControl extends Plugin {
 							}
 						}
 						else {
-							// != 'all'
+							// !== 'all'
 							if (in_array($from, $this->access_control['deny'])) {
 								$error = 'Access control config \'deny\' section contains duplicate value: ' . $from;
 								break;
 							}
 							else {
-								if ($from != '') {
+								if ($from !== '') {
 									// ignore empty entries
 									$this->access_control['deny'][] = $from;
 								}
@@ -268,7 +268,7 @@ class PluginAccessControl extends Plugin {
 		$access = implode('|', $player->zone);
 
 		// check for empty zone
-		if ($access == '') {
+		if ($access === '') {
 			if ($this->access_control['order']) {  // Allow,Deny
 				;  // default denied
 			}
@@ -354,7 +354,7 @@ class PluginAccessControl extends Plugin {
 			return;
 		}
 
-		if ($param == 'help') {
+		if ($param === 'help') {
 			$header = '{#black}/admin access$g handles player access control:';
 			$help = array();
 			$help[] = array('...', '{#black}help',
@@ -367,7 +367,7 @@ class PluginAccessControl extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink($player->login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(0.8, 0.05, 0.15, 0.6), 'OK');
 		}
-		else if ($param == 'list') {
+		else if ($param === 'list') {
 			$player->msgs = array();
 
 			$head = 'Current player access control settings:';
@@ -431,7 +431,7 @@ class PluginAccessControl extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
-		else if ($param == 'reload') {
+		else if ($param === 'reload') {
 			// reload/check access control
 			if ($this->onSync($aseco, true)) {
 				$message = $this->access_control['messages']['reload'];

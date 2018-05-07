@@ -50,7 +50,7 @@ class PlayerList extends BaseClass {
 		$this->setAuthor('undef.de');
 		$this->setContributors(array('brakerb'));
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -76,7 +76,7 @@ class PlayerList extends BaseClass {
 	public function getSpectatorCount () {
 		$count = 0;
 		foreach ($this->player_list as $player) {
-			if ($player->is_spectator == true) {
+			if ($player->is_spectator === true) {
 				$count += 1;
 			}
 		}
@@ -90,7 +90,7 @@ class PlayerList extends BaseClass {
 	*/
 
 	public function addPlayer ($player) {
-		if (isset($player) && is_object($player) && $player instanceof Player && $player->login != '') {
+		if (isset($player) && is_object($player) && $player instanceof Player && $player->login !== '') {
 
 			// Check for existing Player, otherwise insert into Database
 			$this->checkDatabase($player);
@@ -139,7 +139,7 @@ class PlayerList extends BaseClass {
 	public function getPlayerById ($id) {
 		if (!empty($id)) {
 			foreach ($this->player_list as $player) {
-				if ($player->id == $id) {
+				if ($player->id === $id) {
 					return $player;
 				}
 			}
@@ -156,7 +156,7 @@ class PlayerList extends BaseClass {
 	public function getPlayerByPid ($pid) {
 		if (!empty($pid)) {
 			foreach ($this->player_list as $player) {
-				if ($player->pid == $pid) {
+				if ($player->pid === $pid) {
 					return $player;
 				}
 			}
@@ -538,7 +538,7 @@ class PlayerList extends BaseClass {
 						if (isset($players[$pid])) {
 							$count = 1;
 							foreach ($data[$map_id] as $ply_pid) {
-								if ($pid == $ply_pid) {
+								if ($pid === $ply_pid) {
 									$rank = $count;
 									break;
 								}
@@ -572,7 +572,7 @@ class PlayerList extends BaseClass {
 					if ($aseco->db->affected_rows === -1) {
 						$aseco->console('[PlayerList][ERROR] Could not insert any player averages ('. $aseco->db->errmsg() .') for statement ['. $query .']');
 					}
-					else if ($aseco->db->affected_rows != count($players)) {
+					else if ($aseco->db->affected_rows !== count($players)) {
 						$aseco->console('[PlayerList][ERROR] Could not insert all '. count($players) .' player averages ('. $aseco->db->errmsg() .')! Please increase the database settings "max_allowed_packet" to a larger value!');
 					}
 				}

@@ -50,7 +50,7 @@ class RankingList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-04-23');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Player Ranking from the dedicated server.');
 
@@ -89,8 +89,8 @@ class RankingList extends BaseClass {
 			$entry->stunts_score			= 0;
 			$entry->prev_stunts_score		= 0;
 
-			// Insert, added "XX" to make sure the key is a string and not a integer, type casting like (string)$entry do not work
-			$this->ranking_list[$entry->login."XX"] = $entry;
+			// Insert. Added 'XX' to make sure the key is a string and not a integer, type casting like (string)$entry->login do not work as an array index
+			$this->ranking_list[$entry->login.'XX'] = $entry;
 
 			return true;
 		}
@@ -105,34 +105,36 @@ class RankingList extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function update ($item) {
+	public function update ($data) {
 		global $aseco;
 
-		// Create a ranking entry
-		$entry = new Ranking();
-		$entry->rank				= $item['rank'];
-		$entry->pid				= $item['pid'];
-		$entry->login				= $item['login'];
-		$entry->nickname			= $item['nickname'];
-		$entry->round_points			= $item['round_points'];
-		$entry->map_points			= $item['map_points'];
-		$entry->match_points			= $item['match_points'];
-		$entry->best_race_time			= $item['best_race_time'];
-		$entry->best_race_respawns		= $item['best_race_respawns'];
-		$entry->best_race_checkpoints		= $item['best_race_checkpoints'];
-		$entry->best_lap_time			= $item['best_lap_time'];
-		$entry->best_lap_respawns		= $item['best_lap_respawns'];
-		$entry->best_lap_checkpoints		= $item['best_lap_checkpoints'];
-		$entry->prev_race_time			= $item['prev_race_time'];
-		$entry->prev_race_respawns		= $item['prev_race_respawns'];
-		$entry->prev_race_checkpoints		= $item['prev_race_checkpoints'];
-		$entry->stunts_score			= $item['stunts_score'];
-		$entry->prev_stunts_score		= $item['prev_stunts_score'];
+		foreach ($data as $item) {
+			// Create a ranking entry
+			$entry = new Ranking();
+			$entry->rank				= $item['rank'];
+			$entry->pid				= $item['pid'];
+			$entry->login				= $item['login'];
+			$entry->nickname			= $item['nickname'];
+			$entry->round_points			= $item['round_points'];
+			$entry->map_points			= $item['map_points'];
+			$entry->match_points			= $item['match_points'];
+			$entry->best_race_time			= $item['best_race_time'];
+			$entry->best_race_respawns		= $item['best_race_respawns'];
+			$entry->best_race_checkpoints		= $item['best_race_checkpoints'];
+			$entry->best_lap_time			= $item['best_lap_time'];
+			$entry->best_lap_respawns		= $item['best_lap_respawns'];
+			$entry->best_lap_checkpoints		= $item['best_lap_checkpoints'];
+			$entry->prev_race_time			= $item['prev_race_time'];
+			$entry->prev_race_respawns		= $item['prev_race_respawns'];
+			$entry->prev_race_checkpoints		= $item['prev_race_checkpoints'];
+			$entry->stunts_score			= $item['stunts_score'];
+			$entry->prev_stunts_score		= $item['prev_stunts_score'];
 
-		// Update full entry
-		$this->ranking_list[$entry->login."XX"] = $entry;
+			// Update full entry
+			$this->ranking_list[$entry->login.'XX'] = $entry;
+		}
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS || $aseco->server->gameinfo->mode === Gameinfo::TEAM || $aseco->server->gameinfo->mode === Gameinfo::CUP) {
 			$scores = array();
 			$times = array();
 			$pids = array();
@@ -153,7 +155,7 @@ class RankingList extends BaseClass {
 			unset($scores, $times, $pids);
 
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::LAPS) {
 			$best_lap_checkpoints = array();
 			$scores = array();
 			$pids = array();
@@ -195,7 +197,7 @@ class RankingList extends BaseClass {
 		$i = 1;
 		foreach ($this->ranking_list as $login => $data) {
 			// Replace PHP_INT_MAX "times" to back "0"
-			if ($data->best_race_time == PHP_INT_MAX) {
+			if ($data->best_race_time === PHP_INT_MAX) {
 				$data->best_race_time = 0;
 			}
 
@@ -219,7 +221,7 @@ class RankingList extends BaseClass {
 		$this->ranking_list = array();
 
 		// Setup empty rankings, but not in Team mode (not required)
-		if ($aseco->server->gameinfo->mode != Gameinfo::TEAM) {
+		if ($aseco->server->gameinfo->mode !== Gameinfo::TEAM) {
 			foreach ($aseco->server->players->player_list as $player) {
 				$this->addPlayer($player);
 			}
@@ -244,8 +246,8 @@ class RankingList extends BaseClass {
 	*/
 
 	public function getRankByLogin ($login) {
-		if (!empty($login) && isset($this->ranking_list[$login."XX"])) {
-			return $this->ranking_list[$login."XX"];
+		if (!empty($login) && isset($this->ranking_list[$login.'XX'])) {
+			return $this->ranking_list[$login.'XX'];
 		}
 		else {
 			return false;
@@ -295,7 +297,7 @@ class RankingList extends BaseClass {
 		$top = array();
 		foreach ($this->ranking_list as $item) {
 			$top[$item->login] = $item;
-			if ($count == 3) {
+			if ($count === 3) {
 				break;
 			}
 			$count++;
@@ -315,7 +317,7 @@ class RankingList extends BaseClass {
 		$top = array();
 		foreach ($this->ranking_list as $item) {
 			$top[$item->login] = $item;
-			if ($count == 10) {
+			if ($count === 10) {
 				break;
 			}
 			$count++;
@@ -335,7 +337,7 @@ class RankingList extends BaseClass {
 		$top = array();
 		foreach ($this->ranking_list as $item) {
 			$top[$item->login] = $item;
-			if ($count == 50) {
+			if ($count === 50) {
 				break;
 			}
 			$count++;

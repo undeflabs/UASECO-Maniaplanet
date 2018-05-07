@@ -49,8 +49,8 @@ class Country extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-28');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides lists of Countries and IOC codes, and converter methods.');
 
 		$this->country_list = array(
@@ -459,7 +459,7 @@ class Country extends BaseClass {
 		}
 		else {
 			$nation = 'OTH';
-			if ($country != '') {
+			if ($country !== '') {
 				trigger_error('Country::countryToIoc(): Could not map country: '. $country, E_USER_WARNING);
 			}
 		}
@@ -481,7 +481,7 @@ class Country extends BaseClass {
 		}
 		else {
 			$country = 'Other Countries';
-			if ($ioc != '') {
+			if ($ioc !== '') {
 				trigger_error('Country::iocToCountry(): Could not map IOC: '. $ioc, E_USER_WARNING);
 			}
 		}

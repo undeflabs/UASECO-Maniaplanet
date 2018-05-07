@@ -44,8 +44,8 @@ class PlayList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-30');
-		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription('Provides and handles a Playlist for Maps.');
 
 		$this->debug = $debug;
@@ -215,7 +215,7 @@ class PlayList extends BaseClass {
 			}
 
 			// If Playlist is empty, setup the next Map at the dedicated server
-			if (count($this->playlist) == 0) {
+			if (count($this->playlist) === 0) {
 				try {
 					// Set the next Map
 					$result = $aseco->client->query('SetNextMapIdent', $map->uid);
@@ -237,7 +237,7 @@ class PlayList extends BaseClass {
 	public function isMapInPlaylistByUid ($uid) {
 		if (!empty($uid)) {
 			foreach ($this->playlist as $item) {
-				if ($item['uid'] == $uid) {
+				if ($item['uid'] === $uid) {
 					return true;
 				}
 			}
@@ -254,7 +254,7 @@ class PlayList extends BaseClass {
 	public function getPlaylistEntryByUid ($uid) {
 		if (!empty($uid)) {
 			foreach ($this->playlist as $item) {
-				if ($item['uid'] == $uid) {
+				if ($item['uid'] === $uid) {
 					return $item;
 				}
 			}

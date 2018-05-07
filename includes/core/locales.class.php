@@ -45,8 +45,8 @@ class Locales extends BaseClass {
 		$this->setAuthor('askuri');
 		$this->setCoAuthors('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-15');
-		$this->setCopyright('2014 - 2017 by Martin Weber (askuri)');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by Martin Weber (askuri)');
 		$this->setDescription('Provides multilanguage support.');
 
 		$aseco->registerEvent('onPlayerConnect',	array($this, 'onPlayerConnect'));

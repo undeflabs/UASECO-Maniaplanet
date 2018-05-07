@@ -51,8 +51,8 @@ class PluginPlayerInfos extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-06');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays current list of nicks/logins.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -112,7 +112,7 @@ class PluginPlayerInfos extends Plugin {
 
 		// create list of players, optionally by (sub)string
 		foreach ($aseco->server->players->player_list as $pl) {
-			if (strlen($command['params'][0]) == 0 || stripos($aseco->stripStyles($pl->nickname), $command['params'][0]) !== false || stripos($pl->login, $command['params'][0]) !== false) {
+			if (strlen($command['params'][0]) === 0 || stripos($aseco->stripStyles($pl->nickname), $command['params'][0]) !== false || stripos($pl->login, $command['params'][0]) !== false) {
 				$plarr = array();
 				$plarr['login'] = $pl->login;
 				$player->playerlist[] = $plarr;
@@ -156,7 +156,7 @@ class PluginPlayerInfos extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
 		else {
-			// == 1
+			// === 1
 			$aseco->sendChatMessage('{#server}» {#error}No player(s) found!', $player->login);
 		}
 	}

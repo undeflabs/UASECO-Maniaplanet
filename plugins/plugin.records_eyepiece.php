@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -148,49 +148,49 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
-		$this->config['MAP_WIDGET'][0]['ENABLED'][0]					= ((strtoupper($this->config['MAP_WIDGET'][0]['ENABLED'][0]) == 'TRUE')					? true : false);
-		$this->config['CLOCK_WIDGET'][0]['RACE'][0]['ENABLED'][0]			= ((strtoupper($this->config['CLOCK_WIDGET'][0]['RACE'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['CLOCK_WIDGET'][0]['SCORE'][0]['ENABLED'][0]			= ((strtoupper($this->config['CLOCK_WIDGET'][0]['SCORE'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['ENABLED'][0]			= ((strtoupper($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['WINNING_PAYOUT'][0]['ENABLED'][0]				= ((strtoupper($this->config['WINNING_PAYOUT'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['OPERATOR'][0]			= ((strtoupper($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['OPERATOR'][0]) == 'TRUE')		? true : false);
-		$this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['ADMIN'][0]			= ((strtoupper($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['ADMIN'][0]) == 'TRUE')			? true : false);
-		$this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['MASTERADMIN'][0]		= ((strtoupper($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['MASTERADMIN'][0]) == 'TRUE')		? true : false);
-		$this->config['DONATION_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['DONATION_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['VISITORS_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['VISITORS_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['FAVORITE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['TOPLIST_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['MUSIC_WIDGET'][0]['ENABLED'][0]					= ((strtoupper($this->config['MUSIC_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0]				= ((strtoupper($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0]) == 'TRUE')				? true : false);
-		$this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0]) == 'TRUE')				? true : false);
-		$this->config['NICEMODE'][0]['ENABLED'][0]					= ((strtoupper($this->config['NICEMODE'][0]['ENABLED'][0]) == 'TRUE')					? true : false);
-		$this->config['NICEMODE'][0]['FORCE'][0]					= ((strtoupper($this->config['NICEMODE'][0]['FORCE'][0]) == 'TRUE')					? true : false);
-		$this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0]		= ((strtoupper($this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0]) == 'TRUE')		? true : false);
-		$this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0]		= ((strtoupper($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0]) == 'AVERAGE')	? true : false);
-		$this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]) == 'TRUE')				? true : false);
-		$this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]) == 'TRUE')				? true : false);
-		$this->config['UI_PROPERTIES'][0]['WARMUP'][0]					= ((strtoupper($this->config['UI_PROPERTIES'][0]['WARMUP'][0]) == 'TRUE')				? true : false);
-		$this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0]) == 'TRUE')			? true : false);
-		$this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0]) == 'TRUE')			? true : false);
-		$this->config['UI_PROPERTIES'][0]['POSITION'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['POSITION'][0]) == 'TRUE')				? true : false);
-		$this->config['UI_PROPERTIES'][0]['SPEED_AND_DISTANCE'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['SPEED_AND_DISTANCE'][0]) == 'TRUE')			? true : false);
-		$this->config['UI_PROPERTIES'][0]['PERSONAL_BEST_AND_RANK'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['PERSONAL_BEST_AND_RANK'][0]) == 'TRUE')		? true : false);
-		$this->config['UI_PROPERTIES'][0]['CHECKPOINT_LIST'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['CHECKPOINT_LIST'][0]) == 'TRUE')			? true : false);
-		$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]			= ((strtoupper($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]) == 'TRUE')		? true : false);
-		$this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]				= ((strtoupper($this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]) == 'TRUE')				? true : false);
+		$this->config['MAP_WIDGET'][0]['ENABLED'][0]					= ((strtoupper($this->config['MAP_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['CLOCK_WIDGET'][0]['RACE'][0]['ENABLED'][0]			= ((strtoupper($this->config['CLOCK_WIDGET'][0]['RACE'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['CLOCK_WIDGET'][0]['SCORE'][0]['ENABLED'][0]			= ((strtoupper($this->config['CLOCK_WIDGET'][0]['SCORE'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['NEXT_ENVIRONMENT_WIDGET'][0]['ENABLED'][0]			= ((strtoupper($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['WINNING_PAYOUT'][0]['ENABLED'][0]				= ((strtoupper($this->config['WINNING_PAYOUT'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['OPERATOR'][0]			= ((strtoupper($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['OPERATOR'][0]) === 'TRUE')		? true : false);
+		$this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['ADMIN'][0]			= ((strtoupper($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['ADMIN'][0]) === 'TRUE')			? true : false);
+		$this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['MASTERADMIN'][0]		= ((strtoupper($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['MASTERADMIN'][0]) === 'TRUE')		? true : false);
+		$this->config['DONATION_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['DONATION_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['VISITORS_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['VISITORS_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['FAVORITE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['TOPLIST_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['MUSIC_WIDGET'][0]['ENABLED'][0]					= ((strtoupper($this->config['MUSIC_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0]				= ((strtoupper($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0]) === 'TRUE')				? true : false);
+		$this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0]				= ((strtoupper($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0]) === 'TRUE')				? true : false);
+		$this->config['NICEMODE'][0]['ENABLED'][0]					= ((strtoupper($this->config['NICEMODE'][0]['ENABLED'][0]) === 'TRUE')					? true : false);
+		$this->config['NICEMODE'][0]['FORCE'][0]					= ((strtoupper($this->config['NICEMODE'][0]['FORCE'][0]) === 'TRUE')					? true : false);
+		$this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0]		= ((strtoupper($this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0]) === 'TRUE')		? true : false);
+		$this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0]		= ((strtoupper($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0]) === 'AVERAGE')	? true : false);
+		$this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0]) === 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0]) === 'TRUE')			? true : false);
+		$this->config['UI_PROPERTIES'][0]['WARMUP'][0]					= ((strtoupper($this->config['UI_PROPERTIES'][0]['WARMUP'][0]) === 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0]) === 'TRUE')			? true : false);
+		$this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0]) === 'TRUE')			? true : false);
+		$this->config['UI_PROPERTIES'][0]['POSITION'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['POSITION'][0]) === 'TRUE')				? true : false);
+		$this->config['UI_PROPERTIES'][0]['SPEED_AND_DISTANCE'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['SPEED_AND_DISTANCE'][0]) === 'TRUE')			? true : false);
+		$this->config['UI_PROPERTIES'][0]['PERSONAL_BEST_AND_RANK'][0]			= ((strtoupper($this->config['UI_PROPERTIES'][0]['PERSONAL_BEST_AND_RANK'][0]) === 'TRUE')		? true : false);
+		$this->config['UI_PROPERTIES'][0]['CHECKPOINT_LIST'][0]				= ((strtoupper($this->config['UI_PROPERTIES'][0]['CHECKPOINT_LIST'][0]) === 'TRUE')			? true : false);
+		$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]			= ((strtoupper($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]) === 'TRUE')		? true : false);
+		$this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]				= ((strtoupper($this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0]) === 'TRUE')				? true : false);
 		$this->config['FEATURES'][0]['NUMBER_FORMAT'][0]				= strtolower($this->config['FEATURES'][0]['NUMBER_FORMAT'][0]);
-		$this->config['FEATURES'][0]['SHORTEN_NUMBERS'][0]				= ((strtoupper($this->config['FEATURES'][0]['SHORTEN_NUMBERS'][0]) == 'TRUE')				? true : false);
-		$this->config['FEATURES'][0]['SONGLIST'][0]['SORTING'][0]			= ((strtoupper($this->config['FEATURES'][0]['SONGLIST'][0]['SORTING'][0]) == 'TRUE')			? true : false);
-		$this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0]		= ((strtoupper($this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0]) == 'TRUE')		? true : false);
+		$this->config['FEATURES'][0]['SHORTEN_NUMBERS'][0]				= ((strtoupper($this->config['FEATURES'][0]['SHORTEN_NUMBERS'][0]) === 'TRUE')				? true : false);
+		$this->config['FEATURES'][0]['SONGLIST'][0]['SORTING'][0]			= ((strtoupper($this->config['FEATURES'][0]['SONGLIST'][0]['SORTING'][0]) === 'TRUE')			? true : false);
+		$this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0]		= ((strtoupper($this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0]) === 'TRUE')		? true : false);
 		$this->config['FEATURES'][0]['MAPLIST'][0]['SORTING'][0]			= strtoupper($this->config['FEATURES'][0]['MAPLIST'][0]['SORTING'][0]);
-		$this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0]			= ((strtoupper($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0]) == 'TRUE')		? true : false);
-		$this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0]	= ((strtoupper($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0]) == 'TRUE')	? true : false);
+		$this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0]			= ((strtoupper($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0]) === 'TRUE')		? true : false);
+		$this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0]	= ((strtoupper($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0]) === 'TRUE')	? true : false);
 		$this->config['FEATURES'][0]['KARMA'][0]['CALCULATION_METHOD'][0]		= strtolower($this->config['FEATURES'][0]['KARMA'][0]['CALCULATION_METHOD'][0]);
 
 
@@ -219,12 +219,12 @@ class PluginRecordsEyepiece extends Plugin {
 		foreach ($gamemodes as $gamemode => $id) {
 			foreach ($widgets as $widget) {
 				if (isset($this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0])) {
-					$this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] = ((strtoupper($this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0]) == 'TRUE') ? true : false);
+					$this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] = ((strtoupper($this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0]) === 'TRUE') ? true : false);
 
 					// Topcount are required to be lower then entries.
 					// But not in 'Team', both need to be '2'
 					if ( (isset($this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['TOPCOUNT'][0])) && (isset($this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]))) {
-						if ( ($widget == 'LIVE_RANKINGS') && ($gamemode == 'TEAM')) {
+						if ( ($widget === 'LIVE_RANKINGS') && ($gamemode === 'TEAM')) {
 							$this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] = 2;
 							$this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['TOPCOUNT'][0] = 2;
 						}
@@ -252,8 +252,8 @@ class PluginRecordsEyepiece extends Plugin {
 		unset($id, $widget);
 
 		// Special checks for <rounds>
-		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['ENABLED'][0] == true) {
-			$this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['DISPLAY_TYPE'][0] = ((strtoupper($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['DISPLAY_TYPE'][0]) == 'TIME') ? true : false);
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['ENABLED'][0] === true) {
+			$this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['DISPLAY_TYPE'][0] = ((strtoupper($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['DISPLAY_TYPE'][0]) === 'TIME') ? true : false);
 			$format = ((isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['FORMAT'][0])) ? $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['ROUNDS'][0]['FORMAT'][0] : false);
 			if ( (preg_match('/\{score\}/', $format) === 0) && ((preg_match('/\{remaining\}/', $format) === 0) || (preg_match('/\{pointlimit\}/', $format) === 0))) {
 				// Setup default
@@ -263,14 +263,14 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Special checks for <laps>
-		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['LAPS'][0]['ENABLED'][0] == true) {
-			$this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['LAPS'][0]['DISPLAY_TYPE'][0] = ((strtoupper($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['LAPS'][0]['DISPLAY_TYPE'][0]) == 'TIME') ? true : false);
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['LAPS'][0]['ENABLED'][0] === true) {
+			$this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['LAPS'][0]['DISPLAY_TYPE'][0] = ((strtoupper($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0]['LAPS'][0]['DISPLAY_TYPE'][0]) === 'TIME') ? true : false);
 		}
 
 		// Check all Widgets in NiceMode
 		foreach ($widgets as $widget) {
 			if (isset($this->config['NICEMODE'][0]['ALLOW'][0][$widget][0])) {
-				$this->config['NICEMODE'][0]['ALLOW'][0][$widget][0] = ((strtoupper($this->config['NICEMODE'][0]['ALLOW'][0][$widget][0]) == 'TRUE') ? true : false);
+				$this->config['NICEMODE'][0]['ALLOW'][0][$widget][0] = ((strtoupper($this->config['NICEMODE'][0]['ALLOW'][0][$widget][0]) === 'TRUE') ? true : false);
 			}
 		}
 		unset($widget);
@@ -279,7 +279,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$scorelists = array('TOP_AVERAGE_TIMES', 'DEDIMANIA_RECORDS', 'LOCAL_RECORDS', 'TOP_RANKINGS', 'TOP_WINNERS', 'MOST_RECORDS', 'MOST_FINISHED', 'TOP_PLAYTIME', 'TOP_DONATORS', 'TOP_NATIONS', 'TOP_CONTINENTS', 'TOP_MAPS', 'TOP_VOTERS', 'TOP_VISITORS', 'TOP_ACTIVE_PLAYERS', 'TOP_WINNING_PAYOUTS', 'TOP_BETWINS', 'TOP_ROUNDSCORE');
 		foreach ($scorelists as $widget) {
 			if (isset($this->config['SCORETABLE_LISTS'][0][$widget][0]['ENABLED'][0])) {
-				$this->config['SCORETABLE_LISTS'][0][$widget][0]['ENABLED'][0] = ((strtoupper($this->config['SCORETABLE_LISTS'][0][$widget][0]['ENABLED'][0]) == 'TRUE') ? true : false);
+				$this->config['SCORETABLE_LISTS'][0][$widget][0]['ENABLED'][0] = ((strtoupper($this->config['SCORETABLE_LISTS'][0][$widget][0]['ENABLED'][0]) === 'TRUE') ? true : false);
 			}
 			else {
 				// Auto disable this
@@ -318,7 +318,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Register /emusic chat command if the MusicWidget is enabled
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			if (!isset($aseco->plugins['PluginMusicServer'])) {
 				if ($reload !== true) {
 					$aseco->console('[RecordsEyepiece] » Plugin MusicServer is not available, hide <music_widget>.');
@@ -351,13 +351,13 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->config['ROUND_SCORE'][0]['WIDTH'][0] = 15.5;
 		}
 
-		if ( (!isset($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0])) || ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] == '')) {
+		if ( (!isset($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0])) || ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] === '')) {
 			$this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] = 0;
 		}
-		if ( (!isset($this->config['FEATURES'][0]['KARMA'][0]['MIN_VOTES'][0])) || ($this->config['FEATURES'][0]['KARMA'][0]['MIN_VOTES'][0] == '')) {
+		if ( (!isset($this->config['FEATURES'][0]['KARMA'][0]['MIN_VOTES'][0])) || ($this->config['FEATURES'][0]['KARMA'][0]['MIN_VOTES'][0] === '')) {
 			$this->config['FEATURES'][0]['KARMA'][0]['MIN_VOTES'][0] = 0;
 		}
-		if ( (!isset($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0])) || ($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0] == '')) {
+		if ( (!isset($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0])) || ($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0] === '')) {
 			$this->config['FEATURES'][0]['TOPLIST_LIMIT'][0] = 5000;
 		}
 
@@ -370,16 +370,16 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Check for Background-Colors
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] == '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] === '') {
 			$this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] = '0000';
 		}
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] == '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] === '') {
 			$this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] = '0000';
 		}
 
 		// Check for additional settings
-		if ($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] == true) {
-			if (($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ACCESS_URL'][0] == '') || (preg_match('/^http.*/', $this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ACCESS_URL'][0]) === 0)) {
+		if ($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] === true) {
+			if (($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ACCESS_URL'][0] === '') || (preg_match('/^http.*/', $this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ACCESS_URL'][0]) === 0)) {
 				// Autodisable
 				$this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] = false;
 				$aseco->console('[RecordsEyepiece] » Setup for <features><maplist><mapimages><access_url> is not correct in "records_eyepiece.xml"');
@@ -388,11 +388,11 @@ class PluginRecordsEyepiece extends Plugin {
 		if (!isset($this->config['FEATURES'][0]['MAPLIST'][0]['AUTHOR_DISPLAY'][0]) || empty($this->config['FEATURES'][0]['MAPLIST'][0]['AUTHOR_DISPLAY'][0])) {
 			$this->config['FEATURES'][0]['MAPLIST'][0]['AUTHOR_DISPLAY'][0] = 'nickname';
 		}
-		if ($this->config['MAP_WIDGET'][0]['ENABLED'][0] == true) {
-			if ( (isset($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0])) && (strtoupper($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0]) == 'NEXT')) {
+		if ($this->config['MAP_WIDGET'][0]['ENABLED'][0] === true) {
+			if ( (isset($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0])) && (strtoupper($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0]) === 'NEXT')) {
 				$this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0] = 'next';
 			}
-			else if ( (isset($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0])) && (strtoupper($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0]) == 'CURRENT')) {
+			else if ( (isset($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0])) && (strtoupper($this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0]) === 'CURRENT')) {
 				$this->config['MAP_WIDGET'][0]['SCORE'][0]['DISPLAY'][0] = 'current';
 			}
 			else {
@@ -462,7 +462,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		$this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0] = $aseco->formatFloat($this->config['NEXT_GAMEMODE_WIDGET'][0]['SCALE'][0]);
 
-		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 			// Check setup Limits
 			if ( (!$this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['MINIMUM_AMOUNT'][0]) || ($this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['MINIMUM_AMOUNT'][0] < 3)) {
 				$this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['MINIMUM_AMOUNT'][0] = 3;
@@ -659,22 +659,22 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets = array('DEDIMANIA_RECORDS', 'LOCAL_RECORDS', 'LIVE_RANKINGS', 'ROUND_SCORE');
 		foreach ($widgets as $widget) {
 			foreach ($gamemodes as $gamemode => $id) {
-				if ( ($widget == 'DEDIMANIA_RECORDS') && (($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] == true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['DEDIMANIA_RECORDS'][0] == true) && ($this->config['States']['NiceMode'] == true)))) {
+				if ( ($widget === 'DEDIMANIA_RECORDS') && (($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] === true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['DEDIMANIA_RECORDS'][0] === true) && ($this->config['States']['NiceMode'] === true)))) {
 					$build = $this->buildDedimaniaRecordsWidgetBody($id);
 					$this->cache['DedimaniaRecords'][$id]['WidgetHeader'] = $build['header'];
 					$this->cache['DedimaniaRecords'][$id]['WidgetFooter'] = $build['footer'];
 				}
-				if ( ($widget == 'LOCAL_RECORDS') && (($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] == true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LOCAL_RECORDS'][0] == true) && ($this->config['States']['NiceMode'] == true)))) {
+				if ( ($widget === 'LOCAL_RECORDS') && (($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] === true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LOCAL_RECORDS'][0] === true) && ($this->config['States']['NiceMode'] === true)))) {
 					$build = $this->buildLocalRecordsWidgetBody($id);
 					$this->cache['LocalRecords'][$id]['WidgetHeader'] = $build['header'];
 					$this->cache['LocalRecords'][$id]['WidgetFooter'] = $build['footer'];
 				}
-				if ( ($widget == 'LIVE_RANKINGS') && (($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] == true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LIVE_RANKINGS'][0] == true) && ($this->config['States']['NiceMode'] == true)))) {
+				if ( ($widget === 'LIVE_RANKINGS') && (($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] === true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LIVE_RANKINGS'][0] === true) && ($this->config['States']['NiceMode'] === true)))) {
 					$build = $this->buildLiveRankingsWidgetBody($id);
 					$this->cache['LiveRankings'][$id]['WidgetHeader'] = $build['header'];
 					$this->cache['LiveRankings'][$id]['WidgetFooter'] = $build['footer'];
 				}
-				if ( ($widget == 'ROUND_SCORE') && ($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] == true)) {
+				if ( ($widget === 'ROUND_SCORE') && ($this->config[$widget][0]['GAMEMODE'][0][$id][0]['ENABLED'][0] === true)) {
 					$build = $this->buildRoundScoreWidgetBody($id, 'RACE');
 					$this->cache['RoundScore'][$id]['Race']['WidgetHeader'] = $build['header'];
 					$this->cache['RoundScore'][$id]['Race']['WidgetFooter'] = $build['footer'];
@@ -776,7 +776,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$aseco->console('[RecordsEyepiece] » Found column `WinningPayout`.');
 			}
 
-			if ($this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0]['ENABLED'][0] == true) {
+			if ($this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0]['ENABLED'][0] === true) {
 				// Update own `MostFinished`
 				$aseco->console('[RecordsEyepiece] Updating `MostFinished` counts for all Players...');
 				$mostfinished = array();
@@ -813,7 +813,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$aseco->console('[RecordsEyepiece] Skip updating `MostFinished` counts for all Players, because Widget is disabled.');
 			}
 
-			if ($this->config['SCORETABLE_LISTS'][0]['MOST_RECORDS'][0]['ENABLED'][0] == true) {
+			if ($this->config['SCORETABLE_LISTS'][0]['MOST_RECORDS'][0]['ENABLED'][0] === true) {
 				// Update own `MostRecords`
 				$aseco->console('[RecordsEyepiece] Updating `MostRecords` counts for all Players...');
 				$mostrecords = array();
@@ -853,7 +853,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Check if is NiceMode been forced
-		if ( ($this->config['NICEMODE'][0]['ENABLED'][0] == true) && ($this->config['NICEMODE'][0]['FORCE'][0] == true)) {
+		if ( ($this->config['NICEMODE'][0]['ENABLED'][0] === true) && ($this->config['NICEMODE'][0]['FORCE'][0] === true)) {
 			// Turn nicemode on
 			$this->config['States']['NiceMode'] = true;
 
@@ -864,7 +864,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		if ( ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) && (isset($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT']) )) {
+		if ( ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) && (isset($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT']) )) {
 
 			$aseco->console('[RecordsEyepiece] Checking entries for the <placement_widget>...');
 
@@ -872,7 +872,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$new_placements = array();
 			$chat_id = 1;	// Start ID for <chat_command>'s
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ( (isset($placement['ENABLED'][0])) && (strtoupper($placement['ENABLED'][0]) == 'TRUE')) {
+				if ( (isset($placement['ENABLED'][0])) && (strtoupper($placement['ENABLED'][0]) === 'TRUE')) {
 
 					if (isset($placement['INCLUDE'][0])) {
 						// WITH <include>: Check for min. required entries <display>, <include>,
@@ -900,7 +900,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 					// Transform all Gamemode-Names from e.g. 'TIME_ATTACK' to '2'
 					foreach ($gamemodes as $gamemode => $id) {
-						if ($placement['DISPLAY'][0] == $gamemode) {
+						if ($placement['DISPLAY'][0] === $gamemode) {
 							$placement['DISPLAY'][0] = $id;
 						}
 					}
@@ -908,7 +908,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 					// Remove empty and unused tags to free mem. too.
 					foreach ($placement as $tag => $value) {
-						if ($value[0] == '') {
+						if ($value[0] === '') {
 							unset($placement[$tag]);
 						}
 					}
@@ -931,7 +931,7 @@ class PluginRecordsEyepiece extends Plugin {
 						}
 
 						// If this <placement> has a <chat_command>, then setup an ID for this (max. 1 till 25)
-						if ( (isset($placement['CHAT_COMMAND'][0])) && ($placement['CHAT_COMMAND'][0] != '') && ($chat_id <= 25)) {
+						if ( (isset($placement['CHAT_COMMAND'][0])) && ($placement['CHAT_COMMAND'][0] !== '') && ($chat_id <= 25)) {
 							$placement['CHAT_MLID'][0] = $chat_id;
 							$chat_id ++;
 						}
@@ -968,7 +968,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Setup 'map_info'
-		if ( ($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0] == false) || ($this->config['MAP_WIDGET'][0]['ENABLED'][0] == true)) {
+		if ( ($this->config['UI_PROPERTIES'][0]['MAP_INFO'][0] === false) || ($this->config['MAP_WIDGET'][0]['ENABLED'][0] === true)) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('map_info', false);
 		}
 		else {
@@ -976,7 +976,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'round_scores' and use own RoundScoreWidget (if enabled)
-		if ($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0] == false || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::ROUNDS][0]['ENABLED'][0] == true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TEAM][0]['ENABLED'][0] == true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CUP][0]['ENABLED'][0] == true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] == true) {
+		if ($this->config['UI_PROPERTIES'][0]['ROUND_SCORES'][0] === false || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::ROUNDS][0]['ENABLED'][0] === true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::TEAM][0]['ENABLED'][0] === true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CUP][0]['ENABLED'][0] === true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] === true) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('round_scores', false);
 		}
 		else {
@@ -984,7 +984,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'warmup'
-		if ($this->config['UI_PROPERTIES'][0]['WARMUP'][0] == false || $this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['UI_PROPERTIES'][0]['WARMUP'][0] === false || $this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] === true) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('warmup', false);
 		}
 		else {
@@ -992,7 +992,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'endmap_ladder_recap'
-		if ($this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['ENDMAP_LADDER_RECAP'][0] === false) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('endmap_ladder_recap', false);
 		}
 		else {
@@ -1000,7 +1000,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'multilap_info'
-		if ($this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['MULTILAP_INFO'][0] === false) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('multilap_info', false);
 		}
 		else {
@@ -1008,7 +1008,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'position'
-		if ($this->config['UI_PROPERTIES'][0]['POSITION'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['POSITION'][0] === false) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('position', false);
 		}
 		else {
@@ -1016,7 +1016,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'speed_and_distance'
-		if ($this->config['UI_PROPERTIES'][0]['SPEED_AND_DISTANCE'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['SPEED_AND_DISTANCE'][0] === false) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('speed_and_distance', false);
 		}
 		else {
@@ -1024,7 +1024,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'personal_best_and_rank'
-		if ($this->config['UI_PROPERTIES'][0]['PERSONAL_BEST_AND_RANK'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['PERSONAL_BEST_AND_RANK'][0] === false) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('personal_best_and_rank', false);
 		}
 		else {
@@ -1032,7 +1032,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Setup 'checkpoint_list'
-		if ($this->config['UI_PROPERTIES'][0]['CHECKPOINT_LIST'][0] == false) {
+		if ($this->config['UI_PROPERTIES'][0]['CHECKPOINT_LIST'][0] === false) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('checkpoint_list', false);
 		}
 		else {
@@ -1065,23 +1065,23 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->refreshScorelists();
 
 		// Build the Playlist-Cache
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			$this->getMusicServerPlaylist(false, true);
 		}
 
 		// Build the Toplist Widget
-		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] === true) {
 			$this->cache['ToplistWidget'] = $this->buildToplistWidget();
 		}
 
 		// Build the AddToFavorite Widget
-		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] === true) {
 			$this->cache['AddToFavoriteWidget']['Race'] = $this->buildAddToFavoriteWidget('RACE');
 			$this->cache['AddToFavoriteWidget']['Score'] = $this->buildAddToFavoriteWidget('SCORE');
 		}
 
 		// Build the DonationWidget
-		if ($this->config['DONATION_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['DONATION_WIDGET'][0]['ENABLED'][0] === true) {
 			$val = explode(',', $this->config['DONATION_WIDGET'][0]['AMOUNTS'][0]);
 			if (count($val) < 7) {
 				trigger_error('[RecordsEyepiece] » The amount of <donation_widget><amounts> is lower then the required min. of 7 in records_eyepiece.xml!', E_USER_ERROR);
@@ -1102,7 +1102,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function onShutdown ($aseco) {
 
-		if (isset($this->config['WINNING_PAYOUT'][0]) && $this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+		if (isset($this->config['WINNING_PAYOUT'][0]) && $this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 			foreach ($aseco->server->players->player_list as $player) {
 				if ($this->cache['PlayerWinnings'][$player->login]['FinishPayment'] > 0) {
 					$this->winningPayout($player);
@@ -1126,11 +1126,11 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		if (strtoupper($chat_parameter) == 'PAYOUTS') {
+		if (strtoupper($chat_parameter) === 'PAYOUTS') {
 
 			if ($aseco->isAnyAdminByLogin($login)) {
 
-				if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+				if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 					$message = '{#server}» There are outstanding disbursements in the amount of ';
 					$outstanding = 0;
 					foreach ($this->cache['PlayerWinnings'] as $login => $struct) {
@@ -1149,7 +1149,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		}
 		else {
-			if ($aseco->server->gamestate == Server::RACE) {
+			if ($aseco->server->gamestate === Server::RACE) {
 
 				// Call the HelpWindow
 				$params = array(
@@ -1173,7 +1173,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function chat_estat ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if ($aseco->server->gamestate == Server::RACE) {
+		if ($aseco->server->gamestate === Server::RACE) {
 
 			// Get Player object
 			if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
@@ -1184,55 +1184,55 @@ class PluginRecordsEyepiece extends Plugin {
 			$gamemode = $aseco->server->gameinfo->mode;
 
 			$id = false;
-			if ( (strtoupper($chat_parameter) == 'DEDIRECS') && ($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true)) {
+			if ( (strtoupper($chat_parameter) === 'DEDIRECS') && ($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true)) {
 				$id = 'showDedimaniaRecordsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'LOCALRECS') {
+			else if (strtoupper($chat_parameter) === 'LOCALRECS') {
 				$id = 'showLocalRecordsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPNATIONS') {
+			else if (strtoupper($chat_parameter) === 'TOPNATIONS') {
 				$id = 'showTopNationsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPRANKS') {
+			else if (strtoupper($chat_parameter) === 'TOPRANKS') {
 				$id = 'showTopRankingsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPWINNERS') {
+			else if (strtoupper($chat_parameter) === 'TOPWINNERS') {
 				$id = 'showTopWinnersWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'MOSTRECORDS') {
+			else if (strtoupper($chat_parameter) === 'MOSTRECORDS') {
 				$id = 'showMostRecordsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'MOSTFINISHED') {
+			else if (strtoupper($chat_parameter) === 'MOSTFINISHED') {
 				$id = 'showMostFinishedWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPPLAYTIME') {
+			else if (strtoupper($chat_parameter) === 'TOPPLAYTIME') {
 				$id = 'showTopPlaytimeWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPDONATORS') {
+			else if (strtoupper($chat_parameter) === 'TOPDONATORS') {
 				$id = 'showTopDonatorsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPMAPS') {
+			else if (strtoupper($chat_parameter) === 'TOPMAPS') {
 				$id = 'showTopMapsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPVOTERS') {
+			else if (strtoupper($chat_parameter) === 'TOPVOTERS') {
 				$id = 'showTopVotersWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPACTIVE') {
+			else if (strtoupper($chat_parameter) === 'TOPACTIVE') {
 				$id = 'showTopActivePlayersWindow';
 			}
-			else if ( (strtoupper($chat_parameter) == 'TOPPAYOUTS') && ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true)) {
+			else if ( (strtoupper($chat_parameter) === 'TOPPAYOUTS') && ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true)) {
 				$id = 'showTopWinningPayoutWindow';
 			}
-			else if ( (strtoupper($chat_parameter) == 'TOPBETWINS') && ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] == true)) {
+			else if ( (strtoupper($chat_parameter) === 'TOPBETWINS') && ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] === true)) {
 				$id = 'showTopBetwinsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPROUNDSCORE') {
+			else if (strtoupper($chat_parameter) === 'TOPROUNDSCORE') {
 				$id = 'showTopRoundscoreWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPVISITORS') {
+			else if (strtoupper($chat_parameter) === 'TOPVISITORS') {
 				$id = 'showTopVisitorsWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'TOPCONTINENTS') {
+			else if (strtoupper($chat_parameter) === 'TOPCONTINENTS') {
 				$id = 'showTopContinentsWindow';
 			}
 			else {
@@ -1267,8 +1267,8 @@ class PluginRecordsEyepiece extends Plugin {
 		$message = false;
 
 		// Check optional parameter
-		if (strtoupper($chat_parameter) == 'RELOAD') {
-			if ($aseco->server->gamestate == Server::RACE) {
+		if (strtoupper($chat_parameter) === 'RELOAD') {
+			if ($aseco->server->gamestate === Server::RACE) {
 				$aseco->console('[RecordsEyepiece] MasterAdmin '. $login .' reloads the configuration.');
 
 				// Close all Widgets at all Players
@@ -1289,7 +1289,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->onWarmUpStatusChanged($aseco, $aseco->warmup_phase);
 
 				// Display the PlacementWidgets at state 'always'
-				if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
+				if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) {
 					$xml = $this->cache['PlacementWidget']['Always'];
 					$this->sendManialink($xml, false, 0);
 				}
@@ -1332,8 +1332,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 			$param = preg_split("/^forcenice (true|false)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
 			$message = '{#admin}» Set <nicemode><force> to "'. $param[0] .'".';
-			$this->config['NICEMODE'][0]['FORCE'][0]	= ((strtoupper($param[0]) == 'TRUE') ? true : false);
-			$this->config['States']['NiceMode']	= ((strtoupper($param[0]) == 'TRUE') ? true : false);
+			$this->config['NICEMODE'][0]['FORCE'][0]	= ((strtoupper($param[0]) === 'TRUE') ? true : false);
+			$this->config['States']['NiceMode']	= ((strtoupper($param[0]) === 'TRUE') ? true : false);
 
 			// Lets refresh the Widgets
 			$this->config['States']['DedimaniaRecords']['UpdateDisplay']	= true;
@@ -1344,7 +1344,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			$param = preg_split("/^playermarker (true|false)$/", $chat_parameter, 0, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
 			$message = '{#admin}» Set <features><mark_online_player_records> to "'. $param[0] .'".';
-			$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]	= ((strtoupper($param[0]) == 'TRUE') ? true : false);
+			$this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0]	= ((strtoupper($param[0]) === 'TRUE') ? true : false);
 
 			// Lets refresh the Widgets
 			$this->config['States']['DedimaniaRecords']['UpdateDisplay']	= true;
@@ -1356,7 +1356,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Show message
-		if ($message != false) {
+		if ($message !== false) {
 			$aseco->sendChatMessage($message, $login);
 		}
 	}
@@ -1371,15 +1371,15 @@ class PluginRecordsEyepiece extends Plugin {
 	public function chat_elist ($aseco, $login, $chat_command, $chat_parameter) {
 
 		// Do not display at score
-		if ($aseco->server->gamestate == Server::RACE) {
+		if ($aseco->server->gamestate === Server::RACE) {
 
 			// Get Player object
 			if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
 				return;
 			}
 
-			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) == 0) {
-				if ( ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0]) && ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] != 0)) {
+			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) === 0) {
+				if ( ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0]) && ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] !== 0)) {
 					$this->sendProgressIndicator($player->login);
 				}
 
@@ -1391,117 +1391,117 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			$id = false;
-			if (strtoupper($chat_parameter) == 'JUKEBOX') {
+			if (strtoupper($chat_parameter) === 'JUKEBOX') {
 
 				// Show the MaplistWindow (but only jukeboxed Maps)
 				$id = 'showMaplistWindowFilterJukeboxedMaps';
 			}
-			else if (strtoupper($chat_parameter) == 'AUTHOR') {
+			else if (strtoupper($chat_parameter) === 'AUTHOR') {
 
 				// Show the MapAuthorlistWindow
 				$id = 'showMapAuthorlistWindow';
 			}
-			else if (strtoupper($chat_parameter) == 'NORECENT') {
+			else if (strtoupper($chat_parameter) === 'NORECENT') {
 
 				// Show the MaplistWindow (but no recent Maps)
 				$id = 'showMaplistWindowFilterNoRecentMaps';
 			}
-			else if (strtoupper($chat_parameter) == 'ONLYRECENT') {
+			else if (strtoupper($chat_parameter) === 'ONLYRECENT') {
 
 				// Show the MaplistWindow (but only recent Maps)
 				$id = 'showMaplistWindowFilterOnlyRecentMaps';
 			}
-			else if (strtoupper($chat_parameter) == 'NORANK') {
+			else if (strtoupper($chat_parameter) === 'NORANK') {
 
 				// Show the MaplistWindow (but only Maps without a rank)
 				$id = 'showMaplistWindowFilterOnlyMapsWithoutRank';
 			}
-			else if (strtoupper($chat_parameter) == 'ONLYRANK') {
+			else if (strtoupper($chat_parameter) === 'ONLYRANK') {
 
 				// Show the MaplistWindow (but only Maps with a rank)
 				$id = 'showMaplistWindowFilterOnlyMapsWithRank';
 			}
-			else if (strtoupper($chat_parameter) == 'NOMULTI') {
+			else if (strtoupper($chat_parameter) === 'NOMULTI') {
 
 				// Show the MaplistWindow (but no Multilap Maps)
 				$id = 'showMaplistWindowFilterNoMultilapMaps';
 			}
-			else if (strtoupper($chat_parameter) == 'ONLYMULTI') {
+			else if (strtoupper($chat_parameter) === 'ONLYMULTI') {
 
 				// Show the MaplistWindow (but only Multilap Maps)
 				$id = 'showMaplistWindowFilterOnlyMultilapMaps';
 			}
-			else if (strtoupper($chat_parameter) == 'NOAUTHOR') {
+			else if (strtoupper($chat_parameter) === 'NOAUTHOR') {
 
 				// Show the MaplistWindow (but only Maps no author time)
 				$id = 'showMaplistWindowFilterOnlyMapsNoAuthorTime';
 			}
-			else if (strtoupper($chat_parameter) == 'NOGOLD') {
+			else if (strtoupper($chat_parameter) === 'NOGOLD') {
 
 				// Show the MaplistWindow (but only Maps no gold time)
 				$id = 'showMaplistWindowFilterOnlyMapsNoGoldTime';
 			}
-			else if (strtoupper($chat_parameter) == 'NOSILVER') {
+			else if (strtoupper($chat_parameter) === 'NOSILVER') {
 
 				// Show the MaplistWindow (but only Maps no silver time)
 				$id = 'showMaplistWindowFilterOnlyMapsNoSilverTime';
 			}
-			else if (strtoupper($chat_parameter) == 'NOBRONZE') {
+			else if (strtoupper($chat_parameter) === 'NOBRONZE') {
 
 				// Show the MaplistWindow (but only Maps no bronze time)
 				$id = 'showMaplistWindowFilterOnlyMapsNoBronzeTime';
 			}
-			else if (strtoupper($chat_parameter) == 'NOFINISH') {
+			else if (strtoupper($chat_parameter) === 'NOFINISH') {
 
 				// Show the MaplistWindow (but only Maps not finished)
 				$id = 'showMaplistWindowFilterOnlyMapsNotFinished';
 			}
-			else if (strtoupper($chat_parameter) == 'BEST') {
+			else if (strtoupper($chat_parameter) === 'BEST') {
 
 				// Show the MaplistWindow (sort Maps 'Best Player Rank')
 				$id = 'showMaplistWindowSortingBestPlayerRank';
 			}
-			else if (strtoupper($chat_parameter) == 'WORST') {
+			else if (strtoupper($chat_parameter) === 'WORST') {
 
 				// Show the MaplistWindow (sort Maps 'Worst Player Rank')
 				$id = 'showMaplistWindowSortingWorstPlayerRank';
 			}
-			else if (strtoupper($chat_parameter) == 'SHORTEST') {
+			else if (strtoupper($chat_parameter) === 'SHORTEST') {
 
 				// Show the MaplistWindow (sort Maps 'Shortest Author Time')
 				$id = 'showMaplistWindowSortingShortestAuthorTime';
 			}
-			else if (strtoupper($chat_parameter) == 'LONGEST') {
+			else if (strtoupper($chat_parameter) === 'LONGEST') {
 
 				// Show the MaplistWindow (sort Maps 'Longest Author Time')
 				$id = 'showMaplistWindowSortingLongestAuthorTime';
 			}
-			else if (strtoupper($chat_parameter) == 'NEWEST') {
+			else if (strtoupper($chat_parameter) === 'NEWEST') {
 
 				// Show the MaplistWindow (sort Maps 'Newest Maps First')
 				$id = 'showMaplistWindowSortingNewestMapsFirst';
 			}
-			else if (strtoupper($chat_parameter) == 'OLDEST') {
+			else if (strtoupper($chat_parameter) === 'OLDEST') {
 
 				// Show the MaplistWindow (sort Maps 'Oldest Maps First')
 				$id = 'showMaplistWindowSortingOldestMapsFirst';
 			}
-			else if (strtoupper($chat_parameter) == 'MAP') {
+			else if (strtoupper($chat_parameter) === 'MAP') {
 
 				// Show the MaplistWindow (sort Maps 'By Mapname')
 				$id = 'showMaplistWindowSortingByMapname';
 			}
-			else if (strtoupper($chat_parameter) == 'AUTHOR') {
+			else if (strtoupper($chat_parameter) === 'AUTHOR') {
 
 				// Show the MaplistWindow (sort Maps 'By Authorname')
 				$id = 'showMaplistWindowSortingByAuthorname';
 			}
-			else if (strtoupper($chat_parameter) == 'BESTKARMA') {
+			else if (strtoupper($chat_parameter) === 'BESTKARMA') {
 
 				// Show the MaplistWindow (sort Maps 'By Karma: Best Maps First')
 				$id = 'showMaplistWindowSortingByKarmaBestMapsFirst';
 			}
-			else if (strtoupper($chat_parameter) == 'WORSTKARMA') {
+			else if (strtoupper($chat_parameter) === 'WORSTKARMA') {
 
 				// Show the MaplistWindow (sort Maps 'By Karma: Worst Maps First')
 				$id = 'showMaplistWindowSortingByKarmaWorstMapsFirst';
@@ -1545,9 +1545,9 @@ class PluginRecordsEyepiece extends Plugin {
 	// Wrapper/Chat command for opening the MusiclistWindow
 	public function chat_emusic ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			// Do not display at score
-			if ($aseco->server->gamestate == Server::RACE) {
+			if ($aseco->server->gamestate === Server::RACE) {
 				// Get Player object
 				if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 					$params = array(
@@ -1581,19 +1581,19 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->config['States']['RefreshTimestampRecordWidgets'] = (time() + $this->config['FEATURES'][0]['REFRESH_INTERVAL'][0]);
 
 			// Check for changed LocalRecords, e.g. on "/admin delrec 1"...
-			if (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+			if (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 				if (count($aseco->plugins['PluginLocalRecords']->records->record_list) >= 1) {
 					$localDigest = $this->buildRecordDigest('locals', $aseco->plugins['PluginLocalRecords']->records->record_list);
-					if ($this->config['States']['LocalRecords']['ChkSum'] != $localDigest && $this->config['States']['LocalRecords']['NoRecordsFound'] === false) {
+					if ($this->config['States']['LocalRecords']['ChkSum'] !== $localDigest && $this->config['States']['LocalRecords']['NoRecordsFound'] === false) {
 						$this->config['States']['LocalRecords']['NeedUpdate'] = true;
 					}
 				}
 			}
 
 			// Load the current Rankings
-			if (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+			if (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 				$this->cache['CurrentRankings'] = array();
-				if ($gamemode == Gameinfo::TEAM) {
+				if ($gamemode === Gameinfo::TEAM) {
 					$this->cache['CurrentRankings'] = $this->getCurrentRanking(2,0);
 				}
 				else {
@@ -1607,13 +1607,13 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 			$widgets = '';
-			if ($this->config['States']['NiceMode'] == true) {
+			if ($this->config['States']['NiceMode'] === true) {
 				// Display the RecordWidgets to all Players (if refresh is required)
 				$widgets .= $this->showRecordWidgets(false);
 			}
 
 			// Send all widgets to ALL Players
-			if ($widgets != '') {
+			if ($widgets !== '') {
 				// Send Manialink
 				$this->sendManialink($widgets, false, 0);
 			}
@@ -1630,11 +1630,11 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->config['States']['RefreshTimestampPreload'] = (time() + 5);
 
 			foreach ($aseco->server->players->player_list as $player) {
-				if ( (time() >= $player->data['PluginRecordsEyepiece']['Preload']['Timestamp']) && ($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] != 5)) {
+				if ( (time() >= $player->data['PluginRecordsEyepiece']['Preload']['Timestamp']) && ($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] !== 5)) {
 					$player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] += 1;
 					$widgets = $this->buildImagePreload($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart']);
 
-					if ($widgets != '') {
+					if ($widgets !== '') {
 						// Send Manialink
 						$this->sendManialink($widgets, $player->login, 0);
 					}
@@ -1665,72 +1665,72 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Refresh the TopRankings Array
 		$this->getTopRankings($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_RANKINGS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_RANKINGS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopRankings'] = $this->buildScorelistWidgetEntry('TopRankingsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_RANKINGS'][0], $this->scores['TopRankings'], array('score', 'nickname'));
 		}
 
 		// Refresh the TopWinners Array
 		$this->getTopWinners($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopWinners'] = $this->buildScorelistWidgetEntry('TopWinnersWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0], $this->scores['TopWinners'], array('score', 'nickname'));
 		}
 
 		// Refresh TopMaps Array (if required)
-		if ($this->config['States']['TopMaps']['NeedUpdate'] == true) {
+		if ($this->config['States']['TopMaps']['NeedUpdate'] === true) {
 			$this->calculateMapKarma();
 			$this->getTopMaps($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_MAPS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_MAPS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopMaps'] = $this->buildScorelistWidgetEntry('TopMapsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_MAPS'][0], $this->scores['TopMaps'], array('karma', 'map'));
 		}
 
 		// Refresh TopVoters Array (if required)
-		if ($this->config['States']['TopVoters']['NeedUpdate'] == true) {
+		if ($this->config['States']['TopVoters']['NeedUpdate'] === true) {
 			$this->getTopVoters($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VOTERS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VOTERS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopVoters'] = $this->buildScorelistWidgetEntry('TopVotersWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_VOTERS'][0], $this->scores['TopVoters'], array('score', 'nickname'));
 		}
 
 		// Refresh the TopBetwins Array
 		$this->getTopBetwins($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopBetwins'] = $this->buildScorelistWidgetEntry('TopBetwinsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0], $this->scores['TopBetwins'], array('won', 'nickname'));
 		}
 
 		// Refresh the TopWinningPayout Array
 		$this->getTopWinningPayout($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNING_PAYOUTS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNING_PAYOUTS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopWinningPayouts'] = $this->buildScorelistWidgetEntry('TopWinningPayoutsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_WINNING_PAYOUTS'][0], $this->scores['TopWinningPayouts'], array('won', 'nickname'));
 		}
 
 		// Refresh the TopVisitors Array
 		$this->getTopVisitors($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VISITORS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VISITORS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopVisitors'] = $this->buildScorelistWidgetEntry('TopVisitorsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_VISITORS'][0], $this->scores['TopVisitors'], array('score', 'nickname'));
 		}
 
 		// Refresh the TopActivePlayers Array
 		$this->getTopActivePlayers($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_ACTIVE_PLAYERS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_ACTIVE_PLAYERS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopActivePlayers'] = $this->buildScorelistWidgetEntry('TopActivePlayersWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_ACTIVE_PLAYERS'][0], $this->scores['TopActivePlayers'], array('score', 'nickname'));
 		}
 
 		// Refresh the TopPlaytime Array
 		$this->getTopPlaytime($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_PLAYTIME'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_PLAYTIME'][0]['ENABLED'][0] === true) {
 			$this->cache['TopPlaytime'] = $this->buildScorelistWidgetEntry('TopPlaytimeWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_PLAYTIME'][0], $this->scores['TopPlaytime'], array('score', 'nickname'));
 		}
 
 		// Refresh the TopNations Array
 		$this->getTopNationList($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['ENABLED'][0] === true) {
 			$this->cache['TopNations'] = $this->buildTopNationsForScore($this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['ENTRIES'][0]);
 		}
 
 		// Refresh the Visitors Array
 		$this->getVisitors($this->config['FEATURES'][0]['TOPLIST_LIMIT'][0]);
-		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] === true) {
 			$this->cache['VisitorsWidget'] = $this->buildVisitorsWidget();
 		}
 	}
@@ -1779,7 +1779,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->cache['PlayerStates'][$player->login]['FinishScore']		= -1;
 
 
-		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 			// Check for WinningPayment: If this exists, do not override!
 			if ( !isset($this->cache['PlayerWinnings'][$player->login]['TimeStamp'])) {
 				$this->cache['PlayerWinnings'][$player->login]['FinishPayment']	= 0;
@@ -1799,7 +1799,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Look if Player is in $this->scores['TopActivePlayers'] and if, then update and resort
 		$found = false;
 		foreach ($this->scores['TopActivePlayers'] as &$item) {
-			if ($item['login'] == $player->login) {
+			if ($item['login'] === $player->login) {
 				$item['score']		= 'Today';
 				$item['score_plain']	= 0;
 				$found = true;
@@ -1807,7 +1807,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 		}
 		unset($item);
-		if ($found == true) {
+		if ($found === true) {
 			// Resort by 'score'
 			$data = array();
 			foreach ($this->scores['TopActivePlayers'] as $key => $row) {
@@ -1820,60 +1820,60 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$widgets .= $this->buildClockWidget();
 
-		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the TopList Widget to connecting Player
 			$widgets .= $this->cache['ToplistWidget'];
 		}
 
-		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the AddToFavorite Widget
 			$widgets .= $this->cache['AddToFavoriteWidget']['Race'];
 		}
 
-		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the Visitors-Widget to connecting Player
-			$widgets .= (($this->cache['VisitorsWidget'] != false) ? $this->cache['VisitorsWidget'] : '');
+			$widgets .= (($this->cache['VisitorsWidget'] !== false) ? $this->cache['VisitorsWidget'] : '');
 		}
 
-		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == true) {
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === true) {
 			// Display the WarmUpInfoWidget to connecting Player
-			$widgets .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+			$widgets .= (($this->cache['WarmUpInfoWidget'] !== false) ? $this->cache['WarmUpInfoWidget'] : '');
 		}
 
-		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] == true && ($aseco->server->maps->current->multi_lap == true && ($gamemode != Gameinfo::TIME_ATTACK && $gamemode != Gameinfo::DOPPLER))) {
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] === true && ($aseco->server->maps->current->multi_lap === true && ($gamemode !== Gameinfo::TIME_ATTACK && $gamemode !== Gameinfo::DOPPLER))) {
 			// Display the MultiLapInfoWidget to connecting Player
-			$widgets .= (($this->cache['MultiLapInfoWidget'] != false) ? $this->cache['MultiLapInfoWidget'] : '');
+			$widgets .= (($this->cache['MultiLapInfoWidget'] !== false) ? $this->cache['MultiLapInfoWidget'] : '');
 		}
 
-		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] === true) {
 			// Send the SpectatorInfoGetter to connecting Player
 			$this->cache['SpectatorOverview'][$player->login] = '';
 			$widgets .= $this->buildSpectatorInfoGetter();
 		}
 
-		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the ManiaExchangeWidget to connecting Player
-			$widgets .= (($this->cache['ManiaExchangeWidget'] != false) ? $this->cache['ManiaExchangeWidget'] : '');
+			$widgets .= (($this->cache['ManiaExchangeWidget'] !== false) ? $this->cache['ManiaExchangeWidget'] : '');
 		}
 
-		if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the MapcountWidget to connecting Player
-			$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+			$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 		}
 
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the Music Widget to connecting Player
-			$widgets .= (($this->cache['MusicWidget'] != false) ? $this->cache['MusicWidget'] : '');
+			$widgets .= (($this->cache['MusicWidget'] !== false) ? $this->cache['MusicWidget'] : '');
 		}
 
-		if ($this->config['States']['NiceMode'] == true) {
+		if ($this->config['States']['NiceMode'] === true) {
 			// Display the RecordWidgets to connecting Player
 			$widgets .= $this->showRecordWidgets(true);
 		}
 		else {
 			// Find any Records for this Player and if found, refresh the concerned Widgets
 			$result = $this->findPlayerRecords($player->login);
-			if ( ($result['DedimaniaRecords'] == true) || ($result['LocalRecords'] == true)) {
+			if ( ($result['DedimaniaRecords'] === true) || ($result['LocalRecords'] === true)) {
 				// New Player has one Record, need to refresh concerned Widgets (without LiveRankings) at ALL Players, but not current Player
 				$this->config['States']['DedimaniaRecords']['UpdateDisplay']	= true;
 				$this->config['States']['LocalRecords']['UpdateDisplay']		= true;
@@ -1884,12 +1884,12 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Display the PlacementWidgets at state 'always'
-		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->cache['PlacementWidget']['Always'];
 		}
 
 		// Display the PlacementWidgets at state 'race'
-		if ( ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) && ($aseco->server->gamestate == Server::RACE)) {
+		if ( ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) && ($aseco->server->gamestate === Server::RACE)) {
 			$widgets .= $this->cache['PlacementWidget']['Race'];
 			if (isset($this->cache['PlacementWidget'][$gamemode])) {
 				$widgets .= $this->cache['PlacementWidget'][$gamemode];
@@ -1897,7 +1897,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Display the MapWidget
-		$widgets .= (($this->cache['MapWidget']['Race'] != false) ? $this->cache['MapWidget']['Race'] : '');
+		$widgets .= (($this->cache['MapWidget']['Race'] !== false) ? $this->cache['MapWidget']['Race'] : '');
 
 		// Mark this Player for need to preload Images
 		$player->data['PluginRecordsEyepiece']['Preload']['Timestamp'] = (time() + 15);
@@ -1905,11 +1905,11 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Display the RoundScoreWidget
-		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildRoundScoreWidget($gamemode, false);
 		}
 
-//		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+//		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 //			$widgets .= $this->buildLiveRankingsWidgetMS($gamemode, $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]);
 //		}
 
@@ -1953,16 +1953,16 @@ class PluginRecordsEyepiece extends Plugin {
 		// Check if it is time to switch from "normal" to NiceMode or back
 		$this->checkServerLoad();
 
-		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 			$this->winningPayout($player);
 		}
 
 		// Find any Records for this Player and if found, refresh the concerned Widgets
 		$result = $this->findPlayerRecords($player->login);
-		if ($result['DedimaniaRecords'] == true) {
+		if ($result['DedimaniaRecords'] === true) {
 			$this->config['States']['DedimaniaRecords']['UpdateDisplay'] = true;
 		}
-		if ($result['LocalRecords'] == true) {
+		if ($result['LocalRecords'] === true) {
 			$this->config['States']['LocalRecords']['UpdateDisplay'] = true;
 		}
 
@@ -1993,7 +1993,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function onPlayerFinishPrefix ($aseco, $finish_item) {
 
-		if ($finish_item->score == 0) {
+		if ($finish_item->score === 0) {
 			// No actual finish, bail out immediately
 			return;
 		}
@@ -2003,7 +2003,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$player = $aseco->server->players->player_list[$finish_item->player_login];
 
 
-		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == false) {
+		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === false) {
 
 			// Add the Score
 			$this->scores['RoundScore'][$finish_item->score] = array(
@@ -2023,7 +2023,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Check if the Player has a better score as before
 		$refresh = false;
-		if ($this->cache['PlayerStates'][$player->login]['FinishScore'] == -1) {
+		if ($this->cache['PlayerStates'][$player->login]['FinishScore'] === -1) {
 			// New Score, store them
 			$this->cache['PlayerStates'][$player->login]['FinishScore'] = $finish_item->score;
 
@@ -2040,10 +2040,10 @@ class PluginRecordsEyepiece extends Plugin {
 			$refresh = true;
 		}
 		// Refresh the LiveRankingsWidget only if there is a better or new Score/Time
-		if ($refresh == true) {
+		if ($refresh === true) {
 			// Player finished the Map, need to Update the 'LiveRanking',
 			// but not at Gamemode 'Rounds' - that are only updated at the event 'onEndRound'!
-			if ($aseco->server->gameinfo->mode != Gameinfo::ROUNDS) {
+			if ($aseco->server->gameinfo->mode !== Gameinfo::ROUNDS) {
 				$this->config['States']['LiveRankings']['NeedUpdate'] = true;
 				$this->config['States']['LiveRankings']['NoRecordsFound'] = false;
 			}
@@ -2058,7 +2058,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Store the $finish_item->score to build the average
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['ENABLED'][0] === true) {
 			$this->scores['TopAverageTimes'][$player->login][] = $finish_item->score;
 		}
 	}
@@ -2073,10 +2073,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Look if Player is in Array
 		foreach ($this->scores['TopWinners'] as $item) {
-			if ($item['login'] == $player->login) {
+			if ($item['login'] === $player->login) {
 				// Lets refresh them now
 				$this->getTopWinners();
-				if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0]['ENABLED'][0] == true) {
+				if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0]['ENABLED'][0] === true) {
 					$this->cache['TopWinners'] = $this->buildScorelistWidgetEntry('TopWinnersWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0], $this->scores['TopWinners'], array('score', 'nickname'));
 				}
 				break;
@@ -2094,13 +2094,13 @@ class PluginRecordsEyepiece extends Plugin {
 	public function onPlayerInfoChanged ($aseco, $login) {
 
 		// Skip work at Score
-		if ($aseco->server->gamestate == Server::RACE) {
+		if ($aseco->server->gamestate === Server::RACE) {
 
 			// Get current Gamemode
 			$gamemode = $aseco->server->gameinfo->mode;
 
 			// Refresh Player and Team membership
-			if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+			if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 
 				// Get Player
 				if ($player = $aseco->server->players->getPlayerByLogin($login)) {
@@ -2131,23 +2131,23 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 //		// F9 handling
-//		if ($params['Action'] == 'switchDedimaniaRecordsWidget') {
+//		if ($params['Action'] === 'switchDedimaniaRecordsWidget') {
 //			$this->config['States']['DedimaniaRecords']['Visibility'] = $aseco->string2bool($params['Visible']);
 //			return;
 //		}
-//		else if ($params['Action'] == 'switchLocalRecordsWidget') {
+//		else if ($params['Action'] === 'switchLocalRecordsWidget') {
 //			$this->config['States']['LocalRecords']['Visibility'] = $aseco->string2bool($params['Visible']);
 //			return;
 //		}
-//		else if ($params['Action'] == 'switchMusicWidget') {
+//		else if ($params['Action'] === 'switchMusicWidget') {
 //			$this->config['States']['MusicWidget']['Visibility']	 = $aseco->string2bool($params['Visible']);
 //			return;
 //		}
-//		else if ($params['Action'] == 'switchLiveRankingsWidget') {
+//		else if ($params['Action'] === 'switchLiveRankingsWidget') {
 //			$this->config['States']['LiveRankings']['Visibility'] = $aseco->string2bool($params['Visible']);
 //			return;
 //		}
-//		else if ($params['Action'] == 'switchRoundScoreWidget') {
+//		else if ($params['Action'] === 'switchRoundScoreWidget') {
 //			$this->config['States']['RoundScoreWidget']['Visibility'] = $aseco->string2bool($params['Visible']);
 //			return;
 //		}
@@ -2184,22 +2184,22 @@ class PluginRecordsEyepiece extends Plugin {
 			'showTopContinentsWindow',
 		);
 
-		if ($params['Action'] == 'spectatorUpdate' && $this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($params['Action'] === 'spectatorUpdate' && $this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] === true) {
 			$this->updateSpectatorList($params['Spectator'], $params['Target']);
 			return;
 		}
 
-		if ($params['Action'] == 'showLastCurrentNextMapWindow') {
+		if ($params['Action'] === 'showLastCurrentNextMapWindow') {
 
 			$this->buildLastCurrentNextMapWindow($player);
 
 		}
-		else if ($params['Action'] == 'showManiaExchangeMapInfoWindow') {
+		else if ($params['Action'] === 'showManiaExchangeMapInfoWindow') {
 
 			$this->buildManiaExchangeMapInfoWindow($player);
 
 		}
-		else if ($params['Action'] == 'addMapToPlaylist') {
+		else if ($params['Action'] === 'addMapToPlaylist') {
 
 			// Get the selected Map
 			$map = $aseco->server->maps->getMapByUid($params['uid']);
@@ -2223,13 +2223,13 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'removeMapFromPlaylist') {
+		else if ($params['Action'] === 'removeMapFromPlaylist') {
 
 			if ($aseco->allowAbility($player, 'dropjukebox')) {
 				$juked = 0;
 				$tid = 1;
 				foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
-					if ($item['uid'] == $params['uid']) {
+					if ($item['uid'] === $params['uid']) {
 						$juked = $tid;
 						break;
 					}
@@ -2244,19 +2244,19 @@ class PluginRecordsEyepiece extends Plugin {
 				$aseco->releaseChatCommand('/jukebox drop', $login);
 			}
 
-			if ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] == true) {
+			if ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] === true) {
 				// Refresh on drop map from jukebox
 				$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 				$require_action = true;
 			}
 
 		}
-		else if ($params['Action'] == 'askDropMapFromPlaylist') {
+		else if ($params['Action'] === 'askDropMapFromPlaylist') {
 
 			$widgets .= $this->buildAskDropMapFromPlaylist();
 
 		}
-		else if ($params['Action'] == 'dropMapFromPlaylist') {
+		else if ($params['Action'] === 'dropMapFromPlaylist') {
 
 			// Drop all Maps from the Jukebox
 			$aseco->releaseChatCommand('/admin clearjukebox', $player->login);
@@ -2269,12 +2269,12 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'askDropSongFromPlaylist') {
+		else if ($params['Action'] === 'askDropSongFromPlaylist') {
 
 			$widgets .= $this->buildAskDropSongFromPlaylist();
 
 		}
-		else if ($params['Action'] == 'dropSongFromPlaylist') {
+		else if ($params['Action'] === 'dropSongFromPlaylist') {
 
 			// Drop song
 			$aseco->releaseChatCommand('/music drop', $player->login);
@@ -2287,10 +2287,10 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindow') {
+		else if ($params['Action'] === 'showMaplistWindow') {
 
-			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) == 0) {
-				if ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] && $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] != 0) {
+			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) === 0) {
+				if ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] && $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] !== 0) {
 					$this->sendProgressIndicator($player->login);
 				}
 
@@ -2306,7 +2306,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyCanyonMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyCanyonMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2314,7 +2314,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyStadiumMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyStadiumMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2322,7 +2322,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyValleyMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyValleyMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2330,7 +2330,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterJukeboxedMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterJukeboxedMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2338,7 +2338,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterNoRecentMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterNoRecentMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2346,7 +2346,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyRecentMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyRecentMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2354,7 +2354,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsWithoutRank') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsWithoutRank') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2362,7 +2362,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsWithRank') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsWithRank') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2370,7 +2370,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsNoGoldTime') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsNoGoldTime') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2378,7 +2378,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsNoAuthorTime') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsNoAuthorTime') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2386,7 +2386,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterMapsWithMoodSunrise') {
+		else if ($params['Action'] === 'showMaplistWindowFilterMapsWithMoodSunrise') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2394,7 +2394,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterMapsWithMoodDay') {
+		else if ($params['Action'] === 'showMaplistWindowFilterMapsWithMoodDay') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2402,7 +2402,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterMapsWithMoodSunset') {
+		else if ($params['Action'] === 'showMaplistWindowFilterMapsWithMoodSunset') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2410,7 +2410,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterMapsWithMoodNight') {
+		else if ($params['Action'] === 'showMaplistWindowFilterMapsWithMoodNight') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2418,7 +2418,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMultilapMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMultilapMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2426,7 +2426,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterNoMultilapMaps') {
+		else if ($params['Action'] === 'showMaplistWindowFilterNoMultilapMaps') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2434,7 +2434,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsNoSilverTime') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsNoSilverTime') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2442,7 +2442,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsNoBronzeTime') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsNoBronzeTime') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2450,7 +2450,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterOnlyMapsNotFinished') {
+		else if ($params['Action'] === 'showMaplistWindowFilterOnlyMapsNotFinished') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2458,7 +2458,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingBestPlayerRank') {
+		else if ($params['Action'] === 'showMaplistWindowSortingBestPlayerRank') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2466,7 +2466,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingWorstPlayerRank') {
+		else if ($params['Action'] === 'showMaplistWindowSortingWorstPlayerRank') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2474,7 +2474,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingShortestAuthorTime') {
+		else if ($params['Action'] === 'showMaplistWindowSortingShortestAuthorTime') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2482,7 +2482,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingLongestAuthorTime') {
+		else if ($params['Action'] === 'showMaplistWindowSortingLongestAuthorTime') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2490,7 +2490,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingNewestMapsFirst') {
+		else if ($params['Action'] === 'showMaplistWindowSortingNewestMapsFirst') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2498,7 +2498,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingOldestMapsFirst') {
+		else if ($params['Action'] === 'showMaplistWindowSortingOldestMapsFirst') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2506,7 +2506,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingByMapname') {
+		else if ($params['Action'] === 'showMaplistWindowSortingByMapname') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2514,7 +2514,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingByAuthorname') {
+		else if ($params['Action'] === 'showMaplistWindowSortingByAuthorname') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2522,7 +2522,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingByKarmaBestMapsFirst') {
+		else if ($params['Action'] === 'showMaplistWindowSortingByKarmaBestMapsFirst') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2530,7 +2530,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingByKarmaWorstMapsFirst') {
+		else if ($params['Action'] === 'showMaplistWindowSortingByKarmaWorstMapsFirst') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2538,7 +2538,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowSortingByAuthorNation') {
+		else if ($params['Action'] === 'showMaplistWindowSortingByAuthorNation') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
@@ -2546,7 +2546,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterByKeyword') {
+		else if ($params['Action'] === 'showMaplistWindowFilterByKeyword') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 //			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;						// already setup in chat_list()!
@@ -2554,16 +2554,16 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'handlePlayerDonation') {
+		else if ($params['Action'] === 'handlePlayerDonation') {
 
 			// Donate the Donation
 			$aseco->releaseChatCommand('/donate '. $params['Amount'], $player->login);
 
 		}
-		else if ($params['Action'] == 'releaseChatCommand') {
+		else if ($params['Action'] === 'releaseChatCommand') {
 
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ( (isset($placement['CHAT_MLID'][0])) && ($placement['CHAT_MLID'][0] == $params['id'])) {
+				if ( (isset($placement['CHAT_MLID'][0])) && ($placement['CHAT_MLID'][0] === $params['id'])) {
 					$aseco->releaseChatCommand($placement['CHAT_COMMAND'][0], $player->login);
 					break;
 				}
@@ -2571,7 +2571,7 @@ class PluginRecordsEyepiece extends Plugin {
 			unset($placement);
 
 		}
-		else if ($params['Action'] == 'showMaplistWindowFilterAuthor') {
+		else if ($params['Action'] === 'showMaplistWindowFilterAuthor') {
 
 			// Show the MaplistWindow (but only Maps from the selected MapAuthor)
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
@@ -2580,21 +2580,21 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'addSongToJukebox') {
+		else if ($params['Action'] === 'addSongToJukebox') {
 
 			$aseco->releaseChatCommand('/music '. $params['id'], $login);
 
 			// It is required to refresh the SongIds from $aseco->plugins['PluginMusicServer']->songs
 			$this->config['States']['MusicServerPlaylist']['NeedUpdate'] = true;
 
-			if ($this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0] == true) {
+			if ($this->config['FEATURES'][0]['SONGLIST'][0]['FORCE_SONGLIST'][0] === true) {
 				// Refresh on juke'd song
 				$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMusiclistWindow';
 				$require_action = true;
 			}
 
 		}
-		else if ( ($params['Action'] == 20) && ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] == true)) {
+		else if ( ($params['Action'] === 20) && ($this->config['FEATURES'][0]['MAPLIST'][0]['FORCE_MAPLIST'][0] === true)) {
 
 			// Refresh on drop complete jukebox (action from plugin.rasp_jukebox.php)
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
@@ -2604,14 +2604,14 @@ class PluginRecordsEyepiece extends Plugin {
 		else if (in_array($params['Action'], $answer_index)) {
 
 			// Set the Window action
-			if ($player->data['PluginRecordsEyepiece']['Window']['Action'] != $params['Action']) {
+			if ($player->data['PluginRecordsEyepiece']['Window']['Action'] !== $params['Action']) {
 				$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 			}
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = $params['Action'];
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'WindowPagePrev') {
+		else if ($params['Action'] === 'WindowPagePrev') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] -= 1;
 			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] < 0) {
@@ -2620,7 +2620,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'WindowPagePrevTwo') {
+		else if ($params['Action'] === 'WindowPagePrevTwo') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] -= 2;
 			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] < 0) {
@@ -2629,13 +2629,13 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'WindowPageFirst') {
+		else if ($params['Action'] === 'WindowPageFirst') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'WindowPageNext') {
+		else if ($params['Action'] === 'WindowPageNext') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] += 1;
 			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] > $player->data['PluginRecordsEyepiece']['Window']['MaxPage']) {
@@ -2644,7 +2644,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'WindowPageNextTwo') {
+		else if ($params['Action'] === 'WindowPageNextTwo') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] += 2;
 			if ($player->data['PluginRecordsEyepiece']['Window']['Page'] > $player->data['PluginRecordsEyepiece']['Window']['MaxPage']) {
@@ -2653,7 +2653,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$require_action = true;
 
 		}
-		else if ($params['Action'] == 'WindowPageLast') {
+		else if ($params['Action'] === 'WindowPageLast') {
 
 			$player->data['PluginRecordsEyepiece']['Window']['Page'] = $player->data['PluginRecordsEyepiece']['Window']['MaxPage'];
 			$require_action = true;
@@ -2662,134 +2662,134 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Nothing above matched, so the Player want to see the prev/next page in the current open Window
-		if ($require_action == true) {
-			if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showDedimaniaRecordsWindow') {
+		if ($require_action === true) {
+			if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showDedimaniaRecordsWindow') {
 
 				$this->buildDedimaniaRecordsWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showLocalRecordsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showLocalRecordsWindow') {
 
 				$this->buildLocalRecordsWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showLiveRankingsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showLiveRankingsWindow') {
 
 				$this->buildLiveRankingsWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMusiclistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMusiclistWindow') {
 
 				$result = $this->buildMusiclistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login);
 				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMaplistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistWindow') {
 
 				$result = $this->buildMaplistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player);
 				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMapAuthorlistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMapAuthorlistWindow') {
 
 				$result = $this->buildMapAuthorlistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player);
 				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
 				$widgets .= $result['xml'];
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showHelpWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showHelpWindow') {
 
 				$this->buildHelpWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showToplistWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showToplistWindow') {
 
 				$this->buildToplistWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopRankingsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopRankingsWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_RANKINGS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopWinnersWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopWinnersWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_WINNERS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMostRecordsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMostRecordsWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'MOST_RECORDS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMostFinishedWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMostFinishedWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'MOST_FINISHED', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopPlaytimeWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopPlaytimeWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_PLAYTIME', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopDonatorsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopDonatorsWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_DONATORS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopMapsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopMapsWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_MAPS', array('karma', 'map'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopVotersWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopVotersWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_VOTERS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopActivePlayersWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopActivePlayersWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_ACTIVE_PLAYERS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopWinningPayoutWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopWinningPayoutWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_WINNING_PAYOUTS', array('won', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopBetwinsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopBetwinsWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_BETWINS', array('won', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopRoundscoreWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopRoundscoreWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_ROUNDSCORE', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopVisitorsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopVisitorsWindow') {
 
 				$this->buildScorelistWindowEntry($player, 'TOP_VISITORS', array('score', 'nickname'));
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopNationsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopNationsWindow') {
 
 				$this->buildTopNationsWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showTopContinentsWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showTopContinentsWindow') {
 
 				$this->buildTopContinentsWindow($player);
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMaplistFilterWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistFilterWindow') {
 
 				$widgets .= $this->buildMaplistFilterWindow();
 
 			}
-			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] == 'showMaplistSortingWindow') {
+			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistSortingWindow') {
 
 				$widgets .= $this->buildMaplistSortingWindow();
 
@@ -2859,12 +2859,12 @@ class PluginRecordsEyepiece extends Plugin {
 		// to prevent double countings.
 		$found = false;
 		foreach ($this->scores['LocalRecords'] as $item) {
-			if ($finish_item->player->login == $item['login']) {
+			if ($finish_item->player->login === $item['login']) {
 				$found = true;
 				break;
 			}
 		}
-		if ($found == false) {
+		if ($found === false) {
 			// Get the Player object
 			$player = $aseco->server->players->player_list[$finish_item->player->login];
 
@@ -2876,7 +2876,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			foreach ($this->scores['MostRecords'] as &$item) {
-				if ($finish_item->player->login == $item['login']) {
+				if ($finish_item->player->login === $item['login']) {
 					$item['score']++;
 					break;
 				}
@@ -2912,7 +2912,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Init
 		$widgets = '';
 
-		if ($command[0] == 'clear') {
+		if ($command[0] === 'clear') {
 			$this->cache['Map']['Jukebox'] = false;
 
 			// Rebuild the Widgets
@@ -2940,11 +2940,11 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->cache['MapWidget']['Score'] = $this->buildMapWidget('score');
 
 			// Refresh the "Next Map" Widget
-			if ($command[0] == 'replay' || $command[0] == 'restart' || $command[0] == 'skip' || $command[0] == 'previous' || $command[0] == 'nextenv') {
-				if ($aseco->server->gamestate == Server::SCORE) {
+			if ($command[0] === 'replay' || $command[0] === 'restart' || $command[0] === 'skip' || $command[0] === 'previous' || $command[0] === 'nextenv') {
+				if ($aseco->server->gamestate === Server::SCORE) {
 					$widgets .= $this->cache['MapWidget']['Score'];
 				}
-				else if ($aseco->server->gamestate == Server::RACE) {
+				else if ($aseco->server->gamestate === Server::RACE) {
 					$widgets .= $this->cache['MapWidget']['Race'];
 				}
 			}
@@ -2971,71 +2971,71 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets = '';
 
 		// Set to 'true' on several parameter to prevent redo this at the event 'onMapListModified'
-		if ($command[0] == 'add' || $command[0] == 'remove' || $command[0] == 'rename' || $command[0] == 'juke') {
+		if ($command[0] === 'add' || $command[0] === 'remove' || $command[0] === 'rename' || $command[0] === 'juke') {
 			$this->config['States']['MaplistRefreshProgressed'] = true;
 		}
 
 		// Check for changed Maplist and refresh complete or partial
-		if ($command[0] == 'read') {
+		if ($command[0] === 'read') {
 			// Get the new Maplist
 			$this->getMaplist(false);
 
-			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 				// Refresh the MapcountWidget
 				$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
 
 				// Display the MapcountWidget to all Player
-				$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+				$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 			}
 		}
-		else if ($command[0] == 'add' || $command[0] == 'juke') {
+		else if ($command[0] === 'add' || $command[0] === 'juke') {
 			// Get the new Maplist
 			$this->getMaplist($command[1]);
 
-			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 				// Refresh the MapcountWidget
 				$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
 
 				// Display the MapcountWidget to all Player
-				$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+				$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 			}
 		}
-		else if ($command[0] == 'remove' || $command[0] == 'unjuke') {
+		else if ($command[0] === 'remove' || $command[0] === 'unjuke') {
 			// Get the new Maplist
 			$this->getMaplist($command[1]);
 
-			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 				// Refresh the MapcountWidget
 				$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
 
 				// Display the MapcountWidget to all Player
-				$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+				$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 			}
 		}
 
 		// Clean the local records cache from MaplistWindow at every Player
-		if ($command[0] == 'read' || $command[0] == 'remove') {
+		if ($command[0] === 'read' || $command[0] === 'remove') {
 			foreach ($aseco->server->players->player_list as $player) {
 				$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = array();
 			}
 			unset($player);
 		}
 
-		if ($command[0] == 'add' || $command[0] == 'juke' || $command[0] == 'remove' || $command[0] == 'unjuke' || $command[0] == 'remove') {
+		if ($command[0] === 'add' || $command[0] === 'juke' || $command[0] === 'remove' || $command[0] === 'unjuke' || $command[0] === 'remove') {
 
 			// Rebuild the Widgets
 			$this->cache['MapWidget']['Race']	= $this->buildMapWidget('race');
 			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
 
-			if ($aseco->server->gamestate == Server::SCORE) {
+			if ($aseco->server->gamestate === Server::SCORE) {
 				$widgets .= $this->cache['MapWidget']['Score'];
 			}
-			else if ($aseco->server->gamestate == Server::RACE) {
+			else if ($aseco->server->gamestate === Server::RACE) {
 				$widgets .= $this->cache['MapWidget']['Race'];
 			}
 		}
 
-		if (!empty($widgets) && $aseco->server->gamestate != Server::SCORE) {
+		if (!empty($widgets) && $aseco->server->gamestate !== Server::SCORE) {
 			// Send Manialink to all Players
 			$this->sendManialink($widgets, false, 0);
 		}
@@ -3053,7 +3053,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Reload the Maplist now
 		if ($data[2] !== false) {
 			// Do the work not again, if already done at 'onMaplistChanged'
-			if ($this->config['States']['MaplistRefreshProgressed'] == true) {
+			if ($this->config['States']['MaplistRefreshProgressed'] === true) {
 				$this->config['States']['MaplistRefreshProgressed'] = false;
 				return;
 			}
@@ -3064,13 +3064,13 @@ class PluginRecordsEyepiece extends Plugin {
 			// Get the new Maplist
 			$this->getMaplist(false);
 
-			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+			if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 				// Refresh the MapcountWidget
 				$this->cache['MapcountWidget']	= $this->buildMapcountWidget();
 
 				// Display the MapcountWidget to all Player
-				if ($aseco->server->gamestate == Server::RACE) {
-					$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+				if ($aseco->server->gamestate === Server::RACE) {
+					$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 				}
 			}
 
@@ -3078,10 +3078,10 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->cache['MapWidget']['Race']	= $this->buildMapWidget('race');
 			$this->cache['MapWidget']['Score']	= $this->buildMapWidget('score');
 
-			if ($aseco->server->gamestate == Server::SCORE) {
+			if ($aseco->server->gamestate === Server::SCORE) {
 				$widgets .= $this->cache['MapWidget']['Score'];
 			}
-			else if ($aseco->server->gamestate == Server::RACE) {
+			else if ($aseco->server->gamestate === Server::RACE) {
 				$widgets .= $this->cache['MapWidget']['Race'];
 			}
 
@@ -3132,7 +3132,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Increase donations for this Player if in TOP
 		$found = false;
 		foreach ($this->scores['TopDonators'] as &$item) {
-			if ($item['login'] == $donation[0]) {
+			if ($item['login'] === $donation[0]) {
 				$item['score_plain'] += $donation[1];
 				$item['score'] = $this->formatNumber($item['score_plain'], 0) .' P';
 
@@ -3142,7 +3142,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 		}
 		unset($item);
-		if ($found == false) {
+		if ($found === false) {
 			// Get Player object
 			if ($player = $aseco->server->players->getPlayerByLogin($donation[0])) {
 				// Add the Player to the TopDonators
@@ -3193,16 +3193,16 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['States']['WarmUpPhase'] = $aseco->warmup_phase;
 
 		// Display the RoundScoreWidget
-		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] == true) {
+		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] === true) {
 			$this->buildRoundScoreWidget($aseco->server->gameinfo->mode, true);
 		}
 
 		$widget = '';
-		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == false) {
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === false) {
 			$widget .= '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget" version="3"></manialink>';
 		}
-		else if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == true) {
-			$widget .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+		else if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === true) {
+			$widget .= (($this->cache['WarmUpInfoWidget'] !== false) ? $this->cache['WarmUpInfoWidget'] : '');
 		}
 		if (!empty($widget)) {
 			$this->sendManialink($widget, false, 0);
@@ -3228,7 +3228,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->refreshScorelists();
 
 		// Refresh the Playlist-Cache
-		if ( ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) && ($this->config['States']['MusicServerPlaylist']['NeedUpdate'] == true)) {
+		if ( ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) && ($this->config['States']['MusicServerPlaylist']['NeedUpdate'] === true)) {
 			$this->getMusicServerPlaylist(true, false);
 		}
 	}
@@ -3248,19 +3248,19 @@ class PluginRecordsEyepiece extends Plugin {
 		$gamemode = $aseco->server->gameinfo->mode;
 
 		// At Gamemode 'Rounds' or 'Team' need to refresh now
-		if ($gamemode == Gameinfo::ROUNDS || $gamemode == Gameinfo::TEAM || $gamemode == Gameinfo::CHASE) {
+		if ($gamemode === Gameinfo::ROUNDS || $gamemode === Gameinfo::TEAM || $gamemode === Gameinfo::CHASE) {
 
 			// Build the RecordWidgets and ONLY in normal mode send it to each or given Player (if refresh is required)
 			$this->buildRecordWidgets(false, false);
 
-			if ($this->config['States']['NiceMode'] == true) {
+			if ($this->config['States']['NiceMode'] === true) {
 				// Display the RecordWidgets to all Players
 				$widgets .= $this->showRecordWidgets(false);
 			}
 		}
 
 		// Build the RoundScoreWidget
-		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 			// Reset round and display an empty Widget
 			$this->scores['RoundScore'] = array();
 			$widgets .= $this->buildRoundScoreWidget($gamemode, false);
@@ -3285,7 +3285,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$gamemode = $aseco->server->gameinfo->mode;
 
 		// At Gamemode 'Rounds', 'Team' or 'Cup' need to refresh now
-		if ($gamemode == Gameinfo::ROUNDS || $gamemode == Gameinfo::TEAM || $gamemode == Gameinfo::CUP || $gamemode == Gameinfo::CHASE) {
+		if ($gamemode === Gameinfo::ROUNDS || $gamemode === Gameinfo::TEAM || $gamemode === Gameinfo::CUP || $gamemode === Gameinfo::CHASE) {
 			$this->config['States']['LiveRankings']['NeedUpdate']		= true;
 			$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
 
@@ -3310,10 +3310,10 @@ class PluginRecordsEyepiece extends Plugin {
 		$gamemode = $aseco->server->gameinfo->mode;
 
 		// Special handling for Gamemode 'Laps' or 'Chase'
-		if ($gamemode != Gameinfo::LAPS && $gamemode != Gameinfo::CHASE && !empty($aseco->registered_events['onPlayerCheckpoint'])) {
+		if ($gamemode !== Gameinfo::LAPS && $gamemode !== Gameinfo::CHASE && !empty($aseco->registered_events['onPlayerCheckpoint'])) {
 			// Unregister (possible registered) 'onPlayerCheckpoint' event for Gamemode 'Laps' or 'Chase' if this is not 'Laps' or 'Chase'
 			foreach ($aseco->registered_events['onPlayerCheckpoint'] as &$item) {
-				if ($item[0]->getClassname() == $this->getClassname()) {
+				if ($item[0]->getClassname() === $this->getClassname()) {
 					$aseco->console('[RecordsEyepiece] Unregister event "onPlayerCheckpoint", currently not required.');
 					unset($item);
 					break;
@@ -3323,7 +3323,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Unregister (possible registered) 'onPlayerFinishLap' event for Gamemode 'Laps' if this is not 'Laps'
 			foreach ($aseco->registered_events['onPlayerFinishLap'] as &$item) {
-				if ($item[0]->getClassname() == $this->getClassname()) {
+				if ($item[0]->getClassname() === $this->getClassname()) {
 					$aseco->console('[RecordsEyepiece] Unregister event "onPlayerFinishLap", currently not required.');
 					unset($item);
 					break;
@@ -3331,7 +3331,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			unset($item);
 		}
-		else if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] == true) {
+		else if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] === true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] === true || $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] === true) {
 			// Register event 'onPlayerCheckpoint' in Gamemode 'Laps' or 'Chase'
 			// if <live_rankings><laps> is enabled
 			// or <round_score><gamemode><laps> is enabled
@@ -3339,13 +3339,13 @@ class PluginRecordsEyepiece extends Plugin {
 			// or <round_score><gamemode><chase> is enabled
 			$found = false;
 			foreach ($aseco->registered_events['onPlayerCheckpoint'] as $item) {
-				if ($item[0]->getClassname() == $this->getClassname()) {
+				if ($item[0]->getClassname() === $this->getClassname()) {
 					$found = true;
 					break;
 				}
 			}
 			unset($item);
-			if ($found == false) {
+			if ($found === false) {
 				$aseco->registerEvent('onPlayerCheckpoint', array($this, 'onPlayerCheckpoint'));
 				$aseco->console('[RecordsEyepiece] Register event "onPlayerCheckpoint" to enabled wanted Widgets.');
 			}
@@ -3357,13 +3357,13 @@ class PluginRecordsEyepiece extends Plugin {
 			// or <round_score><gamemode><chase> is enabled
 			$found = false;
 			foreach ($aseco->registered_events['onPlayerFinishLap'] as $item) {
-				if ($item[0]->getClassname() == $this->getClassname()) {
+				if ($item[0]->getClassname() === $this->getClassname()) {
 					$found = true;
 					break;
 				}
 			}
 			unset($item);
-			if ($found == false) {
+			if ($found === false) {
 				$aseco->registerEvent('onPlayerFinishLap', array($this, 'onPlayerFinishLap'));
 				$aseco->console('[RecordsEyepiece] Register event "onPlayerFinishLap" to enabled wanted Widgets.');
 			}
@@ -3375,9 +3375,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Setup the RoundScorePoints for the current Gamemodes
-		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
-			if ($gamemode == Gameinfo::ROUNDS) {
-				if ($aseco->server->gameinfo->rounds['UseAlternateRules'] == true) {
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
+			if ($gamemode === Gameinfo::ROUNDS) {
+				if ($aseco->server->gameinfo->rounds['UseAlternateRules'] === true) {
 					// Only the first wins, no draw!
 					$this->config['RoundScore']['Points'][Gameinfo::ROUNDS] = array(1,0);
 				}
@@ -3385,8 +3385,8 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->config['RoundScore']['Points'][Gameinfo::ROUNDS] = $aseco->server->gameinfo->rounds['PointsRepartition'];
 				}
 			}
-			else if ($gamemode == Gameinfo::CUP) {
-				if ($aseco->server->gameinfo->cup['UseAlternateRules'] == true) {
+			else if ($gamemode === Gameinfo::CUP) {
+				if ($aseco->server->gameinfo->cup['UseAlternateRules'] === true) {
 					// Only the first wins, no draw!
 					$this->config['RoundScore']['Points'][Gameinfo::CUP] = array(1,0);
 				}
@@ -3394,7 +3394,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->config['RoundScore']['Points'][Gameinfo::CUP] = $aseco->server->gameinfo->cup['PointsRepartition'];
 				}
 			}
-			else if ($gamemode == Gameinfo::TEAM) {
+			else if ($gamemode === Gameinfo::TEAM) {
 				$this->config['RoundScore']['Points'][Gameinfo::TEAM] = array(1);
 //				$this->config['RoundScore']['Points'][Gameinfo::TEAM] = $aseco->server->gameinfo->team['PointsRepartition'];
 			}
@@ -3416,7 +3416,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 			// Clean up
 			$this->cache['WinningPayoutPlayers'] = array();
 
@@ -3467,11 +3467,11 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// At Gamemode 'Laps' and 'Chase' store the NbLabs from Dedicated-Server and NOT the
 		// value from the $map_item, because they does not match the reality!
-		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::LAPS) {
 			$this->cache['Map']['NbCheckpoints'] = $map_item->nb_checkpoints;
 			$this->cache['Map']['NbLaps'] = $aseco->server->gameinfo->laps['ForceLapsNb'];
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			$this->cache['Map']['NbCheckpoints'] = $map_item->nb_checkpoints;
 			$this->cache['Map']['NbLaps'] = $aseco->server->gameinfo->chase['ForceLapsNb'];
 		}
@@ -3481,16 +3481,16 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 	        // Store the forced Laps for 'Rounds', 'Team', 'Laps' and 'Cup'
-		if ($gamemode == Gameinfo::ROUNDS) {
+		if ($gamemode === Gameinfo::ROUNDS) {
 			$this->cache['Map']['ForcedLaps'] = $aseco->server->gameinfo->rounds['ForceLapsNb'];
 		}
-		else if ($gamemode == Gameinfo::TEAM) {
+		else if ($gamemode === Gameinfo::TEAM) {
 			$this->cache['Map']['ForcedLaps'] = $aseco->server->gameinfo->team['ForceLapsNb'];
 		}
-		else if ($gamemode == Gameinfo::LAPS) {
+		else if ($gamemode === Gameinfo::LAPS) {
 			$this->cache['Map']['ForcedLaps'] = $aseco->server->gameinfo->laps['ForceLapsNb'];
 		}
-		else if ($gamemode == Gameinfo::CUP) {
+		else if ($gamemode === Gameinfo::CUP) {
 			$this->cache['Map']['ForcedLaps'] = $aseco->server->gameinfo->cup['ForceLapsNb'];
 		}
 		else {
@@ -3502,76 +3502,76 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$widgets .= $this->buildClockWidget();
 
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the Music Widget to all Players
 			$this->getCurrentSong();
 			$this->cache['MusicWidget'] = $this->buildMusicWidget();
 
-			if ($this->config['States']['NiceMode'] == false) {
+			if ($this->config['States']['NiceMode'] === false) {
 				foreach ($aseco->server->players->player_list as $player) {
 
 					// Display the MusicWidget only to the Player if they did'nt has them set to hidden
-					if ($this->cache['MusicWidget'] != false) {
+					if ($this->cache['MusicWidget'] !== false) {
 						$this->sendManialink($this->cache['MusicWidget'], $player->login, 0);
 					}
 				}
 				unset($player);
 			}
 			else {
-				$widgets .= (($this->cache['MusicWidget'] != false) ? $this->cache['MusicWidget'] : '');
+				$widgets .= (($this->cache['MusicWidget'] !== false) ? $this->cache['MusicWidget'] : '');
 			}
 		}
 
-		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the TopList Widget to all Players
 			$widgets .= $this->cache['ToplistWidget'];
 		}
 
-		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the AddToFavorite Widget
 			$widgets .= $this->cache['AddToFavoriteWidget']['Race'];
 		}
 
-		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the Visitors-Widget to all Players
-			$widgets .= (($this->cache['VisitorsWidget'] != false) ? $this->cache['VisitorsWidget'] : '');
+			$widgets .= (($this->cache['VisitorsWidget'] !== false) ? $this->cache['VisitorsWidget'] : '');
 		}
 
 		$this->cache['WarmUpInfoWidget'] = $this->buildWarmUpInfoWidget();
-		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == true) {
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === true) {
 			// Display the WarmUpInfoWidget to all Players
-			$widgets .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+			$widgets .= (($this->cache['WarmUpInfoWidget'] !== false) ? $this->cache['WarmUpInfoWidget'] : '');
 		}
 
 		$this->cache['MultiLapInfoWidget'] = $this->buildMultiLapInfoWidget();
-		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] == true && ($aseco->server->maps->current->multi_lap == true && ($gamemode != Gameinfo::TIME_ATTACK && $gamemode != Gameinfo::DOPPLER))) {
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] === true && ($aseco->server->maps->current->multi_lap === true && ($gamemode !== Gameinfo::TIME_ATTACK && $gamemode !== Gameinfo::DOPPLER))) {
 			// Display the MultiLapInfoWidget to all Players
-			$widgets .= (($this->cache['MultiLapInfoWidget'] != false) ? $this->cache['MultiLapInfoWidget'] : '');
+			$widgets .= (($this->cache['MultiLapInfoWidget'] !== false) ? $this->cache['MultiLapInfoWidget'] : '');
 		}
 
-		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] === true) {
 			// Send the SpectatorInfoGetter to all Players
 			$widgets .= $this->buildSpectatorInfoGetter();
 		}
 
-		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Refresh the ManiaExchangeWidget
 			$this->cache['ManiaExchangeWidget'] = $this->buildManiaExchangeWidget();
 
 			// Display the MapcountWidget to all Player
-			$widgets .= (($this->cache['ManiaExchangeWidget'] != false) ? $this->cache['ManiaExchangeWidget'] : '');
+			$widgets .= (($this->cache['ManiaExchangeWidget'] !== false) ? $this->cache['ManiaExchangeWidget'] : '');
 		}
 
-		if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 			// Refresh the MapcountWidget
 			$this->cache['MapcountWidget'] = $this->buildMapcountWidget();
 
 			// Display the MapcountWidget to all Player
-			$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+			$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 		}
 
 		// Display the PlacementWidgets at state 'race'
-		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->cache['PlacementWidget']['Race'];
 			if (isset($this->cache['PlacementWidget'][$gamemode])) {
 				$widgets .= $this->cache['PlacementWidget'][$gamemode];
@@ -3592,8 +3592,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Load the current Rankings
 		$this->cache['CurrentRankings'] = array();
-		if (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
-			if ($gamemode == Gameinfo::TEAM) {
+		if (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
+			if ($gamemode === Gameinfo::TEAM) {
 				$this->cache['CurrentRankings'] = $this->getCurrentRanking(2,0);
 			}
 			else {
@@ -3605,7 +3605,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Build the RecordWidgets and ONLY in normal mode send it to each or given Player (if refresh is required)
 		$this->buildRecordWidgets(false, false);
 
-		if ($this->config['States']['NiceMode'] == true) {
+		if ($this->config['States']['NiceMode'] === true) {
 			// Display the RecordWidgets to all Players
 			$widgets .= $this->showRecordWidgets(false);
 		}
@@ -3622,7 +3622,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['States']['RefreshTimestampPreload']			= (time() + 5);
 
 		// Store the possible Placeholder from MX
-		if ( (isset($aseco->server->maps->current->mx) ) && ($aseco->server->maps->current->mx != false)) {
+		if ( (isset($aseco->server->maps->current->mx) ) && ($aseco->server->maps->current->mx !== false)) {
 			$this->config['PlacementPlaceholders']['MAP_MX_PREFIX']		= $aseco->server->maps->current->mx->prefix;
 			$this->config['PlacementPlaceholders']['MAP_MX_ID']		= $aseco->server->maps->current->mx->id;
 			$this->config['PlacementPlaceholders']['MAP_MX_PAGEURL']	= $aseco->server->maps->current->mx->pageurl;
@@ -3638,15 +3638,15 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Include the MapWidget (if enabled)
-		$widgets .= (($this->cache['MapWidget']['Race'] != false) ? $this->cache['MapWidget']['Race'] : '');
+		$widgets .= (($this->cache['MapWidget']['Race'] !== false) ? $this->cache['MapWidget']['Race'] : '');
 
 		// Build an empty RoundScoreWidget
-		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 			// Display an empty Widget
 			$widgets .= $this->buildRoundScoreWidget($gamemode, false);
 		}
 
-//		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+//		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 //			$widgets .= $this->buildLiveRankingsWidgetMS($gamemode, $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]);
 //		}
 
@@ -3674,9 +3674,9 @@ class PluginRecordsEyepiece extends Plugin {
 	// or <round_score><gamemode><chase> is enabled
 	public function onPlayerCheckpoint ($aseco, $params) {
 
-		if (($aseco->server->gameinfo->mode == Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) || ($aseco->server->gameinfo->mode == Gameinfo::CHASE && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] == true)) {
+		if (($aseco->server->gameinfo->mode === Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] === true) || ($aseco->server->gameinfo->mode === Gameinfo::CHASE && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] === true)) {
 
-			if ($this->config['States']['WarmUpPhase'] == false) {
+			if ($this->config['States']['WarmUpPhase'] === false) {
 				// Get the Player object
 				$player = $aseco->server->players->player_list[$params['login']];
 
@@ -3697,7 +3697,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Only work at 'Laps' or 'Chase'
-		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) {
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] === true) {
 			// Let the LiveRankings refresh, when a Player drive through one
 			$this->config['States']['LiveRankings']['NeedUpdate']		= true;
 			$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
@@ -3712,8 +3712,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function onPlayerFinishLap ($aseco, $params) {
 
-		if (($aseco->server->gameinfo->mode == Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) || ($aseco->server->gameinfo->mode == Gameinfo::CHASE && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] == true)) {
-			if ($this->config['States']['WarmUpPhase'] == false) {
+		if (($aseco->server->gameinfo->mode === Gameinfo::LAPS && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] === true) || ($aseco->server->gameinfo->mode === Gameinfo::CHASE && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][Gameinfo::CHASE][0]['ENABLED'][0] === true)) {
+			if ($this->config['States']['WarmUpPhase'] === false) {
 				// Get the Player object
 				$player = $aseco->server->players->player_list[$params['login']];
 
@@ -3734,7 +3734,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Only work at 'Laps' or 'Chase'
-		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] == true) {
+		if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][Gameinfo::LAPS][0]['ENABLED'][0] === true) {
 			// Let the LiveRankings refresh, when a Player drive through one
 			$this->config['States']['LiveRankings']['NeedUpdate']		= true;
 			$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
@@ -3759,7 +3759,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets = '';
 
 		// Display the PlacementWidgets at state 'race'
-		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->cache['PlacementWidget']['Race'];
 			if (isset($this->cache['PlacementWidget'][$gamemode])) {
 				$widgets .= $this->cache['PlacementWidget'][$gamemode];
@@ -3768,13 +3768,13 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$widgets .= $this->buildClockWidget();
 
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the Music Widget to all Players
-			if ($this->config['States']['NiceMode'] == false) {
+			if ($this->config['States']['NiceMode'] === false) {
 				foreach ($aseco->server->players->player_list as $player) {
 
 					// Display the MusicWidget only to the Player if they did'nt has them set to hidden
-					if ($this->cache['MusicWidget'] != false) {
+					if ($this->cache['MusicWidget'] !== false) {
 						$this->sendManialink($this->cache['MusicWidget'], $player->login, 0);
 					}
 				}
@@ -3782,48 +3782,48 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			else {
-				$widgets .= (($this->cache['MusicWidget'] != false) ? $this->cache['MusicWidget'] : '');
+				$widgets .= (($this->cache['MusicWidget'] !== false) ? $this->cache['MusicWidget'] : '');
 			}
 		}
 
-		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['TOPLIST_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the TopList Widget to all Players
 			$widgets .= $this->cache['ToplistWidget'];
 		}
 
-		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the AddToFavorite Widget
 			$widgets .= $this->cache['AddToFavoriteWidget']['Race'];
 		}
 
-		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['VISITORS_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the Visitors-Widget to all Players
-			$widgets .= (($this->cache['VisitorsWidget'] != false) ? $this->cache['VisitorsWidget'] : '');
+			$widgets .= (($this->cache['VisitorsWidget'] !== false) ? $this->cache['VisitorsWidget'] : '');
 		}
 
-		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] == true && $this->config['States']['WarmUpPhase'] == true) {
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === true) {
 			// Display the WarmUpInfoWidget to all Players
-			$widgets .= (($this->cache['WarmUpInfoWidget'] != false) ? $this->cache['WarmUpInfoWidget'] : '');
+			$widgets .= (($this->cache['WarmUpInfoWidget'] !== false) ? $this->cache['WarmUpInfoWidget'] : '');
 		}
 
-		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] == true && ($aseco->server->maps->current->multi_lap == true && ($gamemode != Gameinfo::TIME_ATTACK && $gamemode != Gameinfo::DOPPLER))) {
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['ENABLED'][0] === true && ($aseco->server->maps->current->multi_lap === true && ($gamemode !== Gameinfo::TIME_ATTACK && $gamemode !== Gameinfo::DOPPLER))) {
 			// Display the MultiLapInfoWidget to all Players
-			$widgets .= (($this->cache['MultiLapInfoWidget'] != false) ? $this->cache['MultiLapInfoWidget'] : '');
+			$widgets .= (($this->cache['MultiLapInfoWidget'] !== false) ? $this->cache['MultiLapInfoWidget'] : '');
 		}
 
-		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] === true) {
 			// Send the SpectatorInfoGetter to connecting Player
 			$widgets .= $this->buildSpectatorInfoGetter();
 		}
 
-		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MANIAEXCHANGE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the ManiaExchangeWidget to connecting Player
-			$widgets .= (($this->cache['ManiaExchangeWidget'] != false) ? $this->cache['ManiaExchangeWidget'] : '');
+			$widgets .= (($this->cache['ManiaExchangeWidget'] !== false) ? $this->cache['ManiaExchangeWidget'] : '');
 		}
 
-		if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MAPCOUNT_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the MapcountWidget to all Player
-			$widgets .= (($this->cache['MapcountWidget'] != false) ? $this->cache['MapcountWidget'] : '');
+			$widgets .= (($this->cache['MapcountWidget'] !== false) ? $this->cache['MapcountWidget'] : '');
 		}
 
 		// Reset at each Player the Hash
@@ -3848,7 +3848,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Build the RecordWidgets and ONLY in normal mode send it to each or given Player (if refresh is required)
 		$this->buildRecordWidgets(false, false);
 
-		if ($this->config['States']['NiceMode'] == true) {
+		if ($this->config['States']['NiceMode'] === true) {
 			// Display the RecordWidgets to all Players
 			$widgets .= $this->showRecordWidgets(false);
 		}
@@ -3862,10 +3862,10 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['States']['RefreshTimestampRecordWidgets'] = (time() + $this->config['FEATURES'][0]['REFRESH_INTERVAL'][0]);
 
 		// Display the MapWidget (if enabled)
-		$widgets .= (($this->cache['MapWidget']['Race'] != false) ? $this->cache['MapWidget']['Race'] : '');
+		$widgets .= (($this->cache['MapWidget']['Race'] !== false) ? $this->cache['MapWidget']['Race'] : '');
 
 		// Clear the RoundScore array and hide the Widget
-		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 			// Reset round
 			$this->scores['RoundScore']	= array();
 			$this->scores['RoundScorePB']	= array();
@@ -3875,7 +3875,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Send all widgets
-		if ($widgets != '') {
+		if ($widgets !== '') {
 			// Send Manialink
 			$this->sendManialink($widgets, false, 0);
 		}
@@ -3890,7 +3890,7 @@ class PluginRecordsEyepiece extends Plugin {
 	public function onEndMapRanking ($aseco, $race) {
 
 		// Bail out if there are no Players
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 			return;
 		}
 
@@ -3904,82 +3904,82 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets .= $this->closeRaceWidgets(false, true);
 
 		// Build the PlacementWidgets at state 'score'
-		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildPlacementWidget('score');
 		}
 
-		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] == true) {
+		if ($this->config['WINNING_PAYOUT'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildWinningPayoutWidget();
 		}
 
-		if ($this->config['DONATION_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['DONATION_WIDGET'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->cache['DonationWidget'];
 		}
 
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildTopAverageTimesForScore($this->config['SCORETABLE_LISTS'][0]['TOP_AVERAGE_TIMES'][0]['ENTRIES'][0]);
 
 			// Reset for the new Map
 			$this->scores['TopAverageTimes'] = array();
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['DEDIMANIA_RECORDS'][0]['ENABLED'][0] == true) {
-			if ($this->config['States']['DedimaniaRecords']['NeedUpdate'] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['DEDIMANIA_RECORDS'][0]['ENABLED'][0] === true) {
+			if ($this->config['States']['DedimaniaRecords']['NeedUpdate'] === true) {
 				$this->getDedimaniaRecords();
 			}
 			$widgets .= $this->buildScorelistWidgetEntry('DedimaniaRecordsWidget', $this->config['SCORETABLE_LISTS'][0]['DEDIMANIA_RECORDS'][0], $this->scores['DedimaniaRecords'], array('score', 'nickname'));
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['LOCAL_RECORDS'][0]['ENABLED'][0] == true) {
-			if ($this->config['States']['LocalRecords']['NeedUpdate'] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['LOCAL_RECORDS'][0]['ENABLED'][0] === true) {
+			if ($this->config['States']['LocalRecords']['NeedUpdate'] === true) {
 				$this->getLocalRecords($gamemode);
 			}
 			$widgets .= $this->buildScorelistWidgetEntry('LocalRecordsWidget', $this->config['SCORETABLE_LISTS'][0]['LOCAL_RECORDS'][0], $this->scores['LocalRecords'], array('score', 'nickname'));
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_RANKINGS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopRankings'] != false) ? $this->cache['TopRankings'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_RANKINGS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopRankings'] !== false) ? $this->cache['TopRankings'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopWinners'] != false) ? $this->cache['TopWinners'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNERS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopWinners'] !== false) ? $this->cache['TopWinners'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['MOST_RECORDS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['MOST_RECORDS'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildScorelistWidgetEntry('MostRecordsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['MOST_RECORDS'][0], $this->scores['MostRecords'], array('score', 'nickname'));
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildScorelistWidgetEntry('MostFinishedWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['MOST_FINISHED'][0], $this->scores['MostFinished'], array('score', 'nickname'));
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_PLAYTIME'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopPlaytime'] != false) ? $this->cache['TopPlaytime'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_PLAYTIME'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopPlaytime'] !== false) ? $this->cache['TopPlaytime'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_DONATORS'][0]['ENABLED'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_DONATORS'][0]['ENABLED'][0] === true) {
 			$widgets .= $this->buildScorelistWidgetEntry('TopDonatorsWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_DONATORS'][0], $this->scores['TopDonators'], array('score', 'nickname'));
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopNations'] != false) ? $this->cache['TopNations'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopNations'] !== false) ? $this->cache['TopNations'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_MAPS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopMaps'] != false) ? $this->cache['TopMaps'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_MAPS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopMaps'] !== false) ? $this->cache['TopMaps'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VOTERS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopVoters'] != false) ? $this->cache['TopVoters'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VOTERS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopVoters'] !== false) ? $this->cache['TopVoters'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopBetwins'] != false) ? $this->cache['TopBetwins'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopBetwins'] !== false) ? $this->cache['TopBetwins'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNING_PAYOUTS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopWinningPayouts'] != false) ? $this->cache['TopWinningPayouts'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_WINNING_PAYOUTS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopWinningPayouts'] !== false) ? $this->cache['TopWinningPayouts'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VISITORS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopVisitors'] != false) ? $this->cache['TopVisitors'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_VISITORS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopVisitors'] !== false) ? $this->cache['TopVisitors'] : '');
 		}
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_ACTIVE_PLAYERS'][0]['ENABLED'][0] == true) {
-			$widgets .= (($this->cache['TopActivePlayers'] != false) ? $this->cache['TopActivePlayers'] : '');
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_ACTIVE_PLAYERS'][0]['ENABLED'][0] === true) {
+			$widgets .= (($this->cache['TopActivePlayers'] !== false) ? $this->cache['TopActivePlayers'] : '');
 		}
-		if ( ($gamemode == Gameinfo::ROUNDS) || ($gamemode == Gameinfo::CUP)) {
+		if ( ($gamemode === Gameinfo::ROUNDS) || ($gamemode === Gameinfo::CUP)) {
 			// Store the won RoundScore to the Database-Table
 			$this->storePlayersRoundscore();
 
 			// Refresh the TopRoundscore Array
 			$this->getTopRoundscore();
-			if ($this->config['SCORETABLE_LISTS'][0]['TOP_ROUNDSCORE'][0]['ENABLED'][0] == true) {
+			if ($this->config['SCORETABLE_LISTS'][0]['TOP_ROUNDSCORE'][0]['ENABLED'][0] === true) {
 				$this->cache['TopRoundscore'] = $this->buildScorelistWidgetEntry('TopRoundscoreWidgetAtScore', $this->config['SCORETABLE_LISTS'][0]['TOP_ROUNDSCORE'][0], $this->scores['TopRoundscore'], array('score', 'nickname'));
 				$widgets .= $this->cache['TopRoundscore'];
 			}
@@ -3988,11 +3988,11 @@ class PluginRecordsEyepiece extends Plugin {
 		$widgets .= $this->buildClockWidget();
 
 		// Display the MapWidget (if enabled)
-		$widgets .= (($this->cache['MapWidget']['Score'] != false) ? $this->cache['MapWidget']['Score'] : '');
+		$widgets .= (($this->cache['MapWidget']['Score'] !== false) ? $this->cache['MapWidget']['Score'] : '');
 
 
 		// Clear the RoundScore array and hide the Widget
-		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+		if (isset($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode]) && $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 			// Reset round
 			$this->scores['RoundScore']	= array();
 			$this->scores['RoundScorePB']	= array();
@@ -4001,22 +4001,22 @@ class PluginRecordsEyepiece extends Plugin {
 			$widgets .= '<manialink id="RoundScoreWidget" name="RoundScoreWidget" version="3"></manialink>';
 		}
 
-		if ($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['ENABLED'][0] === true) {
 			// Build & display the NextEnvironmentWidget
 			$widgets .= $this->buildNextEnvironmentWidgetForScore();
 		}
 
-		if ($this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['NEXT_GAMEMODE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Build & display the NextGamemodeWidget
 			$widgets .= $this->buildNextGamemodeWidgetForScore();
 		}
 
-		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['FAVORITE_WIDGET'][0]['ENABLED'][0] === true) {
 			// Display the AddToFavorite Widget
 			$widgets .= $this->cache['AddToFavoriteWidget']['Score'];
 		}
 
-		if ($widgets != '') {
+		if ($widgets !== '') {
 			// Send Manialink to all Players
 			$this->sendManialink($widgets, false, 0);
 		}
@@ -4041,7 +4041,7 @@ class PluginRecordsEyepiece extends Plugin {
 	public function buildAddToFavoriteWidget ($mode = 'RACE') {
 
 		$bg = "";
-		if ($this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$bg = '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['FAVORITE_WIDGET'][0][$mode][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonAddToFavoriteWidget"/>';
 		}
 		else {
@@ -4077,16 +4077,16 @@ class PluginRecordsEyepiece extends Plugin {
 		global $aseco;
 
 		$env = '';
-		if ($aseco->server->maps->next->environment == 'Canyon') {
+		if ($aseco->server->maps->next->environment === 'Canyon') {
 			$env = '<quad pos="4.025 -1.3125" z-index="0.06" size="20 7.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_CANYON'][0] .'"/>';
 		}
-		else if ($aseco->server->maps->next->environment == 'Stadium') {
+		else if ($aseco->server->maps->next->environment === 'Stadium') {
 			$env = '<quad pos="4.025 -1.3125" z-index="0.06" size="20 7.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_STADIUM'][0] .'"/>';
 		}
-		else if ($aseco->server->maps->next->environment == 'Valley') {
+		else if ($aseco->server->maps->next->environment === 'Valley') {
 			$env = '<quad pos="4.025 -1.3125" z-index="0.06" size="20 7.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'"/>';
 		}
-		else if ($aseco->server->maps->next->environment == 'Lagoon') {
+		else if ($aseco->server->maps->next->environment === 'Lagoon') {
 			$env = '<quad pos="4.025 -1.3125" z-index="0.06" size="20 7.5" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
 		}
 
@@ -4271,7 +4271,7 @@ class PluginRecordsEyepiece extends Plugin {
 	public function buildImagePreload ($part = 1) {
 
 //		// Free the display from the preloaded images
-//		if ($part == 5) {
+//		if ($part === 5) {
 //			$xml  = '<manialink id="ImagePreloadBox1" version="3"></manialink>';
 //			$xml .= '<manialink id="ImagePreloadBox2" version="3"></manialink>';
 //			$xml .= '<manialink id="ImagePreloadBox3" version="3"></manialink>';
@@ -4283,7 +4283,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$xml  = '<manialink id="ImagePreloadBox'. $part .'" name="ImagePreloadBox'. $part .'" version="3">';
 		$xml .= '<frame pos="-300 -225" z-index="0">';		// Place outside visibility
 
-		if ($part == 1) {
+		if ($part === 1) {
 //			$xml .= '<quad pos="0 0" z-index="0" size="8.75 6.5625" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_LEFT'][0] .'"/>';		// Loaded in Widgets, no need to preload
 //			$xml .= '<quad pos="0 0" z-index="0" size="8.75 6.5625" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_RIGHT'][0] .'"/>';	// Loaded in Widgets, no need to preload
 //			$xml .= '<quad pos="0 0" z-index="0" size="5.25 3.9375" image="'. $this->config['IMAGES'][0]['WIDGET_OPEN_SMALL'][0] .'"/>';	// Loaded in Widgets, no need to preload
@@ -4295,7 +4295,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<quad pos="0 0" z-index="0" size="10 7.5" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="10 7.5" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
 		}
-		else if ($part == 2) {
+		else if ($part === 2) {
 			$xml .= '<quad pos="0 0" z-index="0" size="10 7.5" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="10 7.5" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="10 7.5" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'"/>';
@@ -4303,7 +4303,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<quad pos="0 0" z-index="0" size="18 8.145" image="'. $this->config['IMAGES'][0]['WORLDMAP'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="8 6" image="'. $this->config['IMAGES'][0]['ICON_MANIA_EXCHANGE'][0] .'"/>';
 		}
-		else if ($part == 3) {
+		else if ($part === 3) {
 			// <environment>
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_CANYON'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_CANYON'][0] .'"/>';
@@ -4314,7 +4314,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_LAGOON'][0] .'"/>';
 		}
-		else if ($part == 4) {
+		else if ($part === 4) {
 			// <mood>
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNRISE'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['SUNRISE'][0] .'"/>';
@@ -4352,7 +4352,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			// Build the ManiaExchangeWidget with ActionId
 			$xml = $this->templates['MANIA_EXCHANGE']['HEADER'];
-			if ($this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			if ($this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 				$xml .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonManiaExchangeWidget"/>';
 			}
 			else {
@@ -4374,7 +4374,7 @@ class PluginRecordsEyepiece extends Plugin {
 		else {
 			// Build the ManiaExchangeWidget WITHOUT ActionId
 			$xml = $this->templates['MANIA_EXCHANGE']['HEADER'];
-			if ($this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+			if ($this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 				$xml .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MANIAEXCHANGE_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'"/>';
 			}
 			else {
@@ -4430,7 +4430,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Set the right Icon and Title position
 		$position = (($this->config['MUSIC_WIDGET'][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
-		if ($position == 'right') {
+		if ($position === 'right') {
 			$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['MUSIC_WIDGET'][0]['WIDTH'][0]);
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['MUSIC_WIDGET'][0]['WIDTH'][0]);
 			$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['MUSIC_WIDGET'][0]['WIDTH'][0]);
@@ -4486,7 +4486,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="33.875 3.75" class="labels" text="'. $this->config['CurrentMusicInfos']['Title'] .'"/>';
 		$xml .= '<label pos="2.5 -8.4375" z-index="0.04" size="37.125 3.75" class="labels" scale="0.9" text="by '. $this->config['CurrentMusicInfos']['Artist'] .'"/>';
-//		if ($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0] == true) {
+//		if ($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0] === true) {
 //			$xml .= '<quad pos="23.75 -11.625" z-index="0.05" size="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripStyles($this->config['CurrentMusicInfos']['Artist'], true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
 //		}
 		$xml .= str_replace(
@@ -4515,13 +4515,13 @@ class PluginRecordsEyepiece extends Plugin {
 		$gamestate = strtoupper($aseco->server->gamestate);
 
 		// Bail out if not enabled at gamestate
-		if ($this->config['CLOCK_WIDGET'][0][$gamestate][0]['ENABLED'][0] == false) {
+		if ($this->config['CLOCK_WIDGET'][0][$gamestate][0]['ENABLED'][0] === false) {
 			return;
 		}
 
 		// Build the ClockWidget
 		$bg = "";
-		if ($this->config['CLOCK_WIDGET'][0][$gamestate][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['CLOCK_WIDGET'][0][$gamestate][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$bg = '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['CLOCK_WIDGET'][0][$gamestate][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['CLOCK_WIDGET'][0][$gamestate][0]['BACKGROUND_FOCUS'][0] .'"/>';
 		}
 		else {
@@ -4563,7 +4563,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$searchpattern = '(%MAP_MX_PREFIX%|%MAP_MX_ID%|%MAP_MX_PAGEURL%|%MAP_UID%|%MAP_NAME%)';
 
 		$mx = false;
-		if ($this->config['PlacementPlaceholders']['MAP_MX_PREFIX'] != false) {
+		if ($this->config['PlacementPlaceholders']['MAP_MX_PREFIX'] !== false) {
 			$mx = true;
 		}
 
@@ -4573,7 +4573,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<manialink id="PlacementWidgetAlways" name="PlacementWidgetAlways" version="3">';
 			$xml .= '<frame pos="0 0" z-index="0">';
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ($placement['DISPLAY'][0] == 'ALWAYS') {
+				if ($placement['DISPLAY'][0] === 'ALWAYS') {
 
 					// First: Remove all Placeholder, that are not supported here,
 					// because this <placement> are never refreshed!
@@ -4597,7 +4597,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<manialink id="PlacementWidgetRace" name="PlacementWidgetRace" version="3">';
 			$xml .= '<frame pos="0 0" z-index="0">';
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ($placement['DISPLAY'][0] == 'RACE') {
+				if ($placement['DISPLAY'][0] === 'RACE') {
 
 					// First: Remove all Placeholder, that are not supported here,
 					// because this <placement> are never refreshed after map change!
@@ -4651,8 +4651,8 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<manialink id="PlacementWidgetScore" name="PlacementWidgetScore" version="3">';
 			$xml .= '<frame pos="0 0" z-index="0">';
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ($placement['DISPLAY'][0] == 'SCORE') {
-					if ($mx == false) {
+				if ($placement['DISPLAY'][0] === 'SCORE') {
+					if ($mx === false) {
 						// Try to find Placeholders and skip
 						if (isset($placement['URL'][0])) {
 							if (preg_match($searchpattern, $placement['URL'][0]) > 0) {
@@ -4681,7 +4681,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Replace the supported Placeholder, if already loaded
 		// (at startup the event onPlayerConnect is always to early, the Map is not loaded yet)
-		if ($mx == true) {
+		if ($mx === true) {
 			$xml = str_replace(
 				array(
 					'%MAP_MX_PREFIX%',
@@ -4696,7 +4696,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$xml
 			);
 		}
-		if ($this->config['PlacementPlaceholders']['MAP_UID'] != false) {
+		if ($this->config['PlacementPlaceholders']['MAP_UID'] !== false) {
 			$xml = str_replace(
 				array(
 					'%MAP_UID%',
@@ -4875,12 +4875,12 @@ class PluginRecordsEyepiece extends Plugin {
 		global $aseco;
 
 		// Bail out if Scoretable is displayed
-		if ($aseco->server->gamestate == Server::SCORE) {
+		if ($aseco->server->gamestate === Server::SCORE) {
 			return;
 		}
 
 		// Bail out if there are no Players
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 			return;
 		}
 
@@ -4888,19 +4888,19 @@ class PluginRecordsEyepiece extends Plugin {
 		$gamemode = $aseco->server->gameinfo->mode;
 
 		$widgets = '';
-		if ( ($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) && ($this->config['NICEMODE'][0]['ALLOW'][0]['DEDIMANIA_RECORDS'][0] == true)) {
-			if ( ($this->config['States']['DedimaniaRecords']['UpdateDisplay'] == true) || ($force_display == true)) {
-				$widgets .= (($this->cache['DedimaniaRecords']['NiceMode'] != false) ? $this->cache['DedimaniaRecords']['NiceMode'] : '');
+		if ( ($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) && ($this->config['NICEMODE'][0]['ALLOW'][0]['DEDIMANIA_RECORDS'][0] === true)) {
+			if ( ($this->config['States']['DedimaniaRecords']['UpdateDisplay'] === true) || ($force_display === true)) {
+				$widgets .= (($this->cache['DedimaniaRecords']['NiceMode'] !== false) ? $this->cache['DedimaniaRecords']['NiceMode'] : '');
 			}
 		}
-		if ( ($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) && ($this->config['NICEMODE'][0]['ALLOW'][0]['LOCAL_RECORDS'][0] == true)) {
-			if ( ($this->config['States']['LocalRecords']['UpdateDisplay'] == true) || ($force_display == true)) {
-				$widgets .= (($this->cache['LocalRecords']['NiceMode'] != false) ? $this->cache['LocalRecords']['NiceMode'] : '');
+		if ( ($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) && ($this->config['NICEMODE'][0]['ALLOW'][0]['LOCAL_RECORDS'][0] === true)) {
+			if ( ($this->config['States']['LocalRecords']['UpdateDisplay'] === true) || ($force_display === true)) {
+				$widgets .= (($this->cache['LocalRecords']['NiceMode'] !== false) ? $this->cache['LocalRecords']['NiceMode'] : '');
 			}
 		}
-		if ( ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) && ($this->config['NICEMODE'][0]['ALLOW'][0]['LIVE_RANKINGS'][0] == true)) {
-			if ( ($this->config['States']['LiveRankings']['UpdateDisplay'] == true) || ($force_display == true)) {
-				$widgets .= (($this->cache['LiveRankings']['NiceMode'] != false) ? $this->cache['LiveRankings']['NiceMode'] : '');
+		if ( ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) && ($this->config['NICEMODE'][0]['ALLOW'][0]['LIVE_RANKINGS'][0] === true)) {
+			if ( ($this->config['States']['LiveRankings']['UpdateDisplay'] === true) || ($force_display === true)) {
+				$widgets .= (($this->cache['LiveRankings']['NiceMode'] !== false) ? $this->cache['LiveRankings']['NiceMode'] : '');
 			}
 		}
 
@@ -4924,9 +4924,9 @@ class PluginRecordsEyepiece extends Plugin {
 		$buildDedimaniaRecordsWidget = false;
 		$buildLocalRecordsWidget = false;
 		$buildLiveRankingsWidget = false;
-		if ( (isset($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['DEDIMANIA_RECORDS'][0] == true) && ($this->config['States']['NiceMode'] == true))) {
+		if ( (isset($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['DEDIMANIA_RECORDS'][0] === true) && ($this->config['States']['NiceMode'] === true))) {
 			// Refresh the Widget only if it needs an update
-			if ($this->config['States']['DedimaniaRecords']['NeedUpdate'] == true) {
+			if ($this->config['States']['DedimaniaRecords']['NeedUpdate'] === true) {
 
 				// Get current Records
 				$this->getDedimaniaRecords();
@@ -4935,15 +4935,15 @@ class PluginRecordsEyepiece extends Plugin {
 				// Say yes to build the Widget
 				$buildDedimaniaRecordsWidget = true;
 			}
-			if ($this->config['States']['DedimaniaRecords']['UpdateDisplay'] == true) {
+			if ($this->config['States']['DedimaniaRecords']['UpdateDisplay'] === true) {
 
 				// Say yes to build the Widget
 				$buildDedimaniaRecordsWidget = true;
 			}
 		}
-		if ( (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LOCAL_RECORDS'][0] == true) && ($this->config['States']['NiceMode'] == true))) {
+		if ( (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LOCAL_RECORDS'][0] === true) && ($this->config['States']['NiceMode'] === true))) {
 			// Refresh the Widget only if it needs an update
-			if ($this->config['States']['LocalRecords']['NeedUpdate'] == true) {
+			if ($this->config['States']['LocalRecords']['NeedUpdate'] === true) {
 
 				// Get current Records
 				$this->getLocalRecords($gamemode);
@@ -4952,15 +4952,15 @@ class PluginRecordsEyepiece extends Plugin {
 				// Say yes to build the Widget
 				$buildLocalRecordsWidget = true;
 			}
-			if ($this->config['States']['LocalRecords']['UpdateDisplay'] == true) {
+			if ($this->config['States']['LocalRecords']['UpdateDisplay'] === true) {
 
 				// Say yes to build the Widget
 				$buildLocalRecordsWidget = true;
 			}
 		}
-		if ( (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LIVE_RANKINGS'][0] == true) && ($this->config['States']['NiceMode'] == true))) {
+		if ( (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) || (($this->config['NICEMODE'][0]['ALLOW'][0]['LIVE_RANKINGS'][0] === true) && ($this->config['States']['NiceMode'] === true))) {
 			// Refresh the Widget only if it needs an update
-			if ($this->config['States']['LiveRankings']['NeedUpdate'] == true) {
+			if ($this->config['States']['LiveRankings']['NeedUpdate'] === true) {
 
 				// Get current Records
 				$this->getLiveRankings($gamemode);
@@ -4969,7 +4969,7 @@ class PluginRecordsEyepiece extends Plugin {
 				// Say yes to build the Widget
 				$buildLiveRankingsWidget = true;
 			}
-			if ($this->config['States']['LiveRankings']['UpdateDisplay'] == true) {
+			if ($this->config['States']['LiveRankings']['UpdateDisplay'] === true) {
 
 				// Say yes to build the Widget
 				$buildLiveRankingsWidget = true;
@@ -4977,7 +4977,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		if ($this->config['States']['NiceMode'] == false) {
+		if ($this->config['States']['NiceMode'] === false) {
 
 			// Clean mem (from possible reverted NiceMode)
 			$this->cache['DedimaniaRecords']['NiceMode']	= false;
@@ -4985,12 +4985,12 @@ class PluginRecordsEyepiece extends Plugin {
 			$this->cache['LiveRankings']['NiceMode']	= false;
 
 			// If we switched to score, bail out
-			if ($aseco->server->gamestate == Server::SCORE) {
+			if ($aseco->server->gamestate === Server::SCORE) {
 				return;
 			}
 
 			// Build the Widgets for all connected Players or given Player ($target same as $player)
-			if ($target != false) {
+			if ($target !== false) {
 				$player_list = array($target);
 			}
 			else {
@@ -4999,7 +4999,7 @@ class PluginRecordsEyepiece extends Plugin {
 			foreach ($player_list as $player) {
 
 				$widgets = '';
-				if ( (($buildDedimaniaRecordsWidget == true) || ($force['DedimaniaRecords'] == true)) && (isset($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true)) {
+				if ( (($buildDedimaniaRecordsWidget === true) || ($force['DedimaniaRecords'] === true)) && (isset($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true)) {
 					$widgets .= $this->buildRecordWidgetContent(
 						$gamemode,
 						$player,
@@ -5007,7 +5007,7 @@ class PluginRecordsEyepiece extends Plugin {
 						'DEDIMANIA_RECORDS'
 					);
 				}
-				if ( (($buildLocalRecordsWidget == true) || ($force['LocalRecords'] == true)) && (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true)) {
+				if ( (($buildLocalRecordsWidget === true) || ($force['LocalRecords'] === true)) && (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true)) {
 					$widgets .= $this->buildRecordWidgetContent(
 						$gamemode,
 						$player,
@@ -5015,11 +5015,11 @@ class PluginRecordsEyepiece extends Plugin {
 						'LOCAL_RECORDS'
 					);
 				}
-				if ( (($buildLiveRankingsWidget == true) || ($force['LiveRankings'] == true)) && (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true)) {
+				if ( (($buildLiveRankingsWidget === true) || ($force['LiveRankings'] === true)) && (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true)) {
 					$widgets .= $this->buildLiveRankingsWidget($player->login, $player->data['PluginRecordsEyepiece']['Prefs']['WidgetEmptyEntry'], $gamemode, $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]);
 				}
 
-				if ($widgets != '') {
+				if ($widgets !== '') {
 					// Send Manialink to given Player
 					$this->sendManialink($widgets, $player->login, 0);
 				}
@@ -5029,7 +5029,7 @@ class PluginRecordsEyepiece extends Plugin {
 		else {
 
 			// Build the RecordWidgets for all connected Players and ignore the Player specific highlites
-			if ($buildDedimaniaRecordsWidget == true) {
+			if ($buildDedimaniaRecordsWidget === true) {
 				$this->cache['DedimaniaRecords']['NiceMode'] = $this->buildRecordWidgetContent(
 					$gamemode,
 					false,
@@ -5038,7 +5038,7 @@ class PluginRecordsEyepiece extends Plugin {
 				);
 				$this->config['States']['DedimaniaRecords']['UpdateDisplay'] = true;
 			}
-			if ($buildLocalRecordsWidget == true) {
+			if ($buildLocalRecordsWidget === true) {
 				$this->cache['LocalRecords']['NiceMode'] = $this->buildRecordWidgetContent(
 					$gamemode,
 					false,
@@ -5047,7 +5047,7 @@ class PluginRecordsEyepiece extends Plugin {
 				);
 				$this->config['States']['LocalRecords']['UpdateDisplay'] = true;
 			}
-			if ($buildLiveRankingsWidget == true) {
+			if ($buildLiveRankingsWidget === true) {
 				$this->cache['LiveRankings']['NiceMode'] = $this->buildLiveRankingsWidget(false, false, $gamemode, $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]);
 				$this->config['States']['LiveRankings']['UpdateDisplay'] = true;
 			}
@@ -5063,7 +5063,7 @@ class PluginRecordsEyepiece extends Plugin {
 	public function sendManialink ($widgets, $login = false, $timeout = 0) {
 		global $aseco;
 
-		if ($login != false) {
+		if ($login !== false) {
 			// Send to given Player
 			$aseco->sendManialink($widgets, $login, ($timeout * 1000), false);
 		}
@@ -5154,7 +5154,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 	public function closeRaceWidgets ($login = false, $all = true) {
 
-		if ($all == false) {
+		if ($all === false) {
 			// Do NOT close:
 			//  - VisitorsWidget
 			//  - MapCountWidget
@@ -5196,7 +5196,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Close all Windows (incl. SubWindows)
 		$xml .= $this->closeAllWindows();
 
-		if ($login != false) {
+		if ($login !== false) {
 			// Send to given Player
 			$this->sendManialink($xml, $login, 0);
 		}
@@ -5279,12 +5279,12 @@ class PluginRecordsEyepiece extends Plugin {
 		global $aseco;
 
 		// Bail out immediately at Gamemode 'Team'
-		if ($aseco->server->gameinfo->mode == Gameinfo::TEAM) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::TEAM) {
 			return;
 		}
 
 		// Bail out if there are no Players
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 			return;
 		}
 
@@ -5318,17 +5318,17 @@ class PluginRecordsEyepiece extends Plugin {
 
 					// Check ignore list
 					$ignore = false;
-					if ( ($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['OPERATOR'][0] == true) && ($aseco->isOperator($player))) {
+					if ( ($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['OPERATOR'][0] === true) && ($aseco->isOperator($player))) {
 						$ignore = true;
 					}
-					if ( ($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['ADMIN'][0] == true) && ($aseco->isAdmin($player))) {
+					if ( ($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['ADMIN'][0] === true) && ($aseco->isAdmin($player))) {
 						$ignore = true;
 					}
-					if ( ($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['MASTERADMIN'][0] == true) && ($aseco->isMasterAdmin($player))) {
+					if ( ($this->config['WINNING_PAYOUT'][0]['IGNORE'][0]['MASTERADMIN'][0] === true) && ($aseco->isMasterAdmin($player))) {
 						$ignore = true;
 					}
 
-					if ($player == false) {
+					if ($player === false) {
 						// If the Player is already disconnected, use own Cache
 						$player = $this->cache['WinningPayoutPlayers'][$item->login];
 
@@ -5362,7 +5362,7 @@ class PluginRecordsEyepiece extends Plugin {
 				foreach ($score as &$item) {
 					if ($item['ladderrank'] >= $this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['RANK_LIMIT'][0]) {
 						if ( ($this->cache['PlayerWinnings'][$item['login']]['FinishPayment'] + $this->cache['PlayerWinnings'][$item['login']]['FinishPaid']) < $this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['MAXIMUM_PLANETS'][0]) {
-							if ( ($item['disconnected'] == false) && ($item['ignore'] == false)) {
+							if ( ($item['disconnected'] === false) && ($item['ignore'] === false)) {
 								switch ($item['rank']) {
 									case 1:
 										$this->cache['PlayerWinnings'][$item['login']]['FinishPayment'] += $this->config['WINNING_PAYOUT'][0]['PAY_PLANETS'][0]['FIRST'][0];
@@ -5431,12 +5431,12 @@ class PluginRecordsEyepiece extends Plugin {
 					}
 
 					// Build the Won and the Info column
-					if ($item['disconnected'] == true) {
+					if ($item['disconnected'] === true) {
 						// Player already disconnected
 						$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.875 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['PLANETS'][0] .'" text="0 P"/>';
 						$xml .= '<label pos="61.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="20 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['DISCONNECTED'][0] .'" text="Disconnected!"/>';
 					}
-					else if ($item['ignore'] == true) {
+					else if ($item['ignore'] === true) {
 						// Player is in <winning_payout><ignore>
 						$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.875 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['PLANETS'][0] .'" text="0 P"/>';
 						$xml .= '<label pos="61.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="20 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['DISCONNECTED'][0] .'" text="No Payout!"/>';
@@ -5446,7 +5446,7 @@ class PluginRecordsEyepiece extends Plugin {
 						$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.875 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['PLANETS'][0] .'" text="0 P"/>';
 						$xml .= '<label pos="61.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="20 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['RANK_LIMIT'][0] .'" text="Over Rank-Limit!"/>';
 					}
-					else if ( ( ($this->cache['PlayerWinnings'][$item['login']]['FinishPayment'] + $this->cache['PlayerWinnings'][$item['login']]['FinishPaid']) >= $this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['MAXIMUM_PLANETS'][0]) && ($item['won'] == 0)) {
+					else if ( ( ($this->cache['PlayerWinnings'][$item['login']]['FinishPayment'] + $this->cache['PlayerWinnings'][$item['login']]['FinishPaid']) >= $this->config['WINNING_PAYOUT'][0]['PLAYERS'][0]['MAXIMUM_PLANETS'][0]) && ($item['won'] === 0)) {
 						// <maximum_planets> reached
 						$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="9.875 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['PLANETS'][0] .'" text="0 P"/>';
 						$xml .= '<label pos="61.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="20 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['WINNING_PAYOUT'][0]['COLORS'][0]['RANK_LIMIT'][0] .'" text="Over Payout-Limit!"/>';
@@ -5600,7 +5600,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Clean array
 		$this->scores['LocalRecords'] = array();
 
-		if (count($aseco->plugins['PluginLocalRecords']->records->record_list) == 0) {
+		if (count($aseco->plugins['PluginLocalRecords']->records->record_list) === 0) {
 			$this->config['States']['LocalRecords']['NoRecordsFound'] = true;
 		}
 		else {
@@ -5639,9 +5639,9 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->scores['LiveRankings'][$i]['rank']	= $data->rank;
 					$this->scores['LiveRankings'][$i]['login']	= $data->login;
 					$this->scores['LiveRankings'][$i]['nickname']	= $data->nickname;
-					if ($gamemode == Gameinfo::ROUNDS) {
+					if ($gamemode === Gameinfo::ROUNDS) {
 						// Display Score instead Time?
-						if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] == true) {
+						if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] === true) {
 							$this->scores['LiveRankings'][$i]['score'] = $aseco->formatTime($data->best_race_time);
 						}
 						else {
@@ -5669,22 +5669,22 @@ class PluginRecordsEyepiece extends Plugin {
 							}
 						}
 					}
-					else if ($gamemode == Gameinfo::TIME_ATTACK) {
+					else if ($gamemode === Gameinfo::TIME_ATTACK) {
 						$this->scores['LiveRankings'][$i]['score'] = $aseco->formatTime($data->best_race_time);
 					}
-					else if ($gamemode == Gameinfo::TEAM) {
+					else if ($gamemode === Gameinfo::TEAM) {
 						// Player(Team) with score
 						$this->scores['LiveRankings'][$i]['rank']	= $data->rank;
 						$this->scores['LiveRankings'][$i]['score']	= $data->map_points;
 					}
-					else if ($gamemode == Gameinfo::LAPS) {
+					else if ($gamemode === Gameinfo::LAPS) {
 						// Display Checkpoints instead Time?
-						if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] == true) {
+						if ($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] === true) {
 							$this->scores['LiveRankings'][$i]['score'] = $aseco->formatTime($data->best_lap_time);
 						}
 						else {
 							if (isset($this->cache['Map']['NbCheckpoints']) && isset($this->cache['Map']['NbLaps'])) {
-								if ($aseco->server->maps->current->multi_lap == true) {
+								if ($aseco->server->maps->current->multi_lap === true) {
 									$this->scores['LiveRankings'][$i]['score'] = count($data->best_lap_checkpoints) .'/'. ($this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps']);
 								}
 								else {
@@ -5692,11 +5692,11 @@ class PluginRecordsEyepiece extends Plugin {
 								}
 							}
 							else {
-								$this->scores['LiveRankings'][$i]['score'] = count($data->best_lap_checkpoints) . ((count($data->best_lap_checkpoints) == 1) ? ' cp.' : ' cps.');
+								$this->scores['LiveRankings'][$i]['score'] = count($data->best_lap_checkpoints) . ((count($data->best_lap_checkpoints) === 1) ? ' cp.' : ' cps.');
 							}
 						}
 					}
-					else if ($gamemode == Gameinfo::CUP) {
+					else if ($gamemode === Gameinfo::CUP) {
 						if (isset($aseco->server->gameinfo->cup['PointsLimit'])) {
 							$this->scores['LiveRankings'][$i]['score'] = $data->map_points .'/'. $aseco->server->gameinfo->cup['PointsLimit'];
 						}
@@ -5704,11 +5704,11 @@ class PluginRecordsEyepiece extends Plugin {
 							$this->scores['LiveRankings'][$i]['score'] = $data->map_points;
 						}
 					}
-					else if ($gamemode == Gameinfo::CHASE) {
+					else if ($gamemode === Gameinfo::CHASE) {
 						$this->scores['LiveRankings'][$i]['time'] = $aseco->formatTime($data->best_race_time);
 						$this->scores['LiveRankings'][$i]['score'] = $aseco->formatTime($data->best_race_time);
 					}
-					else if ($gamemode == Gameinfo::DOPPLER) {
+					else if ($gamemode === Gameinfo::DOPPLER) {
 						$this->scores['LiveRankings'][$i]['score'] = $this->formatNumber($data->map_points, 0);
 					}
 					else {
@@ -5716,7 +5716,7 @@ class PluginRecordsEyepiece extends Plugin {
 						$this->scores['LiveRankings'][$i]['score'] = $data->map_points;
 					}
 				}
-				else if ($gamemode == Gameinfo::TEAM) {
+				else if ($gamemode === Gameinfo::TEAM) {
 					// Team without score
 					$this->scores['LiveRankings'][$i]['rank']	= $data->rank;
 					$this->scores['LiveRankings'][$i]['score']	= 0;
@@ -5727,7 +5727,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$i++;
 			}
 
-			if ($gamemode == Gameinfo::TEAM) {
+			if ($gamemode === Gameinfo::TEAM) {
 				// Was TeamPointsLimit set?
 				if (isset($aseco->server->gameinfo->team['PointsLimit'])) {
 					$this->scores['LiveRankings'][0]['score'] = $this->scores['LiveRankings'][0]['score'] .'/'. $aseco->server->gameinfo->team['PointsLimit'] .' pts.';
@@ -5796,7 +5796,7 @@ class PluginRecordsEyepiece extends Plugin {
 			(ROUND(`r`.`Average` / 1000) / 10) AS `Average`
 		FROM `%prefix%players` AS `p`
 		LEFT JOIN `%prefix%rankings` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
-		WHERE `r`.`Average` != 0
+		WHERE `r`.`Average` !== 0
 		ORDER BY `r`.`Average` ASC
 		". $appendix .";
 		";
@@ -6022,7 +6022,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`Nickname`,
 			`Donations`
 		FROM `%prefix%players`
-		WHERE `Donations` != 0
+		WHERE `Donations` !== 0
 		ORDER BY `Donations` DESC
 		". $appendix .";
 		";
@@ -6133,7 +6133,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			// Do not add Maps without any votes
-			if ($row->karma_votes == 0) {
+			if ($row->karma_votes === 0) {
 				continue;
 			}
 
@@ -6209,7 +6209,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$appendix = 'LIMIT '. $limit;
 		}
 
-		if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0] == true) {
+		if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0] === true) {
 			// Calculate the Average
 			$query = "
 			SELECT
@@ -6247,7 +6247,7 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->scores['TopBetwins'] = array();
 
 				$i = 0;
-				if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0] == true) {
+				if ($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['DISPLAY'][0] === true) {
 					// Wanna have the average
 					while ($row = $res->fetch_object()) {
 						$this->scores['TopBetwins'][$i]['rank']		= ($i+1);
@@ -6448,7 +6448,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->scores['TopActivePlayers'][$i]['rank']		= ($i+1);
 					$this->scores['TopActivePlayers'][$i]['login']		= $row->Login;
 					$this->scores['TopActivePlayers'][$i]['nickname']	= $row->Nickname;
-					$this->scores['TopActivePlayers'][$i]['score']		= (($row->Days == 0) ? 'Today' : $this->formatNumber(-$row->Days, 0) .' d');
+					$this->scores['TopActivePlayers'][$i]['score']		= (($row->Days === 0) ? 'Today' : $this->formatNumber(-$row->Days, 0) .' d');
 					$this->scores['TopActivePlayers'][$i]['score_plain']	= (int)$row->Days;
 
 					$i++;
@@ -6477,7 +6477,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`p`.`Continent`,
 			COUNT(`p`.`Continent`) AS `ContinentCount`
 		FROM `%prefix%players` AS `p`
-		WHERE `p`.`Continent` != ''
+		WHERE `p`.`Continent` !== ''
 		GROUP BY `p`.`Continent`
 		ORDER BY `ContinentCount` DESC
 		". $appendix .";
@@ -6510,8 +6510,8 @@ class PluginRecordsEyepiece extends Plugin {
 	public function getMapAuthor ($map, $for_chat = false) {
 		global $aseco;
 
-		if ($this->config['FEATURES'][0]['MAPLIST'][0]['AUTHOR_DISPLAY'][0] == 'nickname') {
-			if ($for_chat == true) {
+		if ($this->config['FEATURES'][0]['MAPLIST'][0]['AUTHOR_DISPLAY'][0] === 'nickname') {
+			if ($for_chat === true) {
 				return (!empty($map->author_nickname) ? $map->author_nickname : $map->author);
 			}
 			else {
@@ -6534,16 +6534,16 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Get current song and strip server path
 		$current = $aseco->client->query('GetForcedMusic');
-		if (($current['Url'] != '') || ($current['File'] != '')) {
+		if (($current['Url'] !== '') || ($current['File'] !== '')) {
 			if (isset($aseco->plugins['PluginMusicServer'])) {
-				$songname = str_replace(strtolower($aseco->plugins['PluginMusicServer']->server), '', ($current['Url'] != '' ? strtolower($current['Url']) : strtolower($current['File'])));
+				$songname = str_replace(strtolower($aseco->plugins['PluginMusicServer']->server), '', ($current['Url'] !== '' ? strtolower($current['Url']) : strtolower($current['File'])));
 			}
 			else {
-				$songname = ($current['Url'] != '' ? strtolower($current['Url']) : strtolower($current['File']));
+				$songname = ($current['Url'] !== '' ? strtolower($current['Url']) : strtolower($current['File']));
 			}
 
 			for ($i = 0; $i < count($this->cache['MusicServerPlaylist']); $i ++) {
-				if (strtolower($this->cache['MusicServerPlaylist'][$i]['File']) == $songname) {
+				if (strtolower($this->cache['MusicServerPlaylist'][$i]['File']) === $songname) {
 					$this->config['CurrentMusicInfos'] = array(
 						'Artist'	=> $this->cache['MusicServerPlaylist'][$i]['Artist'],
 						'Title'		=> $this->cache['MusicServerPlaylist'][$i]['Title']
@@ -6572,14 +6572,14 @@ class PluginRecordsEyepiece extends Plugin {
 			return;
 		}
 
-		if ($only_refresh == false) {
+		if ($only_refresh === false) {
 
 			// Clean before refill
 			$this->cache['MusicServerPlaylist'] = array();
 
-			if ($output_info == true) {
+			if ($output_info === true) {
 				$amount = count($aseco->plugins['PluginMusicServer']->songs);
-				$aseco->console('[RecordsEyepiece] Reading '. $amount . (($amount == 1) ? ' Song' : ' Songs') .'...');
+				$aseco->console('[RecordsEyepiece] Reading '. $amount . (($amount === 1) ? ' Song' : ' Songs') .'...');
 			}
 
 			$id = 1;	// SongId starts from 1
@@ -6646,7 +6646,7 @@ class PluginRecordsEyepiece extends Plugin {
 			unset($song);
 
 
-			if ($this->config['FEATURES'][0]['SONGLIST'][0]['SORTING'][0] == true) {
+			if ($this->config['FEATURES'][0]['SONGLIST'][0]['SORTING'][0] === true) {
 				// Build the arrays for sorting
 				$artists = array();
 				$titles = array();
@@ -6669,7 +6669,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$id = 1;	// SongId starts from 1
 			foreach ($aseco->plugins['PluginMusicServer']->songs as $song) {
 				foreach ($this->cache['MusicServerPlaylist'] as &$item) {
-					if ($item['File'] ==  strtolower($song)) {
+					if ($item['File'] ===  strtolower($song)) {
 						$item['SongId'] = $id;
 					}
 				}
@@ -6702,7 +6702,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`r`.`MapId`
 		FROM `%prefix%records` AS `r`
 		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId` = `r`.`MapId`
-		WHERE `r`.`Score` != ''
+		WHERE `r`.`Score` !== ''
 		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		ORDER BY `r`.`MapId` ASC, `Score` ASC,`Date` ASC;
 		";
@@ -6715,7 +6715,7 @@ class PluginRecordsEyepiece extends Plugin {
 			while ($row = $result->fetch_object()) {
 
 				// Reset Rank counter
-				if ($last != $row->Uid) {
+				if ($last !== $row->Uid) {
 					$last = $row->Uid;
 					$pos = 1;
 				}
@@ -6726,7 +6726,7 @@ class PluginRecordsEyepiece extends Plugin {
 				}
 
 				// Only add the calling Player
-				if ($row->PlayerId == $pid) {
+				if ($row->PlayerId === $pid) {
 					$list[$row->Uid] = array(
 						'rank'	=> $pos,
 						'score'	=> $row->Score,
@@ -6785,7 +6785,7 @@ class PluginRecordsEyepiece extends Plugin {
 					while ($row = $result->fetch_object()) {
 						// Add only Maps that are in the Maplist, skip none present Maps
 						foreach ($aseco->server->maps->map_list as $map) {
-							if ($map->uid == $row->Uid) {
+							if ($map->uid === $row->Uid) {
 								$unfinished[] = $row->Uid;
 								break 1;
 							}
@@ -6815,7 +6815,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Check for DedimaniaRecords
 		if (count($this->scores['DedimaniaRecords']) > 0) {
 			foreach ($this->scores['DedimaniaRecords'] as $item) {
-				if ($item['login'] == $login) {
+				if ($item['login'] === $login) {
 					$DedimaniaRecords = true;
 					break;
 				}
@@ -6826,7 +6826,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Check for LocalRecords
 		if (count($this->scores['LocalRecords']) > 0) {
 			foreach ($this->scores['LocalRecords'] as $item) {
-				if ($item['login'] == $login) {
+				if ($item['login'] === $login) {
 					$LocalRecords = true;
 					break;
 				}
@@ -6942,7 +6942,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$offset = 5.625;
 			foreach ($this->scores['TopNations'] as $item) {
 				$xml .= '<label pos="10 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="8.5 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $item['count'] .'"/>';
-				$xml .= '<quad pos="11.625 -'. ($this->config['LineHeight'] * $line + $offset - 0.7) .'" z-index="0.002" size="3 3" image="file://Media/Flags/'. (($item['nation'] == 'OTH') ? 'other' : $item['nation']) .'.dds"/>';
+				$xml .= '<quad pos="11.625 -'. ($this->config['LineHeight'] * $line + $offset - 0.7) .'" z-index="0.002" size="3 3" image="file://Media/Flags/'. (($item['nation'] === 'OTH') ? 'other' : $item['nation']) .'.dds"/>';
 				$xml .= '<label pos="17.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.002" size="21.875 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $aseco->country->iocToCountry($item['nation']) .'"/>';
 
 				$line ++;
@@ -7081,14 +7081,14 @@ class PluginRecordsEyepiece extends Plugin {
 		// Build the entries if already loaded
 		if (count($this->scores[$list]) > 0 ) {
 
-			if ($this->config['States']['NiceMode'] == false) {
+			if ($this->config['States']['NiceMode'] === false) {
 				// Build the "CloseToYou" Array
 				$records = $this->buildCloseToYouArray($this->scores[$list], $preset, $limit, $topcount);
 
 				// Now check if it is required to build this Manialink (only required in normal mode, nice mode send always)
 				$digest = $this->buildCloseToYouDigest($records);
-				if ($this->cache['PlayerStates'][$player->login][$list] != false) {
-					if ( ($this->cache['PlayerStates'][$player->login][$list] != $digest) || ($this->config['States'][$list]['UpdateDisplay'] == true)) {
+				if ($this->cache['PlayerStates'][$player->login][$list] !== false) {
+					if ( ($this->cache['PlayerStates'][$player->login][$list] !== $digest) || ($this->config['States'][$list]['UpdateDisplay'] === true)) {
 
 						// Widget is different as before, store them and build the new Widget
 						$this->cache['PlayerStates'][$player->login][$list] = $digest;
@@ -7113,12 +7113,12 @@ class PluginRecordsEyepiece extends Plugin {
 			foreach ($records as $item) {
 
 				// Mark all Players behind the current with an orange icon instead a green one
-				if ($player !== false && $item['login'] == $player->login) {
+				if ($player !== false && $item['login'] === $player->login) {
 					$behind_rankings = true;
 				}
 
 				// Mark connected Players with a record
-				if ($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0] == true && $this->config['States']['NiceMode'] == false && $player !== false && $item['login'] != $player->login) {
+				if ($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0] === true && $this->config['States']['NiceMode'] === false && $player !== false && $item['login'] !== $player->login) {
 					$xml .= $this->getConnectedPlayerRecord($item['login'], $line, $topcount, $behind_rankings, $this->config[$widget][0]['WIDTH'][0]);
 				}
 
@@ -7164,7 +7164,7 @@ class PluginRecordsEyepiece extends Plugin {
 		// Calculate the widget height (+ 6 for title)
 		$widget_height = ($this->config['LineHeight'] * $this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] + 6);
 
-		if ($position == 'right') {
+		if ($position === 'right') {
 			$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0]);
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0]);
 			$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0]);
@@ -7233,7 +7233,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Add Background for top X Players
 		if ($topcount > 0) {
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] !== '') {
 				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] - 2) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
@@ -7333,7 +7333,7 @@ EOL;
 		// Calculate the widget height (+ 6 for title)
 		$widget_height = ($this->config['LineHeight'] * $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] + 6);
 
-		if ($position == 'right') {
+		if ($position === 'right') {
 			$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['LOCAL_RECORDS'][0]['WIDTH'][0]);
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['LOCAL_RECORDS'][0]['WIDTH'][0]);
 			$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['LOCAL_RECORDS'][0]['WIDTH'][0]);
@@ -7402,7 +7402,7 @@ EOL;
 
 		// Add Background for top X Players
 		if ($topcount > 0) {
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] !== '') {
 				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] - 2) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
@@ -7501,7 +7501,7 @@ EOL;
 		// Calculate the widget height (+ 6 for title)
 		$widget_height = ($this->config['LineHeight'] * $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] + 6);
 
-		if ($position == 'right') {
+		if ($position === 'right') {
 			$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
 			$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
@@ -7570,7 +7570,7 @@ EOL;
 
 		// Add Background for top X Players
 		if ($topcount > 0) {
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] !== '') {
 				$xml .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 2) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
@@ -7590,7 +7590,7 @@ EOL;
 		// Add marker for LocalUser Rank left and right from the Widget
 		$line = 0;
 		$xml .= '<frame pos="0 -'. ($this->config['LineHeight'] * $line + $offset - 0.55) .'" z-index="0.004" id="RecordsEyepieceLiveRankingsMarker" hidden="true">';
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] !== '') {
 			$xml .= '<quad pos="1 -0.5625" z-index="0.004" size="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 2) .' 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'" id="RecordsEyepieceLiveRankingsBackgroundMarker" hidden="true"/>';
 			$xml .= '<quad pos="-5 -0.5625" z-index="0.004" size="3.375 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 			$xml .= '<quad pos="'. $this->config['LIVE_RANKINGS'][0]['WIDTH'][0] .' -0.5625" z-index="0.004" size="3.375 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
@@ -7607,7 +7607,7 @@ EOL;
 
 		// Setup the total count of Checkpoints
 		$totalcps = 0;
-		if ( ($gamemode == Gameinfo::ROUNDS) || ($gamemode == Gameinfo::TEAM) || ($gamemode == Gameinfo::CUP)) {
+		if ( ($gamemode === Gameinfo::ROUNDS) || ($gamemode === Gameinfo::TEAM) || ($gamemode === Gameinfo::CUP)) {
 			if ($this->cache['Map']['ForcedLaps'] > 0) {
 				$totalcps = $this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['ForcedLaps'];
 			}
@@ -7618,7 +7618,7 @@ EOL;
 				$totalcps = $this->cache['Map']['NbCheckpoints'];
 			}
 		}
-		else if ( ($this->cache['Map']['NbLaps'] > 0) && ($gamemode == Gameinfo::LAPS)) {
+		else if ( ($this->cache['Map']['NbLaps'] > 0) && ($gamemode === Gameinfo::LAPS)) {
 			$totalcps = $this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps'];
 		}
 		else {
@@ -7632,7 +7632,7 @@ EOL;
 		$ColorBetter	= '$'. substr($this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BETTER'][0], 0, 3);
 		$ColorWorse	= '$'. substr($this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['WORSE'][0], 0, 3);
 
-		$multilapmap = (($aseco->server->maps->current->multi_lap == true) ? 'True' : 'False');
+		$multilapmap = (($aseco->server->maps->current->multi_lap === true) ? 'True' : 'False');
 
 		$visibility = ucfirst($aseco->bool2string($this->config['States']['LiveRankings']['Visibility']));
 
@@ -8040,7 +8040,7 @@ EOL;
 		global $aseco;
 
 		// Set the Placeholder for "No Score"
-		if ($gamemode == Gameinfo::ROUNDS && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] == false) {
+		if ($gamemode === Gameinfo::ROUNDS && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] === false) {
 			// Only set this if 'score' are to display, if 'time' use the default
 			if (isset($aseco->server->gameinfo->rounds['PointsLimit'])) {
 				$placeholder = str_replace(
@@ -8061,7 +8061,7 @@ EOL;
 				$placeholder = 0;
 			}
 		}
-		else if ($gamemode == Gameinfo::LAPS && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] == false) {
+		else if ($gamemode === Gameinfo::LAPS && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['DISPLAY_TYPE'][0] === false) {
 			// Only set this if 'checkpoints' are to display, if 'time' use the default
 			if (isset($this->cache['Map']['NbCheckpoints']) && isset($this->cache['Map']['NbLaps'])) {
 				$placeholder = '0/'. ($this->cache['Map']['NbCheckpoints'] * $this->cache['Map']['NbLaps']);
@@ -8083,11 +8083,11 @@ EOL;
 
 		// Build the entries if already loaded
 		if (count($this->scores['LiveRankings']) > 0) {
-			if ($this->config['States']['NiceMode'] == false && $gamemode != Gameinfo::TEAM) {
+			if ($this->config['States']['NiceMode'] === false && $gamemode !== Gameinfo::TEAM) {
 				// Build the "CloseToYou" Array, but not in 'Team' and NiceMode
 				$records = $this->buildCloseToYouArray($this->scores['LiveRankings'], $preset, $limit, $topcount);
 			}
-			else if ($gamemode == Gameinfo::TEAM) {
+			else if ($gamemode === Gameinfo::TEAM) {
 				// Need to handle 'Team' other then all other Gamemodes
 				$records = $this->scores['LiveRankings'];
 				$records[0]['self'] = 0;
@@ -8100,10 +8100,10 @@ EOL;
 			}
 
 			// Now check if it is required to build this Manialink (only required in normal mode, nice mode send always)
-			if ($this->config['States']['NiceMode'] == false) {
+			if ($this->config['States']['NiceMode'] === false) {
 				$digest = $this->buildCloseToYouDigest($records);
-				if (isset($this->cache['PlayerStates'][$login]) && $this->cache['PlayerStates'][$login]['LiveRankings'] != false) {
-					if ($this->cache['PlayerStates'][$login]['LiveRankings'] != $digest) {
+				if (isset($this->cache['PlayerStates'][$login]) && $this->cache['PlayerStates'][$login]['LiveRankings'] !== false) {
+					if ($this->cache['PlayerStates'][$login]['LiveRankings'] !== $digest) {
 						// Widget is different as before, store them and build the new Widget
 						$this->cache['PlayerStates'][$login]['LiveRankings'] = $digest;
 					}
@@ -8136,7 +8136,7 @@ EOL;
 			unset($item);
 
 		}
-		else if ($login != false) {
+		else if ($login !== false) {
 			// Create an empty entry
 			$xml .= $this->getCloseToYouEntry($preset, 0, $topcount, $placeholder, $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
 		}
@@ -8166,7 +8166,7 @@ EOL;
 		// Calculate the widget height (+ 6 for title)
 		$widget_height = ($this->config['LineHeight'] * $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] + 6);
 
-		if ($position == 'right') {
+		if ($position === 'right') {
 			$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
 			$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['LIVE_RANKINGS'][0]['WIDTH'][0]);
@@ -8235,7 +8235,7 @@ EOL;
 
 		// Add Background for top X Players
 		if ($topcount > 0) {
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] !== '') {
 				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] - 2) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
@@ -8326,7 +8326,7 @@ EOL;
 	public function buildRoundScoreWidget ($gamemode, $send_direct = true) {
 		global $aseco;
 
-		if ($this->config['States']['WarmUpPhase'] == true) {
+		if ($this->config['States']['WarmUpPhase'] === true) {
 			// Add Widget header
 			$xml = $this->cache['RoundScore'][$gamemode]['WarmUp']['WidgetHeader'];
 
@@ -8345,7 +8345,7 @@ EOL;
 			$position = (($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
 			// Adjust the Points to the connected Player count
-			if ($gamemode == Gameinfo::TEAM && $aseco->server->gameinfo->team['UseAlternateRules'] == true) {
+			if ($gamemode === Gameinfo::TEAM && $aseco->server->gameinfo->team['UseAlternateRules'] === true) {
 
 				// Get Playercount
 				$limit = count($aseco->server->players->player_list);
@@ -8361,7 +8361,7 @@ EOL;
 					$i++;
 				}
 			}
-			else if ($gamemode != Gameinfo::LAPS && $gamemode != Gameinfo::CHASE) {
+			else if ($gamemode !== Gameinfo::LAPS && $gamemode !== Gameinfo::CHASE) {
 				$rpoints = $this->config['RoundScore']['Points'][$gamemode];
 			}
 
@@ -8371,7 +8371,7 @@ EOL;
 			$round_score = array();
 			$round_score = $this->scores['RoundScore'];
 
-//			if ($gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::CHASE) {
+//			if ($gamemode === Gameinfo::LAPS || $gamemode === Gameinfo::CHASE) {
 //				$cps = array();
 //				$scores = array();
 //				$pids = array();
@@ -8392,7 +8392,7 @@ EOL;
 //				}
 //				unset($item);
 //			}
-//			else if ($gamemode == Gameinfo::ROUNDS) {
+//			else if ($gamemode === Gameinfo::ROUNDS) {
 //				// No need to sort, it is already sorted by ModeScript "Rounds.Script.txt"
 //				$round_score = $this->scores['RoundScore'];
 //			}
@@ -8431,12 +8431,12 @@ EOL;
 			foreach ($round_score as $item) {
 
 				// Adjust Team points
-				if ($gamemode == Gameinfo::TEAM) {
-					if ($aseco->server->gameinfo->team['UseAlternateRules'] == false) {
-						if ($team_break == true) {
+				if ($gamemode === Gameinfo::TEAM) {
+					if ($aseco->server->gameinfo->team['UseAlternateRules'] === false) {
+						if ($team_break === true) {
 							$points = '0';
 						}
-						else if ($round_score[0]['team'] != $item['team']) {
+						else if ($round_score[0]['team'] !== $item['team']) {
 							$points = '0';
 							$team_break = true;
 						}
@@ -8448,7 +8448,7 @@ EOL;
 						$points = ((isset($rpoints[$line])) ? $rpoints[$line] : end($rpoints));
 					}
 				}
-				else if ($gamemode != Gameinfo::LAPS && $gamemode != Gameinfo::CHASE) {
+				else if ($gamemode !== Gameinfo::LAPS && $gamemode !== Gameinfo::CHASE) {
 					// All other Gamemodes except 'Laps' and 'Chase'
 					$points = ((isset($rpoints[$line])) ? $rpoints[$line] : end($rpoints));
 				}
@@ -8461,13 +8461,13 @@ EOL;
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['WORSE'][0];
 				}
 
-				if ($position == 'left') {
-					if ($gamemode == Gameinfo::TEAM) {
-						$xml .= '<quad pos="-8.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.2625) .'" z-index="0.004" size="8.5 3.15" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
+				if ($position === 'left') {
+					if ($gamemode === Gameinfo::TEAM) {
+						$xml .= '<quad pos="-8.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.2625) .'" z-index="0.004" size="8.5 3.15" bgcolor="'. (($item['team'] === 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label pos="-1.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="7.5 3.75" class="labels" halign="right" scale="0.9" textcolor="FFFF" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $points .'"/>';
 					}
-					else if ($gamemode == Gameinfo::LAPS) {
-						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] != '') {
+					else if ($gamemode === Gameinfo::LAPS) {
+						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] !== '') {
 							$xml .= '<quad pos="-17.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] .'"/>';
 						}
 						else {
@@ -8478,14 +8478,14 @@ EOL;
 						$xml .= '<label pos="-6 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score['score_plain'])) .'"/>';
 						$xml .= '<label pos="-1 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
-					else if ($gamemode == Gameinfo::CHASE) {
-						$xml .= '<quad pos="-17.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
+					else if ($gamemode === Gameinfo::CHASE) {
+						$xml .= '<quad pos="-17.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. (($item['team'] === 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label pos="-6 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.75" class="labels" halign="right" scale="0.9" textcolor="FFFF" text="+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score[0]['score_plain'])) .'"/>';
 						$xml .= '<label pos="-1 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.75" class="labels" halign="right" scale="0.9" textcolor="FFFF" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
 					else {
 						// Gameinfo::ROUNDS or Gameinfo::CUP
-						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] != '') {
+						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] !== '') {
 							$xml .= '<quad pos="-10.25 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="10 3.5625" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] .'"/>';
 						}
 						else {
@@ -8495,12 +8495,12 @@ EOL;
 					}
 				}
 				else {
-					if ($gamemode == Gameinfo::TEAM) {
-						$xml .= '<quad pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 1.25) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.2625) .'" z-index="0.004" size="8.5 3.15" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
+					if ($gamemode === Gameinfo::TEAM) {
+						$xml .= '<quad pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 1.25) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.2625) .'" z-index="0.004" size="8.5 3.15" bgcolor="'. (($item['team'] === 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 9) .' -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="7.5 3.75" class="labels" halign="right" scale="0.9" textcolor="FFFF" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $points .'"/>';
 					}
-					else if ($gamemode == Gameinfo::LAPS) {
-						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] != '') {
+					else if ($gamemode === Gameinfo::LAPS) {
+						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] !== '') {
 							$xml .= '<quad pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.4) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] .'"/>';
 						}
 						else {
@@ -8509,14 +8509,14 @@ EOL;
 						$xml .= '<label pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 11.5) .' -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.5625" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score[0]['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score[0]['score_plain'])) .'"/>';
 						$xml .= '<label pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 17.5) .' -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.5625" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score[0]['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
-					else if ($gamemode == Gameinfo::CHASE) {
-						$xml .= '<quad pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.4) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. (($item['team'] == 0) ? '03D8' : 'D308') .'"/>';
+					else if ($gamemode === Gameinfo::CHASE) {
+						$xml .= '<quad pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.4) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. (($item['team'] === 0) ? '03D8' : 'D308') .'"/>';
 						$xml .= '<label pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 11.5) .' -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.75" class="labels" halign="right" scale="0.9" textcolor="FFFF" text="+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score[0]['score_plain'])) .'"/>';
 						$xml .= '<label pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 17.5) .' -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.75" class="labels" halign="right" scale="0.9" textcolor="FFFF" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
 					}
 					else {
 						// Gameinfo::ROUNDS or Gameinfo::CUP
-						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] != '') {
+						if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] !== '') {
 							$xml .= '<quad pos="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 0.4) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="10 3.5625" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_BACKGROUND'][0] .'"/>';
 						}
 						else {
@@ -8554,7 +8554,7 @@ EOL;
 			$xml .= $this->cache['RoundScore'][$gamemode]['Race']['WidgetFooter'];
 		}
 
-		if ($send_direct == true) {
+		if ($send_direct === true) {
 			// Send the Widget now to all Player
 			$this->sendManialink($xml, false, 0);
 		}
@@ -8580,7 +8580,7 @@ EOL;
 		// Calculate the widget height (+ 6 for title)
 		$widget_height = ($this->config['LineHeight'] * $this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0] + 6);
 
-		if ($position == 'right') {
+		if ($position === 'right') {
 			$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['ROUND_SCORE'][0]['WIDTH'][0]);
 			$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['ROUND_SCORE'][0]['WIDTH'][0]);
 		}
@@ -8637,7 +8637,7 @@ EOL;
 
 		// Add Background for top X Players
 		if ($topcount > 0) {
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] !== '') {
 				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 2) .' '. (($topcount * $this->config['LineHeight']) + 0.5625) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
@@ -8690,7 +8690,7 @@ EOL;
 			$entry = $records[$i];
 			$entry['rank'] = $i + 1;
 			if ($isbetter) {
-				if ($records[$i]['login'] == $login) {
+				if ($records[$i]['login'] === $login) {
 					$self = $entry;
 					$isbetter = false;
 				}
@@ -8778,7 +8778,7 @@ EOL;
 		$resultNew = array();
 		$count = 0;
 		for ($i=0; $i<count($result); $i++) {
-			if ($result[$i] != null){
+			if ($result[$i] !== null){
 				$resultNew[] = $result[$i];
 				$count ++;
 			}
@@ -8821,7 +8821,7 @@ EOL;
 	// $list = 'locals'
 	public function buildRecordDigest ($list, $array) {
 
-		if ($list == 'locals') {
+		if ($list === 'locals') {
 			$result = '';
 			foreach ($array as $entry) {
 				$result .= $entry->player->login;
@@ -8849,8 +8849,8 @@ EOL;
 
 		// Do not build the Player related highlites if in NiceMode!
 		$xml = '';
-		if ($this->config['States']['NiceMode'] == false) {
-			if ($item['self'] == -1) {
+		if ($this->config['States']['NiceMode'] === false) {
+			if ($item['self'] === -1) {
 				if ($item['rank'] < ($topcount+1)) {
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['TOP'][0];
 				}
@@ -8858,7 +8858,7 @@ EOL;
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BETTER'][0];
 				}
 			}
-			else if ($item['self'] == 1) {
+			else if ($item['self'] === 1) {
 				if ($item['rank'] < ($topcount+1)) {
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['TOP'][0];
 				}
@@ -8867,11 +8867,11 @@ EOL;
 				}
 			}
 			else {
-				if ($item['rank'] != false) {
+				if ($item['rank'] !== false) {
 					$textcolor = $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SELF'][0];
 
 					// Add a background for this Player with an record here
-					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
+					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] !== '') {
 						$xml .= '<quad pos="1 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.005" size="'. ($widgetwidth - 2) .' 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 					}
 					else {
@@ -8879,7 +8879,7 @@ EOL;
 					}
 
 					// $item['rank'] is set 'false' in Team to skip the highlite here in $this->buildLiveRankingsWidget()
-					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
+					if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] !== '') {
 						$xml .= '<quad pos="-3.675 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.005" size="3.375 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 						$xml .= '<quad pos="'. ($widgetwidth + 0.2) .' -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="3.375 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 					}
@@ -8893,11 +8893,11 @@ EOL;
 			}
 		}
 
-		if ($item['rank'] != false) {
-			if ( ($this->config['States']['NiceMode'] == true) && ($item['rank'] <= $topcount)) {
+		if ($item['rank'] !== false) {
+			if ( ($this->config['States']['NiceMode'] === true) && ($item['rank'] <= $topcount)) {
 				$textcolor = $this->config['NICEMODE'][0]['COLORS'][0]['TOP'][0];
 			}
-			else if ( ($this->config['States']['NiceMode'] == true) && ($item['rank'] > $topcount)) {
+			else if ( ($this->config['States']['NiceMode'] === true) && ($item['rank'] > $topcount)) {
 				$textcolor = $this->config['NICEMODE'][0]['COLORS'][0]['WORSE'][0];
 			}
 
@@ -8927,7 +8927,7 @@ EOL;
 			$xml = '';
 
 			// Add a background for this Player with an record here
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] !== '') {
 				$xml .= '<quad pos="1 -'. ($this->config['LineHeight'] * $line + 5.0625) .'" z-index="0.005" size="'. ($widgetwidth - 2) .' 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
 			}
 			else {
@@ -8935,7 +8935,7 @@ EOL;
 			}
 
 			// Add a marker for Player with an record here (left and right from the Widget)
-			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
+			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] !== '') {
 				$xml .= '<quad pos="-3.675 -'. ($this->config['LineHeight'] * $line + 5.0625) .'" z-index="0.005" size="3.375 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
 				$xml .= '<quad pos="'. ($widgetwidth + 0.2) .' -'. ($this->config['LineHeight'] * $line + 5.0625) .'" z-index="0.005" size="3.375 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
 			}
@@ -8943,7 +8943,7 @@ EOL;
 				$xml .= '<quad pos="-3.675 -'. ($this->config['LineHeight'] * $line + 5.0625) .'" z-index="0.005" size="3.375 3.375" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
 				$xml .= '<quad pos="'. ($widgetwidth + 0.2) .' -'. ($this->config['LineHeight'] * $line + 5.0625) .'" z-index="0.005" size="3.375 3.375" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_SUBSTYLE'][0] .'"/>';
 			}
-			if ($behind_rank == true) {
+			if ($behind_rank === true) {
 				$marker = array('style' => 'Icons64x64_1', 'substyle' => 'NotBuddy');
 			}
 			else {
@@ -8991,10 +8991,10 @@ EOL;
 
 		// Build Link to the Map at dedimania.net
 		$dedimode = '';
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS || $aseco->server->gameinfo->mode === Gameinfo::TEAM || $aseco->server->gameinfo->mode === Gameinfo::CUP) {
 			$dedimode = '&amp;Mode=M1';
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode === Gameinfo::LAPS) {
 			$dedimode = '&amp;Mode=M2';
 		}
 		$url = 'http://dedimania.net/tm2stats/?do=stat'. $dedimode .'&amp;&RecOrder3=RANK-ASC&amp;UId='. $aseco->server->maps->current->uid .'&amp;Show=RECORDS';
@@ -9244,7 +9244,7 @@ EOL;
 		$xml .= '<label pos="32.1 -20.625" z-index="0.04" size="35 3.75" halign="center" class="labels" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad pos="32.1 -7.25" z-index="0.50" size="41.2 30" halign="center" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->previous->uid) .'?.jpg') .'"/>';
 		$xml .= '<label pos="3.5 -39.375" z-index="0.02" size="52.5 5.625" class="labels" textsize="2" text="'. $this->handleSpecialChars($aseco->server->maps->previous->name) .'"/>';
-		$xml .= '<quad pos="3.75 -43.125" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->previous->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->previous->author_nation) .'.dds"/>';
+		$xml .= '<quad pos="3.75 -43.125" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->previous->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->previous->author_nation) .'.dds"/>';
 		$xml .= '<label pos="8.65 -43.6875" z-index="0.02" size="46 5.625" class="labels" text="by '. $this->getMapAuthor($aseco->server->maps->previous) .'"/>';
 		$xml .= '<frame pos="7.4 -61.875" z-index="0">';	// BEGIN: Times frame
 		$xml .= '<quad pos="0 13.3125" z-index="0.1" size="3.75 3.75" halign="right" style="MedalsBig" substyle="MedalNadeo"/>';
@@ -9260,7 +9260,7 @@ EOL;
 		$xml .= '<label pos="1.25 -4.3125" z-index="0.1" size="20 3.75" class="labels" text="'. $aseco->server->maps->previous->environment .'"/>';
 		$xml .= '<label pos="1.25 -8.625" z-index="0.1" size="20 3.75" class="labels" text="'. $aseco->server->maps->previous->mood .'"/>';
 		$xml .= '</frame>';			// END: Times frame
-		if ($aseco->server->maps->previous->mx !== false && $aseco->server->maps->previous->mx->pageurl != false) {
+		if ($aseco->server->maps->previous->mx !== false && $aseco->server->maps->previous->mx->pageurl !== false) {
 			$xml .= '<frame pos="31.3 -61.875" z-index="0">';	// BEGIN: MX Mapinfos
 			$xml .= '<label pos="0 12.9375" z-index="0.1" size="12.5 4.125" class="labels" text="Type:"/>';
 			$xml .= '<label pos="0 8.625" z-index="0.1" size="12.5 3.75" class="labels" text="Style:"/>';
@@ -9277,21 +9277,21 @@ EOL;
 			$xml .= '</frame>';			// END: MX Mapinfos
 
 			// Button "Visit Page"
-			if ($aseco->server->maps->previous->mx->pageurl != false) {
+			if ($aseco->server->maps->previous->mx->pageurl !== false) {
 				$xml .= '<frame pos="17.4 -74.0625" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->previous->mx->pageurl) .'" text="VISIT MAP PAGE" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
 			}
 
 			// Button "Download Map"
-			if ($aseco->server->maps->previous->mx->dloadurl != false) {
+			if ($aseco->server->maps->previous->mx->dloadurl !== false) {
 				$xml .= '<frame pos="17.4 -78.28125" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->previous->mx->dloadurl) .'" text="DOWNLOAD MAP" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
 			}
 
 			// Button "Download Replay"
-			if ($aseco->server->maps->previous->mx->replayurl != false) {
+			if ($aseco->server->maps->previous->mx->replayurl !== false) {
 				$xml .= '<frame pos="17.4 -82.5" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->previous->mx->replayurl) .'" text="DOWNLOAD REPLAY" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
@@ -9310,7 +9310,7 @@ EOL;
 		$xml .= '<label pos="32.1 -20.625" z-index="0.04" size="35 3.75" halign="center" class="labels" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad pos="32.1 -7.25" z-index="0.50" size="41.2 30" halign="center" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->current->uid) .'?.jpg') .'"/>';
 		$xml .= '<label pos="3.5 -39.375" z-index="0.02" size="52.5 5.625" class="labels" textsize="2" text="'. $this->handleSpecialChars($aseco->server->maps->current->name) .'"/>';
-		$xml .= '<quad pos="3.75 -43.125" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->current->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->current->author_nation) .'.dds"/>';
+		$xml .= '<quad pos="3.75 -43.125" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->current->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->current->author_nation) .'.dds"/>';
 		$xml .= '<label pos="8.65 -43.6875" z-index="0.02" size="46 5.625" class="labels" text="by '. $this->getMapAuthor($aseco->server->maps->current) .'"/>';
 		$xml .= '<frame pos="7.4 -61.875" z-index="0">';	// BEGIN: Times frame
 		$xml .= '<quad pos="0 13.3125" z-index="0.1" size="3.75 3.75" halign="right" style="MedalsBig" substyle="MedalNadeo"/>';
@@ -9326,7 +9326,7 @@ EOL;
 		$xml .= '<label pos="1.25 -4.3125" z-index="0.1" size="20 3.75" class="labels" text="'. $aseco->server->maps->current->environment .'"/>';
 		$xml .= '<label pos="1.25 -8.625" z-index="0.1" size="20 3.75" class="labels" text="'. $aseco->server->maps->current->mood .'"/>';
 		$xml .= '</frame>';			// END: Times frame
-		if ($aseco->server->maps->current->mx !== false && $aseco->server->maps->current->mx->pageurl != false) {
+		if ($aseco->server->maps->current->mx !== false && $aseco->server->maps->current->mx->pageurl !== false) {
 			$xml .= '<frame pos="31.3 -61.875" z-index="0">';	// BEGIN: MX Mapinfos
 			$xml .= '<label pos="0 12.9375" z-index="0.1" size="12.5 4.125" class="labels" text="Type:"/>';
 			$xml .= '<label pos="0 8.625" z-index="0.1" size="12.5 3.75" class="labels" text="Style:"/>';
@@ -9343,21 +9343,21 @@ EOL;
 			$xml .= '</frame>';			// END: MX Mapinfos
 
 			// Button "Visit Page"
-			if ($aseco->server->maps->current->mx->pageurl != false) {
+			if ($aseco->server->maps->current->mx->pageurl !== false) {
 				$xml .= '<frame pos="17.4 -74.0625" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->pageurl) .'" text="VISIT MAP PAGE" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
 			}
 
 			// Button "Download Map"
-			if ($aseco->server->maps->current->mx->dloadurl != false) {
+			if ($aseco->server->maps->current->mx->dloadurl !== false) {
 				$xml .= '<frame pos="17.4 -78.28125" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->dloadurl) .'" text="DOWNLOAD MAP" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
 			}
 
 			// Button "Download Replay"
-			if ($aseco->server->maps->current->mx->replayurl != false) {
+			if ($aseco->server->maps->current->mx->replayurl !== false) {
 				$xml .= '<frame pos="17.4 -82.5" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->replayurl) .'" text="DOWNLOAD REPLAY" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
@@ -9375,7 +9375,7 @@ EOL;
 		$xml .= '<label pos="32.1 -20.625" z-index="0.04" size="35 3.75" halign="center" class="labels" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad pos="32.1 -7.25" z-index="0.50" size="41.2 30" halign="center" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->next->uid) .'?.jpg') .'"/>';
 		$xml .= '<label pos="3.5 -39.375" z-index="0.02" size="52.5 5.625" class="labels" textsize="2" text="'. $this->handleSpecialChars($aseco->server->maps->next->name) .'"/>';
-		$xml .= '<quad pos="3.75 -43.125" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->next->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->next->author_nation) .'.dds"/>';
+		$xml .= '<quad pos="3.75 -43.125" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->next->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->next->author_nation) .'.dds"/>';
 		$xml .= '<label pos="8.65 -43.6875" z-index="0.02" size="46 5.625" class="labels" text="by '. $this->getMapAuthor($aseco->server->maps->next) .'"/>';
 		$xml .= '<frame pos="7.4 -61.875" z-index="0">';	// BEGIN: Times frame
 		$xml .= '<quad pos="0 13.3125" z-index="0.1" size="3.75 3.75" halign="right" style="MedalsBig" substyle="MedalNadeo"/>';
@@ -9391,7 +9391,7 @@ EOL;
 		$xml .= '<label pos="1.25 -4.3125" z-index="0.1" size="20 3.75" class="labels" text="'. $aseco->server->maps->next->environment .'"/>';
 		$xml .= '<label pos="1.25 -8.625" z-index="0.1" size="20 3.75" class="labels" text="'. $aseco->server->maps->next->mood .'"/>';
 		$xml .= '</frame>';			// END: Times frame
-		if ($aseco->server->maps->next->mx !== false && $aseco->server->maps->next->mx->pageurl != false) {
+		if ($aseco->server->maps->next->mx !== false && $aseco->server->maps->next->mx->pageurl !== false) {
 			$xml .= '<frame pos="31.3 -61.875" z-index="0">';	// BEGIN: MX Mapinfos
 			$xml .= '<label pos="0 12.9375" z-index="0.1" size="12.5 4.125" class="labels" text="Type:"/>';
 			$xml .= '<label pos="0 8.625" z-index="0.1" size="12.5 3.75" class="labels" text="Style:"/>';
@@ -9408,21 +9408,21 @@ EOL;
 			$xml .= '</frame>';			// END: MX Mapinfos
 
 			// Button "Visit Page"
-			if ($aseco->server->maps->next->mx->pageurl != false) {
+			if ($aseco->server->maps->next->mx->pageurl !== false) {
 				$xml .= '<frame pos="17.4 -74.0625" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->next->mx->pageurl) .'" text="VISIT MAP PAGE" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
 			}
 
 			// Button "Download Map"
-			if ($aseco->server->maps->next->mx->dloadurl != false) {
+			if ($aseco->server->maps->next->mx->dloadurl !== false) {
 				$xml .= '<frame pos="17.4 -78.28125" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->next->mx->dloadurl) .'" text="DOWNLOAD MAP" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
 			}
 
 			// Button "Download Replay"
-			if ($aseco->server->maps->next->mx->replayurl != false) {
+			if ($aseco->server->maps->next->mx->replayurl !== false) {
 				$xml .= '<frame pos="17.4 -82.5" z-index="0.04">';
 				$xml .= '<label pos="15 0" z-index="0.02" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->next->mx->replayurl) .'" text="DOWNLOAD REPLAY" style="CardButtonSmall"/>';
 				$xml .= '</frame>';
@@ -9504,7 +9504,7 @@ EOL;
 			if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment']) ){
 				// Filter for environment
 				foreach ($aseco->server->maps->map_list as $map) {
-					if (strtoupper($map->environment) == $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment']) {
+					if (strtoupper($map->environment) === $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment']) {
 						$maplist[] = $map->uid;
 					}
 				}
@@ -9513,7 +9513,7 @@ EOL;
 			}
 			else if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['mood'])) {
 				foreach ($aseco->server->maps->map_list as $map) {
-					if (strtoupper($map->mood) == $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['mood']) {
+					if (strtoupper($map->mood) === $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['mood']) {
 						$maplist[] = $map->uid;
 					}
 				}
@@ -9523,7 +9523,7 @@ EOL;
 			else if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author']) ){
 				// Filter for MapAuthor
 				foreach ($aseco->server->maps->map_list as $map) {
-					if ($map->author == $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author']) {
+					if ($map->author === $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author']) {
 						$maplist[] = $map->uid;
 					}
 				}
@@ -9531,7 +9531,7 @@ EOL;
 				$listoptions = '(Filter: Only Maps by '. $player->data['PluginRecordsEyepiece']['Maplist']['Filter']['author'] .')';
 			}
 			else if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'])) {
-				if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORANK') {
+				if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NORANK') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (!isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['rank'])) {
 							$maplist[] = $map->uid;
@@ -9540,7 +9540,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: Not Ranked Maps)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRANK') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'ONLYRANK') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['rank'])) {
 							$maplist[] = $map->uid;
@@ -9549,7 +9549,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: Only Ranked Maps)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOAUTHOR') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NOAUTHOR') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid])) {
 							if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['score'] > $map->author_time) {
@@ -9560,7 +9560,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Author Time)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOGOLD') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NOGOLD') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid])) {
 							if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['score'] > $map->gold_time) {
@@ -9571,7 +9571,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Gold Time)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOSILVER') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NOSILVER') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid])) {
 							if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['score'] > $map->silver_time) {
@@ -9582,7 +9582,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Silver Time)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOBRONZE') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NOBRONZE') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid])) {
 							if ($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['score'] > $map->bronze_time) {
@@ -9593,7 +9593,7 @@ EOL;
 					unset($map);
 					$listoptions = '(Filter: No Bronze Time)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NORECENT') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NORECENT') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if ($aseco->server->maps->history->isMapInHistoryByUid($map->uid) !== true) {
 							$maplist[] = $map->uid;
@@ -9601,10 +9601,10 @@ EOL;
 					}
 					$listoptions = '(Filter: No Recent)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYRECENT') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'ONLYRECENT') {
 					foreach ($aseco->server->maps->history->map_list as $item) {
 						foreach ($aseco->server->maps->map_list as $map) {
-							if ($map->uid == $item['uid']) {
+							if ($map->uid === $item['uid']) {
 								$maplist[] = $map->uid;
 							}
 						}
@@ -9613,11 +9613,11 @@ EOL;
 					unset($uid);
 					$listoptions = '(Filter: Only Recent)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'JUKEBOX') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'JUKEBOX') {
 					foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
 						foreach ($aseco->server->maps->map_list as $map) {
 							// Find the Maps from the Jukebox
-							if ($item['uid'] == $map->uid) {
+							if ($item['uid'] === $map->uid) {
 								$maplist[] = $map->uid;
 								break;
 							}
@@ -9627,25 +9627,25 @@ EOL;
 					unset($item);
 					$listoptions = '(Filter: Only Jukebox)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'ONLYMULTILAP') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'ONLYMULTILAP') {
 					foreach ($aseco->server->maps->map_list as $map) {
-						if ($map->multi_lap == true) {
+						if ($map->multi_lap === true) {
 							$maplist[] = $map->uid;
 						}
 					}
 					unset($map);
 					$listoptions = '(Filter: Only Multilap)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOMULTILAP') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NOMULTILAP') {
 					foreach ($aseco->server->maps->map_list as $map) {
-						if ($map->multi_lap != true) {
+						if ($map->multi_lap !== true) {
 							$maplist[] = $map->uid;
 						}
 					}
 					unset($map);
 					$listoptions = '(Filter: No Multilap)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] == 'NOFINISH') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['cmd'] === 'NOFINISH') {
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (in_array($map->uid, $player->data['PluginRecordsEyepiece']['Maplist']['Unfinished'])) {
 							$maplist[] = $map->uid;
@@ -9656,7 +9656,7 @@ EOL;
 				}
 			}
 			else if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'])) {
-				if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'BEST') {
+				if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'BEST') {
 					$list = array();
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['rank'])) {
@@ -9680,7 +9680,7 @@ EOL;
 
 					$listoptions = '(Sorting: Best Player Rank)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'WORST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'WORST') {
 					$list = array();
 					foreach ($aseco->server->maps->map_list as $map) {
 						if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Records'][$map->uid]['rank'])) {
@@ -9704,7 +9704,7 @@ EOL;
 
 					$listoptions = '(Sorting: Worst Player Rank)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'SHORTEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'SHORTEST') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9721,7 +9721,7 @@ EOL;
 
 					$listoptions = '(Sorting: Shortest Author Time)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'LONGEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'LONGEST') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9738,7 +9738,7 @@ EOL;
 
 					$listoptions = '(Sorting: Longest Author Time)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'NEWEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'NEWEST') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9755,7 +9755,7 @@ EOL;
 
 					$listoptions = '(Sorting: Newest Maps First)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'OLDEST') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'OLDEST') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9772,7 +9772,7 @@ EOL;
 
 					$listoptions = '(Sorting: Oldest Maps First)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'MAPNAME') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'MAPNAME') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9789,7 +9789,7 @@ EOL;
 
 					$listoptions = '(Sorting: By Map Name)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'AUTHORNAME') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'AUTHORNAME') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9806,7 +9806,7 @@ EOL;
 
 					$listoptions = '(Sorting: By Author Name)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'BESTMAPS') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'BESTMAPS') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9823,7 +9823,7 @@ EOL;
 
 					$listoptions = '(Sorting: Karma Best Maps)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'WORSTMAPS') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'WORSTMAPS') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9840,7 +9840,7 @@ EOL;
 
 					$listoptions = '(Sorting: Karma Worst Maps)';
 				}
-				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] == 'AUTHORNATION') {
+				else if ($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['sort'] === 'AUTHORNATION') {
 					$list = $aseco->server->maps->map_list;
 
 					// Sort the array now
@@ -9884,7 +9884,7 @@ EOL;
 
 
 		$subwin = '';
-		if (count($maplist) == 0) {
+		if (count($maplist) === 0) {
 
 			$subwin = str_replace(
 				array(
@@ -10042,11 +10042,11 @@ EOL;
 
 
 		// Create Windowtitle depending on the $maplist
-		if (count($maplist) == 0) {
+		if (count($maplist) === 0) {
 			$title = 'Maps on this Server';
 		}
 		else {
-			$title = 'Maps on this Server   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalmaps, 0) . (($totalmaps == 1) ? ' Map' : ' Maps') .' '. $listoptions;
+			$title = 'Maps on this Server   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalmaps, 0) . (($totalmaps === 1) ? ' Map' : ' Maps') .' '. $listoptions;
 		}
 
 		$xml = str_replace(
@@ -10088,7 +10088,7 @@ EOL;
 				$juked = 0;
 				$tid = 1;
 				foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
-					if ($item['uid'] == $map->uid) {
+					if ($item['uid'] === $map->uid) {
 						$login = $item['Login'];
 						$juked = $tid;
 						break;
@@ -10106,7 +10106,7 @@ EOL;
 //				}
 
 				$xml .= '<frame pos="'. $offset .' -'. (17.71875 * $line) .'" z-index="1">';
-				if ($aseco->server->maps->current->uid == $map->uid && $juked == false) {
+				if ($aseco->server->maps->current->uid === $map->uid && $juked === false) {
 					// Current map
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
@@ -10115,10 +10115,10 @@ EOL;
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
 					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
-					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
+					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === false && $juked == false) {
+				else if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === false && $juked === false) {
 					// Default (not current, not recent, not juked)
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
@@ -10127,24 +10127,24 @@ EOL;
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
 					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
-					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
+					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true && $juked == true) {
+				else if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true && $juked === true) {
 					// This is a recent but juked Map
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="0.675 -0.6375" z-index="0.04" size="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
 					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-					if ( ($dropall) || ($login == $player->login)) {
+					if ( ($dropall) || ($login === $player->login)) {
 						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
 					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" textcolor="000" textfont="Oswald" class="labels" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
-					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
+					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
+				else if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					// This is a recent Map
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
@@ -10155,30 +10155,30 @@ EOL;
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
 					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" textcolor="FFF8" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
-					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
+					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 				else {
 					// This is a juked Map
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="0.675 -0.6375" z-index="0.04" size="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
-					if ($aseco->server->maps->current->uid == $map->uid) {
+					if ($aseco->server->maps->current->uid === $map->uid) {
 						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="0099FF55"/>';
 					}
 					else {
 						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
 					}
-					if ( ($dropall) || ($login == $player->login)) {
+					if ( ($dropall) || ($login === $player->login)) {
 						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
 					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" textcolor="000" textfont="Oswald" class="labels" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
 					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
-					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
+					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 
-				if ($aseco->server->maps->current->uid != $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
 					// This is a recent Map
 
 					// Authortime
@@ -10931,11 +10931,11 @@ EOL;
 
 
 		// Create Windowtitle depending on the $this->cache['MapAuthors']
-		if (count($this->cache['MapAuthors']) == 0) {
+		if (count($this->cache['MapAuthors']) === 0) {
 			$title = 'Select Mapauthor for filtering the Maplist';
 		}
 		else {
-			$title = 'Select Mapauthor for filtering the Maplist   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalauthors, 0) . (($totalauthors == 1) ? ' Author' : ' Authors');
+			$title = 'Select Mapauthor for filtering the Maplist   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalauthors, 0) . (($totalauthors === 1) ? ' Author' : ' Authors');
 		}
 
 		$xml = str_replace(
@@ -11076,7 +11076,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/europe.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 3.75" class="labels" text="$OEUROPE"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Europe'] .' '. (($ccounts['Europe'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Europe'] .' '. (($ccounts['Europe'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 		// Asia
@@ -11085,7 +11085,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/asia.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 3.75" class="labels" text="$OASIA"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Asia'] .' '. (($ccounts['Asia'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Asia'] .' '. (($ccounts['Asia'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 		// Oceania
@@ -11094,7 +11094,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/oceania.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 3.75" class="labels" text="$OOCEANIA"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Oceania'] .' '. (($ccounts['Oceania'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Oceania'] .' '. (($ccounts['Oceania'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 		// North America
@@ -11103,7 +11103,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/namerica.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 2.8" class="labels" text="$ONORTH AMERICA"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 2.5" class="labels" scale="0.8" text="'. $ccounts['North America'] .' '. (($ccounts['North America'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 2.5" class="labels" scale="0.8" text="'. $ccounts['North America'] .' '. (($ccounts['North America'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 		// South America
@@ -11112,7 +11112,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/samerica.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 3.75" class="labels" text="$OSOUTH AMERICA"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['South America'] .' '. (($ccounts['South America'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['South America'] .' '. (($ccounts['South America'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 		// Africa
@@ -11121,7 +11121,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/africa.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 3.75" class="labels" text="$OAFRICA"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Africa'] .' '. (($ccounts['Africa'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Africa'] .' '. (($ccounts['Africa'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 		// Middle East
@@ -11130,7 +11130,7 @@ EOL;
 		$xml .= '<quad pos="0 0" z-index="0.01" size="40 9.375" bgcolor="0009"/>';
 		$xml .= '<quad pos="1.25 -0.9375" z-index="0.02" size="7.6 7.6" image="file://Media/Flags/middleeast.dds"/>';
 		$xml .= '<label pos="10 -1.875" z-index="0.02" size="28 3.75" class="labels" text="$OMIDDLE EAST"/>';
-		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Middle East'] .' '. (($ccounts['Middle East'] == 1) ? 'Player' : 'Players') .'"/>';
+		$xml .= '<label pos="10 -5.25" z-index="0.02" size="35 3.75" class="labels" scale="0.8" text="'. $ccounts['Middle East'] .' '. (($ccounts['Middle East'] === 1) ? 'Player' : 'Players') .'"/>';
 		$xml .= '</frame>';
 
 
@@ -11177,18 +11177,18 @@ EOL;
 		$xml .= '<label pos="40.5 -33.9375" z-index="0.04" size="62 3.75" class="labels" halign="center" text="Press DEL if can not see an Image here!"/>';
 		$xml .= '<quad pos="9.5 -13.875" z-index="0.05" size="62 45" image="'. $aseco->handleSpecialChars($this->getMapImageUrl($aseco->server->maps->current->uid) .'?.jpg') .'"/>';
 		$xml .= '<label pos="9.25 -61.125" z-index="0.04" size="80 5.625" class="labels" textsize="3" text="'. $this->handleSpecialChars($aseco->server->maps->current->name) .'"/>';
-		$xml .= '<quad pos="9.25 -65.8125" z-index="0.04" size="4 4" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->current->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->current->author_nation) .'.dds"/>';
+		$xml .= '<quad pos="9.25 -65.8125" z-index="0.04" size="4 4" image="file://Media/Flags/'. (strtoupper($aseco->server->maps->current->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->current->author_nation) .'.dds"/>';
 		$xml .= '<label pos="15.5 -66.3749" z-index="0.04" size="80 3.75" class="labels" textsize="2" scale="0.9" text="by '. $this->getMapAuthor($aseco->server->maps->current) .'"/>';
 
 		$date_time = $aseco->server->maps->current->mx->uploaded;
-		if ($aseco->server->maps->current->mx->uploaded != $aseco->server->maps->current->mx->updated) {
+		if ($aseco->server->maps->current->mx->uploaded !== $aseco->server->maps->current->mx->updated) {
 			$date_time = $aseco->server->maps->current->mx->updated;
 		}
 		$xml .= '<label pos="9.25 -70.5" z-index="0.04" size="45 2.8125" class="labels" scale="0.8" text="from '. preg_replace('/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.\d+$/', "\\1 \\2", $date_time) .'"/>';
 		$xml .= '<label pos="54.25 -70.5" z-index="0.04" size="45 2.8125" class="labels" scale="0.8" text="MX-ID: '. $aseco->server->maps->current->mx->id .'"/>';
 
 		// Author comment
-		if ($aseco->server->maps->current->mx->acomment != '') {
+		if ($aseco->server->maps->current->mx->acomment !== '') {
 			$acomment = $aseco->server->maps->current->mx->original_acomment;
 
 			// Replace <br> with LF
@@ -11244,17 +11244,17 @@ EOL;
 		$xml .= '</frame>';
 
 		// Button "Visit Page"
-		if ($aseco->server->maps->current->mx->pageurl != false) {
+		if ($aseco->server->maps->current->mx->pageurl !== false) {
 			$xml .= '<label pos="107 -45.0625" z-index="0.05" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->pageurl) .'" text="VISIT MAP PAGE" style="CardButtonSmall"/>';
 		}
 
 		// Button "Download Map"
-		if ($aseco->server->maps->current->mx->dloadurl != false) {
+		if ($aseco->server->maps->current->mx->dloadurl !== false) {
 			$xml .= '<label pos="107 -50.1875" z-index="0.05" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->dloadurl) .'" text="DOWNLOAD MAP" style="CardButtonSmall"/>';
 		}
 
 		// Button "Download Replay"
-		if ($aseco->server->maps->current->mx->replayurl != false) {
+		if ($aseco->server->maps->current->mx->replayurl !== false) {
 			$xml .= '<label pos="107 -55.3125" z-index="0.05" size="30 3.75" class="labels" halign="center" scale="0.8" url="'. $aseco->handleSpecialChars($aseco->server->maps->current->mx->replayurl) .'" text="DOWNLOAD REPLAY" style="CardButtonSmall"/>';
 		}
 		$xml .= '</frame>';
@@ -11462,7 +11462,7 @@ EOL;
 				array(
 					$this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0],
 					$this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0],
-					'Choose the next Song   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalsongs, 0) . (($totalsongs == 1) ? ' Song' : ' Songs'),
+					'Choose the next Song   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalsongs, 0) . (($totalsongs === 1) ? ' Song' : ' Songs'),
 					$buttons
 				),
 				$this->templates['WINDOW']['HEADER']
@@ -11486,7 +11486,7 @@ EOL;
 				$juked = false;
 				if (isset($aseco->plugins['PluginMusicServer'])) {
 					foreach ($aseco->plugins['PluginMusicServer']->jukebox as $pl => $songid) {
-						if ($song['SongId'] == $songid) {
+						if ($song['SongId'] === $songid) {
 							$login = $pl;
 							$juked = true;
 							break;
@@ -11496,8 +11496,8 @@ EOL;
 				}
 
 				$xml .= '<frame pos="'. $offset .' -'. (17.71875 * $line) .'" z-index="1">';
-				if ($juked == false) {
-					if ( ($this->config['CurrentMusicInfos']['Artist'] == $song['Artist']) && ($this->config['CurrentMusicInfos']['Title'] == $song['Title'])) {
+				if ($juked === false) {
+					if ( ($this->config['CurrentMusicInfos']['Artist'] === $song['Artist']) && ($this->config['CurrentMusicInfos']['Title'] === $song['Title'])) {
 						// Current Song
 						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="0099FF55"/>';
 						$xml .= '<quad pos="0.5 -0.5" z-index="0.03" size="43.375 3.75" bgcolor="0099FFDD"/>';
@@ -11518,7 +11518,7 @@ EOL;
 					// Juked Song
 					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.03" size="43.375 3.75" bgcolor="00DD00FF"/>';
-					if ($login == $caller) {
+					if ($login === $caller) {
 						$xml .= '<quad pos="36.425 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=dropSongFromPlaylist" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
 					$xml .= '<label pos="5.5 -1.22" z-index="0.04" size="43.25 0" class="labels" textcolor="000F" text="Song #'. ($i+1) .'"/>';
@@ -11558,15 +11558,15 @@ EOL;
 	public function buildMapWidget ($state = 'race') {
 		global $aseco;
 
-		if ($this->config['MAP_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MAP_WIDGET'][0]['ENABLED'][0] === true) {
 
 			$xml = false;
-			if ($state == 'race') {
+			if ($state === 'race') {
 
 				// Set the right Icon and Title position
 				$position = (($this->config['MAP_WIDGET'][0]['RACE'][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
-				if ($position == 'right') {
+				if ($position === 'right') {
 					$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['MAP_WIDGET'][0]['WIDTH'][0]);
 					$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['MAP_WIDGET'][0]['WIDTH'][0]);
 					$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['MAP_WIDGET'][0]['WIDTH'][0]);
@@ -11603,19 +11603,19 @@ EOL;
 						$this->handleSpecialChars($aseco->server->maps->current->name),
 						$aseco->formatTime($aseco->server->maps->current->author_time),
 						$this->getMapAuthor($aseco->server->maps->current),
-						(strtoupper($aseco->server->maps->current->author_nation) == 'OTH' ? 'other' : $aseco->server->maps->current->author_nation)
+						(strtoupper($aseco->server->maps->current->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->current->author_nation)
 					),
 					$this->templates['MAP_WIDGET']['RACE']['HEADER']
 				);
 				$xml .= $this->templates['MAP_WIDGET']['RACE']['FOOTER'];
 
 			}
-			else if ($state == 'score') {
+			else if ($state === 'score') {
 
 				// Set the right Icon and Title position
 				$position = (($this->config['MAP_WIDGET'][0]['RACE'][0]['POS_X'][0] < 0) ? 'right' : 'left');
 
-				if ($position == 'right') {
+				if ($position === 'right') {
 					$imagex	= ($this->config['Positions'][$position]['image_open']['x'] + $this->config['MAP_WIDGET'][0]['WIDTH'][0]);
 					$iconx	= ($this->config['Positions'][$position]['icon']['x'] + $this->config['MAP_WIDGET'][0]['WIDTH'][0]);
 					$titlex	= ($this->config['Positions'][$position]['title']['x'] + $this->config['MAP_WIDGET'][0]['WIDTH'][0]);
@@ -11635,7 +11635,7 @@ EOL;
 				);
 
 				// Check for changing display
-				if (strtoupper($type) == 'CURRENT') {
+				if (strtoupper($type) === 'CURRENT') {
 					$title = $this->config['MAP_WIDGET'][0]['TITLES'][0]['CURRENT'][0];
 					$icon = array(
 						$this->config['MAP_WIDGET'][0]['ICONS'][0]['CURRENT'][0]['ICON_STYLE'][0],
@@ -11644,7 +11644,7 @@ EOL;
 				}
 
 				$map = false;
-				if (strtoupper($type) == 'NEXT') {
+				if (strtoupper($type) === 'NEXT') {
 					$map = $aseco->server->maps->next;
 				}
 				else {
@@ -11684,7 +11684,7 @@ EOL;
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($map->name),
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime($map->author_time),
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $this->getMapAuthor($map),
-						(strtoupper($map->author_nation) == 'OTH' ? 'other' : $map->author_nation),
+						(strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation),
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $map->environment,
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $map->mood,
 						$this->config['STYLE'][0]['WIDGET_SCORE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime($map->gold_time),
@@ -11696,7 +11696,7 @@ EOL;
 				$xml .= $this->templates['MAP_WIDGET']['SCORE']['FOOTER'];
 			}
 
-			if ($xml != false) {
+			if ($xml !== false) {
 				return $xml;
 			}
 		}
@@ -11721,12 +11721,12 @@ EOL;
 			$rank = 1;
 			$line = 0;
 			foreach ($this->scores[$data['list']] as $item) {
-				if ($data['list'] == 'TopNations') {
+				if ($data['list'] === 'TopNations') {
 					$xml .= '<label pos="7.875 -'. (3.35 * $line) .'" z-index="0.02" size="6.625 3.1875" class="labels" halign="right" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['count'] .'"/>';
-					$xml .= '<quad pos="9.75 '. (($line == 0) ? 0.5625 : -(3.35 * $line - 0.5625)) .'" z-index="0.02" size="3 3" image="file://Media/Flags/'. (($item['nation'] == 'OTH') ? 'other' : $item['nation']) .'.dds"/>';
+					$xml .= '<quad pos="9.75 '. (($line === 0) ? 0.5625 : -(3.35 * $line - 0.5625)) .'" z-index="0.02" size="3 3" image="file://Media/Flags/'. (($item['nation'] === 'OTH') ? 'other' : $item['nation']) .'.dds"/>';
 					$xml .= '<label pos="15.25 -'. (3.35 * $line) .'" z-index="0.02" size="29.25 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->country->iocToCountry($item['nation']) .'"/>';
 				}
-				else if ($data['list'] == 'TopContinents') {
+				else if ($data['list'] === 'TopContinents') {
 					$continent = str_replace(
 							array(
 								' ',
@@ -11741,14 +11741,14 @@ EOL;
 					);
 
 					$xml .= '<label pos="7.875 -'. (3.35 * $line) .'" z-index="0.03" size="6.25 3.1875" class="labels" halign="right" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['count'] .'"/>';
-					$xml .= '<quad pos="9.75 '. (($line == 0) ? 0.5625 : -(3.35 * $line - 0.5625)) .'" z-index="0.03" size="3.5 3.5" image="file://Media/Flags/'. $continent .'.dds"/>';
+					$xml .= '<quad pos="9.75 '. (($line === 0) ? 0.5625 : -(3.35 * $line - 0.5625)) .'" z-index="0.03" size="3.5 3.5" image="file://Media/Flags/'. $continent .'.dds"/>';
 					$xml .= '<label pos="15.25 -'. (3.35 * $line) .'" z-index="0.03" size="29.25 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['continent'] .'"/>';
 				}
 				else {
 					// Mark current connected Players
 					if (isset($item['login'])) {
-						if ($item['login'] == $target) {
-							if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] != '') {
+						if ($item['login'] === $target) {
+							if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] !== '') {
 								$xml .= '<quad pos="0.5 '. (((3.35 * $line - 0.375) > 0) ? -(3.35 * $line - 0.375) : 0.375) .'" z-index="0.01" size="47.5 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_SELF_BACKGROUND'][0] .'"/>';
 							}
 							else {
@@ -11756,7 +11756,7 @@ EOL;
 							}
 						}
 						else if (in_array($item['login'], $logins)) {
-							if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] != '') {
+							if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] !== '') {
 								$xml .= '<quad pos="0.5 '. (((3.35 * $line - 0.375) > 0) ? -(3.35 * $line - 0.375) : 0.375) .'" z-index="0.01" size="47.5 3.375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_OTHER_BACKGROUND'][0] .'"/>';
 							}
 							else {
@@ -11799,7 +11799,7 @@ EOL;
 		// Add all connected PlayerLogins
 		$players = array();
 		foreach ($aseco->server->players->player_list as $pl) {
-			if ($pl->login != $player->login) {
+			if ($pl->login !== $player->login) {
 				$players[] = $pl->login;
 			}
 		}
@@ -11808,7 +11808,7 @@ EOL;
 		$toplists = array();
 
 		// DedimaniaRecords
-		if ($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] == true) {
+		if ($this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true) {
 			$toplists[] = array(
 				'actionid'	=> 'showDedimaniaRecordsWindow',
 				'icon_style'	=> $this->config['DEDIMANIA_RECORDS'][0]['ICON_STYLE'][0],
@@ -12083,20 +12083,20 @@ EOL;
 		$help_player .= '<label pos="47.5 -3.75" z-index="0.01" size="113.5 3.75" class="labels" textcolor="FF0F" text="Display this help"/>';
 
 		// Command "/emusic"
-		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] == true) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) {
 			$help_player .= '<label pos="0 -7.5" z-index="0.01" size="42.5 3.75" class="labels" text="/emusic"/>';
 			$help_player .= '<label pos="47.5 -7.5" z-index="0.01" size="113.5 3.75" class="labels" textcolor="FF0F" text="Lists musics currently on the server"/>';
 		}
 
 		// Command "/estat [PARAMETER]"
 		$help_player .= '<label pos="0 -15" z-index="0.01" size="42.5 3.75" class="labels" text="/estat [PARAMETER]"/>';
-		$help_player .= '<label pos="47.5 -15" z-index="0.01" size="113.5 3.75" autonewline="1" class="labels" textcolor="FF0F" text="Optional parameter can be:$FFF'. LF .'dedirecs, localrecs, topnations, topranks, topwinners, mostrecords, mostfinished, topplaytime, topdonators, toptracks, topvoters, topvisitors, topactive, toppayouts, toproundscore'. (($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] == true) ? ', topbetwins' : '') .'"/>';
+		$help_player .= '<label pos="47.5 -15" z-index="0.01" size="113.5 3.75" autonewline="1" class="labels" textcolor="FF0F" text="Optional parameter can be:$FFF'. LF .'dedirecs, localrecs, topnations, topranks, topwinners, mostrecords, mostfinished, topplaytime, topdonators, toptracks, topvoters, topvisitors, topactive, toppayouts, toproundscore'. (($this->config['SCORETABLE_LISTS'][0]['TOP_BETWINS'][0]['ENABLED'][0] === true) ? ', topbetwins' : '') .'"/>';
 
 		// Command "/elist [PARAMETER]"
 		$help_player .= '<label pos="0 -33.75" z-index="0.01" size="42.5 3.75" class="labels" text="/elist [PARAMETER]"/>';
 		$help_player .= '<label pos="47.5 -33.75" z-index="0.01" size="113.5 3.75" autonewline="1" class="labels" textcolor="FF0F" text="Lists tracks currently on the server, optional parameter can be:'. LF .'$FFFjukebox, author, authorname, map, norecent, onlyrecent, norank, onlyrank, nomulti, onlymulti, noauthor, nogold, nosilver, nobronze, nofinish, best, worst, shortest, longest, newest, oldest, sortauthor, bestkarma, worstkarma'. LF .'$FF0or a keyword to search for"/>';
 
-		if ($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0] == true) {
+		if ($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0] === true) {
 			$help_player .= '<quad pos="0.375 -71.5" z-index="0.02" size="3.25 2.625" style="Icons64x64_1" substyle="Buddy"/>';
 			$help_player .= '<label pos="5.625 -71.5" z-index="0.01" size="155.55 0" class="labels" text="Marker for an other Player that is currently online at this Server with a record and is ranked before you"/>';
 
@@ -12252,7 +12252,7 @@ EOL;
 		// %amount_spectators%
 		$content  = '<manialink id="SpectatorInfoWidget" name="SpectatorInfoWidget" version="3">';
 		$content .= '<frame pos="'. $this->config['SPECTATOR_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['SPECTATOR_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_SpectatorInfoWidget">';
-		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['SPECTATOR_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		}
 		else {
@@ -12321,7 +12321,7 @@ EOL;
 		// %totallaps%
 		$content  = '<manialink id="MultiLapInfoWidget" name="MultiLapInfoWidget" version="3">';
 		$content .= '<frame pos="'. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['MULTILAP_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MultiLapInfoWidget">';
-		if ($this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['MULTILAP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		}
 		else {
@@ -12419,7 +12419,7 @@ EOL;
 		//--------------------------------------------------------------//
 		$content  = '<manialink id="WarmUpInfoWidget" name="WarmUpInfoWidget" version="3">';
 		$content .= '<frame pos="'. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_X'][0] .' '. $this->config['WARM_UP_INFO_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_WarmUpInfoWidget">';
-		if ($this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['WARM_UP_INFO_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		}
 		else {
@@ -12518,7 +12518,7 @@ EOL;
 		// %widgetheight%
 		$header  = '<manialink id="DonationWidgetAtScore" name="DonationWidgetAtScore" version="3">';
 		$header .= '<frame pos="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_DonationWidgetAtScore">';
-		if ($this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+		if ($this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] !== '') {
 			$header .= '<quad pos="0 0" z-index="0.001" size="11.5 %widgetheight%" bgcolor="'. $this->config['DONATION_WIDGET'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
@@ -12569,7 +12569,7 @@ EOL;
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
 		$header .= '<frame pos="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_X'][0] .' '. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_WinningPayoutWidgetAtScore">';
-		if ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+		if ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] !== '') {
 			$header .= '<quad pos="0 0" z-index="0.001" size="63.75 '. ($this->config['LineHeight'] * 5.625 + 6.375) .'" bgcolor="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
@@ -12577,7 +12577,7 @@ EOL;
 		}
 
 		// Icon and Title
-		if ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.002" size="61.75 3.75" bgcolor="'. $this->config['WINNING_PAYOUT'][0]['WIDGET'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -12631,7 +12631,7 @@ EOL;
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
 		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
-		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] !== '') {
 			$header .= '<quad pos="0 0" z-index="0.001" size="39.4 %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
@@ -12639,7 +12639,7 @@ EOL;
 		}
 
 		// Icon and Title
-		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.002" size="37.4 3.75" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -12696,7 +12696,7 @@ EOL;
 		$header .= '<quad pos="%image_open_pos_x% -7.75" z-index="0.03" size="8.75 8.75" image="%image_open%"/>';
 
 		// Icon and Title
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.03" size="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 2) .' 3.75" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -12754,7 +12754,7 @@ EOL;
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
 		$header .= '<frame pos="'. $this->config['MAP_WIDGET'][0]['SCORE'][0]['POS_X'][0] .' '. $this->config['MAP_WIDGET'][0]['SCORE'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MapWidget">';
-		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] !== '') {
 			$header .= '<quad pos="0.25 -0.1875" z-index="0.001" size="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 0.5) .' 26.4375" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
@@ -12762,7 +12762,7 @@ EOL;
 		}
 
 		// Icon and Title
-		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_SCORE'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.002" size="'. ($this->config['MAP_WIDGET'][0]['WIDTH'][0] - 2) .' 3.75" bgcolor="'. $this->config['STYLE'][0]['WIDGET_SCORE'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -12895,7 +12895,7 @@ EOL;
 		//--------------------------------------------------------------//
 		$content  = '<manialink id="ToplistWidget" name="ToplistWidget" version="3">';
 		$content .= '<frame pos="'. $this->config['TOPLIST_WIDGET'][0]['POS_X'][0] .' '. $this->config['TOPLIST_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_ToplistWidget">';
-		if ($this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['TOPLIST_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonToplistWidget"/>';
 		}
 		else {
@@ -12959,7 +12959,7 @@ EOL;
 		// %icon%
 		$content  = '<manialink id="NextEnvironmentWidgetAtScore" name="NextEnvironmentWidgetAtScore" version="3">';
 		$content .= '<frame pos="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_NextEnvironmentWidgetAtScore">';
-		if ($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+		if ($this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_COLOR'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="27.75 12.19" bgcolor="'. $this->config['NEXT_ENVIRONMENT_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
@@ -13002,7 +13002,7 @@ EOL;
 		// %icon_style%, %icon_substyle%
 		$content  = '<manialink id="NextGamemodeWidgetAtScore" name="NextGamemodeWidgetAtScore" version="3">';
 		$content .= '<frame pos="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_X'][0] .' '. $this->config['NEXT_GAMEMODE_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_NextGamemodeWidgetAtScore">';
-		if ($this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_COLOR'][0] != '') {
+		if ($this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_COLOR'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['NEXT_GAMEMODE_WIDGET'][0]['BACKGROUND_COLOR'][0] .'"/>';
 		}
 		else {
@@ -13046,7 +13046,7 @@ EOL;
 		// %visitorcount%
 		$content  = '<manialink id="VisitorsWidget" name="VisitorsWidget" version="3">';
 		$content .= '<frame pos="'. $this->config['VISITORS_WIDGET'][0]['POS_X'][0] .' '. $this->config['VISITORS_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_VisitorsWidget">';
-		if ($this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['VISITORS_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonVisitorsWidget"/>';
 		}
 		else {
@@ -13168,7 +13168,7 @@ EOL;
 		// %mapcount%
 		$content  = '<manialink id="MapCountWidget" name="MapCountWidget" version="3">';
 		$content .= '<frame pos="'. $this->config['MAPCOUNT_WIDGET'][0]['POS_X'][0] .' '. $this->config['MAPCOUNT_WIDGET'][0]['POS_Y'][0] .'" z-index="0" id="Frame_MapCountWidget">';
-		if ($this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] != '') {
+		if ($this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] !== '') {
 			$content .= '<quad pos="0 0" z-index="0.001" size="11.5 12.19" bgcolor="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['MAPCOUNT_WIDGET'][0]['BACKGROUND_FOCUS'][0] .'" scriptevents="1" id="ButtonMapCountWidget"/>';
 		}
 		else {
@@ -13331,7 +13331,7 @@ EOL;
 		$header .= '<quad pos="%image_open_pos_x% %image_open_pos_y%" z-index="0.05" size="8.75 8.75" image="%image_open%"/>';
 
 		// Icon and Title
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.003" size="%title_background_width% 3.75" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -13453,7 +13453,7 @@ EOL;
 		$header .= '<quad pos="%image_open_pos_x% %image_open_pos_y%" z-index="0.05" size="8.75 8.75" image="%image_open%"/>';
 
 		// Icon and Title
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.003" size="%title_background_width% 3.75" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -13502,7 +13502,7 @@ EOL;
 		$header .= '<quad pos="15.125 -4.875" z-index="0.003" size="%column_width_name% %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_NAME'][0] .'"/>';
 
 		// Icon and Title
-		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] != '') {
+		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] !== '') {
 			$header .= '<quad pos="1 -0.675" z-index="0.003" size="%title_background_width% 3.75" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] .'"/>';
 		}
 		else {
@@ -13611,7 +13611,7 @@ EOL;
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
 		$header .= '</stylesheet>';
-		if ($this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0] == true) {
+		if ($this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0] === true) {
 			$header .= '<quad pos="-160 90" z-index="18.49" size="320 180" bgcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['BGCOLOR'][0] .'" id="Lightbox"/>';
 		}
 		else {
@@ -13663,7 +13663,7 @@ Void HideFrame (Text ChildId) {
 }
 Void WipeOut (Text ChildId) {
 	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container != Null) {
+	if (Container !== Null) {
 		declare Real EndPosnX = 0.0;
 		declare Real EndPosnY = 0.0;
 		declare Real PosDistanceX = (EndPosnX - Container.RelativePosition_V3.X);
@@ -13871,13 +13871,13 @@ EOL;
 	public function checkServerLoad () {
 		global $aseco;
 
-		if ( ($this->config['NICEMODE'][0]['ENABLED'][0] == true) && ($this->config['NICEMODE'][0]['FORCE'][0] == false)) {
+		if ( ($this->config['NICEMODE'][0]['ENABLED'][0] === true) && ($this->config['NICEMODE'][0]['FORCE'][0] === false)) {
 
 			// Get Playercount
 			$player_count = count($aseco->server->players->player_list);
 
 			// Check Playercount and if to high, switch to nicemode
-			if ( ($this->config['States']['NiceMode'] == false) && ($player_count >= $this->config['NICEMODE'][0]['LIMITS'][0]['UPPER_LIMIT'][0])) {
+			if ( ($this->config['States']['NiceMode'] === false) && ($player_count >= $this->config['NICEMODE'][0]['LIMITS'][0]['UPPER_LIMIT'][0])) {
 
 				// Turn nicemode on
 				$this->config['States']['NiceMode'] = true;
@@ -13889,7 +13889,7 @@ EOL;
 				// Set new refresh interval
 				$this->config['FEATURES'][0]['REFRESH_INTERVAL'][0] = $this->config['NICEMODE'][0]['REFRESH_INTERVAL'][0];
 			}
-			else if ( ($this->config['States']['NiceMode'] == true) && ($player_count <= $this->config['NICEMODE'][0]['LIMITS'][0]['LOWER_LIMIT'][0])) {
+			else if ( ($this->config['States']['NiceMode'] === true) && ($player_count <= $this->config['NICEMODE'][0]['LIMITS'][0]['LOWER_LIMIT'][0])) {
 
 				// Turn nicemode off
 				$this->config['States']['NiceMode'] = false;
@@ -13908,7 +13908,7 @@ EOL;
 
 	public function formatNumber ($num, $dec) {
 
-		if ( ($this->config['FEATURES'][0]['SHORTEN_NUMBERS'][0] == true) && ($num > 1000)) {
+		if ( ($this->config['FEATURES'][0]['SHORTEN_NUMBERS'][0] === true) && ($num > 1000)) {
 			return intval($num / 1000) .'k';
 		}
 		else {
@@ -13926,7 +13926,7 @@ EOL;
 		global $aseco;
 
 		$map = $aseco->server->maps->getMapByUid($uid);
-		if ($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] == true && $map->mx === false) {
+		if ($this->config['FEATURES'][0]['MAPLIST'][0]['MAPIMAGES'][0]['ENABLED'][0] === true && $map->mx === false) {
 			if (empty($map->uid)) {
 				return $this->config['IMAGES'][0]['NO_SCREENSHOT'][0];
 			}
@@ -13989,7 +13989,7 @@ EOL;
 			$this->cache['MapAuthors'][] = $mapob->author;
 
 			// Setup the Cache for the AuthorNation
-			if (isset($mapob->author_nation) && $mapob->author_nation != 'OTH') {
+			if (isset($mapob->author_nation) && $mapob->author_nation !== 'OTH') {
 				$this->cache['MapAuthorNation'][$mapob->author] = $mapob->author_nation;
 			}
 
@@ -14021,7 +14021,7 @@ EOL;
 		global $aseco;
 
 		$data = array();
-		if ($this->config['FEATURES'][0]['KARMA'][0]['CALCULATION_METHOD'][0] == 'tmkarma') {
+		if ($this->config['FEATURES'][0]['KARMA'][0]['CALCULATION_METHOD'][0] === 'tmkarma') {
 			$votings = array();
 			$values = array(
 				'Fantastic'	=> 3,
@@ -14079,7 +14079,7 @@ EOL;
 				);
 
 				// Prevention of "illegal division by zero"
-				if ($totalvotes == 0) {
+				if ($totalvotes === 0) {
 					$totalvotes = 0.0000000000001;
 				}
 
@@ -14245,7 +14245,7 @@ EOL;
 		$string = preg_replace('/\${1}[SHWILON]/i', '', $string);
 
 
-		if ($this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0] == true) {
+		if ($this->config['FEATURES'][0]['ILLUMINATE_NAMES'][0] === true) {
 			// Replace too dark colors with lighter ones
 			$string = preg_replace('/\${1}(000|111|222|333|444|555)/i', '\$AAA', $string);
 		}

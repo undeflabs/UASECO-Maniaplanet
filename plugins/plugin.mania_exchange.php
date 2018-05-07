@@ -50,8 +50,8 @@ class PluginManiaExchange extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles maps from ManiaExchange and provides MX records message at start of each map.');
 
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
@@ -102,7 +102,7 @@ class PluginManiaExchange extends Plugin {
 				);
 				$message->sendChatMessage();
 
-//				if ($this->config['show_records'] == 2) {
+//				if ($this->config['show_records'] === 2) {
 //					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 //				}
 //				else {

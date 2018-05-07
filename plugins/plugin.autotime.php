@@ -48,8 +48,8 @@ class PluginAutotime extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-08-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.autotime', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED, '1.0.0', null);
@@ -92,23 +92,23 @@ class PluginAutotime extends Plugin {
 
 		// Check for compatible Gamemode on next map
 		$gamemode = $aseco->server->gameinfo->mode;
-		if ($gamemode == Gameinfo::TIME_ATTACK || $gamemode == Gameinfo::LAPS || $gamemode == Gameinfo::TEAM_ATTACK || $gamemode == Gameinfo::CHASE) {
+		if ($gamemode === Gameinfo::TIME_ATTACK || $gamemode === Gameinfo::LAPS || $gamemode === Gameinfo::TEAM_ATTACK || $gamemode === Gameinfo::CHASE) {
 			// Check if auto timelimit enabled
 			if ($this->config['MULTIPLICATOR'][0] > 0) {
 				// Setup calculation base
-				if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'AUTHOR') {
+				if (strtoupper($this->config['CALCULATION_BASE'][0]) === 'AUTHOR') {
 					$newtime = substr((int)$map->author_time, 0, -3);
 					$basedtime = (int)$map->author_time;
 				}
-				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'GOLD') {
+				else if (strtoupper($this->config['CALCULATION_BASE'][0]) === 'GOLD') {
 					$newtime = substr((int)$map->gold_time, 0, -3);
 					$basedtime = (int)$map->gold_time;
 				}
-				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'SILVER') {
+				else if (strtoupper($this->config['CALCULATION_BASE'][0]) === 'SILVER') {
 					$newtime = substr((int)$map->silver_time, 0, -3);
 					$basedtime = (int)$map->silver_time;
 				}
-				else if (strtoupper($this->config['CALCULATION_BASE'][0]) == 'BRONZE') {
+				else if (strtoupper($this->config['CALCULATION_BASE'][0]) === 'BRONZE') {
 					$newtime = substr((int)$map->bronze_time, 0, -3);
 					$basedtime = (int)$map->bronze_time;
 				}
@@ -138,16 +138,16 @@ class PluginAutotime extends Plugin {
 				}
 
 				// Send new time
-				if ($gamemode == Gameinfo::TIME_ATTACK) {
+				if ($gamemode === Gameinfo::TIME_ATTACK) {
 					$aseco->server->gameinfo->time_attack['TimeLimit'] = (int)$newtime;
 				}
-				else if ($gamemode == Gameinfo::LAPS) {
+				else if ($gamemode === Gameinfo::LAPS) {
 					$aseco->server->gameinfo->laps['TimeLimit'] = (int)$newtime;
 				}
-				else if ($gamemode == Gameinfo::TEAM_ATTACK) {
+				else if ($gamemode === Gameinfo::TEAM_ATTACK) {
 					$aseco->server->gameinfo->team_attack['TimeLimit'] = (int)$newtime;
 				}
-				else if ($gamemode == Gameinfo::CHASE) {
+				else if ($gamemode === Gameinfo::CHASE) {
 					$aseco->server->gameinfo->chase['TimeLimit'] = (int)$newtime;
 				}
 				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
@@ -162,7 +162,7 @@ class PluginAutotime extends Plugin {
 				);
 
 
-//				if ($this->config['DISPLAY'][0] == 2) {
+//				if ($this->config['DISPLAY'][0] === 2) {
 //					$aseco->releaseEvent('onSendWindowMessage', array($message, true));
 //				}
 //				else if ($this->config['DISPLAY'][0] > 0) {

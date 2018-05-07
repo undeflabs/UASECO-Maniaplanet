@@ -46,8 +46,8 @@ class PluginChatWins extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.wins', 'plugin_description'));
 
 		$this->registerChatCommand('wins', 'chat_wins', new Message('chat.wins', 'plugin_description'), Player::PLAYERS);
@@ -61,7 +61,7 @@ class PluginChatWins extends Plugin {
 
 	public function chat_wins ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			if (!$player = $aseco->server->players->getPlayerByLogin($chat_parameter)) {
 				$msg = new Message('chat.wins', 'message_player_not_found');
 				$msg->addPlaceholders($chat_parameter);

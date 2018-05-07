@@ -48,8 +48,8 @@ class PluginVoteManager extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2012 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
 		$this->addDependence('PluginRaspVotes',			Dependence::DISALLOWED,	null, null);
@@ -112,7 +112,7 @@ class PluginVoteManager extends Plugin {
 		$this->config['VOTING'][0]['COUNTDOWN'][0]						= (int)$this->config['VOTING'][0]['COUNTDOWN'][0];
 		$this->config['VOTING'][0]['MAX_VOTES'][0]						= (int)$this->config['VOTING'][0]['MAX_VOTES'][0];
 		$this->config['VOTING'][0]['MAX_RESTARTS'][0]						= (int)$this->config['VOTING'][0]['MAX_RESTARTS'][0];
-		$this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]				= ((strtoupper($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]) == 'TRUE') ? true : false);
+		$this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]				= ((strtoupper($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0]) === 'TRUE') ? true : false);
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['DEFAULT'][0];
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0]				= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['BAN'][0];
 		$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPIDENT'][0]			= (float)$this->config['DEDICATED_SERVER'][0]['RATIO'][0]['JUMPTOMAPIDENT'][0];
@@ -233,7 +233,7 @@ class PluginVoteManager extends Plugin {
 		}
 		$aseco->client->query('SetCallVoteRatios', $callvotes);
 
-		if ($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0] == true) {
+		if ($this->config['DEDICATED_SERVER'][0]['DISABLE_CALLVOTES'][0] === true) {
 			$aseco->client->query('SetCallVoteTimeOut', (int)0);
 		}
 
@@ -264,12 +264,12 @@ class PluginVoteManager extends Plugin {
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ($this->config['RunningVote']['Active'] == true) {
-			if ($answer['Action'] == 'Vote') {
-				if ($answer['Value'] == 'Yes') {
+		if ($this->config['RunningVote']['Active'] === true) {
+			if ($answer['Action'] === 'Vote') {
+				if ($answer['Value'] === 'Yes') {
 					$this->handleVote($login, 'Yes');
 				}
-				else if ($answer['Value'] == 'No') {
+				else if ($answer['Value'] === 'No') {
 					$this->handleVote($login, 'No');
 				}
 			}
@@ -285,10 +285,10 @@ class PluginVoteManager extends Plugin {
 	public function handleAdminAction ($action) {
 		global $aseco;
 
-		if ($action == 'pass') {
+		if ($action === 'pass') {
 			// Admin "Pass" for the current Vote
-			if ($this->config['RunningVote']['Active'] == true) {
-				if ($this->config['RunningVote']['Mode'] == 'Restart') {
+			if ($this->config['RunningVote']['Active'] === true) {
+				if ($this->config['RunningVote']['Mode'] === 'Restart') {
 					// Restart passed, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_SUCCESS'][0]);
 
@@ -296,21 +296,21 @@ class PluginVoteManager extends Plugin {
 					$this->config['Cache']['Todo']['onEndMap'] = $this->config['RunningVote']['Mode'];
 
 					// Add to Jukebox for replay
-					if ($this->config['MODE'][0] == 'replay') {
+					if ($this->config['MODE'][0] === 'replay') {
 						$this->handleTodo('Replay');
 					}
 
 					// Release the event
 					$aseco->releaseEvent('onVotingRestartMap', null);
 				}
-				else if ($this->config['RunningVote']['Mode'] == 'Skip') {
+				else if ($this->config['RunningVote']['Mode'] === 'Skip') {
 					// Skip passed, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_SUCCESS'][0]);
 
 					// Skip now
 					$this->handleTodo('Skip');
 				}
-				else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+				else if ($this->config['RunningVote']['Mode'] === 'Balance') {
 					// Balance passed, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_SUCCESS'][0]);
 
@@ -327,19 +327,19 @@ class PluginVoteManager extends Plugin {
 			}
 
 		}
-		else if ($action == 'cancel') {
+		else if ($action === 'cancel') {
 
 			// Admin "Cancel" for the current Vote
-			if ($this->config['RunningVote']['Active'] == true) {
-				if ($this->config['RunningVote']['Mode'] == 'Restart') {
+			if ($this->config['RunningVote']['Active'] === true) {
+				if ($this->config['RunningVote']['Mode'] === 'Restart') {
 					// Restart did not pass, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_FAILED'][0]);
 				}
-				else if ($this->config['RunningVote']['Mode'] == 'Skip') {
+				else if ($this->config['RunningVote']['Mode'] === 'Skip') {
 					// Skip did not pass, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0]);
 				}
-				else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+				else if ($this->config['RunningVote']['Mode'] === 'Balance') {
 					// Balance did not pass, send the info message
 					$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_FAILED'][0]);
 				}
@@ -363,7 +363,7 @@ class PluginVoteManager extends Plugin {
 
 	public function onEverySecond ($aseco) {
 
-		if ($this->config['RunningVote']['Active'] == true) {
+		if ($this->config['RunningVote']['Active'] === true) {
 			if ($this->config['RunningVote']['Countdown'] > 0) {
 
 				// Countdown
@@ -377,7 +377,7 @@ class PluginVoteManager extends Plugin {
 					}
 				}
 				unset($player);
-				if ($stop == true) {
+				if ($stop === true) {
 					$this->config['RunningVote']['Countdown'] = 0;
 				}
 			}
@@ -395,11 +395,11 @@ class PluginVoteManager extends Plugin {
 				$count_yes = count($this->config['RunningVote']['Votes']['Yes']);
 				$count_no = count($this->config['RunningVote']['Votes']['No']);
 				$totalvotes = $count_yes + $count_no;
-				if ($totalvotes == 0) {
+				if ($totalvotes === 0) {
 					$totalvotes = 0.0001;
 				}
 				if ( ($count_yes / $totalvotes * 100) >= ($this->config['VOTING'][0]['RATIO'][0] * 100) ) {
-					if ($this->config['RunningVote']['Mode'] == 'Restart') {
+					if ($this->config['RunningVote']['Mode'] === 'Restart') {
 						// Restart passed, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_SUCCESS'][0]);
 
@@ -407,21 +407,21 @@ class PluginVoteManager extends Plugin {
 						$this->config['Cache']['Todo']['onEndMap'] = $this->config['RunningVote']['Mode'];
 
 						// Add to Jukebox for replay
-						if ($this->config['MODE'][0] == 'replay') {
+						if ($this->config['MODE'][0] === 'replay') {
 							$this->handleTodo('Replay');
 						}
 
 						// Release the event
 						$aseco->releaseEvent('onVotingRestartMap', null);
 					}
-					else if ($this->config['RunningVote']['Mode'] == 'Skip') {
+					else if ($this->config['RunningVote']['Mode'] === 'Skip') {
 						// Skip passed, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_SUCCESS'][0]);
 
 						// Skip now
 						$this->handleTodo('Skip');
 					}
-					else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+					else if ($this->config['RunningVote']['Mode'] === 'Balance') {
 						// Balance passed, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_SUCCESS'][0]);
 
@@ -430,15 +430,15 @@ class PluginVoteManager extends Plugin {
 					}
 				}
 				else {
-					if ($this->config['RunningVote']['Mode'] == 'Restart') {
+					if ($this->config['RunningVote']['Mode'] === 'Restart') {
 						// Restart did not pass, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_FAILED'][0]);
 					}
-					else if ($this->config['RunningVote']['Mode'] == 'Skip') {
+					else if ($this->config['RunningVote']['Mode'] === 'Skip') {
 						// Skip did not pass, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_FAILED'][0]);
 					}
-					else if ($this->config['RunningVote']['Mode'] == 'Balance') {
+					else if ($this->config['RunningVote']['Mode'] === 'Balance') {
 						// Balance did not pass, send the info message
 						$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_BALANCE_FAILED'][0]);
 					}
@@ -463,11 +463,11 @@ class PluginVoteManager extends Plugin {
 	public function onPlayerChat ($aseco, $chat) {
 
 		if ( $aseco->isAnyAdminByLogin($chat[1]) ) {
-			if (strtolower($chat[2]) == '/admin pass') {
+			if (strtolower($chat[2]) === '/admin pass') {
 				// Admin has used "/admin pass" for the current Vote
 				$this->handleAdminAction('pass');
 			}
-			else if (strtolower($chat[2]) == '/admin cancel') {
+			else if (strtolower($chat[2]) === '/admin cancel') {
 				// Admin has used "/admin cancel" for the current Vote
 				$this->handleAdminAction('cancel');
 			}
@@ -493,7 +493,7 @@ class PluginVoteManager extends Plugin {
 		$aseco->sendManialink($xml, $player->login, 0, false);
 
 		// Check for current vote and show it
-		if ($this->config['RunningVote']['Active'] == true) {
+		if ($this->config['RunningVote']['Active'] === true) {
 			$this->config['RunningVote']['Players'][] = $player->login;
 			$this->sendOutVote($player->login);
 		}
@@ -516,7 +516,7 @@ class PluginVoteManager extends Plugin {
 		$this->config['Cache']['Todo']['onEndMap'] = false;
 
 		// Store the Timelimit at TA
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $aseco->server->gameinfo->time_attack['TimeLimit'] > 0) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK && $aseco->server->gameinfo->time_attack['TimeLimit'] > 0) {
 			$this->config['TimeAttackTimelimit'] = time() + $aseco->server->gameinfo->time_attack['TimeLimit'];
 		}
 		else {
@@ -524,7 +524,7 @@ class PluginVoteManager extends Plugin {
 		}
 
 		// Find Uid and count the restarts or reset
-		if ($aseco->server->maps->previous->uid == $aseco->server->maps->current->uid && $this->startup_phase == false) {
+		if ($aseco->server->maps->previous->uid === $aseco->server->maps->current->uid && $this->startup_phase === false) {
 			// Count the restarts
 			$this->config['Cache']['LastMap']['Runs'] ++;
 		}
@@ -571,16 +571,16 @@ class PluginVoteManager extends Plugin {
 		$aseco->sendManialink($xml, false, 0, false);
 
 		// Reset all before votings if a running vote was interrupted (by Admin skip/restart)
-		if ($this->config['RunningVote']['Active'] == true) {
+		if ($this->config['RunningVote']['Active'] === true) {
 			$this->config['RunningVote'] = $this->cleanupCurrentVote();
 			$this->config['RunningVote']['Votes']['Restart']	= 0;
 			$this->config['RunningVote']['Votes']['Skip']		= 0;
 			$this->config['TimeAttackTimelimit']			= -1;
 		}
 
-		if ($this->config['Cache']['Todo']['onEndMap'] == 'Restart') {
+		if ($this->config['Cache']['Todo']['onEndMap'] === 'Restart') {
 			// Restart if it is the whished mode
-			if ($this->config['MODE'][0] == 'restart') {
+			if ($this->config['MODE'][0] === 'restart') {
 				$this->handleTodo('Restart');
 			}
 
@@ -600,13 +600,13 @@ class PluginVoteManager extends Plugin {
 	public function handleTodo ($mode) {
 		global $aseco;
 
-		if ($mode == 'Restart') {
+		if ($mode === 'Restart') {
 			// Simulate a onEndMap for Dedimania, otherwise new driven records are lost!
 			if ( isset($aseco->plugins['PluginDedimania']) ) {
 				$aseco->plugins['PluginDedimania']->onEndMap($aseco, $aseco->server->maps->current);
 			}
 
-			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 				// Don't clear scores if in Cup mode
 				$aseco->client->query('RestartMap', true);
 			}
@@ -615,7 +615,7 @@ class PluginVoteManager extends Plugin {
 			}
 			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
-		else if ($mode == 'Replay') {
+		else if ($mode === 'Replay') {
 			// prepend current map to start of jukebox
 			$uid = $aseco->server->maps->current->uid;
 			$aseco->plugins['PluginRaspJukebox']->jukebox = array_reverse($aseco->plugins['PluginRaspJukebox']->jukebox, true);
@@ -630,8 +630,8 @@ class PluginVoteManager extends Plugin {
 			$aseco->plugins['PluginRaspJukebox']->jukebox = array_reverse($aseco->plugins['PluginRaspJukebox']->jukebox, true);
 			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
-		else if ($mode == 'Skip') {
-			if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		else if ($mode === 'Skip') {
+			if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 				// Don't clear scores if in Cup mode
 				$aseco->client->query('NextMap', true);
 			}
@@ -640,7 +640,7 @@ class PluginVoteManager extends Plugin {
 			}
 			$aseco->console('[VoteManager] "'. $mode .'" the current Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
-		else if ($mode == 'Balance') {
+		else if ($mode === 'Balance') {
 			$aseco->client->query('AutoTeamBalance');
 			$aseco->console('[VoteManager] "'. $mode .'" the Teams on Map ['. $aseco->stripStyles($aseco->server->maps->current->name) .']');
 		}
@@ -655,12 +655,12 @@ class PluginVoteManager extends Plugin {
 	public function setupNewVote ($mode, $login, $nickname, $question) {
 		global $aseco;
 
-		if ($this->config['Cache']['Todo']['onEndMap'] == 'Restart') {
+		if ($this->config['Cache']['Todo']['onEndMap'] === 'Restart') {
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_RESTART_CANCEL'][0], $login);
 			return;
 		}
 
-		if ( ($this->config['VOTING'][0]['MAX_VOTES'][0] == 0) || ( ($this->config['VOTING'][0]['MAX_VOTES'][0] > 0) && ($this->config['RunningVote']['Votes'][$mode] < $this->config['VOTING'][0]['MAX_VOTES'][0]) ) ) {
+		if ( ($this->config['VOTING'][0]['MAX_VOTES'][0] === 0) || ( ($this->config['VOTING'][0]['MAX_VOTES'][0] > 0) && ($this->config['RunningVote']['Votes'][$mode] < $this->config['VOTING'][0]['MAX_VOTES'][0]) ) ) {
 			// Who started the vote and what kind of vote
 			$this->config['RunningVote']['StartedFrom'] = array('Login' => $login, 'Nickname' => $nickname);
 			$this->config['RunningVote']['Question'] = $question;
@@ -687,7 +687,7 @@ class PluginVoteManager extends Plugin {
 			$message = $aseco->formatText($this->config['MESSAGES'][0]['VOTE_LIMIT_REACHED'][0],
 				$mode,
 				$this->config['VOTING'][0]['MAX_VOTES'][0],
-				($this->config['VOTING'][0]['MAX_VOTES'][0] == 1) ? '' : 's'
+				($this->config['VOTING'][0]['MAX_VOTES'][0] === 1) ? '' : 's'
 			);
 			$aseco->sendChatMessage($message, $login);
 		}
@@ -708,7 +708,7 @@ class PluginVoteManager extends Plugin {
 			$this->buildWidget()
 		);
 
-		if ($login == false) {
+		if ($login === false) {
 			// Send to all Players
 			$aseco->sendManialink($xml, implode(',', $this->config['RunningVote']['Players']), 0, false);
 		}
@@ -1072,15 +1072,15 @@ EOL;
 	public function handleVote ($login, $type) {
 		global $aseco;
 
-		if ( ($this->config['RunningVote']['Active'] == true) && ($this->config['RunningVote']['Countdown'] > 0) ) {
+		if ( ($this->config['RunningVote']['Active'] === true) && ($this->config['RunningVote']['Countdown'] > 0) ) {
 			// Do not allow to change the own started vote
-			if ($this->config['RunningVote']['StartedFrom']['Login'] == $login) {
+			if ($this->config['RunningVote']['StartedFrom']['Login'] === $login) {
 				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
 				return;
 			}
 
 			// Check if Player have already voted before
-			$not_voted = (($type == 'Yes') ? 'No' : 'Yes');
+			$not_voted = (($type === 'Yes') ? 'No' : 'Yes');
 			if (isset($this->config['RunningVote']['Votes'][$type][$login])) {
 				// Player voted the same
 				return;
@@ -1171,36 +1171,36 @@ EOL;
 			return false;
 		}
 
-		if ($type == 'Restart' && $this->config['Cache']['LastMap']['Runs'] >= $this->config['VOTING'][0]['MAX_RESTARTS'][0]) {
+		if ($type === 'Restart' && $this->config['Cache']['LastMap']['Runs'] >= $this->config['VOTING'][0]['MAX_RESTARTS'][0]) {
 			// Max. restarts reached, cancel this request
 			$message = $aseco->formatText($this->config['MESSAGES'][0]['VOTE_RESTART_LIMITED'][0],
 				$this->config['VOTING'][0]['MAX_RESTARTS'][0],
-				(($this->config['VOTING'][0]['MAX_RESTARTS'][0] == 1) ? '' : 's')
+				(($this->config['VOTING'][0]['MAX_RESTARTS'][0] === 1) ? '' : 's')
 			);
 			$aseco->sendChatMessage($message, $login);
 			return false;
 		}
 
-		if ($type == 'Skip' && $this->config['Cache']['Todo']['onEndMap'] == 'Restart') {
+		if ($type === 'Skip' && $this->config['Cache']['Todo']['onEndMap'] === 'Restart') {
 			// There was a successfully restart vote before, cancel this skip request
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
 			return false;
 		}
 
-		if ($type == 'Skip' && ($aseco->server->maps->previous->uid == $aseco->server->maps->current->uid && $this->config['Cache']['LastMap']['Runs'] >= 1)) {
+		if ($type === 'Skip' && ($aseco->server->maps->previous->uid === $aseco->server->maps->current->uid && $this->config['Cache']['LastMap']['Runs'] >= 1)) {
 			// For the current Map was a successfully restart vote before, cancel this skip request
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_SKIP_CANCEL'][0], $login);
 			return false;
 		}
 
-		if ($this->config['RunningVote']['Active'] == true) {
+		if ($this->config['RunningVote']['Active'] === true) {
 			// There is already a running vote, cancel this request
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_ALREADY_RUNNING'][0], $login);
 			return false;
 		}
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK) {
-			if ($this->config['TimeAttackTimelimit'] > (time() + $this->config['VOTING'][0]['TIMEOUT_LIMIT'][0]) || $aseco->server->gameinfo->time_attack['TimeLimit'] == 0) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK) {
+			if ($this->config['TimeAttackTimelimit'] > (time() + $this->config['VOTING'][0]['TIMEOUT_LIMIT'][0]) || $aseco->server->gameinfo->time_attack['TimeLimit'] === 0) {
 				return true;
 			}
 			else {
@@ -1225,7 +1225,7 @@ EOL;
 		$message = false;
 
 		// Check optional parameter
-		if (strtoupper($chat_parameter) == 'RELOAD') {
+		if (strtoupper($chat_parameter) === 'RELOAD') {
 
 			$aseco->console('[VoteManager] MasterAdmin '. $login .' reloads the configuration.');
 			$this->onSync($aseco);
@@ -1234,7 +1234,7 @@ EOL;
 
 
 		// Show message
-		if ($message != false) {
+		if ($message !== false) {
 			$aseco->sendChatMessage($message, $login);
 		}
 	}
@@ -1292,7 +1292,7 @@ EOL;
 
 	public function chat_yes ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if ($this->config['RunningVote']['Active'] == false) {
+		if ($this->config['RunningVote']['Active'] === false) {
 			// Send info message
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NONE_RUNNING'][0], $login);
 		}
@@ -1309,7 +1309,7 @@ EOL;
 
 	public function chat_no ($aseco, $login, $chat_command, $chat_parameter) {
 
-		if ($this->config['RunningVote']['Active'] == false) {
+		if ($this->config['RunningVote']['Active'] === false) {
 			// Send info message
 			$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NONE_RUNNING'][0], $login);
 		}

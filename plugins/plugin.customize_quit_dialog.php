@@ -45,8 +45,8 @@ class PluginCustomizeQuitDialog extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-08');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Customize the Quit-Dialog when a Player wants to leave the server.');
 
 		$this->registerEvent('onSync', 'onSync');
@@ -68,7 +68,7 @@ class PluginCustomizeQuitDialog extends Plugin {
 		unset($this->config['SETTINGS']);
 
 		$xml = @file_get_contents($this->config['MANIALINK_FILE'][0]);
-		$this->config['PROPOSE_ADD_TO_FAVORITES'][0] = ((strtoupper($this->config['PROPOSE_ADD_TO_FAVORITES'][0]) == 'TRUE') ? true : false);
+		$this->config['PROPOSE_ADD_TO_FAVORITES'][0] = ((strtoupper($this->config['PROPOSE_ADD_TO_FAVORITES'][0]) === 'TRUE') ? true : false);
 
 		if ($xml !== false) {
 			$aseco->client->query('CustomizeQuitDialog', $xml, $this->config['SEND_TO_SERVER'][0], $this->config['PROPOSE_ADD_TO_FAVORITES'][0], ((int)$this->config['DELAY_QUIT_BUTTON'][0] * 1000));

@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2017-08-18
- * Copyright:	2014 - 2017 by undef.de
+ * Date:	2018-05-07
+ * Copyright:	2014 - 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify

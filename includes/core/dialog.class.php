@@ -47,8 +47,8 @@ class Dialog extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2017 - 2018 by undef.de');
 		$this->setDescription(new Message('class.dialog', 'dialog_description'));
 
 		// Empty content by default
@@ -125,7 +125,7 @@ class Dialog extends BaseClass {
 		}
 		else {
 			if ($aseco->debug) {
-				if ($player->id == 0) {
+				if ($player->id === 0) {
 					$aseco->console('[ClassDialog] Ignoring the given Fakeplayer.');
 				}
 				else {
@@ -280,13 +280,13 @@ class Dialog extends BaseClass {
 	public function buildManiascript () {
 
 		$buttons = array(
-//			'Event.ControlId == "ClassDialogClose"',
-			'Event.ControlId == "ClassDialogMinimize"',
+//			'Event.ControlId === "ClassDialogClose"',
+			'Event.ControlId === "ClassDialogMinimize"',
 		);
 
 		$count = 1;
 		foreach ($this->content['buttons'] as $item) {
-			$buttons[] = 'Event.ControlId == "ClassDialogButton'. $count .'"';
+			$buttons[] = 'Event.ControlId === "ClassDialogButton'. $count .'"';
 
 			$count += 1;
 		}
@@ -442,7 +442,7 @@ EOL;
 	public function normalizeString ($string) {
 		global $aseco;
 
-		if ($this->settings['stripcodes'] == true) {
+		if ($this->settings['stripcodes'] === true) {
 			// Remove all formating codes
 			$string = $aseco->stripStyles($string);
 		}

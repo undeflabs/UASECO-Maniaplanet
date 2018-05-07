@@ -54,7 +54,7 @@ class PluginRoundAutoEnd extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.3');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.round_autoend', 'plugin_description'));
 
@@ -99,7 +99,7 @@ class PluginRoundAutoEnd extends Plugin {
 	*/
 
 	public function onEverySecond ($aseco) {
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			if ($this->timer > 0 && time() >= $this->timer) {
 
 				$message = '';
@@ -149,7 +149,7 @@ class PluginRoundAutoEnd extends Plugin {
 	*/
 
 	public function onLoadingMap ($aseco, $map) {
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			$this->time_delta = ceil(($map->author_time / 1000) * $this->config['multiplicator']);
 
 			$aseco->console('[RoundAutoEnd] Setting round end time to ['. ($this->time_delta + $this->time_scoreboard) .'] seconds, based upon author time ['. $aseco->formatTime($map->author_time) .']');
@@ -162,7 +162,7 @@ class PluginRoundAutoEnd extends Plugin {
 			$message->sendChatMessage();
 
 			// On startup execute onBeginRound(), the ModeScript does this only when the round really begins!
-			if ($aseco->startup_phase == true) {
+			if ($aseco->startup_phase === true) {
 				$this->onBeginRound($aseco);
 			}
 		}
@@ -175,7 +175,7 @@ class PluginRoundAutoEnd extends Plugin {
 	*/
 
 	public function onBeginRound ($aseco) {
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			$this->timer = (time() + $this->time_delta + $this->time_countdown + $this->time_scoreboard);
 			$this->player_finished = array();
 		}
@@ -188,7 +188,7 @@ class PluginRoundAutoEnd extends Plugin {
 	*/
 
 	public function onEndRound ($aseco) {
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			$this->timer = 0;
 		}
 	}
@@ -200,7 +200,7 @@ class PluginRoundAutoEnd extends Plugin {
 	*/
 
 	public function onWarmUpStatusChanged ($aseco) {
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			$this->rounds_per_map = $aseco->server->gameinfo->rounds['RoundsPerMap'];
 
 			if ($aseco->warmup_phase === true) {
@@ -220,10 +220,10 @@ class PluginRoundAutoEnd extends Plugin {
 	*/
 
 	public function onPlayerFinishPrefix ($aseco, $finish) {
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			$this->player_finished[] = $finish->player_login;
 
-			if (count($this->player_finished) == count($aseco->server->players->player_list)) {
+			if (count($this->player_finished) === count($aseco->server->players->player_list)) {
 				$this->timer = 0;
 			}
 		}

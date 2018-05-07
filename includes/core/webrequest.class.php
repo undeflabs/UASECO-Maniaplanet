@@ -50,8 +50,8 @@ class WebRequest extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-17');
-		$this->setCopyright('2016 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2016 - 2018 by undef.de');
 		$this->setDescription('Provides asynchronous and synchronous communication for HTTP GET-, POST- and HEAD-Requests.');
 
 		$this->timeout		= 20;

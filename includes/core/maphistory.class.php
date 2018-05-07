@@ -51,8 +51,8 @@ class MapHistory extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
-		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription('Map history for the dedicated server and provides several methods for the required handling of the history.');
 
 		$this->settings['max_history_entries'] = $max_history_entries;
@@ -199,7 +199,7 @@ class MapHistory extends BaseClass {
 	public function isMapInHistoryById ($id) {
 		if (!empty($id)) {
 			foreach ($this->map_list as $item) {
-				if ($item['id'] == $id) {
+				if ($item['id'] === $id) {
 					return true;
 				}
 			}
@@ -216,7 +216,7 @@ class MapHistory extends BaseClass {
 	public function isMapInHistoryByUid ($uid) {
 		if (!empty($uid)) {
 			foreach ($this->map_list as $item) {
-				if ($item['uid'] == $uid) {
+				if ($item['uid'] === $uid) {
 					return true;
 				}
 			}

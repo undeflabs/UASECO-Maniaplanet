@@ -45,8 +45,8 @@ class PluginLazyButtons extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2012 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('A buttons Widget for lazy Players.');
 
 		$this->registerEvent('onSync',				'onSync');
@@ -107,7 +107,7 @@ class PluginLazyButtons extends Plugin {
 		$command_amount = count($this->config['COMMANDS'][0]['ENTRY']);
 		$command_amount = (($command_amount > 20) ? 20 : $command_amount);
 
-		if ($state == 'Race') {
+		if ($state === 'Race') {
 			$posx = -(160 + ($command_amount * 10.75) + 14.25);
 			$xml .= '<frame pos="'. $posx .' '. $this->config['WIDGET'][0]['RACE'][0]['POS_Y'][0] .'" z-index="20" id="LazyButtonsFrame">';
 		}
@@ -222,10 +222,10 @@ EOL;
 		// Reload the "lazy_buttons.xml"
 		$this->onSync($aseco);
 
-		if ($aseco->server->gamestate == Server::RACE) {
+		if ($aseco->server->gamestate === Server::RACE) {
 			$aseco->sendManialink($this->config['Widget']['Race'], false);
 		}
-		else if ($aseco->server->gamestate == Server::SCORE) {
+		else if ($aseco->server->gamestate === Server::SCORE) {
 			$aseco->sendManialink($this->config['Widget']['Score'], false);
 		}
 
@@ -240,15 +240,15 @@ EOL;
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ($answer['Action'] == 'Button') {
+		if ($answer['Action'] === 'Button') {
 
 			// Get the Player object
 			$player = $aseco->server->players->player_list[$login];
 
-			if ( isset($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0] != '') {
+			if ( isset($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0] !== '') {
 				$aseco->sendChatMessage('$FF0[$Z'. $player->nickname .'$Z$S$FF0] $I'. $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['MESSAGE'][0], false);
 			}
-			else if ( isset($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0] != '' ) {
+			else if ( isset($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0]) && $this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0] !== '' ) {
 				$aseco->releaseChatCommand($this->config['COMMANDS'][0]['ENTRY'][$answer['MessageId']]['CHAT_COMMAND'][0], $player->login);
 			}
 		}

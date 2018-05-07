@@ -47,8 +47,8 @@ class PluginChatStats extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-05');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.stats', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -175,10 +175,10 @@ class PluginChatStats extends Plugin {
 		$stats[] = array('Ladder Score', '{#black}' . round($score, 1));
 		$stats[] = array('Last Match', '{#black}' . round($lastm, 1));
 		$stats[] = array('Wins', '{#black}' . $fwins);
-		$stats[] = array('Draws', '{#black}' . $fdraws . ($losses != 0 ? '   $gW/L: {#black}' . round($wins / $losses, 3) : ''));
+		$stats[] = array('Draws', '{#black}' . $fdraws . ($losses !== 0 ? '   $gW/L: {#black}' . round($wins / $losses, 3) : ''));
 		$stats[] = array('Losses', '{#black}' . $flosses);
 		$stats[] = array('Zone', '{#black}' . implode(', ', $target->zone));
-		$stats[] = array('Inscribed', '{#black}' . $inscrdays . ' day' . ($inscrdays == 1 ? ' ' : 's ') . $inscrhours . ' hours');
+		$stats[] = array('Inscribed', '{#black}' . $inscrdays . ' day' . ($inscrdays === 1 ? ' ' : 's ') . $inscrhours . ' hours');
 		$stats[] = array('Client', '{#black}' . $target->client);
 		if ($aseco->allowAbility($player, 'chat_statsip')) {
 			$stats[] = array('IP', '{#black}' . $target->ipport);
@@ -202,7 +202,7 @@ class PluginChatStats extends Plugin {
 		$target = $player;
 
 		// check for optional login parameter if any admin
-		if ($chat_parameter != '' && $aseco->allowAbility($player, 'chat_settings')) {
+		if ($chat_parameter !== '' && $aseco->allowAbility($player, 'chat_settings')) {
 			if (!$target = $aseco->server->players->getPlayerParam($player, $chat_parameter, true)) {
 				return;
 			}

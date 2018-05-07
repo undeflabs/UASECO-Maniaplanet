@@ -51,8 +51,8 @@ class XmlParser extends BaseClass {
 		$this->setAuthor('undef.de');
 		$this->setContributors('Bueddl');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Builds an easy structured array out of a xml file, element names will be the keys and the data the values.');
 	}
 
@@ -126,7 +126,7 @@ class XmlParser extends BaseClass {
 
 	private function tagData ($parser, $data) {
 		// This way it makes sure '0' is not interpreted as 'false' and got handled too
-		if (trim($data) != '') {
+		if (trim($data) !== '') {
 			$index = $this->stack[count($this->stack)-1];
 			// use raw, do not decode '+' into space
 			if ($this->utf8enc) {

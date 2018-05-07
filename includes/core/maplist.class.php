@@ -65,7 +65,7 @@ class MapList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-04-17');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
@@ -147,7 +147,7 @@ class MapList extends BaseClass {
 
 	public function getMapById ($id) {
 		foreach ($this->map_list as $map) {
-			if ($map->id == $id) {
+			if ($map->id === $id) {
 				return $map;
 			}
 		}
@@ -165,7 +165,7 @@ class MapList extends BaseClass {
 
 	public function getMapByFilename ($filename) {
 		foreach ($this->map_list as $map) {
-			if ($map->filename == $filename) {
+			if ($map->filename === $filename) {
 				return $map;
 			}
 		}
@@ -183,7 +183,7 @@ class MapList extends BaseClass {
 
 	public function removeMapByFilename ($filename) {
 		foreach ($this->map_list as $map) {
-			if ($map->filename == $filename) {
+			if ($map->filename === $filename) {
 				unset($this->map_list[$map->uid]);
 				return true;
 			}
@@ -398,7 +398,7 @@ class MapList extends BaseClass {
 				$this->map_list[$map->uid] = $map;
 			}
 
-			if ($count % 50 == 0) {
+			if ($count % 50 === 0) {
 				$aseco->logMessage($count .'.. ');
 			}
 			$count += 1;
@@ -426,7 +426,7 @@ class MapList extends BaseClass {
 			$result = $this->updateMapInDatabase($map);
 
 			// Update the Maplist
-			if ($result == true) {
+			if ($result === true) {
 				$this->map_list[$map->uid] = $map;
 			}
 		}
@@ -467,7 +467,7 @@ class MapList extends BaseClass {
 				if (!empty($newlist)) {
 					// Add the new Maps
 					foreach ($newlist as $mapinfo) {
-						if ($mapinfo['UId'] == $uid) {
+						if ($mapinfo['UId'] === $uid) {
 							$maplist[] = $mapinfo;
 							$done = true;
 						}
@@ -570,7 +570,7 @@ class MapList extends BaseClass {
 		}
 		else {
 			$aid = $result['AuthorId'];
-			if ($map->author_continent != '' && $map->author_nation != 'OTH') {
+			if ($map->author_continent !== '' && $map->author_nation !== 'OTH') {
 				$query = "
 				UPDATE `%prefix%authors`
 				SET
@@ -685,10 +685,10 @@ class MapList extends BaseClass {
 			". $map->cost .",
 			". $aseco->db->quote($map->type) .",
 			". $aseco->db->quote($map->style) .",
-			". $aseco->db->quote( (($map->multi_lap == true) ? 'true' : 'false') ) .",
+			". $aseco->db->quote( (($map->multi_lap === true) ? 'true' : 'false') ) .",
 			". (($map->nb_laps > 1) ? $map->nb_laps : 0) .",
 			". $map->nb_checkpoints .",
-			". $aseco->db->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
+			". $aseco->db->quote( (($map->validated === true) ? 'true' : (($map->validated === false) ? 'false' : 'unknown')) ) .",
 			". $aseco->db->quote($map->exeversion) .",
 			". $aseco->db->quote($map->exebuild) .",
 			". $aseco->db->quote($map->mod_name) .",
@@ -746,10 +746,10 @@ class MapList extends BaseClass {
 			`Cost` = ". $map->cost .",
 			`Type` = ". $aseco->db->quote($map->type) .",
 			`Style` = ". $aseco->db->quote($map->style) .",
-			`MultiLap` = ". $aseco->db->quote( (($map->multi_lap == true) ? 'true' : 'false') ) .",
+			`MultiLap` = ". $aseco->db->quote( (($map->multi_lap === true) ? 'true' : 'false') ) .",
 			`NbLaps` = ". (($map->nb_laps > 1) ? $map->nb_laps : 0) .",
 			`NbCheckpoints` = ". $map->nb_checkpoints .",
-			`Validated` = ". $aseco->db->quote( (($map->validated == true) ? 'true' : (($map->validated == false) ? 'false' : 'unknown')) ) .",
+			`Validated` = ". $aseco->db->quote( (($map->validated === true) ? 'true' : (($map->validated === false) ? 'false' : 'unknown')) ) .",
 			`ExeVersion` = ". $aseco->db->quote($map->exeversion) .",
 			`ExeBuild` = ". $aseco->db->quote($map->exebuild) .",
 			`ModName` = ". $aseco->db->quote($map->mod_name) .",

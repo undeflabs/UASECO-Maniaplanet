@@ -45,8 +45,8 @@ class WindowList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-31');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('class.window', 'windowlist_description'));
 
 		// Register callbacks for this new Window
@@ -175,7 +175,7 @@ class WindowList extends BaseClass {
 		}
 
 
-		if ($send == true) {
+		if ($send === true) {
 			$this->send($window, $player, $window->settings['hideclick'], $window->settings['hideclick']);
 		}
 	}
@@ -192,7 +192,7 @@ class WindowList extends BaseClass {
 		if (isset($player) && is_object($player) && $player instanceof Player && $player->id > 0) {
 
 			// Make sure there are haligns for inner columns
-			if (count($window->settings['halign']) == 0) {
+			if (count($window->settings['halign']) === 0) {
 				$widths = (100 / $window->settings['columns']);
 				for ($i = $widths; $i <= 100; $i += $widths) {
 					$window->settings['halign'][] = 'left';
@@ -200,7 +200,7 @@ class WindowList extends BaseClass {
 			}
 
 			// Make sure there are widths for inner columns
-			if (count($window->settings['widths']) == 0) {
+			if (count($window->settings['widths']) === 0) {
 				$widths = (100 / $window->settings['columns']);
 				for ($i = $widths; $i <= 100; $i += $widths) {
 					$window->settings['widths'][] = $widths;
@@ -208,7 +208,7 @@ class WindowList extends BaseClass {
 			}
 
 			// Make sure there are textcolors for inner columns
-			if (count($window->settings['textcolors']) == 0) {
+			if (count($window->settings['textcolors']) === 0) {
 				$widths = (100 / $window->settings['columns']);
 				for ($i = $widths; $i <= 100; $i += $widths) {
 					$window->settings['textcolors'][] = 'FFFF';
@@ -259,7 +259,7 @@ class WindowList extends BaseClass {
 		}
 		else {
 			if ($aseco->debug) {
-				if ($player->id == 0) {
+				if ($player->id === 0) {
 					$aseco->console('[ClassWindowList] Ignoring the given Fakeplayer.');
 				}
 				else {

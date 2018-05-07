@@ -47,7 +47,7 @@ class PluginRasp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
@@ -232,7 +232,7 @@ class PluginRasp extends Plugin {
 		if ($this->feature_ranks) {
 			$this->showRank($player->login);
 		}
-		if ( ($this->feature_stats) && ($aseco->startup_phase == false) ) {
+		if ( ($this->feature_stats) && ($aseco->startup_phase === false) ) {
 			$this->showPb($player, $aseco->server->maps->current->id, $this->always_show_pb);
 		}
 	}
@@ -311,7 +311,7 @@ class PluginRasp extends Plugin {
 			`r`.`Average`
 		FROM `%prefix%players` AS `p`
 		LEFT JOIN `%prefix%rankings` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
-		WHERE `r`.`Average` != 0
+		WHERE `r`.`Average` !== 0
 		ORDER BY `r`.`Average` ASC
 		LIMIT ". $top .";
 		";
@@ -644,7 +644,7 @@ class PluginRasp extends Plugin {
 		// find ranked record
 		for ($i = 0; $i < $aseco->plugins['PluginLocalRecords']->records->getMaxRecords(); $i++) {
 			if (($rec = $aseco->plugins['PluginLocalRecords']->records->getRecord($i)) !== false) {
-				if ($rec->player->login == $player->login) {
+				if ($rec->player->login === $player->login) {
 					$ret['time'] = $rec->score;
 					$ret['rank'] = $i + 1;
 					$found = true;
@@ -659,7 +659,7 @@ class PluginRasp extends Plugin {
 		// check whether to show PB (e.g. for /pb)
 		if (!$always_show) {
 			// check for ranked record that's already shown at map start
-			if ($found && $aseco->plugins['PluginLocalRecords']->settings['show_recs_before'] == 2) {
+			if ($found && $aseco->plugins['PluginLocalRecords']->settings['show_recs_before'] === 2) {
 				return;
 			}
 		}
@@ -768,7 +768,7 @@ class PluginRasp extends Plugin {
 
 		$player = $aseco->server->players->getPlayerByLogin($time->player_login);
 		$map = $aseco->server->maps->getMapByUid($time->map_uid);
-		if ($player->pid != 0) {
+		if ($player->pid !== 0) {
 			$query = "
 			INSERT INTO `%prefix%times` (
 				`MapId`,
@@ -850,7 +850,7 @@ class PluginRasp extends Plugin {
 
 		foreach ($aseco->server->maps->map_list as $map) {
 			// Check for wildcard, map name or author name
-			if ($wildcard == '*') {
+			if ($wildcard === '*') {
 				$pos = 0;
 			}
 			else {
@@ -861,7 +861,7 @@ class PluginRasp extends Plugin {
 			}
 
 			// Check for environment
-			if ($env == '*') {
+			if ($env === '*') {
 				$pose = 0;
 			}
 			else {

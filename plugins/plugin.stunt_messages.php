@@ -51,8 +51,8 @@ class PluginStuntMessages extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays Stunt messages at the top of the screen like "Free Style 360!!"...');
 
 		// Register functions for events
@@ -316,15 +316,15 @@ class PluginStuntMessages extends Plugin {
 		// TODO: Store into own database table
 
 		foreach ($aseco->server->players->player_list as $player) {
-			$message = '{#record}» You made {#highlite}'. ($this->db[$player->login]['total_points'] + $this->db[$player->login]['total_bonus']) .'{#record} Stunt-Point'. ($this->db[$player->login]['total_points'] == 1 ? '' : 's');
+			$message = '{#record}» You made {#highlite}'. ($this->db[$player->login]['total_points'] + $this->db[$player->login]['total_bonus']) .'{#record} Stunt-Point'. ($this->db[$player->login]['total_points'] === 1 ? '' : 's');
 			if ($this->db[$player->login]['total_bonus'] > 0) {
-				$message .= ', {#highlite}'. $this->db[$player->login]['total_bonus'] .'{#record} Bonus-Point'. ($this->db[$player->login]['total_bonus'] == 1 ? '' : 's');
+				$message .= ', {#highlite}'. $this->db[$player->login]['total_bonus'] .'{#record} Bonus-Point'. ($this->db[$player->login]['total_bonus'] === 1 ? '' : 's');
 			}
 			else {
 				$message .= ', {#highlite}NO{#record} Bonus-Points';
 			}
 			if ($this->db[$player->login]['total_penalty'] > 0) {
-				$message .= ' but lost {#highlite}'. $this->db[$player->login]['total_penalty'] .'{#record} Point'. ($this->db[$player->login]['total_bonus'] == 1 ? '' : 's') .' because of Penalties';
+				$message .= ' but lost {#highlite}'. $this->db[$player->login]['total_penalty'] .'{#record} Point'. ($this->db[$player->login]['total_bonus'] === 1 ? '' : 's') .' because of Penalties';
 			}
 			else {
 				$message .= ' and {#highlite}NO{#record} Penalty-Points!!';
@@ -344,7 +344,7 @@ class PluginStuntMessages extends Plugin {
 
 		// 2014-05-23: Bug that sends stunts too, if the server is at score:
 		// Bail out if not at Server::RACE
-		if ($aseco->server->gamestate == Server::SCORE) {
+		if ($aseco->server->gamestate === Server::SCORE) {
 			return;
 		}
 
@@ -360,7 +360,7 @@ class PluginStuntMessages extends Plugin {
 			$positive_points = true;
 
 			// Add "Combo"
-			if ($params['combo'] == 1) {
+			if ($params['combo'] === 1) {
 				$stunt[] = 'Chained';
 			}
 			else if ($params['combo'] > 1) {
@@ -368,22 +368,22 @@ class PluginStuntMessages extends Plugin {
 			}
 
 			// Add "StraightStunt", but not where containing already "Straight" in the figure
-			if ($params['is_straight'] == true && ($params['figure'] != '::EStuntFigure::StraightJump' && $params['figure'] != '::EStuntFigure::WreckStraightJump')) {
+			if ($params['is_straight'] === true && ($params['figure'] !== '::EStuntFigure::StraightJump' && $params['figure'] !== '::EStuntFigure::WreckStraightJump')) {
 				$stunt[] = 'Straight';
 			}
 
 			// Add "ReversedStunt"
-			if ($params['is_reverse'] == true) {
+			if ($params['is_reverse'] === true) {
 				$stunt[] = 'Reversed';
 			}
 
 			// Add "MasterJump"
-			if ($params['is_masterjump'] == true) {
+			if ($params['is_masterjump'] === true) {
 				$stunt[] = 'Master';
 			}
 
 			// Add "StuntFigure"
-			if ($params['figure'] == '::EStuntFigure::StraightJump') {
+			if ($params['figure'] === '::EStuntFigure::StraightJump') {
 				// Rename "Straight" to others name to have more figures and fun =)
 				$range = 0;
 				if ($params['points'] < 5) {
@@ -421,7 +421,7 @@ class PluginStuntMessages extends Plugin {
 		$xml .= '<frame pos="'. $this->position['x'] .' '. $this->position['y'] .'" z-index="'. $this->position['z'] .'" id="'. $this->manialinkid .'Frame">';
 		$xml .= '<label pos="0 0" z-index="0.01" size="150 4.125" textsize="3" style="TextButtonBig" scale="0.9" halign="center" textcolor="'. $this->text_colors['stunts'] .'" text="$S$O'. implode(' ', $stunt) .'!!" id="'. $this->manialinkid .'Name" hidden="true" opacity="0.0"/>';
 		if ($params['points'] > 0) {
-			if ($positive_points == true) {
+			if ($positive_points === true) {
 				$textcolor = $this->text_colors['points'];
 				$this->db[$params['login']]['total_points'] += $params['points'];
 			}
@@ -435,12 +435,12 @@ class PluginStuntMessages extends Plugin {
 			}
 
 			// Add "StuntPoints"
-			$points[] = (($positive_points == true) ? '+' : '-') . $params['points'] .' '. (($params['points'] == 1) ? 'point' : 'points');
+			$points[] = (($positive_points === true) ? '+' : '-') . $params['points'] .' '. (($params['points'] === 1) ? 'point' : 'points');
 
 			// Add "StuntFactor", but only on a higher amount of points
-			if ($params['points'] > 10 && $params['factor'] > 1 && $positive_points == true) {
+			if ($params['points'] > 10 && $params['factor'] > 1 && $positive_points === true) {
 				$sum = (ceil($params['points'] * $params['factor']) - $params['points']);
-				$bonus = '+'. $sum .' Bonus '. (($sum == 1) ? 'Point' : 'Points') .'!!';
+				$bonus = '+'. $sum .' Bonus '. (($sum === 1) ? 'Point' : 'Points') .'!!';
 				$this->db[$params['login']]['total_bonus'] += $sum;
 			}
 		}

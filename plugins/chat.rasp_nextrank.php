@@ -46,8 +46,8 @@ class PluginChatRaspNextrank extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-09');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.rasp_nextrank', 'plugin_description'));
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);

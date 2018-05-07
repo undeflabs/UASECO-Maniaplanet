@@ -47,8 +47,8 @@ class PluginMuting extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles individual and global player muting');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -254,7 +254,7 @@ class PluginMuting extends Plugin {
 		$player->msgs = array();
 		$player->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Padlock', 0.01));
 		foreach ($player->mutelist as $pl) {
-			if ($pl != '') {
+			if ($pl !== '') {
 				$plarr = array();
 				$plarr['login'] = $pl;
 				$player->playerlist[] = $plarr;
@@ -283,7 +283,7 @@ class PluginMuting extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
 		else {
-			// == 1
+			// === 1
 			$aseco->sendChatMessage('{#server}» {#error}No muted players found!', $player->login);
 		}
 	}

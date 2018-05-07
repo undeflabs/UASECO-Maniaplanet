@@ -47,8 +47,8 @@ class PluginTachometer extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('reaby');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-06-15');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays a smart tachometer on the HUD.');
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -85,7 +85,7 @@ class PluginTachometer extends Plugin {
 			),
 
 			'sounds' => array(
-				'enabled'				=> ($aseco->string2bool($settings['SOUNDS'][0]['ENABLED'][0]) == true ? 'True' : 'False'),
+				'enabled'				=> ($aseco->string2bool($settings['SOUNDS'][0]['ENABLED'][0]) === true ? 'True' : 'False'),
 
 				'drive_backward_url'			=> $settings['SOUNDS'][0]['DRIVE_BACKWARD'][0],
 				'gear_shift_url'			=> $settings['SOUNDS'][0]['GEAR_SHIFT'][0],
@@ -166,7 +166,7 @@ class PluginTachometer extends Plugin {
 		$message = false;
 
 		// Check optional parameter
-		if (strtoupper($chat_parameter) == 'RELOAD') {
+		if (strtoupper($chat_parameter) === 'RELOAD') {
 
 			// Reload the config
 			$this->onSync($aseco, true);
@@ -182,7 +182,7 @@ class PluginTachometer extends Plugin {
 		}
 
 		// Show message
-		if ($message != false) {
+		if ($message !== false) {
 			$aseco->sendChatMessage($message, $login);
 		}
 	}
@@ -677,7 +677,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'" name="'. $this->config['manialinkid'] .'" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= $this->config['tachometer']['template'];
 			$xml .= $maniascript;
 		}

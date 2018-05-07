@@ -50,8 +50,8 @@ abstract class BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-22');
-		$this->setCopyright('2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2017 - 2018 by undef.de');
 		$this->setDescription('Structure for all classes, extend this class to build your own one.');
 	}
 

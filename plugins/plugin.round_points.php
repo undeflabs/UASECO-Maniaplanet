@@ -47,8 +47,8 @@ class PluginRoundPoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-04');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Allows setting common and custom Rounds points systems.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0',	null);
@@ -89,7 +89,7 @@ class PluginRoundPoints extends Plugin {
 
 
 		// Setup only if Gamemode is "Rounds" or "Cup"
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS || $aseco->server->gameinfo->mode === Gameinfo::CUP) {
 
 			// Set configured default rounds points system
 			$system = $this->config['DEFAULT_SYSTEM'][0];
@@ -112,10 +112,10 @@ class PluginRoundPoints extends Plugin {
 					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 
 					// Setup limits
-					if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+					if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 						$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
 					}
-					else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+					else if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 						$aseco->server->gameinfo->cup['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
 					}
 					$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();
@@ -125,7 +125,7 @@ class PluginRoundPoints extends Plugin {
 				}
 
 			}
-			else if ($system == '') {
+			else if ($system === '') {
 				try {
 					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.SetPointsRepartition', $points);
 					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
@@ -142,16 +142,16 @@ class PluginRoundPoints extends Plugin {
 			// Convent string (string are required by 'Trackmania.SetPointsRepartition') back to int
 			$points = array_map('intval', $points);
 
-			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+			if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 				$aseco->server->gameinfo->rounds['PointsRepartition'] = $points;
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
+				if ($aseco->settings['developer']['log_events']['common'] === true) {
 					$aseco->console('[Event] Points Repartition Loaded');
 				}
 				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
 			}
-			else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			else if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 				$aseco->server->gameinfo->cup['PointsRepartition'] = $points;
-				if ($aseco->settings['developer']['log_events']['common'] == true) {
+				if ($aseco->settings['developer']['log_events']['common'] === true) {
 					$aseco->console('[Event] Points Repartition Loaded');
 				}
 				$aseco->releaseEvent('onPointsRepartitionLoaded', $points);
@@ -177,7 +177,7 @@ class PluginRoundPoints extends Plugin {
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
 
-		if ($params['Action'] == 'ReleaseChatCommand') {
+		if ($params['Action'] === 'ReleaseChatCommand') {
 			$aseco->releaseChatCommand($params['command'], $login);
 		}
 	}
@@ -192,17 +192,17 @@ class PluginRoundPoints extends Plugin {
 
 		// Get custom points
 		$points = array();
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 			$points = $aseco->server->gameinfo->rounds['PointsRepartition'];
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 			$points = $aseco->server->gameinfo->cup['PointsRepartition'];
 		}
 
 		// search for known points system
 		$system = false;
 		foreach ($this->rounds_points as $rpoints) {
-			if ($points == $rpoints['points']) {
+			if ($points === $rpoints['points']) {
 				$system = $rpoints['label'];
 				break;
 			}
@@ -242,7 +242,7 @@ class PluginRoundPoints extends Plugin {
 		// Get Player object
 		$player = $aseco->server->players->getPlayerByLogin($login);
 
-		if ($chat_parameter == 'help') {
+		if ($chat_parameter === 'help') {
 			$data = array();
 			$data[] = array('/setrpoints help',		'Displays this help information');
 			$data[] = array('/setrpoints list',		'Displays available points systems');
@@ -278,7 +278,7 @@ class PluginRoundPoints extends Plugin {
 			$window->setContent($settings_content);
 			$window->send($player, 0, false);
 		}
-		else if ($chat_parameter == 'list') {
+		else if ($chat_parameter === 'list') {
 			$data = array();
 			foreach ($this->rounds_points as $points) {
 				$data[] = array(
@@ -316,20 +316,20 @@ class PluginRoundPoints extends Plugin {
 			$window->setContent($settings_content);
 			$window->send($player, 0, false);
 		}
-		else if ($chat_parameter == 'show') {
+		else if ($chat_parameter === 'show') {
 			// Get custom points
 			$points = array();
-			if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+			if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 				$points = $aseco->server->gameinfo->rounds['PointsRepartition'];
 			}
-			else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+			else if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 				$points = $aseco->server->gameinfo->cup['PointsRepartition'];
 			}
 
 			// Search for known points system
 			$system = false;
 			foreach ($this->rounds_points as $rpoints) {
-				if ($points == $rpoints[1]) {
+				if ($points === $rpoints[1]) {
 					$system = $rpoints[0];
 					break;
 				}
@@ -357,7 +357,7 @@ class PluginRoundPoints extends Plugin {
 			}
 			$aseco->sendChatMessage($message, $login);
 		}
-		else if ($chat_parameter == 'off') {
+		else if ($chat_parameter === 'off') {
 
 			// Set original points system
 			$points = array('10', '6', '4', '3', '2', '1');
@@ -425,10 +425,10 @@ class PluginRoundPoints extends Plugin {
 				$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 
 				// Setup limits
-				if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS) {
+				if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS) {
 					$aseco->server->gameinfo->rounds['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
 				}
-				else if ($aseco->server->gameinfo->mode == Gameinfo::CUP) {
+				else if ($aseco->server->gameinfo->mode === Gameinfo::CUP) {
 					$aseco->server->gameinfo->cup['PointsLimit'] = (int)$this->rounds_points[$system]['limit'];
 				}
 				$aseco->plugins['PluginModescriptHandler']->setupModescriptSettings();

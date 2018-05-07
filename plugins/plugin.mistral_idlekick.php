@@ -55,7 +55,7 @@ class PluginMistralIdlekick extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Kick idle Players to let waiting spectators play.');
 
@@ -83,13 +83,13 @@ class PluginMistralIdlekick extends Plugin {
 		$this->messages['idlekick_spec']	= $settings['MESSAGES'][0]['IDLEKICK_SPEC'][0];
 
 		// Register required events
-		if ($this->reset_onchat == true) {
+		if ($this->reset_onchat === true) {
 			$this->registerEvent('onPlayerChat', 'onPlayerChat');
 		}
-		if ($this->reset_oncheckpoint == true) {
+		if ($this->reset_oncheckpoint === true) {
 			$this->registerEvent('onPlayerCheckpoint', 'onPlayerCheckpoint');
 		}
-		if ($this->reset_onfinish == true) {
+		if ($this->reset_onfinish === true) {
 			$this->registerEvent('onPlayerFinish', 'onPlayerFinish');
 		}
 
@@ -219,7 +219,7 @@ class PluginMistralIdlekick extends Plugin {
 
 		foreach ($aseco->server->players->player_list as $player) {
 			// Check for spectator or player map counts
-			if ($this->getPlayerData($player, 'IdleCount') == ($player->is_spectator ? $this->kick_spectator_after : $this->kick_player_after)) {
+			if ($this->getPlayerData($player, 'IdleCount') === ($player->is_spectator ? $this->kick_spectator_after : $this->kick_player_after)) {
 				$dokick = false;
 				if ($player->is_spectator) {
 					$dokick = true;
@@ -228,7 +228,7 @@ class PluginMistralIdlekick extends Plugin {
 					$message = $aseco->formatText($this->messages['idlekick_spec'],
 						$player->nickname,
 						$this->kick_spectator_after,
-						($this->kick_spectator_after == 1 ? '' : 's')
+						($this->kick_spectator_after === 1 ? '' : 's')
 					);
 				}
 				else {
@@ -238,7 +238,7 @@ class PluginMistralIdlekick extends Plugin {
 						$message = $aseco->formatText($this->messages['idlespec_play'],
 							$player->nickname,
 							$this->kick_player_after,
-							($this->kick_player_after == 1 ? '' : 's')
+							($this->kick_player_after === 1 ? '' : 's')
 						);
 
 						try {
@@ -268,7 +268,7 @@ class PluginMistralIdlekick extends Plugin {
 						$message = $aseco->formatText($this->messages['idlekick_play'],
 							$player->nickname,
 							$this->kick_player_after,
-							($this->kick_player_after == 1 ? '' : 's')
+							($this->kick_player_after === 1 ? '' : 's')
 						);
 					}
 				}

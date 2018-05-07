@@ -46,8 +46,8 @@ class PluginForceMod extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-08');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Force environment Mods for Maps.');
 
 		$this->registerEvent('onSync',			'onSync');
@@ -86,10 +86,10 @@ class PluginForceMod extends Plugin {
 		unset($xml['SETTINGS']);
 
 		// Setup
-		$this->override = ((strtoupper($xml['OVERRIDE'][0]) == 'TRUE') ? true : false);
+		$this->override = ((strtoupper($xml['OVERRIDE'][0]) === 'TRUE') ? true : false);
 		$this->mods = array();
 		foreach ($xml['MODS'][0]['MOD'] as $mod) {
-			if (strtoupper($mod['ENABLED'][0]) == 'TRUE') {
+			if (strtoupper($mod['ENABLED'][0]) === 'TRUE') {
 				$mod['ENVIRONMENT'][0] = ucfirst($mod['ENVIRONMENT'][0]);
 				$this->mods[$mod['ENVIRONMENT'][0]][] = array(
 					'Env'	=> $mod['ENVIRONMENT'][0],

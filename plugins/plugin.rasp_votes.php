@@ -58,8 +58,8 @@ class PluginRaspVotes extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides sophisticated chat-based voting features, similar to (and fully integrated with) MX /add votes.');
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::REQUIRED,	'1.0.0', null);
@@ -170,7 +170,7 @@ class PluginRaspVotes extends Plugin {
 			$message = $this->messages['VOTE_EXPLAIN'][0];
 
 			// check for global explanation
-			if ($this->global_explain == 2) {
+			if ($this->global_explain === 2) {
 				if ($this->vote_in_window) {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
@@ -178,11 +178,11 @@ class PluginRaspVotes extends Plugin {
 					$aseco->sendChatMessage($message);
 				}
 			}
-			else if ($this->global_explain == 1) {  // just to the new player
+			else if ($this->global_explain === 1) {  // just to the new player
 				// strip 1 leading '>' to indicate a player message instead of system-wide
 				$message = str_replace('{#server}»> ', '{#server}» ', $message);
 				$aseco->sendChatMessage($message, $player->login);
-			}  // == 0, no explanation
+			}  // === 0, no explanation
 		}
 	}
 
@@ -197,7 +197,7 @@ class PluginRaspVotes extends Plugin {
 		// check for ongoing vote
 		if ($this->feature_votes && !empty($this->chatvote)) {
 			// check for vote to kick this player
-			if ($this->chatvote['type'] == 4 && $this->chatvote['target'] == $player->login) {
+			if ($this->chatvote['type'] === 4 && $this->chatvote['target'] === $player->login) {
 				$aseco->console('[RaspVotes] Vote by {1} to {2} reset!',
 					$this->chatvote['login'],
 					$this->chatvote['desc']
@@ -224,12 +224,12 @@ class PluginRaspVotes extends Plugin {
 
 		// in TimeAttack/Laps modes, bail out immediately
 		// (ignoring the 1 EndRound event that happens at the end of the map)
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode === Gameinfo::LAPS) {
 			return;
 		}
 
 		// expire an /endround vote immediately
-		if (!empty($this->chatvote) && $this->chatvote['type'] == 0) {
+		if (!empty($this->chatvote) && $this->chatvote['type'] === 0) {
 			$message = $aseco->formatText($this->messages['VOTE_END'][0],
 				$this->chatvote['desc'],
 				'expired',
@@ -296,7 +296,7 @@ class PluginRaspVotes extends Plugin {
 					if (!empty($this->chatvote)) {
 						$message = $aseco->formatText($this->messages['VOTE_Y'][0],
 							$this->chatvote['votes'],
-							($this->chatvote['votes'] == 1 ? '' : 's'),
+							($this->chatvote['votes'] === 1 ? '' : 's'),
 							$this->chatvote['desc']
 						);
 						if ($this->vote_in_window) {
@@ -310,7 +310,7 @@ class PluginRaspVotes extends Plugin {
 						// !empty($this->mxadd)
 						$message = $aseco->formatText($this->messages['JUKEBOX_Y'][0],
 							$this->mxadd['votes'],
-							($this->mxadd['votes'] == 1 ? '' : 's'),
+							($this->mxadd['votes'] === 1 ? '' : 's'),
 							$aseco->stripStyles($this->mxadd['name'])
 						);
 						if ($this->jukebox_in_window) {
@@ -334,7 +334,7 @@ class PluginRaspVotes extends Plugin {
 	public function onPlayerCheckpoint ($aseco, $unused) {
 
 		// in Rounds/Team/Cup modes, bail out immediately
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS || $aseco->server->gameinfo->mode == Gameinfo::TEAM || $aseco->server->gameinfo->mode == Gameinfo::CUP) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS || $aseco->server->gameinfo->mode === Gameinfo::TEAM || $aseco->server->gameinfo->mode === Gameinfo::CUP) {
 			return;
 		}
 
@@ -398,7 +398,7 @@ class PluginRaspVotes extends Plugin {
 						if (!empty($this->chatvote)) {
 							$message = $aseco->formatText($this->messages['VOTE_Y'][0],
 								$this->chatvote['votes'],
-								($this->chatvote['votes'] == 1 ? '' : 's'),
+								($this->chatvote['votes'] === 1 ? '' : 's'),
 								$this->chatvote['desc']
 							);
 							if ($this->vote_in_window) {
@@ -412,7 +412,7 @@ class PluginRaspVotes extends Plugin {
 							// !empty($this->mxadd)
 							$message = $aseco->formatText($this->messages['JUKEBOX_Y'][0],
 								$this->mxadd['votes'],
-								($this->mxadd['votes'] == 1 ? '' : 's'),
+								($this->mxadd['votes'] === 1 ? '' : 's'),
 								$aseco->stripStyles($this->mxadd['name'])
 							);
 							if ($this->jukebox_in_window) {
@@ -519,7 +519,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check for TimeAttack/Laps modes
-		if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode == Gameinfo::LAPS) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK || $aseco->server->gameinfo->mode === Gameinfo::LAPS) {
 			$message = '{#server}» {#error}Running {#highlite}$i ' .
 			           str_replace('_', ' ', $aseco->server->gameinfo->getModeName()) .
 			           '{#error} mode - end round disabled!';
@@ -605,7 +605,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether ladder votes are allowed
-		if ($this->max_laddervotes == 0) {
+		if ($this->max_laddervotes === 0) {
 			$message = '{#server}» {#error}Ladder restart votes not allowed!';
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -616,14 +616,14 @@ class PluginRaspVotes extends Plugin {
 			$message = $aseco->formatText($this->messages['VOTE_LIMIT'][0],
 				$this->max_laddervotes,
 				'/ladder',
-				($this->max_laddervotes == 1 ? '' : 's')
+				($this->max_laddervotes === 1 ? '' : 's')
 			);
 			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for mode-specific restrictions
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $this->r_points_limits) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS && $this->r_points_limits) {
 			// in Rounds mode, get points of first player & points limit
 			$info = $aseco->client->query('GetCurrentRanking', 1, 0);
 			$points = $info[0]['Score'];
@@ -639,7 +639,7 @@ class PluginRaspVotes extends Plugin {
 				return;
 			}
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
 			$played = (time() - $aseco->server->maps->current->starttime);
 			$info = $aseco->client->query('GetTimeAttackLimit');
@@ -736,7 +736,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether replay votes are allowed
-		if ($this->max_replayvotes == 0) {
+		if ($this->max_replayvotes === 0) {
 			$message = '{#server}» {#error}Replay votes not allowed!';
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -747,7 +747,7 @@ class PluginRaspVotes extends Plugin {
 			$message = $aseco->formatText($this->messages['VOTE_LIMIT'][0],
 				$this->max_replayvotes,
 				'/replay',
-				($this->max_replayvotes == 1 ? '' : 's')
+				($this->max_replayvotes === 1 ? '' : 's')
 			);
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -757,7 +757,7 @@ class PluginRaspVotes extends Plugin {
 		if ($this->replays_limit > 0 && $aseco->plugins['PluginRaspJukebox']->replays_counter >= $this->replays_limit) {
 			$message = $aseco->formatText($this->messages['NO_MORE_REPLAY'][0],
 				$this->replays_limit,
-				($this->replays_limit == 1 ? '' : 's')
+				($this->replays_limit === 1 ? '' : 's')
 			);
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -771,7 +771,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check for mode-specific restrictions
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $this->r_points_limits) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS && $this->r_points_limits) {
 			// in Rounds mode, get points of first player & points limit
 			$info = $aseco->client->query('GetCurrentRanking', 1, 0);
 			$points = $info[0]['Score'];
@@ -787,7 +787,7 @@ class PluginRaspVotes extends Plugin {
 				return;
 			}
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
 			$played = (time() - $aseco->server->maps->current->starttime);
 			$info = $aseco->client->query('GetTimeAttackLimit');
@@ -884,7 +884,7 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// check whether skip votes are allowed
-		if ($this->max_skipvotes == 0) {
+		if ($this->max_skipvotes === 0) {
 			$message = '{#server}» {#error}Skip votes not allowed!';
 			$aseco->sendChatMessage($message, $player->login);
 			return;
@@ -895,14 +895,14 @@ class PluginRaspVotes extends Plugin {
 			$message = $aseco->formatText($this->messages['VOTE_LIMIT'][0],
 				$this->max_skipvotes,
 				'/skip',
-				($this->max_skipvotes == 1 ? '' : 's')
+				($this->max_skipvotes === 1 ? '' : 's')
 			);
 			$aseco->sendChatMessage($message, $player->login);
 			return;
 		}
 
 		// check for mode-specific restrictions
-		if ($aseco->server->gameinfo->mode == Gameinfo::ROUNDS && $this->r_points_limits) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS && $this->r_points_limits) {
 			// in Rounds mode, get points of first player & points limit
 			$info = $aseco->client->query('GetCurrentRanking', 1, 0);
 			$points = $info[0]['Score'];
@@ -918,7 +918,7 @@ class PluginRaspVotes extends Plugin {
 				return;
 			}
 		}
-		else if ($aseco->server->gameinfo->mode == Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
+		else if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK && $this->ta_time_limits) {
 			// in TimeAttack mode, get map playing time & time limit
 			$played = (time() - $aseco->server->maps->current->starttime);
 			$info = $aseco->client->query('GetTimeAttackLimit');
@@ -1185,7 +1185,7 @@ class PluginRaspVotes extends Plugin {
 		// check for ongoing chat or MX vote
 		if (!empty($this->chatvote)) {
 			// check for vote ownership or admin
-			if ($player->login == $this->chatvote['login'] || $aseco->allowAbility($player, 'cancel')) {
+			if ($player->login === $this->chatvote['login'] || $aseco->allowAbility($player, 'cancel')) {
 				$aseco->console('[RaspVotes] Vote to {1} cancelled by {2}!',
 					$this->chatvote['desc'],
 					$player->login
@@ -1210,7 +1210,7 @@ class PluginRaspVotes extends Plugin {
 		}
 		else if (!empty($this->mxadd)) {
 			// check for vote ownership or admin
-			if ($player->login == $this->mxadd['login'] || $aseco->allowAbility($player, 'cancel')) {
+			if ($player->login === $this->mxadd['login'] || $aseco->allowAbility($player, 'cancel')) {
 				$aseco->console('[RaspVotes] Vote to add {1} cancelled by {2}!',
 					$aseco->stripStyles($this->mxadd['name'], false),
 					$player->login
@@ -1259,10 +1259,10 @@ class PluginRaspVotes extends Plugin {
 		}
 
 		// exceptions for low player count
-		if ($votes == 0) {
+		if ($votes === 0) {
 			$votes = 1;  // needed for /y
 		}
-		else if ($numplrs >= 2 && $numplrs <= 3 && $votes == 1) {
+		else if ($numplrs >= 2 && $numplrs <= 3 && $votes === 1) {
 			$votes = 2;  // minimum
 		}
 

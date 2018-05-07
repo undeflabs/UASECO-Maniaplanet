@@ -68,8 +68,8 @@ class Gameinfo extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.3');
-		$this->setBuild('2017-08-31');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
 		$info = $aseco->client->query('GetCurrentGameInfo', 1);
@@ -136,7 +136,7 @@ class Gameinfo extends BaseClass {
 		$this->modebase['RespawnBehaviour']	= $modescript['settings']['S_RespawnBehaviour'];
 
 		// https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
-		if ($this->mode == self::ROUNDS) {
+		if ($this->mode === self::ROUNDS) {
 			// Rounds (+RoundsBase)
 			if (isset($clone->rounds['PointsRepartition'])) {
 				// Custom settings
@@ -157,13 +157,13 @@ class Gameinfo extends BaseClass {
 			$this->rounds['WarmUpNumber']			= $modescript['settings']['S_WarmUpNb'];
 			$this->rounds['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
 		}
-		else if ($this->mode == self::TIME_ATTACK) {
+		else if ($this->mode === self::TIME_ATTACK) {
 			// TimeAttack
 			$this->time_attack['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->time_attack['WarmUpNumber']		= $modescript['settings']['S_WarmUpNb'];
 			$this->time_attack['WarmUpDuration']		= $modescript['settings']['S_WarmUpDuration'];
 		}
-		else if ($this->mode == self::TEAM) {
+		else if ($this->mode === self::TEAM) {
 			// Team  (+RoundsBase)
 			if ( isset($clone->team['PointsRepartition']) ) {
 				$this->team['PointsRepartition']	= $clone->team['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
@@ -183,7 +183,7 @@ class Gameinfo extends BaseClass {
 			$this->team['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
 			$this->team['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
 		}
-		else if ($this->mode == self::LAPS) {
+		else if ($this->mode === self::LAPS) {
 			// Laps
 			$this->laps['FinishTimeout']			= $modescript['settings']['S_FinishTimeout'];
 			$this->laps['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
@@ -191,7 +191,7 @@ class Gameinfo extends BaseClass {
 			$this->laps['WarmUpNumber']			= $modescript['settings']['S_WarmUpNb'];
 			$this->laps['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
 		}
-		else if ($this->mode == self::CUP) {
+		else if ($this->mode === self::CUP) {
 			// Cup (+RoundsBase)
 			if ( isset($clone->cup['PointsRepartition']) ) {
 				$this->cup['PointsRepartition']		= $clone->cup['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
@@ -213,14 +213,14 @@ class Gameinfo extends BaseClass {
 			$this->cup['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
 			$this->cup['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
 		}
-		else if ($this->mode == self::TEAM_ATTACK) {
+		else if ($this->mode === self::TEAM_ATTACK) {
 			// TeamAttack
 			$this->team_attack['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->team_attack['MinPlayerPerClan']		= $modescript['settings']['S_MinPlayerPerClan'];
 			$this->team_attack['MaxPlayerPerClan']		= $modescript['settings']['S_MaxPlayerPerClan'];
 			$this->team_attack['MaxClanNb']			= $modescript['settings']['S_MaxClanNb'];
 		}
-		else if ($this->mode == self::CHASE) {
+		else if ($this->mode === self::CHASE) {
 			// Chase
 			$this->chase['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->chase['MapPointsLimit']			= $modescript['settings']['S_MapPointsLimit'];
@@ -240,7 +240,7 @@ class Gameinfo extends BaseClass {
 			$this->chase['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
 			$this->chase['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
 		}
-		else if ($this->mode == self::KNOCKOUT) {
+		else if ($this->mode === self::KNOCKOUT) {
 			// Knockout
 			$this->knockout['FinishTimeout']		= $modescript['settings']['S_FinishTimeout'];
 			$this->knockout['RoundsPerMap']			= $modescript['settings']['S_RoundsPerMap'];
@@ -248,7 +248,7 @@ class Gameinfo extends BaseClass {
 			$this->knockout['ForceLapsNb']			= $modescript['settings']['S_ForceLapsNb'];
 			$this->knockout['ShowMultilapInfo']		= $modescript['settings']['S_ShowMultilapInfo'];
 		}
-		else if ($this->mode == self::DOPPLER) {
+		else if ($this->mode === self::DOPPLER) {
 			// Doppler
 			$this->doppler['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->doppler['LapsSpeedMode']			= $modescript['settings']['S_LapsSpeedMode'];

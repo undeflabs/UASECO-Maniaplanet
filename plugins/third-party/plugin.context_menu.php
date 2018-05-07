@@ -47,8 +47,8 @@ class PluginContextMenu extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2015 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription('A configurable Right-Mouse-Button-Menu (Context-Menu).');
 
 		$this->registerEvent('onSync',				'onSync');
@@ -119,7 +119,7 @@ class PluginContextMenu extends Plugin {
 		}
 		if (is_array($xml)) {
 			foreach ($xml as $key => $value) {
-				if ((string)$key == '@attributes') {
+				if ((string)$key === '@attributes') {
 					$r[] = $this->simplexml2array($value);
 				}
 				else {
@@ -172,8 +172,8 @@ class PluginContextMenu extends Plugin {
 	*/
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
-		if ($params['Action'] == 'executeAction') {
-			if (substr($params['Call'], 0, 1) == '/') {
+		if ($params['Action'] === 'executeAction') {
+			if (substr($params['Call'], 0, 1) === '/') {
 				$aseco->releaseChatCommand($params['Call'], $login);
 			}
 		}
@@ -207,24 +207,24 @@ class PluginContextMenu extends Plugin {
 				$entry = $entry[0];
 
 				// Check for a missing Plugin or no dependency to skip entry.
-				if ($this->checkDependency($entry) == false) {
+				if ($this->checkDependency($entry) === false) {
 					continue;
 				}
 
-				if (isset($entry['type']) && $entry['type'] == 'separator') {
+				if (isset($entry['type']) && $entry['type'] === 'separator') {
 					$offset += 0.45;
 					$menu_height += 0.45;
 				}
 				else if (isset($entry['action'])) {
 					// Action handling
 					$action = false;
-					if (substr($entry['action'], 0, 14) == 'maniaplanet://') {
+					if (substr($entry['action'], 0, 14) === 'maniaplanet://') {
 	 					$action = ' data-manialink="<![CDATA['. (string)$entry['action'] .']]>"';
 					}
-					else if (substr($entry['action'], 0, 7) == 'http://') {
+					else if (substr($entry['action'], 0, 7) === 'http://') {
 	 					$action = ' data-httplink="<![CDATA['. (string)$entry['action'] .']]>"';
 					}
-					else if (substr($entry['action'], 0, 1) == '/') {
+					else if (substr($entry['action'], 0, 1) === '/') {
 	 					$action = ' data-chatcmd="<![CDATA[PluginContextMenu?Action=executeAction&amp;Call='. (string)$entry['action'] .']]>"';
 					}
 					$xml .= '<quad pos="0.5 -'. ($menu_height + $offset) .'" z-index="0.003" size="47.75 3.75"'. $action .' bgcolor="00000033" bgcolorfocus="88AA0077" id="ContextMenuActionEntry'. $total_entries .'" scriptevents="1"/>';
@@ -234,7 +234,7 @@ class PluginContextMenu extends Plugin {
 					if (isset($entry['icon'])) {
 						$icon = explode('|', (string)$entry['icon']);
 					}
-					if (substr($icon[0], 0, 7) == 'http://') {
+					if (substr($icon[0], 0, 7) === 'http://') {
 						$xml .= '<quad pos="0.9 -'. ($menu_height + $offset) .'" z-index="0.004" size="3.8 3.8" image="'. $icon[0] .'"/>';
 					}
 					else if ($icon[0] !== false) {
@@ -366,7 +366,7 @@ EOL;
 		}
 
 		foreach ($aseco->plugins as $plugin) {
-			if ($plugin->getClassname() == (string)$entry['dependency']) {
+			if ($plugin->getClassname() === (string)$entry['dependency']) {
 				return true;
 			}
 		}

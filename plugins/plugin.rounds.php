@@ -49,7 +49,7 @@ class PluginRounds extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Reports finishes in each individual round.');
 
@@ -133,7 +133,7 @@ class PluginRounds extends Plugin {
 					$cur_record = $aseco->plugins['PluginLocalRecords']->records->getRecord($i);
 
 					// if the record is new on this map then check if it's in this round
-					if ($cur_record->new && $cur_record->player->login == $tm['login'] && $cur_record->score == $tm['score']) {
+					if ($cur_record->new && $cur_record->player->login === $tm['login'] && $cur_record->score === $tm['score']) {
 						$new = true;
 						break;
 					}

@@ -46,8 +46,8 @@ class PluginLastOnline extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.last_online', 'plugin_description'));
 
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
@@ -83,7 +83,7 @@ class PluginLastOnline extends Plugin {
 		$target = $player;
 
 		// Get given player login for last online query
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			if (!$target = $aseco->server->players->getPlayerParam($player, $chat_parameter, true)) {
 				return;
 			}

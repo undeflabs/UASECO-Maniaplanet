@@ -8,7 +8,7 @@
  * Author:	undef.de
  * Copyright:	2017 - 2018 by undef.de
  * Version:	1.0.2
- * Build:	2018-02-11
+ * Build:	2018-05-07
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ class WebRequestWorker {
 
 			if ($dir = opendir($this->path)) {
 				while ($entry = readdir($dir)) {
-					if ($entry == '.' || $entry == '..') {
+					if ($entry === '.' || $entry === '..') {
 						continue;
 					}
 					if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.job') !== false) {
@@ -101,7 +101,7 @@ class WebRequestWorker {
 					}
 
 					// Got a kill signal?
-					if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && $entry == $suicide_file) {
+					if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && $entry === $suicide_file) {
 						$this->logMessage('[WebRequest] suicide pid '. $pid .'...');
 						unlink($this->path.$suicide_file);
 						unlink($this->path.$pid_file);
@@ -127,7 +127,7 @@ class WebRequestWorker {
 
 	public function request ($request) {
 
-		if (strtoupper($request->method) == 'POST') {
+		if (strtoupper($request->method) === 'POST') {
 			// HTTP POST
 			$request->data = urlencode($request->data);
 			$stream_context = stream_context_create(
@@ -289,7 +289,7 @@ class WebRequestWorker {
 	public function customErrorHandler ($errno, $errstr, $errfile, $errline) {
 
 		// Check for error suppression
-		if (error_reporting() == 0) {
+		if (error_reporting() === 0) {
 			return;
 		}
 

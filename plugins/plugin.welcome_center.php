@@ -48,8 +48,8 @@ class PluginWelcomeCenter extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-05');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays a message in the chat and can display a Welcome-Window on Player connects.');
 
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
@@ -67,12 +67,12 @@ class PluginWelcomeCenter extends Plugin {
 		unset($this->config['SETTINGS']);
 
 		// Transform 'TRUE' or 'FALSE' from string to boolean
-		$this->config['WELCOME_WINDOW'][0]['ENABLED'][0]			= ((strtoupper($this->config['WELCOME_WINDOW'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0]	= ((strtoupper($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0]) == 'TRUE')	? true : false);
-		$this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0]			= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
-		$this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]		= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]) == 'TRUE')		? true : false);
-		$this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]			= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]) == 'TRUE')			? true : false);
-		$this->config['INFO_MESSAGES'][0]['ENABLED'][0]				= ((strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) == 'TRUE')			? true : false);
+		$this->config['WELCOME_WINDOW'][0]['ENABLED'][0]			= ((strtoupper($this->config['WELCOME_WINDOW'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0]	= ((strtoupper($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0]) === 'TRUE')	? true : false);
+		$this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0]			= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
+		$this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]		= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0]) === 'TRUE')		? true : false);
+		$this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]			= ((strtoupper($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0]) === 'TRUE')			? true : false);
+		$this->config['INFO_MESSAGES'][0]['ENABLED'][0]				= ((strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) === 'TRUE')			? true : false);
 
 		foreach ($this->config['INFO_MESSAGES'][0]['MESSAGES'][0] as $msg) {
 			$this->messages[] = $msg[0];
@@ -130,22 +130,22 @@ class PluginWelcomeCenter extends Plugin {
 
 	public function onPlayerConnect ($aseco, $player) {
 
-		if ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] == true && $aseco->startup_phase == false) {
+		if ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] === true && $aseco->startup_phase === false) {
 
 			$show = true;
-			if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) == 'operators' && (!$aseco->isOperator($player) && !$aseco->isAdmin($player) && !$aseco->isMasterAdmin($player))) {
+			if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) === 'operators' && (!$aseco->isOperator($player) && !$aseco->isAdmin($player) && !$aseco->isMasterAdmin($player))) {
 				$show = false;
 			}
-			else if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) == 'admins' && (!$aseco->isAdmin($player) && !$aseco->isMasterAdmin($player))) {
+			else if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) === 'admins' && (!$aseco->isAdmin($player) && !$aseco->isMasterAdmin($player))) {
 				$show = false;
 			}
-			else if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) == 'masteradmins' && !$aseco->isMasterAdmin($player)) {
+			else if (strtolower($this->config['JOIN_LEAVE_INFO'][0]['SHOW_CONNECT'][0]) === 'masteradmins' && !$aseco->isMasterAdmin($player)) {
 				$show = false;
 			}
 			if ($show === true) {
 				// Define Admin/Player title
 				$title = 'New Player';
-				if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] == true) {
+				if ($this->config['JOIN_LEAVE_INFO'][0]['ADD_RIGHTS'][0] === true) {
 					$title = $aseco->isMasterAdmin($player) ? '{#logina}'. $aseco->titles['MASTERADMIN'][0] :
 						($aseco->isAdmin($player) ? '{#logina}'. $aseco->titles['ADMIN'][0] :
 						($aseco->isOperator($player) ? '{#logina}'. $aseco->titles['OPERATOR'][0] :
@@ -182,7 +182,7 @@ class PluginWelcomeCenter extends Plugin {
 					$this->config['JOIN_LEAVE_INFO'][0]['JOIN_MESSAGE'][0]
 				);
 				if (!empty($message)) {
-					if ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] == true && function_exists('send_window_message')) {
+					if ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] === true && function_exists('send_window_message')) {
 						send_window_message($aseco, $message, false);
 					}
 					else {
@@ -192,8 +192,8 @@ class PluginWelcomeCenter extends Plugin {
 			}
 		}
 
-		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] == true) {
-			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] == false && $player->server_rank_average == 0) {
+		if ($this->config['WELCOME_WINDOW'][0]['ENABLED'][0] === true) {
+			if ($this->config['WELCOME_WINDOW'][0]['HIDE'][0]['RANKED_PLAYER'][0] === false && $player->server_rank_average === 0) {
 				// Send it direct to the Player
 				$this->buildWelcomeWindow($player);
 			}
@@ -208,7 +208,7 @@ class PluginWelcomeCenter extends Plugin {
 
 	public function onPlayerDisconnect ($aseco, $player) {
 
-		if ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] == true) {
+		if ($this->config['JOIN_LEAVE_INFO'][0]['ENABLED'][0] === true) {
 
 			// Setup Zone
 			$zone = $player->zone;
@@ -233,8 +233,8 @@ class PluginWelcomeCenter extends Plugin {
 				),
 				$message
 			);
-			if ($message != '') {
-				if ( ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] == true) && (function_exists('send_window_message')) ) {
+			if ($message !== '') {
+				if ( ($this->config['JOIN_LEAVE_INFO'][0]['MESSAGES_IN_WINDOW'][0] === true) && (function_exists('send_window_message')) ) {
 					send_window_message($aseco, $message, false);
 				}
 				else {
@@ -253,12 +253,12 @@ class PluginWelcomeCenter extends Plugin {
 	public function onEndMap ($aseco, $data) {
 
 		// If not enabled, bail out immediately
-		if ($this->config['INFO_MESSAGES'][0]['ENABLED'][0] == false) {
+		if ($this->config['INFO_MESSAGES'][0]['ENABLED'][0] === false) {
 			return;
 		}
 
 		// If no info messages, bail out immediately
-		if (count($this->messages) == 0) {
+		if (count($this->messages) === 0) {
 			return;
 		}
 
@@ -271,7 +271,7 @@ class PluginWelcomeCenter extends Plugin {
 			$message = $aseco->formatColors($this->config['INFO_MESSAGES'][0]['MESSAGE_PREFIX'][0] . $this->messages[$i]);
 
 			// Send the Message to all connected Players...
-			if (strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) == 'WINDOW') {
+			if (strtoupper($this->config['INFO_MESSAGES'][0]['ENABLED'][0]) === 'WINDOW') {
 				// ..into message window
 				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 			}
@@ -299,12 +299,12 @@ class PluginWelcomeCenter extends Plugin {
 		$message = str_replace('{player}', $aseco->handleSpecialChars($player->nickname.'$Z'), $message);
 
 		// Set the content
-		if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['NORMAL'][0] != '') {
+		if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['NORMAL'][0] !== '') {
 			$xml .= '<quad pos="164.5 -1.5" z-index="0.03" size="34 87" image="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['NORMAL'][0] .'"';
-			if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['FOCUS'][0] != '') {
+			if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['FOCUS'][0] !== '') {
 	 			$xml .= ' imagefocus="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['FOCUS'][0] .'"';
 			}
-			if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['LINK'][0] != '') {
+			if ($this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['LINK'][0] !== '') {
 	 			$xml .= ' url="'. $this->config['WELCOME_WINDOW'][0]['IMAGE'][0]['LINK'][0] .'"';
 			}
 			$xml .= '/>';

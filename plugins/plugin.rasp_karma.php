@@ -45,7 +45,7 @@ class PluginRaspKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Votes for a map and displays current score of it.');
 
@@ -143,10 +143,10 @@ class PluginRaspKarma extends Plugin {
 			return;
 		}
 
-		if ($chat_command == '++') {
+		if ($chat_command === '++') {
 			$vote = 1;
 		}
-		else if ($chat_command == '--') {
+		else if ($chat_command === '--') {
 			$vote = -1;
 		}
 
@@ -179,7 +179,7 @@ class PluginRaspKarma extends Plugin {
 					// show chat message
 					$message = $aseco->formatText($this->messages['KARMA_REQUIRE'][0],
 						$this->karma_require_finish,
-						($this->karma_require_finish == 1 ? '' : 's')
+						($this->karma_require_finish === 1 ? '' : 's')
 					);
 					$aseco->sendChatMessage($message, $caller->login);
 
@@ -203,7 +203,7 @@ class PluginRaspKarma extends Plugin {
 		$res = $aseco->db->query($query);
 		if ($res->num_rows > 0) {
 			$row = $res->fetch_object();
-			if ($row->Score == $vote) {
+			if ($row->Score === $vote) {
 				$message = $this->messages['KARMA_VOTED'][0];
 				$aseco->sendChatMessage($message, $caller->login);
 			}
@@ -266,7 +266,7 @@ class PluginRaspKarma extends Plugin {
 
 		// check for possible public karma vote
 		if ($this->allow_public_karma) {
-			if ( ($chat[2] == '++') || ($chat[2] == '--') ) {
+			if ( ($chat[2] === '++') || ($chat[2] === '--') ) {
 				$this->chat_playervote($aseco, $chat[1], $chat[2], '');
 			}
 		}
@@ -312,12 +312,12 @@ class PluginRaspKarma extends Plugin {
 	public function onPlayerFinish ($aseco, $finish_item) {
 
 		// if no finish reminders, bail out immediately
-		if (!$this->feature_karma || $this->remind_karma != 2) {
+		if (!$this->feature_karma || $this->remind_karma !== 2) {
 			return;
 		}
 
 		// if no actual finish, bail out too
-		if ($finish_item->score == 0) {
+		if ($finish_item->score === 0) {
 			return;
 		}
 
@@ -334,7 +334,7 @@ class PluginRaspKarma extends Plugin {
 		";
 
 		$res = $aseco->db->query($query);
-		if ($res->num_rows == 0) {
+		if ($res->num_rows === 0) {
 			// show reminder message
 			$message = $this->messages['KARMA_REMIND'][0];
 			$aseco->sendChatMessage($message, $player->login);
@@ -351,7 +351,7 @@ class PluginRaspKarma extends Plugin {
 	public function onEndMap ($aseco, $data) {
 
 		// if no end race reminders, bail out immediately
-		if (!$this->feature_karma || $this->remind_karma != 1) {
+		if (!$this->feature_karma || $this->remind_karma !== 1) {
 			return;
 		}
 
@@ -370,7 +370,7 @@ class PluginRaspKarma extends Plugin {
 				";
 
 				$res = $aseco->db->query($query);
-				if ($res->num_rows == 0) {
+				if ($res->num_rows === 0) {
 					// show reminder message
 					$message = $this->messages['KARMA_REMIND'][0];
 					$aseco->sendChatMessage($message, $player->login);
@@ -399,7 +399,7 @@ class PluginRaspKarma extends Plugin {
 		";
 
 		$res = $aseco->db->query($query);
-		if ($res->num_rows == 1) {
+		if ($res->num_rows === 1) {
 			$row = $res->fetch_object();
 			$karma = $row->Karma;
 			$total = $row->Total;
@@ -429,7 +429,7 @@ class PluginRaspKarma extends Plugin {
 				";
 
 				$res2 = $aseco->db->query($query2);
-				if ($res2->num_rows == 1) {
+				if ($res2->num_rows === 1) {
 					$row2 = $res2->fetch_object();
 					$plus = $row2->Plus;
 					$minus = $row2->Minus;
@@ -502,7 +502,7 @@ class PluginRaspKarma extends Plugin {
 		// optionally add player's actual vote
 		if ($this->karma_show_votes) {
 			$playerid = $aseco->server->players->getPlayerIdByLogin($login);
-			if ($playerid != 0) {
+			if ($playerid !== 0) {
 				$query3 = "
 				SELECT
 					`Score`
@@ -514,7 +514,7 @@ class PluginRaspKarma extends Plugin {
 				$res3 = $aseco->db->query($query3);
 				if ($res3->num_rows > 0) {
 					$row3 = $res3->fetch_object();
-					if ($row3->Score == 1) {
+					if ($row3->Score === 1) {
 						$vote = '++';
 					}
 					else {  // -1

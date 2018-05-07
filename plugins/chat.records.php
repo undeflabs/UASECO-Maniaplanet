@@ -48,8 +48,8 @@ class PluginChatRecords extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays all records of the current map.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -81,7 +81,7 @@ class PluginChatRecords extends Plugin {
 		$arglist = explode(' ', strtolower(preg_replace('/ +/', ' ', $chat_parameter)));
 
 		// process optional relations commands
-		if ($arglist[0] == 'help') {
+		if ($arglist[0] === 'help') {
 			$header = '{#black}/recs <option>$g shows local records and relations:';
 			$help = array();
 			$help[] = array('...', '{#black}help',
@@ -109,35 +109,35 @@ class PluginChatRecords extends Plugin {
 			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(1.1, 0.05, 0.3, 0.75), 'OK');
 			return;
 		}
-		else if ($arglist[0] == 'pb') {
+		else if ($arglist[0] === 'pb') {
 			$aseco->releaseChatCommand('/pb', $login);
 			return;
 		}
-		else if ($arglist[0] == 'new') {
+		else if ($arglist[0] === 'new') {
 			$aseco->releaseChatCommand('/newrecs', $login);
 			return;
 		}
-		else if ($arglist[0] == 'live') {
+		else if ($arglist[0] === 'live') {
 			$aseco->releaseChatCommand('/liverecs', $login);
 			return;
 		}
-		else if ($arglist[0] == 'first') {
+		else if ($arglist[0] === 'first') {
 			$aseco->releaseChatCommand('/firstrec', $login);
 			return;
 		}
-		else if ($arglist[0] == 'last') {
+		else if ($arglist[0] === 'last') {
 			$aseco->releaseChatCommand('/lastrec', $login);
 			return;
 		}
-		else if ($arglist[0] == 'next') {
+		else if ($arglist[0] === 'next') {
 			$aseco->releaseChatCommand('/nextrec', $login);
 			return;
 		}
-		else if ($arglist[0] == 'diff') {
+		else if ($arglist[0] === 'diff') {
 			$aseco->releaseChatCommand('/diffrec', $login);
 			return;
 		}
-		else if ($arglist[0] == 'range') {
+		else if ($arglist[0] === 'range') {
 			$aseco->releaseChatCommand('/recrange', $login);
 			return;
 		}
@@ -306,7 +306,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		// check for optional login parameter if any admin
-		if ($chat_parameter != '' && $aseco->allowAbility($target, 'chat_summary')) {
+		if ($chat_parameter !== '' && $aseco->allowAbility($target, 'chat_summary')) {
 			if (!$target = $aseco->server->players->getPlayerParam($target, $chat_parameter, true)) {
 				return;
 			}
@@ -337,7 +337,7 @@ class PluginChatRecords extends Plugin {
 					// check for first 3 records
 					if ($show > 0) {
 						// check for same record
-						if ($rec == $currec) {
+						if ($rec === $currec) {
 							$cntrec++;
 						}
 						else {
@@ -648,7 +648,7 @@ class PluginChatRecords extends Plugin {
 		$target = $player;
 
 		// check for optional login parameter if any admin
-		if ($command['params'] != '' && $aseco->allowAbility($player, 'chat_bestworst')) {
+		if ($command['params'] !== '' && $aseco->allowAbility($player, 'chat_bestworst')) {
 			if (!$target = $aseco->server->players->getPlayerParam($player, $command['params'], true)) {
 				return;
 			}

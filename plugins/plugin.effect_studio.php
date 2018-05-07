@@ -51,7 +51,7 @@ class PluginEffectStudio extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 
@@ -130,7 +130,7 @@ class PluginEffectStudio extends Plugin {
 		$this->config['EventActions'] = array();
 		foreach ($this->config['AUDITIVE'][0]['EFFECT'] as &$item) {
 			if ( array_key_exists($item['EVENT'][0], $valid_events) ) {
-				if (strtoupper($item['ENABLED'][0]) == 'TRUE') {
+				if (strtoupper($item['ENABLED'][0]) === 'TRUE') {
 					// Retrieve the file (max. 1024 bytes) to build a MD5-Hash from
 					$file = @file_get_contents($item['URL'][0], NULL, NULL, 1024);
 					if ($file === false) {
@@ -143,7 +143,7 @@ class PluginEffectStudio extends Plugin {
 					$this->config['EventActions'][$item['EVENT'][0]] = array(
 						'Url'		=> $item['URL'][0],
 						'ChkSum'	=> md5($file),
-						'Loop'		=> ((strtoupper($item['LOOP'][0]) == 'TRUE') ? 1 : 0),
+						'Loop'		=> ((strtoupper($item['LOOP'][0]) === 'TRUE') ? 1 : 0),
 						'Timeout'	=> (intval($item['LENGTH'][0]) + 2),
 					);
 
@@ -161,7 +161,7 @@ class PluginEffectStudio extends Plugin {
 		unset($item);
 
 		foreach ($this->config['SCRIPTS'][0]['SCRIPT'] as &$script) {
-			if (strtoupper($script['ENABLED'][0]) == 'TRUE') {
+			if (strtoupper($script['ENABLED'][0]) === 'TRUE') {
 				$file = @file_get_contents($script['PATH'][0]);
 				if ($file !== false) {
 					$this->manialinks[] = $file;
@@ -351,12 +351,12 @@ class PluginEffectStudio extends Plugin {
 		global $aseco;
 
 		$xml = false;
-		if (($typ == 'auditive') || ($typ == 'both') ) {
+		if (($typ === 'auditive') || ($typ === 'both') ) {
 			$xml .= '<manialink name="EffectStudioAuditive'. ucfirst($event) .'" id="EffectStudioAuditive'. ucfirst($event) .'" version="3">';
 			$xml .= '<audio posn="350 0 0" sizen="7.5 5.625" data="'. $this->config['EventActions'][$event]['Url'] .'?chksum='. $this->config['EventActions'][$event]['ChkSum'] .'.ogg" play="1" looping="'. $this->config['EventActions'][$event]['Loop'] .'" />';
 			$xml .= '</manialink>';
 		}
-		elseif (($typ == 'visual') || ($typ == 'both') ) {
+		elseif (($typ === 'visual') || ($typ === 'both') ) {
 
 		}
 

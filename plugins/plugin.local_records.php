@@ -48,7 +48,7 @@ class PluginLocalRecords extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Saves record into a local database.');
 
@@ -120,15 +120,15 @@ class PluginLocalRecords extends Plugin {
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
 		// Show top-8 & records of all online players before map
-		if (($this->settings['show_recs_before'] & 2) == 2) {
+		if (($this->settings['show_recs_before'] & 2) === 2) {
 			$this->show_maprecs($aseco, $player->login, 1, 0);
 		}
-		else if (($this->settings['show_recs_before'] & 1) == 1) {
+		else if (($this->settings['show_recs_before'] & 1) === 1) {
 			// Or show original record message
 			$aseco->sendChatMessage($message, $player->login);
 		}
@@ -161,7 +161,7 @@ class PluginLocalRecords extends Plugin {
 	public function onPlayerDisconnect ($aseco, $player) {
 
 		// Ignore fluke disconnects with empty logins
-		if ($player->login == '') {
+		if ($player->login === '') {
 			return;
 		}
 
@@ -188,7 +188,7 @@ class PluginLocalRecords extends Plugin {
 	public function onLoadingMap ($aseco, $map) {
 
 		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			$aseco->console('[LocalRecords] Unsupported gamemode, records ignored!');
 			return;
 		}
@@ -226,7 +226,7 @@ class PluginLocalRecords extends Plugin {
 					// create record object
 					$record_item = new Record();
 					$record_item->score = $record['Score'];
-					$record_item->checkpoints = ($record['Checkpoints'] != '' ? explode(',', $record['Checkpoints']) : array());
+					$record_item->checkpoints = ($record['Checkpoints'] !== '' ? explode(',', $record['Checkpoints']) : array());
 					$record_item->new = false;
 
 					// create a player object to put it into the record object
@@ -290,8 +290,8 @@ class PluginLocalRecords extends Plugin {
 
 
 			// If no maprecs, show the original record message to all players
-			if (($this->settings['show_recs_before'] & 1) == 1) {
-				if (($this->settings['show_recs_before'] & 4) == 4) {
+			if (($this->settings['show_recs_before'] & 1) === 1) {
+				if (($this->settings['show_recs_before'] & 4) === 4) {
 					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
 				}
 				else {
@@ -322,12 +322,12 @@ class PluginLocalRecords extends Plugin {
 	public function onBeginMap ($aseco, $response) {
 
 		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
 		// Show top-8 & records of all online players before map
-		if (($this->settings['show_recs_before'] & 2) == 2) {
+		if (($this->settings['show_recs_before'] & 2) === 2) {
 			$this->show_maprecs($aseco, false, 1, $this->settings['show_recs_before']);
 		}
 	}
@@ -341,19 +341,19 @@ class PluginLocalRecords extends Plugin {
 	public function onEndMapRanking ($aseco, $map) {
 
 		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
 		// Show top-8 & all new records after map
-		if (($this->settings['show_recs_after'] & 2) == 2) {
+		if (($this->settings['show_recs_after'] & 2) === 2) {
 			$this->show_maprecs($aseco, false, 3, $this->settings['show_recs_after']);
 		}
-		else if (($this->settings['show_recs_after'] & 1) == 1) {
+		else if (($this->settings['show_recs_after'] & 1) === 1) {
 			// fall back on old top-5
 			$records = '';
 
-			if ($this->records->count() == 0) {
+			if ($this->records->count() === 0) {
 				// display a no-new-record message
 				$message = $aseco->formatText($this->settings['messages']['RANKING_NONE'][0],
 					$aseco->stripStyles($aseco->server->maps->current->name),
@@ -385,13 +385,13 @@ class PluginLocalRecords extends Plugin {
 			}
 
 			// Append the records if any
-			if ($records != '') {
+			if ($records !== '') {
 				$records = substr($records, 0, strlen($records)-2);  // strip trailing ", "
 				$message .= LF . $records;
 			}
 
 			// Show ranking message to all players
-			if (($this->settings['show_recs_after'] & 4) == 4) {
+			if (($this->settings['show_recs_after'] & 4) === 4) {
 				$aseco->releaseEvent('onSendWindowMessage', array($message, true));
 			}
 			else {
@@ -409,17 +409,17 @@ class PluginLocalRecords extends Plugin {
 	public function onPlayerFinish ($aseco, $finish_item) {
 
 		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
 		// If no actual finish, bail out immediately
-		if ($finish_item->score == 0) {
+		if ($finish_item->score === 0) {
 			return;
 		}
 
 //		// In Laps mode on real PlayerFinish event, bail out too
-//		if ($aseco->server->gameinfo->mode == Gameinfo::LAPS && !$finish_item->new) {
+//		if ($aseco->server->gameinfo->mode === Gameinfo::LAPS && !$finish_item->new) {
 //			return;
 //		}
 
@@ -443,7 +443,7 @@ class PluginLocalRecords extends Plugin {
 				for ($rank = 0; $rank < $this->records->count(); $rank++) {
 					$rec = $this->records->getRecord($rank);
 
-					if ($rec->player->login == $player->login) {
+					if ($rec->player->login === $player->login) {
 
 						// new record worse than old one
 						if ($finish_item->score > $rec->score) {
@@ -460,7 +460,7 @@ class PluginLocalRecords extends Plugin {
 
 				$finish_time = $aseco->formatTime($finish_item->score);
 
-				if ($cur_rank != -1) {  // player has a record in topXX already
+				if ($cur_rank !== -1) {  // player has a record in topXX already
 
 					// compute difference to old record
 					$diff = $cur_score - $finish_item->score;
@@ -515,7 +515,7 @@ class PluginLocalRecords extends Plugin {
 					}
 					else {
 
-						if ($diff == 0) {
+						if ($diff === 0) {
 							// do a player equaled his/her record message
 							$message = $aseco->formatText($this->settings['messages']['RECORD_EQUAL'][0],
 								$aseco->stripStyles($player->nickname),
@@ -622,7 +622,7 @@ class PluginLocalRecords extends Plugin {
 	public function onPlayerWins ($aseco, $player) {
 
 		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
@@ -703,7 +703,7 @@ class PluginLocalRecords extends Plugin {
 		$this->records->deleteRecord($recno);
 
 		// check if fill up is needed
-		if ($this->records->count() == ($this->records->getMaxRecords() - 1)) {
+		if ($this->records->count() === ($this->records->getMaxRecords() - 1)) {
 			// get max'th time
 			$query = "
 			SELECT DISTINCT
@@ -724,7 +724,7 @@ class PluginLocalRecords extends Plugin {
 
 			$result = $aseco->db->query($query);
 			if ($result) {
-	 			if ($result->num_rows == 1) {
+	 			if ($result->num_rows === 1) {
 					$timerow = $result->fetch_object();
 
 					// get corresponding date/time & checkpoints
@@ -786,7 +786,7 @@ class PluginLocalRecords extends Plugin {
 					// create record object
 					$record_item = new Record();
 					$record_item->score = $timerow->Score;
-					$record_item->checkpoints = ($timerow2->Checkpoints != '' ? explode(',', $timerow2->Checkpoints) : array());
+					$record_item->checkpoints = ($timerow2->Checkpoints !== '' ? explode(',', $timerow2->Checkpoints) : array());
 					$record_item->new = false;
 
 					// create a player object to put it into the record object
@@ -821,7 +821,7 @@ class PluginLocalRecords extends Plugin {
 		$found = false;
 		for ($i = 0; $i < $this->records->getMaxRecords(); $i++) {
 			if (($rec = $this->records->getRecord($i)) !== false) {
-				if ($rec->player->login == $login) {
+				if ($rec->player->login === $login) {
 					$pb['time'] = $rec->score;
 					$pb['rank'] = $i + 1;
 					$found = true;
@@ -884,7 +884,7 @@ class PluginLocalRecords extends Plugin {
 		$records = '$n';  // use narrow font
 
 		// check for records
-		if (($total = $this->records->count()) == 0) {
+		if (($total = $this->records->count()) === 0) {
 			$totalnew = -1;
 		}
 		else {
@@ -934,17 +934,17 @@ class PluginLocalRecords extends Plugin {
 							$aseco->formatTime($cur_record->score)
 						);
 
-						if ($mode != 0 && $i == $total-1) {
+						if ($mode !== 0 && $i === $total-1) {
 							// check if last ranked record
 							$records .= $record_msg;
 						}
-						else if ($mode == 1 || $mode == 2) {
+						else if ($mode === 1 || $mode === 2) {
 							// check if always show (start of/during map)
 							$records .= $record_msg;
 						}
 						else {
 							// show record if < show_min_recs (end of map)
-							if ($mode == 3 && $i < $this->settings['show_min_recs']) {
+							if ($mode === 3 && $i < $this->settings['show_min_recs']) {
 								$records .= $record_msg;
 							}
 						}
@@ -956,11 +956,11 @@ class PluginLocalRecords extends Plugin {
 							$aseco->formatTime($cur_record->score)
 						);
 
-						if ($mode != 0 && $i == $total-1) {
+						if ($mode !== 0 && $i === $total-1) {
 							// check if last ranked record
 							$records .= $record_msg;
 						}
-						else if (($mode == 2 && $i < $this->settings['show_min_recs']-2) || (($mode == 1 || $mode == 3) && $i < $this->settings['show_min_recs'])) {
+						else if (($mode === 2 && $i < $this->settings['show_min_recs']-2) || (($mode === 1 || $mode === 3) && $i < $this->settings['show_min_recs'])) {
 							// show offline record if < show_min_recs-2 (during map)
 							// show offline record if < show_min_recs (start/end of map)
 							$records .= $record_msg;
@@ -987,7 +987,7 @@ class PluginLocalRecords extends Plugin {
 		}
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
-		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error == '') {
+		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
 			$name = '$l[http://' . $aseco->server->maps->current->mx->prefix .
 			        '.mania-exchange.com/tracks/view/'.
 			        $aseco->server->maps->current->mx->id .']'. $name .'$l';
@@ -1001,7 +1001,7 @@ class PluginLocalRecords extends Plugin {
 				$totalnew
 			);
 		}
-		else if ($totalnew == 0 && $records != '$n') {
+		else if ($totalnew === 0 && $records !== '$n') {
 			// check whether to show range
 			if ($this->settings['show_recs_range']) {
 				$message = $aseco->formatText($this->settings['messages']['RANKING_RANGE'][0],
@@ -1017,14 +1017,14 @@ class PluginLocalRecords extends Plugin {
 				);
 			}
 		}
-		else if ($totalnew == 0 && $records == '$n') {
+		else if ($totalnew === 0 && $records === '$n') {
 			$message = $aseco->formatText($this->settings['messages']['RANKING_NO_NEW'][0],
 				$name,
 				$timing
 			);
 		}
 		else {
-			// $totalnew == -1
+			// $totalnew === -1
 			$message = $aseco->formatText($this->settings['messages']['RANKING_NONE'][0],
 				$name,
 				$timing
@@ -1032,7 +1032,7 @@ class PluginLocalRecords extends Plugin {
 		}
 
 		// append the records if any
-		if ($records != '$n') {
+		if ($records !== '$n') {
 			$records = substr($records, 0, strlen($records)-2);  // strip trailing ", "
 			$message .= LF . $records;
 		}
@@ -1044,8 +1044,8 @@ class PluginLocalRecords extends Plugin {
 			$aseco->sendChatMessage($message, $login);
 		}
 		else {
-			if (($window & 4) == 4) {
-				$aseco->releaseEvent('onSendWindowMessage', array($message, ($mode == 3)));
+			if (($window & 4) === 4) {
+				$aseco->releaseEvent('onSendWindowMessage', array($message, ($mode === 3)));
 			}
 			else {
 				$aseco->sendChatMessage($message);

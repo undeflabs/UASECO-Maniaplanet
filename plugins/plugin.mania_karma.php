@@ -75,7 +75,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -401,14 +401,14 @@ class PluginManiaKarma extends Plugin {
 		unset($xmlcfg->comment);
 
 
-		if ((string)$xmlcfg->urls->api_auth == '') {
+		if ((string)$xmlcfg->urls->api_auth === '') {
 			trigger_error("[ManiaKarma] <urls><api_auth> is empty in config file 'config/mania_karma.xml'!", E_USER_ERROR);
 		}
 
-		if ((string)$xmlcfg->nation == '') {
+		if ((string)$xmlcfg->nation === '') {
 			trigger_error("[ManiaKarma] <nation> is empty in config file 'config/mania_karma.xml'!", E_USER_ERROR);
 		}
-		else if ((string)$xmlcfg->nation == 'YOUR_SERVER_NATION') {
+		else if ((string)$xmlcfg->nation === 'YOUR_SERVER_NATION') {
 			trigger_error("[ManiaKarma] <nation> is not set in config file 'config/mania_karma.xml'! Please change 'YOUR_SERVER_NATION' with your server nation code.", E_USER_ERROR);
 		}
 		else if (! $iso3166Alpha3[strtoupper((string)$xmlcfg->nation)][1] ) {
@@ -420,19 +420,19 @@ class PluginManiaKarma extends Plugin {
 		$this->config['urls']['api_auth'] = (string)$xmlcfg->urls->api_auth;
 
 		// Check the given config timeouts and set defaults on too low or on empty timeouts
-		if ((int)$xmlcfg->timeout < 40 || (int)$xmlcfg->timeout == '') {
+		if ((int)$xmlcfg->timeout < 40 || (int)$xmlcfg->timeout === '') {
 			$this->config['timeout'] = 40;
 		}
 		else {
 			$this->config['timeout'] = (int)$xmlcfg->timeout;
 		}
-		if ((int)$xmlcfg->timeout_connect < 30 || (int)$xmlcfg->timeout_connect == '') {
+		if ((int)$xmlcfg->timeout_connect < 30 || (int)$xmlcfg->timeout_connect === '') {
 			$this->config['timeout_connect'] = 30;
 		}
 		else {
 			$this->config['timeout_connect'] = (int)$xmlcfg->timeout_connect;
 		}
-		if ((int)$xmlcfg->timeout_dns < 100 || (int)$xmlcfg->timeout_dns == '') {
+		if ((int)$xmlcfg->timeout_dns < 100 || (int)$xmlcfg->timeout_dns === '') {
 			$this->config['timeout_dns'] = 100;
 		}
 		else {
@@ -476,7 +476,7 @@ class PluginManiaKarma extends Plugin {
 				'timeout'		=> $this->config['timeout'],
 			);
 			$request = $aseco->webrequest->GET($params);
-			if (isset($request->response['header']['code']) && $request->response['header']['code'] == 200) {
+			if (isset($request->response['header']['code']) && $request->response['header']['code'] === 200) {
 				// Read the request
 				if (!$xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
 					$this->config['retrytime'] = (time() + $this->config['retrywait']);
@@ -491,12 +491,12 @@ class PluginManiaKarma extends Plugin {
 					$aseco->console('[ManiaKarma] ********************************************************');
 				}
 				else {
-					if ((int)$xml->status == 200) {
+					if ((int)$xml->status === 200) {
 						$this->config['retrytime'] = 0;
 						$this->config['account']['authcode'] = (string)$xml->authcode;
 						$this->config['urls']['api'] = (string)$xml->api_url;
 
-						$this->config['import_done'] = ((strtoupper((string)$xml->import_done) == 'TRUE') ? true : false);
+						$this->config['import_done'] = ((strtoupper((string)$xml->import_done) === 'TRUE') ? true : false);
 
 						$aseco->console('[ManiaKarma] » Successfully started with async communication.');
 						$aseco->console('[ManiaKarma] » The API set the Request-URL to "'. $this->config['urls']['api'] .'"');
@@ -582,7 +582,7 @@ class PluginManiaKarma extends Plugin {
 		);
 		foreach ($gamemodes as $mode => $id) {
 			if ( isset($xmlcfg->karma_widget->gamemode->$mode) ) {
-				$this->config['widget']['states'][$id]['enabled']	= ((strtoupper((string)$xmlcfg->karma_widget->gamemode->$mode->enabled) == 'TRUE') ? true : false);
+				$this->config['widget']['states'][$id]['enabled']	= ((strtoupper((string)$xmlcfg->karma_widget->gamemode->$mode->enabled) === 'TRUE') ? true : false);
 				$this->config['widget']['states'][$id]['pos_x']		= (float)($xmlcfg->karma_widget->gamemode->$mode->pos_x ? $xmlcfg->karma_widget->gamemode->$mode->pos_x : 0);
 				$this->config['widget']['states'][$id]['pos_y']		= (float)($xmlcfg->karma_widget->gamemode->$mode->pos_y ? $xmlcfg->karma_widget->gamemode->$mode->pos_y : 0);
 				$this->config['widget']['states'][$id]['scale']		= ($xmlcfg->karma_widget->gamemode->$mode->scale ? sprintf("%.1f", $xmlcfg->karma_widget->gamemode->$mode->scale) : 1.0);
@@ -596,20 +596,20 @@ class PluginManiaKarma extends Plugin {
 
 		// Set the config
 		$this->config['urls']['website']				= (string)$xmlcfg->urls->website;
-		$this->config['show_welcome']					= ((strtoupper((string)$xmlcfg->show_welcome) == 'TRUE')		? true : false);
-		$this->config['allow_public_vote']				= ((strtoupper((string)$xmlcfg->allow_public_vote) == 'TRUE')		? true : false);
-		$this->config['show_at_start']					= ((strtoupper((string)$xmlcfg->show_at_start) == 'TRUE')		? true : false);
-		$this->config['show_details']					= ((strtoupper((string)$xmlcfg->show_details) == 'TRUE')		? true : false);
-		$this->config['show_votes']					= ((strtoupper((string)$xmlcfg->show_votes) == 'TRUE')			? true : false);
-		$this->config['show_karma']					= ((strtoupper((string)$xmlcfg->show_karma) == 'TRUE')			? true : false);
+		$this->config['show_welcome']					= ((strtoupper((string)$xmlcfg->show_welcome) === 'TRUE')		? true : false);
+		$this->config['allow_public_vote']				= ((strtoupper((string)$xmlcfg->allow_public_vote) === 'TRUE')		? true : false);
+		$this->config['show_at_start']					= ((strtoupper((string)$xmlcfg->show_at_start) === 'TRUE')		? true : false);
+		$this->config['show_details']					= ((strtoupper((string)$xmlcfg->show_details) === 'TRUE')		? true : false);
+		$this->config['show_votes']					= ((strtoupper((string)$xmlcfg->show_votes) === 'TRUE')			? true : false);
+		$this->config['show_karma']					= ((strtoupper((string)$xmlcfg->show_karma) === 'TRUE')			? true : false);
 		$this->config['require_finish']					= (int)$xmlcfg->require_finish;
 		$this->config['remind_to_vote']					= strtoupper((string)$xmlcfg->remind_to_vote);
 		$this->config['reminder_window']['display']			= strtoupper((string)$xmlcfg->reminder_window->display);
-		$this->config['score_mx_window']				= ((strtoupper((string)$xmlcfg->score_mx_window) == 'TRUE')		? true : false);
-		$this->config['messages_in_window']				= ((strtoupper((string)$xmlcfg->messages_in_window) == 'TRUE')		? true : false);
-		$this->config['show_player_vote_public']			= ((strtoupper((string)$xmlcfg->show_player_vote_public) == 'TRUE')	? true : false);
-		$this->config['save_karma_also_local']				= ((strtoupper((string)$xmlcfg->save_karma_also_local) == 'TRUE')	? true : false);
-		$this->config['sync_global_karma_local']			= ((strtoupper((string)$xmlcfg->sync_global_karma_local) == 'TRUE')	? true : false);
+		$this->config['score_mx_window']				= ((strtoupper((string)$xmlcfg->score_mx_window) === 'TRUE')		? true : false);
+		$this->config['messages_in_window']				= ((strtoupper((string)$xmlcfg->messages_in_window) === 'TRUE')		? true : false);
+		$this->config['show_player_vote_public']			= ((strtoupper((string)$xmlcfg->show_player_vote_public) === 'TRUE')	? true : false);
+		$this->config['save_karma_also_local']				= ((strtoupper((string)$xmlcfg->save_karma_also_local) === 'TRUE')	? true : false);
+		$this->config['sync_global_karma_local']			= ((strtoupper((string)$xmlcfg->sync_global_karma_local) === 'TRUE')	? true : false);
 		$this->config['images']['widget_open_left']			= (string)$xmlcfg->images->widget_open_left;
 		$this->config['images']['widget_open_right']			= (string)$xmlcfg->images->widget_open_right;
 		$this->config['images']['mx_logo_normal']			= (string)$xmlcfg->images->mx_logo_normal;
@@ -618,13 +618,13 @@ class PluginManiaKarma extends Plugin {
 		$this->config['images']['cup_silver']				= (string)$xmlcfg->images->cup_silver;
 		$this->config['images']['maniakarma_logo']			= (string)$xmlcfg->images->maniakarma_logo;
 		$this->config['images']['progress_indicator']			= (string)$xmlcfg->images->progress_indicator;
-		$this->config['uptodate_check']					= ((strtoupper((string)$xmlcfg->uptodate_check) == 'TRUE')		? true : false);
+		$this->config['uptodate_check']					= ((strtoupper((string)$xmlcfg->uptodate_check) === 'TRUE')		? true : false);
 		$this->config['uptodate_info']					= strtoupper((string)$xmlcfg->uptodate_info);
 
 		$this->config['karma_calculation_method']			= strtoupper((string)$xmlcfg->karma_calculation_method);
 
 		// Config for Karma Lottery
-		$this->config['karma_lottery']['enabled']			= ((strtoupper((string)$xmlcfg->karma_lottery->enabled) == 'TRUE')	? true : false);
+		$this->config['karma_lottery']['enabled']			= ((strtoupper((string)$xmlcfg->karma_lottery->enabled) === 'TRUE')	? true : false);
 		$this->config['karma_lottery']['minimum_players']		= ((int)$xmlcfg->karma_lottery->minimum_players ? (int)$xmlcfg->karma_lottery->minimum_players : 1);
 		$this->config['karma_lottery']['planets_win']			= (int)$xmlcfg->karma_lottery->planets_win;
 		$this->config['karma_lottery']['minimum_server_planets']	= (int)$xmlcfg->karma_lottery->minimum_server_planets;
@@ -708,10 +708,10 @@ class PluginManiaKarma extends Plugin {
 		$this->config['widget']['score']['title_substyle']		= (string)$xmlcfg->widget_styles->score->title_substyle;
 
 		// Check for Background-Colors
-		if ($this->config['widget']['race']['background_color'] == '') {
+		if ($this->config['widget']['race']['background_color'] === '') {
 			$this->config['widget']['race']['background_color'] = '0000';
 		}
-		if ($this->config['widget']['race']['background_focus'] == '') {
+		if ($this->config['widget']['race']['background_focus'] === '') {
 			$this->config['widget']['race']['background_focus'] = '0000';
 		}
 
@@ -734,7 +734,7 @@ class PluginManiaKarma extends Plugin {
 		);
 
 		// Init
-		if ($aseco->startup_phase == true) {
+		if ($aseco->startup_phase === true) {
 			$this->karma			= $this->setEmptyKarma(true);
 			$this->karma['data']['uid']	= $aseco->server->maps->current->uid;
 			$this->karma['data']['id']	= $aseco->server->maps->current->id;
@@ -752,9 +752,9 @@ class PluginManiaKarma extends Plugin {
 		$this->config['widget']['skeleton']['race'] 	= $this->buildKarmaWidget($this->config['widget']['current_state']);
 		$this->config['widget']['skeleton']['score']	= $this->buildKarmaWidget(0);
 
-		if ($this->config['retrytime'] == 0) {
+		if ($this->config['retrytime'] === 0) {
 			// Update KarmaWidget for all connected Players
-			if ($this->config['widget']['current_state'] == 0) {
+			if ($this->config['widget']['current_state'] === 0) {
 				$this->sendWidgetCombination(array('skeleton_score', 'cups_values'), false);
 			}
 			else {
@@ -770,7 +770,7 @@ class PluginManiaKarma extends Plugin {
 
 
 		// Add "/karma lottery" to "/karma help" if lottery is enabled
-		if ($this->config['karma_lottery']['enabled'] == true) {
+		if ($this->config['karma_lottery']['enabled'] === true) {
 			$this->config['messages']['karma_help'] .= $this->config['messages']['lottery_help'];
 		}
 
@@ -794,30 +794,30 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		// Check if public vote is enabled
-		if ($this->config['allow_public_vote'] == true) {
+		if ($this->config['allow_public_vote'] === true) {
 			// check for possible public karma vote
-			if ($chat[2] == '+++') {
+			if ($chat[2] === '+++') {
 				$this->handlePlayerVote($player, 3);
 			}
-			else if ($chat[2] == '++') {
+			else if ($chat[2] === '++') {
 				$this->handlePlayerVote($player, 2);
 			}
-			else if ($chat[2] == '+') {
+			else if ($chat[2] === '+') {
 				$this->handlePlayerVote($player, 1);
 			}
-			else if ($chat[2] == '-') {
+			else if ($chat[2] === '-') {
 				$this->handlePlayerVote($player, -1);
 			}
-			else if ($chat[2] == '--') {
+			else if ($chat[2] === '--') {
 				$this->handlePlayerVote($player, -2);
 			}
-			else if ($chat[2] == '---') {
+			else if ($chat[2] === '---') {
 				$this->handlePlayerVote($player, -3);
 			}
 		}
-		else if ( ($chat[2] == '+++') || ($chat[2] == '++') || ($chat[2] == '+') || ($chat[2] == '-') || ($chat[2] == '--') || ($chat[2] == '---') ) {
+		else if ( ($chat[2] === '+++') || ($chat[2] === '++') || ($chat[2] === '+') || ($chat[2] === '-') || ($chat[2] === '--') || ($chat[2] === '---') ) {
 			$message = $aseco->formatText($this->config['messages']['karma_no_public'], '/'. $chat[2]);
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, ($player->login ? $player : false));
 			}
 			else {
@@ -842,10 +842,10 @@ class PluginManiaKarma extends Plugin {
 		$message = false;
 
 		// Check optional parameter
-		if (strtoupper($chat_parameter) == 'HELP' || strtoupper($chat_parameter) == 'ABOUT') {
+		if (strtoupper($chat_parameter) === 'HELP' || strtoupper($chat_parameter) === 'ABOUT') {
 			$this->onPlayerManialinkPageAnswer($aseco, $player->login, array('Action' => 'OpenHelpWindow'));
 		}
-		else if (strtoupper($chat_parameter) == 'DETAILS') {
+		else if (strtoupper($chat_parameter) === 'DETAILS') {
 			$message = $aseco->formatText($this->config['messages']['karma_details'],
 				$this->karma['global']['votes']['karma'],
 				$this->karma['global']['votes']['fantastic']['percent'],	$this->karma['global']['votes']['fantastic']['count'],
@@ -856,39 +856,39 @@ class PluginManiaKarma extends Plugin {
 				$this->karma['global']['votes']['waste']['percent'],		$this->karma['global']['votes']['waste']['count']
 			);
 		}
-		else if (strtoupper($chat_parameter) == 'RELOAD') {
+		else if (strtoupper($chat_parameter) === 'RELOAD') {
 			if ($aseco->isMasterAdmin($player)) {
 				$aseco->console('[ManiaKarma] MasterAdmin '. $player->login .' reloads the configuration.');
 				$message = '{#admin}» Reload of the configuration "config/mania_karma.xml" done.';
 				$this->onSync($aseco);
 			}
 		}
-		else if (strtoupper($chat_parameter) == 'EXPORT') {
+		else if (strtoupper($chat_parameter) === 'EXPORT') {
 			if ($aseco->isMasterAdmin($player)) {
 				$aseco->console('[ManiaKarma] MasterAdmin '. $player->login .' start the export of all local votes.');
 				$this->exportVotes($player);
 			}
 		}
-		else if (strtoupper($chat_parameter) == 'UPTODATE') {
+		else if (strtoupper($chat_parameter) === 'UPTODATE') {
 			if ($aseco->isMasterAdmin($player)) {
 				$aseco->console('[ManiaKarma] MasterAdmin '. $player->login .' start the up-to-date check.');
 				$this->uptodateCheck($player);
 			}
 		}
-		else if ( (strtoupper($chat_parameter) == 'LOTTERY') && ($this->config['karma_lottery']['enabled'] == true) ) {
+		else if ( (strtoupper($chat_parameter) === 'LOTTERY') && ($this->config['karma_lottery']['enabled'] === true) ) {
 			if  ( (isset($player->rights)) && ($player->rights) ) {
 				$message = $aseco->formatText($this->config['messages']['lottery_total_player_win'],
 					$this->getPlayerData($player, 'LotteryPayout')
 				);
 			}
 		}
-		else if (strtoupper($chat_parameter) == '') {
+		else if (strtoupper($chat_parameter) === '') {
 			$message = $this->createKarmaMessage($player->login, true);
 		}
 
 		// Show message
-		if ($message != false) {
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) && ($this->config['widget']['current_state'] != 0) ) {
+		if ($message !== false) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) && ($this->config['widget']['current_state'] !== 0) ) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -906,22 +906,22 @@ class PluginManiaKarma extends Plugin {
 	public function chat_votes ($aseco, $login, $chat_command, $chat_parameter) {
 
 		if ($player = $aseco->server->players->getPlayerByLogin($login)) {
-			if ($chat_command == '+++') {
+			if ($chat_command === '+++') {
 				$this->handlePlayerVote($player, 3);
 			}
-			else if ($chat_command == '++') {
+			else if ($chat_command === '++') {
 				$this->handlePlayerVote($player, 2);
 			}
-			else if ($chat_command == '+') {
+			else if ($chat_command === '+') {
 				$this->handlePlayerVote($player, 1);
 			}
-			else if ($chat_command == '-') {
+			else if ($chat_command === '-') {
 				$this->handlePlayerVote($player, -1);
 			}
-			else if ($chat_command == '--') {
+			else if ($chat_command === '--') {
 				$this->handlePlayerVote($player, -2);
 			}
-			else if ($chat_command == '---') {
+			else if ($chat_command === '---') {
 				$this->handlePlayerVote($player, -3);
 			}
 		}
@@ -960,7 +960,7 @@ class PluginManiaKarma extends Plugin {
 	public function onPlayerConnect ($aseco, $player) {
 
 		// Show welcome message to the new player?
-		if ($this->config['show_welcome'] == true) {
+		if ($this->config['show_welcome'] === true) {
 			$message = $aseco->formatText($this->config['messages']['welcome'],
 					'http://'. $this->config['urls']['website'] .'/',
 					$this->config['urls']['website']
@@ -973,12 +973,12 @@ class PluginManiaKarma extends Plugin {
 		// Check for a MasterAdmin
 		if ($aseco->isMasterAdmin($player)) {
 			// Do UpToDate check?
-			if ($this->config['uptodate_check'] == true) {
+			if ($this->config['uptodate_check'] === true) {
 				$this->uptodateCheck($player);
 			}
 
 			// Export already made?
-			if ($this->config['import_done'] == false) {
+			if ($this->config['import_done'] === false) {
 				$message = '{#server}> {#emotic}#################################################'. LF;
 				$message .= '{#server}> {#emotic}Please start the export of your current local votes with the command "/karma export". Thanks!'. LF;
 				$message .= '{#server}> {#emotic}#################################################'. LF;
@@ -988,7 +988,7 @@ class PluginManiaKarma extends Plugin {
 
 
 		// If karma lottery is enabled, then initialize (if player has related rights)
-		if ($this->config['karma_lottery']['enabled'] == true) {
+		if ($this->config['karma_lottery']['enabled'] === true) {
 			if ( (isset($player->rights)) && ($player->rights) ) {
 				$this->storePlayerData($player, 'LotteryPayout', 0);
 			}
@@ -1008,10 +1008,10 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		// Do nothing at Startup!!
-		if ($aseco->startup_phase == false) {
+		if ($aseco->startup_phase === false) {
 			// Check if Player is already in $this->karma,
 			// for "unwished disconnects" and "reconnected" Players
-			if ( ( !isset($this->karma['global']['players'][$player->login]) ) || ($aseco->server->maps->current->uid != $this->karma['data']['uid']) ) {
+			if ( ( !isset($this->karma['global']['players'][$player->login]) ) || ($aseco->server->maps->current->uid !== $this->karma['data']['uid']) ) {
 
 				if ( !isset($this->karma['global']['players'][$player->login]) ) {
 					$this->karma['global']['players'][$player->login]['vote']	= 0;
@@ -1027,13 +1027,13 @@ class PluginManiaKarma extends Plugin {
 				$this->handleGetApiCall($aseco->server->maps->current, $player);
 
 				// Check to see if it is required to sync global to local votes?
-				if ($this->config['sync_global_karma_local'] == true) {
+				if ($this->config['sync_global_karma_local'] === true) {
 					$this->syncGlobaAndLocalVotes('local', false);
 				}
 			}
 
 			// Display the complete KarmaWidget only for connected Player
-			if ($this->config['widget']['current_state'] == 0) {
+			if ($this->config['widget']['current_state'] === 0) {
 				$this->sendWidgetCombination(array('skeleton_score', 'cups_values', 'player_marker'), $player);
 			}
 			else {
@@ -1065,7 +1065,7 @@ class PluginManiaKarma extends Plugin {
 	public function onPlayerDisconnect ($aseco, $player) {
 
 		// Need to pay planets for lottery wins to this player?
-		if ($this->config['karma_lottery']['enabled'] == true) {
+		if ($this->config['karma_lottery']['enabled'] === true) {
 			if ( (isset($player->rights)) && ($player->rights) ) {
 				if ($this->getPlayerData($player, 'LotteryPayout') > 0) {
 					// Pay planets to player
@@ -1104,7 +1104,7 @@ class PluginManiaKarma extends Plugin {
 	public function onPlayerFinish ($aseco, $finish_item) {
 
 		// If no actual finish, bail out immediately
-		if ($finish_item->score == 0) {
+		if ($finish_item->score === 0) {
 			return;
 		}
 
@@ -1120,11 +1120,11 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		// If no finish reminders, bail out too (does not need to check $this->getPlayerData($player, 'FinishedMapCount'), because actually finished ;)
-		if ( ($this->config['remind_to_vote'] == 'FINISHED') || ($this->config['remind_to_vote'] == 'ALWAYS') ) {
+		if ( ($this->config['remind_to_vote'] === 'FINISHED') || ($this->config['remind_to_vote'] === 'ALWAYS') ) {
 
 			// Check whether player already voted
-			if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] <= $this->getPlayerData($player, 'FinishedMapCount')) ) ) {
-				if ( ($this->config['reminder_window']['display'] == 'FINISHED') || ($this->config['reminder_window']['display'] == 'ALWAYS') ) {
+			if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && ( ($this->config['require_finish'] > 0) && ($this->config['require_finish'] <= $this->getPlayerData($player, 'FinishedMapCount')) ) ) {
+				if ( ($this->config['reminder_window']['display'] === 'FINISHED') || ($this->config['reminder_window']['display'] === 'ALWAYS') ) {
 					// Show reminder window
 					$this->showReminderWindow($player->login);
 					$this->storePlayerData($player, 'ReminderWindow', true);
@@ -1132,7 +1132,7 @@ class PluginManiaKarma extends Plugin {
 				else {
 					// Show reminder message
 					$message = $this->config['messages']['karma_remind'];
-					if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+					if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 						send_window_message($aseco, $message, $player);
 					}
 					else {
@@ -1156,7 +1156,7 @@ class PluginManiaKarma extends Plugin {
 			return;
 		}
 
-		if ($answer['Action'] == 'OpenHelpWindow') {
+		if ($answer['Action'] === 'OpenHelpWindow') {
 			$page_help = $this->buildHelpAboutWindow($this->config['messages']['karma_help']);
 
 			// Setup settings for Window
@@ -1180,7 +1180,7 @@ class PluginManiaKarma extends Plugin {
 			$window->setFooter($settings_footer);
 			$window->send($player, 0, false);
 		}
-		else if ($answer['Action'] == 'OpenKarmaWindow') {
+		else if ($answer['Action'] === 'OpenKarmaWindow') {
 			$page_votes = $this->buildKarmaDetailWindow($player->login);
 			$page_whokarma = $this->buildWhoKarmaWindow();
 
@@ -1207,32 +1207,32 @@ class PluginManiaKarma extends Plugin {
 			$window->setFooter($settings_footer);
 			$window->send($player, 0, false);
 		}
-		else if ($answer['Action'] == 'Vote') {
-			if ($answer['Value'] == 'Fantastic') {						// Vote +++
+		else if ($answer['Action'] === 'Vote') {
+			if ($answer['Value'] === 'Fantastic') {						// Vote +++
 				$this->handlePlayerVote($player, 3);
 			}
-			else if ($answer['Value'] == 'Beautiful') {					// Vote ++
+			else if ($answer['Value'] === 'Beautiful') {					// Vote ++
 				$this->handlePlayerVote($player, 2);
 			}
-			else if ($answer['Value'] == 'Good') {						// Vote +
+			else if ($answer['Value'] === 'Good') {						// Vote +
 				$this->handlePlayerVote($player, 1);
 			}
-			else if ($answer['Value'] == 'Undecided') {					// Vote undecided
+			else if ($answer['Value'] === 'Undecided') {					// Vote undecided
 				$this->showUndecidedMessage($player);
 			}
-			else if ($answer['Value'] == 'Bad') {						// Vote -
+			else if ($answer['Value'] === 'Bad') {						// Vote -
 				$this->handlePlayerVote($player, -1);
 			}
-			else if ($answer['Value'] == 'Poor') {						// Vote --
+			else if ($answer['Value'] === 'Poor') {						// Vote --
 				$this->handlePlayerVote($player, -2);
 			}
-			else if ($answer['Value'] == 'Waste') {						// Vote ---
+			else if ($answer['Value'] === 'Waste') {						// Vote ---
 				$this->handlePlayerVote($player, -3);
 			}
-			else if ($answer['Value'] == 'RequireFinish') {					// Vote disabled on <require_finish> >= 1
+			else if ($answer['Value'] === 'RequireFinish') {					// Vote disabled on <require_finish> >= 1
 				$this->handlePlayerVote($player, 0);
 			}
-			else if ($answer['Value'] == 'Ignore') {					// Just ignore
+			else if ($answer['Value'] === 'Ignore') {					// Just ignore
 				// do nothing
 			}
 		}
@@ -1287,9 +1287,9 @@ class PluginManiaKarma extends Plugin {
 		$this->karma['new']['players']		= array();
 
 		// If there no players, bail out
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 
-			if ($this->config['retrytime'] == 0) {
+			if ($this->config['retrytime'] === 0) {
 				// Start an async PING request
 				// Generate the url for this Ping-Request
 				$api_url = sprintf("%s?Action=Ping&login=%s&authcode=%s",
@@ -1340,7 +1340,7 @@ class PluginManiaKarma extends Plugin {
 		$this->handleGetApiCall($aseco->server->maps->current, false);
 
 		// Check to see if it is required to sync global to local votes?
-		if ($this->config['sync_global_karma_local'] == true) {
+		if ($this->config['sync_global_karma_local'] === true) {
 			$this->syncGlobaAndLocalVotes('local', false);
 		}
 
@@ -1364,7 +1364,7 @@ class PluginManiaKarma extends Plugin {
 		}
 
 		// Before draw a lottery winner, check if players has already voted, if lottery is enabled and if players has related rights (TMU)
-		if ($this->config['karma_lottery']['enabled'] == true) {
+		if ($this->config['karma_lottery']['enabled'] === true) {
 
 			// Init message
 			$message = false;
@@ -1383,7 +1383,7 @@ class PluginManiaKarma extends Plugin {
 
 					// Check all connected Players if they has voted
 					foreach ($aseco->server->players->player_list as $player) {
-						if ($this->karma['global']['players'][$player->login]['vote'] != 0) {
+						if ($this->karma['global']['players'][$player->login]['vote'] !== 0) {
 							array_push($lottery_attendant, $player->login);
 						}
 					}
@@ -1466,7 +1466,7 @@ class PluginManiaKarma extends Plugin {
 	public function onEndMapRanking ($aseco, $data) {
 
 		// If there no players, bail out immediately
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 			return;
 		}
 
@@ -1491,7 +1491,7 @@ class PluginManiaKarma extends Plugin {
 
 
 		// If no end race reminders, bail out immediately
-		if ( ($this->config['remind_to_vote'] == 'SCORE') || ($this->config['remind_to_vote'] == 'ALWAYS') ) {
+		if ( ($this->config['remind_to_vote'] === 'SCORE') || ($this->config['remind_to_vote'] === 'ALWAYS') ) {
 
 			// Check all connected Players
 			$players_reminder = array();
@@ -1503,18 +1503,18 @@ class PluginManiaKarma extends Plugin {
 				}
 
 				// Check whether Player already voted
-				if ($this->karma['global']['players'][$player->login]['vote'] == 0) {
+				if ($this->karma['global']['players'][$player->login]['vote'] === 0) {
 					$players_reminder[] = $player->login;
 					$this->storePlayerData($player, 'ReminderWindow', true);
 				}
-				else if ($this->config['score_mx_window'] == true) {
+				else if ($this->config['score_mx_window'] === true) {
 					// Show the MX-Link-Window
 					$this->showManiaExchangeLinkWindow($player);
 				}
 			}
 
 			if (count($players_reminder) > 0) {
-				if ( ($this->config['reminder_window']['display'] == 'SCORE') || ($this->config['reminder_window']['display'] == 'ALWAYS') ) {
+				if ( ($this->config['reminder_window']['display'] === 'SCORE') || ($this->config['reminder_window']['display'] === 'ALWAYS') ) {
 					// Show reminder Window
 					$this->showReminderWindow(implode(',', $players_reminder));
 				}
@@ -1527,7 +1527,7 @@ class PluginManiaKarma extends Plugin {
 			unset($players_reminder);
 
 		}
-		else if ($this->config['score_mx_window'] == true) {
+		else if ($this->config['score_mx_window'] === true) {
 			// Check all connected Players
 			foreach ($aseco->server->players->player_list as $player) {
 
@@ -1537,7 +1537,7 @@ class PluginManiaKarma extends Plugin {
 				}
 
 				// Check whether Player already voted
-				if ($this->karma['global']['players'][$player->login]['vote'] != 0) {
+				if ($this->karma['global']['players'][$player->login]['vote'] !== 0) {
 					// Show the MX-Link-Window
 					$this->showManiaExchangeLinkWindow($player);
 				}
@@ -1555,7 +1555,7 @@ class PluginManiaKarma extends Plugin {
 		global $aseco;
 
 		// If there no players, bail out immediately
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 			return;
 		}
 
@@ -1563,7 +1563,7 @@ class PluginManiaKarma extends Plugin {
 
 		// Possible parameters: 'skeleton_race', 'skeleton_score', 'cups_values', 'player_marker', 'hide_window' and 'hide_all'
 		foreach ($widgets as $widget) {
-			if ($widget == 'hide_all') {
+			if ($widget === 'hide_all') {
 				$xml .= '<manialink id="'. $this->config['manialink_id'] .'02" name="Windows" version="3"></manialink>';
 				$xml .= '<manialink id="'. $this->config['manialink_id'] .'03" name="SkeletonWidget" version="3"></manialink>';
 				$xml .= '<manialink id="'. $this->config['manialink_id'] .'04" name="PlayerVoteMarker" version="3"></manialink>';
@@ -1573,21 +1573,21 @@ class PluginManiaKarma extends Plugin {
 				break;
 			}
 
-			if ($widget == 'hide_window') {
+			if ($widget === 'hide_window') {
 				$xml .= '<manialink id="'. $this->config['manialink_id'] .'02" name="Windows" version="3"></manialink>';
 			}
 
-			if (isset($this->config['widget']['states'][$this->config['widget']['current_state']]) && $this->config['widget']['states'][$this->config['widget']['current_state']]['enabled'] == true) {
-				if ($widget == 'skeleton_race') {
+			if (isset($this->config['widget']['states'][$this->config['widget']['current_state']]) && $this->config['widget']['states'][$this->config['widget']['current_state']]['enabled'] === true) {
+				if ($widget === 'skeleton_race') {
 					$xml .= $this->config['widget']['skeleton']['race'];
 				}
-				else if ($widget == 'skeleton_score') {
+				else if ($widget === 'skeleton_score') {
 					$xml .= $this->config['widget']['skeleton']['score'];
 				}
-				else if ($widget == 'cups_values') {
+				else if ($widget === 'cups_values') {
 					$xml .= $this->buildKarmaCupsValue($this->config['widget']['current_state']);
 				}
-				else if ($widget == 'player_marker') {
+				else if ($widget === 'player_marker') {
 					$xml .= $this->buildPlayerVoteMarker($player, $this->config['widget']['current_state']);
 				}
 			}
@@ -1598,7 +1598,7 @@ class PluginManiaKarma extends Plugin {
 			}
 		}
 
-		if ($player != false) {
+		if ($player !== false) {
 			$aseco->sendManialink($xml, $player->login, 0, false);
 		}
 		else {
@@ -1628,9 +1628,9 @@ class PluginManiaKarma extends Plugin {
 
 		// MainWidget Frame
 		$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0" id="'. $this->config['manialink_id'] .'03MainFrame">';
-		if ($gamemode == 0) {
+		if ($gamemode === 0) {
 			// No action to open the full widget at 'Score'
-			if ($this->config['widget']['score']['background_color'] != '') {
+			if ($this->config['widget']['score']['background_color'] !== '') {
 				$xml .= '<quad pos="0 0" z-index="0.01" size="39.4 20.15625" bgcolor="'. $this->config['widget']['score']['background_color'] .'"/>';
 			}
 			else {
@@ -1654,8 +1654,8 @@ class PluginManiaKarma extends Plugin {
 
 
 		// Window title
-		if ($gamemode == 0) {
-			if ($this->config['widget']['score']['title_background'] != '') {
+		if ($gamemode === 0) {
+			if ($this->config['widget']['score']['title_background'] !== '') {
 				$xml .= '<quad pos="1 -0.75" z-index="0.01" size="37.4 3.75" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['score']['title_background'] .'"/>';
 			}
 			else {
@@ -1663,7 +1663,7 @@ class PluginManiaKarma extends Plugin {
 			}
 		}
 		else {
-			if ($this->config['widget']['race']['title_background'] != '') {
+			if ($this->config['widget']['race']['title_background'] !== '') {
 				$xml .= '<quad pos="1 -0.75" z-index="0.01" size="37.4 3.75" url="http://'. $this->config['urls']['website'] .'/goto?uid='. $aseco->server->maps->current->uid .'&amp;env='. $aseco->server->maps->current->environment .'&amp;game='. $aseco->server->game .'" bgcolor="'. $this->config['widget']['race']['title_background'] .'"/>';
 			}
 			else {
@@ -1671,7 +1671,7 @@ class PluginManiaKarma extends Plugin {
 			}
 		}
 
-		if ($gamemode == 0) {
+		if ($gamemode === 0) {
 			$title = $this->config['widget']['score']['title'];
 			$icon_style = $this->config['widget']['score']['icon_style'];
 			$icon_substyle = $this->config['widget']['score']['icon_substyle'];
@@ -1806,7 +1806,7 @@ EOL;
 
 		$cup_gold_amount = 0;
 		if ($this->karma['global']['votes']['karma'] > 0) {
-			if ($this->config['karma_calculation_method'] == 'RASP') {
+			if ($this->config['karma_calculation_method'] === 'RASP') {
 				$positive = $this->karma['global']['votes']['fantastic']['count'] + $this->karma['global']['votes']['beautiful']['count'] + $this->karma['global']['votes']['good']['count'];
 				$cup_gold_amount = round($positive / $this->karma['global']['votes']['total'] * $total_cups);
 			}
@@ -1815,7 +1815,7 @@ EOL;
 			}
 		}
 		else if ($this->karma['local']['votes']['karma'] > 0) {
-			if ($this->config['karma_calculation_method'] == 'RASP') {
+			if ($this->config['karma_calculation_method'] === 'RASP') {
 				$positive = $this->karma['local']['votes']['fantastic']['count'] + $this->karma['local']['votes']['beautiful']['count'] + $this->karma['local']['votes']['good']['count'];
 				$cup_gold_amount = round($positive / $this->karma['local']['votes']['total'] * $total_cups);
 			}
@@ -1853,7 +1853,7 @@ EOL;
 
 		// Global Value and Votes
 		$globalcolor = 'FFFF';
-		if ($this->config['karma_calculation_method'] == 'DEFAULT') {
+		if ($this->config['karma_calculation_method'] === 'DEFAULT') {
 			if ( ($this->karma['global']['votes']['karma'] >= 0) && ($this->karma['global']['votes']['karma'] <= 30) ) {
 				$globalcolor = 'D00F';
 			}
@@ -1867,7 +1867,7 @@ EOL;
 
 		// Local Value and Votes
 		$localcolor = 'FFFF';
-		if ($this->config['karma_calculation_method'] == 'DEFAULT') {
+		if ($this->config['karma_calculation_method'] === 'DEFAULT') {
 			if ( ($this->karma['local']['votes']['karma'] >= 0) && ($this->karma['local']['votes']['karma'] <= 30) ) {
 				$localcolor = 'F00F';
 			}
@@ -1884,7 +1884,7 @@ EOL;
 		$xml .= '<quad pos="0 -0.1875" z-index="0.01" size="0.25 5.34375" bgcolor="FFF5"/>';
 		$xml .= '<label pos="0.75 -0.1875" z-index="0.01" class="labels" size="10 2.0625" textsize="1" scale="0.65" textcolor="FFFF" text="GLOBAL"/>';
 		$xml .= '<label pos="8.25 0" z-index="0.01" size="7.5 2.625" class="labels" textsize="1" scale="0.9" textcolor="'. $globalcolor .'" text="$O'. $this->karma['global']['votes']['karma'] .'"/>';
-		$xml .= '<label pos="0.75 -2.4375" z-index="0.01" size="16.5 2.25" class="labels" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<label pos="0.75 -2.4375" z-index="0.01" size="16.5 2.25" class="labels" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] === 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 		$xml .= '</frame>';
 
 		// Local values and votes
@@ -1892,7 +1892,7 @@ EOL;
 		$xml .= '<quad pos="0 -0.1875" z-index="0.01" size="0.25 5.34375" bgcolor="FFF5"/>';
 		$xml .= '<label pos="0.75 -0.1875" z-index="0.01" size="10 2.0625" class="labels" textsize="1" scale="0.65" textcolor="FFFF" text="LOCAL "/>';
 		$xml .= '<label pos="7.5 0" z-index="0.01" size="7.5 2.625" textsize="1" scale="0.9" textcolor="'. $localcolor .'" text="$O'. $this->karma['local']['votes']['karma'] .'"/>';
-		$xml .= '<label pos="0.75 -2.4375" z-index="0.01" size="16.5 2.25" class="labels" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<label pos="0.75 -2.4375" z-index="0.01" size="16.5 2.25" class="labels" textsize="1" scale="0.85" textcolor="0F3F" text="'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] === 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 		$xml .= '</frame>';
 
 
@@ -1946,7 +1946,7 @@ EOL;
 		$xml = '<frame pos="0 8" z-index="1">';
 
 		$color = '$FFF';
-		if ($this->config['karma_calculation_method'] == 'DEFAULT') {
+		if ($this->config['karma_calculation_method'] === 'DEFAULT') {
 			if ( ($this->karma['global']['votes']['karma'] >= 0) && ($this->karma['global']['votes']['karma'] <= 30) ) {
 				$color = '$D00';
 			}
@@ -1958,7 +1958,7 @@ EOL;
 			}
 		}
 		$xml .= '<label pos="17.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" text="$FFFGlobal Karma: $O'. $color . $this->karma['global']['votes']['karma'] .'"/>';
-		$xml .= '<label pos="87.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<label pos="87.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['global']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['global']['votes']['total'] === 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 
 
 		$xml .= '<label pos="11.75 -21.28125" z-index="0.03" size="7.5 0" class="labels" halign="right" scale="0.8" text="100%"/>';
@@ -2004,12 +2004,12 @@ EOL;
 		$xml .= '<quad pos="17.75 -78.75" z-index="0.04" size="70 0.1875" bgcolor="FFFD"/>';
 		$xml .= '<quad pos="17.5 -22.5" z-index="0.03" size="0.25 56.25" bgcolor="FFFD"/>';
 
-		$height['fantastic']	= (($this->karma['global']['votes']['fantastic']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['fantastic']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['beautiful']	= (($this->karma['global']['votes']['beautiful']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['beautiful']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['good']		= (($this->karma['global']['votes']['good']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['good']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['bad']		= (($this->karma['global']['votes']['bad']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['bad']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['poor']		= (($this->karma['global']['votes']['poor']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['poor']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['waste']	= (($this->karma['global']['votes']['waste']['percent'] != 0) ? sprintf("%.2f", ($this->karma['global']['votes']['waste']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['fantastic']	= (($this->karma['global']['votes']['fantastic']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['global']['votes']['fantastic']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['beautiful']	= (($this->karma['global']['votes']['beautiful']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['global']['votes']['beautiful']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['good']		= (($this->karma['global']['votes']['good']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['global']['votes']['good']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['bad']		= (($this->karma['global']['votes']['bad']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['global']['votes']['bad']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['poor']		= (($this->karma['global']['votes']['poor']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['global']['votes']['poor']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['waste']	= (($this->karma['global']['votes']['waste']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['global']['votes']['waste']['percent'] / 3.3333333333 * 1.875)) : 0);
 
 		$xml .= '<label pos="25.5 -'. (75 - $height['fantastic']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['fantastic']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
 		$xml .= '<label pos="36.75 -'. (75 - $height['beautiful']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['global']['votes']['beautiful']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
@@ -2069,7 +2069,7 @@ EOL;
 		$xml .= '<frame pos="105 8" z-index="1">';
 
 		$color = '$FFF';
-		if ($this->config['karma_calculation_method'] == 'DEFAULT') {
+		if ($this->config['karma_calculation_method'] === 'DEFAULT') {
 			if ( ($this->karma['local']['votes']['karma'] >= 0) && ($this->karma['local']['votes']['karma'] <= 30) ) {
 				$color = '$F00';
 			}
@@ -2081,7 +2081,7 @@ EOL;
 			}
 		}
 		$xml .= '<label pos="17.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" text="$FFFLocal Karma: $O'. $color . $this->karma['local']['votes']['karma'] .'"/>';
-		$xml .= '<label pos="87.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] == 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
+		$xml .= '<label pos="87.5 -12.5" z-index="0.03" size="50 0" class="labels" textsize="2" scale="0.9" halign="right" text="$FFF'. number_format($this->karma['local']['votes']['total'], 0, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .' '. (($this->karma['local']['votes']['total'] === 1) ? $this->config['messages']['karma_vote_singular'] : $this->config['messages']['karma_vote_plural']) .'"/>';
 
 		$xml .= '<label pos="11.75 -21.28125" z-index="0.03" size="7.5 0" halign="right" class="labels" scale="0.8" text="100%"/>';
 		$xml .= '<quad pos="13.75 -22.5" z-index="0.04" size="3.75 0.1875" bgcolor="FFFD"/>';
@@ -2126,12 +2126,12 @@ EOL;
 		$xml .= '<quad pos="17.75 -78.75" z-index="0.04" size="70 0.1875" bgcolor="FFFD"/>';
 		$xml .= '<quad pos="17.5 -22.5" z-index="0.03" size="0.25 56.25" bgcolor="FFFD"/>';
 
-		$height['fantastic']	= (($this->karma['local']['votes']['fantastic']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['fantastic']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['beautiful']	= (($this->karma['local']['votes']['beautiful']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['beautiful']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['good']		= (($this->karma['local']['votes']['good']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['good']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['bad']		= (($this->karma['local']['votes']['bad']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['bad']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['poor']		= (($this->karma['local']['votes']['poor']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['poor']['percent'] / 3.3333333333 * 1.875)) : 0);
-		$height['waste']	= (($this->karma['local']['votes']['waste']['percent'] != 0) ? sprintf("%.2f", ($this->karma['local']['votes']['waste']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['fantastic']	= (($this->karma['local']['votes']['fantastic']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['local']['votes']['fantastic']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['beautiful']	= (($this->karma['local']['votes']['beautiful']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['local']['votes']['beautiful']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['good']		= (($this->karma['local']['votes']['good']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['local']['votes']['good']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['bad']		= (($this->karma['local']['votes']['bad']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['local']['votes']['bad']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['poor']		= (($this->karma['local']['votes']['poor']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['local']['votes']['poor']['percent'] / 3.3333333333 * 1.875)) : 0);
+		$height['waste']	= (($this->karma['local']['votes']['waste']['percent'] !== 0) ? sprintf("%.2f", ($this->karma['local']['votes']['waste']['percent'] / 3.3333333333 * 1.875)) : 0);
 
 		$xml .= '<label pos="25.5 -'. (75 - $height['fantastic']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['fantastic']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
 		$xml .= '<label pos="36.75 -'. (75 - $height['beautiful']) .'" z-index="0.06" size="9.5 0" halign="center" class="labels" scale="0.8" text="'. number_format($this->karma['local']['votes']['beautiful']['percent'], 2, $this->config['NumberFormat'][$this->config['number_format']]['decimal_sep'], $this->config['NumberFormat'][$this->config['number_format']]['thousands_sep']) .'%"/>';
@@ -2190,27 +2190,27 @@ EOL;
 		if ( isset($this->karma['global']['players'][$login]) ) {
 			// BEGIN: Global vote frame
 			$xml .= '<frame pos="0 -80.5" z-index="1">';
-			if ($this->karma['global']['players'][$login]['vote'] == 3) {
+			if ($this->karma['global']['players'][$login]['vote'] === 3) {
 				$xml .= '<quad pos="25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == 2) {
+			else if ($this->karma['global']['players'][$login]['vote'] === 2) {
 				$xml .= '<quad pos="36.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="36.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == 1) {
+			else if ($this->karma['global']['players'][$login]['vote'] === 1) {
 				$xml .= '<quad pos="47.5 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="47.5 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == -1) {
+			else if ($this->karma['global']['players'][$login]['vote'] === -1) {
 				$xml .= '<quad pos="58.75 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="58.75 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == -2) {
+			else if ($this->karma['global']['players'][$login]['vote'] === -2) {
 				$xml .= '<quad pos="70 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="70 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == -3) {
+			else if ($this->karma['global']['players'][$login]['vote'] === -3) {
 				$xml .= '<quad pos="81.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="81.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
@@ -2221,27 +2221,27 @@ EOL;
 		if ( isset($this->karma['local']['players'][$login]) ) {
 			// BEGIN: Local vote frame
 			$xml .= '<frame pos="105 -80.5" z-index="1">';
-			if ($this->karma['local']['players'][$login]['vote'] == 3) {
+			if ($this->karma['local']['players'][$login]['vote'] === 3) {
 				$xml .= '<quad pos="25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['local']['players'][$login]['vote'] == 2) {
+			else if ($this->karma['local']['players'][$login]['vote'] === 2) {
 				$xml .= '<quad pos="36.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="36.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['local']['players'][$login]['vote'] == 1) {
+			else if ($this->karma['local']['players'][$login]['vote'] === 1) {
 				$xml .= '<quad pos="47.5 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="47.5 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['local']['players'][$login]['vote'] == -1) {
+			else if ($this->karma['local']['players'][$login]['vote'] === -1) {
 				$xml .= '<quad pos="58.75 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="58.75 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['local']['players'][$login]['vote'] == -2) {
+			else if ($this->karma['local']['players'][$login]['vote'] === -2) {
 				$xml .= '<quad pos="70 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="70 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
-			else if ($this->karma['local']['players'][$login]['vote'] == -3) {
+			else if ($this->karma['local']['players'][$login]['vote'] === -3) {
 				$xml .= '<quad pos="81.25 0" z-index="0.05" size="5.25 5.25" halign="center" style="Icons64x64_1" substyle="YellowHigh"/>';
 				$xml .= '<label pos="81.25 -5.2" z-index="0.03" size="15 0" class="labels" halign="center" textsize="1" scale="0.85" textcolor="FFFF" text="Your vote"/>';
 			}
@@ -2273,7 +2273,7 @@ EOL;
 			$players[] = array(
 				'id'		=> $player->id,
 				'nickname'	=> $this->handleSpecialChars($player->nickname),
-				'vote'		=> (($this->karma['global']['players'][$player->login]['vote'] == 0) ? -4 : $this->karma['global']['players'][$player->login]['vote']),
+				'vote'		=> (($this->karma['global']['players'][$player->login]['vote'] === 0) ? -4 : $this->karma['global']['players'][$player->login]['vote']),
 			);
 		}
 
@@ -2358,57 +2358,57 @@ EOL;
 		$preset['waste']['action']		= 'RequireFinish';
 
 		// Fantastic
-		if ($this->karma['global']['players'][$player->login]['vote'] == 3) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === 3) {
 			$preset['fantastic']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['fantastic']['action'] = 'Ignore';
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['fantastic']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
 		// Beautiful
-		if ($this->karma['global']['players'][$player->login]['vote'] == 2) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === 2) {
 			$preset['beautiful']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['beautiful']['action'] = 'Ignore';
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['beautiful']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
 		// Good
-		if ($this->karma['global']['players'][$player->login]['vote'] == 1) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === 1) {
 			$preset['good']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['good']['action'] = 'Ignore';
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['good']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
 
 		// Bad
-		if ($this->karma['global']['players'][$player->login]['vote'] == -1) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === -1) {
 			$preset['bad']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['bad']['action'] = 'Ignore';
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['bad']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
 		// Poor
-		if ($this->karma['global']['players'][$player->login]['vote'] == -2) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === -2) {
 			$preset['poor']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['poor']['action'] = 'Ignore';
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['poor']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
 		// Waste
-		if ($this->karma['global']['players'][$player->login]['vote'] == -3) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === -3) {
 			$preset['waste']['bgcolor'] = $this->config['widget']['buttons']['bg_disabled'];
 			$preset['waste']['action'] = 'Ignore';
 		}
-		else if ( ($this->karma['global']['players'][$player->login]['vote'] == 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
+		else if ( ($this->karma['global']['players'][$player->login]['vote'] === 0) && (($this->config['require_finish'] > 0) && ($this->getPlayerData($player, 'FinishedMapCount') < $this->config['require_finish'])) ) {
 			$preset['waste']['bgcolor'] = $this->config['widget']['buttons']['bg_vote'];
 		}
 
@@ -2418,7 +2418,7 @@ EOL;
 
 
 		// Button +++
-		if ($preset['fantastic']['bgcolor'] != '0000') {
+		if ($preset['fantastic']['bgcolor'] !== '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame pos="4.575 -15.9375" z-index="1">';
 			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['fantastic']['action'] .'" bgcolor="'. $preset['fantastic']['bgcolor'] .'"/>';
@@ -2427,7 +2427,7 @@ EOL;
 		}
 
 		// Button ++
-		if ($preset['beautiful']['bgcolor'] != '0000') {
+		if ($preset['beautiful']['bgcolor'] !== '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame pos="9.575 -15.9375" z-index="1">';
 			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['beautiful']['action'] .'" bgcolor="'. $preset['beautiful']['bgcolor'] .'"/>';
@@ -2436,7 +2436,7 @@ EOL;
 		}
 
 		// Button +
-		if ($preset['good']['bgcolor'] != '0000') {
+		if ($preset['good']['bgcolor'] !== '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame pos="14.575 -15.9375" z-index="1">';
 			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['good']['action'] .'" bgcolor="'. $preset['good']['bgcolor'] .'"/>';
@@ -2445,7 +2445,7 @@ EOL;
 		}
 
 		// Button -
-		if ($preset['bad']['bgcolor'] != '0000') {
+		if ($preset['bad']['bgcolor'] !== '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame pos="19.575 -15.9375" z-index="1">';
 			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['bad']['action'] .'" bgcolor="'. $preset['bad']['bgcolor'] .'"/>';
@@ -2454,7 +2454,7 @@ EOL;
 		}
 
 		// Button --
-		if ($preset['poor']['bgcolor'] != '0000') {
+		if ($preset['poor']['bgcolor'] !== '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame pos="24.575 -15.9375" z-index="1">';
 			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['poor']['action'] .'" bgcolor="'. $preset['poor']['bgcolor'] .'"/>';
@@ -2463,7 +2463,7 @@ EOL;
 		}
 
 		// Button ---
-		if ($preset['waste']['bgcolor'] != '0000') {
+		if ($preset['waste']['bgcolor'] !== '0000') {
 			// Mark current vote or disable the vote possibility
 			$marker .= '<frame pos="29.575 -15.9375" z-index="1">';
 			$marker .= '<quad pos="0.5 -0.15" z-index="0.3" size="4.5 2.625" action="PluginManiaKarma?Action=Vote&Value='. $preset['waste']['action'] .'" bgcolor="'. $preset['waste']['bgcolor'] .'"/>';
@@ -2478,7 +2478,7 @@ EOL;
 		$xml .= '</stylesheet>';
 
 		// Send/Build MainWidget Frame only when required, if empty then the player can vote
-		if ($marker != false) {
+		if ($marker !== false) {
 			$xml .= '<frame pos="'. $this->config['widget']['states'][$gamemode]['pos_x'] .' '. $this->config['widget']['states'][$gamemode]['pos_y'] .'" z-index="0.01" id="'. $this->config['manialink_id'] .'04MainFrame">';
 			$xml .= $marker;
 			$xml .= '</frame>';
@@ -2617,7 +2617,6 @@ main () {
 						LabelTooltip.Visible = True;
 					}
 				}
-
 			}
 		}
 		yield;
@@ -2641,7 +2640,7 @@ EOL;
 		global $aseco;
 
 		// Do nothing at Startup!!
-		if ($aseco->startup_phase == true) {
+		if ($aseco->startup_phase === true) {
 			return;
 		}
 
@@ -2652,7 +2651,7 @@ EOL;
 
 //		// $vote is "0" when the Player clicks on a red (no vote possible) or blue marked (same vote) button,
 //		// in both situation we bail out now.
-//		if ($vote == 0) {
+//		if ($vote === 0) {
 //			return;
 //		}
 
@@ -2663,9 +2662,9 @@ EOL;
 			// Show chat message
 			$message = $aseco->formatText($this->config['messages']['karma_require_finish'],
 						$this->config['require_finish'],
-						($this->config['require_finish'] == 1 ? '' : 's')
+						($this->config['require_finish'] === 1 ? '' : 's')
 			);
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) && ($this->config['widget']['current_state'] != 0) ) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) && ($this->config['widget']['current_state'] !== 0) ) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -2676,10 +2675,10 @@ EOL;
 
 
 		// Before call the remote API, check if player has the same already voted
-		if ($this->karma['global']['players'][$player->login]['vote'] == $vote) {
+		if ($this->karma['global']['players'][$player->login]['vote'] === $vote) {
 			// Same vote, does not need to call remote API, bail out immediately
 			$message = $this->config['messages']['karma_voted'];
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -2691,13 +2690,13 @@ EOL;
 
 		// Store the new vote for send them later with "MultiVote",
 		// but only if the global is different to the current vote
-		if ( (isset($this->karma['global']['players'][$player->login]['vote'])) && ($this->karma['global']['players'][$player->login]['vote'] != $vote) ) {
+		if ( (isset($this->karma['global']['players'][$player->login]['vote'])) && ($this->karma['global']['players'][$player->login]['vote'] !== $vote) ) {
 			$this->karma['new']['players'][$player->login] = $vote;
 		}
 
 
 	//	// Check if connection was failed
-	//	if ($this->config['retrytime'] == 0) {
+	//	if ($this->config['retrytime'] === 0) {
 			// Remove the previous global Vote
 			if ( isset($this->karma['global']['players'][$player->login]['vote']) ) {
 				switch ($this->karma['global']['players'][$player->login]['vote']) {
@@ -2761,14 +2760,14 @@ EOL;
 		}
 
 	//	// Check if connection was failed, and store the current Vote (only local or both)
-	//	if ($this->config['retrytime'] == 0) {
+	//	if ($this->config['retrytime'] === 0) {
 			$this->karma['global']['players'][$player->login]['vote'] = $vote;
 	//	}
 		$this->karma['local']['players'][$player->login]['vote'] = $vote;
 
 
 	//	// Check if connection was failed
-	//	if ($this->config['retrytime'] == 0) {
+	//	if ($this->config['retrytime'] === 0) {
 			// Add the new Vote into the counts (global/local)
 			switch ($vote) {
 				case 3:
@@ -2829,7 +2828,7 @@ EOL;
 
 
 	//	// Check if connection was failed
-	//	if ($this->config['retrytime'] == 0) {
+	//	if ($this->config['retrytime'] === 0) {
 			// Update the global/local $this->karma
 			$this->calculateKarma(array('global','local'));
 	//	}
@@ -2840,15 +2839,15 @@ EOL;
 
 
 		// Show the MX-Link-Window (if enabled and we are at Score)
-		if ($this->config['score_mx_window'] == true) {
+		if ($this->config['score_mx_window'] === true) {
 			$this->showManiaExchangeLinkWindow($player);
 		}
 
 
 		// Tell the player the result for his/her vote
-		if ($this->karma['global']['players'][$player->login]['previous'] == 0) {
+		if ($this->karma['global']['players'][$player->login]['previous'] === 0) {
 			$message = $aseco->formatText($this->config['messages']['karma_done'], $aseco->server->maps->current->name_stripped);
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -2856,9 +2855,9 @@ EOL;
 			}
 
 		}
-		else if ($this->karma['global']['players'][$player->login]['previous'] != $vote) {
+		else if ($this->karma['global']['players'][$player->login]['previous'] !== $vote) {
 			$message = $aseco->formatText($this->config['messages']['karma_change'], $aseco->server->maps->current->name_stripped);
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -2869,8 +2868,8 @@ EOL;
 
 		// Show Map Karma (with details?)
 		$message = $this->createKarmaMessage($player->login, false);
-		if ($message != false) {
-			if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+		if ($message !== false) {
+			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -2884,12 +2883,12 @@ EOL;
 
 
 		// Should all other player (except the vote given player) be informed/asked?
-		if ($this->config['show_player_vote_public'] == true) {
+		if ($this->config['show_player_vote_public'] === true) {
 			$logins = array();
 			foreach ($aseco->server->players->player_list as $pl) {
 
 				// Don't ask/tell the player that give the vote
-				if ($pl->login == $player->login) {
+				if ($pl->login === $player->login) {
 					continue;
 				}
 
@@ -2899,7 +2898,7 @@ EOL;
 				}
 
 				// Don't ask/tell players if she/he has already voted!
-				if ($this->karma['global']['players'][$pl->login]['vote'] != 0) {
+				if ($this->karma['global']['players'][$pl->login]['vote'] !== 0) {
 					continue;
 				}
 
@@ -2913,22 +2912,22 @@ EOL;
 			}
 
 			// Build the message and send out
-			if ($vote == 1) {
+			if ($vote === 1) {
 				$player_voted = $this->config['messages']['karma_good'];
 			}
-			else if ($vote == 2) {
+			else if ($vote === 2) {
 				$player_voted = $this->config['messages']['karma_beautiful'];
 			}
-			else if ($vote == 3) {
+			else if ($vote === 3) {
 				$player_voted = $this->config['messages']['karma_fantastic'];
 			}
-			else if ($vote == -1) {
+			else if ($vote === -1) {
 				$player_voted = $this->config['messages']['karma_bad'];
 			}
-			else if ($vote == -2) {
+			else if ($vote === -2) {
 				$player_voted = $this->config['messages']['karma_poor'];
 			}
-			else if ($vote == -3) {
+			else if ($vote === -3) {
 				$player_voted = $this->config['messages']['karma_waste'];
 			}
 			$message = $aseco->formatText($this->config['messages']['karma_show_opinion'],
@@ -2975,9 +2974,9 @@ EOL;
 		$message = $this->createKarmaMessage($login, false);
 
 		// Show message
-		if ($message != false) {
+		if ($message !== false) {
 			if ($login) {
-				if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+				if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 					if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 						send_window_message($aseco, $message, $player);
 					}
@@ -2987,7 +2986,7 @@ EOL;
 				}
 			}
 			else {
-				if ( ($this->config['messages_in_window'] == true) && (function_exists('send_window_message')) ) {
+				if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
 					send_window_message($aseco, $message, false);
 				}
 				else {
@@ -3010,7 +3009,7 @@ EOL;
 		$message = false;
 
 		// Show default Karma message
-		if ( ($this->config['show_karma'] == true) || ($force_display == true) ) {
+		if ( ($this->config['show_karma'] === true) || ($force_display === true) ) {
 			$message = $aseco->formatText($this->config['messages']['karma_message'],
 				$aseco->server->maps->current->name_stripped,
 				$this->karma['global']['votes']['karma']
@@ -3018,23 +3017,23 @@ EOL;
 		}
 
 		// Optionally show player's actual vote
-		if ( ($this->config['show_votes'] == true) || ($force_display == true) ) {
-			if ($this->karma['global']['players'][$login]['vote'] == 1) {
+		if ( ($this->config['show_votes'] === true) || ($force_display === true) ) {
+			if ($this->karma['global']['players'][$login]['vote'] === 1) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_good'], '/+');
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == 2) {
+			else if ($this->karma['global']['players'][$login]['vote'] === 2) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_beautiful'], '/++');
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == 3) {
+			else if ($this->karma['global']['players'][$login]['vote'] === 3) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_fantastic'], '/+++');
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == -1) {
+			else if ($this->karma['global']['players'][$login]['vote'] === -1) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_bad'], '/-');
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == -2) {
+			else if ($this->karma['global']['players'][$login]['vote'] === -2) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_poor'], '/--');
 			}
-			else if ($this->karma['global']['players'][$login]['vote'] == -3) {
+			else if ($this->karma['global']['players'][$login]['vote'] === -3) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_waste'], '/---');
 			}
 			else {
@@ -3044,7 +3043,7 @@ EOL;
 		}
 
 		// Optionally show vote counts & percentages
-		if ( ($this->config['show_details'] == true) || ($force_display == true) ) {
+		if ( ($this->config['show_details'] === true) || ($force_display === true) ) {
 			$message .= $aseco->formatText(LF. $this->config['messages']['karma_details'],
 				$this->karma['global']['votes']['karma'],
 				$this->karma['global']['votes']['fantastic']['percent'],	$this->karma['global']['votes']['fantastic']['count'],
@@ -3070,13 +3069,13 @@ EOL;
 		global $aseco;
 
 		// Should all other player (except the vote given player) be informed/asked?
-		if ($this->config['show_player_vote_public'] == true) {
+		if ($this->config['show_player_vote_public'] === true) {
 			foreach ($aseco->server->players->player_list as $player) {
 
 				// Show only to players that did not voted yet
-				if ($this->karma['global']['players'][$player->login]['vote'] == 0) {
+				if ($this->karma['global']['players'][$player->login]['vote'] === 0) {
 					// Don't ask/tell the player that give the undecided vote
-					if ($player->login == $caller->login) {
+					if ($player->login === $caller->login) {
 						continue;
 					}
 
@@ -3095,7 +3094,7 @@ EOL;
 		}
 
 		// Close reminder-window if there is one for this Player
-		if ($this->getPlayerData($caller, 'ReminderWindow') == true) {
+		if ($this->getPlayerData($caller, 'ReminderWindow') === true) {
 			$this->closeReminderWindow($caller);
 		}
 	}
@@ -3111,7 +3110,7 @@ EOL;
 		global $aseco;
 
 		$gamestate = 'race';
-		if ($this->config['widget']['current_state'] == 0) {
+		if ($this->config['widget']['current_state'] === 0) {
 			$gamestate = 'score';
 		}
 
@@ -3213,7 +3212,7 @@ EOL;
 		global $aseco;
 
 		// Bail out immediately if not at Score
-		if ($this->config['widget']['current_state'] != 0) {
+		if ($this->config['widget']['current_state'] !== 0) {
 			return;
 		}
 
@@ -3246,7 +3245,7 @@ EOL;
 		}
 
 		$gamestate = 'race';
-		if ($this->config['widget']['current_state'] == 0) {
+		if ($this->config['widget']['current_state'] === 0) {
 			$gamestate = 'score';
 		}
 
@@ -3297,15 +3296,15 @@ EOL;
 		global $aseco;
 
 		// If there no players, bail out immediately
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 			return;
 		}
 
 		// Build the Manialink
 		$xml = '<manialink id="'. $this->config['manialink_id'] .'01" name="ReminderWindow" version="3"></manialink>';
 
-		if ($player != false) {
-			if ($this->getPlayerData($player, 'ReminderWindow') == true) {
+		if ($player !== false) {
+			if ($this->getPlayerData($player, 'ReminderWindow') === true) {
 				$aseco->sendManialink($xml, $player->login, 0, false);
 				$this->storePlayerData($player, 'ReminderWindow', false);
 			}
@@ -3313,7 +3312,7 @@ EOL;
 		else {
 			// Reset state at all Players
 			foreach ($aseco->server->players->player_list as $player) {
-				if ($this->getPlayerData($player, 'ReminderWindow') == true) {
+				if ($this->getPlayerData($player, 'ReminderWindow') === true) {
 					$this->storePlayerData($player, 'ReminderWindow', false);
 				}
 			}
@@ -3357,7 +3356,7 @@ EOL;
 				$this->onSync($aseco);
 			}
 
-			if ($this->config['retrytime'] == 0) {
+			if ($this->config['retrytime'] === 0) {
 
 				// Check for all required parameters for an remote API Call
 				if ( (empty($this->karma['data']['uid'])) || (empty($this->karma['data']['name'])) || (empty($this->karma['data']['author'])) || (empty($this->karma['data']['env'])) ) {
@@ -3410,7 +3409,7 @@ EOL;
 
 
 			// Check if karma should saved local also
-			if ($this->config['save_karma_also_local'] == true) {
+			if ($this->config['save_karma_also_local'] === true) {
 
 				$logins = array();
 				foreach ($this->karma['new']['players'] as $login => $vote) {
@@ -3482,7 +3481,7 @@ EOL;
 
 		// Switch source and destination if required
 		$destination = 'local';
-		if ($source == 'local') {
+		if ($source === 'local') {
 			$destination = 'global';
 		}
 
@@ -3495,12 +3494,12 @@ EOL;
 		$found = false;
 		foreach ($this->karma[$source]['players'] as $login => $votes) {
 			// Skip "no vote" (value "0") from sync
-			if ($votes['vote'] == 0) {
+			if ($votes['vote'] === 0) {
 				continue;
 			}
 
 			// Is the votes are different, then replace $source with the $destination vote
-			if ( (isset($this->karma[$destination]['players'][$login])) && ($this->karma[$destination]['players'][$login]['vote'] != $votes['vote']) ) {
+			if ( (isset($this->karma[$destination]['players'][$login])) && ($this->karma[$destination]['players'][$login]['vote'] !== $votes['vote']) ) {
 
 				// Set to true to rebuild the $destination Karma and the Widget (Cups/Values)
 				$found = true;
@@ -3540,7 +3539,7 @@ EOL;
 			}
 		}
 
-		if ($found == true) {
+		if ($found === true) {
 			// Update the $destination $this->karma
 			$this->calculateKarma(array($destination));
 
@@ -3559,7 +3558,7 @@ EOL;
 		global $aseco;
 
 		// If there no players, bail out immediately
-		if (count($aseco->server->players->player_list) == 0) {
+		if (count($aseco->server->players->player_list) === 0) {
 //			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
 //			$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 			return;
@@ -3655,8 +3654,8 @@ EOL;
 			$target = $params[2];
 		}
 
-		if ($request->response['header']['code'] == 200) {
-			if ($type == 'GET') {
+		if ($request->response['header']['code'] === 200) {
+			if ($type === 'GET') {
 				// Read the request
 				if (!$xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
 					$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'": Could not read/parse request from mania-karma.com "'. $request->response['content'] .'"!');
@@ -3667,7 +3666,7 @@ EOL;
 				else {
 					$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
 
-					if ($xml->status == 200) {
+					if ((int)$xml->status === 200) {
 
 						$this->karma['global']['votes']['fantastic']['percent']		= (float)$xml->votes->fantastic['percent'];
 						$this->karma['global']['votes']['fantastic']['count']		= (int)$xml->votes->fantastic['count'];
@@ -3689,7 +3688,7 @@ EOL;
 						// Insert the votes for every Player
 						foreach ($aseco->server->players->player_list as $player) {
 							foreach ($xml->players->player as $pl) {
-								if ($player->login == $pl['login']) {
+								if ($player->login === $pl['login']) {
 									$this->karma['global']['players'][$player->login]['vote']	= (int)$pl['vote'];
 									$this->karma['global']['players'][$player->login]['previous']	= (int)$pl['previous'];
 								}
@@ -3701,9 +3700,9 @@ EOL;
 							// Has the Player already vote this Map? If true, set to 9999 for max.
 							foreach ($aseco->server->players->player_list as $player) {
 								foreach ($xml->players->player as $pl) {
-									if ( ($player->login == $pl['login']) && ((int)$pl['vote'] != 0) ) {
-										// Set the state of finishing this map, if not already has a setup of a != 0 value
-										if ($this->getPlayerData($player, 'FinishedMapCount') == 0) {
+									if ( ($player->login === $pl['login']) && ((int)$pl['vote'] !== 0) ) {
+										// Set the state of finishing this map, if not already has a setup of a !== 0 value
+										if ($this->getPlayerData($player, 'FinishedMapCount') === 0) {
 											$this->storePlayerData($player, 'FinishedMapCount', 9999);
 										}
 									}
@@ -3712,22 +3711,22 @@ EOL;
 						}
 
 						// Check to see if it is required to sync global to local votes?
-						if ($this->config['sync_global_karma_local'] == true) {
+						if ($this->config['sync_global_karma_local'] === true) {
 							$this->syncGlobaAndLocalVotes('local', true);
 						}
 
 						// Now sync local votes to global votes (e.g. on connection lost...)
 						$this->syncGlobaAndLocalVotes('global', true);
 
-						if ($this->config['karma_calculation_method'] == 'RASP') {
+						if ($this->config['karma_calculation_method'] === 'RASP') {
 							// Update the global/local $this->karma
 							$this->calculateKarma(array('global','local'));
 						}
 
 						// Display the Karma value of Map?
-						if ($this->config['show_at_start'] == true) {
+						if ($this->config['show_at_start'] === true) {
 							// Show players' actual votes, or global karma message?
-							if ($this->config['show_votes'] == true) {
+							if ($this->config['show_votes'] === true) {
 								// Send individual player messages
 								if ($target === false) {
 									foreach ($aseco->server->players->player_list as $player) {
@@ -3748,7 +3747,7 @@ EOL;
 							$this->sendLoadingIndicator(false, $this->config['widget']['current_state']);
 
 							// Extract the MapImage and store them at the API
-							if (strtoupper($xml->image_present) == 'FALSE') {
+							if (strtoupper($xml->image_present) === 'FALSE') {
 								$this->transmitMapImage();
 							}
 						}
@@ -3762,7 +3761,7 @@ EOL;
 
 					if ($target === false) {
 						// Update KarmaWidget for all connected Players
-						if ($this->config['widget']['current_state'] == 0) {
+						if ($this->config['widget']['current_state'] === 0) {
 							$this->sendWidgetCombination(array('skeleton_score', 'cups_values'), false);
 						}
 						else {
@@ -3774,7 +3773,7 @@ EOL;
 					}
 					else {
 						// Update KarmaWidget only for current Player
-						if ($this->config['widget']['current_state'] == 0) {
+						if ($this->config['widget']['current_state'] === 0) {
 							$this->sendWidgetCombination(array('skeleton_score', 'cups_values', 'player_marker'), $target);
 						}
 						else {
@@ -3783,10 +3782,10 @@ EOL;
 					}
 				}
 			}
-			else if ($type == 'VOTE') {
+			else if ($type === 'VOTE') {
 				// Read the request
 				if ($xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
-					if (!$xml->status == 200) {
+					if ((int)$xml->status !== 200) {
 						$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'":  Storing votes failed with returncode "'. $xml->status .'"');
 					}
 					unset($xml);
@@ -3797,7 +3796,7 @@ EOL;
 					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 				}
 			}
-			else if ($type == 'UPTODATE') {
+			else if ($type === 'UPTODATE') {
 				// Read the request
 				if ($xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
 					$current_release = $xml->uaseco;
@@ -3810,7 +3809,7 @@ EOL;
 						$aseco->sendChatMessage($message, $target->login);
 					}
 					else {
-						if ($this->config['uptodate_info'] == 'DEFAULT') {
+						if ($this->config['uptodate_info'] === 'DEFAULT') {
 							$message = $aseco->formatText($this->config['messages']['uptodate_ok'],
 								$this->getVersion()
 							);
@@ -3825,17 +3824,17 @@ EOL;
 					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 				}
 			}
-			else if ($type == 'EXPORT') {
-				if ($request->response['header']['code'] == 200) {
+			else if ($type === 'EXPORT') {
+				if ($request->response['header']['code'] === 200) {
 					$this->config['import_done'] = true;		// Set to true, otherwise only after restart UASECO knows that
 					$message = '{#server}» {#admin}Export done. Thanks for supporting mania-karma.com!';
 					$aseco->sendChatMessage($message, $target->login);
 				}
-				else if ($request->response['header']['code'] == 406) {
+				else if ($request->response['header']['code'] === 406) {
 					$message = '{#server}» {#error}Export rejected! Please check your <login> and <nation> in config file "config/mania_karma.xml"!';
 					$aseco->sendChatMessage($message, $target->login);
 				}
-				else if ($request->response['header']['code'] == 409) {
+				else if ($request->response['header']['code'] === 409) {
 					$message = '{#server}» {#error}Export rejected! Export was already done, allowed only one time!';
 					$aseco->sendChatMessage($message, $target->login);
 				}
@@ -3844,10 +3843,10 @@ EOL;
 					$aseco->sendChatMessage($message, $target->login);
 				}
 			}
-			else if ($type == 'PING') {
+			else if ($type === 'PING') {
 				$this->config['retrytime'] = 0;
 			}
-			else if ($type == 'STOREIMAGE') {
+			else if ($type === 'STOREIMAGE') {
 				// Do nothing
 			}
 		}
@@ -3893,7 +3892,7 @@ EOL;
 			if ($res->num_rows > 0) {
 				while ($row = $res->fetch_object()) {
 					foreach ($aseco->server->players->player_list as $player) {
-						if ($player->login == $row->login) {
+						if ($player->login === $row->login) {
 							$this->storePlayerData($player, 'FinishedMapCount', (int)$row->count);
 						}
 					}
@@ -3913,7 +3912,7 @@ EOL;
 		global $aseco;
 
 		// Bail out if $MapId is not given
-		if ($MapId == false) {
+		if ($MapId === false) {
 			return;
 		}
 
@@ -4000,14 +3999,14 @@ EOL;
 		global $aseco;
 
 		// Bail out if $MapId is not given
-		if ($MapId == false) {
+		if ($MapId === false) {
 			return;
 		}
 
 
 		// Build the Player votes Array
 		$logins = array();
-		if ($login == false) {
+		if ($login === false) {
 			// Add all Players
 			foreach ($aseco->server->players->player_list as $player) {
 				$logins[] = "'". $player->login ."'";
@@ -4040,7 +4039,7 @@ EOL;
 			$res->free_result();
 		}
 
-		if ($login == false) {
+		if ($login === false) {
 			// If some Players has not vote this Map, we need to add them with Vote=0
 			foreach ($aseco->server->players->player_list as $player) {
 				if ( !isset($this->karma['local']['players'][$player->login]) ) {
@@ -4056,9 +4055,9 @@ EOL;
 		// Find out which Player already vote this Map? If true, set to 9999 for max.
 		if ($this->config['require_finish'] > 0) {
 			foreach ($aseco->server->players->player_list as $player) {
-				if ($this->karma['local']['players'][$player->login]['vote'] != 0) {
-					// Set the state of finishing this map, if not already has a setup of a != 0 value
-					if ($this->getPlayerData($player, 'FinishedMapCount') == 0) {
+				if ($this->karma['local']['players'][$player->login]['vote'] !== 0) {
+					// Set the state of finishing this map, if not already has a setup of a !== 0 value
+					if ($this->getPlayerData($player, 'FinishedMapCount') === 0) {
 						$this->storePlayerData($player, 'FinishedMapCount', 9999);
 					}
 				}
@@ -4197,7 +4196,7 @@ EOL;
 			$totalvotes = ($this->karma[$location]['votes']['fantastic']['count'] + $this->karma[$location]['votes']['beautiful']['count'] + $this->karma[$location]['votes']['good']['count'] + $this->karma[$location]['votes']['bad']['count'] + $this->karma[$location]['votes']['poor']['count'] + $this->karma[$location]['votes']['waste']['count']);
 
 			// Prevention of "illegal division by zero"
-			if ($totalvotes == 0) {
+			if ($totalvotes === 0) {
 				$totalvotes = 0.0000000000001;
 			}
 
@@ -4219,7 +4218,7 @@ EOL;
 				($this->karma[$location]['votes']['waste']['count'] * 0)
 			);
 
-			if ($this->config['karma_calculation_method'] == 'RASP') {
+			if ($this->config['karma_calculation_method'] === 'RASP') {
 				$this->karma[$location]['votes']['karma'] = floor(
 					($this->karma[$location]['votes']['fantastic']['count'] * 3) +
 					($this->karma[$location]['votes']['beautiful']['count'] * 2) +
@@ -4246,7 +4245,7 @@ EOL;
 	public function exportVotes ($player) {
 		global $aseco;
 
-		if ($this->config['import_done'] != false) {
+		if ($this->config['import_done'] !== false) {
 			$message = "{#server}» {#admin}Export of local votes already done, skipping...";
 			$aseco->sendChatMessage($message, $player->login);
 			return;

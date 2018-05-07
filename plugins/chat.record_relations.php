@@ -47,8 +47,8 @@ class PluginRecordRelations extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-03');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.record_relations', 'plugin_description'));
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
@@ -157,7 +157,7 @@ class PluginRecordRelations extends Plugin {
 			// find ranked record
 			for ($i = 0; $i < $total; $i++) {
 				$rec = $aseco->plugins['PluginLocalRecords']->records->getRecord($i);
-				if ($rec->player->login == $player->login) {
+				if ($rec->player->login === $player->login) {
 					$rank = $i;
 					$found = true;
 					break;
@@ -268,7 +268,7 @@ class PluginRecordRelations extends Plugin {
 			// find ranked record
 			for ($i = 0; $i < $total; $i++) {
 				$rec = $aseco->plugins['PluginLocalRecords']->records->getRecord($i);
-				if ($rec->player->login == $login) {
+				if ($rec->player->login === $login) {
 					$rank = $i;
 					$found = true;
 					break;

@@ -49,7 +49,7 @@ class PluginPanels extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-05-07');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('DEPRECATED: Selects ManiaLink panel templates.');
 
@@ -81,7 +81,7 @@ class PluginPanels extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter == 'help') {
+		if ($chat_parameter === 'help') {
 			$header = '{#black}/panelbg$g will change the panel background:';
 			$help = array();
 			$help[] = array('...', '{#black}help',
@@ -95,7 +95,7 @@ class PluginPanels extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(0.8, 0.05, 0.15, 0.6), 'OK');
 		}
-		else if ($chat_parameter == 'list') {
+		else if ($chat_parameter === 'list') {
 			$player->maplist = array();
 
 			// read list of background files
@@ -103,7 +103,7 @@ class PluginPanels extends Plugin {
 			$dir = opendir($paneldir);
 			$files = array();
 			while (($file = readdir($dir)) !== false) {
-				if (strtolower(substr($file, 0, 7)) == 'panelbg' && strtolower(substr($file, -4)) == '.xml') {
+				if (strtolower(substr($file, 0, 7)) === 'panelbg' && strtolower(substr($file, -4)) === '.xml') {
 					$files[] = substr($file, 7, strlen($file)-11);
 				}
 			}
@@ -146,7 +146,7 @@ class PluginPanels extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
-		else if ($chat_parameter != '') {
+		else if ($chat_parameter !== '') {
 			$panelbg = $chat_parameter;
 			if (is_numeric($panelbg) && $panelbg > 0) {
 				$sid = ltrim($panelbg, '0');
@@ -156,7 +156,7 @@ class PluginPanels extends Plugin {
 					$panelbg = $player->maplist[$sid]['panel'];
 				}
 			}
-			if ($panelbg == 'default') {
+			if ($panelbg === 'default') {
 				$player->panelbg = $aseco->panelbg;
 				$message = '{#server}» Panel background reset to server default {#highlite}' . $this->settings['panel_bg'] . '{#server} !';
 				$this->setPanelBG($login, $this->settings['panel_bg']);
@@ -166,7 +166,7 @@ class PluginPanels extends Plugin {
 			}
 			else {
 				// add file prefix
-				if (strtolower(substr($panelbg, 0, 7)) != 'panelbg')
+				if (strtolower(substr($panelbg, 0, 7)) !== 'panelbg')
 	                                $panelbg = 'PanelBG' . $panelbg;
 				$panelbg_file = 'config/panels/' . $panelbg . '.xml';
 				// load new background
@@ -213,7 +213,7 @@ class PluginPanels extends Plugin {
 
 			// set panel background (none = Card)
 			$this->settings['panel_bg'] = $settings['PANEL_BG'][0];
-			if ($this->settings['panel_bg'] == '') {
+			if ($this->settings['panel_bg'] === '') {
 				$this->settings['panel_bg'] = 'PanelBGCard';
 			}
 
@@ -234,7 +234,7 @@ class PluginPanels extends Plugin {
 
 
 			// check for default admin panel
-			if ($this->settings['admin_panel'] != '') {
+			if ($this->settings['admin_panel'] !== '') {
 				$panel_file = 'config/panels/' . $this->settings['admin_panel'] . '.xml';
 				$aseco->console('[Panel] Load default admin panel [{1}]', $panel_file);
 				// load default panel
@@ -390,7 +390,7 @@ class PluginPanels extends Plugin {
 			}
 
 			// load player's personal panels
-			if ($panels['admin'] != '') {
+			if ($panels['admin'] !== '') {
 				$panel_file = 'config/panels/' . $panels['admin'] . '.xml';
 				if (!$player->panels['admin'] = @file_get_contents($panel_file)) {
 					// Could not read XML file
@@ -413,7 +413,7 @@ class PluginPanels extends Plugin {
 	public function load_admpanel ($aseco, $player) {
 
 		// check for any admin
-		if ($aseco->isAnyAdmin($player) && $player->panels['admin'] != '') {
+		if ($aseco->isAnyAdmin($player) && $player->panels['admin'] !== '') {
 			$this->display_adminpanel($aseco, $player);
 		}
 	}
@@ -430,7 +430,7 @@ class PluginPanels extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter == 'help') {
+		if ($chat_parameter === 'help') {
 			$header = '{#black}/admin panel$g will change the admin panel:';
 			$help = array();
 			$help[] = array('...', '{#black}help',
@@ -446,7 +446,7 @@ class PluginPanels extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink($login, $header, array('Icons64x64_1', 'TrackInfo', -0.01), $help, array(0.8, 0.05, 0.15, 0.6), 'OK');
 		}
-		else if ($chat_parameter == 'list') {
+		else if ($chat_parameter === 'list') {
 			$player->maplist = array();
 
 			// read list of admin panel files
@@ -454,7 +454,7 @@ class PluginPanels extends Plugin {
 			$dir = opendir($paneldir);
 			$files = array();
 			while (($file = readdir($dir)) !== false) {
-				if (strtolower(substr($file, 0, 5)) == 'admin' && strtolower(substr($file, -4)) == '.xml') {
+				if (strtolower(substr($file, 0, 5)) === 'admin' && strtolower(substr($file, -4)) === '.xml') {
 					$files[] = substr($file, 5, strlen($file)-9);
 				}
 			}
@@ -498,7 +498,7 @@ class PluginPanels extends Plugin {
 			// display ManiaLink message
 			$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 		}
-		else if ($chat_parameter != '') {
+		else if ($chat_parameter !== '') {
 			$panel = $chat_parameter;
 			if (is_numeric($panel) && $panel > 0) {
 				$pid = ltrim($panel, '0');
@@ -508,13 +508,13 @@ class PluginPanels extends Plugin {
 					$panel = $player->maplist[$pid]['panel'];
 				}
 			}
-			if ($panel == 'off') {
+			if ($panel === 'off') {
 				$player->panels['admin'] = '';
 				$this->adminpanel_off($aseco, $login);
 				$message = '{#server}» Admin panel disabled!';
 				$this->setPanel($login, 'admin', '');
 			}
-			else if ($panel == 'default') {
+			else if ($panel === 'default') {
 				$player->panels['admin'] = $this->replacePanelBG($this->panels['admin'], $player->panelbg);
 				$this->load_admpanel($aseco, $player);
 				$message = '{#server}» Admin panel reset to server default {#highlite}' . substr($this->settings['admin_panel'], 5) . '{#server} !';
@@ -522,7 +522,7 @@ class PluginPanels extends Plugin {
 			}
 			else {
 				// add file prefix
-				if (strtolower(substr($panel, 0, 5)) != 'admin')
+				if (strtolower(substr($panel, 0, 5)) !== 'admin')
 					$panel = 'Admin' . $panel;
 				$panel_file = 'config/panels/' . $panel . '.xml';
 				// load new panel

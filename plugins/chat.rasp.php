@@ -52,8 +52,8 @@ class PluginChatRasp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides private messages and a wide variety of shout-outs.');
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -122,7 +122,7 @@ class PluginChatRasp extends Plugin {
 		}
 
 		// check for a message
-		if (isset($command['params'][1]) && $command['params'][1] != '') {
+		if (isset($command['params'][1]) && $command['params'][1] !== '') {
 			$stamp = date('H:i:s');
 			// strip wide fonts from nicks
 			$plnick = str_ireplace('$w', '', $player->nickname);
@@ -194,7 +194,7 @@ class PluginChatRasp extends Plugin {
 			}
 
 			// check for a message
-			if ($command['params'][1] != '') {
+			if ($command['params'][1] !== '') {
 				$stamp = date('H:i:s');
 				// strip wide fonts from nicks
 				$plnick = str_ireplace('$w', '', $player->nickname);
@@ -331,7 +331,7 @@ class PluginChatRasp extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			$msg = '$g['. $player->nickname .'$z$s] {#interact}Hello '. $chat_parameter .' !';
 		}
 		else {
@@ -359,7 +359,7 @@ class PluginChatRasp extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			$msg = '$g['. $player->nickname .'$z$s] {#interact}Bye '. $chat_parameter .' !';
 		}
 		else {
@@ -387,7 +387,7 @@ class PluginChatRasp extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			$msg = '$g['. $player->nickname .'$z$s] {#interact}Thanks '. $chat_parameter .' !';
 		}
 		else {
@@ -539,7 +539,7 @@ class PluginChatRasp extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			$msg = '$g['. $player->nickname .'$z$s] {#interact}Good Game '. $chat_parameter .' !';
 		}
 		else {
@@ -567,7 +567,7 @@ class PluginChatRasp extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			$msg = '$g['. $player->nickname .'$z$s] {#interact}Good Race '. $chat_parameter .' !';
 		}
 		else {
@@ -595,7 +595,7 @@ class PluginChatRasp extends Plugin {
 			return;
 		}
 
-		if ($chat_parameter != '') {
+		if ($chat_parameter !== '') {
 			$msg = '$g['. $player->nickname .'$z$s] {#interact}Nice One '. $chat_parameter .' !';
 		}
 		else {
@@ -669,7 +669,7 @@ class PluginChatRasp extends Plugin {
 		$aseco->sendChatMessage($msg);
 
 		try {
-			if (isset($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] != '') {
+			if (isset($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] !== '') {
 				$aseco->client->addCall('Kick',
 					$player->login,
 					$aseco->formatColors($aseco->plugins['PluginRasp']->messages['BOOTME_DIALOG'][0] .'$z')
@@ -703,7 +703,7 @@ class PluginChatRasp extends Plugin {
 		$aseco->sendChatMessage($msg);
 
 		try {
-			if (isset($aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0] != '') {
+			if (isset($aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0]) && $aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0] !== '') {
 				$aseco->client->addCall('Kick',
 					$player->login,
 					$aseco->formatColors($aseco->plugins['PluginRasp']->messages['RAGEQUIT_DIALOG'][0] .'$z')

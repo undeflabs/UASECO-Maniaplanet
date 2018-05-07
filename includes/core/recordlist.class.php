@@ -45,8 +45,8 @@ class RecordList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-31');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages a list of records, add records to the list and remove them.');
 
 		$this->record_list = array();
@@ -144,7 +144,7 @@ class RecordList extends BaseClass {
 		global $aseco;
 
 		// if no rank was set for this record, then put it to the end of the list
-		if ($rank == -1) {
+		if ($rank === -1) {
 			$rank = count($this->record_list);
 		}
 

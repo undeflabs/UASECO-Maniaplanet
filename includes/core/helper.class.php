@@ -44,8 +44,8 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-08-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
 
@@ -57,7 +57,7 @@ class Helper extends BaseClass {
 
 	public function displayLoadStatus ($message, $ratio = 0.0) {
 
-		if ($this->settings['show_load_status'] == true) {
+		if ($this->settings['show_load_status'] === true) {
 			$xml = '<manialink id="UASECO:LoadStatus" version="3">';
 			if ($message !== false && $this->startup_phase === true) {
 				$xml .= '<frame pos="-44.375 60.75" z-index="0.01">';
@@ -144,7 +144,7 @@ class Helper extends BaseClass {
 					$found = true;
 				}
 			}
-			if ($found == false) {
+			if ($found === false) {
 				$translated .= $needle;
 			}
 		}
@@ -329,7 +329,7 @@ class Helper extends BaseClass {
 				foreach ($chat_commands as $name => $cc) {
 					// collect either admin or non-admin commands
 					$allowed = false;
-					if ($showadmin == true) {
+					if ($showadmin === true) {
 						if ($cc['rights'] & Player::OPERATORS) {
 							// Chat command is only allowed for Operators, Admins or MasterAdmins
 							$allowed = true;
@@ -342,7 +342,7 @@ class Helper extends BaseClass {
 							// Chat command is only allowed for MasterAdmins
 							$allowed = true;
 						}
-						if ($allowed == true) {
+						if ($allowed === true) {
 							foreach ($cc['params'] as $cmd => $description) {
 								// if is object, finish the message and output its result.
 								// if not, it should be a normal string. this is a fallback for old plugins
@@ -360,7 +360,7 @@ class Helper extends BaseClass {
 							// Chat command is allowed for everyone
 							$allowed = true;
 						}
-						if ($allowed == true) {
+						if ($allowed === true) {
 //							// if is object), finish the message and output its result.
 							// if not, it should be a normal string. this is a fallback for old plugins
 							$help[] = array($pad . $cmd, ($cc['help'] instanceof Message) ? $cc['help']->finish($login) : $cc['help']);
@@ -389,7 +389,7 @@ class Helper extends BaseClass {
 			foreach ($chat_commands as $name => $cc) {
 				// collect either admin or non-admin commands
 				$allowed = false;
-				if ($showadmin == true) {
+				if ($showadmin === true) {
 					if ($cc['rights'] & Player::OPERATORS) {
 						// Chat command is only allowed for Operators, Admins or MasterAdmins
 						$allowed = true;
@@ -402,7 +402,7 @@ class Helper extends BaseClass {
 						// Chat command is only allowed for MasterAdmins
 						$allowed = true;
 					}
-					if ($allowed == true) {
+					if ($allowed === true) {
 						foreach ($cc['params'] as $cmd => $description) {
 							$help .= $cmd . ', ';
 						}
@@ -413,7 +413,7 @@ class Helper extends BaseClass {
 						// Chat command is allowed for everyone
 						$allowed = true;
 					}
-					if ($allowed == true) {
+					if ($allowed === true) {
 						$help .= $name . ', ';
 					}
 				}
@@ -433,7 +433,7 @@ class Helper extends BaseClass {
 	// Sends one or more Manialinks immediately to the given $logins, or all Players
 	public function sendManialink ($widgets, $logins = false, $timeout = 0, $hideclick = false) {
 
-		if ($widgets != '') {
+		if ($widgets !== '') {
 			$xml  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 			$xml .= $widgets;
 
@@ -447,7 +447,7 @@ class Helper extends BaseClass {
 				}
 				catch (Exception $exception) {
 					$errmsg = $exception->getMessage();
-					if ($errmsg != 'Login unknown.') {
+					if ($errmsg !== 'Login unknown.') {
 						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - sendManialink(): SendDisplayManialinkPageToLogin: '. $logins);
 						$this->console('[DUMP] '. $widgets);
 					}
@@ -475,7 +475,7 @@ class Helper extends BaseClass {
 	// Adds one or more Manialinks to the multiquery and send later together with other Manialinks waiting in the query queue
 	public function addManialink ($widgets, $logins = false, $timeout = 0, $hideclick = false) {
 
-		if ($widgets != '') {
+		if ($widgets !== '') {
 			$xml  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 			$xml .= $widgets;
 
@@ -489,7 +489,7 @@ class Helper extends BaseClass {
 				}
 				catch (Exception $exception) {
 					$errmsg = $exception->getMessage();
-					if ($errmsg != 'Login unknown.') {
+					if ($errmsg !== 'Login unknown.') {
 						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - addManialink(): SendDisplayManialinkPageToLogin: '. $logins);
 						$this->console('[DUMP] '. $widgets);
 					}
@@ -516,7 +516,7 @@ class Helper extends BaseClass {
 	// Sends a chat message to the given $logins, or all Players
 	// OBSOLETE!!! Use the Message class please!
 	public function sendChatMessage ($message, $logins = false) {
-		if ($message != '') {
+		if ($message !== '') {
 			// Replace all entities back to normal for chat.
 			$message = $this->decodeEntities($message);
 
@@ -531,7 +531,7 @@ class Helper extends BaseClass {
 				}
 				catch (Exception $exception) {
 					$errmsg = $exception->getMessage();
-					if ($errmsg != 'Login unknown.') {
+					if ($errmsg !== 'Login unknown.') {
 						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $errmsg .'" - sendChatMessage(): ChatSendServerMessageToLogin: '. $logins);
 					}
 				}
@@ -645,7 +645,7 @@ class Helper extends BaseClass {
 
 		// Check case-insensitive paths
 		foreach ($checkpaths as $path) {
-			if (strtolower($filepath) == strtolower($path)) {
+			if (strtolower($filepath) === strtolower($path)) {
 				return $path;
 			}
 		}
@@ -872,24 +872,24 @@ class Helper extends BaseClass {
 
 		$timestring = '';
 		if ($days) {
-			$timestring .= sprintf("%d day%s", $days, ($days == 1 ? ' ' : 's '));
+			$timestring .= sprintf("%d day%s", $days, ($days === 1 ? ' ' : 's '));
 		}
 		if ($hours) {
-			$timestring .= sprintf("%d hour%s", $hours, ($hours == 1 ? ' ' : 's '));
+			$timestring .= sprintf("%d hour%s", $hours, ($hours === 1 ? ' ' : 's '));
 		}
 		if ($minutes) {
 			if ($short === true) {
 				$timestring .= sprintf("%d min. ", $minutes);
 			}
 			else {
-				$timestring .= sprintf("%d minute%s", $minutes, ($minutes == 1 ? ' ' : 's '));
+				$timestring .= sprintf("%d minute%s", $minutes, ($minutes === 1 ? ' ' : 's '));
 			}
 		}
 		if ($short === true) {
 			$timestring .= sprintf("%d sec.", $seconds);
 		}
 		else {
-			$timestring .= sprintf("%d second%s", $seconds, ($seconds == 1 ? ' ' : 's'));
+			$timestring .= sprintf("%d second%s", $seconds, ($seconds === 1 ? ' ' : 's'));
 		}
 
 		return $timestring;
@@ -958,10 +958,10 @@ class Helper extends BaseClass {
 		if (is_bool($string)) {
 			return $string;
 		}
-		else if (strtoupper($string) == 'TRUE') {
+		else if (strtoupper($string) === 'TRUE') {
 			return true;
 		}
-		else if (strtoupper($string) == 'FALSE') {
+		else if (strtoupper($string) === 'FALSE') {
 			return false;
 		}
 		else {
@@ -1192,7 +1192,7 @@ class Helper extends BaseClass {
 				// $co < 192
 				// 1 byte ASCII => 0bbbbbbb, or invalid => 10bbbbbb or 11111bbb
 				// erroneous middle multibyte char?
-				if ($co >= 128 || $co == 0) {
+				if ($co >= 128 || $co === 0) {
 					$new .= $invalidRepl;
 				}
 				else {
@@ -1338,7 +1338,7 @@ class Helper extends BaseClass {
 	public function allowAbility ($player, $ability) {
 
 		// Check for unlocked password
-		if ($this->settings['lock_password'] != '' && !$player->unlocked) {
+		if ($this->settings['lock_password'] !== '' && !$player->unlocked) {
 			return false;
 		}
 
@@ -1370,10 +1370,10 @@ class Helper extends BaseClass {
 	public function isMasterAdmin ($player) {
 
 		// Check for masteradmin list entry
-		if (isset($player->login) && $player->login != '' && isset($this->masteradmin_list['TMLOGIN'])) {
+		if (isset($player->login) && $player->login !== '' && isset($this->masteradmin_list['TMLOGIN'])) {
 			if (($i = array_search($player->login, $this->masteradmin_list['TMLOGIN'])) !== false) {
 				// Check for matching IP if set
-				if ($this->masteradmin_list['IPADDRESS'][$i] != '') {
+				if ($this->masteradmin_list['IPADDRESS'][$i] !== '') {
 					if (!$this->matchIP($player->ip, $this->masteradmin_list['IPADDRESS'][$i])) {
 						trigger_error("Attempt to use MasterAdmin login [". $player->login ."] from IP [". $player->ip ."]!", E_USER_WARNING);
 						return false;
@@ -1405,10 +1405,10 @@ class Helper extends BaseClass {
 	public function isAdmin ($player) {
 
 		// Check for admin list entry
-		if (isset($player->login) && $player->login != '' && isset($this->admin_list['TMLOGIN'])) {
+		if (isset($player->login) && $player->login !== '' && isset($this->admin_list['TMLOGIN'])) {
 			if (($i = array_search($player->login, $this->admin_list['TMLOGIN'])) !== false) {
 				// Check for matching IP if set
-				if ($this->admin_list['IPADDRESS'][$i] != '') {
+				if ($this->admin_list['IPADDRESS'][$i] !== '') {
 					if (!$this->matchIP($player->ip, $this->admin_list['IPADDRESS'][$i])) {
 						trigger_error("Attempt to use Admin login [". $player->login ."] from IP [". $player->ip ."]!", E_USER_WARNING);
 						return false;
@@ -1440,10 +1440,10 @@ class Helper extends BaseClass {
 	public function isOperator ($player) {
 
 		// Check for operator list entry
-		if (isset($player->login) && $player->login != '' && isset($this->operator_list['TMLOGIN'])) {
+		if (isset($player->login) && $player->login !== '' && isset($this->operator_list['TMLOGIN'])) {
 			if (($i = array_search($player->login, $this->operator_list['TMLOGIN'])) !== false) {
 				// check for matching IP if set
-				if ($this->operator_list['IPADDRESS'][$i] != '') {
+				if ($this->operator_list['IPADDRESS'][$i] !== '') {
 					if (!$this->matchIP($player->ip, $this->operator_list['IPADDRESS'][$i])) {
 						trigger_error("Attempt to use Operator login [" . $player->login ."] from IP [". $player->ip ."]!", E_USER_WARNING);
 						return false;
@@ -1484,7 +1484,7 @@ class Helper extends BaseClass {
 
 	// Checks if the given player login is in masteradmin list.
 	public function isMasterAdminByLogin ($login) {
-		if ($login != '' && isset($this->masteradmin_list['TMLOGIN'])) {
+		if ($login !== '' && isset($this->masteradmin_list['TMLOGIN'])) {
 			return in_array($login, $this->masteradmin_list['TMLOGIN']);
 		}
 		else {
@@ -1500,7 +1500,7 @@ class Helper extends BaseClass {
 
 	// Checks if the given player login is in admin list.
 	public function isAdminByLogin ($login) {
-		if ($login != '' && isset($this->admin_list['TMLOGIN'])) {
+		if ($login !== '' && isset($this->admin_list['TMLOGIN'])) {
 			return in_array($login, $this->admin_list['TMLOGIN']);
 		}
 		else {
@@ -1517,7 +1517,7 @@ class Helper extends BaseClass {
 	// Checks if the given player login is in operator list.
 	public function isOperatorByLogin ($login) {
 		// Check for operator list entry
-		if ($login != '' && isset($this->operator_list['TMLOGIN'])) {
+		if ($login !== '' && isset($this->operator_list['TMLOGIN'])) {
 			return in_array($login, $this->operator_list['TMLOGIN']);
 		}
 		else {
@@ -1567,7 +1567,7 @@ class Helper extends BaseClass {
 	public function matchIP ($playerip, $listip) {
 
 		// Check for offline player (removeadmin / removeop)
-		if ($playerip == '') {
+		if ($playerip === '') {
 			return true;
 		}
 
@@ -1576,15 +1576,15 @@ class Helper extends BaseClass {
 		foreach (explode(',', $listip) as $ip) {
 			if (preg_match('/^\d+\.\d+\.\d+\.\d+$/', $ip)) {
 				// check for complete list IP
-				$match = ($playerip == $ip);
+				$match = ($playerip === $ip);
 			}
 			else if (substr($ip, -4) === '.*.*') {
 				// check class B wildcard
-				$match = (preg_replace('/\.\d+\.\d+$/', '', $playerip) == substr($ip, 0, -4));
+				$match = (preg_replace('/\.\d+\.\d+$/', '', $playerip) === substr($ip, 0, -4));
 			}
 			else if (substr($ip, -2) === '.*') {
 				// check class C wildcard
-				$match = (preg_replace('/\.\d+$/', '', $playerip) == substr($ip, 0, -2));
+				$match = (preg_replace('/\.\d+$/', '', $playerip) === substr($ip, 0, -2));
 			}
 			if ($match) {
 				return true;
@@ -1619,7 +1619,7 @@ class Helper extends BaseClass {
 					}
 				}
 				else {
-					if (count($this->admin_list['TMLOGIN']) != count($this->admin_list['IPADDRESS'])) {
+					if (count($this->admin_list['TMLOGIN']) !== count($this->admin_list['IPADDRESS'])) {
 						trigger_error("Admin mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
 					}
 				}
@@ -1635,7 +1635,7 @@ class Helper extends BaseClass {
 					}
 				}
 				else {
-					if (count($this->operator_list['TMLOGIN']) != count($this->operator_list['IPADDRESS'])) {
+					if (count($this->operator_list['TMLOGIN']) !== count($this->operator_list['IPADDRESS'])) {
 						trigger_error("Operators mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
 					}
 				}
@@ -1646,7 +1646,7 @@ class Helper extends BaseClass {
 
 			// convert strings to booleans
 			foreach ($this->admin_abilities as $ability => $value) {
-				if (strtoupper($value[0]) == 'TRUE') {
+				if (strtoupper($value[0]) === 'TRUE') {
 					$this->admin_abilities[$ability][0] = true;
 				}
 				else {
@@ -1654,7 +1654,7 @@ class Helper extends BaseClass {
 				}
 			}
 			foreach ($this->operator_abilities as $ability => $value) {
-				if (strtoupper($value[0]) == 'TRUE') {
+				if (strtoupper($value[0]) === 'TRUE') {
 					$this->operator_abilities[$ability][0] = true;
 				}
 				else {
@@ -1696,7 +1696,7 @@ class Helper extends BaseClass {
 		$empty = true;
 		if (isset($this->admin_list['TMLOGIN'])) {
 			for ($i = 0; $i < count($this->admin_list['TMLOGIN']); $i++) {
-				if ($this->admin_list['TMLOGIN'][$i] != '') {
+				if ($this->admin_list['TMLOGIN'][$i] !== '') {
 					$lists .= "\t\t" . '<tmlogin>'. $this->admin_list['TMLOGIN'][$i] .'</tmlogin>';
 					$lists .= ' <ipaddress>'. $this->admin_list['IPADDRESS'][$i] .'</ipaddress>'. CRLF;
 					$empty = false;
@@ -1713,7 +1713,7 @@ class Helper extends BaseClass {
 		$empty = true;
 		if (isset($this->operator_list['TMLOGIN'])) {
 			for ($i = 0; $i < count($this->operator_list['TMLOGIN']); $i++) {
-				if ($this->operator_list['TMLOGIN'][$i] != '') {
+				if ($this->operator_list['TMLOGIN'][$i] !== '') {
 					$lists .= "\t\t" . '<tmlogin>'. $this->operator_list['TMLOGIN'][$i] .'</tmlogin>';
 					$lists .= ' <ipaddress>'. $this->operator_list['IPADDRESS'][$i] .'</ipaddress>'. CRLF;
 					$empty = false;
@@ -1796,7 +1796,7 @@ class Helper extends BaseClass {
 		$list  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>'. CRLF;
 		$list .= '<ban_list>'. CRLF;
 		for ($i = 0; $i < count($this->banned_ips); $i++) {
-			if ($this->banned_ips[$i] != '') {
+			if ($this->banned_ips[$i] !== '') {
 				$list .= "\t\t" . '<ipaddress>'. $this->banned_ips[$i] .'</ipaddress>'. CRLF;
 				$empty = false;
 			}
@@ -1827,7 +1827,7 @@ class Helper extends BaseClass {
 	public function customErrorHandler ($errno, $errstr, $errfile, $errline) {
 
 		// Check for error suppression
-		if (error_reporting() == 0) {
+		if (error_reporting() === 0) {
 			return;
 		}
 

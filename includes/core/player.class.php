@@ -131,8 +131,8 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-06-05');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
 		if ($data) {
@@ -290,7 +290,7 @@ class Player extends BaseClass {
 			if ($res->num_rows > 0) {
 				$total = $res->num_rows;
 				while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
-					if ($row['PlayerId'] == $this->id) {
+					if ($row['PlayerId'] === $this->id) {
 						$average = sprintf('%4.1F', $row['Average'] / 10000);
 						$found = true;
 						break;
@@ -300,7 +300,7 @@ class Player extends BaseClass {
 			}
 			$res->free_result();
 		}
-		if ($found == true) {
+		if ($found === true) {
 			return array($rank, $total, $average);
 		}
 		else {
@@ -449,16 +449,16 @@ class Player extends BaseClass {
 
 	public function getSpectatorStatus () {
 		$status = false;
-		if ($this->is_spectator == true) {
+		if ($this->is_spectator === true) {
 			$status = true;
 		}
 		if ($this->forced_spectator > 0) {
 			$status = true;
 		}
-		if ($this->temporary_spectator == true) {
+		if ($this->temporary_spectator === true) {
 			$status = true;
 		}
-		if ($this->pure_spectator == true) {
+		if ($this->pure_spectator === true) {
 			$status = true;
 		}
 		return $status;
@@ -524,7 +524,7 @@ class Player extends BaseClass {
 			if ($result->num_rows > 0) {
 				while ($row = $result->fetch_object()) {
 					// check for new map & reset rank
-					if ($last != $row->Uid) {
+					if ($last !== $row->Uid) {
 						$last = $row->Uid;
 						$pos = 1;
 					}
@@ -533,7 +533,7 @@ class Player extends BaseClass {
 					}
 
 					// Store player's maps & records
-					if ($row->PlayerId == $this->id) {
+					if ($row->PlayerId === $this->id) {
 						$list[$row->Uid] = $pos;
 						continue;
 					}

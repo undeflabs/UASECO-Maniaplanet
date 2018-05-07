@@ -50,8 +50,8 @@ class PluginMessageLog extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-05-14');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Keeps log of system messages, and displays the messages log.');
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
@@ -90,7 +90,7 @@ class PluginMessageLog extends Plugin {
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $answer) {
 
-		if ($answer['Action'] == 'MessageLogShow') {
+		if ($answer['Action'] === 'MessageLogShow') {
 			// Get player
 			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				// Call /msglog

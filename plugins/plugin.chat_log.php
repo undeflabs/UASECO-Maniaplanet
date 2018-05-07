@@ -49,8 +49,8 @@ class PluginChatlog extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-04-27');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.chat_log', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -83,7 +83,7 @@ class PluginChatlog extends Plugin {
 	public function onPlayerChat ($aseco, $chat) {
 
 		// check for non-empty player chat line, not a chat command
-		if ($chat[2] != '' && $chat[2]{0} != '/') {
+		if ($chat[2] !== '' && $chat[2]{0} !== '/') {
 			// drop oldest chat line if buffer full
 			if (count($this->chat_history_buffer) >= $this->chat_history_length) {
 				array_shift($this->chat_history_buffer);

@@ -49,8 +49,8 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2017-08-18');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -87,7 +87,7 @@ class PluginInfoBar extends Plugin {
 			return;
 		}
 
-		if (strtoupper($chat_parameter) == 'RELOAD') {
+		if (strtoupper($chat_parameter) === 'RELOAD') {
 			if ($aseco->isMasterAdmin($player)) {
 				$aseco->console('[InfoBar] MasterAdmin '. $player->login .' reloads the configuration.');
 
@@ -151,7 +151,7 @@ class PluginInfoBar extends Plugin {
 	public function onEverySecond ($aseco) {
 
 		// Check for required updates
-		if ($aseco->server->gamestate != Server::SCORE) {
+		if ($aseco->server->gamestate !== Server::SCORE) {
 			$this->updateRecords();
 		}
 	}
@@ -192,7 +192,7 @@ class PluginInfoBar extends Plugin {
 	*/
 
 	public function onPlayerManialinkPageAnswer ($aseco, $login, $params) {
-		if ($params['Action'] == 'DonatePlanets') {
+		if ($params['Action'] === 'DonatePlanets') {
 			$aseco->releaseChatCommand('/donate '. $params['Amount'], $login);
 		}
 	}
@@ -269,7 +269,7 @@ class PluginInfoBar extends Plugin {
 	// Event from plugin.local_records.php
 	public function onLocalRecord ($aseco, $record) {
 
-		if ($this->players[$record->player->login]['local_record'] > $record->score || $this->players[$record->player->login]['local_record'] == 0) {
+		if ($this->players[$record->player->login]['local_record'] > $record->score || $this->players[$record->player->login]['local_record'] === 0) {
 			// Store new 1. Local Record at each connected Player
 			foreach ($aseco->server->players->player_list as $player) {
 				$this->players[$player->login]['local_record'] = $record->score;
@@ -310,7 +310,7 @@ class PluginInfoBar extends Plugin {
 	// Event from plugin.dedimania.php
 	public function onDedimaniaRecord ($aseco, $record) {
 
-		if ($this->players[$record['Login']]['dedimania_record'] > $record['Best'] || $this->players[$record['Login']]['dedimania_record'] == 0) {
+		if ($this->players[$record['Login']]['dedimania_record'] > $record['Best'] || $this->players[$record['Login']]['dedimania_record'] === 0) {
 			// Store new 1. Dedimania Record at each connected Player
 			foreach ($aseco->server->players->player_list as $player) {
 				$this->players[$player->login]['dedimania_record'] = $record['Best'];
@@ -375,13 +375,13 @@ class PluginInfoBar extends Plugin {
 
 		foreach ($aseco->server->players->player_list as $player) {
 			$xml = false;
-			if ($this->update['local_record'] == true) {
+			if ($this->update['local_record'] === true) {
 				$xml .= $this->buildLocalRecord($this->players[$player->login]['local_record'], true);
 			}
-			if ($this->update['dedimania_record'] == true) {
+			if ($this->update['dedimania_record'] === true) {
 				$xml .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], true);
 			}
-			if ($this->update['mania_exchange'] == true) {
+			if ($this->update['mania_exchange'] === true) {
 				$xml .= $this->buildManiaExchange($this->players[$player->login]['mania_exchange'], true);
 			}
 			if ($xml !== false) {
@@ -390,13 +390,13 @@ class PluginInfoBar extends Plugin {
 			}
 		}
 
-		if ($this->update['local_record'] == true) {
+		if ($this->update['local_record'] === true) {
 			$this->update['local_record'] = false;
 		}
-		if ($this->update['dedimania_record'] == true) {
+		if ($this->update['dedimania_record'] === true) {
 			$this->update['dedimania_record'] = false;
 		}
-		if ($this->update['mania_exchange'] == true) {
+		if ($this->update['mania_exchange'] === true) {
 			$this->update['mania_exchange'] = false;
 		}
 	}
@@ -418,7 +418,7 @@ class PluginInfoBar extends Plugin {
 		$xml .= $this->buildLadderLimits($show);
 		$xml .= $this->buildClock($show);
 
-		if ($logins == false) {
+		if ($logins === false) {
 			foreach ($aseco->server->players->player_list as $player) {
 				$mls = $xml;
 				$mls .= $this->buildPersonalBest($this->players[$player->login]['personal_best'], $show);
@@ -479,7 +479,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Clock" name="'. $this->config['manialinkid'] .':Clock" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 299) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="21 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 //			$xml .= '<quad pos="0 0" z-index="0.02" size="21 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonClock" ScriptEvents="1"/>';
@@ -505,7 +505,7 @@ EOL;
 		global $aseco;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'LadderLimits" name="'. $this->config['manialinkid'] .':LadderLimits" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 278.75) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="20.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 //			$xml .= '<quad pos="0 0" z-index="0.02" size="20.25 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonLadderLimits" ScriptEvents="1"/>';
@@ -565,7 +565,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Gamemode" name="'. $this->config['manialinkid'] .':Gamemode" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$modename = str_replace('_', ' ', $aseco->server->gameinfo->getModeName($aseco->server->gameinfo->mode));
 			$limits = '---';
 			switch ($aseco->server->gameinfo->mode) {
@@ -608,7 +608,7 @@ EOL;
 					break;
 
 				case Gameinfo::KNOCKOUT:
-					$limits = $aseco->server->gameinfo->knockout['RoundsPerMap'] . (($aseco->server->gameinfo->knockout['RoundsPerMap'] == 1) ? ' round' : ' rounds');
+					$limits = $aseco->server->gameinfo->knockout['RoundsPerMap'] . (($aseco->server->gameinfo->knockout['RoundsPerMap'] === 1) ? ' round' : ' rounds');
 					break;
 
 				case Gameinfo::DOPPLER:
@@ -723,7 +723,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'PlayerSpectatorCount" name="'. $this->config['manialinkid'] .':PlayerSpectatorCount" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. $this->config['bar']['position']['x'] .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="20.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 //			$xml .= '<quad pos="0 0" z-index="0.02" size="20.25 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonPlayerCount" ScriptEvents="1"/>';
@@ -859,7 +859,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'Donation" name="'. $this->config['manialinkid'] .':Donation" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 60.75) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="27.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0.02" size="27.25 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonDonation" ScriptEvents="1"/>';
@@ -963,7 +963,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'CurrentRanking" name="'. $this->config['manialinkid'] .':CurrentRanking" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 40.5) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="20.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 			if (!empty($this->config['CURRENT_RANKING'][0]['ACTION'][0])) {
@@ -994,7 +994,7 @@ EOL;
 	private function buildLastBestTime ($show = true) {
 		global $aseco;
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
@@ -1067,7 +1067,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'PlayerLastBestTime" name="'. $this->config['manialinkid'] .':PlayerLastBestTime" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 88) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="27.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 //			$xml .= '<quad pos="0 0" z-index="0.02" size="27.25 7" bgcolor="'. $this->config['BOX'][0]['BACKGROUND_COLOR_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['BOX'][0]['BACKGROUND_COLOR_FOCUS'][0] .'" id="ButtonLastTime" ScriptEvents="1"/>';
@@ -1100,7 +1100,7 @@ EOL;
 	private function buildPersonalBest ($score, $show = true) {
 		global $aseco;
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
@@ -1194,7 +1194,7 @@ main() {
 EOL;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'PersonalBest" name="'. $this->config['manialinkid'] .':PersonalBest" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 142.5) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="27.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 			if (!empty($this->config['PERSONAL_BEST'][0]['ACTION'][0])) {
@@ -1225,7 +1225,7 @@ EOL;
 	private function buildLocalRecord ($score, $show = true) {
 		global $aseco;
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
@@ -1347,7 +1347,7 @@ EOL;
 	private function buildDedimaniaRecord ($score, $show = true) {
 		global $aseco;
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
@@ -1436,7 +1436,7 @@ main() {
 --></script>
 EOL;
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'DedimaniaRecord" name="'. $this->config['manialinkid'] .':DedimaniaRecord" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 197) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="27.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 			if (!empty($this->config['DEDIMANIA_RECORD'][0]['ACTION'][0])) {
@@ -1467,7 +1467,7 @@ EOL;
 	private function buildManiaExchange ($score, $show = true) {
 		global $aseco;
 
-		if ($aseco->server->gameinfo->mode == Gameinfo::CHASE) {
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
 			return;
 		}
 
@@ -1509,7 +1509,7 @@ main() {
 --></script>
 EOL;
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'ManiaExchange" name="'. $this->config['manialinkid'] .':ManiaExchange" version="3">';
-		if ($show == true) {
+		if ($show === true) {
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 224.25) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="27.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
 			if ($aseco->server->maps->current->mx !== false && !empty($this->config['MANIA_EXCHANGE'][0]['ACTION'][0])) {

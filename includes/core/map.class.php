@@ -93,11 +93,11 @@ class Map extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2017-05-31');
-		$this->setCopyright('2014 - 2017 by undef.de');
+		$this->setBuild('2018-05-07');
+		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores information about a Map on the dedicated server.');
 
-		if ($gbx != null) {
+		if ($gbx !== null) {
 			$this->id		= 0;
 			$this->uid		= $gbx->uid;
 			$this->filename		= $filename;
