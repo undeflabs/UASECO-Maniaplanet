@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-08');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -5796,7 +5796,7 @@ class PluginRecordsEyepiece extends Plugin {
 			(ROUND(`r`.`Average` / 1000) / 10) AS `Average`
 		FROM `%prefix%players` AS `p`
 		LEFT JOIN `%prefix%rankings` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
-		WHERE `r`.`Average` !== 0
+		WHERE `r`.`Average` != 0
 		ORDER BY `r`.`Average` ASC
 		". $appendix .";
 		";
@@ -6022,7 +6022,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`Nickname`,
 			`Donations`
 		FROM `%prefix%players`
-		WHERE `Donations` !== 0
+		WHERE `Donations` != 0
 		ORDER BY `Donations` DESC
 		". $appendix .";
 		";
@@ -6477,7 +6477,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`p`.`Continent`,
 			COUNT(`p`.`Continent`) AS `ContinentCount`
 		FROM `%prefix%players` AS `p`
-		WHERE `p`.`Continent` !== ''
+		WHERE `p`.`Continent` != ''
 		GROUP BY `p`.`Continent`
 		ORDER BY `ContinentCount` DESC
 		". $appendix .";
@@ -6702,7 +6702,7 @@ class PluginRecordsEyepiece extends Plugin {
 			`r`.`MapId`
 		FROM `%prefix%records` AS `r`
 		LEFT JOIN `%prefix%maps` AS `m` ON `m`.`MapId` = `r`.`MapId`
-		WHERE `r`.`Score` !== ''
+		WHERE `r`.`Score` != ''
 		AND `GamemodeId` = ". $aseco->server->gameinfo->mode ."
 		ORDER BY `r`.`MapId` ASC, `Score` ASC,`Date` ASC;
 		";

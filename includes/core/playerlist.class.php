@@ -374,7 +374,7 @@ class PlayerList extends BaseClass {
 					`Continent` = ". $aseco->db->quote($aseco->continent->continentToAbbreviation($player->continent)) .",
 					`Nation` = ". $aseco->db->quote($player->nation) .",
 					`LastVisit` = NOW()
-				WHERE `Login`= ". $aseco->db->quote($player->login) .";
+				WHERE `Login` = ". $aseco->db->quote($player->login) .";
 				";
 				$result = $aseco->db->query($query);
 				if (!$result) {

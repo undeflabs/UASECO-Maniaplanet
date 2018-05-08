@@ -50,7 +50,7 @@ class PluginDonate extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Processes planet donations to and payments from the server.');
 
@@ -140,7 +140,7 @@ class PluginDonate extends Plugin {
 			`Nickname`,
 			`Donations`
 		FROM `%prefix%players`
-		WHERE `Donations` !== 0
+		WHERE `Donations` != 0
 		ORDER BY `Donations` DESC
 		LIMIT ". $top .";
 		";

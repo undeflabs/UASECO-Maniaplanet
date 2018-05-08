@@ -47,7 +47,7 @@ class PluginRasp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
@@ -311,7 +311,7 @@ class PluginRasp extends Plugin {
 			`r`.`Average`
 		FROM `%prefix%players` AS `p`
 		LEFT JOIN `%prefix%rankings` AS `r` ON `p`.`PlayerId` = `r`.`PlayerId`
-		WHERE `r`.`Average` !== 0
+		WHERE `r`.`Average` != 0
 		ORDER BY `r`.`Average` ASC
 		LIMIT ". $top .";
 		";
