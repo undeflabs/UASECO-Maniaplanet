@@ -47,7 +47,7 @@ class PluginRasp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-08');
+		$this->setBuild('2018-05-09');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
@@ -87,7 +87,7 @@ class PluginRasp extends Plugin {
 
 		// prune records and times entries for maps deleted from server
 		if ($this->prune_records_times) {
-			$aseco->console('[Rasp] Pruning `%prefix%records`, `%prefix%ratings` and `%prefix%times` for deleted maps:');
+			$aseco->console('[Rasp] Pruning `'. $aseco->db->table_prefix .'records`, `'. $aseco->db->table_prefix .'ratings` and `'. $aseco->db->table_prefix .'times` for deleted maps:');
 
 			// Get list of maps IDs with records in the database
 			$query = "

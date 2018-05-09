@@ -65,7 +65,7 @@ class MapList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-09');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
@@ -147,12 +147,12 @@ class MapList extends BaseClass {
 
 	public function getMapById ($id) {
 		foreach ($this->map_list as $map) {
-			if ($map->id === $id) {
+			if ($map->id === (int)$id) {
 				return $map;
 			}
 		}
 		if ($this->debug) {
-			trigger_error('[MapList] getMapByFilename(): Can not find map with ID "'. $id .'" in map_list[]', E_USER_WARNING);
+			trigger_error('[MapList] getMapById(): Can not find map with ID "'. $id .'" in map_list[]', E_USER_WARNING);
 		}
 		return new Map(null, null);
 	}
@@ -321,7 +321,7 @@ class MapList extends BaseClass {
 			if (isset($dbinfos[$mapinfo['UId']]) && !empty($dbinfos[$mapinfo['UId']]['filename']) && $this->force_maplist_update === false) {
 				// Create a dummy Map and setup it with data from the database
 				$map			= new Map(null, null);
-				$map->id		= $dbinfos[$mapinfo['UId']]['mapid'];
+				$map->id		= (int)$dbinfos[$mapinfo['UId']]['mapid'];
 				$map->uid		= $dbinfos[$mapinfo['UId']]['uid'];
 				$map->filename		= $mapinfo['FileName'];
 				$map->name		= $dbinfos[$mapinfo['UId']]['name'];
@@ -332,15 +332,15 @@ class MapList extends BaseClass {
 				$map->author_zone	= $dbinfos[$mapinfo['UId']]['author_zone'];
 				$map->author_continent	= $dbinfos[$mapinfo['UId']]['author_continent'];
 				$map->author_nation	= $dbinfos[$mapinfo['UId']]['author_nation'];
-				$map->author_score	= $dbinfos[$mapinfo['UId']]['author_score'];
-				$map->author_time	= $dbinfos[$mapinfo['UId']]['author_time'];
-				$map->gold_time		= $dbinfos[$mapinfo['UId']]['gold_time'];
-				$map->silver_time	= $dbinfos[$mapinfo['UId']]['silver_time'];
-				$map->bronze_time	= $dbinfos[$mapinfo['UId']]['bronze_time'];
-				$map->nb_laps		= $dbinfos[$mapinfo['UId']]['nb_laps'];
+				$map->author_score	= (int)$dbinfos[$mapinfo['UId']]['author_score'];
+				$map->author_time	= (int)$dbinfos[$mapinfo['UId']]['author_time'];
+				$map->gold_time		= (int)$dbinfos[$mapinfo['UId']]['gold_time'];
+				$map->silver_time	= (int)$dbinfos[$mapinfo['UId']]['silver_time'];
+				$map->bronze_time	= (int)$dbinfos[$mapinfo['UId']]['bronze_time'];
+				$map->nb_laps		= (int)$dbinfos[$mapinfo['UId']]['nb_laps'];
 				$map->multi_lap		= $dbinfos[$mapinfo['UId']]['multi_lap'];
-				$map->nb_checkpoints	= $dbinfos[$mapinfo['UId']]['nb_checkpoints'];
-				$map->cost		= $dbinfos[$mapinfo['UId']]['cost'];
+				$map->nb_checkpoints	= (int)$dbinfos[$mapinfo['UId']]['nb_checkpoints'];
+				$map->cost		= (int)$dbinfos[$mapinfo['UId']]['cost'];
 				$map->environment	= $dbinfos[$mapinfo['UId']]['environment'];
 				$map->mood		= $dbinfos[$mapinfo['UId']]['mood'];
 				$map->type		= $dbinfos[$mapinfo['UId']]['type'];

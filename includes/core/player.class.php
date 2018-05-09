@@ -131,13 +131,13 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-09');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
 		if ($data) {
-			$this->id			= $aseco->server->players->getPlayerIdByLogin($data['Login'], true);
-			$this->pid			= $data['PlayerId'];
+			$this->id			= (int)$aseco->server->players->getPlayerIdByLogin($data['Login'], true);
+			$this->pid			= (int)$data['PlayerId'];
 			$this->login			= $data['Login'];
 			$this->nickname			= $data['NickName'];
 			$this->nickname_stripped	= $aseco->stripStyles($this->nickname, true);

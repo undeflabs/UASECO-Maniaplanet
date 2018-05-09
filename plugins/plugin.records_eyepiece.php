@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-05-08');
+		$this->setBuild('2018-05-09');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -1755,6 +1755,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$player->data['PluginRecordsEyepiece']['Window']['MaxPage']	= 0;
 		$player->data['PluginRecordsEyepiece']['Maplist']['Filter']	= false;
 		$player->data['PluginRecordsEyepiece']['Maplist']['Records']	= array();
+		$player->data['PluginRecordsEyepiece']['Maplist']['Unfinished'] = array();
 
 		// Get current Gamemode
 		$gamemode = $aseco->server->gameinfo->mode;
@@ -13663,7 +13664,7 @@ Void HideFrame (Text ChildId) {
 }
 Void WipeOut (Text ChildId) {
 	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container !== Null) {
+	if (Container != Null) {
 		declare Real EndPosnX = 0.0;
 		declare Real EndPosnY = 0.0;
 		declare Real PosDistanceX = (EndPosnX - Container.RelativePosition_V3.X);

@@ -50,7 +50,7 @@ class PlayerList extends BaseClass {
 		$this->setAuthor('undef.de');
 		$this->setContributors(array('brakerb'));
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-09');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -139,7 +139,7 @@ class PlayerList extends BaseClass {
 	public function getPlayerById ($id) {
 		if (!empty($id)) {
 			foreach ($this->player_list as $player) {
-				if ($player->id === $id) {
+				if ($player->id === (int)$id) {
 					return $player;
 				}
 			}
@@ -175,7 +175,7 @@ class PlayerList extends BaseClass {
 		global $aseco;
 
 		if (array_key_exists($login, $this->player_list) && $this->player_list[$login]->id > 0 && $forcequery === false) {
-			return $this->player_list[$login]->id;
+			return (int)$this->player_list[$login]->id;
 		}
 		else {
 			$id = 0;
@@ -195,7 +195,7 @@ class PlayerList extends BaseClass {
 				}
 				$res->free_result();
 			}
-			return $id;
+			return (int)$id;
 		}
 	}
 
@@ -417,7 +417,7 @@ class PlayerList extends BaseClass {
 
 				$result = $aseco->db->query($query);
 				if ($result) {
-					$player->id = $aseco->db->lastid();
+					$player->id = (int)$aseco->db->lastid();
 				}
 				else {
 					trigger_error('[PlayerList] Could not insert connecting player! ('. $aseco->db->errmsg() .')'. CRLF .'sql = '. $query, E_USER_WARNING);

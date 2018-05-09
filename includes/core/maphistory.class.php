@@ -51,7 +51,7 @@ class MapHistory extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-05-09');
 		$this->setCopyright('2015 - 2018 by undef.de');
 		$this->setDescription('Map history for the dedicated server and provides several methods for the required handling of the history.');
 
@@ -82,7 +82,7 @@ class MapHistory extends BaseClass {
 				$this->map_list = array();
 
 				while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-					$map = $aseco->server->maps->getMapById($row['MapId']);
+					$map = $aseco->server->maps->getMapById((int)$row['MapId']);
 					if (isset($map->id) && $map->id > 0) {
 						$this->map_list[$map->id] = array(
 							'played'	=> $row['Date'],
@@ -165,9 +165,7 @@ class MapHistory extends BaseClass {
 				}
 				return false;
 			}
-			else {
-				return true;
-			}
+			return true;
 		}
 	}
 
@@ -199,7 +197,7 @@ class MapHistory extends BaseClass {
 	public function isMapInHistoryById ($id) {
 		if (!empty($id)) {
 			foreach ($this->map_list as $item) {
-				if ($item['id'] === $id) {
+				if ($item['id'] === (int)$id) {
 					return true;
 				}
 			}

@@ -6,7 +6,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2018-05-07
+ * Date:	2018-05-08
  * Copyright:	2014 - 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
@@ -42,9 +42,7 @@ class Database extends mysqli {
 	public $type			= 'MySQL';
 	public $version			= '0.0.0';
 	public $version_full		= '0.0.0';
-
-	// $placeholder will be replaced with $this->table_prefix at each query
-	private $placeholder		= '%prefix%';
+	public $placeholder		= '%prefix%';			// $placeholder will be replaced with $this->table_prefix at each query
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#
