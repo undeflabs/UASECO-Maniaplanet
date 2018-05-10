@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-05-09');
+		$this->setBuild('2018-05-10');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -10084,17 +10084,17 @@ EOL;
 				// Get Map
 				$map = $aseco->server->maps->getMapByUid($maplist[$i]);
 
+				$in_history = $aseco->server->maps->history->isMapInHistoryByUid($map->uid);
+
 				// Find the Player who has juked this Map
 				$login = false;
-				$juked = 0;
-				$tid = 1;
+				$juked = false;
 				foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
 					if ($item['uid'] === $map->uid) {
 						$login = $item['Login'];
-						$juked = $tid;
+						$juked = true;
 						break;
 					}
-					$tid++;
 				}
 				unset($item);
 
@@ -10119,7 +10119,7 @@ EOL;
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === false && $juked === false) {
+				else if ($aseco->server->maps->current->uid !== $map->uid && $in_history === false && $juked === false) {
 					// Default (not current, not recent, not juked)
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
@@ -10131,12 +10131,12 @@ EOL;
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true && $juked === true) {
+				else if ($aseco->server->maps->current->uid !== $map->uid && $in_history === true && $juked === true) {
 					// This is a recent but juked Map
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="0.675 -0.6375" z-index="0.04" size="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
 					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-					if ( ($dropall) || ($login === $player->login)) {
+					if ($dropall === true || $login === $player->login) {
 						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
@@ -10145,7 +10145,7 @@ EOL;
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
-				else if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
+				else if ($aseco->server->maps->current->uid !== $map->uid && $in_history === true) {
 					// This is a recent Map
 //					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
 //					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
@@ -10169,7 +10169,7 @@ EOL;
 					else {
 						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
 					}
-					if ( ($dropall) || ($login === $player->login)) {
+					if ($dropall === true || $login === $player->login) {
 						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
 					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
@@ -10179,7 +10179,7 @@ EOL;
 					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 
-				if ($aseco->server->maps->current->uid !== $map->uid && $aseco->server->maps->history->isMapInHistoryByUid($map->uid) === true) {
+				if ($aseco->server->maps->current->uid !== $map->uid && $in_history === true) {
 					// This is a recent Map
 
 					// Authortime

@@ -47,7 +47,7 @@ class PluginRasp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-09');
+		$this->setBuild('2018-05-10');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
 
@@ -768,7 +768,7 @@ class PluginRasp extends Plugin {
 
 		$player = $aseco->server->players->getPlayerByLogin($time->player_login);
 		$map = $aseco->server->maps->getMapByUid($time->map_uid);
-		if ($player->pid !== 0) {
+		if ($player->id !== 0) {
 			$query = "
 			INSERT INTO `%prefix%times` (
 				`MapId`,
@@ -780,7 +780,7 @@ class PluginRasp extends Plugin {
 			)
 			VALUES (
 				". $map->id .",
-				". $player->pid .",
+				". $player->id .",
 				". $aseco->server->gameinfo->mode .",
 				". $aseco->db->quote(date('Y-m-d H:i:s', time() - date('Z'))) .",
 				". $time->score .",
@@ -807,13 +807,13 @@ class PluginRasp extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function deleteTime ($cid, $pid) {
+	public function deleteTime ($map_id, $player_id) {
 		global $aseco;
 
 		$query = "
 		DELETE FROM `%prefix%times`
-		WHERE `MapId` = ". $cid ."
-		AND `PlayerId` = ". $pid .";
+		WHERE `MapId` = ". $map_id ."
+		AND `PlayerId` = ". $player_id .";
 		";
 		$aseco->db->query($query);
 		if ($aseco->db->affected_rows === -1) {
