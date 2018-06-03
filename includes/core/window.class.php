@@ -51,7 +51,7 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-06-03');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -650,7 +650,11 @@ class Window extends BaseClass {
 		if (!empty($this->content['button_title']) && !empty($this->content['button_link'])) {
 			$protocol = explode('://', $this->content['button_link']);
 			$attr = 'manialink';
-			if (in_array($protocol[0], array('http', 'ftp'))) {
+			if ($protocol[0] === 'manialink') {
+				$attr = 'manialink';
+				$this->content['button_link'] = str_replace(array('manialink://', 'manialink:///:'), $this->content['button_link']);
+			}
+			else if (in_array($protocol[0], array('http', 'https', 'ftp', 'ftps', 'ts3server', 'mumble'))) {
 				$attr = 'url';
 			}
 			$xml .= '<frame pos="101.5 -104.4" z-index="0.04">';

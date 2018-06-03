@@ -45,7 +45,7 @@ class PluginChatHelp extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-06-03');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.help', 'plugin_description'));
 
@@ -69,46 +69,58 @@ class PluginChatHelp extends Plugin {
 		}
 
 		// Check for higher rights of Player
-		$showadmin = false;
+		$isOperator = $aseco->isOperator($player);
+		$isAdmin = $aseco->isAdmin($player);
+		$isMasterAdmin = $aseco->isMasterAdmin($player);
 
 		$commands = $aseco->registered_chatcmds;
 		ksort($commands);
 
 		$data = array();
 		foreach ($commands as $name => $cc) {
-			// collect either admin or non-admin commands
-			$allowed = false;
-			if ($showadmin === true) {
-				if ($cc['rights'] & Player::OPERATORS) {
-					// Chat command is only allowed for Operators, Admins or MasterAdmins
-					$allowed = true;
-				}
-				else if ($cc['rights'] & Player::ADMINS) {
-					// Chat command is only allowed for Admins or MasterAdmins
-					$allowed = true;
-				}
-				else if ($cc['rights'] & Player::MASTERADMINS) {
-					// Chat command is only allowed for MasterAdmins
-					$allowed = true;
-				}
-				if ($allowed === true) {
-					foreach ($cc['params'] as $cmd => $description) {
-						$data[] = array('/'. $cmd, $description);
-					}
-				}
+			if ($cc['rights'] & Player::PLAYERS) {
+				// Chat command is allowed for everyone
+				$message = $aseco->locales->handleMessage($cc['help'], $login);
+				$data[] = array(
+					array(
+						'action'	=> 'PluginChatHelp?Action=ReleaseChatCommand&amp;command=/'. $name,		// Execute on click
+						'title'		=> '/'.$name,									// Display name
+					),
+					$message,
+				);
 			}
-			else {
-				if ($cc['rights'] & Player::PLAYERS) {
-					// Chat command is allowed for everyone
-					$message = $aseco->locales->handleMessage($cc['help'], $login);
-					$data[] = array(
-						array(
-							'action'	=> 'PluginChatHelp?Action=ReleaseChatCommand&amp;command=/'. $name,		// Execute on click
-							'title'		=> '/'.$name,									// Display name
-						),
-						$message,
-					);
-				}
+			else if ($cc['rights'] & Player::OPERATORS && $isOperator === true) {
+				// Chat command is allowed for Operators
+				$message = $aseco->locales->handleMessage($cc['help'], $login);
+				$data[] = array(
+					array(
+						'action'	=> 'PluginChatHelp?Action=ReleaseChatCommand&amp;command=/'. $name,		// Execute on click
+						'title'		=> '/'.$name,									// Display name
+					),
+					$message,
+				);
+			}
+			else if ($cc['rights'] & Player::ADMINS && $isAdmin === true) {
+				// Chat command is allowed for Admins
+				$message = $aseco->locales->handleMessage($cc['help'], $login);
+				$data[] = array(
+					array(
+						'action'	=> 'PluginChatHelp?Action=ReleaseChatCommand&amp;command=/'. $name,		// Execute on click
+						'title'		=> '/'.$name,									// Display name
+					),
+					$message,
+				);
+			}
+			else if ($cc['rights'] & Player::MASTERADMINS && $isMasterAdmin === true) {
+				// Chat command is allowed for MasterAdmins
+				$message = $aseco->locales->handleMessage($cc['help'], $login);
+				$data[] = array(
+					array(
+						'action'	=> 'PluginChatHelp?Action=ReleaseChatCommand&amp;command=/'. $name,		// Execute on click
+						'title'		=> '/'.$name,									// Display name
+					),
+					$message,
+				);
 			}
 		}
 

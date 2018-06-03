@@ -49,7 +49,7 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-06-03');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
@@ -72,7 +72,7 @@ class PluginInfoBar extends Plugin {
 		$this->registerEvent('onManiaExchangeBestLoaded',	'onManiaExchangeBestLoaded');
 		$this->registerEvent('onModeScriptSettingsChanged',	'onModeScriptSettingsChanged');
 
-		$this->registerChatCommand('infobar',			'chat_infobar',	new Message('plugin.info_bar', 'chat_infobar'),	Player::PLAYERS);
+		$this->registerChatCommand('infobar',			'chat_infobar',	new Message('plugin.info_bar', 'chat_infobar'),	Player::MASTERADMINS);
 	}
 
 	/*
@@ -88,18 +88,16 @@ class PluginInfoBar extends Plugin {
 		}
 
 		if (strtoupper($chat_parameter) === 'RELOAD') {
-			if ($aseco->isMasterAdmin($player)) {
-				$aseco->console('[InfoBar] MasterAdmin '. $player->login .' reloads the configuration.');
+			$aseco->console('[InfoBar] MasterAdmin '. $player->login .' reloads the configuration.');
 
-				// Show chat message
-				$msg = new Message('plugin.info_bar', 'message_chat_infobar_reload');
-				$msg->sendChatMessage($player->login);
+			// Show chat message
+			$msg = new Message('plugin.info_bar', 'message_chat_infobar_reload');
+			$msg->sendChatMessage($player->login);
 
-				$this->onSync($aseco);
+			$this->onSync($aseco);
 
-				// Send Info-Bar to all Players
-				$this->sendInfoBar(false, true);
-			}
+			// Send Info-Bar to all Players
+			$this->sendInfoBar(false, true);
 		}
 	}
 

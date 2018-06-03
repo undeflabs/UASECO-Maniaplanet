@@ -131,7 +131,7 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-09');
+		$this->setBuild('2018-06-03');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -290,7 +290,7 @@ class Player extends BaseClass {
 			if ($res->num_rows > 0) {
 				$total = $res->num_rows;
 				while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
-					if ($row['PlayerId'] === $this->id) {
+					if ((int)$row['PlayerId'] === $this->id) {
 						$average = sprintf('%4.1F', $row['Average'] / 10000);
 						$found = true;
 						break;
@@ -300,6 +300,7 @@ class Player extends BaseClass {
 			}
 			$res->free_result();
 		}
+
 		if ($found === true) {
 			return array($rank, $total, $average);
 		}

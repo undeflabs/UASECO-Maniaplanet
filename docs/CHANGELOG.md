@@ -20,6 +20,7 @@
 * Updated `includes/musicserver/getid3` to version `1.9.15` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
 * Changed parameter structure of the events `onPlayerFinishPrefix`, `onPlayerFinish` and `onPlayerFinishPostfix`
 * Replaced PHP equality operators (`==` and `!=`) with identical operators (`===` and `!==`) for a performance gain (initiated by C-Lodder)[https://github.com/undeflabs/UASECO/pull/32]
+* Added a check for obviously wrong port setups of "config/UASECO.xml" <dedicated_server><port>
 
 
 ### Changes at config files
@@ -79,6 +80,7 @@
 * Fixed [PHP Warning] in_array() expects parameter 2 to be array, null given on line 9650 in file `plugins/plugin.records_eyepiece.php` (thanks hacki65)
 * Fixed [UASECO Warning] [Rasp] ERROR: Could not insert time! ((1452) Cannot add or update a child row: a foreign key constraint fails (`DB`.`uaseco_times`, CONSTRAINT `uaseco_times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `uaseco_players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE)) (thanks hackie)
 * Fixed chat command `/elist` can not juke maps, only see `-` instead of `+` (thanks hackie)
+* Fixed RASP does not display correct ranking (thanks hacki65)
 
 
 

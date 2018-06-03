@@ -50,7 +50,7 @@ class PlayerList extends BaseClass {
 		$this->setAuthor('undef.de');
 		$this->setContributors(array('brakerb'));
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-09');
+		$this->setBuild('2018-06-03');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -156,7 +156,7 @@ class PlayerList extends BaseClass {
 	public function getPlayerByPid ($pid) {
 		if (!empty($pid)) {
 			foreach ($this->player_list as $player) {
-				if ($player->pid === $pid) {
+				if ($player->pid === (int)$pid) {
 					return $player;
 				}
 			}
@@ -300,7 +300,7 @@ class PlayerList extends BaseClass {
 					$row = $res->fetch_object();
 
 					$target = new Player();
-					$target->id		= $row->Id;
+					$target->id		= (int)$row->Id;
 					$target->login		= $row->Login;
 					$target->nickname	= $row->Nickname;
 					$target->nation		= $row->Nation;
@@ -352,18 +352,18 @@ class PlayerList extends BaseClass {
 				$result->free_result();
 
 				// Update Player stats
-				$player->id = $dbplayer->PlayerId;
-				if ($player->visits < $dbplayer->Visits) {
-					$player->visits = $dbplayer->Visits;
+				$player->id = (int)$dbplayer->PlayerId;
+				if ($player->visits < (int)$dbplayer->Visits) {
+					$player->visits = (int)$dbplayer->Visits;
 				}
-				if ($player->wins < $dbplayer->Wins) {
-					$player->wins = $dbplayer->Wins;
+				if ($player->wins < (int)$dbplayer->Wins) {
+					$player->wins = (int)$dbplayer->Wins;
 				}
-				if ($player->donations < $dbplayer->Donations) {
-					$player->donations = $dbplayer->Donations;
+				if ($player->donations < (int)$dbplayer->Donations) {
+					$player->donations = (int)$dbplayer->Donations;
 				}
-				if ($player->time_played < $dbplayer->TimePlayed) {
-					$player->time_played = $dbplayer->TimePlayed;
+				if ($player->time_played < (int)$dbplayer->TimePlayed) {
+					$player->time_played = (int)$dbplayer->TimePlayed;
 				}
 
 				// Update Player data

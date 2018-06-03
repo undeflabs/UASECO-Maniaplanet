@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - May 2018 by undef.de
+ * Copyright:	May 2014 - June 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-05-09');
+	define('UASECO_BUILD',			'2018-06-03');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1118,7 +1118,7 @@ class UASECO extends Helper {
 
 		// Executes registered event functions, if there are any events for that type
 		if ( !empty($this->registered_events[$event_type]) ) {
-			if ( ($this->settings['developer']['log_events']['registered_types'] === true) && ($this->settings['developer']['log_events']['all_types'] === false) ) {
+			if ($this->settings['developer']['log_events']['registered_types'] === true && $this->settings['developer']['log_events']['all_types'] === false) {
 				$skip = array(
 					'onEverySecond',
 					'onMainLoop',
@@ -1753,6 +1753,17 @@ class UASECO extends Helper {
 
 	// Authenticates USASEO at the server.
 	private function connectDedicated () {
+
+		// Check for obviously wrong port setup
+		if ((int)$this->server->xmlrpc['port'] === 2350) {
+			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port>.');
+			exit(0);
+		}
+		if ((int)$this->server->xmlrpc['port'] === 3450) {
+			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_p2p_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port>.');
+			exit(0);
+		}
+
 		// Only if logins are set
 		if ($this->server->xmlrpc['ip'] && $this->server->xmlrpc['port'] && $this->server->xmlrpc['login'] && $this->server->xmlrpc['pass']) {
 			// Log console message
@@ -1773,13 +1784,13 @@ class UASECO extends Helper {
 
 			// Check login
 			if ($this->server->xmlrpc['login'] !== 'SuperAdmin') {
-				trigger_error("[Dedicated] Invalid login '". $this->server->xmlrpc['login'] ."' - must be 'SuperAdmin' in [config/UASECO.xml]!", E_USER_WARNING);
+				trigger_error("[Dedicated] Invalid login '". $this->server->xmlrpc['login'] ."' - must be 'SuperAdmin' in [config/UASECO.xml] at <dedicated_server><login>!", E_USER_WARNING);
 				return false;
 			}
 
 			// Check password
 			if ($this->server->xmlrpc['pass'] === 'SuperAdmin') {
-				trigger_error("[Dedicated] Insecure (default) password '" . $this->server->xmlrpc['pass'] . "' - should be changed in dedicated config and [config/UASECO.xml]!", E_USER_WARNING);
+				trigger_error("[Dedicated] Insecure (default) password '" . $this->server->xmlrpc['pass'] . "' - should be changed in dedicated config and [config/UASECO.xml] at <dedicated_server><password>!", E_USER_WARNING);
 			}
 
 			// Log console message
@@ -2467,15 +2478,15 @@ class UASECO extends Helper {
 						// Chat command is allowed for everyone
 						$allowed = true;
 					}
-					else if ( ($this->registered_chatcmds[$command]['rights'] & Player::OPERATORS) && ($this->isOperator($caller) || $this->isAdmin($caller) || $this->isMasterAdmin($caller)) ) {
+					else if ($this->registered_chatcmds[$command]['rights'] & Player::OPERATORS && $this->isOperator($caller) || $this->isAdmin($caller) || $this->isMasterAdmin($caller)) {
 						// Chat command is only allowed for Operators, Admins or MasterAdmins
 						$allowed = true;
 					}
-					else if ( ($this->registered_chatcmds[$command]['rights'] & Player::ADMINS) && ($this->isAdmin($caller) || $this->isMasterAdmin($caller)) ) {
+					else if ($this->registered_chatcmds[$command]['rights'] & Player::ADMINS && ($this->isAdmin($caller) || $this->isMasterAdmin($caller))) {
 						// Chat command is only allowed for Admins or MasterAdmins
 						$allowed = true;
 					}
-					else if ( ($this->registered_chatcmds[$command]['rights'] & Player::MASTERADMINS) && ($this->isMasterAdmin($caller)) ) {
+					else if ($this->registered_chatcmds[$command]['rights'] & Player::MASTERADMINS && $this->isMasterAdmin($caller)) {
 						// Chat command is only allowed for MasterAdmins
 						$allowed = true;
 					}

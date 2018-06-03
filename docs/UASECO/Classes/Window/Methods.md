@@ -166,7 +166,14 @@ Setup the footer to display.
 
 *	`about_link`
 
-	Link for the `about_title`
+	Link for the `about_title`, supported protocols are
+	- `manialink://`
+	- `http://`
+	- `https://`
+	- `ftp://`
+	- `ftps://`
+	- `ts3server://`
+	- `mumble://`
 
 *	`button_title`
 
