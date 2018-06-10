@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-05-10');
+		$this->setBuild('2018-06-10');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -792,7 +792,7 @@ class PluginRecordsEyepiece extends Plugin {
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
-							$mostfinished[$row->PlayerId] = $row->Count;
+							$mostfinished[(int)$row->PlayerId] = (int)$row->Count;
 						}
 						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
 						foreach ($mostfinished as $id => $count) {
@@ -829,7 +829,7 @@ class PluginRecordsEyepiece extends Plugin {
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
-							$mostrecords[$row->PlayerId] = $row->Count;
+							$mostrecords[(int)$row->PlayerId] = (int)$row->Count;
 						}
 						$aseco->db->begin_transaction();	// Require PHP >= 5.5.0
 						foreach ($mostrecords as $id => $count) {
@@ -1379,7 +1379,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) === 0) {
-				if ( ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0]) && ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] !== 0)) {
+				if ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] && $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] !== 0) {
 					$this->sendProgressIndicator($player->login);
 				}
 
@@ -5994,7 +5994,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->scores['TopPlaytime'][$i]['rank']	= ($i+1);
 					$this->scores['TopPlaytime'][$i]['login']	= $row->Login;
 					$this->scores['TopPlaytime'][$i]['nickname']	= $row->Nickname;
-					$this->scores['TopPlaytime'][$i]['score']	= $this->formatNumber(round($row->TimePlayed / 3600), 0) . ' h';
+					$this->scores['TopPlaytime'][$i]['score']	= $this->formatNumber(round((int)$row->TimePlayed / 3600), 0) . ' h';
 
 					$i++;
 				}
@@ -6182,9 +6182,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 				$i = 0;
 				while ($row = $res->fetch_object()) {
-					$this->scores['TopVoters'][$i]['rank']	= ($i+1);
-					$this->scores['TopVoters'][$i]['score']	= $this->formatNumber((int)$row->vote_count, 0);
-					$this->scores['TopVoters'][$i]['login']	= $row->login;
+					$this->scores['TopVoters'][$i]['rank']		= ($i+1);
+					$this->scores['TopVoters'][$i]['score']		= $this->formatNumber((int)$row->vote_count, 0);
+					$this->scores['TopVoters'][$i]['login']		= $row->login;
 					$this->scores['TopVoters'][$i]['nickname']	= $row->nickname;
 
 					$i++;
@@ -6254,7 +6254,7 @@ class PluginRecordsEyepiece extends Plugin {
 						$this->scores['TopBetwins'][$i]['rank']		= ($i+1);
 						$this->scores['TopBetwins'][$i]['login']	= $row->Login;
 						$this->scores['TopBetwins'][$i]['nickname']	= $row->Nickname;
-						$this->scores['TopBetwins'][$i]['won']		= $aseco->formatFloat($row->won, 2);
+						$this->scores['TopBetwins'][$i]['won']		= $aseco->formatFloat((int)$row->won, 2);
 
 						$i++;
 					}
@@ -6449,7 +6449,7 @@ class PluginRecordsEyepiece extends Plugin {
 					$this->scores['TopActivePlayers'][$i]['rank']		= ($i+1);
 					$this->scores['TopActivePlayers'][$i]['login']		= $row->Login;
 					$this->scores['TopActivePlayers'][$i]['nickname']	= $row->Nickname;
-					$this->scores['TopActivePlayers'][$i]['score']		= (($row->Days === 0) ? 'Today' : $this->formatNumber(-$row->Days, 0) .' d');
+					$this->scores['TopActivePlayers'][$i]['score']		= (((int)$row->Days === 0) ? 'Today' : $this->formatNumber(-(int)$row->Days, 0) .' d');
 					$this->scores['TopActivePlayers'][$i]['score_plain']	= (int)$row->Days;
 
 					$i++;
@@ -6727,10 +6727,10 @@ class PluginRecordsEyepiece extends Plugin {
 				}
 
 				// Only add the calling Player
-				if ($row->PlayerId === $pid) {
+				if ((int)$row->PlayerId === $pid) {
 					$list[$row->Uid] = array(
 						'rank'	=> $pos,
-						'score'	=> $row->Score,
+						'score'	=> (int)$row->Score,
 					);
 					continue;
 				}
@@ -6767,7 +6767,7 @@ class PluginRecordsEyepiece extends Plugin {
 			$finished = array();
 			if ($result->num_rows > 0) {
 				while ($row = $result->fetch_object())
-					$finished[] = $row->MapId;
+					$finished[] = (int)$row->MapId;
 			}
 			$result->free_result();
 
@@ -9779,7 +9779,7 @@ EOL;
 					// Sort the array now
 					$sort = array();
 					foreach ($list as $key => $row) {
-						$sort[$key]	= strtolower($row->name_stripped);
+						$sort[$key] = strtolower($row->name_stripped);
 					}
 					array_multisort($sort, SORT_ASC, $list);
 					unset($sort, $row);
@@ -14049,7 +14049,7 @@ EOL;
 				if ($res) {
 					if ($res->num_rows > 0) {
 						while ($row = $res->fetch_object()) {
-							$votings[$row->MapId][$name] = $row->Count;
+							$votings[$row->MapId][$name] = (int)$row->Count;
 						}
 					}
 					$res->free_result();
@@ -14118,8 +14118,8 @@ EOL;
 			if ($res) {
 				if ($res->num_rows > 0) {
 					while ($row = $res->fetch_object()) {
-						$data[$row->MapId]['karma'] = $row->Karma;
-						$data[$row->MapId]['votes'] = $row->Count;
+						$data[(int)$row->MapId]['karma'] = $row->Karma;
+						$data[(int)$row->MapId]['votes'] = (int)$row->Count;
 					}
 				}
 				$res->free_result();

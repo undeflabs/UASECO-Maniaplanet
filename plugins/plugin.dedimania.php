@@ -8,6 +8,7 @@
  *   by Xymph, based on FAST
  *   Protocol documentation: http://dedimania.net:8082/Dedimania
  *   Connection status: http://dedimania.net:8082/stats
+ *   Donate: http://dedimania.net/tm2stats/?do=donation
  *
  * ----------------------------------------------------------------------------------
  *
@@ -93,7 +94,7 @@ class PluginDedimania extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-06-10');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles interaction with the Dedimania world database and shows new/online Dedimania world records and their relations on the current track.');
 
@@ -1577,23 +1578,23 @@ class PluginDedimania extends Plugin {
 
 		if ($map->nb_checkpoints < 2 && $map->author !== 'Nadeo') {
 			// check for map without actual checkpoints
-			$aseco->console('[Dedimania] Map\'s NbCheckpoints < 2: records ignored');
+			$aseco->console('[Dedimania] Map does not match the Dedimania storing rules: Amount of checkpoints in this map is lower then two, records will be ignored.');
 		}
 		else if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS && $map->multi_lap && $aseco->server->gameinfo->rounds['ForceLapsNb'] > 0) {
 			// check for multilap map in Rounds modes
-			$aseco->console('[Dedimania] ForceLapsNb > 0: records ignored');
+			$aseco->console('[Dedimania] ModeScript settings does not match the Dedimania storing rules: Setup of [config/modescript_settings.xml] at <modesetup><rounds><force_laps_number> is higher then 0, records will be ignored.');
 		}
 		else if ($aseco->server->gameinfo->mode === Gameinfo::TEAM && $map->multi_lap && $aseco->server->gameinfo->team['ForceLapsNb'] > 0) {
 			// check for multilap map in Team modes
-			$aseco->console('[Dedimania] ForceLapsNb > 0: records ignored');
+			$aseco->console('[Dedimania] ModeScript settings does not match the Dedimania storing rules: Setup of [config/modescript_settings.xml] at <modesetup><team><force_laps_number> is higher then 0, records will be ignored.');
 		}
 		else if ($aseco->server->gameinfo->mode === Gameinfo::CUP && $map->multi_lap && $aseco->server->gameinfo->cup['ForceLapsNb'] > 0) {
 			// check for multilap map in Cup modes
-			$aseco->console('[Dedimania] ForceLapsNb > 0: records ignored');
+			$aseco->console('[Dedimania] ModeScript settings does not match the Dedimania storing rules: Setup of [config/modescript_settings.xml] at <modesetup><cup><force_laps_number> is higher then 0, records will be ignored.');
 		}
 		else if ($map->author_time < $this->min_author_time) {
 			// check for minimum author time
-			$aseco->console('[Dedimania] Map\'s Author time < '. ($this->min_author_time / 1000) .'s: records ignored');
+			$aseco->console('[Dedimania] Map does not match the Dedimania storing rules: Author time is lower then '. ($this->min_author_time / 1000) .'s:, records will be ignored.');
 		}
 		else {
 			$this->db['TrackValid'] = true;
