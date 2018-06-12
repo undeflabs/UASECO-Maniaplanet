@@ -131,7 +131,7 @@ class Player extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-06-03');
+		$this->setBuild('2018-06-12');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -534,7 +534,7 @@ class Player extends BaseClass {
 					}
 
 					// Store player's maps & records
-					if ($row->PlayerId === $this->id) {
+					if ((int)$row->PlayerId === $this->id) {
 						$list[$row->Uid] = $pos;
 						continue;
 					}

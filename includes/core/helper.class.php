@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-06-03');
+		$this->setBuild('2018-06-12');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -842,6 +842,9 @@ class Helper extends BaseClass {
 	*/
 
 	public function formatNumber ($number, $decimals, $dec_point = '.', $thousands_sep = ',') {
+		if (strpos($number, ',') !== false) {
+			$number = (float)str_replace(',', '.', str_replace('.', '', $number));		// Make sure it is a number
+		}
 		return number_format($number, $decimals, $dec_point, $thousands_sep);
 	}
 
@@ -852,6 +855,9 @@ class Helper extends BaseClass {
 	*/
 
 	public function formatFloat ($number, $decimals = 4, $dec_point = '.', $thousands_sep = '') {
+		if (strpos($number, ',') !== false) {
+			$number = (float)str_replace(',', '.', str_replace('.', '', $number));		// Make sure it is a number
+		}
 		return number_format($number, $decimals, $dec_point, $thousands_sep);
 	}
 
