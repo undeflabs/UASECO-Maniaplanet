@@ -49,7 +49,7 @@ class Country extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-06-13');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides lists of Countries and IOC codes, and converter methods.');
 
@@ -59,9 +59,10 @@ class Country extends BaseClass {
 			'Algeria'			=> 'ALG',
 			'Andorra'			=> 'AND',
 			'Angola'			=> 'ANG',
+			'Antigua and Barbuda'		=> 'ANT',
 			'Argentina'			=> 'ARG',
 			'Armenia'			=> 'ARM',
-			'Aruba'				=> 'ARU',
+			'Aruba'				=> 'ARU',	// 2018-06-13: missing ARU.dds
 			'Australia'			=> 'AUS',
 			'Austria'			=> 'AUT',
 			'Azerbaijan'			=> 'AZE',
@@ -73,7 +74,7 @@ class Country extends BaseClass {
 			'Belgium'			=> 'BEL',
 			'Belize'			=> 'BIZ',
 			'Benin'				=> 'BEN',
-			'Bermuda'			=> 'BER',
+			'Bermuda'			=> 'BER',		// 2018-06-13: missing BER.dds
 			'Bhutan'			=> 'BHU',
 			'Bolivia'			=> 'BOL',
 			'Bosnia&Herzegovina'		=> 'BIH',
@@ -94,7 +95,7 @@ class Country extends BaseClass {
 			'China'				=> 'CHN',
 			'Chinese Taipei'		=> 'TPE',
 			'Colombia'			=> 'COL',
-			'Congo'				=> 'CGO',
+			'Congo'				=> 'COG',		// actually IOC:CGO ISO:COG, COG.dds exists
 			'Costa Rica'			=> 'CRC',
 			'Croatia'			=> 'CRO',
 			'Cuba'				=> 'CUB',
@@ -243,14 +244,14 @@ class Country extends BaseClass {
 			'Zambia'			=> 'ZAM',
 			'Zimbabwe'			=> 'ZIM',
 
-			'Other'				=> 'OTH',
-			'Other Countries'		=> 'OTH',	// Europe
-			'Other Countries (AF)'		=> 'OTH',	// Africa
-			'Other Countries (AS)'		=> 'OTH',	// Asia
-			'Other Countries (ME)'		=> 'OTH',	// Middle East
-			'Other Countries (NA)'		=> 'OTH',	// North America
-			'Other Countries (OC)'		=> 'OTH',	// Oceania
-			'Other Countries (SA)'		=> 'OTH',	// South America
+			'Other'				=> 'WOR',	// WOR.dds
+			'Other Countries'		=> 'WOR',	// Europe
+			'Other Countries (AF)'		=> 'WOR',	// Africa
+			'Other Countries (AS)'		=> 'WOR',	// Asia
+			'Other Countries (ME)'		=> 'WOR',	// Middle East
+			'Other Countries (NA)'		=> 'WOR',	// North America
+			'Other Countries (OC)'		=> 'WOR',	// Oceania
+			'Other Countries (SA)'		=> 'WOR',	// South America
 		);
 
 		$this->ioc_list = array(
@@ -259,6 +260,7 @@ class Country extends BaseClass {
 			'ALG'	=> 'Algeria',
 			'AND'	=> 'Andorra',
 			'ANG'	=> 'Angola',
+			'ANT'	=> 'Antigua and Barbuda',
 			'ARG'	=> 'Argentina',
 			'ARM'	=> 'Armenia',
 			'ARU'	=> 'Aruba',
@@ -285,7 +287,7 @@ class Country extends BaseClass {
 			'BDI'	=> 'Burundi',
 			'CAM'	=> 'Cambodia',
 			'CAR'	=> 'Cameroon',					// deprecated
-			'CMR'	=> 'Cameroon',					// was CAR
+			'CMR'	=> 'Cameroon',					// actually CMR
 			'CAN'	=> 'Canada',
 			'CPV'	=> 'Cape Verde',
 			'CAF'	=> 'Central African Republic',
@@ -294,7 +296,8 @@ class Country extends BaseClass {
 			'CHN'	=> 'China',
 			'TPE'	=> 'Chinese Taipei',
 			'COL'	=> 'Colombia',
-			'CGO'	=> 'Congo',
+			'CGO'	=> 'Congo',					// IOC
+			'COG'	=> 'Congo',					// ISO
 			'CRC'	=> 'Costa Rica',
 			'CRO'	=> 'Croatia',
 			'CUB'	=> 'Cuba',
@@ -383,6 +386,7 @@ class Country extends BaseClass {
 			'NOR'	=> 'Norway',
 			'OMA'	=> 'Oman',
 			'OTH'	=> 'Other Countries',
+			'WOR'	=> 'Other Countries',				// WOR.dds
 			'PAK'	=> 'Pakistan',
 			'PLW'	=> 'Palau',
 			'PLE'	=> 'Palestine',
@@ -454,7 +458,7 @@ class Country extends BaseClass {
 	// Map country names to 3-letter Nation abbreviations
 	public function countryToIoc ($country) {
 
-		if ( array_key_exists(ucfirst($country), $this->country_list) ) {
+		if (array_key_exists(ucfirst($country), $this->country_list)) {
 			$nation = $this->country_list[ucfirst($country)];
 		}
 		else {
@@ -476,7 +480,7 @@ class Country extends BaseClass {
 	// Map 3-letter Nation abbreviation to country names
 	public function iocToCountry ($ioc) {
 
-		if ( array_key_exists($ioc, $this->ioc_list) ) {
+		if (array_key_exists($ioc, $this->ioc_list)) {
 			$country = $this->ioc_list[$ioc];
 		}
 		else {

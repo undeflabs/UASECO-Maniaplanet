@@ -4,7 +4,7 @@
 
 ### General changes
 
-* Requires a `Maniaplanet Dedicated Server` build `2018-03-29_21_00 (Linux)` / `2018-03-29_21_43 (Windows)` or higher
+* Requires a `Maniaplanet Dedicated Server` build `2018-07-03_10_00 (Linux)` / `2018-07-03_03_32 (Windows)` or higher
 * The logfile from UASECO has been renamed to `2017-06-15-uaseco-current.txt` or `2017-06-15-14-31-12-uaseco.txt` for older logfiles
 * The `webrequest.php` uses an own logfile named `2017-06-15-webrequest-current.txt` or `2017-06-15-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
@@ -20,7 +20,7 @@
 * Updated `includes/musicserver/getid3` to version `1.9.15` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
 * Changed parameter structure of the events `onPlayerFinishPrefix`, `onPlayerFinish` and `onPlayerFinishPostfix`
 * Replaced PHP equality operators (`==` and `!=`) with identical operators (`===` and `!==`) for a performance gain (initiated by C-Lodder)[https://github.com/undeflabs/UASECO/pull/32]
-* Added a check for obviously wrong port setups of "config/UASECO.xml" <dedicated_server><port>
+* Added a check for obviously wrong port setups of "config/UASECO.xml" `<dedicated_server><port>`
 
 
 ### Changes at config files
@@ -81,6 +81,7 @@
 * Fixed [UASECO Warning] [Rasp] ERROR: Could not insert time! ((1452) Cannot add or update a child row: a foreign key constraint fails (`DB`.`uaseco_times`, CONSTRAINT `uaseco_times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `uaseco_players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE)) (thanks hackie)
 * Fixed chat command `/elist` can not juke maps, only see `-` instead of `+` (thanks hackie)
 * Fixed RASP does not display correct ranking (thanks hacki65)
+* Fixed [PHP Notice] Trying to get property of non-object on line 102 in file `includes/core/map.class.php` (thanks Snorfold)
 
 
 

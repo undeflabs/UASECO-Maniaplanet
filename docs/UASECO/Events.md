@@ -76,6 +76,10 @@ Event triggered when a Player clicks a server-side manialink that has the `actio
 Event triggered when a Player starts a race.
 
 
+## [onPlayerStartCountdown ($aseco, $login)](_#onPlayerStartCountdown)
+Callback sent when a player see the 3,2,1,Go! countdown.
+
+
 ## [onPlayerCheckpoint ($aseco, $params)](_#onPlayerStartLine)
 Event triggered when a Player crosses a checkpoint.
 

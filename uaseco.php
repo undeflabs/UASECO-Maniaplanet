@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - June 2018 by undef.de
+ * Copyright:	May 2014 - July 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-06-12');
+	define('UASECO_BUILD',			'2018-07-10');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2018-03-29_21_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2018-03-29_21_43');
+	define('MANIAPLANET_BUILD_POSIX',	'2018-07-03_10_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2018-07-03_03_32');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'5.6.0');

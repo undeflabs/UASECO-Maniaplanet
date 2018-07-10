@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-10');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -272,6 +272,11 @@ class PluginCheckpoints extends Plugin {
 		$this->nb_laps		= 0;
 		$this->forced_laps	= 0;
 
+		$this->update_tracking = array();
+		foreach ($aseco->server->players->player_list as $player) {
+			$this->update_tracking[$player->login] = false;
+		}
+
 
 		// At Gamemode 'Laps' store the NbLabs from Dedicated-Server and NOT the
 		// value from the $map_item, because they does not match the reality!
@@ -334,13 +339,8 @@ class PluginCheckpoints extends Plugin {
 
 		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true) {
 			foreach ($aseco->server->players->player_list as $player) {
-				if (isset($this->checkpoints[$player->login]->tracking)) {
-					if ($this->checkpoints[$player->login]->tracking['local_records'] != -1) {
-						$this->handleCheckpointTracking($player->login);
-					}
-					else if ($this->checkpoints[$player->login]->tracking['dedimania_records'] != -1) {
-						$this->handleCheckpointTracking($player->login);
-					}
+				if (isset($this->checkpoints[$player->login]->tracking) && ($this->checkpoints[$player->login]->tracking['local_records'] !== -1 || $this->checkpoints[$player->login]->tracking['dedimania_records'] !== -1)) {
+					$this->handleCheckpointTracking($player->login);
 				}
 			}
 		}
@@ -441,11 +441,9 @@ class PluginCheckpoints extends Plugin {
 
 	public function onPlayerStartCountdown ($aseco, $params) {
 
-		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true && count($this->update_tracking) > 0) {
-			foreach ($this->update_tracking as &$login) {
-				$this->handleCheckpointTracking($login);
-				unset($login);
-			}
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true && $this->update_tracking[$params['login']] === true) {
+			$this->handleCheckpointTracking($params['login']);
+			$this->update_tracking[$params['login']] = false;
 		}
 
 		// Reset for next run in TimeAttack mode
@@ -558,6 +556,11 @@ class PluginCheckpoints extends Plugin {
 			$this->checkpoints[$params['login']]->best['timestamp'] = microtime(true);
 		}
 
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true && $this->update_tracking[$params['login']] === true) {
+			$this->handleCheckpointTracking($params['login']);
+			$this->update_tracking[$params['login']] = false;
+		}
+
 		// Check for cheated checkpoints:
 		// non-positive time, wrong index, or time less than preceding one
 		if ($time <= 0 || $cpid !== count($this->checkpoints[$params['login']]->current['cps']) || ($cpid > 0 && $time < end($this->checkpoints[$params['login']]->current['cps']))) {
@@ -606,10 +609,8 @@ class PluginCheckpoints extends Plugin {
 	*/
 
 	public function onLocalRecord ($aseco, $finish) {
-		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true) {
-			if (!in_array($finish->player->login, $this->update_tracking)) {
-				$this->update_tracking[] = $finish->player->login;
-			}
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true && !in_array($finish->player->login, $this->update_tracking)) {
+			$this->update_tracking[$finish->player->login] = true;
 		}
 	}
 
@@ -620,10 +621,8 @@ class PluginCheckpoints extends Plugin {
 	*/
 
 	public function onDedimaniaRecord ($aseco, $record) {
-		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true) {
-			if (!in_array($record['Login'], $this->update_tracking)) {
-				$this->update_tracking[] = $record['Login'];
-			}
+		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true && !in_array($record['Login'], $this->update_tracking)) {
+			$this->update_tracking[$record['Login']] = true;
 		}
 	}
 

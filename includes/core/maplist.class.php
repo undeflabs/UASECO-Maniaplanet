@@ -65,7 +65,7 @@ class MapList extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-09');
+		$this->setBuild('2018-06-13');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
@@ -933,7 +933,7 @@ class MapList extends BaseClass {
 			trigger_error('[MapList] Could not read Map ['. $aseco->stripBOM($file) .']: '. $e->getMessage(), E_USER_WARNING);
 
 			// Ignore if Map could not be parsed
-			return false;
+			return null;
 		}
 		return $gbx;
 	}

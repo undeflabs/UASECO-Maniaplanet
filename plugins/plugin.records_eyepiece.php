@@ -52,7 +52,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-06-10');
+		$this->setBuild('2018-06-13');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -11003,10 +11003,17 @@ EOL;
 
 			$data = array();
 			foreach ($this->scores['TopNations'] as $item) {
+				$ddsfile = $item['nation'];
+				if ($item['nation'] === 'CGO') {
+					$ddsfile = 'COG';
+				}
+				else if ($item['nation'] === 'OTH') {
+					$ddsfile = 'WOR';
+				}
 				$data[] = array(
 					$item['count'],
 					array(
-						'image'	=> 'file://Media/Flags/'. $item['nation'] .'.dds',
+						'image'	=> 'file://Media/Flags/'. $ddsfile .'.dds',
 					),
 					$aseco->country->iocToCountry($item['nation']),
 				);
