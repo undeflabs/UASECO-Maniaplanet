@@ -1229,8 +1229,8 @@
 			<height>30</height>
 			<background_style>Bgs1InRace</background_style>
 			<background_substyle>NavButton</background_substyle>
-			<image>file://Skins/Avatars/Flags/GER.dds</image>
-			<imagefocus>file://Skins/Avatars/Flags/USA.dds</imagefocus>
+			<image>file://Media/Flags/Flags/GER.dds</image>
+			<imagefocus>file://Media/Flags/Flags/USA.dds</imagefocus>
 			<chat_command>/karma help</chat_command>
 		</placement>
 
@@ -1242,11 +1242,9 @@
 			<pos_y>0.0</pos_y>
 			<width>40</width>
 			<height>30</height>
-			<background_style>Bgs1InRace</background_style>
-			<background_substyle>NavButton</background_substyle>
-			<image>file://Skins/Avatars/Flags/GER.dds</image>
-			<imagefocus>file://Skins/Avatars/Flags/USA.dds</imagefocus>
-			<action_id>PluginManiaKarma?Action=91101</action_id>
+			<image>file://Media/Flags/GER.dds</image>
+			<imagefocus>file://Media/Flags/USA.dds</imagefocus>
+			<action_id>PluginManiaKarma?Action=OpenHelpWindow</action_id>
 		</placement>
 
 	</placement_widget>

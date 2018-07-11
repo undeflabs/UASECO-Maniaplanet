@@ -2,8 +2,7 @@
 /*
  * Plugin: Mania-Karma
  * ~~~~~~~~~~~~~~~~~~~
- * For a detailed description and documentation, please refer to:
- * http://www.undef.name/UASECO/Mania-Karma.php
+ * » Global Karma Database for Map votings.
  *
  * ----------------------------------------------------------------------------------
  *
@@ -75,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -1744,7 +1743,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	KarmaWidget @ plugin.mania_karma.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -1904,7 +1902,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	KarmaCupsValue @ plugin.mania_karma.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -2488,7 +2485,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	PlayerVoteMarker @ plugin.mania_karma.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -2532,7 +2528,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	ConnectionStatus @ plugin.mania_karma.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -2597,7 +2592,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	LoadingIndicator @ plugin.mania_karma.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */

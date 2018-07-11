@@ -51,7 +51,7 @@ class PluginStuntMessages extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays Stunt messages at the top of the screen like "Free Style 360!!"...');
 
@@ -452,7 +452,6 @@ $maniascript = <<<EOL
  /*
  * ==================================
  * Author:	undef.de
- * Website:	http://www.undef.name
  * Widget:	StuntsMessage @ plugin.stunt_messages.php
  * License:	GPLv3
  * ==================================

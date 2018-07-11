@@ -49,7 +49,7 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-06-03');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
@@ -452,7 +452,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<clock> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -533,7 +532,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<gamemode> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -649,7 +647,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<player_count> and <spectator_count> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -763,7 +760,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<donation> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -903,7 +899,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<current_ranking> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -1002,7 +997,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<best_time> and <last_time> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -1113,7 +1107,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<personal_best> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -1239,7 +1232,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<local_record> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -1360,7 +1352,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<dedimania_record> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -1475,7 +1466,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<mania_exchange> @ plugin.info_bar.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */

@@ -45,18 +45,19 @@ class PluginChatServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.server', 'plugin_description'));
 
 		$this->registerChatCommand('uaseco',		'chat_uaseco',		new Message('chat.server', 'slash_uaseco_description'),		Player::PLAYERS);
 		$this->registerChatCommand('contact',		'chat_contact',		new Message('chat.server', 'slash_contact_description'),	Player::PLAYERS);
-		$this->registerChatCommand('masteradmins',	'chat_masteradmins',	new Message('chat.server', 'slash_masteradmins_description'),	Player::PLAYERS);
-		$this->registerChatCommand('admins',		'chat_admins',		new Message('chat.server', 'slash_admins_description'),		Player::PLAYERS);
-		$this->registerChatCommand('operators',		'chat_operators',	new Message('chat.server', 'slash_operators_description'),	Player::PLAYERS);
 		$this->registerChatCommand('plugins',		'chat_plugins',		new Message('chat.server', 'slash_plugins_description'),	Player::PLAYERS);
 		$this->registerChatCommand('time',		'chat_time',		new Message('chat.server', 'slash_time_description'),		Player::PLAYERS);
 		$this->registerChatCommand('uptime',		'chat_uptime',		new Message('chat.server', 'slash_uptime_description'),		Player::PLAYERS);
+		$this->registerChatCommand('masteradmins',	'chat_masteradmins',	new Message('chat.server', 'slash_masteradmins_description'),	Player::PLAYERS);
+		$this->registerChatCommand('admins',		'chat_admins',		new Message('chat.server', 'slash_admins_description'),		Player::PLAYERS);
+		$this->registerChatCommand('operators',		'chat_operators',	new Message('chat.server', 'slash_operators_description'),	Player::PLAYERS);
+
 	}
 
 	/*
@@ -99,6 +100,96 @@ class PluginChatServer extends Plugin {
 		}
 		$msg->sendChatMessage($login);
 
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_plugins ($aseco, $login, $chat_command, $chat_parameter) {
+
+		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
+			return;
+		}
+
+		// Create list of plugins
+		$plugins = $aseco->plugins;
+		ksort($plugins);
+
+		$data = array();
+		foreach ($plugins as $plugin) {
+			$description = $plugin->getDescription();
+
+			$data[] = array(
+				'$N'. $plugin->getFilename(),
+				'$N'. ($description instanceof Message ? $description->finish($player->login) : $description),
+				'$N'. $plugin->getVersion() .' ('. $plugin->getBuild() .')',
+			);
+		}
+		unset($plugins);
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Browse',
+			'textcolors'		=> array('FF5F', 'FFFF'),
+		);
+		$settings_columns = array(
+			'columns'		=> 1,
+			'widths'		=> array(17.5, 72.5, 10),
+			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF', 'FFFF'),
+			'heading'		=> array(
+				(new Message('chat.server', 'slash_plugins_heading_filename'))->finish($login),
+				(new Message('chat.server', 'slash_plugins_heading_description'))->finish($login),
+				(new Message('chat.server', 'slash_plugins_heading_version_build'))->finish($login),
+			),
+		);
+		$settings_content = array(
+			'title'			=> (new Message('chat.server', 'slash_plugins_window_title'))->finish($login),
+			'data'			=> $data,
+			'mode'			=> 'columns',
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->send($player, 0, false);
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_time ($aseco, $login, $chat_command, $chat_parameter) {
+
+		// Show chat message
+		$msg = new Message('chat.server', 'slash_time_chat_message');
+		$msg->addPlaceholders(
+			date('H:i:s T'),
+			date('Y-m-d')
+		);
+		$msg->sendChatMessage($login);
+	}
+
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	public function chat_uptime ($aseco, $login, $chat_command, $chat_parameter) {
+
+		// Show chat message
+		$msg = new Message('chat.server', 'slash_uptime_chat_message');
+		$msg->addPlaceholders(
+			$aseco->timeString($aseco->server->networkstats['Uptime'])
+		);
+		$msg->sendChatMessage($login);
 	}
 
 	/*
@@ -243,96 +334,6 @@ class PluginChatServer extends Plugin {
 		$window->setColumns($settings_columns);
 		$window->setContent($settings_content);
 		$window->send($player, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_plugins ($aseco, $login, $chat_command, $chat_parameter) {
-
-		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {
-			return;
-		}
-
-		// Create list of plugins
-		$plugins = $aseco->plugins;
-		ksort($plugins);
-
-		$data = array();
-		foreach ($plugins as $plugin) {
-			$description = $plugin->getDescription();
-
-			$data[] = array(
-				'$N'. $plugin->getFilename(),
-				'$N'. ($description instanceof Message ? $description->finish($player->login) : $description),
-				'$N'. $plugin->getVersion() .' ('. $plugin->getBuild() .')',
-			);
-		}
-		unset($plugins);
-
-		// Setup settings for Window
-		$settings_styles = array(
-			'icon'			=> 'Icons128x128_1,Browse',
-			'textcolors'		=> array('FF5F', 'FFFF'),
-		);
-		$settings_columns = array(
-			'columns'		=> 1,
-			'widths'		=> array(17.5, 72.5, 10),
-			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF', 'FFFF'),
-			'heading'		=> array(
-				(new Message('chat.server', 'slash_plugins_heading_filename'))->finish($login),
-				(new Message('chat.server', 'slash_plugins_heading_description'))->finish($login),
-				(new Message('chat.server', 'slash_plugins_heading_version_build'))->finish($login),
-			),
-		);
-		$settings_content = array(
-			'title'			=> (new Message('chat.server', 'slash_plugins_window_title'))->finish($login),
-			'data'			=> $data,
-			'mode'			=> 'columns',
-		);
-
-		$window = new Window();
-		$window->setStyles($settings_styles);
-		$window->setColumns($settings_columns);
-		$window->setContent($settings_content);
-		$window->send($player, 0, false);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_time ($aseco, $login, $chat_command, $chat_parameter) {
-
-		// Show chat message
-		$msg = new Message('chat.server', 'slash_time_chat_message');
-		$msg->addPlaceholders(
-			date('H:i:s T'),
-			date('Y-m-d')
-		);
-		$msg->sendChatMessage($login);
-	}
-
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	public function chat_uptime ($aseco, $login, $chat_command, $chat_parameter) {
-
-		// Show chat message
-		$msg = new Message('chat.server', 'slash_uptime_chat_message');
-		$msg->addPlaceholders(
-			$aseco->timeString($aseco->server->networkstats['Uptime'])
-		);
-		$msg->sendChatMessage($login);
 	}
 }
 

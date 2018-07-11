@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-06');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -158,9 +158,9 @@ class PluginChatAdmin extends Plugin {
 			'removeadmin'			=> new Message('chat.admin', 'removeadmin'),
 			'addop'				=> new Message('chat.admin', 'addop'),
 			'removeop'			=> new Message('chat.admin', 'removeop'),
-			'listmasters'			=> new Message('chat.admin', 'listmasters'),
-			'listadmins'			=> new Message('chat.admin', 'listadmins'),
-			'listops'			=> new Message('chat.admin', 'listops'),
+//			'listmasters'			=> new Message('chat.admin', 'listmasters'),
+//			'listadmins'			=> new Message('chat.admin', 'listadmins'),
+//			'listops'			=> new Message('chat.admin', 'listops'),
 			'adminability'			=> new Message('chat.admin', 'adminability'),
 			'opability'			=> new Message('chat.admin', 'opability'),
 			'listabilities'			=> new Message('chat.admin', 'listabilities'),
@@ -2500,148 +2500,148 @@ class PluginChatAdmin extends Plugin {
 				}
 			}
 		}
-		else if ($command['params'][0] === 'listmasters') {
-			/**
-			 * Displays the masteradmins list.
-			 */
-
-			$admin->playerlist = array();
-			$admin->msgs = array();
-
-			$head = 'Current MasterAdmins:';
-			$msg = array();
-			$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
-			$pid = 1;
-			$lines = 0;
-			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
-			foreach ($aseco->masteradmin_list['TMLOGIN'] as $player) {
-				// skip any LAN logins
-				if ($player !== '' && !$aseco->isLANLogin($player)) {
-					$plarr = array();
-					$plarr['login'] = $player;
-					$admin->playerlist[] = $plarr;
-
-					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
-					               '{#black}'. $aseco->server->players->getPlayerNickname($player)
-					               .'$z / {#login}'. $player);
-					$pid++;
-					if (++$lines > 14) {
-						$admin->msgs[] = $msg;
-						$lines = 0;
-						$msg = array();
-						$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
-					}
-				}
-			}
-
-			// add if last batch exists
-			if (count($msg) > 1) {
-				$admin->msgs[] = $msg;
-			}
-
-			// display ManiaLink message
-			if (count($admin->msgs) > 1) {
-				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
-			}
-			else {  // === 1
-				$msg = new Message('chat.admin', 'message_no_masteradmins_found');
-				$msg->sendChatMessage($login);
-			}
-		}
-		else if ($command['params'][0] === 'listadmins') {
-			/**
-			 * Displays the admins list.
-			 */
-
-			if (empty($aseco->admin_list['TMLOGIN'])) {
-				$msg = new Message('chat.admin', 'message_no_admins_found');
-				$msg->sendChatMessage($login);
-				return;
-			}
-
-			$admin->playerlist = array();
-			$admin->msgs = array();
-
-			$head = 'Current Admins:';
-			$msg = array();
-			$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
-			$pid = 1;
-			$lines = 0;
-			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
-			foreach ($aseco->admin_list['TMLOGIN'] as $player) {
-				if ($player !== '') {
-					$plarr = array();
-					$plarr['login'] = $player;
-					$admin->playerlist[] = $plarr;
-
-					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
-					               '{#black}'. $aseco->server->players->getPlayerNickname($player)
-					               .'$z / {#login}'. $player);
-					$pid++;
-					if (++$lines > 14) {
-						$admin->msgs[] = $msg;
-						$lines = 0;
-						$msg = array();
-						$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
-					}
-				}
-			}
-
-			// add if last batch exists
-			if (count($msg) > 1) {
-				$admin->msgs[] = $msg;
-			}
-
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
-		}
-		else if ($command['params'][0] === 'listops') {
-			/**
-			 * Displays the operators list.
-			 */
-
-			if (empty($aseco->operator_list['TMLOGIN'])) {
-				$msg = new Message('chat.admin', 'message_no_operators_found');
-				$msg->sendChatMessage($login);
-				return;
-			}
-
-			$admin->playerlist = array();
-			$admin->msgs = array();
-
-			$head = 'Current Operators:';
-			$msg = array();
-			$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
-			$pid = 1;
-			$lines = 0;
-			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
-			foreach ($aseco->operator_list['TMLOGIN'] as $player) {
-				if ($player !== '') {
-					$plarr = array();
-					$plarr['login'] = $player;
-					$admin->playerlist[] = $plarr;
-
-					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
-					               '{#black}'. $aseco->server->players->getPlayerNickname($player)
-					               .'$z / {#login}'. $player);
-					$pid++;
-					if (++$lines > 14) {
-						$admin->msgs[] = $msg;
-						$lines = 0;
-						$msg = array();
-						$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
-					}
-				}
-			}
-
-			// add if last batch exists
-			if (count($msg) > 1) {
-				$admin->msgs[] = $msg;
-			}
-
-			// display ManiaLink message
-			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
-		}
+//		else if ($command['params'][0] === 'listmasters') {
+//			/**
+//			 * Displays the masteradmins list.
+//			 */
+//
+//			$admin->playerlist = array();
+//			$admin->msgs = array();
+//
+//			$head = 'Current MasterAdmins:';
+//			$msg = array();
+//			$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
+//			$pid = 1;
+//			$lines = 0;
+//			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
+//			foreach ($aseco->masteradmin_list['TMLOGIN'] as $player) {
+//				// skip any LAN logins
+//				if ($player !== '' && !$aseco->isLANLogin($player)) {
+//					$plarr = array();
+//					$plarr['login'] = $player;
+//					$admin->playerlist[] = $plarr;
+//
+//					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
+//					               '{#black}'. $aseco->server->players->getPlayerNickname($player)
+//					               .'$z / {#login}'. $player);
+//					$pid++;
+//					if (++$lines > 14) {
+//						$admin->msgs[] = $msg;
+//						$lines = 0;
+//						$msg = array();
+//						$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
+//					}
+//				}
+//			}
+//
+//			// add if last batch exists
+//			if (count($msg) > 1) {
+//				$admin->msgs[] = $msg;
+//			}
+//
+//			// display ManiaLink message
+//			if (count($admin->msgs) > 1) {
+//				$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
+//			}
+//			else {  // === 1
+//				$msg = new Message('chat.admin', 'message_no_masteradmins_found');
+//				$msg->sendChatMessage($login);
+//			}
+//		}
+//		else if ($command['params'][0] === 'listadmins') {
+//			/**
+//			 * Displays the admins list.
+//			 */
+//
+//			if (empty($aseco->admin_list['TMLOGIN'])) {
+//				$msg = new Message('chat.admin', 'message_no_admins_found');
+//				$msg->sendChatMessage($login);
+//				return;
+//			}
+//
+//			$admin->playerlist = array();
+//			$admin->msgs = array();
+//
+//			$head = 'Current Admins:';
+//			$msg = array();
+//			$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
+//			$pid = 1;
+//			$lines = 0;
+//			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
+//			foreach ($aseco->admin_list['TMLOGIN'] as $player) {
+//				if ($player !== '') {
+//					$plarr = array();
+//					$plarr['login'] = $player;
+//					$admin->playerlist[] = $plarr;
+//
+//					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
+//					               '{#black}'. $aseco->server->players->getPlayerNickname($player)
+//					               .'$z / {#login}'. $player);
+//					$pid++;
+//					if (++$lines > 14) {
+//						$admin->msgs[] = $msg;
+//						$lines = 0;
+//						$msg = array();
+//						$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
+//					}
+//				}
+//			}
+//
+//			// add if last batch exists
+//			if (count($msg) > 1) {
+//				$admin->msgs[] = $msg;
+//			}
+//
+//			// display ManiaLink message
+//			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
+//		}
+//		else if ($command['params'][0] === 'listops') {
+//			/**
+//			 * Displays the operators list.
+//			 */
+//
+//			if (empty($aseco->operator_list['TMLOGIN'])) {
+//				$msg = new Message('chat.admin', 'message_no_operators_found');
+//				$msg->sendChatMessage($login);
+//				return;
+//			}
+//
+//			$admin->playerlist = array();
+//			$admin->msgs = array();
+//
+//			$head = 'Current Operators:';
+//			$msg = array();
+//			$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
+//			$pid = 1;
+//			$lines = 0;
+//			$admin->msgs[0] = array(1, $head, array(0.9, 0.1, 0.8), array('Icons128x128_1', 'Solo'));
+//			foreach ($aseco->operator_list['TMLOGIN'] as $player) {
+//				if ($player !== '') {
+//					$plarr = array();
+//					$plarr['login'] = $player;
+//					$admin->playerlist[] = $plarr;
+//
+//					$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
+//					               '{#black}'. $aseco->server->players->getPlayerNickname($player)
+//					               .'$z / {#login}'. $player);
+//					$pid++;
+//					if (++$lines > 14) {
+//						$admin->msgs[] = $msg;
+//						$lines = 0;
+//						$msg = array();
+//						$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
+//					}
+//				}
+//			}
+//
+//			// add if last batch exists
+//			if (count($msg) > 1) {
+//				$admin->msgs[] = $msg;
+//			}
+//
+//			// display ManiaLink message
+//			$aseco->plugins['PluginManialinks']->display_manialink_multi($admin);
+//		}
 		else if ($command['params'][0] === 'adminability') {
 			/**
 			 * Show/change an admin ability

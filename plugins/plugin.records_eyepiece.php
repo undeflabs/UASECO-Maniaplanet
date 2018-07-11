@@ -2,8 +2,7 @@
 /*
  * Plugin: Records Eyepiece
  * ~~~~~~~~~~~~~~~~~~~~~~~~
- * For a detailed description and documentation, please refer to:
- * http://www.undef.name/UASECO/Records-Eyepiece.php
+ * » A fully configurable HUD for all type of records and gamemodes.
  *
  * ----------------------------------------------------------------------------------
  *
@@ -52,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-06-13');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -864,7 +863,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 
-		if ( ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true) && (isset($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT']) )) {
+		if ($this->config['PLACEMENT_WIDGET'][0]['ENABLED'][0] === true && isset($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'])) {
 
 			$aseco->console('[RecordsEyepiece] Checking entries for the <placement_widget>...');
 
@@ -872,17 +871,16 @@ class PluginRecordsEyepiece extends Plugin {
 			$new_placements = array();
 			$chat_id = 1;	// Start ID for <chat_command>'s
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ( (isset($placement['ENABLED'][0])) && (strtoupper($placement['ENABLED'][0]) === 'TRUE')) {
-
+				if (isset($placement['ENABLED'][0]) && strtoupper($placement['ENABLED'][0]) === 'TRUE') {
 					if (isset($placement['INCLUDE'][0])) {
 						// WITH <include>: Check for min. required entries <display>, <include>,
 						// skip if one was not found.
-						if ( !isset($placement['DISPLAY'][0])) {
+						if (!isset($placement['DISPLAY'][0])) {
 							$aseco->console('[RecordsEyepiece] » One of your <placement> did not have all min. required entries, missing <display>!');
 							continue;
 						}
 
-						if ( !is_readable($placement['INCLUDE'][0])) {
+						if (!is_readable($placement['INCLUDE'][0])) {
 							$aseco->console('[RecordsEyepiece] » One of your <placement> are unable to display, because the file "'. $placement['INCLUDE'][0] .'" at <include> could not be accessed!');
 							continue;
 						}
@@ -890,7 +888,7 @@ class PluginRecordsEyepiece extends Plugin {
 					else {
 						// WITHOUT <include>: Check for min. required entries <pos_x>, <pos_y>, <width> and <height>,
 						// skip if one was not found.
-						if ( ( !isset($placement['DISPLAY'][0]) ) || ( !isset($placement['POS_X'][0]) ) || ( !isset($placement['POS_Y'][0]) ) || ( !isset($placement['WIDTH'][0]) ) || ( !isset($placement['HEIGHT'][0]) )) {
+						if (!isset($placement['DISPLAY'][0]) || !isset($placement['POS_X'][0]) || !isset($placement['POS_Y'][0]) || !isset($placement['WIDTH'][0]) || !isset($placement['HEIGHT'][0])) {
 							$aseco->console('[RecordsEyepiece] » One of your <placement> did not have all min. required entries, missing one of <pos_x>, <pos_y>, <width> or <height>!');
 							continue;
 						}
@@ -915,7 +913,7 @@ class PluginRecordsEyepiece extends Plugin {
 					unset($placement['ENABLED'], $placement['DESCRIPTION'], $value);
 
 					// Skip this part from <placement> with <include> inside
-					if ( !isset($placement['INCLUDE'][0])) {
+					if (!isset($placement['INCLUDE'][0])) {
 
 						// Check for <layer> and adjust the min./max.
 						if (isset($placement['LAYER'][0])) {
@@ -2564,7 +2562,7 @@ class PluginRecordsEyepiece extends Plugin {
 		else if ($params['Action'] === 'releaseChatCommand') {
 
 			foreach ($this->config['PLACEMENT_WIDGET'][0]['PLACEMENT'] as $placement) {
-				if ( (isset($placement['CHAT_MLID'][0])) && ($placement['CHAT_MLID'][0] === $params['id'])) {
+				if (isset($placement['CHAT_MLID'][0]) && $placement['CHAT_MLID'][0] === (int)$params['id']) {
 					$aseco->releaseChatCommand($placement['CHAT_COMMAND'][0], $player->login);
 					break;
 				}
@@ -7250,7 +7248,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<dedimania_records> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -7419,7 +7416,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<local_records> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -7643,7 +7639,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<live_rankings> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -8252,7 +8247,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<live_rankings> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -9020,7 +9014,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org/',
 			'button_title'		=> 'MORE INFO ON DEDIMANIA.NET',
 			'button_link'		=> $url,
 		);
@@ -9085,7 +9079,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO,org',
 		);
 
 		$window = new Window();
@@ -9148,7 +9142,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -9212,7 +9206,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -9444,7 +9438,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -11037,7 +11031,7 @@ EOL;
 			);
 			$settings_footer = array(
 				'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-				'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+				'about_link'		=> 'http://www.UASECO.org',
 			);
 
 			$window = new Window();
@@ -11154,7 +11148,7 @@ EOL;
 		);
 		$settings_footer = array(
 				'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-				'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+				'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -11309,7 +11303,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -12059,7 +12053,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -12080,7 +12074,7 @@ EOL;
 
 		// Begin Help for Players
 		$help_player = '<frame pos="2.5 -2.5" z-index="0.05">';
-		$help_player .= '<quad pos="162 0.9" z-index="0.03" size="34 87" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.undef.name/UASECO/Records-Eyepiece.php"/>';
+		$help_player .= '<quad pos="162 0.9" z-index="0.03" size="34 87" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.UASECO.org"/>';
 
 		// Key "F9"
 		$help_player .= '<label pos="0 0" z-index="0.01" size="42.5 3.75" class="labels" textcolor="FFFF" text="F9"/>';
@@ -12119,7 +12113,7 @@ EOL;
 
 		// Begin Help for MasterAdmins only
 		$help_admin = '<frame pos="2.5 -2.5" z-index="0.05">';
-		$help_admin .= '<quad pos="162 0.9" z-index="0.03" size="34 87" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.undef.name/UASECO/Records-Eyepiece.php"/>';
+		$help_admin .= '<quad pos="162 0.9" z-index="0.03" size="34 87" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.UASECO.org"/>';
 		$help_admin .= '<label pos="0 0" z-index="0.01" size="142.5 3.75" class="labels" textcolor="FF0F" text="Commands for MasterAdmins only:"/>';
 
 		// Command "/eyeset reload"
@@ -12162,7 +12156,7 @@ EOL;
 
 		// Begin About
 		$help_about = '<frame pos="2.5 -2.5" z-index="0.05">';
-		$help_about .= '<quad pos="162 0.9" z-index="0.03" size="34 87" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.undef.name/UASECO/Records-Eyepiece.php"/>';
+		$help_about .= '<quad pos="162 0.9" z-index="0.03" size="34 87" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-normal.jpg" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/welcome-records-eyepiece-focus.jpg" url="http://www.UASECO.org"/>';
 		$help_about .= '<label pos="0 0" z-index="0.01" size="155.55 0" autonewline="1" class="labels" textcolor="FF0F" text="This plugin based upon the well known and good old FuFi.Widgets who accompanied us for years, it was written from scratch to change the look and feel of the Widgets and to make it easier to configure.'. LF.LF .'Some new features are included to have more information available and easily accessible. The famous feature (i think) is the clock which displays the local time without to choose the local timezone, no more need to calculate the local time from a Server far away!'. LF.LF .'Another nice feature are the clickable Record-Widgets to display all the driven records and not just a few in the small Widgets.'. LF.LF .'The extended $FFF$L[http://www.mania-exchange.com/]ManiaExchange-Mapinfo$L$FF0 Window display more information of a Map as the default currently does and also in a very nice way.'. LF.LF .'The next very nice thing is the Maplist where you can easily add a Map to the Playlist. The integrated filter options makes it easy for e.g. list only Maps with the mood night or only Canyon Maps or only Maps from a selected Mapauthor...'. LF.LF .'$OHave fun with the Records-Eyepiece!"/>';
 		$help_about .= '</frame>';
 
@@ -12180,7 +12174,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.undef.name/UASECO/Records-Eyepiece.php',
+			'about_link'		=> 'http://www.UASECO.org',
 		);
 
 		$window = new Window();
@@ -12209,7 +12203,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<spectator_info_widget> (getter) @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12276,7 +12269,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<spectator_info_widget> (widget) @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12346,7 +12338,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<multilap_info_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12443,7 +12434,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<warm_up_info_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12542,7 +12532,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<donation_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12600,7 +12589,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<winning_payout> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12662,7 +12650,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<scoretable_lists> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12725,7 +12712,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<map_widget><race> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12812,7 +12798,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<map_widget><score> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12858,7 +12843,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<clock_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12920,7 +12904,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<toplist_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -12982,7 +12965,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<next_environment_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13026,7 +13008,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<next_gamemode_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13071,7 +13052,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<visitors_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13129,7 +13109,6 @@ $footer .= <<<EOL
  * ==================================
  * Function:	<maniaexchange_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13193,7 +13172,6 @@ $content .= <<<EOL
  * ==================================
  * Function:	<mapcount_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13255,7 +13233,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<favorite_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13356,7 +13333,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<music_widget> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13532,7 +13508,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	<round_score> @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13660,7 +13635,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	Window @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */
@@ -13828,7 +13802,6 @@ $maniascript = <<<EOL
  * ==================================
  * Function:	SubWindow @ plugin.records_eyepiece.php
  * Author:	undef.de
- * Website:	http://www.undef.name
  * License:	GPLv3
  * ==================================
  */

@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-07-10');
+	define('UASECO_BUILD',			'2018-07-11');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -1754,13 +1754,17 @@ class UASECO extends Helper {
 	// Authenticates USASEO at the server.
 	private function connectDedicated () {
 
-		// Check for obviously wrong port setup
+		// Check for obviously wrong setup
 		if ((int)$this->server->xmlrpc['port'] === 2350) {
-			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port>.');
+			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port> from your "UserData/Config/dedicated_cfg.txt" (or however you named that file).');
 			exit(0);
 		}
 		if ((int)$this->server->xmlrpc['port'] === 3450) {
-			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_p2p_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port>.');
+			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_p2p_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port> from your "UserData/Config/dedicated_cfg.txt" (or however you named that file).');
+			exit(0);
+		}
+		if (!filter_var($this->server->xmlrpc['ip'], FILTER_VALIDATE_IP)) {
+			$this->console('[Dedicated] It seems you set in "config/UASECO.xml" at <dedicated_server><ip> a valid IP-Address. Please use the <system_config><force_ip_address> or "127.0.0.1" from your "UserData/Config/dedicated_cfg.txt" (or however you named that file)');
 			exit(0);
 		}
 
@@ -1778,19 +1782,19 @@ class UASECO extends Helper {
 				$this->client->connect($this->server->xmlrpc['ip'], $this->server->xmlrpc['port'], $this->server->timeout);
 			}
 			catch (Exception $exception) {
-				trigger_error('[Dedicated] ['. $exception->getCode() .'] connect - '. $exception->getMessage(), E_USER_WARNING);
-				return false;
+				$this->console('[Dedicated] ['. $exception->getCode() .'] connect - '. $exception->getMessage());
+				die();
 			}
 
 			// Check login
 			if ($this->server->xmlrpc['login'] !== 'SuperAdmin') {
-				trigger_error("[Dedicated] Invalid login '". $this->server->xmlrpc['login'] ."' - must be 'SuperAdmin' in [config/UASECO.xml] at <dedicated_server><login>!", E_USER_WARNING);
-				return false;
+				$this->console('[Dedicated] Invalid login "'. $this->server->xmlrpc['login'] .'" - must be "SuperAdmin" in [config/UASECO.xml] at <dedicated_server><login>!');
+				die();
 			}
 
 			// Check password
 			if ($this->server->xmlrpc['pass'] === 'SuperAdmin') {
-				trigger_error("[Dedicated] Insecure (default) password '" . $this->server->xmlrpc['pass'] . "' - should be changed in dedicated config and [config/UASECO.xml] at <dedicated_server><password>!", E_USER_WARNING);
+				$this->console('[Dedicated][WARNING] Insecure (default) password "' . $this->server->xmlrpc['pass'] .'" - should be changed in dedicated config and [config/UASECO.xml] at <dedicated_server><password>!');
 			}
 
 			// Log console message
@@ -1807,14 +1811,8 @@ class UASECO extends Helper {
 				);
 			}
 
-			try {
-				// Log into the server
-				$this->client->query('Authenticate', $this->server->xmlrpc['login'], $this->server->xmlrpc['pass']);
-			}
-			catch (Exception $exception) {
-				trigger_error('[Dedicated] ['. $exception->getCode() .'] Authenticate - '. $exception->getMessage(), E_USER_WARNING);
-				return false;
-			}
+			// Log into the server
+			$this->client->query('Authenticate', $this->server->xmlrpc['login'], $this->server->xmlrpc['pass']);
 
 			// Enable callback system
 			$this->client->query('EnableCallbacks', true);

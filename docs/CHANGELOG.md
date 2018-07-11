@@ -21,6 +21,7 @@
 * Changed parameter structure of the events `onPlayerFinishPrefix`, `onPlayerFinish` and `onPlayerFinishPostfix`
 * Replaced PHP equality operators (`==` and `!=`) with identical operators (`===` and `!==`) for a performance gain (initiated by C-Lodder)[https://github.com/undeflabs/UASECO/pull/32]
 * Added a check for obviously wrong port setups of "config/UASECO.xml" `<dedicated_server><port>`
+* Chat commands `/admin listmasters`, `/admin listadmins` and `/admin listops` from `plugins/chat.admin.php` has been replaced by `/masteradmins`, `/admins` and `/operators` from `plugins/chat.server.php`
 
 
 ### Changes at config files
@@ -82,6 +83,7 @@
 * Fixed chat command `/elist` can not juke maps, only see `-` instead of `+` (thanks hackie)
 * Fixed RASP does not display correct ranking (thanks hacki65)
 * Fixed [PHP Notice] Trying to get property of non-object on line 102 in file `includes/core/map.class.php` (thanks Snorfold)
+* Fixed <placement>'s from Records-Eyepiece with chat-commands does not call the given chat command (RelaxedRacer)
 
 
 

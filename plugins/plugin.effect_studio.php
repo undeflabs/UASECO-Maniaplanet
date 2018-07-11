@@ -2,8 +2,7 @@
 /*
  * Plugin: Effect Studio
  * ~~~~~~~~~~~~~~~~~~~~~
- * For a detailed description and documentation, please refer to:
- * http://www.undef.name/UASECO/Effect-Studio.php
+ * » Plays/Displays several effects on configured events.
  *
  * ----------------------------------------------------------------------------------
  *
@@ -51,7 +50,7 @@ class PluginEffectStudio extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 

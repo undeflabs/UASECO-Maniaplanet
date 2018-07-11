@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-10');
+		$this->setBuild('2018-07-11');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -390,6 +390,7 @@ class PluginCheckpoints extends Plugin {
 
 		// Init
 		$this->checkpoints[$player->login] = new Checkpoint();
+		$this->update_tracking[$player->login] = false;
 
 		// Set first lap reference in Laps mode
 		if ($aseco->server->gameinfo->mode === Gameinfo::LAPS) {

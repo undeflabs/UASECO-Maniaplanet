@@ -11,11 +11,12 @@
  *   2015-01-28: Added a try/catch at query() to catch all exception (possibly forgotten by Plugin authors)
  *   2015-02-18: Added ignore list for error messages for ListMethods
  *   2017-03-23: Changed [UASECO Exception] logging to full output
+ *   2018-07-11: Changed handling of 'Password incorrect.'
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2017-04-02
- * Copyright:	2014 - 2017 by undef.de
+ * Date:	2018-07-11
+ * Copyright:	2014 - 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: http://www.gnu.org/licenses/lgpl.html LGPL License 3
@@ -196,8 +197,14 @@ class GbxRemote {
 			catch (Exception $exception) {
 				$message = $exception->getMessage();
 				if (!in_array($message, $this->ignore_error_messages)) {
-					$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
-					$aseco->dump($args);
+					if ($message == 'Password incorrect.') {
+						$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'"');
+						die();
+					}
+					else {
+						$aseco->console_text('[UASECO Exception] Error returned: "'. $message .'" ['. $exception->getCode() .'] at '. get_class($this) .'::query() for method "'. $method .'" with arguments:');
+						$aseco->dump($args);
+					}
 				}
 			}
 		}
