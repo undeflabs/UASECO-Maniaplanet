@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-11');
+		$this->setBuild('2018-07-12');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 

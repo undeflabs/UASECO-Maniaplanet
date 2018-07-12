@@ -48,7 +48,7 @@ class PluginLocalRecords extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-12');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Saves record into a local database.');
 
@@ -119,20 +119,6 @@ class PluginLocalRecords extends Plugin {
 
 	public function onPlayerConnect ($aseco, $player) {
 
-		// Bail out immediately on unsupported gamemodes
-		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
-			return;
-		}
-
-		// Show top-8 & records of all online players before map
-		if (($this->settings['show_recs_before'] & 2) === 2) {
-			$this->show_maprecs($aseco, $player->login, 1, 0);
-		}
-		else if (($this->settings['show_recs_before'] & 1) === 1) {
-			// Or show original record message
-			$aseco->sendChatMessage($message, $player->login);
-		}
-
 		// If there's a record on current map
 		$cur_record = $this->records->getRecord(0);
 		if ($cur_record !== false && $cur_record->score > 0) {
@@ -149,6 +135,20 @@ class PluginLocalRecords extends Plugin {
 			$message = $aseco->formatText($this->settings['messages']['RECORD_NONE'][0],
 				$aseco->stripStyles($aseco->server->maps->current->name)
 			);
+		}
+
+		// Bail out immediately on unsupported gamemodes
+		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
+			return;
+		}
+
+		// Show top-8 & records of all online players before map
+		if (($this->settings['show_recs_before'] & 2) === 2) {
+			$this->show_maprecs($aseco, $player->login, 1, 0);
+		}
+		else if (($this->settings['show_recs_before'] & 1) === 1) {
+			// Or show original record message
+			$aseco->sendChatMessage($message, $player->login);
 		}
 	}
 

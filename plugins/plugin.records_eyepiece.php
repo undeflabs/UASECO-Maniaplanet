@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-07-11');
+		$this->setBuild('2018-07-12');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -11768,7 +11768,7 @@ EOL;
 					}
 					$xml .= '<label pos="6.5 -'. (3.35 * $line) .'" z-index="0.02" size="5 3.1875" class="labels" halign="right" scale="0.9" text="'. $rank .'."/>';
 					$xml .= '<label pos="16 -'. (3.35 * $line) .'" z-index="0.02" size="10 3.1875" class="labels" halign="right" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0] .'" text="'. $item[$data['fieldnames'][0]] .'"/>';
-					$xml .= '<label pos="17.25 -'. (3.35 * $line) .'" z-index="0.02" size="28 3.1875" class="labels" scale="0.9" text="'. $item[$data['fieldnames'][1]] .'"/>';
+					$xml .= '<label pos="17.25 -'. (3.35 * $line) .'" z-index="0.02" size="28 3.1875" class="labels" scale="0.9" text="'. $this->handleSpecialChars($item[$data['fieldnames'][1]]) .'"/>';
 				}
 
 				$line ++;

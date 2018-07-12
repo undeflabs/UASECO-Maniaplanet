@@ -74,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2018-07-11');
+		$this->setBuild('2018-07-12');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 

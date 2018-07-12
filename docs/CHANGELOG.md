@@ -84,6 +84,7 @@
 * Fixed RASP does not display correct ranking (thanks hacki65)
 * Fixed [PHP Notice] Trying to get property of non-object on line 102 in file `includes/core/map.class.php` (thanks Snorfold)
 * Fixed <placement>'s from Records-Eyepiece with chat-commands does not call the given chat command (RelaxedRacer)
+* Fixed [PHP Notice] Undefined variable: message on line 133 in file `plugins/plugin.local_records.php` (thanks RelaxedRacer)
 
 
 
