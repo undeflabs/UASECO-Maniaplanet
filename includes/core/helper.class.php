@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-06-12');
+		$this->setBuild('2018-07-15');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -242,9 +242,9 @@ class Helper extends BaseClass {
 			$xml .= ' </dedicated>'.LF;
 			$xml .= ' <server>'.LF;
 			$xml .= '  <link>maniaplanet://#join='. $this->server->login .'@'. $this->server->title .'</link>'.LF;
-			$xml .= '  <admin_contact><![CDATA['. $this->handleSpecialChars($this->settings['admin_contact']) .']]</admin_contact>'.LF;
+			$xml .= '  <admin_contact><![CDATA['. $this->handleSpecialChars($this->settings['admin_contact']) .']]></admin_contact>'.LF;
 			$xml .= '  <login>'. $this->server->login .'</login>'.LF;
-			$xml .= '  <name><![CDATA['. $this->handleSpecialChars($this->stripStyles($this->server->name)) .']]</name>'.LF;
+			$xml .= '  <name><![CDATA['. $this->handleSpecialChars($this->stripStyles($this->server->name)) .']]></name>'.LF;
 			$xml .= '  <continent>'. $this->server->zone[0] .'</continent>'.LF;
 			$xml .= '  <country>'. $this->server->zone[1] .'</country>'.LF;
 			$xml .= '  <protected>'. ((!empty($this->server->options['Password'])) ? 'true' : 'false') .'</protected>'.LF;
@@ -271,7 +271,7 @@ class Helper extends BaseClass {
 			$xml .= ' <current>'.LF;
 			$xml .= '  <map>'.LF;
 			$xml .= '   <uid>'. $this->server->maps->current->uid .'</uid>'.LF;
-			$xml .= '   <name><![CDATA['. $this->handleSpecialChars($this->server->maps->current->name_stripped) .']]</name>'.LF;
+			$xml .= '   <name><![CDATA['. $this->handleSpecialChars($this->server->maps->current->name_stripped) .']]></name>'.LF;
 			$xml .= '   <author>'. $this->server->maps->current->author .'</author>'.LF;
 			$xml .= '   <environment>'. $this->server->maps->current->environment .'</environment>'.LF;
 			$xml .= '   <mood>'. $this->server->maps->current->mood .'</mood>'.LF;
@@ -279,12 +279,12 @@ class Helper extends BaseClass {
 			$xml .= '   <goldtime>'. $this->server->maps->current->gold_time .'</goldtime>'.LF;
 			$xml .= '   <silvertime>'. $this->server->maps->current->silver_time .'</silvertime>'.LF;
 			$xml .= '   <bronzetime>'. $this->server->maps->current->bronze_time .'</bronzetime>'.LF;
-			$xml .= '   <mxurl><![CDATA['. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .']]</mxurl>'.LF;
+			$xml .= '   <mxurl><![CDATA['. str_replace('&', '&amp;', (isset($this->server->maps->current->mx->pageurl)) ? $this->server->maps->current->mx->pageurl : '') .']]></mxurl>'.LF;
 			$xml .= '  </map>'.LF;
 			$xml .= '  <players>'.LF;
 			foreach ($this->server->players->player_list as $player) {
 					$xml .= '   <player>'.LF;
-					$xml .= '     <nickname><![CDATA['. $this->handleSpecialChars($this->stripStyles($player->nickname)) .']]</nickname>'.LF;
+					$xml .= '     <nickname><![CDATA['. $this->handleSpecialChars($this->stripStyles($player->nickname)) .']]></nickname>'.LF;
 					$xml .= '     <login>'. $player->login .'</login>'.LF;
 					$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
 					$xml .= '     <ladder>'. $player->ladder_rank .'</ladder>'.LF;

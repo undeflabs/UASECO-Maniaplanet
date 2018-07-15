@@ -85,6 +85,7 @@
 * Fixed [PHP Notice] Trying to get property of non-object on line 102 in file `includes/core/map.class.php` (thanks Snorfold)
 * Fixed <placement>'s from Records-Eyepiece with chat-commands does not call the given chat command (RelaxedRacer)
 * Fixed [PHP Notice] Undefined variable: message on line 133 in file `plugins/plugin.local_records.php` (thanks RelaxedRacer)
+* Fixed PHP Warning] file_get_contents(https://www.UASECO.org/usagereport.php): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error on line 196 in file `webrequest.php` (thanks RelaxedRacer)
 
 
 
