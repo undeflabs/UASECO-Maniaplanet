@@ -22,6 +22,8 @@
 * Replaced PHP equality operators (`==` and `!=`) with identical operators (`===` and `!==`) for a performance gain (initiated by C-Lodder)[https://github.com/undeflabs/UASECO/pull/32]
 * Added a check for obviously wrong port setups of "config/UASECO.xml" `<dedicated_server><port>`
 * Chat commands `/admin listmasters`, `/admin listadmins` and `/admin listops` from `plugins/chat.admin.php` has been replaced by `/masteradmins`, `/admins` and `/operators` from `plugins/chat.server.php`
+* Changed behavior of `webrequest.php` that now verifies TLS/SSL-Certificates instead of ignoring them
+* Added the plugin list with versions into the ABOUT and DEBUG header (which has been re-ordered too) in the logfile
 
 
 ### Changes at config files

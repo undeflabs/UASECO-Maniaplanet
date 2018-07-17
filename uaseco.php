@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-07-15');
+	define('UASECO_BUILD',			'2018-07-17');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -600,39 +600,30 @@ class UASECO extends Helper {
 	// Sends program header to console and ingame chat.
 	private function sendHeader () {
 
-		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') === 1 ? '' : 's');
+		$max_execution_time = (int)ini_get('max_execution_time') .' second'. ((int)ini_get('max_execution_time') === 1 ? '' : 's');
 		$wrappers = stream_get_wrappers();
 		sort($wrappers, SORT_STRING);
 		$gd = gd_info();
 
 		$this->console_text('####[ABOUT]##########################################################################');
-		$this->console_text('» Server:        {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
+		$this->console_text('» Dedicated:     {1}/{2} build {3}, using Method-API {4}, ModeScript-API {5}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version, MODESCRIPT_API_VERSION);
+		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
+		$this->console_text('»                Host: {1}', $this->server->xmlrpc['ip']);
+		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
+		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
+		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
+		$this->console_text('» Name:          {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
 		if ($this->server->isrelay) {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:         {1}', $this->server->title);
 		$this->console_text('» Gamemode:      "{1}" with script "{2}" version "{3}"', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
-		$this->console_text('» Dedicated:     {1}/{2} build {3}, using Method-API {4}, ModeScript-API {5}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version, MODESCRIPT_API_VERSION);
-		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
-		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
-		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
-		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
-		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» UASECO:        Version {1} build {2}, running on {3}:{4}', UASECO_VERSION, UASECO_BUILD, $this->server->xmlrpc['ip'], $this->server->xmlrpc['port'] .',');
-    		$this->console_text('»                based upon the work of the authors and projects of:');
-    		$this->console_text('»                - Xymph (XAseco2),');
-    		$this->console_text('»                - Florian Schnell, AssemblerManiac and many others (ASECO),');
-    		$this->console_text('»                - Kremsy (MPASECO)');
-		$this->console_text('» Author:        undef.de (UASECO)');
-		$this->console_text('» Website:       {1}', UASECO_WEBSITE);
-		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» PHP:           PHP/{1}', phpversion());
 		$this->console_text('»                INI-File: {1}', php_ini_loaded_file());
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
-		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') === 1 ? true : false)));
+		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string(((int)ini_get('allow_url_fopen') === 1 ? true : false)));
 		$this->console_text('»                Streams: {1}', implode(', ', $wrappers));
 		$this->console_text('»                GD-Lib: Version: {1}, JPEG: {2}, PNG: {3}, FreeType: {4}', $gd['GD Version'], $this->bool2string($gd['JPEG Support']), $this->bool2string($gd['PNG Support']), $this->bool2string($gd['FreeType Support']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
@@ -640,7 +631,22 @@ class UASECO extends Helper {
 		$this->console_text('»                Client:  {1}', $this->db->client_version());
 		$this->console_text('»                Connect: {1}', $this->db->connection_info());
 		$this->console_text('»                Status:  {1}', $this->db->host_status());
+		$this->console_text('» -----------------------------------------------------------------------------------');
+		$this->console_text('» OS:            {1}', php_uname());
+		$this->console_text('» -----------------------------------------------------------------------------------');
+		$this->console_text('» UASECO:        Version {1} build {2}', UASECO_VERSION, UASECO_BUILD);
+    		$this->console_text('»                Based upon the work of the authors and projects of:');
+    		$this->console_text('»                - Xymph (XAseco2),');
+    		$this->console_text('»                - Florian Schnell, AssemblerManiac and many others (ASECO),');
+    		$this->console_text('»                - Kremsy (MPASECO)');
+		$this->console_text('» Author:        undef.de (UASECO)');
+		$this->console_text('» Website:       {1}', UASECO_WEBSITE);
+		$this->console_text('####[PLUGINS]########################################################################');
+		foreach ($this->plugins as $plugin) {
+			$this->console_text('» {1}{2} build {3}', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion(), $plugin->getBuild());
+		}
 		$this->console_text('#####################################################################################');
+
 
 		// Format the text of the message
 		$message = $this->formatText($this->getChatMessage('STARTUP'),
@@ -662,7 +668,7 @@ class UASECO extends Helper {
 
 	private function logDebugInformations () {
 
-		$max_execution_time = ini_get('max_execution_time') .' second'. (ini_get('max_execution_time') === 1 ? '' : 's');
+		$max_execution_time = (int)ini_get('max_execution_time') .' second'. ((int)ini_get('max_execution_time') === 1 ? '' : 's');
 		$wrappers = stream_get_wrappers();
 		sort($wrappers, SORT_STRING);
 		$gd = gd_info();
@@ -683,9 +689,6 @@ class UASECO extends Helper {
 		}
 		$this->console_text('» Script owner:  {1}:{2} (UID/GID)', getmyuid(), getmygid());
 		$this->console_text('» -----------------------------------------------------------------------------------');
-//		$this->console_text('» NbPlugins:     {1} : {2} bytes', sprintf("%5s", count($this->plugins)), sprintf("%10s", $this->formatNumber(strlen(serialize($this->plugins)),0,'.','.')));				// serialize() on SimpleXMLElement are bad
-//		$this->console_text('» RegEvents:     {1} : {2} bytes', sprintf("%5s", count($this->registered_events)), sprintf("%10s", $this->formatNumber(strlen(serialize($this->registered_events)),0,'.','.')));		// serialize() on SimpleXMLElement are bad
-//		$this->console_text('» RegChatCmds:   {1} : {2} bytes', sprintf("%5s", count($this->registered_chatcmds)), sprintf("%10s", $this->formatNumber(strlen(serialize($this->registered_chatcmds)),0,'.','.')));	// serialize() on SimpleXMLElement are bad
 		$this->console_text('» NbPlugins:     {1}', sprintf("%5s", count($this->plugins)));
 		$this->console_text('» RegEvents:     {1}', sprintf("%5s", count($this->registered_events)));
 		$this->console_text('» RegChatCmds:   {1}', sprintf("%5s", count($this->registered_chatcmds)));
@@ -693,25 +696,24 @@ class UASECO extends Helper {
 		$this->console_text('» NbPlayers:     {1} : {2} bytes', sprintf("%5s", $this->server->players->count()), sprintf("%10s", $this->formatNumber(strlen(serialize($this->server->players->player_list)),0,'.','.')));
 		$this->console_text('» PlayerRanks:   {1} : {2} bytes', sprintf("%5s", $this->server->rankings->count()), sprintf("%10s", $this->formatNumber(strlen(serialize($this->server->rankings->ranking_list)),0,'.','.')));
 		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» Server:        {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
+		$this->console_text('» Dedicated:     {1}/{2} build {3}, using Method-API {4}, ModeScript-API {5}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version, MODESCRIPT_API_VERSION);
+		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
+		$this->console_text('»                Host: {1}', $this->server->xmlrpc['ip']);
+		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
+		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
+		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
+		$this->console_text('» Name:          {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
 		if ($this->server->isrelay) {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:         {1}', $this->server->title);
 		$this->console_text('» Gamemode:      "{1}" with script "{2}" version "{3}"', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
-		$this->console_text('» Dedicated:     {1}/{2} build {3}, using Method-API {4}, ModeScript-API {5}', $this->server->game, $this->server->version, $this->server->build, $this->server->api_version, MODESCRIPT_API_VERSION);
-		$this->console_text('»                MatchSettings: {1}', $this->settings['default_maplist']);
-		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
-		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
-		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
-		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» PHP:           PHP/{1}', phpversion());
 		$this->console_text('»                INI-File: {1}', php_ini_loaded_file());
 		$this->console_text('»                MemoryLimit: {1}', ini_get('memory_limit'));
 		$this->console_text('»                MaxExecutionTime: {1}', $max_execution_time);
-		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string((ini_get('allow_url_fopen') === 1 ? true : false)));
+		$this->console_text('»                AllowUrlFopen: {1}', $this->bool2string(((int)ini_get('allow_url_fopen') === 1 ? true : false)));
 		$this->console_text('»                Streams: {1}', implode(', ', $wrappers));
 		$this->console_text('»                GD-Lib: Version: {1}, JPEG: {2}, PNG: {3}, FreeType: {4}', $gd['GD Version'], $this->bool2string($gd['JPEG Support']), $this->bool2string($gd['PNG Support']), $this->bool2string($gd['FreeType Support']));
 		$this->console_text('» -----------------------------------------------------------------------------------');
@@ -719,6 +721,14 @@ class UASECO extends Helper {
 		$this->console_text('»                Client:  {1}', $this->db->client_version());
 		$this->console_text('»                Connect: {1}', $this->db->connection_info());
 		$this->console_text('»                Status:  {1}', $this->db->host_status());
+		$this->console_text('» -----------------------------------------------------------------------------------');
+		$this->console_text('» OS:            {1}', php_uname());
+		$this->console_text('» -----------------------------------------------------------------------------------');
+		$this->console_text('» UASECO:        Version {1} build {2}', UASECO_VERSION, UASECO_BUILD);
+		$this->console_text('####[PLUGINS]########################################################################');
+		foreach ($this->plugins as $plugin) {
+			$this->console_text('» {1}{2} build {3}', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion(), $plugin->getBuild());
+		}
 		$this->console_text('#####################################################################################');
 	}
 

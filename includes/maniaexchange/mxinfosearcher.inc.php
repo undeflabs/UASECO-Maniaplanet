@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
 
+// 2018-07-17: Updated get_file() and added 'ssl' to the stream_context
 // 2017-05-13: Change $maxpage to 10 at get_file()
 // 2017-05-03: Bugfix at get_file(): Added check for return values of fopen()
 // 2017-04-19: Changed the "USER_AGENT"
@@ -201,13 +202,19 @@ class MXInfoSearcher implements Iterator,Countable {
 	private function get_file($url) {
 
 		$context = array(
+			'ssl'		=> array(
+				'verify_peer'		=> true,
+				'verify_peer_name'	=> true,
+				'allow_self_signed'	=> true,
+				'SNI_enabled'		=> true,
+			),
 			'http'		=> array(
 				'ignore_errors'		=> false,
 				'method'		=> 'GET',
 				'timeout'		=> 20,
 				'follow_location'	=> true,
 				'max_redirects'		=> 20,
-				'protocol_version'	=> 1.0,
+				'protocol_version'	=> 1.1,
 				'user_agent'		=> 'MXInfoSearcher/1.6 2017-05-03 '. USER_AGENT,
 			),
 		);

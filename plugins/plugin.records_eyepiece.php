@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-07-12');
+		$this->setBuild('2018-07-17');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -8835,6 +8835,7 @@ EOL;
 	*/
 
 	public function getCloseToYouEntry ($item, $line, $topcount, $noscore, $widgetwidth) {
+		global $aseco;
 
 		// Set offset for calculation the line-heights
 		$offset = 5.625;
@@ -8903,7 +8904,7 @@ EOL;
 			// In Team nobody has a rank
 			$xml .= '<label pos="15 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="13.5 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ( (isset($item['score'])) ? $item['score'] : $noscore) .'"/>';
 		}
-		$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="'. sprintf("%.02f", ($widgetwidth - 15)) .' 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['nickname'] .'"/>';
+		$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="'. sprintf("%.02f", ($widgetwidth - 15)) .' 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->handleSpecialChars($item['nickname']) .'"/>';
 
 		return $xml;
 	}

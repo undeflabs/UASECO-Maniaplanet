@@ -8,7 +8,7 @@
  * Author:	undef.de
  * Copyright:	2017 - 2018 by undef.de
  * Version:	1.0.2
- * Build:	2018-05-07
+ * Build:	2018-07-17
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -133,8 +133,8 @@ class WebRequestWorker {
 			$stream_context = stream_context_create(
 				array(
 					'ssl'		=> array(
-						'verify_peer'		=> false,
-						'verify_peer_name'	=> false,
+						'verify_peer'		=> true,
+						'verify_peer_name'	=> true,
 						'allow_self_signed'	=> true,
 						'SNI_enabled'		=> true,
 					),
