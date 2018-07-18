@@ -52,6 +52,7 @@
 * Splited the section `Required plugins` into `Minimal required plugins` and `Maximal required plugins` in `newinstall/config/plugins.xml`
 * Changed `<message_nextenv_failed>`, `<message_activate_localrecords>` and `<message_activate_addthis>` in `newinstall\locales\chat.admin.xml`
 * Added `<message_activate_rasp>` in `newinstall\locales\chat.admin.xml`
+* Updated/removed (because they are gone) links to documentations from nadeo in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes
@@ -88,6 +89,8 @@
 * Fixed <placement>'s from Records-Eyepiece with chat-commands does not call the given chat command (RelaxedRacer)
 * Fixed [PHP Notice] Undefined variable: message on line 133 in file `plugins/plugin.local_records.php` (thanks RelaxedRacer)
 * Fixed PHP Warning] file_get_contents(https://www.UASECO.org/usagereport.php): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error on line 196 in file `webrequest.php` (thanks RelaxedRacer)
+* Fixed LiveRankingsWidget shows time from a map before after leaving and returning later and server stays empty meanwhile (thanks endbase, hackie, Flighthigh)
+* Fixed CheckpointsTimeDiffWidget without tracking if <auto_enable_cps> and <auto_enable_dedicps> is set to `false` in `config/checkpoints.xml` (thanks hacki65)
 
 
 

@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-07-17');
+		$this->setBuild('2018-07-18');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -3226,8 +3226,15 @@ class PluginRecordsEyepiece extends Plugin {
 		// Refresh Scoretable lists
 		$this->refreshScorelists();
 
+		// Clean up
+		$this->scores['DedimaniaRecords']	= array();
+		$this->scores['LocalRecords']		= array();
+		$this->scores['LiveRankings']		= array();
+		$this->scores['RoundScore']		= array();
+		$this->scores['RoundScorePB']		= array();
+
 		// Refresh the Playlist-Cache
-		if ( ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true) && ($this->config['States']['MusicServerPlaylist']['NeedUpdate'] === true)) {
+		if ($this->config['MUSIC_WIDGET'][0]['ENABLED'][0] === true && $this->config['States']['MusicServerPlaylist']['NeedUpdate'] === true) {
 			$this->getMusicServerPlaylist(true, false);
 		}
 	}
@@ -3402,16 +3409,16 @@ class PluginRecordsEyepiece extends Plugin {
 		foreach ($aseco->server->players->player_list as $player) {
 			// Reset at each Player the Hash
 			$this->cache['PlayerStates'][$player->login]['DedimaniaRecords']	= false;
-			$this->cache['PlayerStates'][$player->login]['LocalRecords']	= false;
-			$this->cache['PlayerStates'][$player->login]['LiveRankings']	= false;
-			$this->cache['PlayerStates'][$player->login]['FinishScore']	= -1;
+			$this->cache['PlayerStates'][$player->login]['LocalRecords']		= false;
+			$this->cache['PlayerStates'][$player->login]['LiveRankings']		= false;
+			$this->cache['PlayerStates'][$player->login]['FinishScore']		= -1;
 
 			// Clean the local recs cache from MaplistWindow and reset WindowAction to default
-			$player->data['PluginRecordsEyepiece']['Window']['Action'] = false;
-			$player->data['PluginRecordsEyepiece']['Window']['Page'] = 0;
-			$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = 0;
-			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = false;
-			$player->data['PluginRecordsEyepiece']['Maplist']['Records'] = array();
+			$player->data['PluginRecordsEyepiece']['Window']['Action']	= false;
+			$player->data['PluginRecordsEyepiece']['Window']['Page']	= 0;
+			$player->data['PluginRecordsEyepiece']['Window']['MaxPage']	= 0;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Filter']	= false;
+			$player->data['PluginRecordsEyepiece']['Maplist']['Records']	= array();
 		}
 
 
@@ -5628,6 +5635,7 @@ class PluginRecordsEyepiece extends Plugin {
 		global $aseco;
 
 		if ($aseco->server->rankings->count() > 0) {
+
 			// Clean before filling
 			$this->scores['LiveRankings'] = array();
 

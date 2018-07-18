@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <settings>
-	<!-- Documentation: http://doc.maniaplanet.com/creation/maniascript/libraries/library-ui.html -->
 	<ui_properties>
 		<!-- The map name and author displayed in the top right of the screen when viewing the scores table -->
 		<map_info>
@@ -196,7 +195,7 @@
 
 
 	<!--
-	Documentation: https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#all-mode-base
+	Documentation: https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#all
 	//-->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
@@ -221,7 +220,7 @@
 	<modesetup>
 		<!--
 		Settings for TimeAttack.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#time-attack
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#timeattack
 		//-->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -238,8 +237,8 @@
 
 		<!--
 		Settings for Rounds.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-base
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-rounds-base
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-roundsbase
 		//-->
 		<rounds>
 			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
@@ -261,8 +260,7 @@
 			<finish_timeout>-1</finish_timeout>
 
 			<!--
-			Set to 'true' to use alternate rules, otherwise 'false',
-			see 'rounds_usenewrules' for details: http://wiki.maniaplanet.com/en/Dedicated_servers#The_configuration_of_the_rounds_mode
+			Set to 'true' to use alternate rules, otherwise 'false'
 			//-->
 			<use_alternate_rules>false</use_alternate_rules>
 
@@ -281,8 +279,8 @@
 
 		<!--
 		Settings for Team.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-base
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#team-rounds-base
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#team-roundsbase-matchmaking
 		//-->
 		<team>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
@@ -292,8 +290,7 @@
 			<finish_timeout>10</finish_timeout>
 
 			<!--
-			Set to 'true' to use alternate rules, otherwise 'false',
-			see 'team_usenewrules' for details: http://wiki.maniaplanet.com/en/Dedicated_servers#The_configuration_of_the_team_mode
+			Set to 'true' to use alternate rules, otherwise 'false'
 			//-->
 			<use_alternate_rules>false</use_alternate_rules>
 
@@ -351,8 +348,8 @@
 
 		<!--
 		Settings for Cup.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-base
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#cup-rounds-base
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#cup-roundsbase-matchmaking
 		//-->
 		<cup>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
@@ -400,7 +397,6 @@
 
 		<!--
 		Settings for TeamAttack.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#team-attack
 		//-->
 		<teamattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -421,7 +417,7 @@
 
 		<!--
 		Settings for Chase.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#chase
+		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#chase-matchmaking
 		//-->
 		<chase>
 			<!-- Time limit (0 to disable, < 0 automatic, based on author time) -->
@@ -528,7 +524,7 @@
 
 	<!--
 	Settings for MatchMaking
-	Documentation: http://doc.maniaplanet.com/dedicated-server/settings-list.html#ModeMatchmaking
+	Documentation: https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#matchmaking
 	//-->
 	<matchmaking>
 		<!-- URL of the matchmaking API. If you don't plan to use a custom matchmaking function leave this setting at its default value. -->
@@ -610,12 +606,12 @@
 		<entry>Libs/domino54/SentenceBank.Script.txt|2015-06-27</entry>
 		<entry>Libs/domino54/Translations.Script.txt|2015-06-27</entry>
 		<entry>Libs/domino54/UpdateChecker.Script.txt|2015-06-27</entry>
-		<entry>Libs/Nadeo/TrackMania/Scores.Script.txt|2018-03-12</entry>
+		<entry>Libs/Nadeo/TrackMania/Scores.Script.txt|2018-04-23</entry>
 		<entry>Modes/TrackMania/Doppler.Script.txt|2015-08-29</entry>
 		<entry>Modes/TrackMania/Knockout.Script.txt|2015-06-27</entry>
 		<entry>Modes/TrackMania/Rounds.Script.txt|2018-03-08</entry>
-		<entry>Modes/TrackMania/TimeAttack.Script.txt|2017-07-12</entry>
-		<entry>Modes/TrackMania/Team.Script.txt|2018-03-08</entry>
+		<entry>Modes/TrackMania/TimeAttack.Script.txt|2018-05-14</entry>
+		<entry>Modes/TrackMania/Team.Script.txt|2018-04-23</entry>
 		<entry>Modes/TrackMania/Laps.Script.txt|2017-07-12</entry>
 		<entry>Modes/TrackMania/Cup.Script.txt|2018-03-08</entry>
 		<entry>Modes/TrackMania/TeamAttack.Script.txt|2016-04-13</entry>

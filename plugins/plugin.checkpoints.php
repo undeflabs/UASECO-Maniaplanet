@@ -39,7 +39,7 @@ class PluginCheckpoints extends Plugin {
 
 	public $checkpoints		= array();
 	public $nb_checkpoints		= 0;
-	public $totalcps		= 0;
+	public $total_checkpoints	= 0;
 	public $nb_laps			= 0;
 	public $forced_laps		= 0;
 
@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-16');
+		$this->setBuild('2018-07-18');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -107,10 +107,10 @@ class PluginCheckpoints extends Plugin {
 
 		$this->config['CHEATER_ACTION'][0]				= (int)$this->config['CHEATER_ACTION'][0];
 
-		$this->nb_checkpoints	= 0;
-		$this->totalcps		= 0;
-		$this->nb_laps		= 0;
-		$this->forced_laps	= 0;
+		$this->nb_checkpoints		= 0;
+		$this->total_checkpoints	= 0;
+		$this->nb_laps			= 0;
+		$this->forced_laps		= 0;
 
 		if (isset($aseco->plugins['PluginDedimania'])) {
 			$aseco->registerChatCommand('dedicps', array($this, 'chat_dedicps'), 'Sets dedimania record checkspoints tracking', Player::PLAYERS);
@@ -267,10 +267,10 @@ class PluginCheckpoints extends Plugin {
 
 
 		// Clean up storages
-		$this->nb_checkpoints	= 0;
-		$this->totalcps		= 0;
-		$this->nb_laps		= 0;
-		$this->forced_laps	= 0;
+		$this->nb_checkpoints		= 0;
+		$this->total_checkpoints	= 0;
+		$this->nb_laps			= 0;
+		$this->forced_laps		= 0;
 
 		$this->update_tracking = array();
 		foreach ($aseco->server->players->player_list as $player) {
@@ -313,35 +313,33 @@ class PluginCheckpoints extends Plugin {
 		// Setup the total count of Checkpoints
 		if ($aseco->server->gameinfo->mode === Gameinfo::ROUNDS || $aseco->server->gameinfo->mode === Gameinfo::TEAM || $aseco->server->gameinfo->mode === Gameinfo::CUP || $aseco->server->gameinfo->mode === Gameinfo::CHASE || $aseco->server->gameinfo->mode === Gameinfo::KNOCKOUT) {
 			if ($this->forced_laps > 0) {
-				$this->totalcps = $this->nb_checkpoints * $this->forced_laps;
+				$this->total_checkpoints = $this->nb_checkpoints * $this->forced_laps;
 			}
 			else if ($this->nb_laps > 0) {
-				$this->totalcps = $this->nb_checkpoints * $this->nb_laps;
+				$this->total_checkpoints = $this->nb_checkpoints * $this->nb_laps;
 			}
 			else {
-				$this->totalcps = $this->nb_checkpoints;
+				$this->total_checkpoints = $this->nb_checkpoints;
 			}
 		}
 		else if ($this->nb_laps > 0 && $aseco->server->gameinfo->mode === Gameinfo::LAPS) {
 			// In Laps.Script.txt Maps that are not multilaps are playable too,
 			// in that case do not do a multiplication with 'NbLaps'!
 			if ($aseco->server->maps->current->multi_lap === true) {
-				$this->totalcps = $this->nb_checkpoints * $this->nb_laps;
+				$this->total_checkpoints = $this->nb_checkpoints * $this->nb_laps;
 			}
 			else {
-				$this->totalcps = $this->nb_checkpoints;
+				$this->total_checkpoints = $this->nb_checkpoints;
 			}
 		}
 		else {
 			// All other Gamemodes
-			$this->totalcps = $this->nb_checkpoints;
+			$this->total_checkpoints = $this->nb_checkpoints;
 		}
 
 		if ($this->config['TIME_DIFF_WIDGET'][0]['ENABLED'][0] === true) {
 			foreach ($aseco->server->players->player_list as $player) {
-				if (isset($this->checkpoints[$player->login]->tracking) && ($this->checkpoints[$player->login]->tracking['local_records'] !== -1 || $this->checkpoints[$player->login]->tracking['dedimania_records'] !== -1)) {
-					$this->handleCheckpointTracking($player->login);
-				}
+				$this->handleCheckpointTracking($player->login);
 			}
 		}
 
@@ -350,7 +348,7 @@ class PluginCheckpoints extends Plugin {
 			foreach ($aseco->server->players->player_list as $player) {
 				$logins[] = $player->login;
 			}
-			$this->buildCounterWidget(-1, implode(',', $logins));
+			$this->buildCounterWidget(implode(',', $logins));
 		}
 	}
 
@@ -402,7 +400,7 @@ class PluginCheckpoints extends Plugin {
 		}
 
 		if ($this->config['COUNT_WIDGET'][0]['ENABLED'][0] === true) {
-			$this->buildCounterWidget(-1, $player->login);
+			$this->buildCounterWidget($player->login);
 		}
 	}
 
@@ -642,7 +640,7 @@ class PluginCheckpoints extends Plugin {
 		}
 		else {
 			$tmp = array();
-			foreach (range(1,$this->totalcps) as $i) {
+			foreach (range(1,$this->total_checkpoints) as $i) {
 				$tmp[] = 0;
 			}
 			$cp_times = implode(',', $tmp);
@@ -701,7 +699,7 @@ main() {
 	declare CMlLabel LabelCheckpointTimeDiff	<=> (Page.GetFirstChild("LabelCheckpointTimeDiff") as CMlLabel);
 	declare CMlLabel LabelBestTime			<=> (Page.GetFirstChild("LabelBestTime") as CMlLabel);
 
-	declare Integer TotalCheckpoints		= {$this->totalcps};		// Incl. Finish
+	declare Integer TotalCheckpoints		= {$this->total_checkpoints};		// Incl. Finish
 	declare Boolean MultilapMap			= {$multilapmap};
 	declare Integer CurrentCheckpoint		= 0;
 	declare Integer LastCheckpointCount		= 0;
@@ -744,11 +742,6 @@ main() {
 		}
 		else {
 			FrameCheckpointTimeDiff.Show();
-		}
-
-		// On UASECO start-up TotalCheckpoints is 0, skip in that case
-		if (TotalCheckpoints == 0) {
-			continue;
 		}
 
 		if (CurrentTime > RefreshTime) {
@@ -886,7 +879,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildCounterWidget ($checkpoint = -1, $login = false) {
+	public function buildCounterWidget ($login = false) {
 		global $aseco;
 
 		$xml = '<manialink id="CheckpointCounter" name="CheckpointCounter" version="3">';
@@ -921,7 +914,7 @@ main() {
 	declare LabelCheckpointLine2			<=> (Page.GetFirstChild("CheckpointLine2") as CMlLabel);
 	declare LabelCheckpointLine2Blink		<=> (Page.GetFirstChild("CheckpointLine2Blink") as CMlLabel);
 
-	declare Integer TotalCheckpoints		= {$this->totalcps};	// Incl. Finish
+	declare Integer TotalCheckpoints		= {$this->total_checkpoints};	// Incl. Finish
 	declare Boolean MultilapMap			= {$multilapmap};
 	declare Boolean TimeAttack			= {$timeattack};
 	declare Integer CurrentLap			= 0;			// Using own CurrentLap instead of Player.CurrentNbLaps
@@ -940,7 +933,7 @@ main() {
 	declare Text MessageWarmUp			= "\$OWarm-up";
 
 	// Init first view
-	if ((TotalCheckpoints-1) == 0) {
+	if ((TotalCheckpoints - 1) == 0) {
 		LabelCheckpointLine1.SetText(MessageWithoutCheckpoints);
 		LabelCheckpointLine2.Visible = False;
 		LabelCheckpointLine2Blink.Visible = True;
@@ -1104,7 +1097,7 @@ EOL;
 	public function handleCheckpointTracking ($login) {
 		global $aseco;
 
-		// Get personal or default Checkpoint tracking
+		// Get personal or default checkpoint tracking
 		if ($setup = $this->getCheckpointSettings($login)) {
 			$this->checkpoints[$login]->tracking['local_records'] = $setup['LocalCheckpointTracking'];
 			$this->checkpoints[$login]->tracking['dedimania_records'] = $setup['DedimaniaCheckpointTracking'];
@@ -1117,7 +1110,6 @@ EOL;
 				$this->checkpoints[$login]->tracking['dedimania_records'] = 0;
 			}
 		}
-
 
 		// Check for specific record
 		if ($this->checkpoints[$login]->tracking['local_records'] > 0 && isset($aseco->plugins['PluginLocalRecords']) && $aseco->plugins['PluginLocalRecords']->records->count() > 0) {
@@ -1136,7 +1128,6 @@ EOL;
 
 			// Send Widget
 			if ($current->player->login === $login) {
-//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Local Record ($>', false);
 			}
 			else {
@@ -1162,7 +1153,6 @@ EOL;
 
 			// Send Widget
 			if ($current->player->login === $login) {
-//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Local Record$>', false);
 			}
 			else {
@@ -1170,7 +1160,7 @@ EOL;
 			}
 		}
 		else if ($this->checkpoints[$login]->tracking['dedimania_records'] > 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map']) && isset($aseco->plugins['PluginDedimania']->db['Map']['Records']) && !empty($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
-			// If specific record unavailable, use last one
+			// If specific dedimania record unavailable, use last one
 			$record = $this->checkpoints[$login]->tracking['dedimania_records'];
 			if ($record > count($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
 				$record = count($aseco->plugins['PluginDedimania']->db['Map']['Records']);
@@ -1185,7 +1175,6 @@ EOL;
 
 			// Send Widget
 			if ($current['Login'] === $login) {
-//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Dedimania Record$>', false);
 			}
 			else {
@@ -1211,7 +1200,6 @@ EOL;
 
 			// Send Widget
 			if ($current['Login'] === $login) {
-//				$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Dedimania Record$>', false);
 			}
 			else {
@@ -1220,7 +1208,7 @@ EOL;
 		}
 		else {
 			// Send Widget
-			$this->buildTimeDiffWidget($login, '$<$NPersonal Best$>', true);
+			$this->buildTimeDiffWidget($login, '$<$NCurrent$>', true);
 		}
 	}
 

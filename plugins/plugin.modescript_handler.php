@@ -58,7 +58,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-18');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -565,6 +565,7 @@ class PluginModescriptHandler extends Plugin {
 					'speed'				=> $params['speed'],				// Speed of the player in km/h
 					'distance'			=> $params['distance'],				// Distance traveled by the player since the beginning of the race
 				);
+
 				if ($response['is_endrace'] === false && $response['is_endlap'] === false) {
 					$aseco->releaseEvent('onPlayerCheckpoint', $response);
 
@@ -578,6 +579,8 @@ class PluginModescriptHandler extends Plugin {
 					if ($aseco->server->maps->current->multi_lap === true) {
  						if ($aseco->server->gameinfo->mode === Gameinfo::TIME_ATTACK) {
 							if ($response['is_endlap'] === true) {
+								// Call 'Trackmania.GetScores' to get 'Trackmania.Scores'
+								$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetScores', array((string)time()));
 								$aseco->releaseEvent('onPlayerFinishLine', $response);
 								$this->playerFinish($response);
 							}
@@ -592,7 +595,7 @@ class PluginModescriptHandler extends Plugin {
 							else if ($response['is_endrace'] === true && $response['is_endlap'] === true) {
 								$aseco->releaseEvent('onPlayerFinishLap', $response);
 								$aseco->releaseEvent('onPlayerFinishLine', $response);
-						}
+							}
 						}
 					}
 					else {
