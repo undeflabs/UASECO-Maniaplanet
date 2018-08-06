@@ -1,5 +1,7 @@
 [![Latest Stable Version](https://poser.pugx.org/undeflabs/uaseco/v/stable?format=flat-square)](https://packagist.org/packages/undeflabs/uaseco)
 [![License](https://poser.pugx.org/undeflabs/uaseco/license?format=flat-square)](https://packagist.org/packages/undeflabs/uaseco)
+[![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://paypal.me/UASECO)
+
 
 UASECO
 ======
