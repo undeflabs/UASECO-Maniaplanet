@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-07-18');
+	define('UASECO_BUILD',			'2018-08-08');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -743,7 +743,7 @@ class UASECO extends Helper {
 		$this->console_text('####[DEBUG]##########################################################################');
 		$this->console_text('» Plugin memory usage on initialization:');
 		foreach ($list as $plugin => $usage) {
-			$this->console_text('» {1} {2} bytes', str_pad('['.$plugin.']', 30, ' ', STR_PAD_RIGHT), str_pad($this->formatNumber($usage, 0, '.', '.'), 15, ' ', STR_PAD_LEFT));
+			$this->console_text('» {1} {2} bytes', str_pad('['. $plugin .']', 30, ' ', STR_PAD_RIGHT), str_pad($this->formatNumber($usage, 0, '.', '.'), 15, ' ', STR_PAD_LEFT));
 		}
 		$this->console_text('#####################################################################################');
 	}
