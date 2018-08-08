@@ -45,7 +45,7 @@ class PluginChatServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-11');
+		$this->setBuild('2018-08-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.server', 'plugin_description'));
 
@@ -210,12 +210,16 @@ class PluginChatServer extends Plugin {
 			foreach ($aseco->masteradmin_list['TMLOGIN'] as $lgn) {
 				// Skip any LAN logins
 				if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
-					$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+					$result = $aseco->server->players->getPlayerNickname($lgn);
+					if ($result === false) {
+						$result = $lgn;
+					}
+					$data[] = array($result .'$Z');
 				}
 			}
 		}
 		else {
-			$data[] = array('NO MASTERADMINS CONFIGURED');
+			$data[] = array(new Message('chat.server', 'no_masteradmins_configured'));
 		}
 
 		// Setup settings for Window
@@ -258,12 +262,16 @@ class PluginChatServer extends Plugin {
 			foreach ($aseco->admin_list['TMLOGIN'] as $lgn) {
 				// Skip any LAN logins
 				if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
-					$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+					$result = $aseco->server->players->getPlayerNickname($lgn);
+					if ($result === false) {
+						$result = $lgn;
+					}
+					$data[] = array($result .'$Z');
 				}
 			}
 		}
 		else {
-			$data[] = array('NO ADMINS CONFIGURED');
+			$data[] = array(new Message('chat.server', 'no_admins_configured'));
 		}
 
 		// Setup settings for Window
@@ -306,12 +314,16 @@ class PluginChatServer extends Plugin {
 			foreach ($aseco->operator_list['TMLOGIN'] as $lgn) {
 				// Skip any LAN logins
 				if (!empty($lgn) && !$aseco->isLANLogin($lgn)) {
-					$data[] = array($aseco->server->players->getPlayerNickname($lgn) .'$Z');
+					$result = $aseco->server->players->getPlayerNickname($lgn);
+					if ($result === false) {
+						$result = $lgn;
+					}
+					$data[] = array($result .'$Z');
 				}
 			}
 		}
 		else {
-			$data[] = array('NO OPERATORS CONFIGURED');
+			$data[] = array(new Message('chat.server', 'no_operators_configured'));
 		}
 
 		// Setup settings for Window

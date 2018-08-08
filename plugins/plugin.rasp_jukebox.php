@@ -55,7 +55,7 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-07-20');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
@@ -284,7 +284,7 @@ class PluginRaspJukebox extends Plugin {
 			}
 			else {
 				// look for intended map in jukebox
-				if ($this->jukebox_check !== '') {
+				if (!empty($this->jukebox_check)) {
 					if (array_key_exists($this->jukebox_check, $this->jukebox)) {
 						if ($aseco->debug) {
 							$message = '[RaspJukebox] Intended Map '.

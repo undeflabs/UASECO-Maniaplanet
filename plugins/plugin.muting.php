@@ -47,7 +47,7 @@ class PluginMuting extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-08-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles individual and global player muting');
 
@@ -259,8 +259,13 @@ class PluginMuting extends Plugin {
 				$plarr['login'] = $pl;
 				$player->playerlist[] = $plarr;
 
+				$nick = $aseco->server->players->getPlayerNickname($pl);
+				if ($nick === false) {
+					$nick = $pl;
+				}
+
 				$msg[] = array(str_pad($pid, 2, '0', STR_PAD_LEFT) .'.',
-					'{#black}'. str_ireplace('$w', '', $aseco->server->players->getPlayerNickname($pl))
+					'{#black}'. str_ireplace('$w', '', $nick)
 					.'$z / {#login}'. $pl
 				);
 				$pid++;

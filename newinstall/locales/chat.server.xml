@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2017-04-18
+	Version:	2017-08-08
 	Authors:	[EN] undef.de
 			[DE] undef.de
 	//-->
@@ -108,7 +108,6 @@
 		<de>{#server}» Aktuelle Serverzeit: {#highlite}{1}{#server} am {#highlite}{2}</de>
 	</slash_time_chat_message>
 
-
 	<slash_uptime_description>
 		<en>Shows the server uptime</en>
 		<de>Zeigt die Betriebszeit vom Server</de>
@@ -118,4 +117,20 @@
 		<en>{#server}» Server Uptime: {#highlite}{1}</en>
 		<de>{#server}» Server aktiv seit: {#highlite}{1}</de>
 	</slash_uptime_chat_message>
+
+
+	<no_operators_configured>
+		<en>No Operators configured</en>
+		<de>Keine Betreiber eingerichtet</de>
+	</no_operators_configured>
+
+	<no_admins_configured>
+		<en>No Admins configured</en>
+		<de>Keine Administratoren eingerichtet</de>
+	</no_admins_configured>
+
+	<no_masteradmins_configured>
+		<en>No MasterAdmins configured</en>
+		<de>Keine Master-Administratoren eingerichtet</de>
+	</no_masteradmins_configured>
 </locales>

@@ -56,7 +56,7 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-18');
+		$this->setBuild('2018-07-20');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -171,6 +171,9 @@ class PluginCheckpoints extends Plugin {
 				$this->checkpoints[$player->login]->tracking['dedimania_records']
 			);
 
+			// Save settings to the database
+			$player->storeDatabasePlayerSettings();
+
 			// Refresh Widget
 			$this->handleCheckpointTracking($player->login);
 		}
@@ -236,6 +239,9 @@ class PluginCheckpoints extends Plugin {
 
 			// Refresh Widget
 			$this->handleCheckpointTracking($player->login);
+
+			// Save settings to the database
+			$player->storeDatabasePlayerSettings();
 		}
 		else {
 			$message = $this->config['MESSAGES'][0]['TRACKING_DISABLED'][0];

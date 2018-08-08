@@ -165,9 +165,9 @@ Returns the Player nickname from the given login.
 
 
 #### Description
-	string = getPlayerNickname ( string $login, [ boolean $forcequery ] )
+	mixed = getPlayerNickname ( string $login, [ boolean $forcequery ] )
 
-If login can not be found, then Unknown is returned.
+If login can not be found, then `false` is returned, otherwise a string containing the nickname.
 
 
 #### Parameters

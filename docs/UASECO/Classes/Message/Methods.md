@@ -106,7 +106,7 @@ Sends the multilanguage chat message to the chat.
 
 
 #### Description
-	void = finishMultiline ( string $logins = null )
+	void = sendChatMessage ( string $logins = null )
 
 
 #### Parameters

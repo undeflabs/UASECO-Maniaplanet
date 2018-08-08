@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-07-18');
+		$this->setBuild('2018-08-08');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -12034,7 +12034,7 @@ EOL;
 		// Build the Content of the Pages
 		$pages = array();
 		$page = 0;
-		foreach (range(0,ceil(count($toplists) / 4)) as $index) {
+		foreach (range(1,ceil(count($toplists) / 4)) as $index) {
 			$pos = 0;
 			$xml = '';
 			foreach (range($page,($page + 3)) as $id) {

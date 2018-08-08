@@ -1,4 +1,4 @@
-<manialink id="UASECO-3">
+<manialink id="UASECO-3" version="3">
 <frame pos="-162 67.6875" z-index="0">
 <quad size="35.25 6.5625" style="%STYLE%" substyle="%SUBST%"/>
 <quad pos="2.75 -1.5" z-index="2" size="4.25 3.375" style="Icons64x64_1" substyle="ClipRewind" action="PluginManialinks?Action=21"/>

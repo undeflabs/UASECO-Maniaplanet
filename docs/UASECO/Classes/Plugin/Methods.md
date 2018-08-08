@@ -28,7 +28,7 @@ Stores the version of the Plugin. Please use this structure:
 
 
 #### Example
-	$this->setVersion('1.0.4');
+	$this->setVersion('2.3.5');
 
 
 
@@ -49,7 +49,7 @@ Returns the version of the Plugin.
 
 
 #### Return Values
-	1.0.4
+	2.3.5
 
 
 
@@ -60,7 +60,14 @@ Returns the version of the Plugin.
 ### [setBuild](_#setBuild)
 Stores the build of the Plugin. Please use this structure:
 
-	2017-04-30 10:53:31
+	2017-04-22 14:54
+	│    │  │  │  └────── Minutes
+	│    │  │  └───────── Hours
+	│    │  └──────────── Day
+	│    └─────────────── Month
+	└──────────────────── Year
+
+`Hours` and `Minutes` can be omitted, but for releases on the same day they are **required**.
 
 
 #### Description
@@ -74,7 +81,7 @@ Stores the build of the Plugin. Please use this structure:
 
 
 #### Example
-	$this->setBuild('2017-04-22 14:54:18');
+	$this->setBuild('2017-04-22 14:54');
 
 
 
@@ -95,7 +102,7 @@ Returns the build of the Plugin.
 
 
 #### Return Values
-	2017-04-22 14:54:18
+	2017-04-22 14:54
 
 
 

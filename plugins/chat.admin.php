@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-12');
+		$this->setBuild('2018-08-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -1322,7 +1322,7 @@ class PluginChatAdmin extends Plugin {
 			if ($target !== false) {
 				$target->login = $param;
 				$target->nickname = $aseco->server->players->getPlayerNickname($param);
-				if ($target->nickname === '') {
+				if ($target->nickname === false) {
 					$target->nickname = $param;
 				}
 
@@ -4884,6 +4884,9 @@ class PluginChatAdmin extends Plugin {
 						// fetch nickname for this login
 						$lgn = $prow['Login'];
 						$nick = $aseco->server->players->getPlayerNickname($lgn);
+						if ($nick === false) {
+							$nick = $lgn;
+						}
 						$newlist[$lgn] = array($lgn, $nick);
 					}
 					if (count($players) < $size) {
@@ -4930,6 +4933,9 @@ class PluginChatAdmin extends Plugin {
 						// fetch nickname for this login
 						$lgn = $prow['Login'];
 						$nick = $aseco->server->players->getPlayerNickname($lgn);
+						if ($nick === false) {
+							$nick = $lgn;
+						}
 						$newlist[$lgn] = array(
 							$lgn,
 							$nick,
@@ -4980,6 +4986,9 @@ class PluginChatAdmin extends Plugin {
 						// fetch nickname for this login
 						$lgn = $prow['Login'];
 						$nick = $aseco->server->players->getPlayerNickname($lgn);
+						if ($nick === false) {
+							$nick = $lgn;
+						}
 						$newlist[$lgn] = array($lgn, $nick);
 					}
 					if (count($players) < $size) {
@@ -5026,6 +5035,9 @@ class PluginChatAdmin extends Plugin {
 						// fetch nickname for this login
 						$lgn = $prow['Login'];
 						$nick = $aseco->server->players->getPlayerNickname($lgn);
+						if ($nick === false) {
+							$nick = $lgn;
+						}
 						$newlist[$lgn] = array($lgn, $nick);
 					}
 					if (count($players) < $size) {

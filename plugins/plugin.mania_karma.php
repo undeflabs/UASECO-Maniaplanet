@@ -74,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2018-07-12');
+		$this->setBuild('2018-07-20');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -961,8 +961,8 @@ class PluginManiaKarma extends Plugin {
 		// Show welcome message to the new player?
 		if ($this->config['show_welcome'] === true) {
 			$message = $aseco->formatText($this->config['messages']['welcome'],
-					'http://'. $this->config['urls']['website'] .'/',
-					$this->config['urls']['website']
+				'http://'. $this->config['urls']['website'] .'/',
+				$this->config['urls']['website']
 			);
 			$message = str_replace('{br}', LF, $message);  // split long message
 			$aseco->sendChatMessage($message, $player->login);
@@ -988,7 +988,7 @@ class PluginManiaKarma extends Plugin {
 
 		// If karma lottery is enabled, then initialize (if player has related rights)
 		if ($this->config['karma_lottery']['enabled'] === true) {
-			if ( (isset($player->rights)) && ($player->rights) ) {
+			if (isset($player->rights) && $player->rights) {
 				$this->storePlayerData($player, 'LotteryPayout', 0);
 			}
 		}
@@ -1010,14 +1010,14 @@ class PluginManiaKarma extends Plugin {
 		if ($aseco->startup_phase === false) {
 			// Check if Player is already in $this->karma,
 			// for "unwished disconnects" and "reconnected" Players
-			if ( ( !isset($this->karma['global']['players'][$player->login]) ) || ($aseco->server->maps->current->uid !== $this->karma['data']['uid']) ) {
+			if (!isset($this->karma['global']['players'][$player->login]) || $aseco->server->maps->current->uid !== $this->karma['data']['uid']) {
 
-				if ( !isset($this->karma['global']['players'][$player->login]) ) {
+				if (!isset($this->karma['global']['players'][$player->login])) {
 					$this->karma['global']['players'][$player->login]['vote']	= 0;
 					$this->karma['global']['players'][$player->login]['previous']	= 0;
 				}
 
-				if ( !isset($this->karma['local']['players'][$player->login]) ) {
+				if (!isset($this->karma['local']['players'][$player->login])) {
 					// Get the local votes for this Player
 					$this->getLocalVotes($aseco->server->maps->current->id, $player->login);
 				}
@@ -2689,8 +2689,8 @@ EOL;
 		}
 
 
-	//	// Check if connection was failed
-	//	if ($this->config['retrytime'] === 0) {
+//		// Check if connection was failed
+//		if ($this->config['retrytime'] === 0) {
 			// Remove the previous global Vote
 			if ( isset($this->karma['global']['players'][$player->login]['vote']) ) {
 				switch ($this->karma['global']['players'][$player->login]['vote']) {
@@ -2724,7 +2724,7 @@ EOL;
 				// Set state "no previous vote"
 				$this->karma['global']['players'][$player->login]['previous'] = 0;
 			}
-	//	}
+//		}
 
 		// Remove the previous local Vote
 		if ( isset($this->karma['local']['players'][$player->login]['vote']) ) {
@@ -2753,15 +2753,15 @@ EOL;
 			}
 		}
 
-	//	// Check if connection was failed, and store the current Vote (only local or both)
-	//	if ($this->config['retrytime'] === 0) {
+//		// Check if connection was failed, and store the current Vote (only local or both)
+//		if ($this->config['retrytime'] === 0) {
 			$this->karma['global']['players'][$player->login]['vote'] = $vote;
-	//	}
+//		}
 		$this->karma['local']['players'][$player->login]['vote'] = $vote;
 
 
-	//	// Check if connection was failed
-	//	if ($this->config['retrytime'] === 0) {
+//		// Check if connection was failed
+//		if ($this->config['retrytime'] === 0) {
 			// Add the new Vote into the counts (global/local)
 			switch ($vote) {
 				case 3:
@@ -2792,44 +2792,44 @@ EOL;
 					// Do nothing
 					break;
 			}
-	//	}
-	//	else {
-	//		// Add the new Vote into the counts (only local)
-	//		switch ($vote) {
-	//			case 3:
-	//				$this->karma['local']['votes']['fantastic']['count'] += 1;
-	//				break;
-	//			case 2:
-	//				$this->karma['local']['votes']['beautiful']['count'] += 1;
-	//				break;
-	//			case 1:
-	//				$this->karma['local']['votes']['good']['count'] += 1;
-	//				break;
-	//			case -1:
-	//				$this->karma['local']['votes']['bad']['count'] += 1;
-	//				break;
-	//			case -2:
-	//				$this->karma['local']['votes']['poor']['count'] += 1;
-	//				break;
-	//			case -3:
-	//				$this->karma['local']['votes']['waste']['count'] += 1;
-	//				break;
-	//			default:
-	//				// Do nothing
-	//				break;
-	//		}
-	//	}
+//		}
+//		else {
+//			// Add the new Vote into the counts (only local)
+//			switch ($vote) {
+//				case 3:
+//					$this->karma['local']['votes']['fantastic']['count'] += 1;
+//					break;
+//				case 2:
+//					$this->karma['local']['votes']['beautiful']['count'] += 1;
+//					break;
+//				case 1:
+//					$this->karma['local']['votes']['good']['count'] += 1;
+//					break;
+//				case -1:
+//					$this->karma['local']['votes']['bad']['count'] += 1;
+//					break;
+//				case -2:
+//					$this->karma['local']['votes']['poor']['count'] += 1;
+//					break;
+//				case -3:
+//					$this->karma['local']['votes']['waste']['count'] += 1;
+//					break;
+//				default:
+//					// Do nothing
+//					break;
+//			}
+//		}
 
 
-	//	// Check if connection was failed
-	//	if ($this->config['retrytime'] === 0) {
+//		// Check if connection was failed
+//		if ($this->config['retrytime'] === 0) {
 			// Update the global/local $this->karma
 			$this->calculateKarma(array('global','local'));
-	//	}
-	//	else {
-	//		// Update only the local $this->karma
-	//		$this->calculateKarma(array('local'));
-	//	}
+//		}
+//		else {
+//			// Update only the local $this->karma
+//			$this->calculateKarma(array('local'));
+//		}
 
 
 		// Show the MX-Link-Window (if enabled and we are at Score)
@@ -2863,7 +2863,7 @@ EOL;
 		// Show Map Karma (with details?)
 		$message = $this->createKarmaMessage($player->login, false);
 		if ($message !== false) {
-			if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
+			if ($this->config['messages_in_window'] === true && function_exists('send_window_message')) {
 				send_window_message($aseco, $message, $player);
 			}
 			else {
@@ -2970,7 +2970,7 @@ EOL;
 		// Show message
 		if ($message !== false) {
 			if ($login) {
-				if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
+				if ($this->config['messages_in_window'] === true && function_exists('send_window_message')) {
 					if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 						send_window_message($aseco, $message, $player);
 					}
@@ -2980,7 +2980,7 @@ EOL;
 				}
 			}
 			else {
-				if ( ($this->config['messages_in_window'] === true) && (function_exists('send_window_message')) ) {
+				if ($this->config['messages_in_window'] === true && function_exists('send_window_message')) {
 					send_window_message($aseco, $message, false);
 				}
 				else {
@@ -3003,7 +3003,7 @@ EOL;
 		$message = false;
 
 		// Show default Karma message
-		if ( ($this->config['show_karma'] === true) || ($force_display === true) ) {
+		if ($this->config['show_karma'] === true || $force_display === true) {
 			$message = $aseco->formatText($this->config['messages']['karma_message'],
 				$aseco->server->maps->current->name_stripped,
 				$this->karma['global']['votes']['karma']
@@ -3011,7 +3011,7 @@ EOL;
 		}
 
 		// Optionally show player's actual vote
-		if ( ($this->config['show_votes'] === true) || ($force_display === true) ) {
+		if ($this->config['show_votes'] === true || $force_display === true) {
 			if ($this->karma['global']['players'][$login]['vote'] === 1) {
 				$message .= $aseco->formatText($this->config['messages']['karma_your_vote'], $this->config['messages']['karma_good'], '/+');
 			}
@@ -3037,7 +3037,7 @@ EOL;
 		}
 
 		// Optionally show vote counts & percentages
-		if ( ($this->config['show_details'] === true) || ($force_display === true) ) {
+		if ($this->config['show_details'] === true || $force_display === true) {
 			$message .= $aseco->formatText(LF. $this->config['messages']['karma_details'],
 				$this->karma['global']['votes']['karma'],
 				$this->karma['global']['votes']['fantastic']['percent'],	$this->karma['global']['votes']['fantastic']['count'],
@@ -3577,7 +3577,7 @@ EOL;
 		}
 
 		// Check for all required parameters for an remote API Call
-		if ( (empty($map->uid)) || (empty($map->name)) || (empty($map->author)) || (empty($map->environment)) ) {
+		if (empty($map->uid) || empty($map->name) || empty($map->author) || empty($map->environment)) {
 			$aseco->console('[ManiaKarma] Could not do a remote API Call "Get", one of the required parameter missed! uid:'. $map->uid .' name:'. $map->name .' author:'. $map->author .' env:'. $map->environment);
 			return;
 		}
@@ -3611,7 +3611,7 @@ EOL;
 			// Start async GET request
 			$params = array(
 				'url'			=> $api_url,
-				'callback'		=> array(array($this, 'handleWebrequest'), array('GET', $api_url)),
+				'callback'		=> array(array($this, 'handleWebrequest'), array('GET', $api_url, $target)),
 				'sync'			=> false,
 				'user_agent'		=> $this->config['user_agent'],
 				'timeout_dns'		=> $this->config['timeout_dns'],

@@ -24,6 +24,7 @@
 * Chat commands `/admin listmasters`, `/admin listadmins` and `/admin listops` from `plugins/chat.admin.php` has been replaced by `/masteradmins`, `/admins` and `/operators` from `plugins/chat.server.php`
 * Changed behavior of `webrequest.php` that now verifies TLS/SSL-Certificates instead of ignoring them
 * Added the plugin list with versions into the ABOUT and DEBUG header (which has been re-ordered too) in the logfile
+* Changed return value from method `getPlayerNickname` from class `PlayerList`, it now returns a boolean `false` instead of a string `Unknown` when a nickname can not be found
 
 
 ### Changes at config files
@@ -53,6 +54,8 @@
 * Changed `<message_nextenv_failed>`, `<message_activate_localrecords>` and `<message_activate_addthis>` in `newinstall\locales\chat.admin.xml`
 * Added `<message_activate_rasp>` in `newinstall\locales\chat.admin.xml`
 * Updated/removed (because they are gone) links to documentations from nadeo in `newinstall/config/modescript_settings.xml`
+* Updated `newinstall/config/panels/AdminBottomCenter.xml`, `newinstall/config/panels/AdminBottomCenterWide.xml` and `newinstall/config/panels/AdminCallVote.xml` to ManiaLink Version 3
+* Updated `newinstall/locales/chat.server.xml` with `no_operators_configured`, `no_admins_configured` and `no_masteradmins_configured`
 
 
 ### Bug fixes
@@ -91,6 +94,8 @@
 * Fixed PHP Warning] file_get_contents(https://www.UASECO.org/usagereport.php): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error on line 196 in file `webrequest.php` (thanks RelaxedRacer)
 * Fixed LiveRankingsWidget shows time from a map before after leaving and returning later and server stays empty meanwhile (thanks endbase, hackie, Flighthigh)
 * Fixed CheckpointsTimeDiffWidget without tracking if <auto_enable_cps> and <auto_enable_dedicps> is set to `false` in `config/checkpoints.xml` (thanks hacki65)
+* Fixed [PHP Warning] array_key_exists(): The first argument should be either a string or an integer on line 288 in file `plugins/plugin.rasp_jukebox.php`
+* Fixed Records-Eyepiece `MoreRankingWindow` which sometimes show one page more then required (thanks hacki65)
 
 
 

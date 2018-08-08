@@ -50,7 +50,7 @@ class PlayerList extends BaseClass {
 		$this->setAuthor('undef.de');
 		$this->setContributors(array('brakerb'));
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-06-03');
+		$this->setBuild('2018-08-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Manages Players on the server, add/remove Players and provides several get functions.');
 
@@ -205,7 +205,7 @@ class PlayerList extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Finds a player Nickname from its login.
+	// Finds a player nickname from its login.
 	public function getPlayerNickname ($login, $forcequery = false) {
 		global $aseco;
 
@@ -213,7 +213,7 @@ class PlayerList extends BaseClass {
 			return $this->player_list[$login]->nickname;
 		}
 		else {
-			$nickname = 'Unknown';
+			$nickname = false;
 			$query = "
 			SELECT
 				`Nickname`

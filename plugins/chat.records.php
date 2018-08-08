@@ -48,7 +48,7 @@ class PluginChatRecords extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-08-08');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays all records of the current map.');
 
@@ -485,6 +485,9 @@ class PluginChatRecords extends Plugin {
 		foreach ($recs as $login => $top3) {
 			// obtain nickname for this login
 			$nick = $aseco->server->players->getPlayerNickname($login);
+			if ($nick === false) {
+				$nick = $lgn;
+			}
 			if (!$aseco->settings['lists_colornicks']) {
 				$nick = $aseco->stripStyles($nick);
 			}
@@ -594,6 +597,9 @@ class PluginChatRecords extends Plugin {
 		foreach ($recs as $login => $rec) {
 			// obtain nickname for this login
 			$nick = $aseco->server->players->getPlayerNickname($login);
+			if ($nick === false) {
+				$nick = $lgn;
+			}
 			if (!$aseco->settings['lists_colornicks']) {
 				$nick = $aseco->stripStyles($nick);
 			}
