@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.1');
-		$this->setBuild('2018-08-08');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -2129,27 +2129,27 @@ class PluginRecordsEyepiece extends Plugin {
 		$require_action = false;
 
 
-//		// F9 handling
-//		if ($params['Action'] === 'switchDedimaniaRecordsWidget') {
-//			$this->config['States']['DedimaniaRecords']['Visibility'] = $aseco->string2bool($params['Visible']);
-//			return;
-//		}
-//		else if ($params['Action'] === 'switchLocalRecordsWidget') {
-//			$this->config['States']['LocalRecords']['Visibility'] = $aseco->string2bool($params['Visible']);
-//			return;
-//		}
-//		else if ($params['Action'] === 'switchMusicWidget') {
-//			$this->config['States']['MusicWidget']['Visibility']	 = $aseco->string2bool($params['Visible']);
-//			return;
-//		}
-//		else if ($params['Action'] === 'switchLiveRankingsWidget') {
-//			$this->config['States']['LiveRankings']['Visibility'] = $aseco->string2bool($params['Visible']);
-//			return;
-//		}
-//		else if ($params['Action'] === 'switchRoundScoreWidget') {
-//			$this->config['States']['RoundScoreWidget']['Visibility'] = $aseco->string2bool($params['Visible']);
-//			return;
-//		}
+		// F9 handling
+		if ($params['Action'] === 'switchDedimaniaRecordsWidget') {
+			$this->config['States']['DedimaniaRecords']['Visibility'] = $aseco->string2bool($params['Visible']);
+			return;
+		}
+		else if ($params['Action'] === 'switchLocalRecordsWidget') {
+			$this->config['States']['LocalRecords']['Visibility'] = $aseco->string2bool($params['Visible']);
+			return;
+		}
+		else if ($params['Action'] === 'switchMusicWidget') {
+			$this->config['States']['MusicWidget']['Visibility']	 = $aseco->string2bool($params['Visible']);
+			return;
+		}
+		else if ($params['Action'] === 'switchLiveRankingsWidget') {
+			$this->config['States']['LiveRankings']['Visibility'] = $aseco->string2bool($params['Visible']);
+			return;
+		}
+		else if ($params['Action'] === 'switchRoundScoreWidget') {
+			$this->config['States']['RoundScoreWidget']['Visibility'] = $aseco->string2bool($params['Visible']);
+			return;
+		}
 
 
 
@@ -7280,7 +7280,7 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 }
 main () {
 //	declare persistent Boolean RecordsEyepieceDedimaniaRecordsVisible = True;
-	declare Boolean RecordsEyepieceDedimaniaRecordsVisible = {$visibility};
+	declare Boolean RecordsEyepieceDedimaniaRecordsVisible for LocalUser = {$visibility};
 
 	declare CMlFrame DedimaniaRecordsWidget	<=> (Page.GetFirstChild("Frame_DedimaniaRecordsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= DedimaniaRecordsWidget.RelativePosition_V3;
@@ -7296,7 +7296,7 @@ main () {
 		// Check for pressed F9 to hide the Widget
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "F9") {
 						if (DedimaniaRecordsWidget.Visible == False) {
 							MoveIt(DedimaniaRecordsWidget, False, OriginalRelativePosition);
@@ -7448,7 +7448,7 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 }
 main () {
 //	declare persistent Boolean RecordsEyepieceLocalRecordsVisible = True;
-	declare Boolean RecordsEyepieceLocalRecordsVisible = {$visibility};
+	declare Boolean RecordsEyepieceLocalRecordsVisible for LocalUser = {$visibility};
 
 	declare CMlFrame LocalRecordsWidget	<=> (Page.GetFirstChild("Frame_LocalRecordsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= LocalRecordsWidget.RelativePosition_V3;
@@ -7463,7 +7463,7 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "F9") {
 						if (LocalRecordsWidget.Visible == False) {
 							MoveIt(LocalRecordsWidget, False, OriginalRelativePosition);
@@ -7681,7 +7681,7 @@ Text FormatTime (Integer MwTime) {
 }
 main () {
 //	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
-	declare Boolean RecordsEyepieceLiveRankingsVisible = {$visibility};
+	declare Boolean RecordsEyepieceLiveRankingsVisible for LocalUser = {$visibility};
 
 //	declare Text[Text] RecordsEyepiece;
 //	RecordsEyepiece["LiveRankings"] = [
@@ -7725,7 +7725,7 @@ main () {
 		// Check for pressed F9 to hide the Widget
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "F9") {
 						if (LiveRankingsWidget.Visible == False) {
 							MoveIt(LiveRankingsWidget, False, OriginalRelativePosition);
@@ -8279,7 +8279,7 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 }
 main () {
 //	declare persistent Boolean RecordsEyepieceLiveRankingsVisible = True;
-	declare Boolean RecordsEyepieceLiveRankingsVisible = {$visibility};
+	declare Boolean RecordsEyepieceLiveRankingsVisible for LocalUser = {$visibility};
 
 	declare CMlFrame LiveRankingsWidget	<=> (Page.GetFirstChild("Frame_LiveRankingsWidget") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= LiveRankingsWidget.RelativePosition_V3;
@@ -8295,7 +8295,7 @@ main () {
 		// Check for pressed F9 to hide the Widget
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "F9") {
 						if (LiveRankingsWidget.Visible == False) {
 							MoveIt(LiveRankingsWidget, False, OriginalRelativePosition);
@@ -12927,11 +12927,11 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
 
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					TriggerPageAction("PluginRecordsEyepiece?Action=showToplistWindow");
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
@@ -13076,10 +13076,10 @@ main () {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					TriggerPageAction("PluginRecordsEyepiece?Action=showTopNationsWindow");
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
@@ -13132,10 +13132,10 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					TriggerPageAction("PluginRecordsEyepiece?Action=showManiaExchangeMapInfoWindow");
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
@@ -13195,10 +13195,10 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					TriggerPageAction("PluginRecordsEyepiece?Action=showMaplistWindow");
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
@@ -13274,10 +13274,10 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					OpenLink("$url" ^ InputPlayer.User.Login ^"&nickname="^ TextLib::URLEncode(InputPlayer.Name), CMlScript::LinkType::ManialinkBrowser);
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
@@ -13366,7 +13366,7 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 }
 main () {
 //	declare persistent Boolean RecordsEyepieceMusicWidgetVisible = True;
-	declare Boolean RecordsEyepieceMusicWidgetVisible = {$visibility};
+	declare Boolean RecordsEyepieceMusicWidgetVisible for LocalUser = {$visibility};
 
 	declare CMlFrame MusicWidget		<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= MusicWidget.RelativePosition_V3;
@@ -13382,7 +13382,7 @@ main () {
 		// Check for pressed F9 to hide the Widget
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "F9") {
 						if (MusicWidget.Visible == False) {
 							MoveIt(MusicWidget, False, OriginalRelativePosition);
@@ -13541,7 +13541,7 @@ Void MoveIt (CMlFrame _Container, Boolean _ScrollOut, Vec2 _Position) {
 }
 main () {
 //	declare persistent Boolean RecordsEyepieceRoundScoreVisible = True;
-	declare Boolean RecordsEyepieceRoundScoreVisible = {$visibility};
+	declare Boolean RecordsEyepieceRoundScoreVisible for LocalUser = {$visibility};
 
 	declare CMlFrame RoundScoreWidget	<=> (Page.GetFirstChild("Frame_%manialinkid%") as CMlFrame);
 	declare Vec2 OriginalRelativePosition	= RoundScoreWidget.RelativePosition_V3;
@@ -13556,7 +13556,7 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "F9") {
 						if (RoundScoreWidget.Visible == False) {
 							MoveIt(RoundScoreWidget, False, OriginalRelativePosition);
@@ -13732,7 +13732,7 @@ main () {
 		}
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "WindowClose") {
 						RecordsEyepieceSubWindowVisible = False;
 						WipeOut("Frame_Window");
@@ -13747,7 +13747,7 @@ main () {
 						IsMinimized = False;
 					}
 				}
-//				case CMlEvent::Type::KeyPress : {
+//				case CMlScriptEvent::Type::KeyPress : {
 //					if (Event.KeyName == "Escape") {
 //						WipeOut("RecordsEyepieceWindow");
 //					}
@@ -13823,7 +13823,7 @@ main () {
 		yield;
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "RecordsEyepieceSubWindowClose") {
 						RecordsEyepieceSubWindowVisible = False;
 					}

@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-15');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -433,7 +433,7 @@ class Helper extends BaseClass {
 	// Sends one or more Manialinks immediately to the given $logins, or all Players
 	public function sendManialink ($widgets, $logins = false, $timeout = 0, $hideclick = false) {
 
-		if ($widgets !== '') {
+		if (!empty($widgets)) {
 			$xml  = '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>';
 			$xml .= $widgets;
 
@@ -1844,31 +1844,6 @@ class Helper extends BaseClass {
 
 				// Throw 'shutting down' event
 				$this->releaseEvent('onShutdown', null);
-
-				// Make sure the Dedicated-Server have the control
-				try {
-					$this->client->query('ManualFlowControlEnable', false);
-
-					try {
-						$this->client->query('ManualFlowControlProceed');
-
-						// Clear all ManiaLinks
-						try {
-							$this->client->query('SendHideManialinkPage');
-						}
-						catch (Exception $exception) {
-							$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): SendHideManialinkPage');
-						}
-
-					}
-					catch (Exception $exception) {
-						$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): ManualFlowControlProceed');
-					}
-				}
-				catch (Exception $exception) {
-					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): ManualFlowControlEnable');
-				}
-
 
 				if (function_exists('xdebug_get_function_stack')) {
 					$this->logMessage(print_r(xdebug_get_function_stack()), true);

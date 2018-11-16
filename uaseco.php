@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - July 2018 by undef.de
+ * Copyright:	May 2014 - November 2018 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-08-08');
+	define('UASECO_BUILD',			'2018-11-16');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2018-07-03_10_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2018-07-03_03_32');
+	define('MANIAPLANET_BUILD_POSIX',	'2018-11-15_20_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2018-11-15_21_26');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'5.6.0');
@@ -1939,10 +1939,10 @@ class UASECO extends Helper {
 					case 'ManiaPlanet.MapListModified':
 						// [0] = int CurMapIndex, [1] = int NextMapIndex, [2] = bool IsListModified
 						if ($call[1][2] === true && $this->settings['automatic_refresh_maplist'] === true) {
-							$this->console('[MapList] Re-reading complete map list from server...');
+							$this->console('[MapList] Refreshing complete map list from server...');
 							$this->server->maps->readMapList();
 							$count = count($this->server->maps->map_list);
-							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count === 1 ? '' : 's') .' which matches server settings!');
+							$this->console('[MapList] ...successfully done, read '. $count .' map'. ($count === 1 ? '' : 's') .' which matches server settings (change this behavior by set <automatic_refresh_maplist> to "false" in [config/UASECO.xml]).');
 							$this->releaseEvent('onMapListChanged', array('read', null));
 						}
 						$this->releaseEvent('onMapListModified', $call[1]);
@@ -2632,6 +2632,70 @@ class UASECO extends Helper {
 		// Simulate a "playerDisconnect"
 		foreach ($this->server->players->player_list as $player) {
 			$this->playerDisconnect($player->login, '');
+		}
+
+
+		// Reset hidden default UIs
+$xml = <<<EOL
+<manialink id="ResetHiddenClientUI" name="ResetHiddenClientUI" version="3">
+<script><!--
+main() {
+	ClientUI.OverlayHideNotices			= False;
+	ClientUI.OverlayHideMapInfo			= False;
+	ClientUI.OverlayHideOpponentsInfo		= False;
+	ClientUI.OverlayHideChat			= False;
+	ClientUI.OverlayHideCheckPointList		= False;
+	ClientUI.OverlayHideRoundScores			= False;
+	ClientUI.OverlayHideCountdown			= False;
+	ClientUI.OverlayHideCrosshair			= False;
+	ClientUI.OverlayHideGauges			= False;
+	ClientUI.OverlayHideConsumables			= False;
+	ClientUI.OverlayHide321Go			= False;
+	ClientUI.OverlayHideBackground			= False;
+	ClientUI.OverlayHideChrono			= False;
+	ClientUI.OverlayHideSpeedAndDist		= False;
+	ClientUI.OverlayHidePersonnalBestAndRank	= False;
+	ClientUI.OverlayHidePosition			= False;
+	ClientUI.OverlayHideCheckPointTime		= False;
+	ClientUI.OverlayHideEndMapLadderRecap		= False;
+	ClientUI.OverlayHideMultilapInfos		= False;
+	ClientUI.OverlayHideSpectatorControllers	= False;
+	ClientUI.OverlayHideSpectatorInfos		= False;
+	ClientUI.OverlayChatHideAvatar			= False;
+//	ClientUI.OverlayChatLineCount			= 40;
+}
+--></script>
+</manialink>
+EOL;
+$this->dump('Sending clearcode!');
+		$this->sendManialink($xml, false, 0, false);
+
+		// Reset UI properties to the default values
+		$this->client->query('TriggerModeScriptEventArray', 'Trackmania.UI.ResetProperties', array());
+
+
+		try {
+			// Make sure the Dedicated-Server have the control
+			$this->client->query('ManualFlowControlEnable', false);
+
+			try {
+				$this->client->query('ManualFlowControlProceed');
+
+				try {
+					// Clear all ManiaLinks
+					$this->client->query('SendHideManialinkPage');
+				}
+				catch (Exception $exception) {
+					$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): SendHideManialinkPage');
+				}
+
+			}
+			catch (Exception $exception) {
+				$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): ManualFlowControlProceed');
+			}
+		}
+		catch (Exception $exception) {
+			$this->console('[UASECO] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - customErrorHandler(): ManualFlowControlEnable');
 		}
 	}
 }

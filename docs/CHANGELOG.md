@@ -4,9 +4,9 @@
 
 ### General changes
 
-* Requires a `Maniaplanet Dedicated Server` build `2018-07-03_10_00 (Linux)` / `2018-07-03_03_32 (Windows)` or higher
-* The logfile from UASECO has been renamed to `2017-06-15-uaseco-current.txt` or `2017-06-15-14-31-12-uaseco.txt` for older logfiles
-* The `webrequest.php` uses an own logfile named `2017-06-15-webrequest-current.txt` or `2017-06-15-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
+* Requires a `Maniaplanet Dedicated Server` build `2018-11-15_20_00 (Linux)` / `2018-11-15_21_26 (Windows)` or higher
+* The logfile from UASECO has been renamed to `2018-11-16-uaseco-current.txt` or `2018-11-16-14-31-12-uaseco.txt` for older logfiles
+* The `webrequest.php` uses an own logfile named `2018-11-16-webrequest-current.txt` or `2018-11-16-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
 * Changed `newinstall/uaseco.sh` and `newinstall/uaseco.bat` to redirect errors into normal logfile from UASECO
 * Added a better error diagnostic message in `includes/core/locales.class.php`
@@ -25,6 +25,9 @@
 * Changed behavior of `webrequest.php` that now verifies TLS/SSL-Certificates instead of ignoring them
 * Added the plugin list with versions into the ABOUT and DEBUG header (which has been re-ordered too) in the logfile
 * Changed return value from method `getPlayerNickname` from class `PlayerList`, it now returns a boolean `false` instead of a string `Unknown` when a nickname can not be found
+* F9 functionality in Records-Eyepiece has been "fixed", also the storage of the settings in the Tachometer plugin (thanks reaby for the tip)
+* Change all deprecated `CMlEvent` to the new `CMlScriptEvent` in all core files and plugins
+* Improved reset of the default client UI on `shutdown` (e.g. crash, `/admin shutdown`, ...) of UASECO
 
 
 ### Changes at config files
@@ -96,6 +99,7 @@
 * Fixed CheckpointsTimeDiffWidget without tracking if <auto_enable_cps> and <auto_enable_dedicps> is set to `false` in `config/checkpoints.xml` (thanks hacki65)
 * Fixed [PHP Warning] array_key_exists(): The first argument should be either a string or an integer on line 288 in file `plugins/plugin.rasp_jukebox.php`
 * Fixed Records-Eyepiece `MoreRankingWindow` which sometimes show one page more then required (thanks hacki65)
+* Fixed [PHP Warning] Illegal string offset 'SONG' on line 147 in file `plugins/plugin.music_server.php`
 
 
 

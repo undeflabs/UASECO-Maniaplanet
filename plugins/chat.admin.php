@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-08-08');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -4029,9 +4029,6 @@ class PluginChatAdmin extends Plugin {
 			// Throw 'shutting down' event
 			$aseco->releaseEvent('onShutdown', null);
 
-			// Clear all ManiaLinks
-			$aseco->client->query('SendHideManialinkPage');
-
 			// Now skip the handling of Callbacks
 			$aseco->shutdown_phase = true;
 
@@ -4834,9 +4831,6 @@ class PluginChatAdmin extends Plugin {
 
 			// Throw 'shutting down' event
 			$aseco->releaseEvent('onShutdown', null);
-
-			// Clear all ManiaLinks
-			$aseco->client->query('SendHideManialinkPage');
 
 			// Now skip the handling of Callbacks
 			$aseco->shutdown_phase = true;

@@ -65,7 +65,7 @@ class PluginMusicServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Handles all server-controlled music.');
 
@@ -144,17 +144,19 @@ class PluginMusicServer extends Plugin {
 		}
 
 		$this->songs = array();
-		foreach ($settings['SONG_FILES'][0]['SONG'] as $song) {
-			$this->songs[] = $song;
-		}
-		unset($settings['SONG_FILES'][0]['SONG']);
+		if (isset($settings['SONG_FILES'][0]['SONG']) === true) {
+			foreach ($settings['SONG_FILES'][0]['SONG'] as $song) {
+				$this->songs[] = $song;
+			}
+			unset($settings['SONG_FILES'][0]['SONG']);
 
-		// remove duplicates
-		$this->songs = array_values(array_unique($this->songs));
+			// remove duplicates
+			$this->songs = array_values(array_unique($this->songs));
 
-		// randomize list
-		if ($this->autoshuffle) {
-			shuffle($this->songs);
+			// randomize list
+			if ($this->autoshuffle) {
+				shuffle($this->songs);
+			}
 		}
 
 		$this->messages = $settings['MESSAGES'][0];

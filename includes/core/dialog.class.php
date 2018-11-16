@@ -47,7 +47,7 @@ class Dialog extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2017 - 2018 by undef.de');
 		$this->setDescription(new Message('class.dialog', 'dialog_description'));
 
@@ -385,7 +385,7 @@ main () {
 		}
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "ClassDialogClose") {
 						WipeOut("ClassDialog");
 					}
@@ -400,12 +400,12 @@ main () {
 						IsMinimized = False;
 					}
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					if ({$buttons}) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
 				}
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "Cut") {		// CTRL + X
 						WipeOut("ClassDialog");
 					}

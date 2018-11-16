@@ -51,7 +51,7 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-06-03');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -785,7 +785,7 @@ main () {
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "ClassWindowButtonFirst") {
 						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
@@ -821,7 +821,7 @@ main () {
 					// Custom MouseClick
 					{$this->script['events']['mouse_click']}
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					if (
 						Event.ControlId == "ClassWindowClose" ||
 						Event.ControlId == "ClassWindowMinimize" ||
@@ -839,7 +839,7 @@ main () {
 					// Custom MouseOver
 					{$this->script['events']['mouse_over']}
 				}
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					if (Event.KeyName == "Home") {
 						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}

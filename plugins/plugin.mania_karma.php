@@ -74,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2018-07-20');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -1759,11 +1759,11 @@ main () {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					TriggerPageAction("PluginManiaKarma?Action=Vote&Value="^ Event.ControlId);
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
 			}
@@ -2537,12 +2537,12 @@ main () {
 	while (True) {
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOut: {
+				case CMlScriptEvent::Type::MouseOut: {
 					if (Event.ControlId == "ManiaKarmaTooltipIcon") {
 						LabelTooltip.Visible = False;
 					}
 				}
-				case CMlEvent::Type::MouseOver: {
+				case CMlScriptEvent::Type::MouseOver: {
 					if (Event.ControlId == "ManiaKarmaTooltipIcon") {
 						LabelTooltip.Visible = True;
 					}
@@ -2601,12 +2601,12 @@ main () {
 	while (True) {
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOut: {
+				case CMlScriptEvent::Type::MouseOut: {
 					if (Event.ControlId == "ManiaKarmaTooltipIcon") {
 						LabelTooltip.Visible = False;
 					}
 				}
-				case CMlEvent::Type::MouseOver: {
+				case CMlScriptEvent::Type::MouseOver: {
 					if (Event.ControlId == "ManiaKarmaTooltipIcon") {
 						LabelTooltip.Visible = True;
 					}
@@ -3169,7 +3169,7 @@ main () {
 		yield;
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					if (
 						Event.ControlId == "ManiaKarmaButton1" ||
 						Event.ControlId == "ManiaKarmaButton2" ||

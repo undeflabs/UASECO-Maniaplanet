@@ -48,7 +48,7 @@ class PluginVoteManager extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2012 - 2018 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
@@ -932,12 +932,12 @@ log(Player.Login ^" -> "^ VoteManager_CurrentVote);
 
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					if (Event.ControlId == "VoteManagerButtonYes" ||Event.ControlId == "VoteManagerButtonNo") {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
 				}
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					// Prevent the initiator from changing his vote
 					if (InputPlayer.User.Login != InitiatorLogin) {
 						if (Event.ControlId == "VoteManagerButtonYes") {
@@ -954,7 +954,7 @@ log(Player.Login ^" -> "^ VoteManager_CurrentVote);
 						}
 					}
 				}
-				case CMlEvent::Type::KeyPress : {
+				case CMlScriptEvent::Type::KeyPress : {
 					// Prevent the initiator from changing his vote
 					if (InputPlayer.User.Login != InitiatorLogin) {
 						if (Event.KeyName == "F5") {

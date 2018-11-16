@@ -49,7 +49,7 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-07-11');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
@@ -545,12 +545,12 @@ main() {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "ButtonGamemodeHelp") {
 						ShowModeHelp();
 					}
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
 			}
@@ -801,7 +801,7 @@ main() {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					LabelTooltipDonations.Hide();
 					if (Event.ControlId == "ButtonDonation") {
 						if (DropDownDonation.Visible == True) {
@@ -825,13 +825,13 @@ main() {
 						}
 					}
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					LabelTooltipDonations.Hide();
 					if (Event.ControlId == "ButtonDonation") {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
 				}
-				case CMlEvent::Type::EntrySubmit : {
+				case CMlScriptEvent::Type::EntrySubmit : {
 					LabelTooltipDonations.Hide();
 					if (Event.ControlId == "EntryDonate") {
 						if (TextLib::ToInteger(EntryDonate.Value) >= {$mindonation}) {
@@ -939,13 +939,13 @@ main() {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "ButtonCurrentRanking") {
 						TriggerPageAction("{$this->config['CURRENT_RANKING'][0]['ACTION'][0]}");
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 					}
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
 			}
@@ -1167,13 +1167,13 @@ main() {
 			// Check for MouseEvents
 			foreach (Event in PendingEvents) {
 				switch (Event.Type) {
-					case CMlEvent::Type::MouseClick : {
+					case CMlScriptEvent::Type::MouseClick : {
 						if (Event.ControlId == "ButtonPersonalBest") {
 							TriggerPageAction("{$this->config['PERSONAL_BEST'][0]['ACTION'][0]}");
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 						}
 					}
-					case CMlEvent::Type::MouseOver : {
+					case CMlScriptEvent::Type::MouseOver : {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
 				}
@@ -1288,13 +1288,13 @@ main() {
 			// Check for MouseEvents
 			foreach (Event in PendingEvents) {
 				switch (Event.Type) {
-					case CMlEvent::Type::MouseClick : {
+					case CMlScriptEvent::Type::MouseClick : {
 						if (Event.ControlId == "ButtonLocalRecord") {
 							TriggerPageAction("{$this->config['LOCAL_RECORD'][0]['ACTION'][0]}");
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 						}
 					}
-					case CMlEvent::Type::MouseOver : {
+					case CMlScriptEvent::Type::MouseOver : {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
 				}
@@ -1408,13 +1408,13 @@ main() {
 			// Check for MouseEvents
 			foreach (Event in PendingEvents) {
 				switch (Event.Type) {
-					case CMlEvent::Type::MouseClick : {
+					case CMlScriptEvent::Type::MouseClick : {
 						if (Event.ControlId == "ButtonDedimaniaRecord") {
 							TriggerPageAction("{$this->config['DEDIMANIA_RECORD'][0]['ACTION'][0]}");
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 						}
 					}
-					case CMlEvent::Type::MouseOver : {
+					case CMlScriptEvent::Type::MouseOver : {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 					}
 				}
@@ -1481,13 +1481,13 @@ main() {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "ButtonManiaExchange") {
 						TriggerPageAction("{$this->config['MANIA_EXCHANGE'][0]['ACTION'][0]}");
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 					}
 				}
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 				}
 			}

@@ -1284,22 +1284,6 @@ Get the referee validation mode.
 
 ***
 
-### [SetServerPlugin](_#SetServerPlugin)
-Set a the ServerPlugin settings. Parameters: `ForceReload` to reload from disk, optionnally: `Name` the filename relative to Scripts/ directory, `Settings` the script #Settings to apply. Only available to Admin.
-
-#### Description
-	boolean SetServerPlugin(boolean, string, struct)
-
-***
-
-### [GetServerPlugin](_#GetServerPlugin)
-Get the ServerPlugin current settings.
-
-#### Description
-	struct GetServerPlugin()
-
-***
-
 ### [SetUseChangingValidationSeed](_#SetUseChangingValidationSeed)
 Set whether the game should use a variable validation seed or not. Only available to Admin. Requires a map restart to be taken into account.
 
@@ -1433,6 +1417,54 @@ Send an event to the mode script. Only available to Admin.
 
 #### Description
 	boolean TriggerModeScriptEventArray(string, array)
+
+***
+
+### [SetServerPlugin](_#SetServerPlugin)
+Set a the ServerPlugin settings. Parameters: `ForceReload` to reload from disk, optionnally: `Name` the filename relative to Scripts/ directory, `Settings` the script #Settings to apply. Only available to Admin.
+
+#### Description
+	boolean SetServerPlugin(boolean, string, struct)
+
+***
+
+### [GetServerPlugin](_#GetServerPlugin)
+Get the ServerPlugin current settings.
+
+#### Description
+	struct GetServerPlugin()
+
+***
+
+### [GetServerPluginVariables](_#GetServerPluginVariables)
+Returns the current xml-rpc variables of the server script.
+
+#### Description
+	struct GetServerPluginVariables()
+
+***
+
+### [SetServerPluginVariables](_#SetServerPluginVariables)
+Set the xml-rpc variables of the server script. Only available to Admin.
+
+#### Description
+	boolean SetServerPluginVariables(struct)
+
+***
+
+### [TriggerServerPluginEvent](_#TriggerServerPluginEvent)
+Send an event to the server script. Only available to Admin.
+
+#### Description
+	boolean TriggerServerPluginEvent(string, string)
+
+***
+
+### [TriggerServerPluginEventArray](_#TriggerServerPluginEventArray)
+Send an event to the server script. Only available to Admin.
+
+#### Description
+	boolean TriggerServerPluginEventArray(string, array)
 
 ***
 
@@ -1949,7 +1981,7 @@ Returns a struct containing the infos for the map with the specified filename. T
 ***
 
 ### [CheckMapForCurrentServerParams](_#CheckMapForCurrentServerParams)
-Returns a boolean if the map with the specified filename matches the current server settings. 
+Returns a boolean if the map with the specified filename matches the current server settings.
 
 #### Description
 	boolean CheckMapForCurrentServerParams(string)
@@ -2102,7 +2134,7 @@ Returns a struct containing the player infos of the game server (ie: in case of 
 ***
 
 ### [GetCurrentRanking](_#GetCurrentRanking)
-Returns the current rankings for the race in progress. (In trackmania legacy team modes, the scores for the two teams are returned. In other modes, it is the individual players` scores) This method take two parameters. The first parameter specifies the maximum number of infos to be returned, and the second one the starting index in the ranking. The ranking returned is a list of structures. Each structure contains the following fields : `Login`, `NickName`, `PlayerId` and `Rank`. In addition, for legacy trackmania modes it also contains `BestTime`, `Score`, `NbrLapsFinished`, `LadderScore`, and an array `BestCheckpoints` that contains the checkpoint times for the best race.
+Returns the current rankings for the race in progress. (In trackmania legacy team modes, the scores for the two teams are returned. In other modes, it is the individual players' scores) This method take two parameters. The first parameter specifies the maximum number of infos to be returned, and the second one the starting index in the ranking. The ranking returned is a list of structures. Each structure contains the following fields : `Login`, `NickName`, `PlayerId` and `Rank`. In addition, for legacy trackmania modes it also contains `BestTime`, `Score`, `NbrLapsFinished`, `LadderScore`, and an array `BestCheckpoints` that contains the checkpoint times for the best race.
 
 #### Description
 	array GetCurrentRanking(int, int)

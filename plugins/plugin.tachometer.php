@@ -47,7 +47,7 @@ class PluginTachometer extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('reaby');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-11');
+		$this->setBuild('2018-11-16');
 		$this->setCopyright('2014 - 2018 by undef.de');
 		$this->setDescription('Displays a smart tachometer on the HUD.');
 
@@ -240,15 +240,10 @@ Integer Blink (Text _ChildId, Integer _NextChange, Boolean _BlinkSpeed) {
 }
 main() {
 	// Declarations
-//	declare persistent Boolean PersistentStorage_TachometerStatisticsStatus		= False;
-//	declare persistent Boolean PersistentStorage_TachometerSoundStatus		= True;
-//	declare persistent Integer PersistentStorage_TachometerCurrentVelocityUnit	= 0;
-//	declare persistent Integer PersistentStorage_TachometerCurrentModulateColor	= 0;
-
-	declare Boolean TachometerStatisticsStatus	= False;
-	declare Boolean TachometerSoundStatus		= True;
-	declare Integer TachometerCurrentVelocityUnit	= 0;
-	declare Integer TachometerCurrentModulateColor	= 0;
+	declare Boolean TachometerStatisticsStatus for LocalUser	= False;
+	declare Boolean TachometerSoundStatus for LocalUser		= True;
+	declare Integer TachometerCurrentVelocityUnit for LocalUser	= 0;
+	declare Integer TachometerCurrentModulateColor for LocalUser	= 0;
 
 	declare netread Integer Net_LibUI_SettingsUpdate for Teams[0];
 	declare netread Text[Text] Net_LibUI_Settings for Teams[0];
@@ -583,7 +578,7 @@ main() {
 		// Check for MouseEvents
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
-				case CMlEvent::Type::MouseOver : {
+				case CMlScriptEvent::Type::MouseOver : {
 					if (Event.ControlId == "QuadIconStatistics") {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 						QuadIconStatistics.ModulateColor = TextLib::ToColor("00AA00");
@@ -601,7 +596,7 @@ main() {
 //						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);
 //					}
 				}
-				case CMlEvent::Type::MouseOut : {
+				case CMlScriptEvent::Type::MouseOut : {
 					if (Event.ControlId == "QuadIconStatistics") {
 						if (TachometerStatisticsStatus == True) {
 							QuadIconStatistics.ModulateColor = TextLib::ToColor("50B7FF");
@@ -623,7 +618,7 @@ main() {
 						LabelVelocityUnit.Opacity = 0.65;
 					}
 				}
-				case CMlEvent::Type::MouseClick : {
+				case CMlScriptEvent::Type::MouseClick : {
 					if (Event.ControlId == "QuadIconStatistics") {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 0, 1.0);
 						if (TachometerStatisticsStatus == True) {
