@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-11-16');
+	define('UASECO_BUILD',			'2018-11-17');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -2667,7 +2667,6 @@ main() {
 --></script>
 </manialink>
 EOL;
-$this->dump('Sending clearcode!');
 		$this->sendManialink($xml, false, 0, false);
 
 		// Reset UI properties to the default values
