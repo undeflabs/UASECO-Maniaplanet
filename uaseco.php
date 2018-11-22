@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2018-11-17');
+	define('UASECO_BUILD',			'2018-11-22');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2018-11-15_20_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2018-11-15_21_26');
+	define('MANIAPLANET_BUILD_POSIX',	'2018-11-22_18_30');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2018-11-22_18_58');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'5.6.0');

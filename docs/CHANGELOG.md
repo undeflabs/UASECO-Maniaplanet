@@ -28,6 +28,7 @@
 * F9 functionality in Records-Eyepiece has been "fixed", also the storage of the settings in the Tachometer plugin (thanks reaby for the tip)
 * Change all deprecated `CMlEvent` to the new `CMlScriptEvent` in all core files and plugins
 * Improved reset of the default client UI on `shutdown` (e.g. crash, `/admin shutdown`, ...) of UASECO
+* Removed the Up-to-date check from `plugins/plugin.mania_karma.php` because it is a default plugin of UASECO
 
 
 ### Changes at config files
@@ -59,6 +60,11 @@
 * Updated/removed (because they are gone) links to documentations from nadeo in `newinstall/config/modescript_settings.xml`
 * Updated `newinstall/config/panels/AdminBottomCenter.xml`, `newinstall/config/panels/AdminBottomCenterWide.xml` and `newinstall/config/panels/AdminCallVote.xml` to ManiaLink Version 3
 * Updated `newinstall/locales/chat.server.xml` with `no_operators_configured`, `no_admins_configured` and `no_masteradmins_configured`
+* Changed `<ui_properties><checkpoint_time><pos><y>` from `25.8` to `-68.8` in `newinstall/config/modescript_settings.xml`
+* Changed `<ui_properties><checkpoint_time><pos><y>` from `-8.0` to `0.0` in `newinstall/config/modescript_settings.xml`
+* Renamed `<ui_properties><warmup>` to `<ui_properties><warm_up>` in `newinstall/config/modescript_settings.xml`
+* Removed `<uptodate_*>` from `newinstall/config/mania_karma.xml`
+* Removed `<uptodate_check>` and `<uptodate_info>` from `newinstall/config/mania_karma.xml`
 
 
 ### Bug fixes
@@ -100,6 +106,10 @@
 * Fixed [PHP Warning] array_key_exists(): The first argument should be either a string or an integer on line 288 in file `plugins/plugin.rasp_jukebox.php`
 * Fixed Records-Eyepiece `MoreRankingWindow` which sometimes show one page more then required (thanks hacki65)
 * Fixed [PHP Warning] Illegal string offset 'SONG' on line 147 in file `plugins/plugin.music_server.php`
+* Fixed [PHP Notice] Undefined variable: import_done on line 980 in file `plugins/plugin.mania_karma.php` (thanks endbase)
+* Fixed [PHP Notice] Undefined variable: api on line 3600 in file `plugins/plugin.mania_karma.php` (thanks endbase)
+* Fixed [PHP Notice] Undefined variable: authcode on line 3602 in file `plugins/plugin.mania_karma.php` (thanks endbase)
+* Fixed the view of the ConnectionStatusWidget when the Widget himself is disabled for the current GameMode (thanks hacki65)
 
 
 

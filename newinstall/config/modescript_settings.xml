@@ -49,8 +49,8 @@
 		<checkpoint_time>
 			<visible>true</visible>
 			<pos>
-				<x>-8.0</x>
-				<y>25.8</y>
+				<x>0.0</x>
+				<y>-68.8</y>
 				<z>-10.0</z>
 			</pos>
 		</checkpoint_time>
@@ -141,14 +141,14 @@
 		</position>
 
 		<!-- Warm-up progression displayed on the right of the screen during warm-up -->
-		<warmup>
+		<warm_up>
 			<visible>true</visible>
 			<pos>
 				<x>153.0</x>
 				<y>13.0</y>
 				<z>0.0</z>
 			</pos>
-		</warmup>
+		</warm_up>
 
 		<!-- Ladder progression box displayed on the top of the screen at the end of the map -->
 		<endmap_ladder_recap>

@@ -74,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.0');
-		$this->setBuild('2018-11-16');
+		$this->setBuild('2018-11-22');
 		$this->setCopyright('2009 - 2018 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -464,6 +464,9 @@ class PluginManiaKarma extends Plugin {
 			urlencode( $this->config['account']['nation'] )
 		);
 
+
+		$this->config['urls']['api'] = false;
+		$this->config['account']['authcode'] = false;
 		try {
 			// Start sync GET request
 			$params = array(
@@ -617,10 +620,9 @@ class PluginManiaKarma extends Plugin {
 		$this->config['images']['cup_silver']				= (string)$xmlcfg->images->cup_silver;
 		$this->config['images']['maniakarma_logo']			= (string)$xmlcfg->images->maniakarma_logo;
 		$this->config['images']['progress_indicator']			= (string)$xmlcfg->images->progress_indicator;
-		$this->config['uptodate_check']					= ((strtoupper((string)$xmlcfg->uptodate_check) === 'TRUE')		? true : false);
-		$this->config['uptodate_info']					= strtoupper((string)$xmlcfg->uptodate_info);
 
 		$this->config['karma_calculation_method']			= strtoupper((string)$xmlcfg->karma_calculation_method);
+		$this->config['import_done']					= false;
 
 		// Config for Karma Lottery
 		$this->config['karma_lottery']['enabled']			= ((strtoupper((string)$xmlcfg->karma_lottery->enabled) === 'TRUE')	? true : false);
@@ -634,9 +636,6 @@ class PluginManiaKarma extends Plugin {
 
 		// Misc. messages
 		$this->config['messages']['welcome']				= (string)$xmlcfg->messages->welcome;
-		$this->config['messages']['uptodate_ok']			= (string)$xmlcfg->messages->uptodate_ok;
-		$this->config['messages']['uptodate_new']			= (string)$xmlcfg->messages->uptodate_new;
-		$this->config['messages']['uptodate_failed']			= (string)$xmlcfg->messages->uptodate_failed;
 
 		// Vote messages
 		$this->config['messages']['karma_message']			= (string)$xmlcfg->messages->karma_message;
@@ -764,7 +763,7 @@ class PluginManiaKarma extends Plugin {
 			}
 
 			// Hide connection status
-			$this->sendConnectionStatus(true, false);
+			$this->sendConnectionStatus(true, $this->config['widget']['current_state']);
 		}
 
 
@@ -868,12 +867,6 @@ class PluginManiaKarma extends Plugin {
 				$this->exportVotes($player);
 			}
 		}
-		else if (strtoupper($chat_parameter) === 'UPTODATE') {
-			if ($aseco->isMasterAdmin($player)) {
-				$aseco->console('[ManiaKarma] MasterAdmin '. $player->login .' start the up-to-date check.');
-				$this->uptodateCheck($player);
-			}
-		}
 		else if ( (strtoupper($chat_parameter) === 'LOTTERY') && ($this->config['karma_lottery']['enabled'] === true) ) {
 			if  ( (isset($player->rights)) && ($player->rights) ) {
 				$message = $aseco->formatText($this->config['messages']['lottery_total_player_win'],
@@ -971,11 +964,6 @@ class PluginManiaKarma extends Plugin {
 
 		// Check for a MasterAdmin
 		if ($aseco->isMasterAdmin($player)) {
-			// Do UpToDate check?
-			if ($this->config['uptodate_check'] === true) {
-				$this->uptodateCheck($player);
-			}
-
 			// Export already made?
 			if ($this->config['import_done'] === false) {
 				$message = '{#server}> {#emotic}#################################################'. LF;
@@ -2511,6 +2499,11 @@ EOL;
 	public function sendConnectionStatus ($status, $gamemode) {
 		global $aseco;
 
+		// If widget is not enabled at the current gamemode, then hide the connection status too
+		if ($this->config['widget']['states'][$gamemode]['enabled'] === true) {
+			$status = true;
+		}
+
 		$xml = '<manialink id="'. $this->config['manialink_id'] .'06" name="ConnectionStatus" version="3">';
 		$xml .= '<stylesheet>';
 		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
@@ -2574,6 +2567,11 @@ EOL;
 		// Bail out on unsupported Gamemodes
 		if (!isset($this->config['widget']['states'][$gamemode])) {
 			return;
+		}
+
+		// If widget is not enabled at the current gamemode, then hide the connection status too
+		if ($this->config['widget']['states'][$gamemode]['enabled'] === true) {
+			$status = false;
 		}
 
 		$xml = '<manialink id="'. $this->config['manialink_id'] .'07" name="LoadingIndicator" version="3">';
@@ -3790,34 +3788,6 @@ EOL;
 					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
 				}
 			}
-			else if ($type === 'UPTODATE') {
-				// Read the request
-				if ($xml = @simplexml_load_string($request->response['content'], null, LIBXML_COMPACT) ) {
-					$current_release = $xml->uaseco;
-					if ( version_compare($current_release, $this->getVersion(), '>') ) {
-						$release_url = 'http://'. $this->config['urls']['website'] .'/Downloads/';
-						$message = $aseco->formatText($this->config['messages']['uptodate_new'],
-							$current_release,
-							'$L[' . $release_url . ']' . $release_url . '$L'
-						);
-						$aseco->sendChatMessage($message, $target->login);
-					}
-					else {
-						if ($this->config['uptodate_info'] === 'DEFAULT') {
-							$message = $aseco->formatText($this->config['messages']['uptodate_ok'],
-								$this->getVersion()
-							);
-							$aseco->sendChatMessage($message, $target->login);
-						}
-					}
-				}
-				else {
-					$aseco->sendChatMessage($this->config['messages']['uptodate_failed'], $target->login);
-					$aseco->console('[ManiaKarma] handleWebrequest() on type "'. $type .'": Could not read/parse xml request!');
-					$this->config['retrytime'] = (time() + $this->config['retrywait']);
-					$this->sendConnectionStatus(false, $this->config['widget']['current_state']);
-				}
-			}
 			else if ($type === 'EXPORT') {
 				if ($request->response['header']['code'] === 200) {
 					$this->config['import_done'] = true;		// Set to true, otherwise only after restart UASECO knows that
@@ -4127,46 +4097,6 @@ EOL;
 		}
 
 		return $empty;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
-	// Checks plugin version at MasterAdmin connect
-	public function uptodateCheck ($player) {
-		global $aseco;
-
-		// Check if connection was failed and try to reconnect
-		if ( ($this->config['retrytime'] > 0) && (time() >= $this->config['retrytime']) ) {
-			// Reconnect to the database
-			$this->onSync($aseco);
-		}
-
-		if ($this->config['retrytime'] > 0) {
-			// Connect failed, try again later
-			return;
-		}
-
-		$api_url = 'http://'. $this->config['urls']['website'] .'/api/plugin-releases.xml';
-		try {
-			// Start async GET request
-			$params = array(
-				'url'			=> $api_url,
-				'callback'		=> array(array($this, 'handleWebrequest'), array('UPTODATE', $api_url, $player)),
-				'sync'			=> false,
-				'user_agent'		=> $this->config['user_agent'],
-				'timeout_dns'		=> $this->config['timeout_dns'],
-				'timeout_connect'	=> $this->config['timeout_connect'],
-				'timeout'		=> $this->config['timeout'],
-			);
-			$aseco->webrequest->GET($params);
-		}
-		catch (Exception $exception) {
-			$aseco->console('[ManiaKarma] webrequest->GET(): '. $exception->getCode() .' - '. $exception->getMessage() ."\n". $exception->getTraceAsString(), E_USER_WARNING);
-		}
 	}
 
 	/*
