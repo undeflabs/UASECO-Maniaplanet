@@ -52,9 +52,9 @@ class PluginChatAdmin extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2018-11-22');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-03-02');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -2395,7 +2395,6 @@ class PluginChatAdmin extends Plugin {
 				if (!$aseco->isAdminByLogin($target->login)) {
 					// add the new admin
 					$aseco->admin_list['TMLOGIN'][] = $target->login;
-					$aseco->admin_list['IPADDRESS'][] = ($aseco->settings['auto_admin_addip'] ? $target->ip : '');
 					$aseco->writeLists();
 
 					// log console message
@@ -2424,7 +2423,6 @@ class PluginChatAdmin extends Plugin {
 				if ($aseco->isAdminByLogin($target->login)) {
 					$i = array_search($target->login, $aseco->admin_list['TMLOGIN']);
 					$aseco->admin_list['TMLOGIN'][$i] = '';
-					$aseco->admin_list['IPADDRESS'][$i] = '';
 					$aseco->writeLists();
 
 					// log console message
@@ -2453,7 +2451,6 @@ class PluginChatAdmin extends Plugin {
 				if (!$aseco->isOperatorByLogin($target->login)) {
 					// add the new operator
 					$aseco->operator_list['TMLOGIN'][] = $target->login;
-					$aseco->operator_list['IPADDRESS'][] = ($aseco->settings['auto_admin_addip'] ? $target->ip : '');
 					$aseco->writeLists();
 
 					// log console message
@@ -2482,7 +2479,6 @@ class PluginChatAdmin extends Plugin {
 				if ($aseco->isOperatorByLogin($target->login)) {
 					$i = array_search($target->login, $aseco->operator_list['TMLOGIN']);
 					$aseco->operator_list['TMLOGIN'][$i] = '';
-					$aseco->operator_list['IPADDRESS'][$i] = '';
 					$aseco->writeLists();
 
 					// log console message

@@ -7,15 +7,15 @@
 	</titles>
 
 	<admins>
-<!-- format:
-		<tmlogin>YOUR_OPERATOR_LOGIN</tmlogin> <ipaddress></ipaddress>
--->
+		<!-- Format (as many as you want):
+		<tmlogin>YOUR_ADMIN_LOGIN</tmlogin>
+		//-->
 	</admins>
 
 	<operators>
-<!-- format:
-		<tmlogin>YOUR_OPERATOR_LOGIN</tmlogin> <ipaddress></ipaddress>
--->
+		<!-- Format (as many as you want):
+		<tmlogin>YOUR_OPERATOR_LOGIN</tmlogin>
+		//-->
 	</operators>
 
 	<admin_abilities>

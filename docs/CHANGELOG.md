@@ -65,6 +65,9 @@
 * Renamed `<ui_properties><warmup>` to `<ui_properties><warm_up>` in `newinstall/config/modescript_settings.xml`
 * Removed `<uptodate_*>` from `newinstall/config/mania_karma.xml`
 * Removed `<uptodate_check>` and `<uptodate_info>` from `newinstall/config/mania_karma.xml`
+* Removed `<ipaddress>` from `newinstall/config/UASECO.xml` at `<masteradmins>` and complete functionality
+* Removed `<auto_admin_addip>` from `newinstall/config/UASECO.xml` and complete functionality
+* Removed `<ipaddress>` from `newinstall/config/adminops.xml` at `<admins>` and `<operators>` and complete functionality
 
 
 ### Bug fixes

@@ -13,11 +13,8 @@
 	</dedicated_server>
 
 	<masteradmins>
-		<!-- /ip:port in tmlogin only useful when joining server over LAN -->
-		<!-- ipaddress can be specified to guard each login against       -->
-		<!-- unauthorized use of admin commands from other IP addresses   -->
-		<!-- format:
-		<tmlogin>YOUR_MASTERADMIN_LOGIN</tmlogin> <ipaddress>YOUR_MASTERADMIN_IP</ipaddress>
+		<!-- Format (as many as you want):
+		<tmlogin>YOUR_MASTERADMIN_LOGIN</tmlogin>
 		//-->
 	</masteradmins>
 
@@ -86,7 +83,6 @@
 	//-->
 	<mapimages_path>/path/to/the/mapimages/</mapimages_path>
 
-	<auto_admin_addip>false</auto_admin_addip>
 	<adminops_file>config/adminops.xml</adminops_file>
 	<bannedips_file>config/bannedips.xml</bannedips_file>
 

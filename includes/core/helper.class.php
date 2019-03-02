@@ -43,9 +43,9 @@ class Helper extends BaseClass {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-03-02');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
 
@@ -1378,19 +1378,7 @@ class Helper extends BaseClass {
 		// Check for masteradmin list entry
 		if (isset($player->login) && $player->login !== '' && isset($this->masteradmin_list['TMLOGIN'])) {
 			if (($i = array_search($player->login, $this->masteradmin_list['TMLOGIN'])) !== false) {
-				// Check for matching IP if set
-				if ($this->masteradmin_list['IPADDRESS'][$i] !== '') {
-					if (!$this->matchIP($player->ip, $this->masteradmin_list['IPADDRESS'][$i])) {
-						trigger_error("Attempt to use MasterAdmin login [". $player->login ."] from IP [". $player->ip ."]!", E_USER_WARNING);
-						return false;
-					}
-					else {
-						return true;
-					}
-				}
-				else {
-					return true;
-				}
+				return true;
 			}
 			else {
 				return false;
@@ -1413,19 +1401,7 @@ class Helper extends BaseClass {
 		// Check for admin list entry
 		if (isset($player->login) && $player->login !== '' && isset($this->admin_list['TMLOGIN'])) {
 			if (($i = array_search($player->login, $this->admin_list['TMLOGIN'])) !== false) {
-				// Check for matching IP if set
-				if ($this->admin_list['IPADDRESS'][$i] !== '') {
-					if (!$this->matchIP($player->ip, $this->admin_list['IPADDRESS'][$i])) {
-						trigger_error("Attempt to use Admin login [". $player->login ."] from IP [". $player->ip ."]!", E_USER_WARNING);
-						return false;
-					}
-					else {
-						return true;
-					}
-				}
-				else {
-					return true;
-				}
+				return true;
 			}
 			else {
 				return false;
@@ -1448,19 +1424,7 @@ class Helper extends BaseClass {
 		// Check for operator list entry
 		if (isset($player->login) && $player->login !== '' && isset($this->operator_list['TMLOGIN'])) {
 			if (($i = array_search($player->login, $this->operator_list['TMLOGIN'])) !== false) {
-				// check for matching IP if set
-				if ($this->operator_list['IPADDRESS'][$i] !== '') {
-					if (!$this->matchIP($player->ip, $this->operator_list['IPADDRESS'][$i])) {
-						trigger_error("Attempt to use Operator login [" . $player->login ."] from IP [". $player->ip ."]!", E_USER_WARNING);
-						return false;
-					}
-					else {
-						return true;
-					}
-				}
-				else {
-					return true;
-				}
+				return true;
 			}
 			else {
 				return false;
@@ -1567,44 +1531,6 @@ class Helper extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Checks if the given player IP matches the corresponding list IP,
-	// allowing for class C and B wildcards, and multiple comma-separated
-	// IPs / wildcards.
-	public function matchIP ($playerip, $listip) {
-
-		// Check for offline player (removeadmin / removeop)
-		if ($playerip === '') {
-			return true;
-		}
-
-		$match = false;
-		// Check all comma-separated IPs/wildcards
-		foreach (explode(',', $listip) as $ip) {
-			if (preg_match('/^\d+\.\d+\.\d+\.\d+$/', $ip)) {
-				// check for complete list IP
-				$match = ($playerip === $ip);
-			}
-			else if (substr($ip, -4) === '.*.*') {
-				// check class B wildcard
-				$match = (preg_replace('/\.\d+\.\d+$/', '', $playerip) === substr($ip, 0, -4));
-			}
-			else if (substr($ip, -2) === '.*') {
-				// check class C wildcard
-				$match = (preg_replace('/\.\d+$/', '', $playerip) === substr($ip, 0, -2));
-			}
-			if ($match) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	// Read Admin/Operator/Ability lists and apply them on the current instance.
 	public function readLists () {
 
@@ -1617,34 +1543,10 @@ class Helper extends BaseClass {
 
 			if (is_array($lists['LISTS']['ADMINS'][0])) {
 				$this->admin_list = $lists['LISTS']['ADMINS'][0];
-				// check admin list consistency
-				if (empty($this->admin_list['IPADDRESS'])) {
-					// fill <ipaddress> list to same length as <tmlogin> list
-					if (($cnt = count($this->admin_list['TMLOGIN'])) > 0) {
-						$this->admin_list['IPADDRESS'] = array_fill(0, $cnt, '');
-					}
-				}
-				else {
-					if (count($this->admin_list['TMLOGIN']) !== count($this->admin_list['IPADDRESS'])) {
-						trigger_error("Admin mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
-					}
-				}
 			}
 
 			if (is_array($lists['LISTS']['OPERATORS'][0])) {
 				$this->operator_list = $lists['LISTS']['OPERATORS'][0];
-				// check operator list consistency
-				if (empty($this->operator_list['IPADDRESS'])) {
-					// fill <ipaddress> list to same length as <tmlogin> list
-					if (($cnt = count($this->operator_list['TMLOGIN'])) > 0) {
-						$this->operator_list['IPADDRESS'] = array_fill(0, $cnt, '');
-					}
-				}
-				else {
-					if (count($this->operator_list['TMLOGIN']) !== count($this->operator_list['IPADDRESS'])) {
-						trigger_error("Operators mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
-					}
-				}
 			}
 
 			$this->admin_abilities = $lists['LISTS']['ADMIN_ABILITIES'][0];
@@ -1704,14 +1606,13 @@ class Helper extends BaseClass {
 			for ($i = 0; $i < count($this->admin_list['TMLOGIN']); $i++) {
 				if ($this->admin_list['TMLOGIN'][$i] !== '') {
 					$lists .= "\t\t" . '<tmlogin>'. $this->admin_list['TMLOGIN'][$i] .'</tmlogin>';
-					$lists .= ' <ipaddress>'. $this->admin_list['IPADDRESS'][$i] .'</ipaddress>'. CRLF;
 					$empty = false;
 				}
 			}
 		}
 		if ($empty) {
 			$lists .= '<!-- format:'. CRLF;
-			$lists .= "\t\t" . '<tmlogin>YOUR_ADMIN_LOGIN</tmlogin> <ipaddress></ipaddress>'. CRLF;
+			$lists .= "\t\t" . '<tmlogin>YOUR_ADMIN_LOGIN</tmlogin>'. CRLF;
 			$lists .= '-->'. CRLF;
 		}
 		$lists .= "\t" . '</admins>'. CRLF . CRLF;
@@ -1721,14 +1622,13 @@ class Helper extends BaseClass {
 			for ($i = 0; $i < count($this->operator_list['TMLOGIN']); $i++) {
 				if ($this->operator_list['TMLOGIN'][$i] !== '') {
 					$lists .= "\t\t" . '<tmlogin>'. $this->operator_list['TMLOGIN'][$i] .'</tmlogin>';
-					$lists .= ' <ipaddress>'. $this->operator_list['IPADDRESS'][$i] .'</ipaddress>'. CRLF;
 					$empty = false;
 				}
 			}
 		}
 		if ($empty) {
 			$lists .= '<!-- format:'. CRLF;
-			$lists .= "\t\t" . '<tmlogin>YOUR_OPERATOR_LOGIN</tmlogin> <ipaddress></ipaddress>'. CRLF;
+			$lists .= "\t\t" . '<tmlogin>YOUR_OPERATOR_LOGIN</tmlogin>'. CRLF;
 			$lists .= '-->'. CRLF;
 		}
 		$lists .= "\t" . '</operators>'. CRLF . CRLF;

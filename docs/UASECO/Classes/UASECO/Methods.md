@@ -339,38 +339,6 @@ Check login string for LAN postfix (pre/post v2.11.21).
 
 
 
-### [matchIP](_#matchIP)
-Checks if the given player IP matches the corresponding list IP, allowing for class C and B wildcards, and multiple comma-separated IPs / wildcards.
-
-
-#### Description
-	boolean = matchIP ( string $playerip, string $listip )
-
-
-#### Parameters
-*	`$playerip`
-
-	The `ip` from a [Class Player](/Development/Classes/Player.php) object
-
-*	`$listip`
-
-	The `ip` from a `config/UASECO.xml` at `<masteradmins><ipaddress>` or `config/adminops.xml` at `<admins><ipaddress>`
-
-
-#### Example
-	$i = array_search($player->login, $aseco->masteradmin_list['TMLOGIN']);
-	$result = $aseco->matchIP($player->ip, $aseco->masteradmin_list['IPADDRESS'][$i]);
-
-
-#### Return Values
-	false
-
-
-
-***
-
-
-
 ### [readLists](_#readLists)
 Read Admin/Operator/Ability lists and apply them on the current instance.
 
@@ -385,6 +353,7 @@ Read Admin/Operator/Ability lists and apply them on the current instance.
 
 #### Return Values
 	true
+
 
 
 ***

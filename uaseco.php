@@ -780,17 +780,6 @@ class UASECO extends Helper {
 				die();
 			}
 
-			// Check masteradmin list consistency
-			if (empty($this->masteradmin_list['IPADDRESS'])) {
-				// Fill <ipaddress> list to same length as <tmlogin> list
-				if (($cnt = count($this->masteradmin_list['TMLOGIN'])) > 0)
-					$this->masteradmin_list['IPADDRESS'] = array_fill(0, $cnt, '');
-			}
-			else {
-				if (count($this->masteradmin_list['TMLOGIN']) !== count($this->masteradmin_list['IPADDRESS']))
-					$this->console("MasterAdmin mismatch between <tmlogin>'s and <ipaddress>'s!");
-			}
-
 			// Set admin contact
 			$this->settings['admin_contact'] = $settings['ADMIN_CONTACT'][0];
 			if (strtolower($this->settings['admin_contact']) === 'your@email.com' || filter_var($this->settings['admin_contact'], FILTER_VALIDATE_EMAIL) === false) {
@@ -874,9 +863,6 @@ class UASECO extends Helper {
 
 			// Color mapnames in the various /lists... lists?
 			$this->settings['lists_colormaps'] = $this->string2bool($settings['LISTS_COLORMAPS'][0]);
-
-			// Automatically add IP for new admins/operators?
-			$this->settings['auto_admin_addip'] = $this->string2bool($settings['AUTO_ADMIN_ADDIP'][0]);
 
 			// Automatically force spectator on player using /afk ?
 			$this->settings['afk_force_spec'] = $this->string2bool($settings['AFK_FORCE_SPEC'][0]);
@@ -1789,21 +1775,21 @@ class UASECO extends Helper {
 		// Check for obviously wrong setup
 		if ((int)$this->server->xmlrpc['port'] === 2350) {
 			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port> from your "UserData/Config/dedicated_cfg.txt" (or however you named that file).');
-			exit(0);
+			die();
 		}
 		if ((int)$this->server->xmlrpc['port'] === 3450) {
 			$this->console('[Dedicated] It seems you have set in "config/UASECO.xml" the <system_config><server_p2p_port> instead of the <system_config><xmlrpc_port>, please change <dedicated_server><port> from your "UserData/Config/dedicated_cfg.txt" (or however you named that file).');
-			exit(0);
+			die();
 		}
-		if (!filter_var($this->server->xmlrpc['ip'], FILTER_VALIDATE_IP)) {
+		if (!filter_var($this->server->xmlrpc['ip'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 			$this->console('[Dedicated] It seems you set in "config/UASECO.xml" at <dedicated_server><ip> a valid IP-Address. Please use the <system_config><force_ip_address> or "127.0.0.1" from your "UserData/Config/dedicated_cfg.txt" (or however you named that file)');
-			exit(0);
+			die();
 		}
 
 		// Only if logins are set
 		if ($this->server->xmlrpc['ip'] && $this->server->xmlrpc['port'] && $this->server->xmlrpc['login'] && $this->server->xmlrpc['pass']) {
 			// Log console message
-			$this->console('[Dedicated] Try to connect to Maniaplanet dedicated server at {1}:{2} (timeout {3}s)',
+			$this->console('[Dedicated] Try to connect to Maniaplanet dedicated server at [{1}:{2}] (timeout {3}s)',
 				$this->server->xmlrpc['ip'],
 				$this->server->xmlrpc['port'],
 				($this->server->timeout !== null ? $this->server->timeout : 0)
