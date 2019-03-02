@@ -5,7 +5,7 @@
 ### General changes
 
 * Requires `PHP/7.2.x` or higher, because active support has been droped for older releases
-* Requires a `Maniaplanet Dedicated Server` build `2019-02-11_21_00 (Linux)` / `2019-02-11_21_48 (Windows)` or higher
+* Requires a `Maniaplanet Dedicated Server` build `2019-02-27_14_00 (Linux)` / `2019-02-27_14_13 (Windows)` or higher
 * The logfile from UASECO has been renamed to `2018-11-16-uaseco-current.txt` or `2018-11-16-14-31-12-uaseco.txt` for older logfiles
 * The `webrequest.php` uses an own logfile named `2018-11-16-webrequest-current.txt` or `2018-11-16-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
