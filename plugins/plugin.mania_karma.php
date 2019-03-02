@@ -73,9 +73,9 @@ class PluginManiaKarma extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('2.0.0');
-		$this->setBuild('2018-11-22');
-		$this->setCopyright('2009 - 2018 by undef.de');
+		$this->setVersion('2.0.1');
+		$this->setBuild('2019-02-12');
+		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
 		$this->addDependence('PluginRaspKarma', Dependence::DISALLOWED, '1.0.0', null);
@@ -465,6 +465,7 @@ class PluginManiaKarma extends Plugin {
 		);
 
 
+		$this->config['import_done'] = false;
 		$this->config['urls']['api'] = false;
 		$this->config['account']['authcode'] = false;
 		try {
@@ -622,7 +623,6 @@ class PluginManiaKarma extends Plugin {
 		$this->config['images']['progress_indicator']			= (string)$xmlcfg->images->progress_indicator;
 
 		$this->config['karma_calculation_method']			= strtoupper((string)$xmlcfg->karma_calculation_method);
-		$this->config['import_done']					= false;
 
 		// Config for Karma Lottery
 		$this->config['karma_lottery']['enabled']			= ((strtoupper((string)$xmlcfg->karma_lottery->enabled) === 'TRUE')	? true : false);
@@ -3362,7 +3362,6 @@ EOL;
 					$pairs[] = urlencode($login) .'='. $vote;
 
 				}
-
 
 				// Generate the url for this Votes
 				$api_url = sprintf("%s?Action=Vote&login=%s&authcode=%s&uid=%s&map=%s&author=%s&atime=%s&nblaps=%s&nbchecks=%s&mood=%s&env=%s&votes=%s&tmx=%s",

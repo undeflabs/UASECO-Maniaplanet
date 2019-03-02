@@ -4,14 +4,13 @@
 
 ### General changes
 
-* Requires `PHP/7.2.x` or higher, because active Support has been droped for older releases
-* Requires a `Maniaplanet Dedicated Server` build `2018-12-18_16_00 (Linux)` / `2018-12-18_17_04 (Windows)` or higher
+* Requires `PHP/7.2.x` or higher, because active support has been droped for older releases
+* Requires a `Maniaplanet Dedicated Server` build `2019-02-11_21_00 (Linux)` / `2019-02-11_21_48 (Windows)` or higher
 * The logfile from UASECO has been renamed to `2018-11-16-uaseco-current.txt` or `2018-11-16-14-31-12-uaseco.txt` for older logfiles
 * The `webrequest.php` uses an own logfile named `2018-11-16-webrequest-current.txt` or `2018-11-16-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
 * Changed `newinstall/uaseco.sh` and `newinstall/uaseco.bat` to redirect errors into normal logfile from UASECO
 * Added a better error diagnostic message in `includes/core/locales.class.php`
-* Added changes for plugin.pay2play.php [submitted from hacki65 at github](https://github.com/undeflabs/UASECO/pull/25/files)
 * Added support for songs with space in the filename for `plugin/plugin.music_server.php` (thanks Phenom1994)
 * Updated to the gbxdatafetcher/2.11 (thanks Xymph)
 * Updated to the ModeScriptApi version `[2.5.0](https://github.com/maniaplanet/script-xmlrpc/releases)`
@@ -99,7 +98,7 @@
 * Fixed chat command `/elist` can not juke maps, only see `-` instead of `+` (thanks hackie)
 * Fixed RASP does not display correct ranking (thanks hacki65)
 * Fixed [PHP Notice] Trying to get property of non-object on line 102 in file `includes/core/map.class.php` (thanks Snorfold)
-* Fixed <placement>'s from Records-Eyepiece with chat-commands does not call the given chat command (RelaxedRacer)
+* Fixed <placement>'s from Records-Eyepiece with chat-commands does not call the given chat command (thanks RelaxedRacer)
 * Fixed [PHP Notice] Undefined variable: message on line 133 in file `plugins/plugin.local_records.php` (thanks RelaxedRacer)
 * Fixed PHP Warning] file_get_contents(https://www.UASECO.org/usagereport.php): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error on line 196 in file `webrequest.php` (thanks RelaxedRacer)
 * Fixed LiveRankingsWidget shows time from a map before after leaving and returning later and server stays empty meanwhile (thanks endbase, hackie, Flighthigh)
@@ -111,6 +110,7 @@
 * Fixed [PHP Notice] Undefined variable: api on line 3600 in file `plugins/plugin.mania_karma.php` (thanks endbase)
 * Fixed [PHP Notice] Undefined variable: authcode on line 3602 in file `plugins/plugin.mania_karma.php` (thanks endbase)
 * Fixed the view of the ConnectionStatusWidget when the Widget himself is disabled for the current GameMode (thanks hacki65)
+* Fixed the request to export the Karma votes, also when the export was already done in `plugins/plugin.mania_karma.php` (thanks RelaxedRacer)
 
 
 

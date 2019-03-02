@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - January 2019 by undef.de
+ * Copyright:	May 2014 - March 2019 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.6');
-	define('UASECO_BUILD',			'2019-01-28');
+	define('UASECO_BUILD',			'2019-03-02');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2018-12-18_16_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2018-12-18_17_04');
+	define('MANIAPLANET_BUILD_POSIX',	'2019-02-27_14_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2019-02-27_14_13');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'7.2.0');
@@ -395,7 +395,8 @@ class UASECO extends Helper {
 		// Connect to Trackmania Dedicated Server
 		if (!$this->connectDedicated()) {
 			// kill program with an error
-			trigger_error('[Dedicated] ...connection could not be established!', E_USER_ERROR);
+			$this->console('[Dedicated] ...connection could not be established!');
+			die();
 		}
 		// Log status message
 		$this->console('[Dedicated] ...connection established successfully!');
@@ -565,7 +566,8 @@ class UASECO extends Helper {
 
 		// Check server build
 		if (strlen($this->server->build) === 0 || ($this->server->game === 'ManiaPlanet' && strcmp($this->server->build, MANIAPLANET_BUILD) < 0)) {
-			trigger_error("Obsolete server build '". $this->server->build ."' - must be at least '". MANIAPLANET_BUILD ."'!", E_USER_ERROR);
+			$this->console('[ERROR] Obsolete server build "'. $this->server->build .'" - must be at least "'. MANIAPLANET_BUILD .'"!');
+			die();
 		}
 
 		// Create a USER_AGENT string
@@ -774,7 +776,8 @@ class UASECO extends Helper {
 			$this->chat_messages = $settings['MESSAGES'][0];
 			$this->masteradmin_list = $settings['MASTERADMINS'][0];
 			if (!isset($this->masteradmin_list) || !is_array($this->masteradmin_list)) {
-				trigger_error('No MasterAdmin(s) configured in [config/UASECO.xml]!', E_USER_ERROR);
+				$this->console('[ERROR] No MasterAdmin(s) configured in [config/UASECO.xml] at <masteradmins>!');
+				die();
 			}
 
 			// Check masteradmin list consistency
@@ -785,7 +788,7 @@ class UASECO extends Helper {
 			}
 			else {
 				if (count($this->masteradmin_list['TMLOGIN']) !== count($this->masteradmin_list['IPADDRESS']))
-					trigger_error("MasterAdmin mismatch between <tmlogin>'s and <ipaddress>'s!", E_USER_WARNING);
+					$this->console("MasterAdmin mismatch between <tmlogin>'s and <ipaddress>'s!");
 			}
 
 			// Set admin contact
@@ -890,7 +893,8 @@ class UASECO extends Helper {
 			// Set dedicated Server installation path
 			$this->settings['dedicated_installation'] = $settings['DEDICATED_INSTALLATION'][0];
 			if (strtoupper($this->settings['dedicated_installation']) === 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
-				trigger_error('Please setup <dedicated_installation> in [config/UASECO.xml]!', E_USER_ERROR);
+				$this->console('[ERROR] Please setup <dedicated_installation> in [config/UASECO.xml]!');
+				die();
 			}
 			if ((OPERATING_SYSTEM === 'POSIX' && substr($this->settings['dedicated_installation'], -1) !== '/') || (OPERATING_SYSTEM === 'WINDOWS' && substr($this->settings['dedicated_installation'], -1) !== '\\')) {
 				$this->console('[Config] Adding missing trailing "'. DIRECTORY_SEPARATOR .'" <dedicated_installation> from [config/UASECO.xml]!');
@@ -926,19 +930,22 @@ class UASECO extends Helper {
 			}
 			else {
 				$this->server->timeout = null;
-				trigger_error('Server init timeout not specified in [config/UASECO.xml]!', E_USER_WARNING);
+				$this->console('[WARNING] Server init timeout not specified in [config/UASECO.xml]!');
 			}
 
 			if ($this->settings['admin_client'] !== '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['admin_client']) !== 1 || $this->settings['admin_client'] === '2.11.10') {
-				trigger_error('Invalid admin client version: '. $this->settings['admin_client'] .'!', E_USER_ERROR);
+				$this->console('[ERROR] Invalid admin client version: '. $this->settings['admin_client'] .'!');
+				die();
 			}
 			if ($this->settings['player_client'] !== '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['player_client']) !== 1 || $this->settings['player_client'] === '2.11.10') {
-				trigger_error('Invalid player client version: '. $this->settings['player_client'] .'!', E_USER_ERROR);
+				$this->console('[ERROR] Invalid player client version: '. $this->settings['player_client'] .'!');
+				die();
 			}
 		}
 		else {
 			// Could not parse XML file
-			trigger_error('Could not read/parse config file ['. $config_file .']!', E_USER_ERROR);
+			$this->console('[ERROR] Could not read/parse config file ['. $config_file .']!');
+			die();
 		}
 	}
 
@@ -979,7 +986,7 @@ class UASECO extends Helper {
 
 					// Load only plugins that were configured right...
 					if (!isset($_PLUGIN) || get_parent_class($_PLUGIN) !== 'Plugin') {
-						trigger_error('require_once() does not load the file [plugins/'. $plugin .'] from <plugin> position '. ($count + 1) .', which means that this Plugin is probably an old version or it is added twice at [config/plugins.xml]!', E_USER_WARNING);
+						$this->console('[WARNING] require_once() does not load the file [plugins/'. $plugin .'] from <plugin> position '. ($count + 1) .', which means that this Plugin is probably an old version or it is added twice at [config/plugins.xml]!');
 						continue;
 					}
 
@@ -1033,7 +1040,8 @@ class UASECO extends Helper {
 			}
 		}
 		else {
-			trigger_error('[Plugin] Could not read/parse plugins list [config/plugins.xml]!', E_USER_ERROR);
+			$this->console('[ERROR] Could not read/parse plugins list [config/plugins.xml]!');
+			die();
 		}
 	}
 
@@ -1068,7 +1076,8 @@ class UASECO extends Helper {
 
 				if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::REQUIRED) {
 					// Check if required dependence exists...
-					trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, disclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!', E_USER_ERROR);
+					$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, disclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!');
+					die();
 				}
 				else if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::WANTED) {
 					// Check if wanted dependence exists...
@@ -1080,18 +1089,21 @@ class UASECO extends Helper {
 
 				// Check if disallowed dependence exists...
 				if (isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::DISALLOWED) {
-					trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], disclude this or the disallowed Plugin in [config/plugins.xml] to continue!', E_USER_ERROR);
+					$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], disclude this or the disallowed Plugin in [config/plugins.xml] to continue!');
+					die();
 				}
 
 				if ($check_version === true) {
 					// Check if dependence has min version...
 					if (isset($dependence->min_version) && isset($this->plugins[$dependence->classname]) && $this->versionCheck($this->plugins[$dependence->classname]->getVersion(), $dependence->min_version, '<')) {
-						trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] requires a more recent version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->min_version .')!', E_USER_ERROR);
+						$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] requires a more recent version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->min_version .')!');
+						die();
 					}
 
 					// Check if dependence is lower than max version...
 					if (isset($dependence->max_version) && isset($this->plugins[$dependence->classname]) && $this->versionCheck($this->plugins[$dependence->classname]->getVersion(), $dependence->max_version, '>')) {
-						trigger_error('[Plugin] The Plugin ['. $plugin->getClassname() .'] requires an older version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->max_version .')!', E_USER_ERROR);
+						$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] requires an older version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->max_version .')!');
+						die();
 					}
 				}
 			}
@@ -1623,7 +1635,8 @@ class UASECO extends Helper {
 		$check_step2['settings']	= in_array($this->settings['dbms']['table_prefix'] .'settings', $tables);
 		$check_step2['times']		= in_array($this->settings['dbms']['table_prefix'] .'times', $tables);
 		if (!$check_step2['authors'] && !$check_step2['maphistory'] && !$check_step2['maps'] && !$check_step2['players'] && !$check_step2['playlist'] && !$check_step2['rankings'] && !$check_step2['ratings'] && !$check_step2['records'] && !$check_step2['settings'] && !$check_step2['times']) {
-			trigger_error('[Database] Table structure incorrect, automatic setup failed!', E_USER_ERROR);
+			$this->console('[ERROR] Table structure incorrect, automatic setup failed!');
+			die();
 		}
 
 
@@ -1637,7 +1650,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maphistory` '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maphistory` '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1651,7 +1665,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maps` '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maps` '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1666,7 +1681,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'playlist` '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'playlist` '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1680,7 +1696,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'rankings` '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'rankings` '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1695,7 +1712,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints: '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1710,7 +1728,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints: '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints: '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1724,7 +1743,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'settings` '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'settings` '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1739,7 +1759,8 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				trigger_error('[Database] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'times` '. $this->db->errmsg(), E_USER_ERROR);
+				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'times` '. $this->db->errmsg());
+				die();
 			}
 		}
 
@@ -1749,7 +1770,8 @@ class UASECO extends Helper {
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			trigger_error('[Database] Failed to enable foreign key checks: '. $this->db->errmsg(), E_USER_ERROR);
+			$this->console('[ERROR] Failed to enable foreign key checks: '. $this->db->errmsg());
+			die();
 		}
 
 		$this->console('[Database] ...successfully done!');
@@ -1864,10 +1886,12 @@ class UASECO extends Helper {
 					$laststatus = $status['Name'];
 				}
 				if (empty($status['Code'])) {
-					trigger_error('[Dedicated] Connection failed on empty status!', E_USER_ERROR);
+					$this->console('[ERROR] Connection to the dedicated server failed on empty status!');
+					die();
 				}
 				if (isset($this->server->timeout) && $timeout++ > $this->server->timeout) {
-					trigger_error('[Dedicated] Timed out while waiting for dedicated server!', E_USER_ERROR);
+					$this->console('[ERROR] Timed out while waiting for dedicated server!');
+					die();
 				}
 			}
 		}
@@ -1889,7 +1913,8 @@ class UASECO extends Helper {
 			$calls = $this->client->getCallbacks();
 		}
 		catch (Exception $exception) {
-			trigger_error('ExecuteCallbacks XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage(), E_USER_ERROR);
+			$this->console('[ERROR] ExecuteCallbacks XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage());
+			die();
 		}
 
 		if (!empty($calls)) {
