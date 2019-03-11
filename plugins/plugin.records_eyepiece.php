@@ -50,9 +50,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
-		$this->setVersion('1.1.1');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2009 - 2018 by undef.de');
+		$this->setVersion('1.1.3');
+		$this->setBuild('2019-03-11');
+		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -2934,18 +2934,12 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->cache['Map']['Jukebox'] = false;
 			}
 
-			// Rebuild the Widgets
-			$this->cache['MapWidget']['Race'] = $this->buildMapWidget('race');
+			// Rebuild the Widget
 			$this->cache['MapWidget']['Score'] = $this->buildMapWidget('score');
 
 			// Refresh the "Next Map" Widget
-			if ($command[0] === 'replay' || $command[0] === 'restart' || $command[0] === 'skip' || $command[0] === 'previous' || $command[0] === 'nextenv') {
-				if ($aseco->server->gamestate === Server::SCORE) {
-					$widgets .= $this->cache['MapWidget']['Score'];
-				}
-				else if ($aseco->server->gamestate === Server::RACE) {
-					$widgets .= $this->cache['MapWidget']['Race'];
-				}
+			if ($aseco->server->gamestate === Server::SCORE) {
+				$widgets .= $this->cache['MapWidget']['Score'];
 			}
 		}
 
@@ -7204,7 +7198,7 @@ class PluginRecordsEyepiece extends Plugin {
 				'%borderheight%',
 				'%widgetwidth%',
 				'%widgetheight%',
-				'%column_width_name%',
+				'%column_width%',
 				'%column_height%',
 				'%title_background_width%',
 				'%title%'
@@ -7372,7 +7366,7 @@ EOL;
 				'%borderheight%',
 				'%widgetwidth%',
 				'%widgetheight%',
-				'%column_width_name%',
+				'%column_width%',
 				'%column_height%',
 				'%title_background_width%',
 				'%title%'
@@ -7539,7 +7533,7 @@ EOL;
 				'%borderheight%',
 				'%widgetwidth%',
 				'%widgetheight%',
-				'%column_width_name%',
+				'%column_width%',
 				'%column_height%',
 				'%title_background_width%',
 				'%title%'
@@ -8203,7 +8197,7 @@ EOL;
 				'%borderheight%',
 				'%widgetwidth%',
 				'%widgetheight%',
-				'%column_width_name%',
+				'%column_width%',
 				'%column_height%',
 				'%title_background_width%',
 				'%title%'
@@ -8531,7 +8525,7 @@ EOL;
 
 				$xml .= '<label pos="5.75 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="4.25 3.1875" class="labels" halign="right" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($line+1) .'."/>';
 				$xml .= '<label pos="14.75 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="9.5 3.1875" class="labels" halign="right" scale="0.9" textcolor="'. $textcolor .'" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['score'] .'"/>';
-				$xml .= '<label pos="15.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="'. sprintf("%.02f", ($this->config['ROUND_SCORE'][0]['WIDTH'][0] / 100 * 156.45)) .' 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['nickname'] .'"/>';
+				$xml .= '<label pos="15.25 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="'. sprintf("%.02f", ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 15)) .' 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $item['nickname'] .'"/>';
 
 				$line ++;
 
@@ -8605,11 +8599,13 @@ EOL;
 				'%halign%',
 				'%posx_title%',
 				'%posy_title%',
+				'%backgroundwidth%',
+				'%backgroundheight%',
 				'%borderwidth%',
 				'%borderheight%',
 				'%widgetwidth%',
 				'%widgetheight%',
-				'%column_width_name%',
+				'%column_width%',
 				'%column_height%',
 				'%title_background_width%',
 				'%title%'
@@ -8626,6 +8622,8 @@ EOL;
 				$this->config['Positions'][$position]['title']['halign'],
 				$titlex,
 				$this->config['Positions'][$position]['title']['y'],
+				($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] - 0.5),
+				($widget_height - 0.375),
 				($this->config['ROUND_SCORE'][0]['WIDTH'][0] + 1),
 				($widget_height + 0.6),
 				$this->config['ROUND_SCORE'][0]['WIDTH'][0],
@@ -8641,10 +8639,10 @@ EOL;
 		// Add Background for top X Players
 		if ($topcount > 0) {
 			if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] !== '') {
-				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 2) .' '. (($topcount * $this->config['LineHeight']) + 0.5625) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
+				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 2) .' '. ($topcount * $this->config['LineHeight']) .'" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_BACKGROUND'][0] .'"/>';
 			}
 			else {
-				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 2) .' '. (($topcount * $this->config['LineHeight']) + 0.5625) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
+				$build['header'] .= '<quad pos="1 -5.0625" z-index="0.004" size="'. ($this->config['ROUND_SCORE'][0]['WIDTH'][0] - 2) .' '. ($topcount * $this->config['LineHeight']) .'" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['TOP_SUBSTYLE'][0] .'"/>';
 			}
 		}
 
@@ -13426,7 +13424,7 @@ EOL;
 		// %backgroundwidth% %backgroundheight%
 		// %borderwidth%, %borderheight%
 		// %widgetwidth%, %widgetheight%
-		// %column_width_name%, %column_height%
+		// %column_width%, %column_height%
 		// %image_open_pos_x%, %image_open_pos_y%, %image_open%
 		// %title_background_width%
 		// %posx_icon%, %posy_icon%, %icon_style%, %icon_substyle%
@@ -13438,11 +13436,11 @@ EOL;
 		$header .= '</stylesheet>';
 		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
 		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="%backgroundwidth% %backgroundheight%" action="PluginRecordsEyepiece?Action=%actionid%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'" bgcolorfocus="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_FOCUS'][0] .'"/>';
-//		$header .= '<quad pos="-0.5 0.5625" z-index="0.001" size="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
+		$header .= '<quad pos="-0.5 0.5625" z-index="0.001" size="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="0 0" z-index="0.002" size="%widgetwidth% %widgetheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="1 -4.875" z-index="0.003" size="3.75 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_RANK'][0] .'"/>';
 		$header .= '<quad pos="6 -4.875" z-index="0.003" size="9.125 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_SCORE'][0] .'"/>';
-		$header .= '<quad pos="15.125 -4.875" z-index="0.003" size="%column_width_name% %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_NAME'][0] .'"/>';
+		$header .= '<quad pos="15.125 -4.875" z-index="0.003" size="%column_width% %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_NAME'][0] .'"/>';
 		$header .= '<quad pos="%image_open_pos_x% %image_open_pos_y%" z-index="0.05" size="8.75 8.75" image="%image_open%"/>';
 
 		// Icon and Title
@@ -13474,9 +13472,10 @@ EOL;
 		//--------------------------------------------------------------//
 		// %manialinkid%
 		// %posx%, %posy%, %widgetscale%
+		// %backgroundwidth% %backgroundheight%
 		// %borderwidth%, %borderheight%
 		// %widgetwidth%, %widgetheight%
-		// %column_width_name%, %column_height%
+		// %column_width%, %column_height%
 		// %title_background_width%
 		// %image_open_pos_x%, %image_open_pos_y%, %image_open%
 		// %posx_icon%, %posy_icon%, %icon_style%, %icon_substyle%
@@ -13487,12 +13486,12 @@ EOL;
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
 		$header .= '</stylesheet>';
 		$header .= '<frame pos="%posx% %posy%" z-index="0" id="Frame_%manialinkid%">';
-		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="%widgetwidth% %widgetheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
+		$header .= '<quad pos="0.25 -0.1875" z-index="0" size="%backgroundwidth% %backgroundheight%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_DEFAULT'][0] .'"/>';
 		$header .= '<quad pos="-0.5 0.5625" z-index="0.001" size="%borderwidth% %borderheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BORDER_SUBSTYLE'][0] .'"/>';
 		$header .= '<quad pos="0 0" z-index="0.002" size="%widgetwidth% %widgetheight%" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
-		$header .= '<quad pos="1 -4.875" z-index="0.003" size="5 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_RANK'][0] .'"/>';
+		$header .= '<quad pos="1 -4.875" z-index="0.003" size="3.75 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_RANK'][0] .'"/>';
 		$header .= '<quad pos="6 -4.875" z-index="0.003" size="9.125 %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_SCORE'][0] .'"/>';
-		$header .= '<quad pos="15.125 -4.875" z-index="0.003" size="%column_width_name% %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_NAME'][0] .'"/>';
+		$header .= '<quad pos="15.125 -4.875" z-index="0.003" size="%column_width% %column_height%" bgcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['BACKGROUND_NAME'][0] .'"/>';
 
 		// Icon and Title
 		if ($this->config['STYLE'][0]['WIDGET_RACE'][0]['TITLE_BACKGROUND'][0] !== '') {

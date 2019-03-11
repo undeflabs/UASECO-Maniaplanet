@@ -54,9 +54,9 @@ class PluginRaspJukebox extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-07-20');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-03-11');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
 		$this->addDependence('PluginRasp',		Dependence::REQUIRED,	'1.0.0', null);
@@ -737,6 +737,9 @@ class PluginRaspJukebox extends Plugin {
 						$this->jukebox[$uid]['source'] = 'Jukebox';
 						$this->jukebox[$uid]['mx'] = false;
 						$this->jukebox[$uid]['uid'] = $uid;
+
+						// Setup next Map
+						$aseco->server->maps->next = $aseco->server->maps->getMapByUid($uid);
 
 						$message = $aseco->formatText($this->messages['JUKEBOX'][0],
 							$aseco->stripStyles($player->maplist[$jid]['name']),

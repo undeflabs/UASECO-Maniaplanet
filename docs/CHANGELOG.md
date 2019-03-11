@@ -1,3 +1,32 @@
+## [Version 0.9.7](_#Version-0.9.7)
+
+
+
+### General changes
+* none
+
+
+### Changes at config files
+* none
+
+
+### Bug fixes
+* Fixed [PHP Notice] Undefined variable: uid on line 870 in file `plugins/chat.admin.php` (thanks hackie, fiendy)
+* Fixed display of the wrong juked map in the `NextMapWidget` (thanks hackie, speedychris)
+* Fixed `RoundScoreWidget`: the Playernames flowed out of the screen (thanks hacki65)
+* Fixed [PHP Notice] Undefined property: Player::$player on line 196 in file `plugins/plugin.rounds.php`
+* Fixed [PHP Notice] Undefined property: Player::$player on line 197 in file `plugins/plugin.rounds.php`
+
+
+
+
+
+***
+
+
+
+
+
 ## [Version 0.9.6](_#Version-0.9.6)
 
 
@@ -5,7 +34,7 @@
 ### General changes
 
 * Requires `PHP/7.2.x` or higher, because active support has been droped for older releases
-* Requires a `Maniaplanet Dedicated Server` build `2019-02-27_14_00 (Linux)` / `2019-02-27_14_13 (Windows)` or higher
+* Requires a `Maniaplanet Dedicated Server` build `2019-02-11_21_00 (Linux)` / `2019-02-11_21_48 (Windows)` or higher
 * The logfile from UASECO has been renamed to `2018-11-16-uaseco-current.txt` or `2018-11-16-14-31-12-uaseco.txt` for older logfiles
 * The `webrequest.php` uses an own logfile named `2018-11-16-webrequest-current.txt` or `2018-11-16-14-31-12-webrequest.txt` for older logfiles (thanks Shrike)
 * Changed `newinstall/webrequest.sh` and `newinstall/webrequest.bat` by adding an own logfile (thanks fiendy)
@@ -543,7 +572,7 @@ Added the command `/tachometer reload` to `plugins/plugin.tachometer.php`
 * Changed and renamed `continent2cid()` to `$aseco->continent->continentToAbbreviation()`
 * Changed and renamed `cid2continent()` to `$aseco->continent->abbreviationToContinent()`
 * Changed and renamed `stripColors()` to `$aseco->stripStyles()`
-* Changed and renamed `file_exists_nocase() to `$aseco->fileExistsNoCase()`
+* Changed and renamed `file_exists_nocase()` to `$aseco->fileExistsNoCase()`
 * Changed F7 (to hide some Widgets) to F9, because Nadeo uses F7 for the Buddy list now
 * Event parameters has been changed for many events, more details: http://www.uaseco.org/development/events.php
 * Event `onCheckpoint` to `onPlayerCheckpoint`

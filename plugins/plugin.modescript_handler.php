@@ -23,10 +23,11 @@
  * ----------------------------------------------------------------------------------
  *
  * Documentation:
- * » https://www.maniaplanet.com/documentation/dedicated-server/references/xml-rpc-scripts
  * » https://github.com/maniaplanet/script-xmlrpc
- * » https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
- * » https://www.maniaplanet.com/documentation/dedicated-server/references/xml-rpc-methods
+ * » https://github.com/maniaplanet/script-xmlrpc/blob/master/XmlRpcListing.md#callbacks
+ * » https://github.com/maniaplanet/script-xmlrpc/blob/master/XmlRpcListing.md#methods
+ * » https://doc.maniaplanet.com/dedicated-server/references/xml-rpc-methods
+ * » https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes
  * » https://www.uaseco.org/dedicated-server/callbacks.php
  *
  */
@@ -58,8 +59,8 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2018-11-22');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setBuild('2019-03-06');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
 		$this->registerEvent('onSync',				'onSync');

@@ -48,9 +48,9 @@ class PluginRounds extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-03-11');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Reports finishes in each individual round.');
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
@@ -193,8 +193,8 @@ class PluginRounds extends Plugin {
 			$player = $aseco->server->players->getPlayerByLogin($finish_item->player_login);
 
 			$this->round_times[$finish_item->score][] = array(
-				'playerid'	=> $player->player->pid,
-				'login'		=> $player->player->login,
+				'playerid'	=> $player->pid,
+				'login'		=> $player->login,
 				'score'		=> $finish_item->score,
 			);
 			if (isset($this->round_pbs[$player->login])) {

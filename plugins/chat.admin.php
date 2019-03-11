@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.2');
-		$this->setBuild('2019-03-02');
+		$this->setBuild('2019-03-11');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -861,7 +861,7 @@ class PluginChatAdmin extends Plugin {
 				    $command['params'][1] >= 1 && $command['params'][1] <= count($aseco->plugins['PluginRaspJukebox']->jukebox)) {
 					$i = 1;
 					foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
-						if ($i++ === $command['params'][1]) {
+						if ($i++ === (int)$command['params'][1]) {
 							$name = $aseco->stripStyles($item['Name']);
 							$uid = $item['uid'];
 							break;
