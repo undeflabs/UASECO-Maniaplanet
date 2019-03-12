@@ -114,9 +114,9 @@ class PluginManialinks extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-03-12');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides simple ManiaLink windows, also handles special panels and custom UI changes.');
 
 
@@ -381,12 +381,12 @@ class PluginManialinks extends Plugin {
 				// /n on chat-based vote (ignored)
 				return;
 
-			case 20:
-				// close main window
-				$this->mainwindow_off($aseco, $player->login);
-				// /jukebox display Clear Jukebox button
-				$aseco->releaseChatCommand('/admin clearjukebox', $player->login);
-				return;
+//			case 20:
+//				// close main window
+//				$this->mainwindow_off($aseco, $player->login);
+//				// /jukebox display Clear Jukebox button
+//				$aseco->releaseChatCommand('/admin clearjukebox', $player->login);
+//				return;
 
 			// Admin panel buttons
 			case 21:

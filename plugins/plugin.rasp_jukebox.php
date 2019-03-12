@@ -54,8 +54,8 @@ class PluginRaspJukebox extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-03-11');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-03-12');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
@@ -788,77 +788,79 @@ class PluginRaspJukebox extends Plugin {
 				}
 			}
 			else if ($chat_parameter === 'display') {
-				if (!empty($this->jukebox)) {
-					// determine admin ability to drop all jukeboxed maps
-					$dropall = $aseco->allowAbility($player, 'dropjukebox');
-					$head = 'Upcoming maps in the jukebox:';
-					$page = array();
-					if ($aseco->settings['clickable_lists']) {
-						$page[] = array('Id', 'Name (click to drop)', 'Requester');
-					}
-					else {
-						$page[] = array('Id', 'Name', 'Requester');
-					}
+				$aseco->releaseChatCommand('/elist jukebox', $player->login);
 
-					$tid = 1;
-					$lines = 0;
-					$player->msgs = array();
-
-					// reserve extra width for $w tags
-					$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
-					$player->msgs[0] = array(1, $head, array(1.10+$extra, 0.1, 0.6+$extra, 0.4), array('Icons128x128_1', 'LoadTrack', 0.02));
-					foreach ($this->jukebox as $item) {
-						$mapname = $item['Name'];
-						if (!$aseco->settings['lists_colormaps']) {
-							$mapname = $aseco->stripStyles($mapname);
-						}
-
-						// add clickable button if admin with 'dropjukebox' ability or map by this player
-						if ($aseco->settings['clickable_lists'] && $tid <= 100 && ($dropall || $item['Login'] === $login)) {
-							$mapname = array('{#black}'. $mapname, 'PluginRaspJukebox?Action='. (-2000-$tid));  // action id
-						}
-						else {
-							$mapname = '{#black}'. $mapname;
-						}
-						$page[] = array(
-							str_pad($tid, 2, '0', STR_PAD_LEFT) .'.',
-							$mapname,
-							'{#black}'. $aseco->stripStyles($item['Nick'])
-						);
-						$tid++;
-						if (++$lines > 14) {
-							if ($aseco->allowAbility($player, 'clearjukebox')) {
-								$page[] = array();
-								$page[] = array('', array('{#emotic}                  Clear Entire Jukebox', 20), '');  // action id
-							}
-							$player->msgs[] = $page;
-							$lines = 0;
-							$page = array();
-							if ($aseco->settings['clickable_lists']) {
-								$page[] = array('Id', 'Name (click to drop)', 'Requester');
-							}
-							else {
-								$page[] = array('Id', 'Name', 'Requester');
-							}
-						}
-					}
-
-					// add if last batch exists
-					if (count($page) > 1) {
-						if ($aseco->allowAbility($player, 'clearjukebox')) {
-							$page[] = array();
-							$page[] = array('', array('{#emotic}                  Clear Entire Jukebox', 20), '');  // action id
-						}
-						$player->msgs[] = $page;
-					}
-
-					// display ManiaLink message
-					$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
-				}
-				else {
-					$message = $this->messages['JUKEBOX_EMPTY'][0];
-					$aseco->sendChatMessage($message, $login);
-				}
+//				if (!empty($this->jukebox)) {
+//					// determine admin ability to drop all jukeboxed maps
+//					$dropall = $aseco->allowAbility($player, 'dropjukebox');
+//					$head = 'Upcoming maps in the jukebox:';
+//					$page = array();
+//					if ($aseco->settings['clickable_lists']) {
+//						$page[] = array('Id', 'Name (click to drop)', 'Requester');
+//					}
+//					else {
+//						$page[] = array('Id', 'Name', 'Requester');
+//					}
+//
+//					$tid = 1;
+//					$lines = 0;
+//					$player->msgs = array();
+//
+//					// reserve extra width for $w tags
+//					$extra = ($aseco->settings['lists_colormaps'] ? 0.2 : 0);
+//					$player->msgs[0] = array(1, $head, array(1.10+$extra, 0.1, 0.6+$extra, 0.4), array('Icons128x128_1', 'LoadTrack', 0.02));
+//					foreach ($this->jukebox as $item) {
+//						$mapname = $item['Name'];
+//						if (!$aseco->settings['lists_colormaps']) {
+//							$mapname = $aseco->stripStyles($mapname);
+//						}
+//
+//						// add clickable button if admin with 'dropjukebox' ability or map by this player
+//						if ($aseco->settings['clickable_lists'] && $tid <= 100 && ($dropall || $item['Login'] === $login)) {
+//							$mapname = array('{#black}'. $mapname, 'PluginRaspJukebox?Action='. (-2000-$tid));  // action id
+//						}
+//						else {
+//							$mapname = '{#black}'. $mapname;
+//						}
+//						$page[] = array(
+//							str_pad($tid, 2, '0', STR_PAD_LEFT) .'.',
+//							$mapname,
+//							'{#black}'. $aseco->stripStyles($item['Nick'])
+//						);
+//						$tid++;
+//						if (++$lines > 14) {
+//							if ($aseco->allowAbility($player, 'clearjukebox')) {
+//								$page[] = array();
+//								$page[] = array('', array('{#emotic}                  Clear Entire Jukebox', 20), '');  // action id
+//							}
+//							$player->msgs[] = $page;
+//							$lines = 0;
+//							$page = array();
+//							if ($aseco->settings['clickable_lists']) {
+//								$page[] = array('Id', 'Name (click to drop)', 'Requester');
+//							}
+//							else {
+//								$page[] = array('Id', 'Name', 'Requester');
+//							}
+//						}
+//					}
+//
+//					// add if last batch exists
+//					if (count($page) > 1) {
+//						if ($aseco->allowAbility($player, 'clearjukebox')) {
+//							$page[] = array();
+//							$page[] = array('', array('{#emotic}                  Clear Entire Jukebox', 20), '');  // action id
+//						}
+//						$player->msgs[] = $page;
+//					}
+//
+//					// display ManiaLink message
+//					$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
+//				}
+//				else {
+//					$message = $this->messages['JUKEBOX_EMPTY'][0];
+//					$aseco->sendChatMessage($message, $login);
+//				}
 			}
 			else if ($chat_parameter === 'drop') {
 				// find map by current player
