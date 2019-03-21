@@ -3,7 +3,7 @@
 [![License](https://poser.pugx.org/undeflabs/uaseco/license?format=flat-square)](https://packagist.org/packages/undeflabs/uaseco)
 
 
-UASECO
+![logo](https://www.uaseco.org/media/site/headline-uaseco-logo.png)
 ======
 
 UASECO is a fork of the XAseco2/1.03 controller for Trackmania and has been overhauled to support the Modescript Gamemodes of Trackmania² in Maniaplanet and changes to run with PHP/7.x or newer.
