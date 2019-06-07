@@ -3,11 +3,22 @@
 
 
 ### General changes
-* none
+* Requires a `Maniaplanet Dedicated Server` build `2019-05-23_18_00 (Linux)` / `2019-05-23_15_45 (Windows)` or higher
+* Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement.
+* ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login`
+* Added a check for a path separator for `<default_maplist>` in `config/UASECO.xml`
+* Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps`
+* Added `Ladder` setup into the ABOUT section of the UASECO lofgile
+* Added DateTime on logfile entries for `webrequest.php`
 
 
 ### Changes at config files
-* none
+* Updated `<client_dialog>` the link to the download page in `newinstall/config/UASECO.xml`
+* Updated `<client_error>` the link to the download page in `newinstall/config/UASECO.xml`
+* Removed `<message_cannot_find_autosave_matchsettings>` in `newinstall/locales/chat.admin.xml`
+* Removed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml`
+* Removed `<autosave_matchsettings>` in `newinstall/config/rasp.xml`
+* Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`)
 
 
 ### Bug fixes
@@ -16,6 +27,9 @@
 * Fixed `RoundScoreWidget`: the Playernames flowed out of the screen (thanks hacki65)
 * Fixed [PHP Notice] Undefined property: Player::$player on line 196 in file `plugins/plugin.rounds.php`
 * Fixed [PHP Notice] Undefined property: Player::$player on line 197 in file `plugins/plugin.rounds.php`
+* Fixed bug when using `/admin add ID` which shows `Unknown` instead of the map name (happens only for previously added maps (thanks hackie, cockneyrebel)
+* Fixed [PHP Notice] Undefined index:  on line 13985 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
+* Fixed [PHP Notice] Undefined index:  on line 13988 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
 
 
 

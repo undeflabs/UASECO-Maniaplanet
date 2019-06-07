@@ -64,9 +64,9 @@ class MapList extends BaseClass {
 	public function __construct ($debug, $force_maplist_update) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2018-06-13');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-06-07');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
 		$this->debug			= $debug;
@@ -696,7 +696,33 @@ class MapList extends BaseClass {
 			". $aseco->db->quote($map->mod_url) .",
 			". $aseco->db->quote($map->song_file) .",
 			". $aseco->db->quote($map->song_url) ."
-		);
+		)
+		ON DUPLICATE KEY UPDATE
+			`Filename` = VALUES(`Filename`),
+			`Name` = VALUES(`Name`),
+			`Comment` = VALUES(`Comment`),
+			`AuthorId` = VALUES(`AuthorId`),
+			`AuthorScore` = VALUES(`AuthorScore`),
+			`AuthorTime` = VALUES(`AuthorTime`),
+			`GoldTime` = VALUES(`GoldTime`),
+			`SilverTime` = VALUES(`SilverTime`),
+			`BronzeTime` = VALUES(`BronzeTime`),
+			`Environment` = VALUES(`Environment`),
+			`Mood` = VALUES(`Mood`),
+			`Cost` = VALUES(`Cost`),
+			`Type` = VALUES(`Type`),
+			`Style` = VALUES(`Style`),
+			`MultiLap` = VALUES(`MultiLap`),
+			`NbLaps` = VALUES(`NbLaps`),
+			`NbCheckpoints` = VALUES(`NbCheckpoints`),
+			`Validated` = VALUES(`Validated`),
+			`ExeVersion` = VALUES(`ExeVersion`),
+			`ExeBuild` = VALUES(`ExeBuild`),
+			`ModName` = VALUES(`ModName`),
+			`ModFile` = VALUES(`ModFile`),
+			`ModUrl` = VALUES(`ModUrl`),
+			`SongFile` = VALUES(`SongFile`),
+			`SongUrl` = VALUES(`SongUrl`);
 		";
 
 		$aseco->db->query($query);

@@ -1,6 +1,10 @@
 # Class Player
 ###### Documentation of includes/core/player.class.php
 
+
+***
+
+
 Structure of a Player, contains information from `GetPlayerInfo` and `GetDetailedPlayerInfo` ListMethods response.
 
 

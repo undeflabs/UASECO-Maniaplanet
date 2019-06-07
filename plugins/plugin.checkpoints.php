@@ -56,8 +56,8 @@ class PluginCheckpoints extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-07-20');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setBuild('2019-05-22');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
 		$this->addDependence('PluginLocalRecords',		Dependence::WANTED,	'1.0.0',	null);
@@ -975,7 +975,7 @@ main() {
 
 		if (CurrentTime > RefreshTime) {
 			foreach (Player in Players) {
-				if (Player.Login != InputPlayer.User.Login) {
+				if (Player.User.Login != InputPlayer.User.Login) {
 					continue;
 				}
 

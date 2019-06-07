@@ -1,6 +1,10 @@
 # Class Checkpoint
 ###### Documentation of includes/core/checkpoint.class.php
 
+
+***
+
+
 Stores checkpoint information for Players.
 
 

@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.3');
-		$this->setBuild('2019-03-11');
+		$this->setBuild('2019-06-07');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -13249,7 +13249,6 @@ main () {
 	declare CMlFrame Container	<=> (Page.GetFirstChild("Frame_AddToFavoriteWidget") as CMlFrame);
 	declare Quad_FavoIcon		<=> (Page.GetFirstChild("Quad_FavoIcon") as CMlQuad);
 
-	declare Boolean Zoomed		= False;
 	declare Integer StartTime	= 0;
 	declare Integer RefreshInterval	= 900;
 	declare Integer RefreshTime	= CurrentTime;
@@ -13974,6 +13973,10 @@ EOL;
 		$this->cache['MapAuthors'] = array();
 
 		foreach ($aseco->server->maps->map_list as $mapob) {
+			if ($mapob->uid === false) {
+				continue;
+			}
+
 			// Add the MapAuthor to the list
 			$this->cache['MapAuthors'][] = $mapob->author;
 

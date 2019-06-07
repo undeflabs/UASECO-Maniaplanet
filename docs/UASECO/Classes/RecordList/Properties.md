@@ -1,6 +1,10 @@
 # Class RecordList
 ###### Documentation of includes/core/recordlist.class.php
 
+
+***
+
+
 Manages a list of records, add records to the list and remove them.
 
 

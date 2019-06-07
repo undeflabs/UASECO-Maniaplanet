@@ -1,6 +1,10 @@
 # Class Ranking
 ###### Documentation of includes/core/ranking.class.php
 
+
+***
+
+
 Structure of ranking.
 
 
@@ -14,9 +18,9 @@ Structure of ranking.
 | `$ranking->pid`							| [Player Id](/Development/Classes/Player.php) at the dedicated Server
 | `$ranking->login`							| [Players Login](/Development/Classes/Player.php)
 | `$ranking->nickname`							| [Players Nickname](/Development/Classes/Player.php)
-| `$ranking->round_points`						|
-| `$ranking->map_points`						|
-| `$ranking->match_points`						|
+| `$ranking->round_points`						| &nbsp;
+| `$ranking->map_points`						| &nbsp;
+| `$ranking->match_points`						| &nbsp;
 | `$ranking->best_race_time`						| Best race time in milliseconds
 | `$ranking->best_race_respawns`					| Number of respawn during best race
 | `$ranking->best_race_checkpoints`					| Checkpoints times during best race
@@ -26,5 +30,5 @@ Structure of ranking.
 | `$ranking->prev_race_time`						| Best race time in milliseconds of the previous race
 | `$ranking->prev_race_respawns`					| Number of respawn of the previous race
 | `$ranking->prev_race_checkpoints`					| Checkpoints times of the previous race
-| `$ranking->stunts_score`						|
-| `$ranking->prev_stunts_score`						|
+| `$ranking->stunts_score`						| &nbsp;
+| `$ranking->prev_stunts_score`						| &nbsp;

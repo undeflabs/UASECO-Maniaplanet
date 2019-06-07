@@ -64,6 +64,7 @@
 	//-->
 	<default_maplist>maplist.txt</default_maplist>
 	<writemaplist_random>true</writemaplist_random>
+	<autosave_maplist>false</autosave_maplist>
 
 	<!-- If you use an external tool (e.g. "AdminServ") to add maps to the dedicated server, then have to set this to 'true', otherwise set this to 'false'. -->
 	<automatic_refresh_maplist>false</automatic_refresh_maplist>
@@ -203,8 +204,8 @@
 		<!-- connection messages -->
 		<banip_dialog>{#welcome}Your IP was banned from this server.$z</banip_dialog>
 		<banip_error>{#welcome}Could not connect:{br}{br}Your IP was banned from this server!</banip_error>
-		<client_dialog>{#welcome}Obsolete client version, please $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]upgrade$l.$z</client_dialog>
-		<client_error>{#welcome}Obsolete client version!{br}Please upgrade to the $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]latest version$l.</client_error>
+		<client_dialog>{#welcome}Obsolete client version, please $l[https://www.maniaplanet.com/download]upgrade$l.$z</client_dialog>
+		<client_error>{#welcome}Obsolete client version!{br}Please upgrade to the $l[https://www.maniaplanet.com/download]latest version$l.</client_error>
 		<connect_dialog>{#welcome}Connection problem, please retry.$z</connect_dialog>
 		<connect_error>{#welcome}$sThis is an administrative notice.$z{br}{br}UASECO encountered a very rare player connection{br}problem. Please re-join the server to correct it.{br}Apologies for the inconvenience.{br}{br}$sThe server administrators.</connect_error>
 

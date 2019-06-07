@@ -1,6 +1,10 @@
 # Class MapList
 ###### Documentation of includes/core/maplist.class.php
 
+
+***
+
+
 Stores information about all Maps on the dedicated server and provides several functions for sorting.
 
 

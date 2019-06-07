@@ -1,6 +1,10 @@
 # Class MapHistory
 ###### Documentation of includes/core/maphistory.class.php
 
+
+***
+
+
 Map history for the dedicated server and provides several methods for the required handling of the history.
 
 

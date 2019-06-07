@@ -109,13 +109,6 @@
 	<jukebox_in_window>false</jukebox_in_window>
 
 	<!--
-	Set to filename to enable autosaving matchsettings upon every map switch,
-	e.g. 'autosave_matchsettings.txt'.
-	Gets stored at "UserData/Maps/MatchSettings/" directory.
-	//-->
-	<autosave_matchsettings></autosave_matchsettings>
-
-	<!--
 	Set to true if you want start-up to prune `records` and `times` for players and
 	maps deleted from database, and for maps deleted from the server
 	Only enable this if you know what you're doing!

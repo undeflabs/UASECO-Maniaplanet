@@ -1,6 +1,10 @@
 # Class Dialog
 ###### Documentation of includes/core/dialog.class.php
 
+
+***
+
+
 Provides a comfortable, configurable styled Manialink Dialog.
 
 

@@ -1,6 +1,10 @@
 # Class RecordList
 ###### Documentation of includes/core/recordlist.class.php
 
+
+***
+
+
 Manages a list of records, add records to the list and remove them.
 
 
@@ -105,7 +109,7 @@ Returns a record by the given rank.
 
 
 #### Example
-	$record = $aseco->server->records->getRecord();
+	$record = $aseco->server->records->getRecord(1);
 
 
 

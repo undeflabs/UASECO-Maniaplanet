@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2018-05-06
+	Version:	2019-06-07
 	Authors:	[EN] undef.de
 			[DE] askuri
 	//-->
@@ -1210,16 +1210,6 @@
 		<de>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} ha die Mapliste gemischt mit {#highlite}{3}{#admin} maps</de>
 	</message_maps_shuffled>
 
-	<message_cannot_find_autosave_matchsettings>
-		<en>{#server}» {#error}Cannot find autosave matchsettings file {#highlite}$i{1}{#error}!</en>
-		<de>{#server}» {#error}Kann die Datei zur automatischen Maplist speicherung nicht finden {#highlite}$i{1}{#error}!</de>
-	</message_cannot_find_autosave_matchsettings>
-
-	<message_autosave_matchsettings_not_set_or_jukebox_disabled>
-		<en>{#server}» {#error}No autosave matchsettings file defined in $I{#highlite}config/rasp.xml{#error} or $I{#highlite}plugin.rasp_jukebox.php{#error} not enabled{#error}!</en>
-		<de>{#server}» {#error}Keine Datei zur automatischen Maplist Speicherung angegeben in $I{#highlite}config/rasp.xml{#error} oder $I{#highlite}plugin.rasp_jukebox.php{#error} nicht eingeschaltet{#error}!</de>
-	</message_autosave_matchsettings_not_set_or_jukebox_disabled>
-
 	<message_no_maplist_randomness>
 		<en>{#server}» {#error}No maplist randomization defined in {#highlite}$i [config/UASECO.xml]{#error}!</en>
 		<de>{#server}» {#error}Kein durchmischen der Mapliste angegeben in {#highlite}$i[config/UASECO.xml]{#error}!</de>
@@ -1241,23 +1231,3 @@
 	</message_shutdownall>
 
 </locales>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

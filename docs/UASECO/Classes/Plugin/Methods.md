@@ -1,6 +1,10 @@
 # Class Plugin
 ###### Documentation of includes/core/plugin.class.php
 
+
+***
+
+
 Structure for all plugins, extend this class to build your own one.
 
 

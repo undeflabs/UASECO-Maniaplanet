@@ -1,6 +1,10 @@
 # Class PlayList
 ###### Documentation of includes/core/playlist.class.php
 
+
+***
+
+
 Provides and handles a Playlist for Maps.
 
 > PLEASE NOTE THAT THIS CLASS IS STIL UNDER DEVELOPMENT AND CURRENTLY WITHOUT ANY FUNCTION!

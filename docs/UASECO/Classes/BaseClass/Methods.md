@@ -1,6 +1,10 @@
 # Class BaseClass
 ###### Documentation of includes/core/baseclass.class.php
 
+
+***
+
+
 Structure for all classes, extend this class to build your own one.
 
 

@@ -1,6 +1,10 @@
 # Class Message
 ###### Documentation of includes/core/message.class.php
 
+
+***
+
+
 Part of multilanguage support.
 
 

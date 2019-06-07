@@ -1,6 +1,10 @@
 # Class XmlParser
 ###### Documentation of includes/core/XmlParser.class.php
 
+
+***
+
+
 Builds an easy structured array out of a xml file, element names will be the keys and the data the values.
 
 

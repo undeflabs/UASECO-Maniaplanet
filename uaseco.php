@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - March 2019 by undef.de
+ * Copyright:	May 2014 - June 2019 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.7');
-	define('UASECO_BUILD',			'2019-03-12');
+	define('UASECO_BUILD',			'2019-06-07');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2019-02-27_14_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2019-02-27_14_13');
+	define('MANIAPLANET_BUILD_POSIX',	'2019-05-23_18_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2019-05-23_15_45');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'7.2.0');
@@ -187,7 +187,7 @@ class UASECO extends Helper {
 		$this->console('####[INIT]###########################################################################');
 
 		if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<')) {
-			$this->console('[ERROR] UASECO requires min. PHP/'. MIN_PHP_VERSION .' and can not run with current PHP/'. PHP_VERSION .', please update PHP!');
+			$this->console('[UASECO][ERROR] UASECO requires min. PHP/'. MIN_PHP_VERSION .' and can not run with current PHP/'. PHP_VERSION .', please update PHP!');
 			die();
 		}
 
@@ -559,6 +559,11 @@ class UASECO extends Helper {
 		// Get basic server info, server id, login, nickname, zone, name, options, mode, limits...
 		$this->server->getServerSettings();
 
+		if (!file_exists($this->server->mapdir .'MatchSettings/'. $this->settings['default_maplist'])) {
+			$this->console('[UASECO][ERROR] Can not find the file "'. $this->server->mapdir .'MatchSettings/'. $this->settings['default_maplist'] .'" from setting <default_maplist> from [config/UASECO.xml]!');
+			die();
+		}
+
 		// Add 'POWERED BY UASECO' to server comment
 		if (strpos($this->stripStyles($this->server->comment, true), 'POWERED BY UASECO') === false) {
 			$this->client->query('SetServerComment', $this->server->comment ."\n". '$Z$O$FFFPOWERED BY $0AF$L['. UASECO_WEBSITE .']'. UASECO_NAME .'$L');
@@ -566,7 +571,7 @@ class UASECO extends Helper {
 
 		// Check server build
 		if (strlen($this->server->build) === 0 || ($this->server->game === 'ManiaPlanet' && strcmp($this->server->build, MANIAPLANET_BUILD) < 0)) {
-			$this->console('[ERROR] Obsolete server build "'. $this->server->build .'" - must be at least "'. MANIAPLANET_BUILD .'"!');
+			$this->console('[UASECO][ERROR] Obsolete server build "'. $this->server->build .'" - must be at least "'. MANIAPLANET_BUILD .'"!');
 			die();
 		}
 
@@ -619,6 +624,7 @@ class UASECO extends Helper {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:         {1}', $this->server->title);
+		$this->console_text('» Ladder:        {1} - {2}k', substr(($this->server->ladder_limit_min / 1000), 0, 3), substr(($this->server->ladder_limit_max / 1000), 0, 3));
 		$this->console_text('» Gamemode:      "{1}" with script "{2}" version "{3}"', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» PHP:           PHP/{1}', phpversion());
@@ -709,6 +715,7 @@ class UASECO extends Helper {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
 		$this->console_text('» Title:         {1}', $this->server->title);
+		$this->console_text('» Ladder:        {1} - {2}k', substr(($this->server->ladder_limit_min / 1000), 0, 3), substr(($this->server->ladder_limit_max / 1000), 0, 3));
 		$this->console_text('» Gamemode:      "{1}" with script "{2}" version "{3}"', str_replace('_', '', $this->server->gameinfo->getModeName()), $this->server->gameinfo->getModeScriptName(), $this->server->gameinfo->getModeVersion());
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» PHP:           PHP/{1}', phpversion());
@@ -776,7 +783,7 @@ class UASECO extends Helper {
 			$this->chat_messages = $settings['MESSAGES'][0];
 			$this->masteradmin_list = $settings['MASTERADMINS'][0];
 			if (!isset($this->masteradmin_list) || !is_array($this->masteradmin_list)) {
-				$this->console('[ERROR] No MasterAdmin(s) configured in [config/UASECO.xml] at <masteradmins>!');
+				$this->console('[UASECO][ERROR] No MasterAdmin(s) configured in [config/UASECO.xml] at <masteradmins>!');
 				die();
 			}
 
@@ -802,9 +809,24 @@ class UASECO extends Helper {
 
 			// Set default filename for readmaplist/writemaplist
 			$this->settings['default_maplist'] = $settings['DEFAULT_MAPLIST'][0];
+			if ($this->settings['default_maplist'] === '') {
+				$this->console('[UASECO][ERROR] You have to setup <default_maplist> from [config/UASECO.xml] to run UASECO!');
+				die();
+			}
+			if (strpos($this->settings['default_maplist'], '/') !== false) {
+				$this->console('[UASECO][ERROR] Found a path separator ("/"), which should only contain a filename in <default_maplist> from [config/UASECO.xml]!');
+				die();
+			}
+			else if (strpos($this->settings['default_maplist'], '\\') !== false) {
+				$this->console('[UASECO][ERROR] Found a path separator ("\"), which should only contain a filename in <default_maplist> from [config/UASECO.xml]!');
+				die();
+			}
 
-			// Add random filter to /admin writemaplist output
+			// Add random filter to "/admin writemaplist" output
 			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
+
+			// Sets automatic saving the maplist
+			$this->settings['autosave_maplist'] = $this->string2bool($settings['AUTOSAVE_MAPLIST'][0]);
 
 			// Automatic refresh of the maplist when the callback "ManiaPlanet.MapListModified" is received
 			$this->settings['automatic_refresh_maplist'] = $this->string2bool($settings['AUTOMATIC_REFRESH_MAPLIST'][0]);
@@ -839,9 +861,6 @@ class UASECO extends Helper {
 
 			// Set filename of guestlist file
 			$this->settings['guestlist_file'] = $settings['GUESTLIST_FILE'][0];
-
-			// Add random filter to /admin writemaplist output
-			$this->settings['writemaplist_random'] = $this->string2bool($settings['WRITEMAPLIST_RANDOM'][0]);
 
 			// Set minimum admin client version
 			$this->settings['admin_client'] = $settings['ADMIN_CLIENT_VERSION'][0];
@@ -879,7 +898,7 @@ class UASECO extends Helper {
 			// Set dedicated Server installation path
 			$this->settings['dedicated_installation'] = $settings['DEDICATED_INSTALLATION'][0];
 			if (strtoupper($this->settings['dedicated_installation']) === 'PATH_TO_DEDICATED_SERVER' || empty($this->settings['dedicated_installation'])) {
-				$this->console('[ERROR] Please setup <dedicated_installation> in [config/UASECO.xml]!');
+				$this->console('[UASECO][ERROR] Please setup <dedicated_installation> in [config/UASECO.xml]!');
 				die();
 			}
 			if ((OPERATING_SYSTEM === 'POSIX' && substr($this->settings['dedicated_installation'], -1) !== '/') || (OPERATING_SYSTEM === 'WINDOWS' && substr($this->settings['dedicated_installation'], -1) !== '\\')) {
@@ -920,17 +939,17 @@ class UASECO extends Helper {
 			}
 
 			if ($this->settings['admin_client'] !== '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['admin_client']) !== 1 || $this->settings['admin_client'] === '2.11.10') {
-				$this->console('[ERROR] Invalid admin client version: '. $this->settings['admin_client'] .'!');
+				$this->console('[UASECO][ERROR] Invalid admin client version: '. $this->settings['admin_client'] .'!');
 				die();
 			}
 			if ($this->settings['player_client'] !== '' && preg_match('/^2\.11\.[12][0-9]$/', $this->settings['player_client']) !== 1 || $this->settings['player_client'] === '2.11.10') {
-				$this->console('[ERROR] Invalid player client version: '. $this->settings['player_client'] .'!');
+				$this->console('[UASECO][ERROR] Invalid player client version: '. $this->settings['player_client'] .'!');
 				die();
 			}
 		}
 		else {
 			// Could not parse XML file
-			$this->console('[ERROR] Could not read/parse config file ['. $config_file .']!');
+			$this->console('[UASECO][ERROR] Could not read/parse config file ['. $config_file .']!');
 			die();
 		}
 	}
@@ -1026,7 +1045,7 @@ class UASECO extends Helper {
 			}
 		}
 		else {
-			$this->console('[ERROR] Could not read/parse plugins list [config/plugins.xml]!');
+			$this->console('[UASECO][ERROR] Could not read/parse plugins list [config/plugins.xml]!');
 			die();
 		}
 	}
@@ -1062,7 +1081,7 @@ class UASECO extends Helper {
 
 				if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::REQUIRED) {
 					// Check if required dependence exists...
-					$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, disclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!');
+					$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, disclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!');
 					die();
 				}
 				else if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::WANTED) {
@@ -1075,20 +1094,20 @@ class UASECO extends Helper {
 
 				// Check if disallowed dependence exists...
 				if (isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::DISALLOWED) {
-					$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], disclude this or the disallowed Plugin in [config/plugins.xml] to continue!');
+					$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], disclude this or the disallowed Plugin in [config/plugins.xml] to continue!');
 					die();
 				}
 
 				if ($check_version === true) {
 					// Check if dependence has min version...
 					if (isset($dependence->min_version) && isset($this->plugins[$dependence->classname]) && $this->versionCheck($this->plugins[$dependence->classname]->getVersion(), $dependence->min_version, '<')) {
-						$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] requires a more recent version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->min_version .')!');
+						$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires a more recent version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->min_version .')!');
 						die();
 					}
 
 					// Check if dependence is lower than max version...
 					if (isset($dependence->max_version) && isset($this->plugins[$dependence->classname]) && $this->versionCheck($this->plugins[$dependence->classname]->getVersion(), $dependence->max_version, '>')) {
-						$this->console('[ERROR] The Plugin ['. $plugin->getClassname() .'] requires an older version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->max_version .')!');
+						$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires an older version of the Plugin ['. $dependence->classname .'] (current version: '. $this->plugins[$dependence->classname]->getVersion() .', expected version: '. $dependence->max_version .')!');
 						die();
 					}
 				}
@@ -1268,7 +1287,7 @@ class UASECO extends Helper {
 		// Check for minimum required version of the Database-Server
 		if (strtolower($this->db->type) === 'mysql') {
 			if (version_compare($this->db->version, MIN_MYSQL_VERSION, '<')) {
-				$this->console('[ERROR] UASECO requires min. MySQL/'. MIN_MYSQL_VERSION .' and can not run with current MySQL/'. $this->db->version  .' ('. $this->db->version_full .'), please update MySQL!');
+				$this->console('[UASECO][ERROR] UASECO requires min. MySQL/'. MIN_MYSQL_VERSION .' and can not run with current MySQL/'. $this->db->version  .' ('. $this->db->version_full .'), please update MySQL!');
 				die();
 			}
 			else {
@@ -1277,7 +1296,7 @@ class UASECO extends Helper {
 		}
 		else if (strtolower($this->db->type) === 'mariadb') {
 			if (version_compare($this->db->version, MIN_MARIADB_VERSION, '<')) {
-				$this->console('[ERROR] UASECO requires min. MariaDB/'. MIN_MARIADB_VERSION .' and can not run with current MariaDB/'. $this->db->version .' ('. $this->db->version_full .'), please update MariaDB!');
+				$this->console('[UASECO][ERROR] UASECO requires min. MariaDB/'. MIN_MARIADB_VERSION .' and can not run with current MariaDB/'. $this->db->version .' ('. $this->db->version_full .'), please update MariaDB!');
 				die();
 			}
 			else {
@@ -1621,7 +1640,7 @@ class UASECO extends Helper {
 		$check_step2['settings']	= in_array($this->settings['dbms']['table_prefix'] .'settings', $tables);
 		$check_step2['times']		= in_array($this->settings['dbms']['table_prefix'] .'times', $tables);
 		if (!$check_step2['authors'] && !$check_step2['maphistory'] && !$check_step2['maps'] && !$check_step2['players'] && !$check_step2['playlist'] && !$check_step2['rankings'] && !$check_step2['ratings'] && !$check_step2['records'] && !$check_step2['settings'] && !$check_step2['times']) {
-			$this->console('[ERROR] Table structure incorrect, automatic setup failed!');
+			$this->console('[UASECO][ERROR] Table structure incorrect, automatic setup failed!');
 			die();
 		}
 
@@ -1636,7 +1655,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maphistory` '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maphistory` '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1651,7 +1670,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maps` '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'maps` '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1667,7 +1686,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'playlist` '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'playlist` '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1682,7 +1701,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'rankings` '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'rankings` '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1698,7 +1717,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints: '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints: '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1714,7 +1733,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints: '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints: '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1729,7 +1748,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'settings` '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'settings` '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1745,7 +1764,7 @@ class UASECO extends Helper {
 			";
 			$result = $this->db->query($query);
 			if (!$result) {
-				$this->console('[ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'times` '. $this->db->errmsg());
+				$this->console('[UASECO][ERROR] Failed to add required foreign key constraints for table `'. $this->settings['dbms']['table_prefix'] .'times` '. $this->db->errmsg());
 				die();
 			}
 		}
@@ -1756,7 +1775,7 @@ class UASECO extends Helper {
 		";
 		$result = $this->db->query($query);
 		if (!$result) {
-			$this->console('[ERROR] Failed to enable foreign key checks: '. $this->db->errmsg());
+			$this->console('[UASECO][ERROR] Failed to enable foreign key checks: '. $this->db->errmsg());
 			die();
 		}
 
@@ -1872,11 +1891,11 @@ class UASECO extends Helper {
 					$laststatus = $status['Name'];
 				}
 				if (empty($status['Code'])) {
-					$this->console('[ERROR] Connection to the dedicated server failed on empty status!');
+					$this->console('[UASECO][ERROR] Connection to the dedicated server failed on empty status!');
 					die();
 				}
 				if (isset($this->server->timeout) && $timeout++ > $this->server->timeout) {
-					$this->console('[ERROR] Timed out while waiting for dedicated server!');
+					$this->console('[UASECO][ERROR] Timed out while waiting for dedicated server!');
 					die();
 				}
 			}
@@ -1899,7 +1918,7 @@ class UASECO extends Helper {
 			$calls = $this->client->getCallbacks();
 		}
 		catch (Exception $exception) {
-			$this->console('[ERROR] ExecuteCallbacks XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage());
+			$this->console('[UASECO][ERROR] ExecuteCallbacks XmlRpc Error ['. $exception->getCode() .'] - '. $exception->getMessage());
 			die();
 		}
 
@@ -2251,6 +2270,48 @@ class UASECO extends Helper {
 
 		// Throw main 'end map' event
 		$this->releaseEvent('onEndMap', $this->server->maps->current);
+
+
+		// Check for autosaving maplist
+		if ($this->settings['autosave_maplist'] === true) {
+			try {
+				$amount_maps_written = $this->client->query('SaveMatchSettings', 'MatchSettings/'. $this->settings['default_maplist']);
+
+				// Should a random filter be added?
+				$success = true;
+				if ($this->settings['writemaplist_random'] === true) {
+					$mapsfile = $this->server->mapdir .'MatchSettings/'. $this->settings['default_maplist'];
+
+					// Read the match settings file
+					if (!$list = @file_get_contents($mapsfile)) {
+						$this->console('[UASECO][WARNING] Could not read match settings file ['. $mapsfile .']!');
+						$success = false;
+					}
+					else {
+						// Insert random filter after <gameinfos> section
+						$list = preg_replace('/<\/gameinfos>/', '$0'. CRLF . CRLF .
+							"\t<filter>" . CRLF .
+							"\t\t<random_map_order>1</random_map_order>" . CRLF .
+							"\t</filter>",
+							$list
+						);
+
+						// Write out the match settings file
+						if (!@file_put_contents($mapsfile, $list)) {
+							$this->console('[UASECO][WARNING] Could not write match settings file ['. $mapsfile .']!');
+							$success = false;
+						}
+					}
+				}
+
+				if ($amount_maps_written > 0 && $success === true) {
+					$this->console('[UASECO] Successfully autosaved ['. $mapsfile .']');
+				}
+			}
+			catch (Exception $exception) {
+				$this->console('[UASECO][WARNING] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveMatchSettings');
+			}
+		}
 	}
 
 	/*

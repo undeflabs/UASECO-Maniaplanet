@@ -49,8 +49,8 @@ class PluginInfoBar extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setBuild('2019-05-22');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -675,23 +675,23 @@ main() {
 
 			foreach (Player in Players) {
 				if (Player.IsSpawned == False) {
-					if (WatchList.existskey(Player.Login) == True) {
-						WatchList[Player.Login] = WatchList[Player.Login] + 1;
+					if (WatchList.existskey(Player.User.Login) == True) {
+						WatchList[Player.User.Login] = WatchList[Player.User.Login] + 1;
 					}
 					else {
-						WatchList[Player.Login] = 1;
+						WatchList[Player.User.Login] = 1;
 					}
 				}
 				else {
-					WatchList[Player.Login] = 0;
+					WatchList[Player.User.Login] = 0;
 				}
 
-				if (WatchList[Player.Login] > SpectatorThreshold) {
-					SpectatorsList[Player.Login] = 0;
+				if (WatchList[Player.User.Login] > SpectatorThreshold) {
+					SpectatorsList[Player.User.Login] = 0;
 				}
 				else {
-					if (SpectatorsList.existskey(Player.Login) == True) {
-						SpectatorsList.removekey(Player.Login);
+					if (SpectatorsList.existskey(Player.User.Login) == True) {
+						SpectatorsList.removekey(Player.User.Login);
 					}
 				}
 			}
@@ -1038,7 +1038,7 @@ main() {
 			NextUpdate = CurrentTime + 500;
 
 			foreach (Player in Players) {
-				if (Player.Login == InputPlayer.User.Login) {
+				if (Player.User.Login == InputPlayer.User.Login) {
 					if (Player.Score != Null) {
 						if (Player.Score.BestRace.Time > 0 && Player.Score.BestRace.Time != LastBestRace) {
 							LastBestRace = Player.Score.BestRace.Time;
@@ -1152,7 +1152,7 @@ main() {
 			foreach (Player in Players) {
 				if (Player.Score != Null && Player.Score.BestRace.Time > 0) {
 					// Check for improved PersonalBest of InputPlayer
-					if (Player.Login == InputPlayer.User.Login && (Player.Score.BestRace.Time < PersonalBestScore || PersonalBestScore == 0)) {
+					if (Player.User.Login == InputPlayer.User.Login && (Player.Score.BestRace.Time < PersonalBestScore || PersonalBestScore == 0)) {
 						PersonalBestScore = Player.Score.BestRace.Time;
 						LabelPersonalBest.SetText(FormatTime(PersonalBestScore));
 					}

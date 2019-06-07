@@ -1,6 +1,10 @@
 # Class PlayerList
 ###### Documentation of includes/core/playerlist.class.php
 
+
+***
+
+
 Manages Players on the server, add/remove Players and provides several get functions.
 
 

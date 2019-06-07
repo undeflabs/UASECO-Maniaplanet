@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.2');
-		$this->setBuild('2019-03-11');
+		$this->setBuild('2019-06-07');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -4526,40 +4526,28 @@ class PluginChatAdmin extends Plugin {
 		global $aseco;
 
 		if ($aseco->settings['writemaplist_random']) {
-			if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings) {
-				if (file_exists($aseco->server->mapdir .'MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings)) {
-					try {
-						if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
-							return;
-						}
-
-						// Get map count
-						$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings);
-
-						// log console message
-						$aseco->console('[ChatAdmin] {1} [{2}] shuffled map list: {3} ({4} maps)!', $logtitle, $login, '[MatchSettings/'.$aseco->plugins['PluginRaspJukebox']->autosave_matchsettings .']', $cnt);
-
-						$msg = new Message('chat.admin', 'message_maps_shuffled');
-						$msg->addPlaceholders($chattitle, $admin->nickname, $cnt);
-						$msg->sendChatMessage($login);
-						return;
-					}
-					catch (Exception $exception) {
-						$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - LoadMatchSettings: [MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings .']');
-
-						$msg = new Message('chat.admin', 'message_failed_reading');
-						$msg->addPlaceholders('MatchSettings/'. $aseco->plugins['PluginRaspJukebox']->autosave_matchsettings);
-						$msg->sendChatMessage($login);
-					}
+			try {
+				if (!$admin = $aseco->server->players->getPlayerByLogin($login)) {
+					return;
 				}
-				else {
-					$message = '';
-					$msg = new Message('chat.admin', 'message_cannot_find_autosave_matchsettings');
-					$msg->addPlaceholders($aseco->plugins['PluginRaspJukebox']->autosave_matchsettings);
-				}
+
+				// Get map count
+				$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettings/'. $aseco->settings['default_maplist']);
+
+				// log console message
+				$aseco->console('[ChatAdmin] {1} [{2}] shuffled map list: {3} ({4} maps)!', $logtitle, $login, '[MatchSettings/'.$aseco->settings['default_maplist'] .']', $cnt);
+
+				$msg = new Message('chat.admin', 'message_maps_shuffled');
+				$msg->addPlaceholders($chattitle, $admin->nickname, $cnt);
+				$msg->sendChatMessage($login);
+				return;
 			}
-			else {
-				$msg = new Message('chat.admin', 'message_autosave_matchsettings_not_set_or_jukebox_disabled');
+			catch (Exception $exception) {
+				$aseco->console('[ChatAdmin] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - LoadMatchSettings: [MatchSettings/'. $aseco->settings['default_maplist'] .']');
+
+				$msg = new Message('chat.admin', 'message_failed_reading');
+				$msg->addPlaceholders('MatchSettings/'. $aseco->settings['default_maplist']);
+				$msg->sendChatMessage($login);
 			}
 		}
 		else {

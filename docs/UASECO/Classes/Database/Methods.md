@@ -1,6 +1,10 @@
 # Class Database
 ###### Documentation of includes/core/database.class.php
 
+
+***
+
+
 This Class extends the [Class mysqli](http://php.net/manual/en/class.mysqli.php), so all the Properties and Methods this Class provides are available too.
 
 

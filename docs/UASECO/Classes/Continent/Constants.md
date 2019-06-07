@@ -1,6 +1,10 @@
 # Class Continent
 ###### Documentation of includes/core/continent.class.php
 
+
+***
+
+
 Provides lists of Continents and converter methods.
 
 

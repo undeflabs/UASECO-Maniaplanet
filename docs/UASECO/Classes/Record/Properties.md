@@ -1,6 +1,10 @@
 # Class Record
 ###### Documentation of includes/core/record.class.php
 
+
+***
+
+
 Structure of a Record.
 
 

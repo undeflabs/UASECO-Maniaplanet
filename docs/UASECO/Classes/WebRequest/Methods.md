@@ -1,6 +1,10 @@
 # Class WebRequest
 ###### Documentation of includes/core/webrequest.class.php
 
+
+***
+
+
 Provides asynchronous and synchronous communication for HTTP GET-, POST- and HEAD-Requests.
 
 

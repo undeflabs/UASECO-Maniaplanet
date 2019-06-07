@@ -1,6 +1,10 @@
 # Class Dependence
 ###### Documentation of includes/core/dependence.class.php
 
+
+***
+
+
 Structure for dependencies of Plugins.
 
 

@@ -1,6 +1,10 @@
 # Class Window
 ###### Documentation of includes/core/window.class.php
 
+
+***
+
+
 Provides a comfortable, configurable styled Manialink window, with automatic handling of actions when a Player click on the pagination buttons.
 
 

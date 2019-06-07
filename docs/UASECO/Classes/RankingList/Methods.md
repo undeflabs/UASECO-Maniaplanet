@@ -1,6 +1,10 @@
 # Class RankingList
 ###### Documentation of includes/core/rankinglist.class.php
 
+
+***
+
+
 Manages Player Ranking from the dedicated server.
 
 

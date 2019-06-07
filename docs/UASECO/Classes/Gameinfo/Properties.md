@@ -1,6 +1,10 @@
 # Class Gameinfo
 ###### Documentation of includes/core/gameinfo.class.php
 
+
+***
+
+
 Provides information to the current game which is running.
 
 

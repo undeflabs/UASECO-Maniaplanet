@@ -1,6 +1,10 @@
 # Class UASECO
 ###### Documentation of UASECO
 
+
+***
+
+
 Core Class of UASECO with many useful Methods.
 
 

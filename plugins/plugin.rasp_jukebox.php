@@ -55,7 +55,7 @@ class PluginRaspJukebox extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.2');
-		$this->setBuild('2019-03-12');
+		$this->setBuild('2019-06-07');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Allow players to add maps to the "jukebox" so they can play favorites without waiting.');
 
@@ -488,39 +488,6 @@ class PluginRaspJukebox extends Plugin {
 			// reset just in case current map was replayed
 			$this->replays_counter = 0;
 			$this->replays_total = 0;
-		}
-
-		// check for autosaving maplist
-		if ($this->autosave_matchsettings !== '') {
-			try {
-				$aseco->client->query('SaveMatchSettings', 'MatchSettings/'. $this->autosave_matchsettings);
-
-				// should a random filter be added?
-				if ($aseco->settings['writemaplist_random']) {
-					$mapsfile = $aseco->server->mapdir .'MatchSettings/'. $this->autosave_matchsettings;
-					// read the match settings file
-					if (!$list = @file_get_contents($mapsfile)) {
-						$aseco->console('[RaspJukebox] Could not read match settings file ['. $mapsfile .']!');
-					}
-					else {
-						// insert random filter after <gameinfos> section
-						$list = preg_replace('/<\/gameinfos>/', '$0'. CRLF . CRLF .
-							"\t<filter>" . CRLF .
-							"\t\t<random_map_order>1</random_map_order>" . CRLF .
-							"\t</filter>",
-							$list
-						);
-
-						// write out the match settings file
-						if (!@file_put_contents($mapsfile, $list)) {
-							$aseco->console('[RaspJukebox] Could not write match settings file ['. $mapsfile .']!');
-						}
-					}
-				}
-			}
-			catch (Exception $exception) {
-				$aseco->console('[RaspJukebox] Exception occurred: ['. $exception->getCode() .'] "'. $exception->getMessage() .'" - SaveMatchSettings');
-			}
 		}
 	}
 
@@ -3019,7 +2986,6 @@ class PluginRaspJukebox extends Plugin {
 				$this->jukebox_permadd		= $aseco->string2bool($xml['RASP']['JUKEBOX_PERMADD'][0]);
 				$this->jukebox_adminadd		= $aseco->string2bool($xml['RASP']['JUKEBOX_ADMINADD'][0]);
 				$this->jukebox_in_window	= $aseco->string2bool($xml['RASP']['JUKEBOX_IN_WINDOW'][0]);
-				$this->autosave_matchsettings	= $xml['RASP']['AUTOSAVE_MATCHSETTINGS'][0];
 				$this->feature_votes		= $aseco->string2bool($xml['RASP']['FEATURE_VOTES'][0]);
 				$this->prune_records_times	= $aseco->string2bool($xml['RASP']['PRUNE_RECORDS_TIMES'][0]);
 

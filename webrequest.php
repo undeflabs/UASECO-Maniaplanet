@@ -6,9 +6,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	2017 - 2018 by undef.de
+ * Copyright:	2017 - 2019 by undef.de
  * Version:	1.0.2
- * Build:	2018-07-17
+ * Build:	2019-06-07
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -222,7 +222,7 @@ class WebRequestWorker {
 		if (!$this->logfile['handle']) {
 			$this->logfile['handle'] = fopen($this->logfile['file'], 'wb+');
 		}
-		fwrite($this->logfile['handle'], $text . CRLF);
+		fwrite($this->logfile['handle'], '['. date('Y-m-d H:i:s') .'] '. $text . CRLF);
 		if (OPERATING_SYSTEM === 'POSIX') {
 			chmod($this->logfile['file'], 0666);
 		}

@@ -1,6 +1,10 @@
 # Class Country
 ###### Documentation of includes/core/country.class.php
 
+
+***
+
+
 Provides lists of Countries and IOC codes, and converter methods.
 
 

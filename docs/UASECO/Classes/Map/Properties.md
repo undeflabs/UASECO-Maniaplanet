@@ -1,6 +1,10 @@
 # Class Map
 ###### Documentation of includes/core/map.class.php
 
+
+***
+
+
 Stores information about a Map on the dedicated server.
 
 
