@@ -27,9 +27,10 @@
 * Fixed `RoundScoreWidget`: the Playernames flowed out of the screen (thanks hacki65)
 * Fixed [PHP Notice] Undefined property: Player::$player on line 196 in file `plugins/plugin.rounds.php`
 * Fixed [PHP Notice] Undefined property: Player::$player on line 197 in file `plugins/plugin.rounds.php`
-* Fixed bug when using `/admin add ID` which shows `Unknown` instead of the map name (happens only for previously added maps (thanks hackie, cockneyrebel)
+* Fixed bug when using `/admin add ID` which shows `Unknown` instead of the map name, happens only for previously added maps (thanks hackie, cockneyrebel)
 * Fixed [PHP Notice] Undefined index:  on line 13985 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
 * Fixed [PHP Notice] Undefined index:  on line 13988 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
+* Fixed links to external resources at the WindowClass (https://github.com/undeflabs/UASECO/issues/41) (thanks BestNoob)
 
 
 

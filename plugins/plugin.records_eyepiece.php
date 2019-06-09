@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.3');
-		$this->setBuild('2019-06-07');
+		$this->setBuild('2019-06-09');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -7782,7 +7782,7 @@ main () {
 				else {
 					CurrentCheckpoint = LiveRankings_LastCheckpointCount;
 				}
-//				log("LR: " ^ Player.Login ^ ": Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ CurrentLap ^", CP-Times: "^ Player.CurRace.Checkpoints ^" MultiLap: "^ MultilapMap);
+//				log("LR: " ^ Player.User.Login ^ ": Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ CurrentLap ^", CP-Times: "^ Player.CurRace.Checkpoints ^" MultiLap: "^ MultilapMap);
 			}
 
 			// Players finish the Map?
@@ -9021,7 +9021,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org/',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 			'button_title'		=> 'MORE INFO ON DEDIMANIA.NET',
 			'button_link'		=> $url,
 		);
@@ -9086,7 +9086,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO,org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -9149,7 +9149,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -9213,7 +9213,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -9445,7 +9445,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -11038,7 +11038,7 @@ EOL;
 			);
 			$settings_footer = array(
 				'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-				'about_link'		=> 'http://www.UASECO.org',
+				'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 			);
 
 			$window = new Window();
@@ -11154,8 +11154,8 @@ EOL;
 			'add_background'	=> true,
 		);
 		$settings_footer = array(
-				'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-				'about_link'		=> 'http://www.UASECO.org',
+			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -11310,7 +11310,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -12060,7 +12060,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -12181,7 +12181,7 @@ EOL;
 		);
 		$settings_footer = array(
 			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
-			'about_link'		=> 'http://www.UASECO.org',
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
 		);
 
 		$window = new Window();

@@ -51,8 +51,8 @@ class Window extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setBuild('2019-06-06');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
 		// Empty content by default
@@ -637,7 +637,19 @@ class Window extends BaseClass {
 			$xml .= '<frame pos="16 -104.4" z-index="0.06">';
 			$xml .= '<label pos="0 0" z-index="0.03" size="45 3.75" class="labels" halign="center" valign="center2" textsize="1" scale="0.6" textcolor="FFFFFFDD"';
 			if (!empty($this->content['about_link'])) {
-				$xml .= ' focusareacolor1="FFFFFF33" focusareacolor2="0099FFFF" manialink="'. $this->content['about_link'] .'"';
+				$protocol = explode('://', $this->content['about_link']);
+				$attr = 'manialink';
+				if ($protocol[0] === 'manialink') {
+					$attr = 'manialink';
+					$this->content['about_link'] = str_replace(array('manialink://', 'manialink:///:'), $this->content['about_link']);
+				}
+				else if (in_array($protocol[0], array('http', 'https', 'ftp', 'ftps', 'ts3server', 'mumble'))) {
+					$attr = 'url';
+				}
+				else {
+					$attr = 'action';
+				}
+				$xml .= ' focusareacolor1="FFFFFF33" focusareacolor2="0099FFFF" '. $attr .'="'. $this->content['about_link'] .'"';
 			}
 			else {
 				$xml .= ' focusareacolor1="FFFFFF33" focusareacolor2="FFFFFF33" action="WindowList?Action=IGNORE"';
@@ -656,6 +668,9 @@ class Window extends BaseClass {
 			}
 			else if (in_array($protocol[0], array('http', 'https', 'ftp', 'ftps', 'ts3server', 'mumble'))) {
 				$attr = 'url';
+			}
+			else {
+				$attr = 'action';
 			}
 			$xml .= '<frame pos="101.5 -104.4" z-index="0.04">';
 			$xml .= '<label pos="0 0" z-index="0.02" size="75 4.875" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" focusareacolor1="0099FFFF" focusareacolor2="DDDDDDFF" '. $attr .'="'. $this->content['button_link'] .'" text="'. $this->content['button_title'] .'"/>';

@@ -74,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.1');
-		$this->setBuild('2019-02-12');
+		$this->setBuild('2019-06-09');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -1158,7 +1158,7 @@ class PluginManiaKarma extends Plugin {
 			);
 			$settings_footer = array(
 				'about_title'		=> 'MANIA-KARMA/'. $this->getVersion(),
-				'about_link'		=> 'http://'. $this->config['urls']['website'],
+				'about_link'		=> 'PluginManiaKarma?Action=OpenHelpWindow',
 			);
 
 			$window = new Window();
@@ -1183,7 +1183,7 @@ class PluginManiaKarma extends Plugin {
 			);
 			$settings_footer = array(
 				'about_title'		=> 'MANIA-KARMA/'. $this->getVersion(),
-				'about_link'		=> 'http://'. $this->config['urls']['website'],
+				'about_link'		=> 'PluginManiaKarma?Action=OpenHelpWindow',
 				'button_title'		=> 'MORE INFO ON MANIA-KARMA.COM',
 				'button_link'		=> 'http://'. $this->config['urls']['website'] .'/goto?uid='. $this->karma['data']['uid'] .'&amp;env='. $this->karma['data']['env'] .'&amp;game='. $aseco->server->game,
 			);

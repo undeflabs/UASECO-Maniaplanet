@@ -48,8 +48,8 @@ class PluginVoteManager extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.0');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2012 - 2018 by undef.de');
+		$this->setBuild('2019-06-09');
+		$this->setCopyright('2012 - 2019 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
 		$this->addDependence('PluginRaspVotes',			Dependence::DISALLOWED,	null, null);
@@ -84,17 +84,6 @@ class PluginVoteManager extends Plugin {
 	*/
 
 	public function onSync ($aseco) {
-
-		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.0';
-		if (defined('UASECO_VERSION')) {
-			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
-				trigger_error('[VoteManager] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
-			}
-		}
-		else {
-			trigger_error('[VoteManager] Can not identify the System, "UASECO_VERSION" is unset! This plugin runs only with UASECO/'. $uaseco_min_version .'+', E_USER_ERROR);
-		}
 
 		if (!$this->config = $aseco->parser->xmlToArray('config/vote_manager.xml')) {
 			trigger_error('[VoteManager] Could not read/parse config file "config/vote_manager.xml"!', E_USER_ERROR);
@@ -819,11 +808,12 @@ $maniascript = <<<EOL
 Void StorePlayerVote (Text _Login, Text _Vote) {
 	foreach (Player in Players) {
 		if (Player.User.Login == _Login) {
-			declare Text VoteManager_CurrentVote for Player = "None";
+			declare VoteManager_CurrentVote for Player = "None";
 			if (VoteManager_CurrentVote != _Vote) {
 				VoteManager_CurrentVote = _Vote;
 			}
 		}
+		log(Now ^" VOTE STATUS: "^ Player);
 	}
 }
 main () {
@@ -905,14 +895,14 @@ main () {
 			declare Real VotesNo	= 0.0;
 			declare Real VotesTotal	= 0.0;
 			foreach (Player in Players) {
-				declare Text VoteManager_CurrentVote for Player = "None";
+				declare VoteManager_CurrentVote for Player = "None";
 				if (VoteManager_CurrentVote == "Yes") {
 					VotesYes += 1.0;
 				}
 				else if (VoteManager_CurrentVote == "No") {
 					VotesNo += 1.0;
 				}
-log(Player.Login ^" -> "^ VoteManager_CurrentVote);
+log(Now ^" VOTE STATUS: "^ Player.User.Login ^" -> "^ VoteManager_CurrentVote);
 			}
 			VotesTotal = VotesYes + VotesNo;
 			if (VotesTotal == 0.0) {
