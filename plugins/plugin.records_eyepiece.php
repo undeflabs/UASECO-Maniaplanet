@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.3');
-		$this->setBuild('2019-06-09');
+		$this->setBuild('2019-06-11');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -114,19 +114,6 @@ class PluginRecordsEyepiece extends Plugin {
 	*/
 
 	public function onSync ($aseco, $reload = null) {
-
-
-		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.0';
-		if (defined('UASECO_VERSION')) {
-			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<')) {
-				trigger_error('[RecordsEyepiece] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
-			}
-		}
-		else {
-			trigger_error('[RecordsEyepiece] Can not identify the System, "UASECO_VERSION" is unset! This plugin runs only with UASECO/'. $uaseco_min_version .'+', E_USER_ERROR);
-		}
-
 
 		// Read Configuration
 		if (!$this->config = $aseco->parser->xmlToArray('config/records_eyepiece.xml', true, true)) {
@@ -1045,6 +1032,10 @@ class PluginRecordsEyepiece extends Plugin {
 		// Setup 'chrono'
 		if (isset($this->config['UI_PROPERTIES'][0]['CHRONO'][0]['POSITION'][0])) {
 			$aseco->plugins['PluginModescriptHandler']->setUserInterfacePosition('chrono', explode(',', $this->config['UI_PROPERTIES'][0]['CHRONO'][0]['POSITION'][0]));
+		}
+
+		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] === true) {
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('spectator_info', false);
 		}
 
 

@@ -7,6 +7,10 @@
 
 
 
+## The server switch after 5 min. to the next map, where can I change that?
+> All gamemode settings are able to change in the `config/modescript_settings.xml`
+
+
 ## How to permanently save maps added from ManiaExchange?
 > You have to use the command `/admin writemaplist` to store the added map to the map list.
 

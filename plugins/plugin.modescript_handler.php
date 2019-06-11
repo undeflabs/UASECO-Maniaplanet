@@ -59,7 +59,7 @@ class PluginModescriptHandler extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2019-03-06');
+		$this->setBuild('2019-06-11');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -354,7 +354,8 @@ class PluginModescriptHandler extends Plugin {
 			trigger_error('[ModescriptHandler] Could not read/parse config file "config/modescript_settings.xml"!', E_USER_ERROR);
 		}
 		$this->settings = $this->settings['SETTINGS'];
-		unset($this->config['SETTINGS']);
+		$this->settings['UI_PROPERTIES'][0]['WARMUP'][0] = $this->settings['UI_PROPERTIES'][0]['WARM_UP'][0];	// Rename "<warm_up>" to original "warmup"
+		unset($this->config['SETTINGS'], $this->settings['UI_PROPERTIES'][0]['WARM_UP'][0]);
 
 
 		if ($restart === false) {
@@ -505,7 +506,7 @@ class PluginModescriptHandler extends Plugin {
 		$this->ui_properties['POSITION'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['POSITION'][0]['VISIBLE'][0]) === 'TRUE')			? true : false);
 		$this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
 		$this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
-		$this->ui_properties['WARM_UP'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['WARM_UP'][0]['VISIBLE'][0]) === 'TRUE')			? true : false);
+		$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) === 'TRUE')			? true : false);
 		$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) === 'TRUE')	? true : false);
 		$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
 		$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
@@ -758,10 +759,7 @@ class PluginModescriptHandler extends Plugin {
 					$aseco->client->query('TriggerModeScriptEventArray', 'Trackmania.GetPointsRepartition', array((string)time()));
 				}
 
-// BEGIN 2017-05-25 work-a-round for https://forum.maniaplanet.com/viewtopic.php?p=285553#p285553
 				if ($params['restarted'] === true && $aseco->server->maps->current->uid === $params['map']['uid']) {
-//				if ($params['restarted'] === true) {
-// END
 					$aseco->restarting = true;							// Map was restarted
 				}
 				else {
@@ -1140,9 +1138,8 @@ class PluginModescriptHandler extends Plugin {
 
 
 			case 'Maniaplanet.StartServer_Start':
-				// When changing Gamemode force all Plugins to resync
 				if ($aseco->changing_to_gamemode !== false && $params['mode']['updated'] === true) {
-					$aseco->console('[ModescriptHandler] Gamemode change detected, running "'. $aseco->server->gameinfo->getModeScriptName() .'"...');
+					$aseco->console('[ModescriptHandler] Gamemode change detected, switching from "'. $aseco->server->gameinfo->getModeScriptName() .'" to "'. $params['mode']['name'] .'.Script.txt"');
 
 					// Refresh server game info
 					$aseco->server->getCurrentGameInfo();
@@ -1216,7 +1213,7 @@ class PluginModescriptHandler extends Plugin {
 			$this->ui_properties['POSITION'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['POSITION'][0]['VISIBLE'][0]) === 'TRUE')			? true : false);
 			$this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
 			$this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
-			$this->ui_properties['WARM_UP'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['WARM_UP'][0]['VISIBLE'][0]) === 'TRUE')			? true : false);
+			$this->ui_properties['WARMUP'][0]['VISIBLE'][0]			= ((strtoupper($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) === 'TRUE')			? true : false);
 			$this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]	= ((strtoupper($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) === 'TRUE')	? true : false);
 			$this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
 			$this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]		= ((strtoupper($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) === 'TRUE')		? true : false);
@@ -1365,7 +1362,7 @@ class PluginModescriptHandler extends Plugin {
 		$ui .= ' <position visible="'. $aseco->bool2string($this->ui_properties['POSITION'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['POSITION'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['POSITION'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['POSITION'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <checkpoint_time visible="'. $aseco->bool2string($this->ui_properties['CHECKPOINT_TIME'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['CHECKPOINT_TIME'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <chat_avatar visible="'. $aseco->bool2string($this->ui_properties['CHAT_AVATAR'][0]['VISIBLE'][0]) .'"/>';
-		$ui .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARM_UP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARM_UP'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARM_UP'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARM_UP'][0]['POS'][0]['Z'][0]) .'"/>';
+		$ui .= ' <warmup visible="'. $aseco->bool2string($this->ui_properties['WARMUP'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['WARMUP'][0]['POS'][0]['Z'][0]) .'"/>';
 		$ui .= ' <endmap_ladder_recap visible="'. $aseco->bool2string($this->ui_properties['ENDMAP_LADDER_RECAP'][0]['VISIBLE'][0]) .'"/>';
 		$ui .= ' <multilap_info visible="'. $aseco->bool2string($this->ui_properties['MULTILAP_INFO'][0]['VISIBLE'][0]) .'"/>';
 		$ui .= ' <spectator_info visible="'. $aseco->bool2string($this->ui_properties['SPECTATOR_INFO'][0]['VISIBLE'][0]) .'" pos="'. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['X'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['Y'][0]) .' '. $aseco->formatFloat($this->ui_properties['SPECTATOR_INFO'][0]['POS'][0]['Z'][0]) .'"/>';
@@ -1383,7 +1380,6 @@ class PluginModescriptHandler extends Plugin {
 	*/
 
 	public function setUserInterfaceVisibility ($field, $value = true) {
-
 		if (array_key_exists(strtoupper($field), $this->ui_properties)) {
 			$this->ui_properties[strtoupper($field)][0]['VISIBLE'][0] = $value;
 		}

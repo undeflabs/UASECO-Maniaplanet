@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.7');
-	define('UASECO_BUILD',			'2019-06-07');
+	define('UASECO_BUILD',			'2019-06-11');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
@@ -619,7 +619,7 @@ class UASECO extends Helper {
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
-		$this->console_text('» Name:          {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
+		$this->console_text('» Name:          {1} ({2}), join link: "maniaplanet://#join={3}@{4}"{5}', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title, (!empty($this->server->options['Password']) ? ' (server is password protected)' : '') );
 		if ($this->server->isrelay) {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}
@@ -710,7 +710,7 @@ class UASECO extends Helper {
 		$this->console_text('»                Ports: Connections {1}, P2P {2}, XmlRpc {3}', $this->server->port, $this->server->p2pport, $this->server->xmlrpc['port']);
 		$this->console_text('»                Network: Send {1} KB, Receive {2} KB', $this->formatNumber($this->server->networkstats['TotalSendingSize'],0,',','.'), $this->formatNumber($this->server->networkstats['TotalReceivingSize'],0,',','.'));
 		$this->console_text('»                Uptime: {1}', $this->timeString($this->server->networkstats['Uptime']));
-		$this->console_text('» Name:          {1} ({2}), join link: "maniaplanet://#join={3}@{4}"', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title);
+		$this->console_text('» Name:          {1} ({2}), join link: "maniaplanet://#join={3}@{4}"{5}', $this->stripStyles($this->server->name, false), $this->server->login, $this->server->login, $this->server->title, (!empty($this->server->options['Password']) ? ' (server is password protected)' : '') );
 		if ($this->server->isrelay) {
 			$this->console_text('=> Relays:        {1} - {2}', $this->stripStyles($this->server->relaymaster['NickName'], false), $this->server->relaymaster['Login']);
 		}

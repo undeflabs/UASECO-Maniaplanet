@@ -31,6 +31,8 @@
 * Fixed [PHP Notice] Undefined index:  on line 13985 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
 * Fixed [PHP Notice] Undefined index:  on line 13988 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
 * Fixed links to external resources at the WindowClass (https://github.com/undeflabs/UASECO/issues/41) (thanks BestNoob)
+* Fixed visibil widgets of `<warmup>` from `<ui_properties>` when visibility was set to `false` in combination with RecordsEyepiece and the enabled <spectator_info_widget>
+* Fixed wrong gamemode output when switching gamemodes `plugins/plugin.modescript_handler.php`
 
 
 
