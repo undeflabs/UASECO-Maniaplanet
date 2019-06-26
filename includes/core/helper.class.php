@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.2');
-		$this->setBuild('2019-03-02');
+		$this->setBuild('2019-06-26');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
@@ -208,9 +208,9 @@ class Helper extends BaseClass {
 			$amount_players = $this->server->players->count();
 			$amount_spectators = 0;
 			foreach ($this->server->players->player_list as $player) {
-					if ($player->is_spectator) {
-						$amount_spectators++;
-					}
+				if ($player->is_spectator) {
+					$amount_spectators++;
+				}
 			}
 			$amount_players = $amount_players - $amount_spectators;
 
@@ -283,13 +283,13 @@ class Helper extends BaseClass {
 			$xml .= '  </map>'.LF;
 			$xml .= '  <players>'.LF;
 			foreach ($this->server->players->player_list as $player) {
-					$xml .= '   <player>'.LF;
-					$xml .= '     <nickname><![CDATA['. $this->handleSpecialChars($this->stripStyles($player->nickname)) .']]></nickname>'.LF;
-					$xml .= '     <login>'. $player->login .'</login>'.LF;
-					$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
-					$xml .= '     <ladder>'. $player->ladder_rank .'</ladder>'.LF;
-					$xml .= '     <spectator>'. $this->bool2string($player->is_spectator) .'</spectator>'.LF;
-					$xml .= '   </player>'.LF;
+				$xml .= '   <player>'.LF;
+				$xml .= '     <nickname><![CDATA['. $this->handleSpecialChars($this->stripStyles($player->nickname)) .']]></nickname>'.LF;
+				$xml .= '     <login>'. $player->login .'</login>'.LF;
+				$xml .= '     <zone>'. implode('|', $player->zone) .'</zone>'.LF;
+				$xml .= '     <ladder>'. $player->ladder_rank .'</ladder>'.LF;
+				$xml .= '     <spectator>'. $this->bool2string($player->is_spectator) .'</spectator>'.LF;
+				$xml .= '   </player>'.LF;
 			}
 			$xml .= '  </players>'.LF;
 			$xml .= ' </current>'.LF;

@@ -19,6 +19,7 @@
 * Removed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml`
 * Removed `<autosave_matchsettings>` in `newinstall/config/rasp.xml`
 * Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`)
+* Changed `<ui_properties><spectator_info><pos><y>` from `-68.0` to `-82.0` in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes

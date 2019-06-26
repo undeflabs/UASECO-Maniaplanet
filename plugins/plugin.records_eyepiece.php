@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.3');
-		$this->setBuild('2019-06-11');
+		$this->setBuild('2019-06-26');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -1035,7 +1035,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		if ($this->config['SPECTATOR_INFO_WIDGET'][0]['ENABLED'][0] === true) {
-			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('spectator_info', false);
+			$aseco->plugins['PluginModescriptHandler']->setUserInterfaceVisibility('viewers_count', false);
 		}
 
 
@@ -12219,8 +12219,8 @@ main () {
 		if (CurrentTime > RefreshTime) {
 			// https://forum.maniaplanet.com/viewtopic.php?p=228759#p228759
 			if (GUIPlayer != Null) {
-				if (GUIPlayer.Login != InputPlayer.User.Login) {
-					CurrentStatus = ""^ GUIPlayer.Login;
+				if (GUIPlayer.User.Login != InputPlayer.User.Login) {
+					CurrentStatus = ""^ GUIPlayer.User.Login;
 				}
 				else {
 					CurrentStatus = "";
