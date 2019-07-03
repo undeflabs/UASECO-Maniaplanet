@@ -74,7 +74,7 @@ class PluginManiaKarma extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('2.0.1');
-		$this->setBuild('2019-06-09');
+		$this->setBuild('2019-06-30');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('Global Karma Database for Map votings.');
 
@@ -3323,8 +3323,8 @@ EOL;
 	public function buildHelpAboutWindow ($message) {
 
 		$xml = '<frame pos="0 0" z-index="1">';
-		$xml .= '<quad pos="142.5 7.5" z-index="0.05" size="57.5 57.5" image="'. $this->config['images']['maniakarma_logo'] .'" url="http://www.mania-karma.com"/>';
-		$xml .= '<label pos="2.5 -2.5" z-index="0.05" size="142.5 0" class="labels" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
+		$xml .= '<quad pos="120 -5" z-index="0.05" size="73.2 34.4" image="'. $this->config['images']['maniakarma_logo'] .'" url="http://www.mania-karma.com"/>';
+		$xml .= '<label pos="2.5 -2.5" z-index="0.05" size="110 0" class="labels" autonewline="1" textsize="1" textcolor="FF0F" text="'. $message .'"/>';
 		$xml .= '</frame>';
 
 		return $xml;

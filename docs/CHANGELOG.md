@@ -3,12 +3,13 @@
 
 
 ### General changes
-* Requires a `Maniaplanet Dedicated Server` build `2019-05-23_18_00 (Linux)` / `2019-05-23_15_45 (Windows)` or higher
+* Requires a `Maniaplanet Dedicated Server` build `2019-07-03_10_00 (Linux)` / `2019-07-03_09_48 (Windows)` or higher
 * Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement.
 * ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login`
+* ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 `InputPlayer.User.Login`
 * Added a check for a path separator for `<default_maplist>` in `config/UASECO.xml`
 * Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps`
-* Added `Ladder` setup into the ABOUT section of the UASECO lofgile
+* Added the current `Ladder`-setup into the ABOUT section of the UASECO lofgile
 * Added DateTime on logfile entries for `webrequest.php`
 
 
@@ -20,6 +21,7 @@
 * Removed `<autosave_matchsettings>` in `newinstall/config/rasp.xml`
 * Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`)
 * Changed `<ui_properties><spectator_info><pos><y>` from `-68.0` to `-82.0` in `newinstall/config/modescript_settings.xml`
+* Changed `<images><maniakarma_logo>` to new URL in `newinstall/config/mania_karma.xml`
 
 
 ### Bug fixes
