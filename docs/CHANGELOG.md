@@ -3,7 +3,7 @@
 
 
 ### General changes
-* Requires a `Maniaplanet Dedicated Server` build `2019-07-03_10_00 (Linux)` / `2019-07-03_09_48 (Windows)` or higher
+* Requires a `Maniaplanet Dedicated Server` build `2019-07-05_12_00 (Linux)` / `2019-07-05_11_43 (Windows)` or higher
 * Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement.
 * ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login`
 * ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 `InputPlayer.User.Login`
@@ -22,6 +22,13 @@
 * Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`)
 * Changed `<ui_properties><spectator_info><pos><y>` from `-68.0` to `-82.0` in `newinstall/config/modescript_settings.xml`
 * Changed `<images><maniakarma_logo>` to new URL in `newinstall/config/mania_karma.xml`
+* Added `<disable_give_up>` to `<modebase><labs>` in `newinstall/config/modescript_settings.xml`
+* Added `<use_custom_points_repartition>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<cumulate_points>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<rounds_per_map>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<maps_per_match>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<use_tie_break>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
+* Updated `<entry>` lines from `Laps.Script.txt` and `Chase.Script.txt` with the current script versions in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes

@@ -195,7 +195,7 @@
 
 
 	<!--
-	Documentation: https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#all
+	Documentation: https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#all
 	//-->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
@@ -220,7 +220,7 @@
 	<modesetup>
 		<!--
 		Settings for TimeAttack.Script.txt
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#timeattack
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#timeattack
 		//-->
 		<timeattack>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -237,8 +237,8 @@
 
 		<!--
 		Settings for Rounds.Script.txt
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-roundsbase
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-roundsbase
 		//-->
 		<rounds>
 			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
@@ -279,8 +279,8 @@
 
 		<!--
 		Settings for Team.Script.txt
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#team-roundsbase-matchmaking
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#team-roundsbase-matchmaking
 		//-->
 		<team>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
@@ -317,6 +317,21 @@
 
 			<!-- Minimum number of players per team in matchmaking -->
 			<min_players_per_team>2</min_players_per_team>
+
+			<!-- Use a custom points repartition. Default [10, 6, 4, 3, 2, 1] -->
+			<use_custom_points_repartition>[10, 6, 4, 3, 2, 1]</use_custom_points_repartition>
+
+			<!-- At the end of the round both teams win their players points, 'true' or 'false' -->
+			<cumulate_points>false</cumulate_points>
+
+			<!-- Number of round to play on one map before going to the next one, '-1' to disable -->
+			<rounds_per_map>-1</rounds_per_map>
+
+			<!-- Number of maps to play before finishing the match, '-1' to disable -->
+			<maps_per_match>-1</maps_per_match>
+
+			<!-- Set to 'true' to continue to play the map until the tie is broken, otherwise 'false' -->
+			<use_tie_break>True</use_tie_break>
 		</team>
 
 
@@ -341,6 +356,9 @@
 
 			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
 			<warm_up_number>0</warm_up_number>
+
+			<!-- Set to 'true' to prevent players from losing the race because of a give up, otherwise 'false' -->
+			<disable_give_up>false</disable_give_up>
 		</laps>
 
 
@@ -348,8 +366,8 @@
 
 		<!--
 		Settings for Cup.Script.txt
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#cup-roundsbase-matchmaking
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#roundsbase
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#cup-roundsbase-matchmaking
 		//-->
 		<cup>
 			<!-- Points limit to finish the Map, set to '-1' to disable -->
@@ -417,7 +435,7 @@
 
 		<!--
 		Settings for Chase.Script.txt
-		https://doc.maniaplanet.com//dedicated-server/references/settings-list-for-nadeo-gamemodes#chase-matchmaking
+		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#chase-matchmaking
 		//-->
 		<chase>
 			<!-- Time limit (0 to disable, < 0 automatic, based on author time) -->

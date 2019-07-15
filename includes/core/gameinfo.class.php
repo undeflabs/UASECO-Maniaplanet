@@ -67,9 +67,9 @@ class Gameinfo extends BaseClass {
 	public function __construct ($aseco, $clone = false) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.3');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.4');
+		$this->setBuild('2019-07-15');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
 		$info = $aseco->client->query('GetCurrentGameInfo', 1);
@@ -165,7 +165,7 @@ class Gameinfo extends BaseClass {
 		}
 		else if ($this->mode === self::TEAM) {
 			// Team  (+RoundsBase)
-			if ( isset($clone->team['PointsRepartition']) ) {
+			if (isset($clone->team['PointsRepartition'])) {
 				$this->team['PointsRepartition']	= $clone->team['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
 			}
 			else {
@@ -182,6 +182,11 @@ class Gameinfo extends BaseClass {
 			$this->team['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
 			$this->team['NbPlayersPerTeamMax']		= $modescript['settings']['S_NbPlayersPerTeamMax'];
 			$this->team['NbPlayersPerTeamMin']		= $modescript['settings']['S_NbPlayersPerTeamMin'];
+			$this->team['UseCustomPointsRepartition']	= $modescript['settings']['S_UseCustomPointsRepartition'];
+			$this->team['CumulatePoints']			= $modescript['settings']['S_CumulatePoints'];
+			$this->team['RoundsPerMap']			= $modescript['settings']['S_RoundsPerMap'];
+			$this->team['MapsPerMatch']			= $modescript['settings']['S_MapsPerMatch'];
+			$this->team['UseTieBreak']			= $modescript['settings']['S_UseTieBreak'];
 		}
 		else if ($this->mode === self::LAPS) {
 			// Laps
@@ -190,10 +195,11 @@ class Gameinfo extends BaseClass {
 			$this->laps['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->laps['WarmUpNumber']			= $modescript['settings']['S_WarmUpNb'];
 			$this->laps['WarmUpDuration']			= $modescript['settings']['S_WarmUpDuration'];
+			$this->laps['DisableGiveUp']			= $modescript['settings']['S_DisableGiveUp'];
 		}
 		else if ($this->mode === self::CUP) {
 			// Cup (+RoundsBase)
-			if ( isset($clone->cup['PointsRepartition']) ) {
+			if (isset($clone->cup['PointsRepartition'])) {
 				$this->cup['PointsRepartition']		= $clone->cup['PointsRepartition'];	// Refreshed every 'onLoadingMap' event
 			}
 			else {
