@@ -3,8 +3,9 @@
 [![License](https://poser.pugx.org/undeflabs/uaseco/license?format=flat-square)](https://packagist.org/packages/undeflabs/uaseco)
 
 
-![logo](https://www.uaseco.org/media/site/headline-uaseco-logo.png)
-======
+![[logo](https://www.uaseco.org/media/github-uaseco-logo.jpg)](https://www.UASECO.org/)
+
+
 
 UASECO is a fork of the XAseco2/1.03 controller for Trackmania and has been overhauled to support the Modescript Gamemodes of Trackmania² in Maniaplanet and changes to run with PHP/7.x or newer.
 Only Modescript Gamemodes of Trackmania² are supported, there is no support included for the legacy Gamemodes of Trackmania².
@@ -25,6 +26,6 @@ Many parts has been rewritten in 2017 again because of the ModeScript API change
 Official website
 ================
 
-For more details, please visit the official website at http://www.UASECO.org/
+For more details, please visit the official website at https://www.UASECO.org/
 
 The official forum for UASECO can be found at http://forum.maniaplanet.com/viewforum.php?f=522
