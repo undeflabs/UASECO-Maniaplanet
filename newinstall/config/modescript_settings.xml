@@ -194,9 +194,7 @@
 
 
 
-	<!--
-	Documentation: https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#all
-	//-->
+	<!-- https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#all -->
 	<modebase>
 		<!-- Chat time in seconds at the end of the map -->
 		<chat_time>20</chat_time>
@@ -213,6 +211,21 @@
 		4: always give up
 		//-->
 		<respawn_behaviour>0</respawn_behaviour>
+
+		<!-- Use the players clublinks, or otherwise use the default teams -->
+		<use_clublinks>false</use_clublinks>
+
+		<!-- Display the clublinks sponsors -->
+		<use_clublinks_sponsors>false</use_clublinks_sponsors>
+
+		<!-- Url of the neutral emblem url to use by default, keep empty for system default -->
+		<neutral_emblem_url></neutral_emblem_url>
+
+		<!-- Environment in which the script runs, used mainly for debugging purpose; 'production' or 'development' -->
+		<script_environment>production</script_environment>
+
+		<!-- Set the server as a channel server -->
+		<is_channel_server>false</is_channel_server>
 	</modebase>
 
 
@@ -259,9 +272,7 @@
 			<!-- Finish timeout in seconds for other Players to finish the Map too, set to '-1' for automatic (based on author time) -->
 			<finish_timeout>-1</finish_timeout>
 
-			<!--
-			Set to 'true' to use alternate rules, otherwise 'false'
-			//-->
+			<!-- Set to 'true' to use alternate rules, otherwise 'false' -->
 			<use_alternate_rules>false</use_alternate_rules>
 
 			<!-- Force number of laps, '-1' to disable -->

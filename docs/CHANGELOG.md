@@ -3,7 +3,7 @@
 
 
 ### General changes
-* Requires a `Maniaplanet Dedicated Server` build `2019-07-05_12_00 (Linux)` / `2019-07-05_11_43 (Windows)` or higher
+* Requires a `Maniaplanet Dedicated Server` build `2019-08-14_16_00 (Linux)` / `2019-08-14_16_04 (Windows)` or higher
 * Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement.
 * ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login`
 * ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 `InputPlayer.User.Login`
@@ -11,6 +11,7 @@
 * Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps`
 * Added the current `Ladder`-setup into the ABOUT section of the UASECO lofgile
 * Added DateTime on logfile entries for `webrequest.php`
+* Updated `includes/musicserver/getid3` to version `1.9.17` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
 
 
 ### Changes at config files
@@ -22,13 +23,18 @@
 * Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`)
 * Changed `<ui_properties><spectator_info><pos><y>` from `-68.0` to `-82.0` in `newinstall/config/modescript_settings.xml`
 * Changed `<images><maniakarma_logo>` to new URL in `newinstall/config/mania_karma.xml`
-* Added `<disable_give_up>` to `<modebase><labs>` in `newinstall/config/modescript_settings.xml`
-* Added `<use_custom_points_repartition>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<cumulate_points>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<rounds_per_map>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<maps_per_match>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<use_tie_break>` to `<modebase><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<disable_give_up>` to `<modesetup><labs>` in `newinstall/config/modescript_settings.xml`
+* Added `<use_custom_points_repartition>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<cumulate_points>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<rounds_per_map>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<maps_per_match>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
+* Added `<use_tie_break>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
 * Updated `<entry>` lines from `Laps.Script.txt` and `Chase.Script.txt` with the current script versions in `newinstall/config/modescript_settings.xml`
+* Added `<use_clublinks>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
+* Added `<use_clublinks_sponsors>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
+* Added `<neutral_emblem_url>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
+* Added `<script_environment>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
+* Added `<is_channel_server>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes
@@ -43,6 +49,7 @@
 * Fixed links to external resources at the WindowClass (https://github.com/undeflabs/UASECO/issues/41) (thanks BestNoob)
 * Fixed visibil widgets of `<warmup>` from `<ui_properties>` when visibility was set to `false` in combination with RecordsEyepiece and the enabled <spectator_info_widget>
 * Fixed wrong gamemode output when switching gamemodes `plugins/plugin.modescript_handler.php`
+* Fixed Warning: mysqli::stat(): Couldn't fetch Database in `includes/core/database.class.php` on line 305
 
 
 
@@ -68,15 +75,15 @@
 * Changed `newinstall/uaseco.sh` and `newinstall/uaseco.bat` to redirect errors into normal logfile from UASECO
 * Added a better error diagnostic message in `includes/core/locales.class.php`
 * Added support for songs with space in the filename for `plugin/plugin.music_server.php` (thanks Phenom1994)
-* Updated to the gbxdatafetcher/2.11 (thanks Xymph)
-* Updated to the ModeScriptApi version `[2.5.0](https://github.com/maniaplanet/script-xmlrpc/releases)`
+* Updated to the [gbxdatafetcher/2.11](https://www.xaseco.org/tools.php) (thanks Xymph)
+* Updated to the ModeScriptApi version [2.5.0](https://github.com/maniaplanet/script-xmlrpc/releases)
 * Added a map list progress indicator for the logfile while starting sequence
 * Updated `plugins/plugin.round_autoend.php` to work also while a WarmUp is running (thanks speedychris)
 * Added some optimations into `includes/core/playerlist.class.php` (thanks brakerb)
 * Updated `includes/musicserver/getid3` to version `1.9.15` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
 * Changed parameter structure of the events `onPlayerFinishPrefix`, `onPlayerFinish` and `onPlayerFinishPostfix`
 * Replaced PHP equality operators (`==` and `!=`) with identical operators (`===` and `!==`) for a performance gain (initiated by C-Lodder)[https://github.com/undeflabs/UASECO/pull/32]
-* Added a check for obviously wrong port setups of "config/UASECO.xml" `<dedicated_server><port>`
+* Added a check for obviously wrong port setups of `config/UASECO.xml` `<dedicated_server><port>`
 * Chat commands `/admin listmasters`, `/admin listadmins` and `/admin listops` from `plugins/chat.admin.php` has been replaced by `/masteradmins`, `/admins` and `/operators` from `plugins/chat.server.php`
 * Changed behavior of `webrequest.php` that now verifies TLS/SSL-Certificates instead of ignoring them
 * Added the plugin list with versions into the ABOUT and DEBUG header (which has been re-ordered too) in the logfile
@@ -149,11 +156,11 @@
 * Fixed displaying of the CurrentMapWidget from score while in race after using "/replay" (thanks aca)
 * Fixed LastNextCurrentWindow does not display the correct next map when changing the Jukebox (thanks aca)
 * Fixed adding a map at score the CurrentMapWidget does not display the correct map (thanks speedychris)
-* Fixed wrong display of songs with spaces, "%20" instead of " " in `plugins/plugin.music_server.php` (thanks speedychris)
+* Fixed wrong display of songs with spaces, `%20` instead of " " in `plugins/plugin.music_server.php` (thanks speedychris)
 * Fixed several password representations in the logfile with a mask `******` (thanks xenicle)
 * Fixed [PHP Notice] Undefined index: TMLOGIN on line 166 in file `plugins/chat.server.php` (thanks xenicle)
 * Fixed [PHP Warning] in_array() expects parameter 2 to be array, null given on line 9650 in file `plugins/plugin.records_eyepiece.php` (thanks hacki65)
-* Fixed [UASECO Warning] [Rasp] ERROR: Could not insert time! ((1452) Cannot add or update a child row: a foreign key constraint fails (`DB`.`uaseco_times`, CONSTRAINT `uaseco_times_ibfk_2` FOREIGN KEY (`PlayerId`) REFERENCES `uaseco_players` (`PlayerId`) ON DELETE CASCADE ON UPDATE CASCADE)) (thanks hackie)
+* Fixed [UASECO Warning] [Rasp] ERROR: Could not insert time! ((1452) Cannot add or update a child row: a foreign key constraint fails (\`DB\`.\`uaseco_times\`, CONSTRAINT \`uaseco_times_ibfk_2\` FOREIGN KEY (\`PlayerId\`) REFERENCES \`uaseco_players\` (\`PlayerId\`) ON DELETE CASCADE ON UPDATE CASCADE)) (thanks hackie)
 * Fixed chat command `/elist` can not juke maps, only see `-` instead of `+` (thanks hackie)
 * Fixed RASP does not display correct ranking (thanks hacki65)
 * Fixed [PHP Notice] Trying to get property of non-object on line 102 in file `includes/core/map.class.php` (thanks Snorfold)

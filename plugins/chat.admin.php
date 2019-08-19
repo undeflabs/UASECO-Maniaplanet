@@ -53,7 +53,7 @@ class PluginChatAdmin extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
 		$this->setVersion('1.0.2');
-		$this->setBuild('2019-06-07');
+		$this->setBuild('2019-07-16');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('chat.admin', 'plugin_description'));
 
@@ -4487,6 +4487,9 @@ class PluginChatAdmin extends Plugin {
 			try {
 				// Get map count
 				$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettings/'. $filename);
+				if (!$cnt) {
+					$cnt = 0;
+				}
 
 				// Log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] read map list: {3} ({4} maps)!', $logtitle, $login, $filename, $cnt);
@@ -4533,6 +4536,9 @@ class PluginChatAdmin extends Plugin {
 
 				// Get map count
 				$cnt = $aseco->client->query('LoadMatchSettings', 'MatchSettings/'. $aseco->settings['default_maplist']);
+				if (!$cnt) {
+					$cnt = 0;
+				}
 
 				// log console message
 				$aseco->console('[ChatAdmin] {1} [{2}] shuffled map list: {3} ({4} maps)!', $logtitle, $login, '[MatchSettings/'.$aseco->settings['default_maplist'] .']', $cnt);

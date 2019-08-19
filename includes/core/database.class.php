@@ -6,8 +6,8 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Date:	2018-05-08
- * Copyright:	2014 - 2018 by undef.de
+ * Date:	2019-07-16
+ * Copyright:	2014 - 2019 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -302,8 +302,8 @@ class Database extends mysqli {
 	*/
 
 	public function disconnect () {
-		if (isset($this) && is_object($this) && $this instanceof Database && $this->stat() !== false) {
-			$this->close();
+		if (isset($this) && is_object($this) && $this instanceof Database) {
+			@$this->close();
 		}
 	}
 

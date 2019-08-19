@@ -59,8 +59,8 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.6');
-		$this->setBuild('2019-07-15');
+		$this->setVersion('1.0.7');
+		$this->setBuild('2019-08-19');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -390,6 +390,11 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
 		$aseco->server->gameinfo->modebase['RespawnBehaviour']		= (int)$this->settings['MODEBASE'][0]['RESPAWN_BEHAVIOUR'][0];
+		$aseco->server->gameinfo->modebase['UseClublinks']		= $aseco->string2bool($this->settings['MODEBASE'][0]['USE_CLUBLINKS'][0]);
+		$aseco->server->gameinfo->modebase['UseClublinksSponsors']	= $aseco->string2bool($this->settings['MODEBASE'][0]['USE_CLUBLINKS_SPONSORS'][0]);
+		$aseco->server->gameinfo->modebase['NeutralEmblemUrl']		= $this->settings['MODEBASE'][0]['NEUTRAL_EMBLEM_URL'][0];
+		$aseco->server->gameinfo->modebase['ScriptEnvironment']		= $this->settings['MODEBASE'][0]['SCRIPT_ENVIRONMENT'][0];
+		$aseco->server->gameinfo->modebase['IsChannelServer']		= $aseco->string2bool($this->settings['MODEBASE'][0]['IS_CHANNEL_SERVER'][0]);
 
 		// Rounds +RoundsBase
 		$aseco->server->gameinfo->rounds['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['ROUNDS'][0]['POINTS_LIMIT'][0];				// RoundsBase
@@ -1496,6 +1501,11 @@ class PluginModescriptHandler extends Plugin {
 			'S_ChatTime'				=> $aseco->server->gameinfo->modebase['ChatTime'],
 			'S_AllowRespawn'			=> $aseco->server->gameinfo->modebase['AllowRespawn'],
 			'S_RespawnBehaviour'			=> $aseco->server->gameinfo->modebase['RespawnBehaviour'],
+			'S_UseClublinks'			=> $aseco->server->gameinfo->modebase['UseClublinks'],
+			'S_UseClublinksSponsors'		=> $aseco->server->gameinfo->modebase['UseClublinksSponsors'],
+			'S_NeutralEmblemUrl'			=> $aseco->server->gameinfo->modebase['NeutralEmblemUrl'],
+			'S_ScriptEnvironment'			=> $aseco->server->gameinfo->modebase['ScriptEnvironment'],
+			'S_IsChannelServer'			=> $aseco->server->gameinfo->modebase['IsChannelServer'],
 		);
 
 		$modesetup = array();
