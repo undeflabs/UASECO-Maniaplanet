@@ -3,7 +3,7 @@
 [![License](https://poser.pugx.org/undeflabs/uaseco/license?format=flat-square)](https://packagist.org/packages/undeflabs/uaseco)
 
 
-![[logo](https://www.uaseco.org/media/github-uaseco-logo.jpg)](https://www.UASECO.org/)
+![logo](https://www.uaseco.org/media/github-uaseco-logo.jpg)
 
 
 
