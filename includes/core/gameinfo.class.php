@@ -68,7 +68,7 @@ class Gameinfo extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.5');
-		$this->setBuild('2019-08-19');
+		$this->setBuild('2019-08-25');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
@@ -133,6 +133,7 @@ class Gameinfo extends BaseClass {
 		// ModeBase
 		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
 		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
+		$this->modebase['RespawnBehaviour']	= $modescript['settings']['S_RespawnBehaviour'];
 		$this->modebase['UseClublinks']		= $modescript['settings']['S_UseClublinks'];
 		$this->modebase['UseClublinksSponsors']	= $modescript['settings']['S_UseClublinksSponsors'];
 		$this->modebase['NeutralEmblemUrl']	= $modescript['settings']['S_NeutralEmblemUrl'];
