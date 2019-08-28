@@ -67,8 +67,8 @@ class Gameinfo extends BaseClass {
 	public function __construct ($aseco, $clone = false) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.5');
-		$this->setBuild('2019-08-25');
+		$this->setVersion('1.0.6');
+		$this->setBuild('2019-08-28');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
@@ -131,17 +131,19 @@ class Gameinfo extends BaseClass {
 		}
 
 		// ModeBase
-		$this->modebase['ChatTime']		= $modescript['settings']['S_ChatTime'];
-		$this->modebase['AllowRespawn']		= $modescript['settings']['S_AllowRespawn'];
-		$this->modebase['RespawnBehaviour']	= $modescript['settings']['S_RespawnBehaviour'];
-		$this->modebase['UseClublinks']		= $modescript['settings']['S_UseClublinks'];
-		$this->modebase['UseClublinksSponsors']	= $modescript['settings']['S_UseClublinksSponsors'];
-		$this->modebase['NeutralEmblemUrl']	= $modescript['settings']['S_NeutralEmblemUrl'];
-		$this->modebase['ScriptEnvironment']	= $modescript['settings']['S_ScriptEnvironment'];
-		$this->modebase['IsChannelServer']	= $modescript['settings']['S_IsChannelServer'];
+		$this->modebase['ChatTime']			= $modescript['settings']['S_ChatTime'];
+		$this->modebase['AllowRespawn']			= $modescript['settings']['S_AllowRespawn'];
+		$this->modebase['RespawnBehaviour']		= $modescript['settings']['S_RespawnBehaviour'];
+		$this->modebase['HideOpponents']		= $modescript['settings']['S_HideOpponents'];
+		$this->modebase['UseLegacyXmlRpcCallbacks']	= $modescript['settings']['S_UseLegacyXmlRpcCallbacks'];
+		$this->modebase['UseClublinks']			= $modescript['settings']['S_UseClublinks'];
+		$this->modebase['UseClublinksSponsors']		= $modescript['settings']['S_UseClublinksSponsors'];
+		$this->modebase['NeutralEmblemUrl']		= $modescript['settings']['S_NeutralEmblemUrl'];
+		$this->modebase['ScriptEnvironment']		= $modescript['settings']['S_ScriptEnvironment'];
+		$this->modebase['IsChannelServer']		= $modescript['settings']['S_IsChannelServer'];
 
 
-		// https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
+		// https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes
 		if ($this->mode === self::ROUNDS) {
 			// Rounds (+RoundsBase)
 			if (isset($clone->rounds['PointsRepartition'])) {

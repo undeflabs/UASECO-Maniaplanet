@@ -55,8 +55,8 @@ class PluginCheckpoints extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-05-22');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-08-27');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -753,12 +753,7 @@ main() {
 		if (CurrentTime > RefreshTime) {
 			if (LastCheckpointCount != InputPlayer.CurRace.Checkpoints.count) {
 				LastCheckpointCount = InputPlayer.CurRace.Checkpoints.count;
-				if (MultilapMap == True) {
-					CurrentCheckpoint = LastCheckpointCount - (InputPlayer.CurrentNbLaps * TotalCheckpoints);
-				}
-				else {
-					CurrentCheckpoint = LastCheckpointCount;
-				}
+				CurrentCheckpoint = LastCheckpointCount;
 			}
 			declare Integer CurrentRaceTime = 0;
 			if (MultilapMap == True) {
@@ -923,7 +918,8 @@ main() {
 	declare Integer TotalCheckpoints		= {$this->total_checkpoints};	// Incl. Finish
 	declare Boolean MultilapMap			= {$multilapmap};
 	declare Boolean TimeAttack			= {$timeattack};
-	declare Integer CurrentLap			= 0;			// Using own CurrentLap instead of Player.CurrentNbLaps
+	declare Integer LastCheckpointCount		= 0;
+	declare Integer CurrentLap			= 0;			// Using own CurrentLap instead of InputPlayer.CurrentNbLaps
 	declare Integer CurrentCheckpoint		= 0;
 	declare Integer RefreshInterval			= 250;
 	declare Integer RefreshTime			= CurrentTime;
@@ -974,68 +970,61 @@ main() {
 		}
 
 		if (CurrentTime > RefreshTime) {
-			foreach (Player in Players) {
-				if (Player.User.Login != InputPlayer.User.Login) {
-					continue;
+			if (LastCheckpointCount != InputPlayer.CurRace.Checkpoints.count) {
+				LastCheckpointCount = InputPlayer.CurRace.Checkpoints.count;
+
+				if (MultilapMap == True) {
+					if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
+						CurrentLap += 1;
+					}
+					CurrentCheckpoint = LastCheckpointCount - (CurrentLap * TotalCheckpoints);
+				}
+				else {
+					CurrentCheckpoint = LastCheckpointCount;
 				}
 
-				declare CheckpointCounter_LastCheckpointCount for Player = -1;
-				if (CheckpointCounter_LastCheckpointCount != Player.CurRace.Checkpoints.count) {
-					CheckpointCounter_LastCheckpointCount = Player.CurRace.Checkpoints.count;
+				// Check for respawn and reset count of current Checkpoint and Laps
+				if (CurrentCheckpoint < 0 && InputPlayer.CurRace.Checkpoints.count == 0) {
+					CurrentCheckpoint = 0;
+					CurrentLap = 0;
+				}
+//					log("CPC: Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ CurrentLap ^", Time: "^ InputPlayer.CurCheckpointRaceTime ^", CP-Times: "^ InputPlayer.CurRace.Checkpoints);
 
-					if (MultilapMap == True) {
-						if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
-							CurrentLap += 1;
-						}
-						CurrentCheckpoint = CheckpointCounter_LastCheckpointCount - (CurrentLap * TotalCheckpoints);
+				// Reset blinking
+				if (BlinkEndTime != -1) {
+					BlinkEndTime = -1;
+				}
+
+				if ((CurrentCheckpoint + 1) == TotalCheckpoints) {
+					if ((TotalCheckpoints - 1) == 0) {
+						LabelCheckpointLine1.SetText(MessageWithoutCheckpoints);
 					}
 					else {
-						CurrentCheckpoint = CheckpointCounter_LastCheckpointCount;
+						LabelCheckpointLine1.SetText(MessageAllCheckpointsReached);
 					}
-
-					// Check for respawn and reset count of current Checkpoint and Laps
-					if (CurrentCheckpoint < 0 && Player.CurRace.Checkpoints.count == 0) {
-						CurrentCheckpoint = 0;
-						CurrentLap = 0;
-					}
-//					log("CPC: Current CP: " ^ CurrentCheckpoint ^ " of " ^ TotalCheckpoints ^ " on lap " ^ CurrentLap ^", Time: "^ Player.CurCheckpointRaceTime ^", CP-Times: "^ Player.CurRace.Checkpoints);
-
-					// Reset blinking
-					if (BlinkEndTime != -1) {
-						BlinkEndTime = -1;
-					}
-
-					if ((CurrentCheckpoint + 1) == TotalCheckpoints) {
-						if ((TotalCheckpoints - 1) == 0) {
-							LabelCheckpointLine1.SetText(MessageWithoutCheckpoints);
-						}
-						else {
-							LabelCheckpointLine1.SetText(MessageAllCheckpointsReached);
-						}
+					LabelCheckpointLine2.Visible = False;
+					LabelCheckpointLine2Blink.Visible = True;
+					LabelCheckpointLine2Blink.SetText(MessageFinishNow);
+				}
+				else if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
+					LabelCheckpointLine1.SetText(MessageMapSuccessfully);
+					if ( (MultilapMap == True) && (TimeAttack == True) ) {
 						LabelCheckpointLine2.Visible = False;
 						LabelCheckpointLine2Blink.Visible = True;
-						LabelCheckpointLine2Blink.SetText(MessageFinishNow);
-					}
-					else if (CurrentCheckpoint > (TotalCheckpoints - 1)) {
-						LabelCheckpointLine1.SetText(MessageMapSuccessfully);
-						if ( (MultilapMap == True) && (TimeAttack == True) ) {
-							LabelCheckpointLine2.Visible = False;
-							LabelCheckpointLine2Blink.Visible = True;
-							LabelCheckpointLine2Blink.SetText(MessageFinishedNextLap);
-							BlinkEndTime = (CurrentTime + 2500);
-						}
-						else {
-							LabelCheckpointLine2.Visible = True;
-							LabelCheckpointLine2Blink.Visible = False;
-							LabelCheckpointLine2.SetText(MessageFinished);
-						}
+						LabelCheckpointLine2Blink.SetText(MessageFinishedNextLap);
+						BlinkEndTime = (CurrentTime + 2500);
 					}
 					else {
 						LabelCheckpointLine2.Visible = True;
 						LabelCheckpointLine2Blink.Visible = False;
-						LabelCheckpointLine1.SetText(MessageCheckpoint);
-						LabelCheckpointLine2.SetText("\$O"^ CurrentCheckpoint ^" \$Zof\$O "^ (TotalCheckpoints - 1));
+						LabelCheckpointLine2.SetText(MessageFinished);
 					}
+				}
+				else {
+					LabelCheckpointLine2.Visible = True;
+					LabelCheckpointLine2Blink.Visible = False;
+					LabelCheckpointLine1.SetText(MessageCheckpoint);
+					LabelCheckpointLine2.SetText("\$O"^ CurrentCheckpoint ^" \$Zof\$O "^ (TotalCheckpoints - 1));
 				}
 			}
 

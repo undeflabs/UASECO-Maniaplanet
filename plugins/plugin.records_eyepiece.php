@@ -51,7 +51,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
 		$this->setVersion('1.1.3');
-		$this->setBuild('2019-06-26');
+		$this->setBuild('2019-08-27');
 		$this->setCopyright('2009 - 2019 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -1996,7 +1996,8 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($this->config['ROUND_SCORE'][0]['GAMEMODE'][0][$aseco->server->gameinfo->mode][0]['ENABLED'][0] === true && $this->config['States']['WarmUpPhase'] === false) {
 
 			// Add the Score
-			$this->scores['RoundScore'][$finish_item->score] = array(
+//			$this->scores['RoundScore'][$finish_item->score] = array(
+			$this->scores['RoundScore'][$player->login] = array(
 				'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
 				'checkpointid'	=> count((isset($aseco->plugins['PluginCheckpoints']->checkpoints[$finish_item->player_login]) ? $aseco->plugins['PluginCheckpoints']->checkpoints[$finish_item->player_login]->current['cps'] : array())) - 1,
 				'playerid'	=> $player->pid,
@@ -3674,7 +3675,7 @@ class PluginRecordsEyepiece extends Plugin {
 				// Add the Score
 				$this->scores['RoundScore'][$player->login] = array(
 					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-					'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
+					'checkpointid'	=> ($params['checkpoint_in_lap'] - 1),
 					'playerid'	=> $player->pid,
 					'login'		=> $player->login,
 					'nickname'	=> $player->nickname,
@@ -3711,7 +3712,7 @@ class PluginRecordsEyepiece extends Plugin {
 				// Add the Score
 				$this->scores['RoundScore'][$player->login] = array(
 					'team'		=> $player->data['PluginRecordsEyepiece']['Prefs']['TeamId'],
-					'checkpointid'	=> count($params['checkpoint_in_lap']) - 1,
+					'checkpointid'	=> ($params['checkpoint_in_lap'] - 1),
 					'playerid'	=> $player->pid,
 					'login'		=> $player->login,
 					'nickname'	=> $player->nickname,
@@ -8371,14 +8372,8 @@ EOL;
 //				unset($key, $row);
 //
 //				// Sort order: CHECKPOINTID, SCORE and PID
-//				array_multisort($cps, SORT_NUMERIC, SORT_DESC, $scores, SORT_NUMERIC, $pids, SORT_NUMERIC, $this->scores['RoundScore']);
+//				array_multisort($cps, SORT_NUMERIC, SORT_DESC, $scores, SORT_NUMERIC, $pids, SORT_NUMERIC, $round_score);
 //				unset($cps, $scores, $pids);
-//
-//				foreach ($this->scores['RoundScore'] as $item) {
-//					// Merge the score arrays together
-//					$round_score[] = $item;
-//				}
-//				unset($item);
 //			}
 //			else if ($gamemode === Gameinfo::ROUNDS) {
 //				// No need to sort, it is already sorted by ModeScript "Rounds.Script.txt"
@@ -8416,7 +8411,9 @@ EOL;
 			$line = 0;
 			$offset = 5.625;
 			$team_break = false;
-			foreach ($round_score as $item) {
+			$last_score = 0;
+			$last_checkpoint = 0;
+			foreach ($round_score as $index => $item) {
 
 				// Adjust Team points
 				if ($gamemode === Gameinfo::TEAM) {
@@ -8461,10 +8458,10 @@ EOL;
 						else {
 							$xml .= '<quad pos="-17.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" style="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['HIGHLITE_COMMON_SUBSTYLE'][0] .'"/>';
 						}
-//						$xml .= '<label pos="-6 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score[0]['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score[0]['score_plain'])) .'"/>';
-//						$xml .= '<label pos="-1 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score[0]['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
-						$xml .= '<label pos="-6 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $round_score['score_plain'])) .'"/>';
-						$xml .= '<label pos="-1 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $round_score['checkpointid']) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
+						$xml .= '<label pos="-6 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="12 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $last_checkpoint) ? 'D02F' : '0D3F') .'" text="$O+'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->formatTime(abs($item['score_plain'] - $last_score)) .'"/>';
+						$xml .= '<label pos="-1 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="3.25 3.75" class="labels" halign="right" scale="0.9" textcolor="'. (($item['checkpointid'] < $last_checkpoint) ? 'D02F' : '0D3F') .'" text="$O'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ($item['checkpointid']+1) .'"/>';
+						$last_score = $item['score_plain'];
+						$last_checkpoint = $item['checkpointid'];
 					}
 					else if ($gamemode === Gameinfo::CHASE) {
 						$xml .= '<quad pos="-17.75 -'. ($this->config['LineHeight'] * $line + $offset - 0.5625) .'" z-index="0.004" size="17.5 3.5625" bgcolor="'. (($item['team'] === 0) ? '03D8' : 'D308') .'"/>';

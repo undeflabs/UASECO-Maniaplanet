@@ -59,8 +59,8 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.7');
-		$this->setBuild('2019-08-19');
+		$this->setVersion('1.0.9');
+		$this->setBuild('2019-08-28');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -390,6 +390,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->modebase['ChatTime']			= (int)$this->settings['MODEBASE'][0]['CHAT_TIME'][0];
 		$aseco->server->gameinfo->modebase['AllowRespawn']		= $aseco->string2bool($this->settings['MODEBASE'][0]['ALLOW_RESPAWN'][0]);
 		$aseco->server->gameinfo->modebase['RespawnBehaviour']		= (int)$this->settings['MODEBASE'][0]['RESPAWN_BEHAVIOUR'][0];
+		$aseco->server->gameinfo->modebase['HideOpponents']		= $aseco->string2bool($this->settings['MODEBASE'][0]['HIDE_OPPONENTS'][0]);
+		$aseco->server->gameinfo->modebase['UseLegacyXmlRpcCallbacks']	= true;												// Force 'true'
 		$aseco->server->gameinfo->modebase['UseClublinks']		= $aseco->string2bool($this->settings['MODEBASE'][0]['USE_CLUBLINKS'][0]);
 		$aseco->server->gameinfo->modebase['UseClublinksSponsors']	= $aseco->string2bool($this->settings['MODEBASE'][0]['USE_CLUBLINKS_SPONSORS'][0]);
 		$aseco->server->gameinfo->modebase['NeutralEmblemUrl']		= $this->settings['MODEBASE'][0]['NEUTRAL_EMBLEM_URL'][0];
@@ -425,7 +427,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->team['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['WARM_UP_DURATION'][0];
 		$aseco->server->gameinfo->team['NbPlayersPerTeamMax']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAX_PLAYERS_PER_TEAM'][0];
 		$aseco->server->gameinfo->team['NbPlayersPerTeamMin']		= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MIN_PLAYERS_PER_TEAM'][0];
-		$aseco->server->gameinfo->team['UseCustomPointsRepartition']	= (string)$this->settings['MODESETUP'][0]['TEAM'][0]['USE_CUSTOM_POINTS_REPARTITION'][0];
+		$aseco->server->gameinfo->team['UseCustomPointsRepartition']	= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['USE_CUSTOM_POINTS_REPARTITION'][0]);
 		$aseco->server->gameinfo->team['CumulatePoints']		= $aseco->string2bool($this->settings['MODESETUP'][0]['TEAM'][0]['CUMULATE_POINTS'][0]);
 		$aseco->server->gameinfo->team['RoundsPerMap']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['ROUNDS_PER_MAP'][0];
 		$aseco->server->gameinfo->team['MapsPerMatch']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['MAPS_PER_MATCH'][0];
@@ -437,7 +439,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->laps['FinishTimeout']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['FINISH_TIMEOUT'][0];
 		$aseco->server->gameinfo->laps['WarmUpNumber']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['WARM_UP_NUMBER'][0];
 		$aseco->server->gameinfo->laps['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['WARM_UP_DURATION'][0];
-		$aseco->server->gameinfo->laps['DisableGiveUp']			= (int)$this->settings['MODESETUP'][0]['LAPS'][0]['DISABLE_GIVE_UP'][0];
+		$aseco->server->gameinfo->laps['DisableGiveUp']			= $aseco->string2bool($this->settings['MODESETUP'][0]['LAPS'][0]['DISABLE_GIVE_UP'][0]);
 
 		// Cup +RoundsBase
 		$aseco->server->gameinfo->cup['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['CUP'][0]['POINTS_LIMIT'][0];				// RoundsBase
@@ -1492,7 +1494,7 @@ class PluginModescriptHandler extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes
+	// https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes
 	public function setupModescriptSettings () {
 		global $aseco;
 
@@ -1501,6 +1503,8 @@ class PluginModescriptHandler extends Plugin {
 			'S_ChatTime'				=> $aseco->server->gameinfo->modebase['ChatTime'],
 			'S_AllowRespawn'			=> $aseco->server->gameinfo->modebase['AllowRespawn'],
 			'S_RespawnBehaviour'			=> $aseco->server->gameinfo->modebase['RespawnBehaviour'],
+			'S_HideOpponents'			=> $aseco->server->gameinfo->modebase['HideOpponents'],
+			'S_UseLegacyXmlRpcCallbacks'		=> $aseco->server->gameinfo->modebase['UseLegacyXmlRpcCallbacks'],
 			'S_UseClublinks'			=> $aseco->server->gameinfo->modebase['UseClublinks'],
 			'S_UseClublinksSponsors'		=> $aseco->server->gameinfo->modebase['UseClublinksSponsors'],
 			'S_NeutralEmblemUrl'			=> $aseco->server->gameinfo->modebase['NeutralEmblemUrl'],

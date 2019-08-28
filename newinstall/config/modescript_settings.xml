@@ -212,6 +212,9 @@
 		//-->
 		<respawn_behaviour>0</respawn_behaviour>
 
+		<!-- Do not display the opponents cars -->
+		<hide_opponents>False</hide_opponents>
+
 		<!-- Use the players clublinks, or otherwise use the default teams -->
 		<use_clublinks>false</use_clublinks>
 
@@ -329,8 +332,8 @@
 			<!-- Minimum number of players per team in matchmaking -->
 			<min_players_per_team>2</min_players_per_team>
 
-			<!-- Use a custom points repartition. Default [10, 6, 4, 3, 2, 1] -->
-			<use_custom_points_repartition>[10, 6, 4, 3, 2, 1]</use_custom_points_repartition>
+			<!-- Use a custom points repartition defined with xmlrpc -->
+			<use_custom_points_repartition>false</use_custom_points_repartition>
 
 			<!-- At the end of the round both teams win their players points, 'true' or 'false' -->
 			<cumulate_points>false</cumulate_points>

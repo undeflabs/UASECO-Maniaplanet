@@ -35,6 +35,8 @@
 * Added `<neutral_emblem_url>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
 * Added `<script_environment>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
 * Added `<is_channel_server>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
+* Added `<hide_opponents>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
+* Changed `<modesetup><team><use_custom_points_repartition>` (and documentation above too) from `[10, 6, 4, 3, 2, 1]` to `false` in `newinstall/config/modescript_settings.xml`
 
 
 ### Bug fixes
@@ -47,9 +49,15 @@
 * Fixed [PHP Notice] Undefined index:  on line 13985 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
 * Fixed [PHP Notice] Undefined index:  on line 13988 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
 * Fixed links to external resources at the WindowClass (https://github.com/undeflabs/UASECO/issues/41) (thanks BestNoob)
-* Fixed visibil widgets of `<warmup>` from `<ui_properties>` when visibility was set to `false` in combination with RecordsEyepiece and the enabled <spectator_info_widget>
+* Fixed visible widgets of `<warmup>` from `<ui_properties>` when visibility was set to `false` in combination with RecordsEyepiece and the enabled <spectator_info_widget>
 * Fixed wrong gamemode output when switching gamemodes `plugins/plugin.modescript_handler.php`
 * Fixed Warning: mysqli::stat(): Couldn't fetch Database in `includes/core/database.class.php` on line 305
+* Fixed [PHP Warning] count(): Parameter must be an array or an object that implements Countable on line 3677 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
+* Fixed [PHP Notice] Undefined index: checkpointid on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
+* Fixed [PHP Notice] Undefined index: score_plain on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
+* Fixed [PHP Notice] Undefined index: checkpointid on line 8467 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
+* Fixed [UASECO Exception] Error returned: "Wrong setting type for 'S_DisableGiveUp'" [-1000] at GbxRemote::query() for method "SetModeScriptSettings" with arguments:
+
 
 
 
