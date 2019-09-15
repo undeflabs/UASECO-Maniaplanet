@@ -46,9 +46,9 @@ class PluginTachometer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('reaby');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-09-15');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Displays a smart tachometer on the HUD.');
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);

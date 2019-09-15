@@ -46,9 +46,9 @@ class PluginMap extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-15');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Times playing time of a map, provides map and time info and shows (file)names of current map\'s and song mod.');
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
@@ -75,7 +75,7 @@ class PluginMap extends Plugin {
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
-			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
+			$name = '$l[https://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
 
 		$message = $aseco->formatText($aseco->getChatMessage('MAP'),
@@ -209,7 +209,7 @@ class PluginMap extends Plugin {
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
-			$name = '$l[http://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name . '$l';
+			$name = '$l[https://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name . '$l';
 		}
 
 		// show chat message
@@ -258,7 +258,7 @@ class PluginMap extends Plugin {
 		if ($aseco->settings['show_curmap'] > 0) {
 			$name = $aseco->stripStyles($map->name);
 			if (isset($map->mx->error) && $map->mx->error === '') {
-				$name = '$l[http://' . $map->mx->prefix .'.mania-exchange.com/tracks/view/'. $map->mx->id .']'. $name . '$l';
+				$name = '$l[https://' . $map->mx->prefix .'.mania-exchange.com/tracks/view/'. $map->mx->id .']'. $name . '$l';
 			}
 
 			// compile message
@@ -305,7 +305,7 @@ class PluginMap extends Plugin {
 
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
-			$name = '$l[http://' . $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
+			$name = '$l[https://' . $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
 
 		// Compute map playing time

@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2017-04-09
+	Version:	2019-09-15
 	Authors:	[EN] undef.de
 			[DE] undef.de
 	//-->
 
+	<plugin_description>
+		<en>Handles maps from ManiaExchange and provides ManiaExchange records message at start of each map</en>
+		<de>Ermöglicht die Verwaltung von Maps von ManiaExchange und zeigt deren Rekorde beim start einer Strecke an</de>
+	</plugin_description>
+
+	<slash_mxlist_description>
+		<en>Lists maps on ManiaExchange</en>
+		<de>Zeigt Strecken von ManiaExchange an</de>
+	</slash_mxlist_description>
+
 	<chat_records>
-		<en>{#server}» {#record}MX World Record: {#highlite}{1}{#record} by {#highlite}{2}</en>
-		<de>{#server}» {#record}MX Weltrecord: {#highlite}{1}{#record} von {#highlite}{2}</de>
+		<en>{#server}» {#record}ManiaExchange World Record: {#highlite}{1}{#record} by {#highlite}{2}</en>
+		<de>{#server}» {#record}ManiaExchange Weltrecord: {#highlite}{1}{#record} von {#highlite}{2}</de>
 	</chat_records>
 
 	<window_title_mxlist>
-		<en>Maps from mania-exchange.com</en>
-		<de>Strecken von mania-exchange.com</de>
+		<en>Maps from ManiaExchange</en>
+		<de>Strecken von ManiaExchange</de>
 	</window_title_mxlist>
+
+	<window_title_retrieving>
+		<en>Request information from ManiaExchange...</en>
+		<de>Informationen von ManiaExchange angefordert...</de>
+	</window_title_retrieving>
 </locales>

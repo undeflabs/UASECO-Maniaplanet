@@ -47,9 +47,9 @@ class PluginUptodate extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-15');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.uptodate', 'plugin_description'));
 
 		$this->addDependence('PluginChatAdmin',	Dependence::WANTED,	'1.0.0', null);

@@ -49,9 +49,9 @@ class PluginEffectStudio extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-07-11');
-		$this->setCopyright('2012 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-15');
+		$this->setCopyright('2012 - 2019 by undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
@@ -70,17 +70,6 @@ class PluginEffectStudio extends Plugin {
 	*/
 
 	public function onSync ($aseco) {
-
-		// Check for the right UASECO-Version
-		$uaseco_min_version = '0.9.0';
-		if (defined('UASECO_VERSION')) {
-			if ( version_compare(UASECO_VERSION, $uaseco_min_version, '<') ) {
-				trigger_error('[EffectStudio] Not supported USAECO version ('. UASECO_VERSION .')! Please update to min. version '. $uaseco_min_version .'!', E_USER_ERROR);
-			}
-		}
-		else {
-			trigger_error('[EffectStudio] Can not identify the System, "UASECO_VERSION" is unset! This plugin runs only with UASECO/'. $uaseco_min_version .'+', E_USER_ERROR);
-		}
 
 		if (!$this->config = $aseco->parser->xmlToArray('config/effect_studio.xml')) {
 			trigger_error('[EffectStudio] Could not read/parse config file "config/effect_studio.xml"!', E_USER_ERROR);

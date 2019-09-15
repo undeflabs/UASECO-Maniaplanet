@@ -242,21 +242,17 @@ Returns the authorname of the Plugin.
 	$author = $aseco->plugins['PluginExample']->getAuthor();	// From a foreign Plugin
 
 
-#### Return Values
-	undef.de
-
-
 
 ***
 
 
 
 ### [setCoAuthors](_#setCoAuthors)
-Stores the co-authornames the Plugin.
+Stores the co-authornames the Plugin, duplicated entries will be made unique
 
 
 #### Description
-	void = setCoAuthors ( array $author )
+	void = setCoAuthors ( string $author, ... )
 
 
 #### Parameters
@@ -266,7 +262,7 @@ Stores the co-authornames the Plugin.
 
 
 #### Example
-	$this->setCoAuthors(array('askuri','Bueddl'));
+	$this->setCoAuthors('askuri','Bueddl');
 
 
 
@@ -286,22 +282,17 @@ Returns the co-authornames of the Plugin.
 	$authors = $this->getCoAuthors();
 
 
-#### Return Values
-	askuri
-	Bueddl
-
-
 
 ***
 
 
 
 ### [setContributors](_#setContributors)
-Stores the contributors the Plugin.
+Stores the contributors the Plugin, duplicated entries will be made unique
 
 
 #### Description
-	void = setContributors ( array $author )
+	void = setContributors ( string $contributor, ... )
 
 
 #### Parameters
@@ -311,7 +302,7 @@ Stores the contributors the Plugin.
 
 
 #### Example
-	$this->setContributors(array('reaby','leigham'));
+	$this->setContributors('reaby','leigham');
 
 
 
@@ -329,11 +320,6 @@ Returns the contributors of the Plugin.
 
 #### Example
 	$contributors = $this->getContributors();
-
-
-#### Return Values
-	reaby
-	leigham
 
 
 

@@ -47,9 +47,9 @@ class PluginChatRecords extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-08-08');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-15');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Displays all records of the current map.');
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);

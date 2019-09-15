@@ -46,9 +46,9 @@ class PluginChatStats extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('askuri');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-15');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('chat.stats', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
@@ -59,7 +59,7 @@ class PluginChatStats extends Plugin {
 		$this->registerEvent('onSync',			'onSync');
 
 		$this->registerChatCommand('stats',	'chat_stats',		new Message('chat.stats', 'plugin_description'),	Player::PLAYERS);
-		$this->registerChatCommand('settings',	'chat_settings',	new Message('chat.stats', 'plugin_description'),		Player::PLAYERS);
+		$this->registerChatCommand('settings',	'chat_settings',	new Message('chat.stats', 'plugin_description'),	Player::PLAYERS);
 	}
 
 	/*
