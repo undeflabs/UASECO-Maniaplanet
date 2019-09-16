@@ -49,17 +49,19 @@ class PluginDonate extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-08');
-		$this->setCopyright('2014 - 2018 by undef.de');
-		$this->setDescription('Processes planet donations to and payments from the server.');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-16');
+		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setDescription(new Message('plugin.donate', 'plugin_description'));
 
-		$this->registerEvent('onSync',				'onSync');
+		$this->registerEvent('onSync',						'onSync');
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
-		$this->registerEvent('onBillUpdated',			'onBillUpdated');
+		$this->registerEvent('onBillUpdated',				'onBillUpdated');
 
-		$this->registerChatCommand('donate',	'chat_donate',	'Donates Planets to server',		Player::PLAYERS);
-		$this->registerChatCommand('topdons',	'chat_topdons',	'Displays top 100 highest donators',	Player::PLAYERS);
+		$this->registerChatCommand('donate',  'chat_donate',	new Message('plugin.donate', 'slash_donate_description'),	Player::PLAYERS);
+		$this->registerChatCommand('topdons', 'chat_topdons',	new Message('plugin.donate', 'slash_topdons_description'),	Player::PLAYERS);
+
 	}
 
 	/*
@@ -100,24 +102,22 @@ class PluginDonate extends Plugin {
 			// check for minimum donation
 			if ($planets >= $this->mindonation) {
 				// start the transaction
-				$message = $aseco->formatText($this->config['MESSAGES'][0]['DONATION'][0],
-					$planets,
-					$aseco->server->name
-				);
+				$msg = new Message('plugin.donate', 'message_donation');
+				$msg->addPlaceholders($planets, $aseco->server->name);
+				$msg->sendChatMessage($login);
 
-				$billid = $aseco->client->query('SendBill', $player->login, $planets, $aseco->formatColors($message), '');
+				$billid = $aseco->client->query('SendBill', $player->login, $planets, $msg->finish($login), '');
 				$this->bills[$billid] = array($player->login, $player->nickname, $planets);
 			}
 			else {
-				$message = $aseco->formatText($this->config['MESSAGES'][0]['DONATE_MINIMUM'][0],
-					$this->mindonation
-				);
-				$aseco->sendChatMessage($message, $player->login);
+				$msg = new Message('plugin.donate', 'message_donate_minimum');
+				$msg->addPlaceholders($this->mindonation);
+				$msg->sendChatMessage($login);
 			}
 		}
 		else {
-			$message = $this->config['MESSAGES'][0]['DONATE_HELP'][0];
-			$aseco->sendChatMessage($message, $player->login);
+			$msg = new Message('plugin.donate', 'message_donate_help');
+			$msg->sendChatMessage($login);
 		}
 	}
 
@@ -190,8 +190,8 @@ class PluginDonate extends Plugin {
 				$window->send($player, 0, false);
 			}
 			else {
-				$message = '{#server}» {#error}No donator(s) found!';
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.donate', 'message_no_donators_found');
+				$message->sendChatMessage($login);
 			}
 
 			$res->free_result();
@@ -216,23 +216,26 @@ class PluginDonate extends Plugin {
 				// check for sufficient balance, including Nadeo tax (2 + 5%)
 				if ($amount <= $planets - 2 - floor($amount * 0.05)) {
 					// remember payment to be made
-					$label = $aseco->formatText($this->config['MESSAGES'][0]['PAYMENT'][0], $amount, $target);
+					$msg = new Message('plugin.donate', 'message_payment');
+					$msg->addPlaceholders($amount, $target);
+					$label = $msg->finish($login);
 					$this->payments[$login] = array($target, (int) $amount, $label);
 					$this->display_payment($login, $label);
 				}
 				else {
-					$message = $aseco->formatText($this->config['MESSAGES'][0]['PAY_INSUFF'][0], $planets);
-					$aseco->sendChatMessage($message, $login);
+					$msg = new Message('plugin.donate', 'message_pay_insuff');
+					$msg->addPlaceholders($planets);
+					$msg->sendChatMessage($login);
 				}
 			}
 			else {
-				$message = $this->config['MESSAGES'][0]['PAY_SERVER'][0];
-				$aseco->sendChatMessage($message, $login);
+				$msg = new Message('plugin.donate', 'message_pay_server');
+				$msg->sendChatMessage($login);
 			}
 		}
 		else {
-			$message = $this->config['MESSAGES'][0]['PAY_HELP'][0];
-			$aseco->sendChatMessage($message, $login);
+			$msg = new Message('plugin.donate', 'message_pay_help');
+			$msg->sendChatMessage($login);
 		}
 	}
 
@@ -266,11 +269,11 @@ class PluginDonate extends Plugin {
 		// Build the buttons
 		$buttons = array(
 			array(
-				'title'		=> 'Yes',
+				'title'		=> (new Message('common', 'yes'))->finish($player->login),
 				'action'	=> 'PluginDonate?Action=Payout&Answer=Confirm',
 			),
 			array(
-				'title'		=> 'No',
+				'title'		=> (new Message('common', 'no'))->finish($player->login),
 				'action'	=> 'PluginDonate?Action=Payout&Answer=Cancel',
 			),
 		);
@@ -306,10 +309,9 @@ class PluginDonate extends Plugin {
 			$this->bills[$billid] = array($login, $this->payments[$login][0], -$this->payments[$login][1]);
 		}
 		else {
-			$message = $aseco->formatText($this->config['MESSAGES'][0]['PAY_CANCEL'][0],
-				$this->payments[$login][0]
-			);
-			$aseco->sendChatMessage($message, $login);
+			$msg = new Message('plugin.donate', 'message_pay_cancel');
+			$msg->addPlaceholders($this->payments[$login][0]);
+			$msg->sendChatMessage($login);
 		}
 	}
 
@@ -362,18 +364,14 @@ class PluginDonate extends Plugin {
 					if ($planets > 0) {
 						// check for public appreciation threshold
 						if ($planets >= $this->publicappr) {
-							$message = $aseco->formatText($this->config['MESSAGES'][0]['THANKS_ALL'][0],
-								$aseco->server->name,
-								$planets,
-								$nickname
-							);
-							$aseco->sendChatMessage($message);
+							$msg = new Message('plugin.donate', 'message_thanks_all');
+							$msg->addPlaceholders($aseco->server->name, $planets, $nickname);
+							$msg->sendChatMessage();
 						}
 						else {
-							$message = $aseco->formatText($this->config['MESSAGES'][0]['THANKS_YOU'][0],
-								$planets
-							);
-							$aseco->sendChatMessage($message, $login);
+							$msg = new Message('plugin.donate', 'message_thanks_you');
+							$msg->addPlaceholders($planets);
+							$msg->sendChatMessage($login);
 						}
 						$aseco->console('[Donate] Player [{1}] donated {2} Planets to this server (TxId {3})', $login, $planets, $txid);
 						$this->updateDonations($login, $planets);
@@ -385,31 +383,32 @@ class PluginDonate extends Plugin {
 						// $planets < 0, get new server planets
 						$newplanets = $aseco->client->query('GetServerPlanets');
 
-						$message = $aseco->formatText($this->config['MESSAGES'][0]['PAY_CONFIRM'][0],
-							abs($planets),
-							$nickname,
-							$newplanets
-						);
-						$aseco->sendChatMessage($message, $login);
+						$msg = new Message('plugin.donate', 'message_pay_confirm');
+						$msg->addPlaceholders(abs($planets), $nickname, $newplanets);
+						$msg->sendChatMessage($login);
+
 						$aseco->console('[Donate] Server paid {1} Planets to [{2}] (TxId {3})', abs($planets), $login, $txid);
 					}
 					unset($this->bills[$billid]);
 					break;
 
 				case 5:  // Refused
-					$message = '{#server}» {#error}Transaction refused!';
-					$aseco->sendChatMessage($message, $login);
-					$aseco->console('[Donate] Refused transaction of {1} to [{2}] (TxId {3})', $planets, $login, $txid);
+					$msg = new Message('plugin.donate', 'message_transaction_refused');
+					$msg->sendChatMessage($login);
+
+					$aseco->console('[Donate] Refused transaction of {1} by login [{2}] (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);
 					break;
 
 				case 6:  // Error
-					$message = '{#server}» {#error}Transaction failed: {#highlite}$i ' . $bill[2];
+					$msg = new Message('plugin.donate', 'message_transaction_failed');
+					$msg->addPlaceholders($bill[2]);
+
 					if ($login !== '') {
-						$aseco->sendChatMessage($message, $login);
+						$msg->sendChatMessage($login);
 					}
 					else {
-						$aseco->sendChatMessage($message);
+						$msg->sendChatMessage();
 					}
 					$aseco->console('[Donate] Failed transaction of {1} to login "{2}" (TxId {3})', $planets, $login, $txid);
 					unset($this->bills[$billid]);

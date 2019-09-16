@@ -44,10 +44,11 @@ class PluginCustomizeQuitDialog extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
-		$this->setDescription('Customize the Quit-Dialog when a Player wants to leave the server.');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-16');
+		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setDescription(new Message('plugin.customize_quit_dialog', 'plugin_description'));
 
 		$this->registerEvent('onSync', 'onSync');
 	}

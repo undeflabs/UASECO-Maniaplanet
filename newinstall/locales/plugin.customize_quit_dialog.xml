@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-16
+	Authors:	[EN] undef.de
+				[DE] aca
+	//-->
+
+	<plugin_description>
+		<en>Customize the Quit-Dialog when a Player wants to leave the server.</en>
+		<de>Personalisiere den Auslog-Dialog der gezeigt wird, wenn ein Spieler den Server verlassen möchte.</de>
+	</plugin_description>
+
+</locales>

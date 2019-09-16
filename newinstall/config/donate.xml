@@ -12,18 +12,4 @@
 
 	<!-- Public appreciation threshold (show "Thank You" to all) -->
 	<public_appreciation_threshold>50</public_appreciation_threshold>
-
-	<messages>
-		<donation>{#donate} Donate {#highlite}{1}{#donate} planets to {#highlite}{2}$z</donation>
-		<thanks_all>{#server}» {#highlite}{1}$z$s{#donate} received a donation of {#highlite}{2}{#donate} planets from {#highlite}{3}$z$s{#donate}.  Thank You!</thanks_all>
-		<thanks_you>{#server}» {#donate}You made a donation of {#highlite}{1}{#donate} planets.  Thank You!</thanks_you>
-		<donate_minimum>{#server}» {#error}Minimum donation amount is {#highlite}$i {1}{#error} planets!</donate_minimum>
-		<donate_help>{#server}» {#error}Use {#highlite}$i /donate &lt;number&gt;{#error} to donate planets to the server</donate_help>
-		<payment>{#donate}Send {#highlite}{1}{#donate} planets to {#highlite}{2}$z</payment>
-		<pay_insuff>{#server}» {#error}Insufficient server planets: {#highlite}$i {1}{#error}!</pay_insuff>
-		<pay_server>{#server}» {#error}Cannot pay this server itself!</pay_server>
-		<pay_confirm>{#server}» {#donate}Payment of {#highlite}{1}{#donate} planets to {#highlite}{2}{#donate} confirmed! Remaining planets: {#highlite}{3}</pay_confirm>
-		<pay_cancel>{#server}» {#donate}Payment to {#highlite}{1}{#donate} cancelled!</pay_cancel>
-		<pay_help>{#server}» {#error}Use {#highlite}$i /admin pay &lt;login&gt; $m&lt;number&gt;{#error} to send server planets to a login</pay_help>
-	</messages>
 </settings>

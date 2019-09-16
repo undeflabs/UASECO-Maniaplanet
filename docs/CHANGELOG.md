@@ -3,61 +3,65 @@
 
 
 ### General changes
-* Requires a `Maniaplanet Dedicated Server` build `2019-08-14_16_00 (Linux)` / `2019-08-14_16_04 (Windows)` or higher
-* Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement.
-* ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login`
-* ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 `InputPlayer.User.Login`
-* Added a check for a path separator for `<default_maplist>` in `config/UASECO.xml`
-* Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps`
-* Added the current `Ladder`-setup into the ABOUT section of the UASECO lofgile
-* Added DateTime on logfile entries for `webrequest.php`
-* Updated `includes/musicserver/getid3` to version `1.9.17` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3))
+* Requires a `Maniaplanet Dedicated Server` build `2019-08-14_16_00 (Linux)` / `2019-08-14_16_04 (Windows)` or higher [undef]
+* Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement [undef]
+* ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login` [undef]
+* ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 `InputPlayer.User.Login` [undef]
+* Added a check for a path separator for `<default_maplist>` in `config/UASECO.xml` [undef]
+* Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps` [undef]
+* Added the current `Ladder`-setup into the ABOUT section of the UASECO lofgile [undef]
+* Added DateTime on logfile entries for `webrequest.php` [undef]
+* Updated `includes/musicserver/getid3` to version `1.9.17` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3)) [undef]
+* Added multilanguage support to `plugins/plugin.customize_quit_dialog.php` [aca]
+* Added multilanguage support to `plugins/plugin.donate.php` [aca]
 
 
 ### Changes at config files
-* Updated `<client_dialog>` the link to the download page in `newinstall/config/UASECO.xml`
-* Updated `<client_error>` the link to the download page in `newinstall/config/UASECO.xml`
-* Removed `<message_cannot_find_autosave_matchsettings>` in `newinstall/locales/chat.admin.xml`
-* Removed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml`
-* Removed `<autosave_matchsettings>` in `newinstall/config/rasp.xml`
-* Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`)
-* Changed `<ui_properties><spectator_info><pos><y>` from `-68.0` to `-82.0` in `newinstall/config/modescript_settings.xml`
-* Changed `<images><maniakarma_logo>` to new URL in `newinstall/config/mania_karma.xml`
-* Added `<disable_give_up>` to `<modesetup><labs>` in `newinstall/config/modescript_settings.xml`
-* Added `<use_custom_points_repartition>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<cumulate_points>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<rounds_per_map>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<maps_per_match>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
-* Added `<use_tie_break>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml`
-* Updated `<entry>` lines from `Laps.Script.txt` and `Chase.Script.txt` with the current script versions in `newinstall/config/modescript_settings.xml`
-* Added `<use_clublinks>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
-* Added `<use_clublinks_sponsors>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
-* Added `<neutral_emblem_url>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
-* Added `<script_environment>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
-* Added `<is_channel_server>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
-* Added `<hide_opponents>` to `<modebase>` in `newinstall/config/modescript_settings.xml`
-* Changed `<modesetup><team><use_custom_points_repartition>` (and documentation above too) from `[10, 6, 4, 3, 2, 1]` to `false` in `newinstall/config/modescript_settings.xml`
+* Updated `<client_dialog>` the link to the download page in `newinstall/config/UASECO.xml` [undef]
+* Updated `<client_error>` the link to the download page in `newinstall/config/UASECO.xml` [undef]
+* Removed `<message_cannot_find_autosave_matchsettings>` in `newinstall/locales/chat.admin.xml` [undef]
+* Removed `<message_autosave_matchsettings_not_set_or_jukebox_disabled>` in `newinstall/locales/chat.admin.xml` [undef]
+* Removed `<autosave_matchsettings>` in `newinstall/config/rasp.xml` [undef]
+* Added `<autosave_maplist>` in `newinstall/config/UASECO.xml` (on default `false`) [undef]
+* Changed `<ui_properties><spectator_info><pos><y>` from `-68.0` to `-82.0` in `newinstall/config/modescript_settings.xml` [undef]
+* Changed `<images><maniakarma_logo>` to new URL in `newinstall/config/mania_karma.xml` [undef]
+* Added `<disable_give_up>` to `<modesetup><labs>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<use_custom_points_repartition>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<cumulate_points>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<rounds_per_map>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<maps_per_match>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<use_tie_break>` to `<modesetup><team>` in `newinstall/config/modescript_settings.xml` [undef]
+* Updated `<entry>` lines from `Laps.Script.txt` and `Chase.Script.txt` with the current script versions in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<use_clublinks>` to `<modebase>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<use_clublinks_sponsors>` to `<modebase>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<neutral_emblem_url>` to `<modebase>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<script_environment>` to `<modebase>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<is_channel_server>` to `<modebase>` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `<hide_opponents>` to `<modebase>` in `newinstall/config/modescript_settings.xml` [undef]
+* Changed `<modesetup><team><use_custom_points_repartition>` (and documentation above too) from `[10, 6, 4, 3, 2, 1]` to `false` in `newinstall/config/modescript_settings.xml` [undef]
+* Added `newinstall/locales/plugin.customize_quit_dialog.xml` [aca]
+* Removed `<messages>` from `newinstall/config/donate.xml` [aca]
+* Added `newinstall/locales/plugin.donate.xml` [aca]
 
 
 ### Bug fixes
-* Fixed [PHP Notice] Undefined variable: uid on line 870 in file `plugins/chat.admin.php` (thanks hackie, fiendy)
-* Fixed display of the wrong juked map in the `NextMapWidget` (thanks hackie, speedychris)
-* Fixed `RoundScoreWidget`: the Playernames flowed out of the screen (thanks hacki65)
-* Fixed [PHP Notice] Undefined property: Player::$player on line 196 in file `plugins/plugin.rounds.php`
-* Fixed [PHP Notice] Undefined property: Player::$player on line 197 in file `plugins/plugin.rounds.php`
-* Fixed bug when using `/admin add ID` which shows `Unknown` instead of the map name, happens only for previously added maps (thanks hackie, cockneyrebel)
-* Fixed [PHP Notice] Undefined index:  on line 13985 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
-* Fixed [PHP Notice] Undefined index:  on line 13988 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel)
-* Fixed links to external resources at the WindowClass (https://github.com/undeflabs/UASECO/issues/41) (thanks BestNoob)
-* Fixed visible widgets of `<warmup>` from `<ui_properties>` when visibility was set to `false` in combination with RecordsEyepiece and the enabled <spectator_info_widget>
-* Fixed wrong gamemode output when switching gamemodes `plugins/plugin.modescript_handler.php`
-* Fixed Warning: mysqli::stat(): Couldn't fetch Database in `includes/core/database.class.php` on line 305
-* Fixed [PHP Warning] count(): Parameter must be an array or an object that implements Countable on line 3677 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
-* Fixed [PHP Notice] Undefined index: checkpointid on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
-* Fixed [PHP Notice] Undefined index: score_plain on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
-* Fixed [PHP Notice] Undefined index: checkpointid on line 8467 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt`
-* Fixed [UASECO Exception] Error returned: "Wrong setting type for 'S_DisableGiveUp'" [-1000] at GbxRemote::query() for method "SetModeScriptSettings" with arguments:
-
+* Fixed [PHP Notice] Undefined variable: uid on line 870 in file `plugins/chat.admin.php` (thanks hackie, fiendy) [undef]
+* Fixed display of the wrong juked map in the `NextMapWidget` (thanks hackie, speedychris) [undef]
+* Fixed `RoundScoreWidget`: the Playernames flowed out of the screen (thanks hacki65) [undef]
+* Fixed [PHP Notice] Undefined property: Player::$player on line 196 in file `plugins/plugin.rounds.php` [undef]
+* Fixed [PHP Notice] Undefined property: Player::$player on line 197 in file `plugins/plugin.rounds.php` [undef]
+* Fixed bug when using `/admin add ID` which shows `Unknown` instead of the map name, happens only for previously added maps (thanks hackie, cockneyrebel) [undef]
+* Fixed [PHP Notice] Undefined index:  on line 13985 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel) [undef]
+* Fixed [PHP Notice] Undefined index:  on line 13988 in file `plugins/plugin.records_eyepiece.php` (thanks cockneyrebel) [undef]
+* Fixed links to external resources at the WindowClass (https://github.com/undeflabs/UASECO/issues/41) (thanks BestNoob) [undef]
+* Fixed visible widgets of `<warmup>` from `<ui_properties>` when visibility was set to `false` in combination with RecordsEyepiece and the enabled <spectator_info_widget> [undef]
+* Fixed wrong gamemode output when switching gamemodes `plugins/plugin.modescript_handler.php` [undef]
+* Fixed Warning: mysqli::stat(): Couldn't fetch Database in `includes/core/database.class.php` on line 305 [undef]
+* Fixed [PHP Warning] count(): Parameter must be an array or an object that implements Countable on line 3677 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt` [undef]
+* Fixed [PHP Notice] Undefined index: checkpointid on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt` [undef]
+* Fixed [PHP Notice] Undefined index: score_plain on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt` [undef]
+* Fixed [PHP Notice] Undefined index: checkpointid on line 8467 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt` [undef]
+* Fixed [UASECO Exception] Error returned: "Wrong setting type for 'S_DisableGiveUp'" [-1000] at GbxRemote::query() for method "SetModeScriptSettings" with arguments [undef]
 
 
 

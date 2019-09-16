@@ -38,9 +38,9 @@ class Message extends BaseClass {
 
 		$this->setAuthor('askuri');
 		$this->setCoAuthors('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by Martin Weber (askuri)');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-16');
+		$this->setCopyright('2014 - 2019 by Martin Weber (askuri)');
 		$this->setDescription('Part of multilanguage support.');
 
 		$this->translations = $aseco->locales->getAllTranslations(strtolower($file), strtolower($id));
@@ -108,10 +108,10 @@ class Message extends BaseClass {
 	*/
 
 	/**
-	 * Takes the result of finish() and splits it by {br} to an array
+	 * Gets the language of the player, chooses the correct translation, replaces variables and returns the message
 	 *
 	 * @author	askuri <askuri@uaseco.org>
-	 * @param	string $id a string
+	 * @param	string $login A Player login
 	 * @return	array List of xxx
 	 */
 	public function finish ($id, $is_login = true) {
@@ -149,10 +149,10 @@ class Message extends BaseClass {
 	*/
 
 	/**
-	 * Gets the language of the player, chooses the correct translation, replaces variables and returns the message
+	 * Takes the result of finish() and splits it by {br} to an array
 	 *
 	 * @author	askuri <askuri@uaseco.org>
-	 * @param	string $login A Player login
+	 * @param	string $id a string
 	 * @return	array List of xxx
 	 */
 	public function finishMultiline ($login) {
