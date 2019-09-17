@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2019-09-16
+	Version:	2019-09-17
 	Authors:	[EN] undef.de
 			[DE] aca
 	//-->
@@ -25,7 +25,7 @@
 
 	<message_donation>
 		<en>{#donate}Donate {#highlite}{1}{#donate} planets to {#highlite}{2}$z</en>
-		<de>{#donate}Spende {#highlite}{1}{#donate} planets an {#highlite}{2}$z</de>
+		<de>{#donate}Spende {#highlite}{1}{#donate} Planets an {#highlite}{2}$z</de>
 	</message_donation>
 
 	<message_thanks_all>
@@ -92,4 +92,14 @@
 		<en>{#server}» {#error}Transaction failed: {#highlite}$i {1}</en>
 		<de>{#server}» {#error}Transaktion fehlgeschlagen: {#highlite}$i {1}</de>
 	</message_transaction_failed>
+	
+	<message_init_payment>
+		<en>Initiating payment from server </en>
+		<de>Zahlung vom Server wird eingeleitet </de>
+	</message_init_payment>
+	
+	<message_confirmation>
+		<en>Would you like to pay now?</en>
+		<de>Möchtest Du jetzt zahlen?</de>
+	</message_confirmation>
 </locales>
