@@ -51,7 +51,7 @@ class PluginDonate extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('aca');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2019-09-16');
+		$this->setBuild('2019-09-17');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.donate', 'plugin_description'));
 
@@ -280,8 +280,8 @@ class PluginDonate extends Plugin {
 
 		// Setup content
 		$settings_content = array(
-			'title'			=> 'Initiating payment from server "'. $aseco->stripStyles($aseco->server->name) .'"',
-			'message'		=> $label . LF .'Would you like to pay now?',
+			'title'			=> (new Message('plugin.donate', 'message_init_payment'))->finish($player->login) .'"'. $aseco->stripStyles($aseco->server->name) .'"',
+			'message'		=> $label . LF . (new Message('plugin.donate', 'message_confirmation'))->finish($player->login),
 			'buttons'		=> $buttons,
 		);
 
