@@ -24,9 +24,14 @@
 
 
 	<message_donation>
+		<en>{#server}» {#donate}Donate {#highlite}{1}{#donate} planets to {#highlite}{2}$z</en>
+		<de>{#server}» {#donate}Spende {#highlite}{1}{#donate} Planets an {#highlite}{2}$z</de>
+	</message_donation>	
+	
+	<message_donation_label>
 		<en>{#donate}Donate {#highlite}{1}{#donate} planets to {#highlite}{2}$z</en>
 		<de>{#donate}Spende {#highlite}{1}{#donate} Planets an {#highlite}{2}$z</de>
-	</message_donation>
+	</message_donation_label>
 
 	<message_thanks_all>
 		<en>{#server}» {#highlite}{1}$z$s{#donate} received a donation of {#highlite}{2}{#donate} planets from {#highlite}{3}$z$s{#donate}. Thank You!</en>
@@ -77,6 +82,11 @@
 		<en>{#server}» {#error}Use {#highlite}$i /admin pay &lt;login&gt; $m&lt;number&gt;{#error} to send server planets to a login</en>
 		<de>{#server}» {#error}Verwende den Befehl {#highlite}$i /admin pay &lt;login&gt; $m&lt;number&gt;{#error} um Planets vom Server an einen Login zu schicken</de>
 	</message_pay_help>
+
+	<message_top_dons_window_title>
+		<en>Current TOP 100 Donators</en>
+		<de>Aktuelle TOP 100 Spender</de>
+	</message_top_dons_window_title>
 
 	<message_no_donators_found>
 		<en>{#server}» {#error}No donator(s) found!</en>
