@@ -51,7 +51,7 @@ class PluginDonate extends Plugin {
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('aca');
 		$this->setVersion('1.0.1');
-		$this->setBuild('2019-09-17');
+		$this->setBuild('2019-09-18');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.donate', 'plugin_description'));
 
@@ -105,8 +105,11 @@ class PluginDonate extends Plugin {
 				$msg = new Message('plugin.donate', 'message_donation');
 				$msg->addPlaceholders($planets, $aseco->server->name);
 				$msg->sendChatMessage($login);
-
-				$billid = $aseco->client->query('SendBill', $player->login, $planets, $msg->finish($login), '');
+				
+				$msg_lbl =  new Message('plugin.donate', 'message_donation_label');
+				$msg_lbl->addPlaceholders($planets, $aseco->server->name);
+				
+				$billid = $aseco->client->query('SendBill', $player->login, $planets, $msg_lbl->finish($login), '');
 				$this->bills[$billid] = array($player->login, $player->nickname, $planets);
 			}
 			else {
@@ -174,10 +177,10 @@ class PluginDonate extends Plugin {
 					'widths'		=> array(11, 22, 67),
 					'halign'		=> array('right', 'right', 'left'),
 					'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
-					'heading'		=> array('#', 'Planets', 'Player'),
+					'heading'		=> array('#', 'Planets', (new Message('common', 'player'))->finish($player->login)),
 				);
 				$settings_content = array(
-					'title'			=> 'Current TOP 100 Donators',
+					'title'			=> (new Message('plugin.donate', 'message_top_dons_window_title'))->finish($player->login),
 					'data'			=> $dons,
 					'about'			=> 'DONATE/'. $this->getVersion(),
 					'mode'			=> 'columns',

@@ -42,6 +42,8 @@
 * Added `newinstall/locales/plugin.customize_quit_dialog.xml` [aca]
 * Removed `<messages>` from `newinstall/config/donate.xml` [aca]
 * Added `newinstall/locales/plugin.donate.xml` [aca]
+* Added `<message_donation_label>` and `<message_top_dons_window_title>` in `newinstall/locales/plugin.donate.xml` [aca]
+* Added `<player>` in `newinstall/locales/common.xml` [aca]
 
 
 ### Bug fixes

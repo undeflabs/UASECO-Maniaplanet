@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2017-04-18
+	Version:	2019-09-18
 	Authors:	[EN] undef.de
-			[DE] askuri
+				[DE] askuri, aca
 	//-->
 
 	<yes>
@@ -30,6 +30,11 @@
 		<en>default</en>
 		<de>standard</de>
 	</default>
+
+	<player>
+		<en>player</en>
+		<de>Spieler</de>
+	</player>
 
 	<medal_author>
 		<en>author medal</en>
