@@ -11,7 +11,7 @@
 * Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps` [undef]
 * Added the current `Ladder`-setup into the ABOUT section of the UASECO lofgile [undef]
 * Added DateTime on logfile entries for `webrequest.php` [undef]
-* Updated `includes/musicserver/getid3` to version `1.9.17` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3)) [undef]
+* Updated `includes/musicserver/getid3` to version `1.9.18` (thanks [James Heinrich](https://github.com/JamesHeinrich/getID3)) [undef]
 * Added multilanguage support to `plugins/plugin.customize_quit_dialog.php` [aca]
 * Added multilanguage support to `plugins/plugin.donate.php` [aca]
 
@@ -64,6 +64,7 @@
 * Fixed [PHP Notice] Undefined index: score_plain on line 8466 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt` [undef]
 * Fixed [PHP Notice] Undefined index: checkpointid on line 8467 in file `plugins/plugin.records_eyepiece.php` with GameMode `Laps.Script.txt` [undef]
 * Fixed [UASECO Exception] Error returned: "Wrong setting type for 'S_DisableGiveUp'" [-1000] at GbxRemote::query() for method "SetModeScriptSettings" with arguments [undef]
+* Fixed that <chat_prefix_replacement> sometimes was not used when using non-enlish setting (e.g. german) [aca, undef]
 
 
 

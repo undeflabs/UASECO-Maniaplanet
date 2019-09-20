@@ -38,8 +38,8 @@ class Message extends BaseClass {
 
 		$this->setAuthor('askuri');
 		$this->setCoAuthors('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-09-16');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-09-20');
 		$this->setCopyright('2014 - 2019 by Martin Weber (askuri)');
 		$this->setDescription('Part of multilanguage support.');
 
@@ -125,6 +125,8 @@ class Message extends BaseClass {
 		}
 
 		$message = $aseco->formatColors($this->chooseTranslation($lang));
+		$message = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
+		$message = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
 
 		// Placeholders
 		if ($this->placeholders !== false) {
