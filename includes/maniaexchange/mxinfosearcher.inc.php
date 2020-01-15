@@ -17,6 +17,7 @@
  * http://tm.mania-exchange.com/threads/view/218
  * Derived from TMXInfoSearcher
  *
+ * v1.7: Update to use the "new" API from MX: https://api.mania-exchange.com/documents/reference
  * v1.6: Added Countable interface to searcher class
  * v1.5: Added MXInfo $titlepack (TM2/SM); add support for environment matching
  * v1.4: Fixed an error checking bug
@@ -137,7 +138,7 @@ class MXInfoSearcher implements Iterator,Countable {
 		$maxpage = 10;  // max. 200 maps
 
 		// compile search URL
-		$url = 'https://' . $this->prefix . '.mania-exchange.com/tracksearch?api=on';
+		$url = 'https://' . $this->prefix . '.mania-exchange.com/tracksearch2/search?api=on&format=json';
 		if ($name != '')
 			$url .= '&trackname=' . $name;
 		if ($author != '')
@@ -178,7 +179,7 @@ class MXInfoSearcher implements Iterator,Countable {
 				}
 			}
 
-			$mx = json_decode($file);
+			$mx = json_decode($file, true);
 			if ($mx === null) {
 				$this->error = 'Cannot decode searched JSON data from ' . $url;
 				return array();
@@ -186,9 +187,10 @@ class MXInfoSearcher implements Iterator,Countable {
 
 			// check for results
 			if (!empty($mx)) {
-				$maps = array_merge($maps, $mx);
+				$maps = array_merge($maps, $mx['results']);
 				$page++;
-			} else {
+			}
+			else {
 				$done = true;
 			}
 		}
@@ -215,7 +217,7 @@ class MXInfoSearcher implements Iterator,Countable {
 				'follow_location'	=> true,
 				'max_redirects'		=> 20,
 				'protocol_version'	=> 1.1,
-				'user_agent'		=> 'MXInfoSearcher/1.6 2017-05-03 '. USER_AGENT,
+				'user_agent'		=> 'MXInfoSearcher/1.7 2020-01-15 '. USER_AGENT,
 			),
 		);
 		$stream_context = stream_context_create($context);
@@ -275,39 +277,39 @@ class MXInfo {
 			else // 'sm' || 'qm'
 				$dir = 'maps';
 
-			$this->id        = ($this->prefix == 'tm') ? $mx->TrackID : $mx->MapID;
-			$this->name      = $mx->Name;
-			$this->userid    = $mx->UserID;
-			$this->author    = $mx->Username;
-			$this->uploaded  = $mx->UploadedAt;
-			$this->updated   = $mx->UpdatedAt;
-			$this->type      = $mx->TypeName;
-			$this->maptype   = isset($mx->MapType) ? $mx->MapType : '';
-			$this->titlepack = isset($mx->TitlePack) ? $mx->TitlePack : '';
-			$this->style     = isset($mx->StyleName) ? $mx->StyleName : '';
-			$this->envir     = $mx->EnvironmentName;
-			$this->mood      = $mx->Mood;
-			$this->dispcost  = $mx->DisplayCost;
-			$this->lightmap  = $mx->Lightmap;
-			$this->modname   = isset($mx->ModName) ? $mx->ModName : '';
-			$this->exever    = $mx->ExeVersion;
-			$this->exebld    = $mx->ExeBuild;
-			$this->routes    = isset($mx->RouteName) ? $mx->RouteName : '';
-			$this->length    = isset($mx->LengthName) ? $mx->LengthName : '';
-			$this->unlimiter = isset($mx->UnlimiterRequired) ? $mx->UnlimiterRequired : false;
-			$this->laps      = isset($mx->Laps) ? $mx->Laps : 0;
-			$this->diffic    = $mx->DifficultyName;
-			$this->lbrating  = isset($mx->LBRating) ? $mx->LBRating : 0;
-			$this->trkvalue  = isset($mx->TrackValue) ? $mx->TrackValue : 0;
-			$this->replaytyp = isset($mx->ReplayTypeName) ? $mx->ReplayTypeName : '';
-			$this->replayid  = isset($mx->ReplayWRID) ? $mx->ReplayWRID : 0;
-			$this->replaycnt = isset($mx->ReplayCount) ? $mx->ReplayCount : 0;
-			$this->acomment  = $mx->Comments;
-			$this->awards    = isset($mx->AwardCount) ? $mx->AwardCount : 0;
-			$this->comments  = $mx->CommentCount;
-			$this->rating    = isset($mx->Rating) ? $mx->Rating : 0.0;
-			$this->ratingex  = isset($mx->RatingExact) ? $mx->RatingExact : 0.0;
-			$this->ratingcnt = isset($mx->RatingCount) ? $mx->RatingCount : 0;
+			$this->id        = ($this->prefix == 'tm') ? $mx['TrackID'] : $mx['MapID'];
+			$this->name      = $mx['Name'];
+			$this->userid    = $mx['UserID'];
+			$this->author    = $mx['Username'];
+			$this->uploaded  = $mx['UploadedAt'];
+			$this->updated   = $mx['UpdatedAt'];
+			$this->type      = $mx['TypeName'];
+			$this->maptype   = isset($mx['MapType']) ? $mx['MapType'] : '';
+			$this->titlepack = isset($mx['TitlePack']) ? $mx['TitlePack'] : '';
+			$this->style     = isset($mx['StyleName']) ? $mx['StyleName'] : '';
+			$this->envir     = $mx['EnvironmentName'];
+			$this->mood      = $mx['Mood'];
+			$this->dispcost  = $mx['DisplayCost'];
+			$this->lightmap  = $mx['Lightmap'];
+			$this->modname   = isset($mx['ModName']) ? $mx['ModName'] : '';
+			$this->exever    = $mx['ExeVersion'];
+			$this->exebld    = $mx['ExeBuild'];
+			$this->routes    = isset($mx['RouteName']) ? $mx['RouteName'] : '';
+			$this->length    = isset($mx['LengthName']) ? $mx['LengthName'] : '';
+			$this->unlimiter = isset($mx['UnlimiterRequired']) ? $mx['UnlimiterRequired'] : false;
+			$this->laps      = isset($mx['Laps']) ? $mx['Laps'] : 0;
+			$this->diffic    = $mx['DifficultyName'];
+			$this->lbrating  = isset($mx['LBRating']) ? $mx['LBRating'] : 0;
+			$this->trkvalue  = isset($mx['TrackValue']) ? $mx['TrackValue'] : 0;
+			$this->replaytyp = isset($mx['ReplayTypeName']) ? $mx['ReplayTypeName'] : '';
+			$this->replayid  = isset($mx['ReplayWRID']) ? $mx['ReplayWRID'] : 0;
+			$this->replaycnt = isset($mx['ReplayCount']) ? $mx['ReplayCount'] : 0;
+			$this->acomment  = $mx['Comments'];
+			$this->awards    = isset($mx['AwardCount']) ? $mx['AwardCount'] : 0;
+			$this->comments  = $mx['CommentCount'];
+			$this->rating    = isset($mx['Rating']) ? $mx['Rating'] : 0.0;
+			$this->ratingex  = isset($mx['RatingExact']) ? $mx['RatingExact'] : 0.0;
+			$this->ratingcnt = isset($mx['RatingCount']) ? $mx['RatingCount'] : 0;
 
 			if ($this->trkvalue == 0 && $this->lbrating > 0)
 				$this->trkvalue = $this->lbrating;
