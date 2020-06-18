@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+	<plugin_description>Bewertet eine Strecke und zeigt ihren aktuellen Bewertungsstand an.</plugin_description>
+	<slash_chat_karma_description>Zeigt den Bewertungsstand der aktuellen Strecke.</slash_chat_karma_description>
+	<slash_chat_playervote_plus_description>Erhöht die Bewertung der aktuellen Strecke.</slash_chat_playervote_plus_description>
+	<slash_chat_playervote_minus_description>Verringert die Bewertung der aktuellen Strecke.</slash_chat_playervote_minus_description>
+	<list_help>{#server}» {#emotic}Benutze zuerst {#highlite}/list{#emotic} - Schreibe {#highlite}/list help{#emotic} für mehr Info</list_help>
+	<karma_map>{#server}» {#karma}Strecke {#highlite}{1}{#karma} Bewertungsstand: {#highlite}{2}</karma_map>
+	<jukebox_notfound>{#server}» {#emotic}ID der Strecke nicht gefunden - Schreibe {#highlite}/list{#emotic} um alle Strecken zu sehen.</jukebox_notfound>
+	<karma>{#server}» {#karma}Aktueller Bewertungsstand der Strecke: {#highlite}{1}</karma>
+	<karma_require>{#server}» {#error}Du musst die Strecke mindestens {#highlite}$i {1}{#error} mal beendet haben bevor Du sie bewertest!</karma_require>
+	<karma_voted>{#server}» {#highlite}Du hast diese Strecke bereits bewertet</karma_voted>
+	<karma_fail>{#server}» {#highlite}Bewerten fehlgeschlagen!</karma_fail>
+	<karma_change>{#server}» {#highlite}Bewertung geändert!</karma_change>
+	<karma_done>{#server}» {#highlite}Bewertung erfolgreich!</karma_done>
+	<karma_nopublic>{#server}» {#error}Öffentliche Bewertungen gesperrt, nutze $i{#highlite}/++{#error} oder $i{#highlite}/--{#error} anstattdessen!</karma_nopublic>
+	<karma_remind>{#server}» {#karma}Vergiss nicht, die Strecke mit ({#highlite}/++{#karma} oder {#highlite}/--{#karma}) zu bewerten</karma_remind>
+	<karma_details>{1} $n{#karma}[++: {#highlite}{2}{#karma} ({#highlite}{3}%{#karma}), --: {#highlite}{4}{#karma} ({#highlite}{5}%{#karma})]</karma_details>
+	<karma_vote> $n{#karma}$i{Deine Bewertung:  {#highlite}$i{1}{#karma}$i}</karma_vote>
+</locales>

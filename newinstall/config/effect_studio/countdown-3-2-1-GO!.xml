@@ -11,11 +11,16 @@
  * Author:	undef.de
  * Website:	http://www.undef.name
  * License:	GPLv3
- * Version:	2017-06-03
+ * Version:	2020-01-15
  * ==================================
  */
 #Include "AnimLib" as AnimLib
 main() {
+	declare Real SizeGfx3			= 75.0;
+	declare Real SizeGfx2			= 75.0;
+	declare Real SizeGfx1			= 75.0;
+	declare Real SizeGfxGo			= 100.0;
+
 	declare Frame_Animation			<=> (Page.GetFirstChild("Frame_Animation") as CMlFrame);
 	declare Quad_Countdown3			<=> (Page.GetFirstChild("Quad_Countdown3") as CMlQuad);
 	declare Quad_Countdown2			<=> (Page.GetFirstChild("Quad_Countdown2") as CMlQuad);
@@ -81,7 +86,7 @@ main() {
 				Quad_Countdown1.Scale = 1.0;
 				Quad_CountdownGo.Scale = 1.0;
 
-				Quad_Countdown3.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
+				Quad_Countdown3.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, SizeGfx3, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, SizeGfx3, 250)>;
 				Quad_Countdown3.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_Countdown3.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
@@ -107,7 +112,7 @@ main() {
 				Quad_Countdown3.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_Countdown3.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 
-				Quad_Countdown2.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
+				Quad_Countdown2.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, SizeGfx2, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, SizeGfx2, 250)>;
 				Quad_Countdown2.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_Countdown2.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
@@ -133,7 +138,7 @@ main() {
 				Quad_Countdown2.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_Countdown2.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 
-				Quad_Countdown1.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, 75.0, 250)>;
+				Quad_Countdown1.Size = <AnimLib::EaseOutBack(OperationalTime, 0.0, SizeGfx1, 250), AnimLib::EaseOutBack(OperationalTime, 0.0, SizeGfx1, 250)>;
 				Quad_Countdown1.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_Countdown1.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}
@@ -162,7 +167,7 @@ main() {
 				Quad_Countdown1.Opacity = AnimLib::EaseInSine(OperationalTime, 0.8, -1.0, 750);
 				Quad_Countdown1.Scale = AnimLib::EaseInSine(OperationalTime, 1.0, -1.0, 750);
 
-				Quad_CountdownGo.Size = <AnimLib::EaseOutElastic2(OperationalTime, 0.0, 100.0, 750), AnimLib::EaseOutElastic2(OperationalTime, 0.0, 100.0, 750)>;
+				Quad_CountdownGo.Size = <AnimLib::EaseOutElastic2(OperationalTime, 0.0, SizeGfxGo, 750), AnimLib::EaseOutElastic2(OperationalTime, 0.0, SizeGfxGo, 750)>;
 				Quad_CountdownGo.Opacity = AnimLib::EaseLinear(OperationalTime, 0.0, 0.8, 250);
 //				Quad_CountdownGo.RelativeRotation = AnimLib::EaseOutElastic2(OperationalTime, -360.0, 360.0, 750);
 			}

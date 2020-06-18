@@ -14,4 +14,4 @@ Manages Players on the server, add/remove Players and provides several get funct
 
 | Members								| Example data or description
 |-----------------------------------------------------------------------|----------------------------
-| `$aseco->server->players->player_list`				| array() of [Class Player](/Development/Classes/Player.php) objects
+| `$aseco->server->players->player_list`				| array() of [Class Player](/development/classes/player.php) objects

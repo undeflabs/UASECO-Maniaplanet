@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - September 2019 by undef.de
+ * Copyright:	May 2014 - January 2020 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,12 +44,12 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.7');
-	define('UASECO_BUILD',			'2019-09-20');
+	define('UASECO_BUILD',			'2020-01-24');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2019-08-14_16_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2019-08-14_16_04');
+	define('MANIAPLANET_BUILD_POSIX',	'2019-10-24_16_00');
+	define('MANIAPLANET_BUILD_WINDOWS',	'2019-10-23_20_00');
 	define('XMLRPC_API_VERSION',		'2013-04-16');
 	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
 	define('MIN_PHP_VERSION',		'7.2.0');
@@ -289,7 +289,7 @@ class UASECO extends Helper {
 			'k'	=> explode(' ', 'Ǩ ǩ ĸ ķ Ķ Ќ К к ќ Қ қ Ҝ ҝ Ҟ ҟ Ҡ ҡ Ӄ ӄ Κ κ'),
 			'l'	=> explode(' ', 'Ĺ ĺ Ļ ļ Ľ ľ Ŀ ŀ Ł ł І ׀ し じ ム レ'),
 			'm'	=> explode(' ', 'М м Μ'),
-			'n'	=> explode(' ', 'Ñ ñ Ń ń Ņ ņ Ň ň ŉ Ŋ ŋ Й И Л П и й л п ה ח מ ת Ν ή η'),
+			'n'	=> explode(' ', 'Ñ ñ Ń ń Ņ ņ Ň ň ŉ Ŋ ŋ Й И Л П и й л п ה ח מ ת Ν ή η ท'),
 			'o'	=> explode(' ', 'Ò Ó Ô Õ Ö Ø ð ò ó ô õ ö ø Ɵ Ơ ơ Ǒ ǒ ǫ Ǫ Ǭ ǭ Ǿ ǿ Ō ō Ŏ ŏ Ő ő Ф О о Ѳ ѳ Ѻ ѻ ט ס Ό Ώ Θ Ο Φ Ω θ ο σ φ ό ϕ 〇 °'),
 			'p'	=> explode(' ', 'Þ þ Р р ק Ρ ρ ア ァ ヤ ャ'),
 			'q'	=> explode(' ', 'Ǫ ǫ Ǭ ǭ'),
@@ -651,21 +651,20 @@ class UASECO extends Helper {
 		$this->console_text('» Website:       {1}', UASECO_WEBSITE);
 		$this->console_text('####[PLUGINS]########################################################################');
 		foreach ($this->plugins as $plugin) {
-			$this->console_text('» {1}{2} build {3}', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion(), $plugin->getBuild());
+			$this->console_text('» {1}{2} ({3})', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion() . sprintf('%'. (8 - strlen($plugin->getVersion())) .'s', ''), $plugin->getBuild());
 		}
 		$this->console_text('#####################################################################################');
 
 
-		// Format the text of the message
-		$message = $this->formatText($this->getChatMessage('STARTUP'),
+		// Show startup message
+		$msg = new Message('uaseco', 'startup');
+		$msg->addPlaceholders(
 			UASECO_VERSION,
 			UASECO_BUILD,
 			$this->server->xmlrpc['ip'],
 			$this->server->xmlrpc['port']
 		);
-
-		// Show startup message
-		$this->sendChatMessage($message);
+		$msg->sendChatMessage();
 	}
 
 	/*
@@ -736,7 +735,7 @@ class UASECO extends Helper {
 		$this->console_text('» UASECO:        Version {1} build {2}', UASECO_VERSION, UASECO_BUILD);
 		$this->console_text('####[PLUGINS]########################################################################');
 		foreach ($this->plugins as $plugin) {
-			$this->console_text('» {1}{2} build {3}', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion(), $plugin->getBuild());
+			$this->console_text('» {1}{2} ({3})', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion() . sprintf('%'. (8 - strlen($plugin->getVersion())) .'s', ''), $plugin->getBuild());
 		}
 		$this->console_text('#####################################################################################');
 	}
@@ -777,10 +776,10 @@ class UASECO extends Helper {
 			$this->settings['developer']['log_events']['all_types']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['LOG_EVENTS'][0]['ALL_TYPES'][0]);
 			$this->settings['developer']['force_maplist_update']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['FORCE_MAPLIST_UPDATE'][0]);
 			$this->settings['developer']['write_documentation']		= $this->string2bool($settings['DEVELOPER_OPTIONS'][0]['WRITE_DOCUMENTATION'][0]);
+			$this->settings['chat_prefix_replacement']			= $settings['CHAT_PREFIX_REPLACEMENT'][0];
 
 			// Read settings and apply them
 			$this->chat_colors = $settings['COLORS'][0];
-			$this->chat_messages = $settings['MESSAGES'][0];
 			$this->masteradmin_list = $settings['MASTERADMINS'][0];
 			if (!isset($this->masteradmin_list) || !is_array($this->masteradmin_list)) {
 				$this->console('[UASECO][ERROR] No MasterAdmin(s) configured in [config/UASECO.xml] at <masteradmins>!');
@@ -892,8 +891,8 @@ class UASECO extends Helper {
 			// Show logins in /recs?
 			$this->settings['show_rec_logins'] = $this->string2bool($settings['SHOW_REC_LOGINS'][0]);
 
-			// Set stripling path
-			$this->settings['stripling_path'] = $settings['STRIPLING_PATH'][0];
+			// Set status path
+			$this->settings['status_path'] = $settings['STATUS_PATH'][0];
 
 			// Set dedicated Server installation path
 			$this->settings['dedicated_installation'] = $settings['DEDICATED_INSTALLATION'][0];
@@ -1076,12 +1075,26 @@ class UASECO extends Helper {
 			// Now check the dependencies of each of them ...
 			foreach ($plugin->getDependencies() as $dependence) {
 
+				// Special check for required version of UASECO
+				if (strtoupper($dependence->classname) === 'UASECO') {
+					if (isset($dependence->min_version) && $this->versionCheck(UASECO_VERSION, $dependence->min_version, '<')) {
+						$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires a more recent version of UASECO ['. $dependence->min_version .'] to run, exclude this Plugin or update UASECO to continue!');
+						die();
+					}
+					else if (isset($dependence->max_version) && $this->versionCheck(UASECO_VERSION, $dependence->max_version, '>')) {
+						$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires an older version of UASECO ['. $dependence->classname .'] (current version: '. UASECO_VERSION .', expected version: '. $dependence->max_version .')!');
+						die();
+					}
+					continue;
+				}
+
+
 				// Check for plugin required version?
 				$check_version = false;
 
 				if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::REQUIRED) {
 					// Check if required dependence exists...
-					$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, disclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!');
+					$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] requires the Plugin ['. $dependence->classname .'] to run, exclude this Plugin or add the required Plugin in [config/plugins.xml] to continue!');
 					die();
 				}
 				else if (!isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::WANTED) {
@@ -1094,7 +1107,7 @@ class UASECO extends Helper {
 
 				// Check if disallowed dependence exists...
 				if (isset($this->plugins[$dependence->classname]) && $dependence->permissions === Dependence::DISALLOWED) {
-					$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], disclude this or the disallowed Plugin in [config/plugins.xml] to continue!');
+					$this->console('[UASECO][ERROR] The Plugin ['. $plugin->getClassname() .'] can not run together with the plugin ['. $dependence->classname .'], exclude this or the disallowed Plugin in [config/plugins.xml] to continue!');
 					die();
 				}
 
@@ -2104,7 +2117,7 @@ class UASECO extends Helper {
 		}
 
 		// Setup next Map
-		$this->server->maps->next = $this->server->maps->getNextMap();
+		$this->server->maps->next = $this->server->maps->getNextMap(true);
 
 		// Search MX for current Map
 		if ($map->mx === false || time() > ($map->mx->timestamp_fetched + $this->server->maps->max_age_mxinfo)) {
@@ -2185,10 +2198,10 @@ class UASECO extends Helper {
 			}
 		}
 
-		// Store usage into "stripling.xml" file
-		$this->buildStriplingInfo();
+		// Store usage into "status.xml" file
+		$this->buildStatusInfo();
 
-		// Report usage back to home website from "stripling.xml" file
+		// Report usage back to home website from "status.xml" file
 		$this->reportServerInfo();
 	}
 
@@ -2235,23 +2248,19 @@ class UASECO extends Helper {
 						);
 
 						if ($player->getWins() % $this->settings['global_win_multiple'] === 0) {
-							// Replace parameters
-							$message = $this->formatText($this->getChatMessage('WIN_MULTI'),
+							$msg = new Message('uaseco', 'win_multi');
+							$msg->addPlaceholders(
 								$this->stripStyles($player->nickname),
 								$player->getWins()
 							);
-
-							// Show chat message
-							$this->sendChatMessage($message);
+							$msg->sendChatMessage();
 						}
 						else {
-							// Replace parameters
-							$message = $this->formatText($this->getChatMessage('WIN_NEW'),
+							$msg = new Message('uaseco', 'win_new');
+							$msg->addPlaceholders(
 								$player->getWins()
 							);
-
-							// Show chat message
-							$this->sendChatMessage($message, $player->login);
+							$msg->sendChatMessage($player->login);
 						}
 
 						// Throw 'player wins' event
@@ -2351,21 +2360,22 @@ class UASECO extends Helper {
 
 			// if no data fetched, notify & kick the player
 			if (!isset($data['Login']) || $data['Login'] === '') {
-				$message = str_replace('{br}', LF, $this->getChatMessage('CONNECT_ERROR'));
-				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
+				(new Message('uaseco', 'connect_error'))->sendChatMessage($login);
+
 				sleep(5);  // allow time to connect and see the notice
-				$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CONNECT_DIALOG')));
+				$this->client->addCall('Kick', $login, (new Message('uaseco', 'connect_dialog'))->finish($login));
+
 				// log console message
 				$this->console('[Player] GetPlayerInfo failed for ['. $login .'] -- notified & kicked');
 				return;
-
 			}
 			else if (!empty($this->banned_ips) && in_array($ipaddr, $this->banned_ips)) {
 				// if player IP in ban list, notify & kick the player
-				$message = str_replace('{br}', LF, $this->getChatMessage('BANIP_ERROR'));
-				$this->sendChatMessage(str_replace(LF.LF, LF, $message), $login);
+				(new Message('uaseco', 'banip_error'))->sendChatMessage($login);
+
 				sleep(5);  // allow time to connect and see the notice
-				$this->client->addCall('Ban', $login, $this->formatColors($this->getChatMessage('BANIP_DIALOG')));
+				$this->client->addCall('Ban', $login, (new Message('uaseco', 'banip_dialog'))->finish($login));
+
 				$this->console('[Player] Player ['. $login .'] banned from '. $ipaddr .' -- notified & kicked');
 				return;
 			}
@@ -2375,22 +2385,26 @@ class UASECO extends Helper {
 				if ($version === '') {
 					$version = '3.3.0';
 				}
-				$message = str_replace('{br}', LF, $this->getChatMessage('CLIENT_ERROR'));
+				$msg = new Message('uaseco', 'client_error');
 
 				// if invalid version, notify & kick the player
 				if ($this->settings['player_client'] !== '' && strcmp($version, $this->settings['player_client']) < 0) {
-					$this->sendChatMessage($message, $login);
+					$msg->sendChatMessage($login);
+
 					sleep(5);  // allow time to connect and see the notice
-					$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG')));
+					$this->client->addCall('Kick', $login, (new Message('uaseco', 'CLIENT_DIALOG'))->finish($login));
+
 					$this->console('[Player] Obsolete player client version '. $version .' for ['. $login .'] -- notified & kicked');
 					return;
 				}
 
 				// if invalid version, notify & kick the admin
 				if ($this->settings['admin_client'] !== '' && $this->isAnyAdminByLogin($data['Login']) && strcmp($version, $this->settings['admin_client']) < 0) {
-					$this->sendChatMessage($message, $login);
+					$msg->sendChatMessage($login);
+
 					sleep(5);  // allow time to connect and see the notice
-					$this->client->addCall('Kick', $login, $this->formatColors($this->getChatMessage('CLIENT_DIALOG')));
+					$this->client->addCall('Kick', $login, (new Message('uaseco', 'CLIENT_DIALOG'))->finish($login));
+
 					$this->console('[Player] Obsolete admin client version '. $version .' for ['. $login .'] -- notified & kicked');
 					return;
 				}
@@ -2431,19 +2445,17 @@ class UASECO extends Helper {
 				}
 			}
 
-			// Replace parameters
-			$message = $this->formatText($this->getChatMessage('WELCOME'),
+			$msg = new Message('uaseco', 'welcome');
+			$msg->addPlaceholders(
 				$this->stripStyles($player->nickname),
 				$this->server->name,
+				UASECO_WEBSITE,
 				UASECO_VERSION
 			);
-			// Hyperlink package name & version number
-			$message = preg_replace('/UASECO.+'. UASECO_VERSION .'/', '$L['. UASECO_WEBSITE .']$0$L', $message);
-			$message = str_replace('{br}', LF, $message);
-			$this->sendChatMessage(str_replace(LF.LF, LF, $message), $player->login);
+			$msg->sendChatMessage($player->login);
 
-			// Store usage into "stripling.xml" file
-			$this->buildStriplingInfo();
+			// Store usage into "stauts.xml" file
+			$this->buildStatusInfo();
 
 			// Throw main 'player connects' event
 			$this->releaseEvent('onPlayerConnect', $player);
@@ -2500,8 +2512,8 @@ class UASECO extends Helper {
 			$player->id
 		);
 
-		// Store usage into "stripling.xml" file
-		$this->buildStriplingInfo();
+		// Store usage into "status.xml" file
+		$this->buildStatusInfo();
 
 		// Throw 'player disconnects' event
 		$this->releaseEvent('onPlayerDisconnect', $player);

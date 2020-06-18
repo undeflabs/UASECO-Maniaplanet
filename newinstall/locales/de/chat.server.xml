@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Stellt Server- und UASECO-Informationen zur Verfügung</plugin_description>
+	<slash_uaseco_description>Zeigt Informationen über UASECO an</slash_uaseco_description>
+	<slash_uaseco_chat_message>{#server}» $L[{1}]{2}$L Version {#highlite}{3}{#server} build {#highlite}{4}</slash_uaseco_chat_message>
+	<slash_contact_description>Zeigt die Kontaktmöglichket zu diesen Server an</slash_contact_description>
+	<slash_contact_chat_message>{#server}» Sie können uns über {#highlite}{1}{#server} kontaktieren</slash_contact_chat_message>
+	<slash_contact_chat_message_no_contact>{#server}» Sie können uns leider nicht kontaktieren!</slash_contact_chat_message_no_contact>
+	<slash_masteradmins_description>Zeigt eine Liste der aktiven MasterAdmins an</slash_masteradmins_description>
+	<slash_masteradmins_window_title>Derzeit aktive MasterAdmins</slash_masteradmins_window_title>
+	<slash_admins_description>Zeigt eine Liste der aktiven Admins an</slash_admins_description>
+	<slash_admins_window_title>Derzeit aktive Admins</slash_admins_window_title>
+	<slash_operators_description>Zeigt eine Liste der aktiven Operator an</slash_operators_description>
+	<slash_operators_window_title>Derzeit aktive Operators</slash_operators_window_title>
+	<slash_plugins_description>Zeigt eine List von aktiven Plug-ins an</slash_plugins_description>
+	<slash_plugins_heading_filename>Dateiname</slash_plugins_heading_filename>
+	<slash_plugins_heading_description>Beschreibung</slash_plugins_heading_description>
+	<slash_plugins_heading_version_build>Version (Build)</slash_plugins_heading_version_build>
+	<slash_plugins_window_title>Derzeit aktivierte Plug-ins</slash_plugins_window_title>
+	<slash_time_description>Zeigt die aktuelle Serverzeit und Datum an</slash_time_description>
+	<slash_time_chat_message>{#server}» Aktuelle Serverzeit: {#highlite}{1}{#server} am {#highlite}{2}</slash_time_chat_message>
+	<slash_uptime_description>Zeigt die Betriebszeit vom Server</slash_uptime_description>
+	<slash_uptime_chat_message>{#server}» Server aktiv seit: {#highlite}{1}</slash_uptime_chat_message>
+	<no_operators_configured>Keine Betreiber eingerichtet</no_operators_configured>
+	<no_admins_configured>Keine Administratoren eingerichtet</no_admins_configured>
+	<no_masteradmins_configured>Keine Master-Administratoren eingerichtet</no_masteradmins_configured>
+</locales>

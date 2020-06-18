@@ -14,4 +14,4 @@ Manages Player Ranking from the dedicated server.
 
 | Members								| Example data or description
 |-----------------------------------------------------------------------|----------------------------
-| `$aseco->server->rankings->ranking_list`				| Array of [Class Ranking](/Development/Classes/Ranking.php) objects
+| `$aseco->server->rankings->ranking_list`				| Array of [Class Ranking](/development/classes/ranking.php) objects

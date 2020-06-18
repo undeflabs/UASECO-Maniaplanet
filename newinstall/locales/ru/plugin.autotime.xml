@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<!-- common messages -->
+	<medal_author>Авторская медаль</medal_author>
+	<medal_gold>Золотая медаль</medal_gold>
+	<medal_silver>Серебряная медаль</medal_silver>
+	<medal_bronze>Бронзовая медаль</medal_bronze>
+
+
+	<!-- plugin messages -->
+	<plugin_description>Изменяет время следующей карты, ориентируясь на авторское время.</plugin_description>
+	<message_default>{#server}»{#emotic} Установлено время по умолчанию для карты {#highlite}{1}{#emotic} - {#highlite}{2}{#emotic}, {#highlite}{3}{#emotic} - {#highlite}{4}</message_default>
+	<message_new>{#server}»{#emotic} Установлено время для карты {#highlite}{1}{#emotic} - {#highlite}{2}{#emotic}, {#highlite}{3}{#emotic} - {#highlite}{4}</message_new>
+	<message_minimum>{#server}»{#emotic} Установлено минимальное время для карты {#highlite}{1}{#emotic} - {#highlite}{2}{#emotic}, {#highlite}{3}{#emotic} - {#highlite}{4}</message_minimum>
+	<message_maximum>{#server}»{#emotic} Установлено максимальное время для карты {#highlite}{1}{#emotic} - {#highlite}{2}{#emotic}, {#highlite}{3}{#emotic} - {#highlite}{4}</message_maximum>
+</locales>

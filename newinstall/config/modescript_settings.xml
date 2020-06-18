@@ -203,12 +203,14 @@
 		<allow_respawn>true</allow_respawn>
 
 		<!--
-		Further details: https://forum.maniaplanet.com/viewtopic.php?p=290478#p290478
+		This setting control the behavior of the respawn button. It overrides the respawn behavior set by the game mode script and the `<allow_respawn>` setting.
+		It can takes one of the following values:
 		0: mode default
 		1: normal
 		2: do nothing
 		3: give up before first CP
 		4: always give up
+		Further details: https://forum.maniaplanet.com/viewtopic.php?p=290478#p290478
 		//-->
 		<respawn_behaviour>0</respawn_behaviour>
 
@@ -242,11 +244,14 @@
 			<!-- Time limit in seconds, until the next Map is loaded -->
 			<time_limit>300</time_limit>
 
-			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 seconds warm up, set to '-1' to disable a warm up timer -->
 			<warm_up_duration>-1</warm_up_duration>
 
 			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
 			<warm_up_number>0</warm_up_number>
+
+			<!-- Use laps number from map, "== 0" independant laps, "> 0" force laps number -->
+			<force_laps_number>0</force_laps_number>
 		</timeattack>
 
 
@@ -257,7 +262,7 @@
 		https://doc.maniaplanet.com/dedicated-server/references/settings-list-for-nadeo-gamemodes#rounds-roundsbase
 		//-->
 		<rounds>
-			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 seconds warm up, set to '-1' to disable a warm up timer -->
 			<warm_up_duration>-1</warm_up_duration>
 
 			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
@@ -320,7 +325,7 @@
 			<!-- The number of points lead a team must have to win the Map -->
 			<points_gap>1</points_gap>
 
-			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 seconds warm up, set to '-1' to disable a warm up timer -->
 			<warm_up_duration>-1</warm_up_duration>
 
 			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
@@ -353,7 +358,7 @@
 
 		<!--
 		Settings for Laps.Script.txt
-		https://www.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#laps
+		https://doc.maniaplanet.com/documentation/dedicated-server/references/settings-list-for-nadeo-gamemodes#laps
 		//-->
 		<laps>
 			<!-- Time limit in seconds, until the next Map is loaded -->
@@ -365,7 +370,7 @@
 			<!-- Force number of laps, '-1' to disable -->
 			<force_laps_number>5</force_laps_number>
 
-			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 seconds warm up, set to '-1' to disable a warm up timer -->
 			<warm_up_duration>-1</warm_up_duration>
 
 			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
@@ -497,7 +502,7 @@
 			<!--  Allow the players who are waiting for a match to play on different maps, default are 600 sec. -->
 			<waiting_time_max>600</waiting_time_max>
 
-			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 secounds warm up, set to '-1' to disable a warm up timer -->
+			<!-- Duration of the warm up phase in rounds (e.g. '20' for 20 seconds warm up, set to '-1' to disable a warm up timer -->
 			<warm_up_duration>-1</warm_up_duration>
 
 			<!-- Number of warm up, set to '0' to disable or to '2' for two warum up rounds -->
@@ -562,6 +567,9 @@
 		<!-- URL of the matchmaking API. If you don't plan to use a custom matchmaking function leave this setting at its default value. -->
 		<matchmaking_api_url>https://matchmaking.maniaplanet.com/v8</matchmaking_api_url>
 
+		<!-- A comma separated list of match servers logins -->
+		<matchmaking_match_servers></matchmaking_match_servers>
+
 		<!--
 		This is the most important setting, it can take one of these values:
 		0 -> matchmaking turned off, standard server
@@ -607,6 +615,12 @@
 
 		<!-- Disable lobby UI -->
 		<lobby_disable_ui>false</lobby_disable_ui>
+
+		<!-- Enable or disable the aggressive transfert mechanism -->
+		<lobby_aggressive_transfer>true</lobby_aggressive_transfer>
+
+		<!-- Kick timed out players -->
+		<kick_timed_out_players>true</kick_timed_out_players>
 
 		<!-- This message is displayed in the chat to inform the players that an error occured in the matchmaking system. -->
 		<matchmaking_error_message>An error occured in the matchmaking API. If the problem persist please try to contact this server administrator.</matchmaking_error_message>

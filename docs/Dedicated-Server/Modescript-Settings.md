@@ -13,6 +13,7 @@
 | Setting								| Default value							| Description
 |-----------------------------------------------------------------------|---------------------------------------------------------------|-------------
 | `S_MatchmakingAPIUrl`							| https://matchmaking.maniaplanet.com/v8			| URL of the matchmaking API. If you do not plan to use a custom matchmaking function leave this setting at its default value.
+| `S_MatchmakingMatchServers`						| ''								| A comma separated list of match servers logins
 | `S_MatchmakingMode`							| 0								| This is the most important setting. It can take one of these five values : 0 -> matchmaking turned off, standard server; 1 -> matchmaking turned on, use this server as a lobby server; 2 -> matchmaking turned on, use this server as a match server; 3 -> matchmaking turned off, use this server as a universal lobby server; 4 -> matchmaking turned off, use this server as a universal match server.
 | `S_MatchmakingRematchRatio`						| -1.0								| Set the minimum ratio of players that have to agree to play a rematch before launching one. The value range from 0.0 to 1.0. Any negative value turns off the rematch vote.
 | `S_MatchmakingRematchNbMax`						| 2								| Set the maximum number of consecutive rematches possible.
@@ -25,7 +26,9 @@
 | `S_LobbyMatchmakerTime`						| 8								| Duration (in seconds) of the matchmaking function. It allows the players to see who they will play their match with or cancel it if necessary.
 | `S_LobbyDisplayMasters`						| true								| Display a list of Masters players in the lobby.
 | `S_LobbyDisableUI`							| false								| Disable lobby UI
+| `S_LobbyAggressiveTransfer`						| True								| Enable or disable the aggressive transfert mechanism
 | `S_MatchmakingErrorMessage`						| An error occured in the matchmaking API. If the problem persist please try to contact this server administrator.	| This message is displayed in the chat to inform the players that an error occured in the matchmaking system.
+| `S_KickTimedOutPlayers`						| True								| Kick timed out players
 | `S_MatchmakingLogAPIError`						| false								| Log the API errors. You can activate it if something doesn't work and you have to investigate. Otherwise it's better to leave it turned off because this can quickly write huge log files.
 | `S_MatchmakingLogAPIDebug`						| false								| Same as above, only turn it on if necessary.
 | `S_MatchmakingLogMiscDebug`						| false								| Same as above, only turn it on if necessary.
@@ -43,8 +46,9 @@
 | Setting								| Default value							| Description
 |-----------------------------------------------------------------------|---------------------------------------------------------------|-------------
 | `S_ChatTime`								| 15								| Chat time at the end of the map
+| `S_UseClublinks`							| False								| Use the players clublinks, or otherwise use the default teams
+| `S_UseClublinksSponsors`						| False								| Display the clublinks sponsors
 | `S_AllowRespawn`							| true								| Allow the players to respawn or not
-| `S_WarmUpDuration`							| -1								| Duration of the warm up phase (-1 to disable)
 | `S_UseScriptCallbacks`						| false								| Turn on/off the script callbacks, useful for server manager
 | `S_UseLegacyCallbacks`						| true								| Turn on/off the legacy callbacks
 | `S_ScoresTableStylePath`						| ""								| Try to load a scores table style from an XML file
@@ -76,7 +80,11 @@
 | Setting								| Default value							| Description
 |-----------------------------------------------------------------------|---------------------------------------------------------------|-------------
 | `S_PointsLimit`							| 50								| Points limit (<= 0 to disable)
+| `S_RoundsPerMap`							| -1								| Number of round to play on one map before going to the next one (negative value to disable)
+| `S_MapsPerMatch`							| -1								| Number of maps to play before finishing the match (negative value to disable)
 | `S_UseTieBreak`							| true								| Continue to play the map until the tie is broken
+| `S_WarmUpNb`								| 0								| Number of warm up
+| `S_WarmUpDuration`							| 2								| Duration of the warm up phase (<= 0 to disable)
 
 
 
@@ -89,6 +97,9 @@
 | Setting								| Default value							| Description
 |-----------------------------------------------------------------------|---------------------------------------------------------------|-------------
 | `S_TimeLimit`								| 300								| Time limit
+| `S_WarmUpNb`								| 0								| Number of warm up
+| `S_WarmUpDuration`							| 0								| Duration of the warm up phase (<= 0 to disable)
+| `S_ForceLapsNb`							| 0								| Use laps number from map, "== 0" independant laps, "> 0" force laps number
 
 
 
@@ -103,11 +114,20 @@
 | `S_PointsLimit`							| 5								| Points limit (<= 0 to disable)
 | `S_MaxPointsPerRound`							| 6								| The maxium number of points attributed to the first player to cross the finish line
 | `S_PointsGap`								| 1								| The number of points lead a team must have to win the map
-| `S_UsePlayerClublinks`						| false								| Use the players clublinks, or otherwise use the default teams
+| `S_UseCustomPointsRepartition`					| False								| Use a custom points repartition defined with xmlrpc
+| `S_CumulatePoints`							| False								| At the end of the round both teams win their players points
+| `S_RoundsPerMap`							| -1								| Number of rounds to play on one map before going to the next one (0 or less to disable)
+| `S_MapsPerMatch`							| -1								| Number of maps to play before finishing the match (0 or less to disable)
+| `S_UseTieBreak`							| True								| Continue to play the map until the tie is broken
+| `S_WarmUpNb`								| 0								| Number of warm up
+| `S_WarmUpDuration`							| 0								| Duration of the warm up phase (<= 0 to disable)
+| `S_NbPlayersPerTeamMax`						| 3								| Maximum number of players per team in matchmaking
+| `S_NbPlayersPerTeamMin`						| 3								| Minimum number of players per team in matchmaking
 
 
 
 ***
+
 
 
 ## [Laps](_#Laps)
@@ -117,6 +137,9 @@
 | `S_TimeLimit`								| 0								| Time limit (<= 0 to disable)
 | `S_ForceLapsNb`							| 5								| Number of Laps (<= 0 to disable)
 | `S_FinishTimeout`							| -1								| Finish timeout (<= 0 to disable)
+| `S_WarmUpNb`								| 0								| Number of warm up
+| `S_WarmUpDuration`							| 0								| Duration of the warm up phase (<= 0 to disable)
+| `S_DisableGiveUp`							| False								| Prevent players from giving up the race
 
 
 
@@ -130,7 +153,10 @@
 |-----------------------------------------------------------------------|---------------------------------------------------------------|-------------
 | `S_RoundsPerMap`							| 5								| Rounds per map
 | `S_NbOfWinners`							| 3								| Number of winners
-| `S_WarmUpDuration`							| 2								| Duration of the warm up phase (<= 0 to disable)
+| `S_WarmUpNb`								| 0								| Number of warm up
+| `S_WarmUpDuration`							| 0								| Duration of the warm up phase (<= 0 to disable)
+| `S_NbOfPlayersMax`							| 4								| Maximum number of players in matchmaking
+| `S_NbOfPlayersMin`							| 4								| Minimum number of players in matchmaking
 
 
 
@@ -170,6 +196,7 @@
 | `S_PauseBetweenRound`							| 15								| Pause duration between rounds.
 | `S_WaitingTimeMax`							| 600								| Maximum waiting time before next map.
 | `S_WaypointEventDelay`						| 500								| Waypoint event buffer delay.
-| `S_UsePlayerClublinks`						| false								| Use the players clublinks, or otherwise use the default teams
+| `S_WarmUpNb`								| 0								| Number of warm up
+| `S_WarmUpDuration`							| 0								| Duration of one warm up
 | `S_NbPlayersPerTeamMax`						| 3								| Maximum number of players per team in matchmaking
 | `S_NbPlayersPerTeamMin`						| 3								| Minimum number of players per team in matchmaking

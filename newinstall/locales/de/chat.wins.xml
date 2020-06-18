@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	askuri
+	//-->
+<!-- common messages -->
+	<wins_other>{#server}» {#record}{#highlite}{1}{#record} hat bereits {#highlite}{2}{#record} Rennen gewonnen</wins_other>
+	<wins>{#server}» {#record}Du hast bereits {#highlite}{1}{#record} Rennen gewonnen</wins>
+
+<!-- plugin messages -->
+	<plugin_description>Zeigt an wieviele Rennen du oder der angegebene Spieler bereits gewonnen hast</plugin_description>
+	<message_player_not_found>{#server}» {#error}Der angegebene Spieler {#highlite}{1}{#error} wurde nicht gefunden!</message_player_not_found>
+</locales>

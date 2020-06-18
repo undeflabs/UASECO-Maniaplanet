@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+	<plugin_description>Handhabt Platzierungen und persönliche Bestzeiten, sowie die dazugehörigen Chat-Befehle.</plugin_description>
+	<slash_chat_pb_description>Zeigt Deine persönliche Bestzeit auf der aktuellen Strecke</slash_chat_pb_description>
+	<slash_chat_rank_description>Zeigt Deine aktuelle Platzierung auf dem Server</slash_chat_rank_description>
+	<slash_chat_top100_description>Zeigt die Top 100 Spieler, die am besten platziert sind.</slash_chat_top100_description>
+	<slash_chat_topwins_description>Zeigt die Top 100 Spieler, die am öftesten gewonnen haben</slash_chat_topwins_description>
+	<slash_chat_active_description>Zeigt die Top 100 Spieler, die am aktivsten sind</slash_chat_active_description>
+	<info_message>Wer ist der Spieler, der am öftesten gewonnen hat? Benutze "/topwins" um es herauszufinden!</info_message>
+	<notonrelay>{#server}» {#error}Befehl nicht verfügbar auf Servern, auf die übertragen wird (relay)</notonrelay>
+	<no_ranked>{#server}» {#error}Keine Spieler gefunden, die eine Platzierung haben!</no_ranked>
+	<topwins_title>Aktuelle TOP 100 Gewinner</topwins_title>
+	<chat_active_title>TOP 100 der Spieler, die am aktivsten sind</chat_active_title>
+	<pb>{#server}» {#record}Persönliche Bestzeit: {#highlite}{1}{#record}({#rank}{2}{#record}) Durchschnitt: {#highlite}{3}</pb>
+	<pb_none>{#server}» {#error}Du hast noch keinen lokalen Rekord auf dieser Strecke</pb_none>
+	<rank>{#server}» {#record}Deine Platzierung auf dem Server ist {#rank}{1}{#record} von {#highlite}{2}{#record} Durchschnitt: {#highlite}{3}</rank>
+	<rank_none>{#server}» {#record}Du musst mindestens {#highlite}{1}{#record} lokale Rekorde auf diesem Server haben für eine Platzierung!</rank_none>
+</locales>

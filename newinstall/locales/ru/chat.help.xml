@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Показывает справку по общедоступным командам чата</plugin_description>
+	<slash_help_description>Показывает справку по доступным командам чата</slash_help_description>
+	<help_window_title>Доступные команды чата</help_window_title>
+</locales>

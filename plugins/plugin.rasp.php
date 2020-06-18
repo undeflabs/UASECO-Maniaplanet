@@ -46,10 +46,11 @@ class PluginRasp extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-06-07');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-10-03');
 		$this->setCopyright('2014 - 2019 by undef.de');
-		$this->setDescription('Provides rank and personal best handling, and related chat commands.');
+		$this->setDescription(new Message('plugin.rasp', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
@@ -64,11 +65,11 @@ class PluginRasp extends Plugin {
 		$this->registerEvent('onPlayerFinish',		'onPlayerFinish');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 
-		$this->registerChatCommand('pb',	'chat_pb',	'Shows your personal best on current map',	Player::PLAYERS);
-		$this->registerChatCommand('rank',	'chat_rank',	'Shows your current server rank',		Player::PLAYERS);
-		$this->registerChatCommand('top100',	'chat_top100',	'Displays top 100 best ranked players',		Player::PLAYERS);
-		$this->registerChatCommand('topwins',	'chat_topwins',	'Displays top 100 victorious players',		Player::PLAYERS);
-		$this->registerChatCommand('active',	'chat_active',	'Displays top 100 most active players',		Player::PLAYERS);
+		$this->registerChatCommand('pb',	'chat_pb',	new Message('plugin.rasp', 'slash_chat_pb_description'),	Player::PLAYERS);
+		$this->registerChatCommand('rank',	'chat_rank',	new Message('plugin.rasp', 'slash_chat_rank_description'),	Player::PLAYERS);
+		$this->registerChatCommand('top100',	'chat_top100',	new Message('plugin.rasp', 'slash_chat_top100_description'),	Player::PLAYERS);
+		$this->registerChatCommand('topwins',	'chat_topwins',	new Message('plugin.rasp', 'slash_chat_topwins_description'),	Player::PLAYERS);
+		$this->registerChatCommand('active',	'chat_active',	new Message('plugin.rasp', 'slash_chat_active_description'),	Player::PLAYERS);
 	}
 
 	/*
@@ -163,7 +164,7 @@ class PluginRasp extends Plugin {
 		}
 
 		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Who is the most victorious player? Use "/topwins" to find out!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage(new Message('plugin.rasp', 'info_message'));
 		}
 	}
 
@@ -266,8 +267,8 @@ class PluginRasp extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->sendChatMessage($message, $login);
+			$message = new Message('plugin.rasp', 'notonrelay');
+			$message->sendChatMessage($login);
 			return;
 		}
 
@@ -360,7 +361,8 @@ class PluginRasp extends Plugin {
 				$window->send($player, 0, false);
 			}
 			else {
-				$aseco->sendChatMessage('{#server}» {#error}No ranked players found!', $player->login);
+				$msg = new Message('plugin.rasp', 'no_ranked');
+				$msg->sendChatMessage($player->login);
 			}
 			$res->free_result();
 		}
@@ -419,7 +421,7 @@ class PluginRasp extends Plugin {
 					'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
 				);
 				$settings_content = array(
-					'title'			=> 'Current TOP 100 Victors',
+					'title'			=> (new Message('plugin.rasp', 'topwins_title'))->finish($login),
 					'data'			=> $wins,
 					'about'			=> 'RASP/'. $this->getVersion(),
 					'mode'			=> 'columns',
@@ -488,7 +490,7 @@ class PluginRasp extends Plugin {
 				'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
 			);
 			$settings_content = array(
-				'title'			=> 'TOP 100 of the most active Players',
+				'title'			=> (new Message('plugin.rasp', 'chat_active_title'))->finish($login),
 				'data'			=> $active,
 				'about'			=> 'RASP/'. $this->getVersion(),
 				'mode'			=> 'columns',
@@ -718,16 +720,16 @@ class PluginRasp extends Plugin {
 		}
 
 		if ($found) {
-			$message = $aseco->formatText($this->messages['PB'][0],
-				$aseco->formatTime($ret['time']),
+			$message = new Message('plugin.rasp', 'pb');
+			$message->addPlaceholders($aseco->formatTime($ret['time']),
 				$ret['rank'],
 				$avg
 			);
-			$aseco->sendChatMessage($message, $player->login);
+			$message->sendChatMessage($player->login);
 		}
 		else {
-			$message = $this->messages['PB_NONE'][0];
-			$aseco->sendChatMessage($message, $player->login);
+			$message = new Message('plugin.rasp', 'pb_none');
+			$message->sendChatMessage($player->login);
 		}
 	}
 
@@ -742,18 +744,17 @@ class PluginRasp extends Plugin {
 
 		$player = $aseco->server->players->getPlayerByLogin($login);
 		if ($player->server_rank > 0) {
-			$message = $aseco->formatText($this->messages['RANK'][0],
-				$player->server_rank,
+			$message = new Message('plugin.rasp', 'rank');
+			$message->addPlaceholders($player->server_rank,
 				$player->server_rank_total,
 				$player->server_rank_average
 			);
-			$aseco->sendChatMessage($message, $login);
+			$message->sendChatMessage($login);
 		}
 		else {
-			$message = $aseco->formatText($this->messages['RANK_NONE'][0],
-				$aseco->settings['server_rank_min_records']
-			);
-			$aseco->sendChatMessage($message, $login);
+			$message = new Message('plugin.rasp', 'rank_none');
+			$message->addPlaceholders($aseco->settings['server_rank_min_records']);
+			$message->sendChatMessage($login);
 		}
 	}
 
@@ -998,9 +999,6 @@ class PluginRasp extends Plugin {
 		if (file_exists($config_file)) {
 			$aseco->console('[Rasp] Loading config file ['. $config_file .']');
 			if ($xml = $aseco->parser->xmlToArray($config_file, true, true)) {
-
-				/***************************** MESSAGES **************************************/
-				$this->messages			= $xml['RASP']['MESSAGES'][0];
 
 				/***************************** FEATURES **************************************/
 				$this->feature_ranks		= $aseco->string2bool($xml['RASP']['FEATURE_RANKS'][0]);

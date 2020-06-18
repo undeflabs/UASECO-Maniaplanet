@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	askuri
+	//-->
+
+	<plugin_description>Zeigt Spielerstatistiken und persönliche Einstellungen</plugin_description>
+	<slash_stats>Zeigt die Statistiken eines Spielers</slash_stats>
+	<slash_settings>Zeigt die Einstellungen eines Spielers</slash_settings>
+	<info_message>Deine persänlichen Statistiken kannst du mit "/stats" ansehen</info_message>
+</locales>

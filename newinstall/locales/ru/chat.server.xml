@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Информация о сервере и контроллере UASECO</plugin_description>
+	<slash_uaseco_description>Информация о контроллере UASECO</slash_uaseco_description>
+	<slash_uaseco_chat_message>{#server}» $L[{1}]{2}$L версия {#highlite}{3}{#server} сборка {#highlite}{4}</slash_uaseco_chat_message>
+	<slash_contact_description>Контактная информация</slash_contact_description>
+	<slash_contact_chat_message>{#server}» Вы можете связаться с нами через {#highlite}{1}</slash_contact_chat_message>
+	<slash_contact_chat_message_no_contact>{#server}» Контактной информации пока нет!</slash_contact_chat_message_no_contact>
+	<slash_masteradmins_description>Показывает владельцев онлайн</slash_masteradmins_description>
+	<slash_masteradmins_window_title>Владельцы онлайн</slash_masteradmins_window_title>
+	<slash_admins_description>Показывает администраторов онлайн</slash_admins_description>
+	<slash_admins_window_title>Администраторы онлайн</slash_admins_window_title>
+	<slash_operators_description>Показывает помощников онлайн</slash_operators_description>
+	<slash_operators_window_title>Помощники онлайн</slash_operators_window_title>
+	<slash_plugins_description>Показывает список активных плагинов</slash_plugins_description>
+	<slash_plugins_heading_filename>Имя</slash_plugins_heading_filename>
+	<slash_plugins_heading_description>Описание</slash_plugins_heading_description>
+	<slash_plugins_heading_version_build>Версия (Сборка)</slash_plugins_heading_version_build>
+	<slash_plugins_window_title>Активные плагины</slash_plugins_window_title>
+	<slash_time_description>Показывает дату и время сервера</slash_time_description>
+	<slash_time_chat_message>{#server}» Сейчас на сервере: {#highlite}{1}{#server} на {#highlite}{2}</slash_time_chat_message>
+	<slash_uptime_description>Показывает время работы сервера</slash_uptime_description>
+	<slash_uptime_chat_message>{#server}» Сервер онлайн уже: {#highlite}{1}</slash_uptime_chat_message>
+</locales>

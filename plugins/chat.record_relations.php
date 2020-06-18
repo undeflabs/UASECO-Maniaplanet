@@ -45,10 +45,10 @@ class PluginRecordRelations extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setCoAuthors('askuri');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setCoAuthors('askuri', 'aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-10-03');
+		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('chat.record_relations', 'plugin_description'));
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
@@ -70,7 +70,7 @@ class PluginRecordRelations extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$msg = new Message('common', 'notonrelay');
+			$msg = new Message('chat.record_relations', 'notonrelay');
 			$msg->sendChatMessage($login);
 			return;
 		}
@@ -80,15 +80,15 @@ class PluginRecordRelations extends Plugin {
 			$record = $aseco->plugins['PluginLocalRecords']->records->getRecord(0);
 
 			// show chat message
-			$message = (new Message('common', 'first_record'))->finish($login);
 
-			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders(1, $aseco->stripStyles($record->player->nickname),	$aseco->formatTime($record->score));
-			$message.= $msg->finish($login);
-
-			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
-
-			$aseco->sendChatMessage($message, $login);
+			$message = new Message('chat.record_relations', 'first_record')
+			$msg = new Message('chat.record_relations', 'ranking_record_new');
+			$msg->addPlaceholders(1,
+				$aseco->stripStyles($record->player->nickname),
+				$aseco->formatTime($record->score)
+			);
+			$message->addPlaceholders($msg);
+			$message->sendChatMessage($login);
 		}
 		else {
 			$msg = new Message('chat.rasp_nextrank', 'no_records_found');
@@ -106,7 +106,7 @@ class PluginRecordRelations extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$msg = new Message('common', 'notonrelay');
+			$msg = new Message('chat.record_relations', 'notonrelay');
 			$msg->sendChatMessage($login);
 			return;
 		}
@@ -116,15 +116,14 @@ class PluginRecordRelations extends Plugin {
 			$record = $aseco->plugins['PluginLocalRecords']->records->getRecord($total-1);
 
 			// show chat message
-			$message = (new Message('common', 'last_record'))->finish($login);
-
-			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders($total, $aseco->stripStyles($record->player->nickname),	$aseco->formatTime($record->score));
-			$message.= $msg->finish($login);
-
-			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
-
-			$aseco->sendChatMessage($message, $login);
+			$message = new Message('chat.record_relations', 'last_record');
+			$msg = new Message('chat.record_relations', 'ranking_record_new');
+			$msg->addPlaceholders($total,
+				$aseco->stripStyles($record->player->nickname),
+				$aseco->formatTime($record->score)
+			);
+			$message->addPlaceholders($msg);
+			$message->sendChatMessage($login);
 		}
 		else {
 			$msg = new Message('chat.rasp_nextrank', 'no_records_found');
@@ -146,7 +145,7 @@ class PluginRecordRelations extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$msg = new Message('common', 'notonrelay');
+			$msg = new Message('chat.record_relations', 'notonrelay');
 			$msg->sendChatMessage($login);
 			return;
 		}
@@ -176,18 +175,14 @@ class PluginRecordRelations extends Plugin {
 				$ths = $diff - ($sec * 1000);
 
 				// show chat message
-				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders($rank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
-				$message1.= $msg->finish($login);
-				substr($message1, 0, strlen($message1)-2);
+				$msg1 = new Message('chat.record_relations', 'ranking_record_new');
+				$msg1->addPlaceholders($rank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
 
-				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders($nextrank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
-				$message2.= $msg->finish($login);
-				substr($message2, 0, strlen($message1)-2);
+				$msg2 = new Message('chat.record_relations', 'ranking_record_new');
+				$msg2->addPlaceholders($nextrank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
 
-				$msg = new Message('common', 'diff_record');
-				$msg->addPlaceholders($message1, $message2,	sprintf("%d.%03d", $sec, $ths));
+				$msg = new Message('chat.record_relations', 'diff_record');
+				$msg->addPlaceholders($msg1, $msg2,	sprintf("%d.%03d", $sec, $ths));
 				$msg->sendChatMessage($login);
 			}
 			else {
@@ -222,18 +217,14 @@ class PluginRecordRelations extends Plugin {
 					$ths = $diff - ($sec * 1000);
 
 					// show chat message
-					$msg = new Message('common', 'ranking_record_new');
-					$msg->addPlaceholders('PB', $aseco->stripStyles($command['author']->nickname), $aseco->formatTime($unranked->Score));
-					$message1.= $msg->finish($login);
-					substr($message1, 0, strlen($message1)-2);
+					$msg1 = new Message('chat.record_relations', 'ranking_record_new');
+					$msg1->addPlaceholders('PB', $aseco->stripStyles($command['author']->nickname), $aseco->formatTime($unranked->Score));
 
-					$msg = new Message('common', 'ranking_record_new');
-					$msg->addPlaceholders($total, $aseco->stripStyles($last->player->nickname),	$aseco->formatTime($last->score));
-					$message2.= $msg->finish($login);
-					substr($message2, 0, strlen($message1)-2);
+					$msg2 = new Message('chat.record_relations', 'ranking_record_new');
+					$msg2->addPlaceholders($total, $aseco->stripStyles($last->player->nickname),	$aseco->formatTime($last->score));
 
-					$msg = new Message('common', 'diff_record');
-					$msg->addPlaceholders($message1, $message2,	sprintf("%d.%03d", $sec, $ths));
+					$msg = new Message('chat.record_relations', 'diff_record');
+					$msg->addPlaceholders($msg1, $msg2,	sprintf("%d.%03d", $sec, $ths));
 					$msg->sendChatMessage($login);
 				}
 				else {
@@ -258,7 +249,7 @@ class PluginRecordRelations extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$msg = new Message('common', 'notonrelay');
+			$msg = new Message('chat.record_relations', 'notonrelay');
 			$msg->sendChatMessage($login);
 			return;
 		}
@@ -286,18 +277,14 @@ class PluginRecordRelations extends Plugin {
 				$ths = $diff - ($sec * 1000);
 
 				// show chat message
-				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders($rank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
-				$message1.= $msg->finish($login);
-				substr($message1, 0, strlen($message1)-2);
+				$msg1 = new Message('chat.record_relations', 'ranking_record_new');
+				$msg1->addPlaceholders($rank + 1, $aseco->stripStyles($record->player->nickname), $aseco->formatTime($record->score));
 
-				$msg = new Message('common', 'ranking_record_new');
-				$msg->addPlaceholders(1, $aseco->stripStyles($first->player->nickname), $aseco->formatTime($first->score));
-				$message2.= $msg->finish($login);
-				substr($message2, 0, strlen($message1)-2);
+				$msg2 = new Message('chat.record_relations', 'ranking_record_new');
+				$msg2->addPlaceholders(1, $aseco->stripStyles($first->player->nickname), $aseco->formatTime($first->score));
 
-				$msg = new Message('common', 'diff_record');
-				$msg->addPlaceholders($message1, $message2,	sprintf("%d.%03d", $sec, $ths));
+				$msg = new Message('chat.record_relations', 'diff_record');
+				$msg->addPlaceholders($msg1, $msg2,	sprintf("%d.%03d", $sec, $ths));
 				$msg->sendChatMessage($login);
 			}
 			else {
@@ -321,7 +308,7 @@ class PluginRecordRelations extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$msg = new Message('common', 'notonrelay');
+			$msg = new Message('chat.record_relations', 'notonrelay');
 			$msg->sendChatMessage($login);
 			return;
 		}
@@ -337,41 +324,14 @@ class PluginRecordRelations extends Plugin {
 			$ths = $diff - ($sec * 1000);
 
 			// show chat message
-			$message1 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
-				1,
-				$aseco->stripStyles($first->player->nickname),
-				$aseco->formatTime($first->score)
-			);
-			$message1 = substr($message1, 0, strlen($message1)-2);  // strip trailing ", "
+			$msg1 = new Message('chat.record_relations', 'ranking_record_new');
+			$msg1->addPlaceholders(1, $aseco->stripStyles($first->player->nickname), $aseco->formatTime($first->score));
 
-			$message2 = $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
-				$total,
-				$aseco->stripStyles($last->player->nickname),
-				$aseco->formatTime($last->score)
-			);
-			$message2 = substr($message2, 0, strlen($message2)-2);  // strip trailing ", "
+			$msg2 = new Message('chat.record_relations', 'ranking_record_new');
+			$msg2->addPlaceholders($total, $aseco->stripStyles($last->player->nickname), $aseco->formatTime($last->score));
 
-			$message = $aseco->formatText($aseco->getChatMessage('DIFF_RECORD'),
-				$message1,
-				$message2,
-				sprintf("%d.%03d", $sec, $ths)
-			);
-
-			$aseco->sendChatMessage($message, $login);
-
-
-			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders(1, $aseco->stripStyles($first->player->nickname), $aseco->formatTime($first->score));
-			$message1.= $msg->finish($login);
-			substr($message1, 0, strlen($message1)-2);
-
-			$msg = new Message('common', 'ranking_record_new');
-			$msg->addPlaceholders($total, $aseco->stripStyles($last->player->nickname), $aseco->formatTime($last->score));
-			$message2.= $msg->finish($login);
-			substr($message2, 0, strlen($message1)-2);
-
-			$msg = new Message('common', 'diff_record');
-			$msg->addPlaceholders($message1, $message2,	sprintf("%d.%03d", $sec, $ths));
+			$msg = new Message('chat.record_relations', 'diff_record');
+			$msg->addPlaceholders($msg1, $msg2,	sprintf("%d.%03d", $sec, $ths));
 			$msg->sendChatMessage($login);
 		}
 		else {

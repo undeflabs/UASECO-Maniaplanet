@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+<!-- plugin messages -->
+	<plugin_description>Legt die Spielzeit einer Strecke fest, liefert Strecken- und Zeit-Info, zeigt den Namen der Datei, die das Aussehen der Strecke modifiziert (Mod) und den (Datei-)Namen des Liedes der aktuellen Strecke.</plugin_description>
+	<slash_chat_map_description>Zeigt Infos zur aktuellen Strecke</slash_chat_map_description>
+	<slash_chat_song_description>Zeigt den Dateinamen des Liedes der aktuellen Strecke</slash_chat_song_description>
+	<slash_chat_mod_description>Zeigt den Namen der Datei, die das Aussehen der Strecke modifiziert (Mod).</slash_chat_mod_description>
+	<slash_chat_nextmap_description>Zeigt den Namen der nächsten Strecke</slash_chat_nextmap_description>
+	<slash_chat_playtime_description>Zeigt die Laufzeit der aktuellen Strecke an</slash_chat_playtime_description>
+	<map>{#server}» Aktuelle Strecke {#highlite}{1} {#server}von {#highlite}{2} {#server}Autor: {#highlite}{3} {#server}Gold: {#highlite}{4} {#server}Silber: {#highlite}{5} {#server}Bronze: {#highlite}{6} {#server}(Anzeige-)Kosten: {#highlite}{7}</map>
+	<current_map>{#server}» Aktuelle Strecke {#highlite}{1} {#server}von {#highlite}{2} {#server}Autor: {#highlite}{3}</current_map>
+	<next_map>{#server}» Die nächste Strecke ist: {#timelite}[{1}] {#highlite}{2}</next_map>
+	<song>{#server}» Strecke {#highlite}{1} {#server}spielt das Lied: {#highlite}{2}</song>
+	<no_song>{#server}» {#error}Kein Strecken-Lied gefunden! {1}</no_song>
+	<no_song_proposal>Versuche es anstattdessen mit {#highlite}$i /music current</no_song_proposal>
+	<mod>{#server}» Strecke {#highlite}{1} {#server}hat Mod: {#highlite}{2} {#server}({#highlite}{3}{#server}){4}</mod>
+	<no_mod>{#server}» {#error}Kein Mod auf der Strecke gefunden!</no_mod>
+	<notonrelay>{#server}» {#error}Befehl nicht verfügbar auf Servern, auf die übertragen wird (relay)</notonrelay>
+	<playtime>{#server}» Aktuelle Strecke {#highlite}{1}{#server} lief {#highlite}{2}</playtime>
+	<playtime_replay>{#server}({#highlite}{1}{#server} mal wiederholt, insgesamt {#highlite}{2}{#server})</playtime_replay>
+	<playtime_finish>{#server}» Aktuelle Strecke {#highlite}{1}{#server} beendet nach {#highlite}{2}</playtime_finish>
+</locales>

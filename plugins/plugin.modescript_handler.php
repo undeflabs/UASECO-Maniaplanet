@@ -59,8 +59,8 @@ class PluginModescriptHandler extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.9');
-		$this->setBuild('2019-08-28');
+		$this->setVersion('1.0.12');
+		$this->setBuild('2019-10-11');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.modescript_handler', 'plugin_description'));
 
@@ -290,9 +290,9 @@ class PluginModescriptHandler extends Plugin {
 //
 //
 //			$settings_style = array(
-//				'textcolor'		=> '09FF',
-//				'seperatorcolor'	=> 'FFFF',
 //				'icon'			=> 'Icons64x64_1,ToolLeague1',
+//				'textcolor'		=> '09FF',
+//				'backgroundcolor'	=> '0099FFDD',
 //			);
 //			$settings_content = array(
 //				'title'			=> (new Message('plugin.modescript_handler', 'window_ui_properties'))->finish($player->login),
@@ -367,6 +367,7 @@ class PluginModescriptHandler extends Plugin {
 
 		// MatchMaking
 		$aseco->server->gameinfo->matchmaking['MatchmakingAPIUrl']			= $this->settings['MATCHMAKING'][0]['MATCHMAKING_API_URL'][0];
+		$aseco->server->gameinfo->matchmaking['MatchmakingMatchServers']		= $this->settings['MATCHMAKING'][0]['MATCHMAKING_MATCH_SERVERS'][0];
 		$aseco->server->gameinfo->matchmaking['MatchmakingMode']			= (int)$this->settings['MATCHMAKING'][0]['MATCHMAKING_MODE'][0];
 		$aseco->server->gameinfo->matchmaking['MatchmakingRematchRatio']		= (float)$this->settings['MATCHMAKING'][0]['MATCHMAKING_REMATCH_RATIO'][0];
 		$aseco->server->gameinfo->matchmaking['MatchmakingRematchNbMax']		= (int)$this->settings['MATCHMAKING'][0]['MATCHMAKING_REMATCH_NUMBER_MAX'][0];
@@ -379,6 +380,8 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->matchmaking['LobbyMatchmakerTime']			= (int)$this->settings['MATCHMAKING'][0]['LOBBY_MATCHMAKER_TIME'][0];
 		$aseco->server->gameinfo->matchmaking['LobbyDisplayMasters']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISPLAY_MASTERS'][0]);
 		$aseco->server->gameinfo->matchmaking['LobbyDisableUi']				= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_DISABLE_UI'][0]);
+		$aseco->server->gameinfo->matchmaking['LobbyAggressiveTransfer']		= $aseco->string2bool($this->settings['MATCHMAKING'][0]['LOBBY_AGGRESSIVE_TRANSFER'][0]);
+		$aseco->server->gameinfo->matchmaking['KickTimedOutPlayers']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['KICK_TIMED_OUT_PLAYERS'][0]);
 		$aseco->server->gameinfo->matchmaking['MatchmakingErrorMessage']		= $this->settings['MATCHMAKING'][0]['MATCHMAKING_ERROR_MESSAGE'][0];
 		$aseco->server->gameinfo->matchmaking['MatchmakingLogAPIError']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_API_ERROR'][0]);
 		$aseco->server->gameinfo->matchmaking['MatchmakingLogAPIDebug']			= $aseco->string2bool($this->settings['MATCHMAKING'][0]['MATCHMAKING_LOG_API_DEBUG'][0]);
@@ -414,6 +417,7 @@ class PluginModescriptHandler extends Plugin {
 		$aseco->server->gameinfo->time_attack['TimeLimit']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['TIME_LIMIT'][0];
 		$aseco->server->gameinfo->time_attack['WarmUpNumber']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['WARM_UP_NUMBER'][0];
 		$aseco->server->gameinfo->time_attack['WarmUpDuration']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['WARM_UP_DURATION'][0];
+		$aseco->server->gameinfo->time_attack['ForceLapsNb']		= (int)$this->settings['MODESETUP'][0]['TIMEATTACK'][0]['FORCE_LAPS_NUMBER'][0];
 
 		// Team +RoundsBase
 		$aseco->server->gameinfo->team['PointsLimit']			= (int)$this->settings['MODESETUP'][0]['TEAM'][0]['POINTS_LIMIT'][0];				// RoundsBase
@@ -1537,6 +1541,7 @@ class PluginModescriptHandler extends Plugin {
 				'S_TimeLimit'			=> $aseco->server->gameinfo->time_attack['TimeLimit'],
 				'S_WarmUpNb'			=> $aseco->server->gameinfo->time_attack['WarmUpNumber'],
 				'S_WarmUpDuration'		=> $aseco->server->gameinfo->time_attack['WarmUpDuration'],
+				'S_ForceLapsNb'			=> $aseco->server->gameinfo->time_attack['ForceLapsNb'],
 			);
 		}
 		else if ($aseco->server->gameinfo->mode === Gameinfo::TEAM) {

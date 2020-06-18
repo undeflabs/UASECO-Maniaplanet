@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+	<plugin_description>Handhabt das Stummschalten von Spielern.</plugin_description>
+	<slash_chat_mute_description>Schaltet die Chatnachrichten eines anderen Spielers aus</slash_chat_mute_description>
+	<slash_chat_unmute_description>Macht das Ausschalten von Chatnachrichten eines andern Spielers rückgängig</slash_chat_unmute_description>
+	<slash_chat_mutelist_description>Zeigt eine Liste der stummgeschalteten Spieler</slash_chat_mutelist_description>
+	<slash_chat_refresh_description>Aktualisiert das Chat-Fenster</slash_chat_refresh_description>
+	<round>{#server}» $n{#message}Runde {#highlite}{1}{#message}: {2}</round>
+	<info_message>Benutze "/mute" und "/unmute" um andere Spieler stummzuschalten oder die Stummschaltung aufzuheben und "/mutelist" um stummgeschaltete Spieler anzuzeigen!</info_message>
+	<error>{#server}» {#error}Du kannst {#logina}$i {1} {#highlite}{2}$z$s{#error} nicht stummschalten!</error>
+	<mute>{#server}» Spieler {#highlite}{1}$z$s{#server} ist stummgeschaltet!</mute>
+	<already_muted>{#server}» {#error}Spieler {#highlite}$i {1}$z$s{#error} ist bereits von Dir stummgeschaltet!</already_muted>
+	<unmute>{#server}» Stummschaltung von Spieler {#highlite}{1}$z$s{#server} wurde aufgehoben!</unmute>
+	<not_in_mutelist>{#server}» {#error}Spieler {#highlite}$i {1}$z$s{#error} ist nicht von Dir stummgeschaltet worden!</not_in_mutelist>
+	<none_muted>{#server}» {#error}Keine stummgeschalteten Spieler gefunden!</none_muted>
+	<list_head>Aktuell stummgeschaltete Spieler:</list_head>
+</locales>

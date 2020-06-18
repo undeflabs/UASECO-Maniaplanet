@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Ermöglicht die Verwaltung von Maps von ManiaExchange und zeigt deren Rekorde beim start einer Strecke an</plugin_description>
+	<slash_mxlist_description>Zeigt Strecken von ManiaExchange an</slash_mxlist_description>
+	<chat_records>{#server}» {#record}ManiaExchange Weltrecord: {#highlite}{1}{#record} von {#highlite}{2}</chat_records>
+	<window_title_mxlist>Strecken von ManiaExchange</window_title_mxlist>
+	<window_title_retrieving>Informationen von ManiaExchange angefordert...</window_title_retrieving>
+</locales>

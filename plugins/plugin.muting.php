@@ -46,10 +46,11 @@ class PluginMuting extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-08-08');
-		$this->setCopyright('2014 - 2018 by undef.de');
-		$this->setDescription('Handles individual and global player muting');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-10-03');
+		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setDescription(new Message('plugin.muting', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks',	Dependence::REQUIRED,	'1.0.0', null);
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
@@ -58,10 +59,10 @@ class PluginMuting extends Plugin {
 		$this->registerEvent('onPlayerChat',	'onPlayerChat');
 		$this->registerEvent('onServerChat',	'onServerChat');
 
-		$this->registerChatCommand('mute',	'chat_mute',		'Mute another player\'s chat messages',		Player::PLAYERS);
-		$this->registerChatCommand('unmute',	'chat_unmute',		'UnMute another player\'s chat messages',	Player::PLAYERS);
-		$this->registerChatCommand('mutelist',	'chat_mutelist',	'Display list of muted players',		Player::PLAYERS);
-		$this->registerChatCommand('refresh',	'chat_refresh',		'Refresh chat window',				Player::PLAYERS);
+		$this->registerChatCommand('mute',	'chat_mute',		new Message('plugin.muting', 'slash_chat_mute_description'),		Player::PLAYERS);
+		$this->registerChatCommand('unmute',	'chat_unmute',		new Message('plugin.muting', 'slash_chat_unmute_description'),		Player::PLAYERS);
+		$this->registerChatCommand('mutelist',	'chat_mutelist',	new Message('plugin.muting', 'slash_chat_mutelist_description'),	Player::PLAYERS);
+		$this->registerChatCommand('refresh',	'chat_refresh',		new Message('plugin.muting', 'slash_chat_refresh_description'),		Player::PLAYERS);
 	}
 
 	/*
@@ -73,13 +74,14 @@ class PluginMuting extends Plugin {
 	public function onSync ($aseco) {
 
 		// Define pattern for known global messages to reduce overhead
-		$this->global_pattern = '/'. $aseco->formatColors($aseco->formatText($aseco->getChatMessage('ROUND'), '\d+'))
+		$msg = new Message('plugin.muting', 'round');
+		$this->global_pattern = '/'. $aseco->formatColors($aseco->formatText($msg->finish('en',false), '\d+'))
 		             .'|'. $aseco->formatColors('$z$s{#server}» ')
 		             .'|'. $aseco->formatColors('{#server}» ') .'/A';		// anchor at start
 		$this->global_pattern = str_replace('$', '\$', $this->global_pattern);	// escape dollars
 
 		if (isset($aseco->plugins['PluginWelcomeCenter'])) {
-			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage('Use "/mute" and "/unmute" to mute / unmute other players, and "/mutelist" to list them!');
+			$aseco->plugins['PluginWelcomeCenter']->addInfoMessage(new Message('plugin.muting', 'info_message');
 		}
 	}
 
@@ -166,11 +168,11 @@ class PluginMuting extends Plugin {
 				($aseco->isOperator($target) ? $aseco->titles['OPERATOR'][0] :
 				'Player')
 			);
-			$message = $aseco->formatText('{#server}» {#error}Cannot mute {#logina}$i {1} {#highlite}{2}$z$s{#error} !',
-				$title,
+			$message = new Message('plugin.muting', 'error');
+			$message->addPlaceholders($title,
 				$aseco->stripStyles($target->nickname)
 			);
-			$aseco->sendChatMessage($message, $player->login);
+			$message->sendChatMessage($player->login);
 			return;
 		}
 
@@ -179,16 +181,16 @@ class PluginMuting extends Plugin {
 			// mute this player
 			$player->mutelist[] = $target->login;
 
-			$message = $aseco->formatText($aseco->getChatMessage('MUTE'),
-				$target->nickname
-			);
+			$message = new Message('plugin.muting', 'mute');
+			$message->addPlaceholders($target->nickname);
 		}
 		else {
-			$message = '{#server}» {#error}Player {#highlite}$i '. $aseco->stripStyles($target->nickname) .'$z$s{#error} is already in your mute list!';
+			$message = new Message('plugin.muting', 'already_muted');
+			$message->addPlaceholders($target->nickname);
 		}
 
 		// show chat message
-		$aseco->sendChatMessage($message, $player->login);
+		$message->sendChatMessage($player->login);
 	}
 
 	/*
@@ -214,16 +216,16 @@ class PluginMuting extends Plugin {
 			// unmute this player
 			$player->mutelist[$i] = '';
 
-			$message = $aseco->formatText($aseco->getChatMessage('UNMUTE'),
-				$target->nickname
-			);
+			$message = new Message('plugin.muting', 'unmute');
+			$message->addPlaceholders($target->nickname);
 		}
 		else {
-			$message = '{#server}» {#error}Player {#highlite}$i '. $aseco->stripStyles($target->nickname) .'$z$s{#error} is not in your mute list!';
+			$message = new Message('plugin.muting', 'not_in_mutelist');
+			$message->addPlaceholders($target->nickname);
 		}
 
 		// show chat message
-		$aseco->sendChatMessage($message, $player->login);
+		$message->sendChatMessage($player->login);
 	}
 
 	/*
@@ -240,13 +242,14 @@ class PluginMuting extends Plugin {
 
 		// check for muted players
 		if (empty($player->mutelist)) {
-			$aseco->sendChatMessage('{#server}» {#error}No muted players found!', $player->login);
+			$message = new Message('plugin.muting', 'none_muted');
+			$message->sendChatMessage($player->login);
 			return;
 		}
 
 		$player->playerlist = array();
 
-		$head = 'Currently Muted Players:';
+		$head = (new Message('plugin.muting', 'list_head'))->finish($login);
 		$msg = array();
 		$msg[] = array('Id', '{#nick}Nick $g/{#login} Login');
 		$pid = 1;
@@ -289,7 +292,8 @@ class PluginMuting extends Plugin {
 		}
 		else {
 			// === 1
-			$aseco->sendChatMessage('{#server}» {#error}No muted players found!', $player->login);
+			$message = new Message('plugin.muting', 'none_muted');
+			$message->sendChatMessage($player->login);
 		}
 	}
 

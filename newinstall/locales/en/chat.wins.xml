@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+<!-- common messages -->
+	<wins_other>{#server}» {#record}Player {#highlite}{1}{#record} has won {#highlite}{2}{#record} races</wins_other>
+	<wins>{#server}» {#record}You have already won {#highlite}{1}{#record} races</wins>
+
+<!-- plugin messages -->
+	<plugin_description>Shows wins for current or given online player</plugin_description>
+	<message_player_not_found>{#server}» {#error}Given player login {#highlite}{1}{#error} not found!</message_player_not_found>
+</locales>

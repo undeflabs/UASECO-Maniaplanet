@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<windowlist_description>Управляет окнами Маниалинка, созданными с помощью "Class Window".</windowlist_description>
+	<window_description>Показывает красивые, настраиваемые окна в стиле Manialink.</window_description>
+	<slash_lastwin>Открывает последнее закрытое окно.</slash_lastwin>
+</locales>

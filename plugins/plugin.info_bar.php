@@ -48,8 +48,8 @@ class PluginInfoBar extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2019-05-22');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-09-22');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
@@ -111,7 +111,7 @@ class PluginInfoBar extends Plugin {
 
 		// Read Configuration
 		if (!$this->config = $aseco->parser->xmlToArray('config/info_bar.xml', true, true)) {
-			trigger_error('[WelcomeCenter] Could not read/parse config file "config/info_bar.xml"!', E_USER_ERROR);
+			trigger_error('[InfoBar] Could not read/parse config file "config/info_bar.xml"!', E_USER_ERROR);
 		}
 		$this->config = $this->config['SETTINGS'];
 		unset($this->config['SETTINGS']);
@@ -374,13 +374,13 @@ class PluginInfoBar extends Plugin {
 		foreach ($aseco->server->players->player_list as $player) {
 			$xml = false;
 			if ($this->update['local_record'] === true) {
-				$xml .= $this->buildLocalRecord($this->players[$player->login]['local_record'], true);
+				$xml .= $this->buildLocalRecord($player->login, $this->players[$player->login]['local_record'], true);
 			}
 			if ($this->update['dedimania_record'] === true) {
-				$xml .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], true);
+				$xml .= $this->buildDedimaniaRecord($player->login, $this->players[$player->login]['dedimania_record'], true);
 			}
 			if ($this->update['mania_exchange'] === true) {
-				$xml .= $this->buildManiaExchange($this->players[$player->login]['mania_exchange'], true);
+				$xml .= $this->buildManiaExchange($player->login, $this->players[$player->login]['mania_exchange'], true);
 			}
 			if ($xml !== false) {
 				// Send Records
@@ -408,32 +408,36 @@ class PluginInfoBar extends Plugin {
 	public function sendInfoBar ($logins = false, $show = true) {
 		global $aseco;
 
-		$xml = $this->buildPlayerSpectatorCount($show);
-		$xml .= $this->buildDonation($show);
-		$xml .= $this->buildCurrentRanking($show);
-		$xml .= $this->buildLastBestTime($show);
-		$xml .= $this->buildGamemode($show);
-		$xml .= $this->buildLadderLimits($show);
-		$xml .= $this->buildClock($show);
-
 		if ($logins === false) {
 			foreach ($aseco->server->players->player_list as $player) {
-				$mls = $xml;
-				$mls .= $this->buildPersonalBest($this->players[$player->login]['personal_best'], $show);
-				$mls .= $this->buildLocalRecord($this->players[$player->login]['local_record'], $show);
-				$mls .= $this->buildDedimaniaRecord($this->players[$player->login]['dedimania_record'], $show);
-				$mls .= $this->buildManiaExchange($this->players[$player->login]['mania_exchange'], $show);
-				$aseco->sendManiaLink($mls, $player->login);
+				$xml = $this->buildPlayerSpectatorCount($player->login, $show);
+				$xml .= $this->buildDonation($player->login, $show);
+				$xml .= $this->buildCurrentRanking($player->login, $show);
+				$xml .= $this->buildLastBestTime($player->login, $show);
+				$xml .= $this->buildGamemode($show);
+				$xml .= $this->buildLadderLimits($player->login, $show);
+				$xml .= $this->buildClock($player->login, $show);
+				$xml .= $this->buildPersonalBest($player->login, $this->players[$player->login]['personal_best'], $show);
+				$xml .= $this->buildLocalRecord($player->login, $this->players[$player->login]['local_record'], $show);
+				$xml .= $this->buildDedimaniaRecord($player->login, $this->players[$player->login]['dedimania_record'], $show);
+				$xml .= $this->buildManiaExchange($player->login, $this->players[$player->login]['mania_exchange'], $show);
+				$aseco->sendManiaLink($xml, $player->login);
 			}
 		}
 		else {
 			foreach (explode(',', $logins) as $login) {
-				$mls = $xml;
-				$mls .= $this->buildPersonalBest($this->players[$login]['personal_best'], $show);
-				$mls .= $this->buildLocalRecord($this->players[$login]['local_record'], $show);
-				$mls .= $this->buildDedimaniaRecord($this->players[$login]['dedimania_record'], $show);
-				$mls .= $this->buildManiaExchange($this->players[$login]['mania_exchange'], $show);
-				$aseco->sendManiaLink($mls, $login);
+				$xml = $this->buildPlayerSpectatorCount($login, $show);
+				$xml .= $this->buildDonation($login, $show);
+				$xml .= $this->buildCurrentRanking($login, $show);
+				$xml .= $this->buildLastBestTime($login, $show);
+				$xml .= $this->buildGamemode($show);
+				$xml .= $this->buildLadderLimits($login, $show);
+				$xml .= $this->buildClock($login, $show);
+				$xml .= $this->buildPersonalBest($login, $this->players[$login]['personal_best'], $show);
+				$xml .= $this->buildLocalRecord($login, $this->players[$login]['local_record'], $show);
+				$xml .= $this->buildDedimaniaRecord($login, $this->players[$login]['dedimania_record'], $show);
+				$xml .= $this->buildManiaExchange($login, $this->players[$login]['mania_exchange'], $show);
+				$aseco->sendManiaLink($xml, $login);
 			}
 		}
 	}
@@ -444,7 +448,7 @@ class PluginInfoBar extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildClock ($show = true) {
+	private function buildClock ($login, $show = true) {
 
 $maniascript = <<<EOL
 <script><!--
@@ -483,7 +487,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.03" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.04" size="5.25 5.25" modulatecolor="'. $this->config['CLOCK'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['CLOCK'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.04" size="10.5 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="00:00:00" id="'. $this->config['manialinkid'] .'LabelLocalTime"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['CLOCK'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_clock'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -498,7 +502,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildLadderLimits ($show = true) {
+	private function buildLadderLimits ($login, $show = true) {
 		global $aseco;
 
 		$xml = '<manialink id="'. $this->config['manialinkid'] .'LadderLimits" name="'. $this->config['manialinkid'] .':LadderLimits" version="3">';
@@ -509,7 +513,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.03" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.04" size="5.25 5.25" modulatecolor="'. $this->config['LADDER_LIMITS'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['LADDER_LIMITS'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.04" size="10.5 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. substr(($aseco->server->ladder_limit_min / 1000), 0, 3) .'-'. substr(($aseco->server->ladder_limit_max / 1000), 0, 3) .'k" id="'. $this->config['manialinkid'] .'LabelLadderLimits"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="LADDER"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['LADDER_LIMITS'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_ladder_limits'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 		}
 		$xml .= '</manialink>';
@@ -623,7 +627,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['GAMEMODE'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['GAMEMODE'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['GAMEMODE'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $limits .'" id="'. $this->config['manialinkid'] .'Gamemode"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['GAMEMODE'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. strtoupper($modename) .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="29 2.625" textcolor="'. $this->config['GAMEMODE'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. strtoupper($modename) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -638,7 +642,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildPlayerSpectatorCount ($show = true) {
+	private function buildPlayerSpectatorCount ($login, $show = true) {
 		global $aseco;
 
 $maniascript = <<<EOL
@@ -725,7 +729,7 @@ EOL;
 //			$xml .= '<quad pos="0 0" z-index="0.03" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.04" size="5.25 5.25" modulatecolor="'. $this->config['PLAYER_COUNT'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['PLAYER_COUNT'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.04" size="10.5 2.625" textcolor="'. $this->config['PLAYER_COUNT'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0/'. $aseco->server->options['CurrentMaxPlayers'] .'" id="'. $this->config['manialinkid'] .'LabelPlayerCount"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['PLAYER_COUNT'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['PLAYER_COUNT'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['PLAYER_COUNT'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_player_count'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 20.25) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="20.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
@@ -733,7 +737,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.03" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.04" size="5.25 5.25" modulatecolor="'. $this->config['SPECTATOR_COUNT'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['SPECTATOR_COUNT'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.04" size="10.5 2.625" textcolor="'. $this->config['SPECTATOR_COUNT'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0/'. $aseco->server->options['CurrentMaxSpectators'] .'" id="'. $this->config['manialinkid'] .'LabelSpectatorCount"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['SPECTATOR_COUNT'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['SPECTATOR_COUNT'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="18 2.625" textcolor="'. $this->config['SPECTATOR_COUNT'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_spectator_count'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -748,7 +752,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildDonation ($show = true) {
+	private function buildDonation ($login, $show = true) {
 		global $aseco;
 
 		// Get the min. amount of donation
@@ -860,21 +864,23 @@ EOL;
 			$xml .= '<quad pos="0.05 -4.325" z-index="0.03" size="2.625 2.625" image="'. $this->config['BOX'][0]['CLICKABLE_INDICATOR'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['DONATION'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['DONATION'][0]['ICON'][0] .'"/>';
-			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['DONATION'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="DONATE"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['DONATION'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="PLANETS PLEASE"/>';
+			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['DONATION'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. (new Message('plugin.info_bar', 'label_donate_heading'))->finish($login) .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['DONATION'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_donate_description'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 
 			// Build onClick full Widget
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 60.75) .' '. ($this->config['bar']['position']['y'] - 7.05) .'" z-index="'. ($this->config['bar']['position']['z'] + 0.02) .'" id="DropDownDonation" hidden="true">';
 			$xml .= '<quad pos="0 -0.1" z-index="0.02" size="55.6 12" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'" ScriptEvents="1"/>';
 			$xml .= '<quad pos="0 0" z-index="0.04" size="55.6 0.2" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
-			$xml .= '<label pos="3 -1.7" z-index="0.04" size="55 2.625" textcolor="FFFF" textsize="1" scale="0.9" text="Please enter the value you want to Donate:"/>';
+			$xml .= '<label pos="3 -1.7" z-index="0.04" size="55 2.625" textcolor="FFFF" textsize="1" scale="0.9" text="'. (new Message('plugin.info_bar', 'label_donate_intro'))->finish($login) .'"/>';
 			$xml .= '<quad pos="3 -7.8" z-index="0.03" size="19 5.1" valign="center" style="Bgs1InRace" substyle="BgColorContour"/>';
 			$xml .= '<entry pos="12.45 -7.8" z-index="0.05" size="17.9 4" halign="center" valign="center2" style="TextValueSmall" textsize="1" textcolor="FFFF" default="500" autonewline="0" id="EntryDonate" ScriptEvents="1"/>';
-			$xml .= '<label pos="38.5 -7.9" z-index="0.05" size="12 4.5" halign="center" valign="center" textsize="1" style="CardButtonSmallS" text="SEND DONATION" id="ButtonSendDonation" ScriptEvents="1"/>';
+			$xml .= '<label pos="38.5 -7.9" z-index="0.05" size="12 4.5" halign="center" valign="center" textsize="1" style="CardButtonSmallS" text="'. (new Message('plugin.info_bar', 'label_donate_button'))->finish($login) .'" id="ButtonSendDonation" ScriptEvents="1"/>';
 
 			// Build Tooltip
-			$xml .= '<label pos="0 -13" z-index="0.05" size="62 2.625" textsize="1" scale="0.9" textcolor="FF0F" text="$SThe minimum value for a donation are '. $mindonation .' Planets." hidden="true" id="LabelTooltipDonations"/>';
+			$message_min_amount = new Message('plugin.info_bar', 'label_donate_minimum_amount');
+			$message_min_amount->addPlaceholders($mindonation);
+			$xml .= '<label pos="0 -13" z-index="0.05" size="62 2.625" textsize="1" scale="0.9" textcolor="FF0F" text="'. $message_min_amount->finish($login) .'" hidden="true" id="LabelTooltipDonations"/>';
 			$xml .= '</frame>';
 
 			$xml .= $maniascript;
@@ -890,7 +896,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildCurrentRanking ($show = true) {
+	private function buildCurrentRanking ($login, $show = true) {
 		global $aseco;
 
 $maniascript = <<<EOL
@@ -969,7 +975,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['CURRENT_RANKING'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['CURRENT_RANKING'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="10.5 2.625" textcolor="'. $this->config['CURRENT_RANKING'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0/0" id="'. $this->config['manialinkid'] .'LabelCurrentRanking"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="18 2.625" textcolor="'. $this->config['CURRENT_RANKING'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['CURRENT_RANKING'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="18 2.625" textcolor="'. $this->config['CURRENT_RANKING'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_current_ranking'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -984,7 +990,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildLastBestTime ($show = true) {
+	private function buildLastBestTime ($login, $show = true) {
 		global $aseco;
 
 		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
@@ -1066,7 +1072,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.03" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.04" size="5.25 5.25" modulatecolor="'. $this->config['LAST_TIME'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['LAST_TIME'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.04" size="17.5 2.625" textcolor="'. $this->config['LAST_TIME'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelLastTime"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="24 2.625" textcolor="'. $this->config['LAST_TIME'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['LAST_TIME'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="29 2.625" textcolor="'. $this->config['LAST_TIME'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_last_time'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= '<frame pos="'. ($this->config['bar']['position']['x'] + 115.25) .' '. $this->config['bar']['position']['y'] .'" z-index="'. ($this->config['bar']['position']['z'] + 0.01) .'">';
 			$xml .= '<quad pos="0 0" z-index="0.01" size="27.25 7" bgcolor="'. $this->config['BAR'][0]['BACKGROUND_COLOR'][0] .'"/>';
@@ -1074,7 +1080,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.03" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.04" size="5.25 5.25" modulatecolor="'. $this->config['BEST_TIME'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['BEST_TIME'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.04" size="17.5 2.625" textcolor="'. $this->config['BEST_TIME'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="0:00.000" id="'. $this->config['manialinkid'] .'LabelBestTime"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="24 2.625" textcolor="'. $this->config['BEST_TIME'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['BEST_TIME'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.04" size="29 2.625" textcolor="'. $this->config['BEST_TIME'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_best_time'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -1089,7 +1095,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildPersonalBest ($score, $show = true) {
+	private function buildPersonalBest ($login, $score, $show = true) {
 		global $aseco;
 
 		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
@@ -1198,7 +1204,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['PERSONAL_BEST'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['PERSONAL_BEST'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['PERSONAL_BEST'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $aseco->formatTime($score) .'" id="LabelPersonalBest"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['PERSONAL_BEST'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['PERSONAL_BEST'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="29 2.625" textcolor="'. $this->config['PERSONAL_BEST'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_personal_best'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -1213,7 +1219,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildLocalRecord ($score, $show = true) {
+	private function buildLocalRecord ($login, $score, $show = true) {
 		global $aseco;
 
 		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
@@ -1319,7 +1325,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['LOCAL_RECORD'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['LOCAL_RECORD'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['LOCAL_RECORD'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $aseco->formatTime($score) .'" id="LabelLocalRecord"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['LOCAL_RECORD'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['LOCAL_RECORD'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="29 2.625" textcolor="'. $this->config['LOCAL_RECORD'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_local_record'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -1334,7 +1340,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildDedimaniaRecord ($score, $show = true) {
+	private function buildDedimaniaRecord ($login, $score, $show = true) {
 		global $aseco;
 
 		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
@@ -1438,7 +1444,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['DEDIMANIA_RECORD'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['DEDIMANIA_RECORD'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['DEDIMANIA_RECORD'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $aseco->formatTime($score) .'" id="LabelDedimaniaRecord"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['DEDIMANIA_RECORD'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['DEDIMANIA_RECORD'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="29 2.625" textcolor="'. $this->config['DEDIMANIA_RECORD'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_dedimania_record'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			$xml .= $maniascript;
 		}
@@ -1453,7 +1459,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	private function buildManiaExchange ($score, $show = true) {
+	private function buildManiaExchange ($login, $score, $show = true) {
 		global $aseco;
 
 		if ($aseco->server->gameinfo->mode === Gameinfo::CHASE) {
@@ -1510,7 +1516,7 @@ EOL;
 			$xml .= '<quad pos="0 0" z-index="0.04" size="0.1 7" bgcolor="'. $this->config['BOX'][0]['SEPERATOR_COLOR'][0] .'"/>';
 			$xml .= '<quad pos="1.6 -1" z-index="0.05" size="5.25 5.25" modulatecolor="'. $this->config['MANIA_EXCHANGE'][0]['MODULATECOLOR'][0] .'" image="'. $this->config['MANIA_EXCHANGE'][0]['ICON'][0] .'"/>';
 			$xml .= '<label pos="8.15 -1.4" z-index="0.05" size="17.5 2.625" textcolor="'. $this->config['MANIA_EXCHANGE'][0]['FONT_COLOR_TOP'][0] .'" textsize="1" text="'. $aseco->formatTime($score) .'"/>';
-			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="24 2.625" textcolor="'. $this->config['MANIA_EXCHANGE'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. $this->config['MANIA_EXCHANGE'][0]['LABEL'][0] .'"/>';
+			$xml .= '<label pos="8.15 -4.2" z-index="0.05" size="29 2.625" textcolor="'. $this->config['MANIA_EXCHANGE'][0]['FONT_COLOR_BOTTOM'][0] .'" textsize="1" scale="0.6" text="'. (new Message('plugin.info_bar', 'label_mania_exchange'))->finish($login) .'"/>';
 			$xml .= '</frame>';
 			if (!empty($this->config['MANIA_EXCHANGE'][0]['ACTION'][0])) {
 				$xml .= $maniascript;

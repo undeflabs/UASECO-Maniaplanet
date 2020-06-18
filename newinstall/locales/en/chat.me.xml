@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+<!-- common messages -->
+	<muted>{#server}» {#highlite}{1}{#error} disabled because you are on the global mute list!</muted>
+
+
+
+<!-- plugin messages -->
+	<plugin_description>Builds a chat message starting with the nickname from player.</plugin_description>
+</locales>

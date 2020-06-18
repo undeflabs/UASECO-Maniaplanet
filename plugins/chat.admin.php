@@ -247,7 +247,7 @@ class PluginChatAdmin extends Plugin {
 					// write warning in console
 					$aseco->console('[ChatAdmin] Player ['. $login .'] tried to use admin chat command (no permission!): '. $arglist[0] .' '. $arglist[1]);
 					// show chat message
-					$aseco->client->query('ChatSendToLogin', $aseco->formatColors((new Message('common', 'insufficient_rights'))->finish($login)), $login);
+					$aseco->client->query('ChatSendToLogin', $aseco->formatColors((new Message('chat.admin', 'insufficient_rights'))->finish($login)), $login);
 					return false;
 				}
 			}
@@ -259,7 +259,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->console('[ChatAdmin] Player ['. $login .'] tried to use admin chat command, but was not unlocked: '. $arglist[0] .' '. $arglist[1]);
 
 			// show chat message
-			$aseco->client->query('ChatSendToLogin', $aseco->formatColors((new Message('common', 'insufficient_rights'))->finish($login)), $login);
+			$aseco->client->query('ChatSendToLogin', $aseco->formatColors((new Message('chat.admin', 'insufficient_rights'))->finish($login)), $login);
 			return false;
 		}
 
@@ -1028,7 +1028,7 @@ class PluginChatAdmin extends Plugin {
 			// get player information
 			if ($target = $aseco->server->players->getPlayerParam($admin, $command['params'][1])) {
 				// display warning message
-				$message = (new Message('common', 'player_warning'))->finishMultiline($target->login);
+				$message = (new Message('chat.admin', 'player_warning'))->finishMultiline($target->login);
 
 				foreach ($message as &$line) {
 					$line = array($line);
@@ -3070,7 +3070,7 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_set_allowmapdownload');
-				$msg->addPlaceholders($enabled ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($enabled ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 			else {
@@ -3078,7 +3078,7 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_get_allowmapdownload');
-				$msg->addPlaceholders($enabled ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($enabled ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 		}
@@ -3103,13 +3103,13 @@ class PluginChatAdmin extends Plugin {
 					$aseco->sendChatMessage($message, $login);
 
 					$msg = new Message('chat.admin', 'message_set_autotimelimit');
-					$msg->addPlaceholders($aseco->plugins['PluginAutotime']->active ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+					$msg->addPlaceholders($aseco->plugins['PluginAutotime']->active ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 					$msg->sendChatMessage($login);
 				}
 				else {
 					// show chat message
 					$msg = new Message('chat.admin', 'message_get_autotimelimit');
-					$msg->addPlaceholders($aseco->plugins['PluginAutotime']->active ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+					$msg->addPlaceholders($aseco->plugins['PluginAutotime']->active ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 					$msg->sendChatMessage($login);
 				}
 			}
@@ -3134,7 +3134,7 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_set_disablerespawn');
-				$msg->addPlaceholders($enabled ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($enabled ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 			else {
@@ -3142,7 +3142,7 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_get_disablerespawn');
-				$msg->addPlaceholders($enabled ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($enabled ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 		}
@@ -3161,7 +3161,7 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_set_forceshowopp');
-				$msg->addPlaceholders($enabled ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($enabled ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 			else if (is_numeric($param) && $param > 1) {
@@ -3185,7 +3185,7 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message, $login);
 
 				$msg = new Message('chat.admin', 'message_get_forceshowopp');
-				$msg->addPlaceholders($enabled ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($enabled ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 		}
@@ -3203,13 +3203,13 @@ class PluginChatAdmin extends Plugin {
 
 				// show chat message
 				$msg = new Message('chat.admin', 'message_set_autoscorepanel');
-				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->auto_scorepanel ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->auto_scorepanel ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 			else {
 				// show chat message
 				$msg = new Message('chat.admin', 'message_get_autoscorepanel');
-				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->auto_scorepanel ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->auto_scorepanel ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 		}
@@ -3230,13 +3230,13 @@ class PluginChatAdmin extends Plugin {
 				$aseco->sendChatMessage($message);
 
 				$msg = new Message('chat.admin', 'message_set_roundsfinishpanel');
-				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->rounds_finishpanel ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->rounds_finishpanel ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 			else {
 				// show chat message
 				$msg = new Message('chat.admin', 'message_get_roundsfinishpanel');
-				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->rounds_finishpanel ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+				$msg->addPlaceholders($aseco->plugins['PluginManialinks']->rounds_finishpanel ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 				$msg->sendChatMessage($login);
 			}
 		}
@@ -3498,7 +3498,7 @@ class PluginChatAdmin extends Plugin {
 			 */
 
 			// show chat message
-			$msg = new Message('common', 'show_planets');
+			$msg = new Message('chat.admin', 'show_planets');
 			$msg->addPlaceholders($aseco->server->name, $aseco->server->amount_planets);
 			$msg->sendChatMessage($login);
 
@@ -4012,7 +4012,7 @@ class PluginChatAdmin extends Plugin {
 			$aseco->debug = !$aseco->debug;
 
 			$msg = new Message('chat.admin', 'message_nextmap');
-			$msg->addPlaceholders($aseco->debug ? (new Message('common', 'enabled'))->finish($login) : (new Message('common', 'disabled'))->finish($login));
+			$msg->addPlaceholders($aseco->debug ? (new Message('chat.admin', 'enabled'))->finish($login) : (new Message('chat.admin', 'disabled'))->finish($login));
 			$msg->sendChatMessage($login);
 		}
 		else if ($command['params'][0] === 'shutdown') {

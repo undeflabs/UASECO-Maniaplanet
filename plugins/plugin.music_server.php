@@ -64,10 +64,11 @@ class PluginMusicServer extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2014 - 2018 by undef.de');
-		$this->setDescription('Handles all server-controlled music.');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-10-03');
+		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setDescription(new Message('plugin.music_server', 'plugin_description'));
 
 		$this->addDependence('PluginManialinks', Dependence::REQUIRED, '1.0.0', null);
 
@@ -78,7 +79,7 @@ class PluginMusicServer extends Plugin {
 		// handles action id's "-2101"-"-4000" for selecting from max. 1900 songs
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 
-		$this->registerChatCommand('music', 'chat_music', 'Handles server music (see: /music help)', Player::PLAYERS);
+		$this->registerChatCommand('music', 'chat_music', new Message('plugin.music_server', 'slash_chat_music_description'), Player::PLAYERS);
 
 	}
 
@@ -159,7 +160,6 @@ class PluginMusicServer extends Plugin {
 			}
 		}
 
-		$this->messages = $settings['MESSAGES'][0];
 		$this->mannext = false;
 		$this->current = 0;
 		$this->jukebox = array();
@@ -571,8 +571,8 @@ class PluginMusicServer extends Plugin {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 			}
 			else {
-				$message = '{#server}» {#error}No songs found, try again!';
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_songs_found');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'current') {
@@ -603,10 +603,9 @@ class PluginMusicServer extends Plugin {
 			}
 
 			// show chat message
-			$message = $aseco->formatText($this->messages['CURRENT'][0],
-				$current
-			);
-			$aseco->sendChatMessage($message, $player->login);
+			$message = new Message('plugin.music_server', 'current');
+			$message->addPlaceholders($current);
+			$message->sendChatMessage($player->login);
 		}
 		else if ($command['params'][0] === 'reload') {
 
@@ -615,8 +614,8 @@ class PluginMusicServer extends Plugin {
 				// read & parse config file
 				if (!$settings = $aseco->parser->xmlToArray('config/music_server.xml', true, true)) {
 					trigger_error('[MusicServer] Could not read/parse Music server config file config/music_server.xml !', E_USER_WARNING);
-					$message = '{#server}» {#error}Could not read/parse Music server config file!';
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'error_config');
+					$message->sendChatMessage($player->login);
 					return;
 				}
 				$this->onSync($aseco);
@@ -628,18 +627,18 @@ class PluginMusicServer extends Plugin {
 				$aseco->console('[MusicServer] {1} [{2}] reloaded config {3} !', $logtitle, $player->login, 'music_server.xml');
 
 				// show chat message
-				$message = $aseco->formatText($this->messages['RELOADED'][0],
-					$chattitle,
+				$message = new Message('plugin.music_server', 'reloaded');
+				$message->addPlaceholders($chattitle,
 					$player->nickname
 				);
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 
 				// throw 'musicbox reloaded' event
 				$aseco->releaseEvent('onMusicboxReloaded', null);
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'next') {
@@ -670,17 +669,17 @@ class PluginMusicServer extends Plugin {
 					if ($this->stripexts) {
 						$song = preg_replace('|\.[^.]+$|', '', $song);
 					}
-					$message = $aseco->formatText($this->messages['NEXT'][0],
-						$chattitle,
+					$message = new Message('plugin.music_server', 'next');
+					$message->addPlaceholders($chattitle,
 						$player->nickname,
 						$song
 					);
-					$aseco->sendChatMessage($message);
+					$message->sendChatMessage();
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'sort') {
@@ -695,15 +694,15 @@ class PluginMusicServer extends Plugin {
 				$aseco->console('[MusicServer] {1} [{2}] sorted song list!', $logtitle, $player->login);
 
 				// show chat message
-				$message = $aseco->formatText($this->messages['SORTED'][0],
-					$chattitle,
+				$message = new Message('plugin.music_server', 'sorted');
+				$message->addPlaceholders($chattitle,
 					$player->nickname
 				);
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'shuffle') {
@@ -718,15 +717,15 @@ class PluginMusicServer extends Plugin {
 				$aseco->console('[MusicServer] {1} [{2}] shuffled song list!', $logtitle, $player->login);
 
 				// show chat message
-				$message = $aseco->formatText($this->messages['SHUFFLED'][0],
-					$chattitle,
+				$message = new Message('plugin.music_server', 'shuffled');
+				$message->addPlaceholders($chattitle,
 					$player->nickname
 				);
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'override' && $command['params'][1] !== '') {
@@ -741,13 +740,14 @@ class PluginMusicServer extends Plugin {
 					$aseco->console('[MusicServer] {1} [{2}] set music override {3} !', $logtitle, $player->login, ($this->override ? 'ON' : 'OFF'));
 
 					// show chat message
-					$message = '{#server}» {#music}Music override set to ' . ($this->override ? 'Enabled' : 'Disabled');
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'override');
+					$message->addPlaceholders(($this->override ? (new Message('plugin.music_server', 'enabled'))->finish($player->login) : (new Message('plugin.music_server', 'disabled'))->finish($player->login)));
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'autonext' && $command['params'][1] !== '') {
@@ -762,13 +762,14 @@ class PluginMusicServer extends Plugin {
 					$aseco->console('[MusicServer] {1} [{2}] set music autonext {3} !', $logtitle, $player->login, ($this->autonext ? 'ON' : 'OFF'));
 
 					// show chat message
-					$message = '{#server}» {#music}Music autonext set to ' . ($this->autonext ? 'Enabled' : 'Disabled');
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'auto_next');
+					$message->addPlaceholders(($this->autonext ? (new Message('plugin.music_server', 'enabled'))->finish($player->login) : (new Message('plugin.music_server', 'disabled'))->finish($player->login)));
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'autoshuffle' && $command['params'][1] !== '') {
@@ -783,13 +784,14 @@ class PluginMusicServer extends Plugin {
 					$aseco->console('[MusicServer] {1} [{2}] set music autoshuffle {3} !', $logtitle, $player->login, ($this->autoshuffle ? 'ON' : 'OFF'));
 
 					// show chat message
-					$message = '{#server}» {#music}Music autoshuffle set to ' . ($this->autoshuffle ? 'Enabled' : 'Disabled');
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'auto_shuffle');
+					$message->addPlaceholders(($this->autoshuffle ? (new Message('plugin.music_server', 'enabled'))->finish($player->login) : (new Message('plugin.music_server', 'disabled'))->finish($player->login)));
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'allowjb' && $command['params'][1] !== '') {
@@ -804,13 +806,14 @@ class PluginMusicServer extends Plugin {
 					$aseco->console('[MusicServer] {1} [{2}] set allow music jukebox {3} !', $logtitle, $player->login, ($this->allowjb ? 'ON' : 'OFF'));
 
 					// show chat message
-					$message = '{#server}» {#music}Allow music jukebox set to ' . ($this->allowjb ? 'Enabled' : 'Disabled');
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'allow_jb');
+					$message->addPlaceholders(($this->allowjb ? (new Message('plugin.music_server', 'enabled'))->finish($player->login) : (new Message('plugin.music_server', 'disabled'))->finish($player->login)));
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'stripdirs' && $command['params'][1] !== '') {
@@ -825,13 +828,14 @@ class PluginMusicServer extends Plugin {
 					$aseco->console('[MusicServer] {1} [{2}] set strip subdirs {3} !', $logtitle, $player->login, ($this->stripdirs ? 'ON' : 'OFF'));
 
 					// show chat message
-					$message = '{#server}» {#music}Strip subdirs set to ' . ($this->stripdirs ? 'Enabled' : 'Disabled');
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'strip_dirs');
+					$message->addPlaceholders(($this->stripdirs ? (new Message('plugin.music_server', 'enabled'))->finish($player->login) : (new Message('plugin.music_server', 'disabled'))->finish($player->login)));
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'stripexts' && $command['params'][1] !== '') {
@@ -846,13 +850,14 @@ class PluginMusicServer extends Plugin {
 					$aseco->console('[MusicServer] {1} [{2}] set strip extensions {3} !', $logtitle, $player->login, ($this->stripexts ? 'ON' : 'OFF'));
 
 					// show chat message
-					$message = '{#server}» {#music}Strip extensions set to ' . ($this->stripexts ? 'Enabled' : 'Disabled');
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'strip_exts');
+					$message->addPlaceholders(($this->stripexts ? (new Message('plugin.music_server', 'enabled'))->finish($player->login) : (new Message('plugin.music_server', 'disabled'))->finish($player->login)));
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'off') {
@@ -871,15 +876,15 @@ class PluginMusicServer extends Plugin {
 				$aseco->console('[MusicServer] {1} [{2}] disabled music & song jukebox!', $logtitle, $player->login);
 
 				// show chat message
-				$message = $aseco->formatText($this->messages['SHUTDOWN'][0],
-					$chattitle,
+				$message = new Message('plugin.music_server', 'shutdown');
+				$message->addPlaceholders($chattitle,
 					$player->nickname
 				);
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 			else {
-				$message = $aseco->getChatMessage('NO_ADMIN');
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_admin');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'jukebox' || $command['params'][0] === 'jb') {
@@ -920,8 +925,8 @@ class PluginMusicServer extends Plugin {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 			}
 			else {
-				$message = $this->messages['JUKEBOX_EMPTY'][0];
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'strip_exts');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if ($command['params'][0] === 'drop') {
@@ -940,15 +945,15 @@ class PluginMusicServer extends Plugin {
 				if ($this->stripexts) {
 					$song = preg_replace('|\.[^.]+$|', '', $song);
 				}
-				$message = $aseco->formatText($this->messages['JUKEBOX_DROP'][0],
-					$aseco->stripStyles($player->nickname),
+				$message = new Message('plugin.music_server', 'jukebox_drop');
+				$message->addPlaceholders($aseco->stripStyles($player->nickname),
 					$song
 				);
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 			else {
-				$message = $this->messages['JUKEBOX_NODROP'][0];
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'jukebox_nodrop');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else if (is_numeric($command['params'][0])) {
@@ -973,35 +978,36 @@ class PluginMusicServer extends Plugin {
 							if ($this->stripexts) {
 								$song = preg_replace('|\.[^.]+$|', '', $song);
 							}
-							$message = $aseco->formatText($this->messages['JUKEBOX'][0],
-								$aseco->stripStyles($player->nickname),
+							$message = new Message('plugin.music_server', 'jukebox');
+							$message->addPlaceholders($aseco->stripStyles($player->nickname),
 								$song
 							);
-							$aseco->sendChatMessage($message);
+							$message->sendChatMessage();
 						}
 						else {
-							$message = $this->messages['JUKEBOX_DUPL'][0];
-							$aseco->sendChatMessage($message, $player->login);
+							$message = new Message('plugin.music_server', 'jukebox_dupl');
+							$message->sendChatMessage($player->login);
 						}
 					}
 					else {
-						$message = $this->messages['JUKEBOX_ALREADY'][0];
-						$aseco->sendChatMessage($message, $player->login);
+						$message = new Message('plugin.music_server', 'jukebox_already');
+						$message->sendChatMessage($player->login);
 					}
 				}
 				else {
-					$message = $this->messages['JUKEBOX_NOTFOUND'][0];
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.music_server', 'jukebox_notfound');
+					$message->sendChatMessage($player->login);
 				}
 			}
 			else {
-				$message = $this->messages['NO_JUKEBOX'][0];
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.music_server', 'no_jukebox');
+				$message->sendChatMessage($player->login);
 			}
 		}
 		else {
-			$message = '{#server}» {#error}Unknown music command or missing parameter: {#highlite}$i ' . $arglist;
-			$aseco->sendChatMessage($message, $player->login);
+			$message = new Message('plugin.music_server', 'unknown_cmd');
+			$message->addPlaceholders($arglist);
+			$message->sendChatMessage($player->login);
 		}
 	}
 

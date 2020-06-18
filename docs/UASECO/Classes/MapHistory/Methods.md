@@ -13,13 +13,13 @@ Map history for the dedicated server and provides several methods for the requir
 
 
 ### [getPreviousMap](_#getPreviousMap)
-Returns a [Class Map](/Development/Classes/Map.php) object from the map that was played before.
+Returns a [Class Map](/development/classes/map.php) object from the map that was played before.
 
 
 #### Description
 	Class Map object = getPreviousMap ( void )
 
-This method returns a empty [Class Map](/Development/Classes/Map.php) object if the previous map can not be found.
+This method returns a empty [Class Map](/development/classes/map.php) object if the previous map can not be found.
 
 
 #### Example
@@ -30,7 +30,7 @@ This method returns a empty [Class Map](/Development/Classes/Map.php) object if 
 #### Return Values
 	2
 
-> You do not need to call this method by yourself, just use `$this->server->maps->previous` (which holds a [Class Map](/Development/Classes/Map.php)) object instead!
+> You do not need to call this method by yourself, just use `$this->server->maps->previous` (which holds a [Class Map](/development/classes/map.php)) object instead!
 
 
 
@@ -76,7 +76,7 @@ With this method you can check if a map is already in the history.
 #### Parameters
 *	`$uid`
 
-	[Class Map](/Development/Classes/Map.php) object uid of the map to check.
+	[Class Map](/development/classes/map.php) object uid of the map to check.
 
 
 #### Example

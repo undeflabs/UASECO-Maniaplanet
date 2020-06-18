@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Показывает дату последнего посещения сервера игроком</plugin_description>
+	<info_message>Надо узнать, когда здесь был тот или иной игрок? Набери "/laston логин", чтобы узнать!</info_message>
+	<answer>{#server}» Игрок {#highlite}{1}$z$s{#server} был здесь: {#highlite}{2}</answer>
+</locales>

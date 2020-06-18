@@ -405,12 +405,13 @@ Add dependecies of the Plugin.
 #### Parameters
 *	`$plugin`
 
-	A string of a classname from the Plugin to add a dependence on.
+	A string of a classname from the Plugin or `UASECO` to add a dependence on.
 
-*	`$plugin`
+*	`$permissions`
 
 	If passed, set the given permissions of the foreign Plugin.
-	Default value is [`Dependence::REQUIRED`](/Development/Classes/Dependence.php)
+	Default value is [`Dependence::REQUIRED`](/development/classes/dependence.php)
+	For `UASECO` only [`Dependence::REQUIRED`](/development/classes/dependence.php) is used.
 
 *	`$min_version`
 
@@ -424,6 +425,7 @@ Add dependecies of the Plugin.
 
 
 #### Example
+	$this->addDependence('UASECO', Dependence::REQUIRED, '0.9.6', null);
 	$this->addDependence('PluginLocalRecords', Dependence::REQUIRED, '1.0.0', null);
 
 
@@ -519,7 +521,7 @@ Register a callback function to the chat commands list.
 
 *	`$rights`
 
-	If passed, set the [Class Player](/Development/Classes/Player.php#Constants) constant who is allowed to call this chat command.
+	If passed, set the [Class Player](/development/classes/player.php#Constants) constant who is allowed to call this chat command.
 	Default value is `Player::PLAYERS`
 
 *	`$params`
@@ -570,7 +572,7 @@ If you do not want that the stored data is saved into the database (because you 
 #### Parameters
 *	`$player`
 
-	A [Class Player](/Development/Classes/Player.php) object to store the wanted data in.
+	A [Class Player](/development/classes/player.php) object to store the wanted data in.
 
 *	`$key`
 
@@ -602,7 +604,7 @@ Returns the data which is stored in a Class Player object by the given key.
 #### Parameters
 *	`$player`
 
-	A [Class Player](/Development/Classes/Player.php) object where the data was stored in.
+	A [Class Player](/development/classes/player.php) object where the data was stored in.
 
 *	`$key`
 
@@ -633,7 +635,7 @@ Returns the data which is stored in a Class Player object by the given key.
 #### Parameters
 *	`$player`
 
-	A [Class Player](/Development/Classes/Player.php) object where the data could be stored in.
+	A [Class Player](/development/classes/player.php) object where the data could be stored in.
 
 *	`$key`
 
@@ -664,7 +666,7 @@ Removes the data which is stored in a Class Player object by the given key.
 #### Parameters
 *	`$player`
 
-	A [Class Player](/Development/Classes/Player.php) object where the data is stored in.
+	A [Class Player](/development/classes/player.php) object where the data is stored in.
 
 *	`$key`
 

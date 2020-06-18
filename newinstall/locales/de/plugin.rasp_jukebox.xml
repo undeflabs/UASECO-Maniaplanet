@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+	<plugin_description>Erlaubt Spielern das Hinzufügen von Strecken zur "Jukebox", sodass sie ihre Favoriten ohne Wartezeit spielen können.</plugin_description>
+	<slash_chat_list_description>Listet die aktuell auf dem Server vorhanden Strecken auf (see: /list help)</slash_chat_list_description>
+	<slash_chat_jukebox_description>Legt die Strecke in die Jukebox (see: /jukebox help)</slash_chat_jukebox_description>
+	<slash_chat_autojuke_description>Legt eine Strecke aus /list in die Jukebox(see: /autojuke help)</slash_chat_autojuke_description>
+	<slash_chat_add_description>Fügt eine Strecke direkt von MX hinzu</slash_chat_add_description>
+	<slash_chat_y_description>Stimmt mit Ja ab für eine MX-map- oder Chat-basierte Abstimmung</slash_chat_y_description>
+	<slash_chat_history_description>Zeigt die letzten 10 gespielten Strecken</slash_chat_history_description>
+	<slash_chat_xlist_description>Zeigt eine Liste mit Strecken von MX (see: /xlist help)</slash_chat_xlist_description>
+	<info_message1>Fragst Du Dich, welche Strecken Du nicht kürzlich gespielt hast? Benutze "/list norecent" um es herauszufinden!</info_message1>
+	<info_message2>Benutze "/list newest" um die neuesten dem Server hinzugefügten Strecken zu finden und lege sie in die Jukebox mit "/jukebox"!</info_message2>
+	<info_message3>Benutze "/list" und dann "/jukebox ##" um eine Strecke in die Jukebox zu legen.</info_message3>
+	<info_message4>Falsche Strecke in die Jukebox gelegt? Benutze "/jukebox drop" um sie zu entfernen.</info_message4>
+	<info_message5>Fragst Du Dich, welche Strecken kürzlich gespielt wurden? Benutze den Befehl "/history".</info_message5>
+	<notonrelay>{#server}» {#error}Befehl nicht verfügbar auf Servern, auf die übertragen wird (relay)</notonrelay>
+	<no_maps_found>{#server}» {#error}Keine Strecken gefunden, versuche es nochmal!</no_maps_found>
+	<invalid_selection>{#server}» {#error}Ingültige Auswahl, versuche es nochmal!</invalid_selection>
+	<maps_na>{#server}» {#highlite}{#error} Strecken aktuell nicht verfügbar, versuche es später nochmal!</maps_na>
+	<wrote_mapref>{#server}» {#emotic}mapref.txt geschrieben</wrote_mapref>
+	<error_erasing>{#server}» {#error}Fehler beim Löschen der alten Datei. Bitte kontaktiere den Admin.</error_erasing>
+	<error_creating>{#server}» {#error}Fehler beim Anlegen der Datei. Bitte kontaktiere den Admin.</error_creating>
+	<error_saving>{#server}» {#error}Fehler beim Speichern der Datei - Konnte Daten nicht schreiben. Bitte kontaktiere den Admin.</error_saving>
+	<no_such_map>{#server}» {#error}Diese Strecke gibt es nicht auf {1}!</no_such_map>
+	<error_dl>{#server}» {#error}Fehler beim Runterladen, oder MX ist nicht erreichbar!</error_dl>
+	<error_must_include>{#server}» {#error}Du musst eine Strecken-ID von MX angeben!</error_must_include>
+	<error_already_voted>{#server}» {#error}Du hast bereits abgestimmt!</error_already_voted>
+	<error_no_vote>{#server}» {#error}Aktuell keine Abstimmung! {1}</error_no_vote>
+	<tip>Benutze {#highlite}$i/add {1}{#error} oder schau Dir {#highlite}$i/helpvote{#error} an um eine zu beginnen.</tip>
+	<tip2>Benutze {#highlite}$i/add {1}{#error} um eine zu beginnen.</tip2>
+	<tip3>Schau Dir {#highlite}$i/helpvote{#error} an um eine zu beginnen.</tip3>
+	<error_no_history>{#server}» {#error}Kürzlich gespielte Strecken nicht anzeigbar!</error_no_history>
+	<error_no_maps_mx>{#server}» {#error}Keine Strecken gefunden oder MX ist nicht erreichbar!</error_no_maps_mx>
+	<jukebox_cancel>{#server}» {#emotic}Aktuelle Abstimmung zu "/add" abgebrochen!</jukebox_cancel>
+	<jukebox_skipleft>{#server}» {#emotic}Strecke {#highlite}{1}{#emotic} aus Jukebox genommen, da {#highlite}{2}{#emotic} den Server verlassen hat.</jukebox_skipleft>
+	<jukebox_next>{#server}» {#emotic}Die nächste Strecke ist {#highlite}{1}{#emotic}, angefordert von {#highlite}{2}</jukebox_next>
+	<list_help>{#server}» {#emotic}Benutze zuerst {#highlite}/list{#emotic} - Schreibe {#highlite}/list help{#emotic} für mehr Info.</list_help>
+	<jukebox_already>{#server}» {#emotic}Du hast bereits eine Strecke in der Jukebox! Warte, bis sie gespielt wurde, bevor Du eine andere hinzufügst.</jukebox_already>
+	<jukebox_dupl>{#server}» {#emotic}Diese Strecke ist bereits in der Jukebox, such Dir eine andere aus.</jukebox_dupl>
+	<jukebox_repeat>{#server}» {#emotic}Diese Strecke wurde kürzlich gespielt. Warte ein bisschen, bevor Du sie erneut hinzufügst.</jukebox_repeat>
+	<jukebox>{#server}» {#highlite}{1}{#emotic} wurde von {#highlite}{2} zur Jukebox hinzugefügt</jukebox>
+	<jukebox_ignored>{#server}» {#emotic}Strecke {#highlite}{1}{#emotic} ignoriert: {#error}{2}</jukebox_ignored>
+	<jukebox_notfound>{#server}» {#emotic}ID der Strecke nicht gefunden - Schreibe {#highlite}/list{#emotic} um alle Strecken zu sehen.</jukebox_notfound>
+	<jukebox_list>{#server}» {#emotic}Nächste Strecken in der Jukebox: </jukebox_list>
+	<jukebox_empty>{#server}» {#emotic}Keine Strecken in der Jukebox, benutze {#highlite}/elist{#emotic} um eine hinzuzufügen</jukebox_empty>
+	<jukebox_drop>{#server}» {#emotic}Spieler {#highlite}{1}{#emotic} nahm seine/ihre Strecke {#highlite}{2}{#emotic} aus der Jukebox!</jukebox_drop>
+	<jukebox_nodrop>{#server}» {#emotic}Du hast keine Strecke in der Jukebox, benutze {#highlite}/elist{#emotic} um eine hinzuzufügen</jukebox_nodrop>
+	<jukebox_help>{#server}» {#emotic}Du musst eine Strecken-ID angeben, z.B. {#highlite}/jukebox 12{#emotic} - Schreibe {#highlite}/jukebox help{#emotic} für mehr Info.</jukebox_help>
+	<no_jukebox>{#server}» {#highlite}/jukebox{#emotic} ist aktuell auf diesem Server deaktiviert.</no_jukebox>
+	<no_spectators>{#server}» {#error}Zuschauer dürfen keine Abstimmungen starten!</no_spectators>
+	<vote_already>{#server}» {#error}Es läuft bereits eine Abstimmung, warte, bis sie beendet ist.</vote_already>
+	<map_too_large>{#server}» {#error}Strecke zu groß ({#highlite}{1}$i{#error} > {2} KB) und wurde nicht hinzugefügt!</map_too_large>
+	<add_present>{#server}» {#highlite}Die Strecke ist bereits in der Streckenliste des Servers und wurde nicht hinzugefügt.</add_present>
+	<add_dupl>{#server}» {#emotic}Die Strecke wurde bereits zur Jukebox hinzugefügt.</add_dupl>
+	<jukebox_add>{#server}» {#highlite}{1}{#emotic} möchte gerne {#highlite}{2}{#emotic} von {3} hinzufügen.{4}{#emotic}Es sind {#highlite}{5}{#emotic} Stimmen notwendig zum Bestätigen. Schreibe {#highlite}/y{#emotic} um mit "Ja" abzustimmen.</jukebox_add>
+	<no_add>{#server}» {#highlite}/add{#emotic} ist auf diesem Server aktuell deaktiviert.</no_add>
+	<jukebox_y>{#server}» {#highlite}{1}{#emotic} weitere Stimme benötigt um {#highlite}{3}{#emotic}. hinzuzufügen. Schreibe {#highlite}/y{#emotic} um mit "Ja" abzustimmen.</jukebox_y>
+	<jukebox_pass>{#server}» {#emotic}Abstimmung erfolgreich beendet! {#highlite}{1}{#emotic} wurde zur Jukebox hinzugefügt.</jukebox_pass>
+	<vote_y>{#server}» {#highlite}{1}{#vote} weitere Stimme benötigt für {#highlite}{3}{#vote}. Schreibe {#highlite}/y{#vote} um mit "Ja" abzustimmen.</vote_y>
+	<vote_pass>{#server}» {#vote}Abstimmung erfolgreich beendet: {#highlite}{1}{#vote}.</vote_pass>
+	<history>{#server}» {#emotic}Kürzlich gespielte Strecken: </history>
+</locales>

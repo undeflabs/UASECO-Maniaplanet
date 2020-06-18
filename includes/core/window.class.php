@@ -34,6 +34,7 @@
 */
 
 class Window extends BaseClass {
+	public $config;
 	public $layout;
 	public $settings;
 	public $content;
@@ -50,73 +51,106 @@ class Window extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-06-06');
-		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setVersion('1.0.10');
+		$this->setBuild('2020-01-19');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
+
+		// Read Configuration
+		if (!$this->config = $aseco->parser->xmlToArray('config/class_window.xml', true, true)) {
+			trigger_error('[ClassWindow] Could not read/parse config file "config/class_window.xml"!', E_USER_ERROR);
+		}
+		$this->config = $this->config['SETTINGS'];
+		unset($this->config['SETTINGS']);
+
 
 		// Empty content by default
 		$this->content = array(
-			'title'				=> '',
-			'data'				=> array(),
-			'page'				=> 0,
-			'maxpage'			=> 0,
-			'about_title'			=> '',
-			'about_link'			=> '',
-			'button_title'			=> '',
-			'button_link'			=> '',
+			'title'					=> '',
+			'data'					=> array(),
+			'page'					=> 0,
+			'maxpage'				=> 0,
+			'about_title'				=> '',
+			'about_link'				=> '',
+			'button_title'				=> '',
+			'button_link'				=> '',
+			'option_button'				=> '',
 		);
 
 		// Setup defaults
 		$this->layout = array(
 			'position' => array(
-				'x' 			=> -102.5,
-				'y' 			=> 57.28125,
-				'z' 			=> 20.0,
+				'x' 				=> -102.5,
+				'y' 				=> 57.28125,
+				'z' 				=> 20.0,
 			),
 			'title' => array(
 				'icon' => array(
-					'style'		=> 'Icons64x64_1',
-					'substyle'	=> 'ToolLeague1',
+					'style'			=> 'Icons64x64_1',
+					'substyle'		=> 'ToolLeague1',
 				),
 			),
 			'heading' => array(
-				'textcolor'		=> 'FFAA00FF',
-				'seperatorcolor'	=> 'AAAAAAFF',
+				'textcolor'			=> 'FFFFFFFF',
+				'backgroundcolor'		=> '0099FFDD',
 			),
 			'highlite' => array(
-				'self'			=> '66880077',
-				'other'			=> '88000077',
+				'self'				=> '66880077',
+				'other'				=> '88000077',
 			),
 			'backgrounds' => array(
-				'main'			=> '032942F0',
-				'title'			=> '000000AA',
-				'title_hover'		=> '000000CC',
+				'main'				=> '032942F0',
+				'content'			=> 'FFFFFF33',
+				'columns'			=> 'FFFFFF33',
+
+				'title_default'			=> '000000AA',
+				'title_focus'			=> '000000CC',
+
+				'header_button_default'		=> 'EEEEEEFF',
+				'header_button_focus'		=> '0099FFFF',
+
+				'pagination_disabled'		=> 'DDDDDD88',
+				'pagination_default'		=> '0099FFFF',
+				'pagination_focus'		=> 'DDDDDDFF',
+
+				'option_button_background'	=> 'DDDDDDFF',
+				'option_button_default'		=> '0099FFFF',
+				'option_button_focus'		=> '82AB05FF',
+
+				'link_button_default'		=> '0099FFFF',
+				'link_button_focus'		=> '82AB05FF',
+
+				'link_label_default'		=> 'FFFFFF33',
+				'link_label_focus'		=> '0099FFFF',
+
+				'about_button_disabled'		=> 'FFFFFF33',
+				'about_button_default'		=> 'FFFFFF33',
+				'about_button_focus'		=> '0099FFFF',
 			),
 		);
 
 		$this->settings = array(
-			'id'				=> 'TheWindowFromClassWindow',
-			'timeout'			=> 0,
-			'hideclick'			=> false,
-			'stripcodes'			=> false,
-			'columns'			=> 2,
-			'mode'				=> 'columns',			// 'columns' or 'pages'
-			'add_background'		=> false,			// Include a background for 'pages'? 'columns' will get them by default!
-			'widths'			=> array(),			// Inner columns
-			'halign'			=> array(),			// Inner columns
-			'heading'			=> array(),			// Inner columns
-			'textcolors'			=> array(),			// array('RRGGBBAA', [...])
+			'id'					=> 'TheWindowFromClassWindow',
+			'timeout'				=> 0,
+			'hideclick'				=> false,
+			'stripcodes'				=> false,
+			'columns'				=> 2,
+			'mode'					=> 'columns',			// 'columns' or 'pages'
+			'add_background'			=> false,			// Include a background for 'pages'? 'columns' will get them by default!
+			'widths'				=> array(),			// Inner columns
+			'halign'				=> array(),			// Inner columns
+			'heading'				=> array(),			// Inner columns
+			'textcolors'				=> array(),			// array('RRGGBBAA', [...])
 		);
 
 		$this->script = array(
-			'functions'			=> '',
-			'declarations'			=> '',
-			'mainloop'			=> '',
+			'functions'				=> '',
+			'declarations'				=> '',
+			'mainloop'				=> '',
 			'events' => array(
-				'mouse_click'		=> '',
-				'mouse_over'		=> '',
-				'key_press'		=> '',
+				'mouse_click'			=> '',
+				'mouse_over'			=> '',
+				'key_press'			=> '',
 			),
 		);
 
@@ -187,6 +221,10 @@ class Window extends BaseClass {
 		}
 		if (isset($param['button_link']) && $param['button_link']) {
 			$this->content['button_link'] = $param['button_link'];
+		}
+
+		if (isset($param['option_button']) && $param['option_button']) {
+			$this->content['option_button'] = $param['option_button'];
 		}
 	}
 
@@ -278,8 +316,8 @@ class Window extends BaseClass {
 		if (isset($param['textcolor']) && $param['textcolor']) {
 			$this->layout['heading']['textcolor'] = $param['textcolor'];
 		}
-		if (isset($param['seperatorcolor']) && $param['seperatorcolor']) {
-			$this->layout['heading']['seperatorcolor'] = $param['seperatorcolor'];
+		if (isset($param['backgroundcolor']) && $param['backgroundcolor']) {
+			$this->layout['heading']['backgroundcolor'] = $param['backgroundcolor'];
 		}
 	}
 
@@ -306,7 +344,7 @@ class Window extends BaseClass {
 		$column_width = (($frame_width - (($this->settings['columns'] - 1) * $outer_gap)) / $this->settings['columns']);
 		$xml = '<frame pos="0 0" z-index="0.01">';
 		foreach (range(0, ($this->settings['columns'] - 1)) as $i) {
-			$xml .= '<quad pos="'. ($i * ($column_width + $outer_gap)) .' 0" z-index="0.01" size="'. $column_width .' 90" bgcolor="FFFFFF33"/>';
+			$xml .= '<quad pos="'. ($i * ($column_width + $outer_gap)) .' 0" z-index="0.01" size="'. $column_width .' 90" bgcolor="'. $this->layout['backgrounds']['columns'] .'"/>';
 		}
 		$xml .= '</frame>';
 
@@ -316,7 +354,6 @@ class Window extends BaseClass {
 			// Prepared settings
 			$entries = 0;
 			$row = 0;
-			$inner_gap = 0.625;
 			$offset = 0;
 			$line_height = 3.5;			// Default
 			if ($headings === true) {
@@ -330,20 +367,19 @@ class Window extends BaseClass {
 						$element_width	= (($inner_width / 100) * $this->settings['widths'][$innercol]);
 						$textcolor	= ((isset($this->layout['heading']['textcolor'][$innercol])) ? $this->layout['heading']['textcolor'][$innercol] : end($this->layout['heading']['textcolor']));
 						$text		= strtoupper((isset($this->settings['heading'][$innercol])) ? $this->settings['heading'][$innercol] : end($this->settings['heading']));
-						$sizew		= ($element_width - ($inner_gap / 2));
-						$posx		= ($last_element_width + $inner_gap + $offset) + ($sizew / 2.2);
+						$sizew		= $element_width;
+						$posx		= ($last_element_width + $offset) + ($sizew / 2.2);
 
-						$xml 		.= '<label pos="'. $posx .' -0.3" z-index="0.02" size="'. (($sizew / 100) * 145) .' '. $line_height .'" class="labels" halign="center" valign="center2" textcolor="'. $textcolor .'" scale="0.65" text="'. $text .'"/>';
+						$xml .= '<label pos="'. $posx .' -0.3" z-index="0.04" size="'. (($sizew / 100) * 145) .' '. $line_height .'" class="labels" halign="center" valign="center2" textcolor="'. $textcolor .'" scale="0.65" text="'. $text .'"/>';
 
-						$last_element_width += $element_width + $inner_gap;
+						$last_element_width += $element_width;
 						$innercol ++;
 					}
-					$offset += (($frame_width + $outer_gap) / $this->settings['columns']);
 
-					// Add header separator
-					$xml .= '<frame pos="-'. (($outer_gap / 2) + $inner_gap) .' -1.8" z-index="0">';
-					$xml .= '<quad pos="'. ($i * ($column_width + $outer_gap)) .' 0" z-index="0.03" size="'. ($column_width - ($inner_gap * 2)) .' 0.2" bgcolor="'. $this->layout['heading']['seperatorcolor'] .'"/>';
-					$xml .= '</frame>';
+					// Add header background color
+					$xml .= '<quad pos="'. ($offset - 2.5) .' 1.6" z-index="0.03" size="'. ($column_width ) .' 4" bgcolor="'. $this->layout['heading']['backgroundcolor'] .'"/>';
+
+					$offset += (($frame_width + $outer_gap) / $this->settings['columns']);
 				}
 				$xml .= '</frame>';
 				$xml .= '<frame pos="2.5 -4.5" z-index="0.01">';
@@ -362,7 +398,7 @@ class Window extends BaseClass {
 
 			$row = 0;
 			$offset = 0;
-			$xml .= '<frame pos="-'. (($outer_gap / 2) + $inner_gap) .' 0" z-index="0.01">';
+			$xml .= '<frame pos="-2.5 0" z-index="0.01">';
 			for ($i = ($this->content['page'] * ($this->settings['columns'] * 25)); $i < (($this->content['page'] * ($this->settings['columns'] * 25)) + ($this->settings['columns'] * 25)); $i ++) {
 				// Is there an entry to display?
 				if (!isset($this->content['data'][$i])) {
@@ -372,10 +408,10 @@ class Window extends BaseClass {
 				foreach ($this->content['data'][$i] as $value) {
 					if (is_array($value) && isset($value['login'])) {
 						if ($value['login'] === $login) {
-							$xml .= '<quad pos="'. $offset .' -'. ($line_height * $row) .'" z-index="0.02" size="'. ($column_width - ($inner_gap * 2)) .' 3.2" bgcolor="'. $this->layout['highlite']['self'] .'"/>';
+							$xml .= '<quad pos="'. $offset .' -'. ($line_height * $row) .'" z-index="0.06" size="'. $column_width .' 3.2" bgcolor="'. $this->layout['highlite']['self'] .'"/>';
 						}
 						else if (in_array($value['login'], $players)) {
-							$xml .= '<quad pos="'. $offset .' -'. ($line_height * $row) .'" z-index="0.02" size="'. ($column_width - ($inner_gap * 2)) .' 3.2" bgcolor="'. $this->layout['highlite']['other'] .'"/>';
+							$xml .= '<quad pos="'. $offset .' -'. ($line_height * $row) .'" z-index="0.06" size="'. $column_width .' 3.2" bgcolor="'. $this->layout['highlite']['other'] .'"/>';
 						}
 					}
 				}
@@ -395,6 +431,7 @@ class Window extends BaseClass {
 			$entries = 0;
 			$row = 0;
 			$offset = 0;
+			$inner_gap = 0.625;
 			for ($i = ($this->content['page'] * ($this->settings['columns'] * 25)); $i < (($this->content['page'] * ($this->settings['columns'] * 25)) + ($this->settings['columns'] * 25)); $i ++) {
 				// Is there an entry to display?
 				if (!isset($this->content['data'][$i])) {
@@ -417,7 +454,7 @@ class Window extends BaseClass {
 								$posx += $element_width;
 							}
 						}
-						$xml .= '<quad pos="'. $posx .' -'. ($line_height * $row) .'" z-index="0.02" size="3.2 3.2" halign="'. $this->settings['halign'][$innercol] .'" image="'. $value['image'] .'"/>';
+						$xml .= '<quad pos="'. $posx .' -'. ($line_height * $row) .'" z-index="0.07" size="3.2 3.2" halign="'. $this->settings['halign'][$innercol] .'" image="'. $value['image'] .'"/>';
 					}
 					else {
 						// Setup <label...>
@@ -432,10 +469,10 @@ class Window extends BaseClass {
 							$posx += ($sizew - $inner_gap);
 						}
 
-						$xml .= '<label pos="'. $posx .' '. $posy .'" z-index="0.03" size="'. $sizew .' 3.2" class="labels" halign="'. (isset($this->settings['halign'][$innercol]) ? $this->settings['halign'][$innercol] : 'left') .'" valign="center2" scale="0.9"';
+						$xml .= '<label pos="'. $posx .' '. $posy .'" z-index="0.07" size="'. $sizew .' 3.2" class="labels" halign="'. (isset($this->settings['halign'][$innercol]) ? $this->settings['halign'][$innercol] : 'left') .'" valign="center2" scale="0.9"';
 						if (is_array($value)) {
 							if (isset($value['action']) && !empty($value['action']) && isset($value['title'])) {
-								$xml .= ' action="'. $value['action'] .'" focusareacolor1="FFFFFF33" focusareacolor2="0099FFFF"';
+								$xml .= ' action="'. $value['action'] .'" focusareacolor1="'. $this->layout['backgrounds']['link_label_default'] .'" focusareacolor2="'. $this->layout['backgrounds']['link_label_focus'] .'"';
 								$xml .= ' textcolor="'. $textcolor .'" text="'. $this->normalizeString($value['title']) .'"/>';
 							}
 							else if (isset($value['login']) && isset($value['nickname'])) {
@@ -476,7 +513,9 @@ class Window extends BaseClass {
 
 	public function buildPages () {
 
-		return $this->content['data'][$this->content['page']];
+		if (isset($this->content['data'][$this->content['page']])) {
+			return $this->content['data'][$this->content['page']];
+		}
 	}
 
 	/*
@@ -501,38 +540,36 @@ class Window extends BaseClass {
 		if ($this->content['page'] > 0) {
 			// First
 			$buttons .= '<frame pos="0 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="ClassWindowButtonFirst" ScriptEvents="1"/>';
-			$buttons .= '<quad pos="1.1 -0.35" z-index="0.02" size="4.25 4.25" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '<quad pos="1.4 -1" z-index="0.03" size="0.8 2.8" bgcolor="FFFFFFFF"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonPrevFirst" ScriptEvents="1"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_PREV_FIRST'][0] .'"/>';
 			$buttons .= '</frame>';
 
-			// Previous (-5)
+			// Previous (-2)
 			$buttons .= '<frame pos="6 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="ClassWindowButtonPrevTwo" ScriptEvents="1"/>';
-			$buttons .= '<quad pos="-0.35 -0.35" z-index="0.02" size="4.25 4.25" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '<quad pos="1.1 -0.35" z-index="0.03" size="4.25 4.25" style="Icons64x64_1" substyle="ShowLeft2"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonPrevTwo" ScriptEvents="1"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_PREV_TWO'][0] .'"/>';
 			$buttons .= '</frame>';
 
 			// Previous (-1)
 			$buttons .= '<frame pos="12 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="ClassWindowButtonPrev" ScriptEvents="1"/>';
-			$buttons .= '<quad pos="0.4 -0.35" z-index="0.02" size="4.25 4.25" style="Icons64x64_1" substyle="ShowLeft2"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonPrev" ScriptEvents="1"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_PREV'][0] .'"/>';
 			$buttons .= '</frame>';
 		}
 		else {
 			// First
 			$buttons .= '<frame pos="0 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="DDDDDD88"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_disabled'] .'"/>';
 			$buttons .= '</frame>';
 
-			// Previous (-5)
+			// Previous (-2)
 			$buttons .= '<frame pos="6 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="DDDDDD88"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_disabled'] .'"/>';
 			$buttons .= '</frame>';
 
 			// Previous (-1)
 			$buttons .= '<frame pos="12 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="DDDDDD88"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_disabled'] .'"/>';
 			$buttons .= '</frame>';
 		}
 
@@ -540,38 +577,36 @@ class Window extends BaseClass {
 		if (($this->content['page'] + 1) <= $this->content['maxpage']) {
 			// Next (+1)
 			$buttons .= '<frame pos="18 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="ClassWindowButtonNext" ScriptEvents="1"/>';
-			$buttons .= '<quad pos="0.4 -0.35" z-index="0.02" size="4.25 4.25" style="Icons64x64_1" substyle="ShowRight2"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonNext" ScriptEvents="1"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_NEXT'][0] .'"/>';
 			$buttons .= '</frame>';
 
-			// Next (+5)
+			// Next (+2)
 			$buttons .= '<frame pos="24 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="ClassWindowButtonNextTwo" ScriptEvents="1"/>';
-			$buttons .= '<quad pos="-0.35 -0.35" z-index="0.02" size="4.25 4.25" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '<quad pos="1.1 -0.35" z-index="0.03" size="4.25 4.25" style="Icons64x64_1" substyle="ShowRight2"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonNextTwo" ScriptEvents="1"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_NEXT_TWO'][0] .'"/>';
 			$buttons .= '</frame>';
 
 			// Last
 			$buttons .= '<frame pos="30 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="0099FFFF" bgcolorfocus="DDDDDDFF" id="ClassWindowButtonLast" ScriptEvents="1"/>';
-			$buttons .= '<quad pos="-0.25 -0.35" z-index="0.02" size="4.25 4.25" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '<quad pos="2.9 -1" z-index="0.03" size="0.8 2.8" bgcolor="FFFFFFFF"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonNextEnd" ScriptEvents="1"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_NEXT_LAST'][0] .'"/>';
 			$buttons .= '</frame>';
 		}
 		else {
 			// First
 			$buttons .= '<frame pos="18 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="DDDDDD88"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_disabled'] .'"/>';
 			$buttons .= '</frame>';
 
-			// Previous (-5)
+			// Previous (-2)
 			$buttons .= '<frame pos="24 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="DDDDDD88"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_disabled'] .'"/>';
 			$buttons .= '</frame>';
 
 			// Previous (-1)
 			$buttons .= '<frame pos="30 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="DDDDDD88"/>';
+			$buttons .= '<quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_disabled'] .'"/>';
 			$buttons .= '</frame>';
 		}
 		$buttons .= '</frame>';
@@ -601,26 +636,26 @@ class Window extends BaseClass {
 		$xml .= '<quad pos="0 -8" z-index="0.01" size="205 100.5" bgcolor="'. $this->layout['backgrounds']['main'] .'" id="ClassWindowBody" ScriptEvents="1"/>';
 
 		// Title
-		$xml .= '<quad pos="0 0" z-index="0.04" size="205 8" bgcolor="'. $this->layout['backgrounds']['title'] .'" bgcolorfocus="'. $this->layout['backgrounds']['title_hover'] .'" id="ClassWindowTitle" ScriptEvents="1"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="205 8" bgcolor="'. $this->layout['backgrounds']['title_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['title_focus'] .'" id="ClassWindowTitle" ScriptEvents="1"/>';
 		$xml .= '<quad pos="2.5 -1.075" z-index="0.05" size="5.5 5.5" style="'. $this->layout['title']['icon']['style'] .'" substyle="'. $this->layout['title']['icon']['substyle'] .'"/>';
-		$xml .= '<label pos="8 -2.575" z-index="0.05" size="188.5 3.75" class="labels" textsize="2" scale="1" textcolor="FFFFFFFF" textfont="Oswald" text="'. $this->content['title'] .'"/>';
+		$xml .= '<label pos="8 -2.575" z-index="0.05" size="188.5 3.75" class="labels" textsize="2" scale="1" textcolor="'. $this->layout['heading']['textcolor'] .'" textfont="Oswald" text="'. $this->content['title'] .'"/>';
 
 		// Minimize Button
 		$xml .= '<frame pos="190 0.125" z-index="0.05">';
-		$xml .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="EEEEEEFF" bgcolorfocus="0099FFFF" id="ClassWindowMinimize" ScriptEvents="1"/>';
-		$xml .= '<label pos="4.2 -4.5" z-index="0.03" size="15 0" class="labels" halign="center" valign="center2" textsize="3" textcolor="333333FF" text="$O-"/>';
+		$xml .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="'. $this->layout['backgrounds']['header_button_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['header_button_focus'] .'" id="ClassWindowMinimize" ScriptEvents="1"/>';
+		$xml .= '<quad pos="2.25 -2.4" z-index="0.03" size="3.75 3.75" image="'. $this->config['MEDIA'][0]['BUTTON_MINIMIZE'][0] .'"/>';
 		$xml .= '</frame>';
 
 		// Close Button
 		$xml .= '<frame pos="196 0.125" z-index="0.05">';
-		$xml .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="EEEEEEFF" bgcolorfocus="0099FFFF" id="ClassWindowClose" ScriptEvents="1"/>';
-		$xml .= '<label pos="4.2 -4.375" z-index="0.03" size="15 0" class="labels" halign="center" valign="center2" textsize="1" scale="0.9" textcolor="333333FF" text="$OX"/>';
+		$xml .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="'. $this->layout['backgrounds']['header_button_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['header_button_focus'] .'" id="ClassWindowClose" ScriptEvents="1"/>';
+		$xml .= '<quad pos="2.25 -2.4" z-index="0.03" size="3.75 3.75" image="'. $this->config['MEDIA'][0]['BUTTON_CLOSE'][0] .'"/>';
 		$xml .= '</frame>';
 
 		// Content
 		$xml .= '<frame pos="2.5 -10.5" z-index="0.05">';
 		if ($this->settings['add_background'] === true) {
-			$xml .= '<quad pos="0 0" z-index="0" size="200 90" bgcolor="FFFFFF33"/>';
+			$xml .= '<quad pos="0 0" z-index="0" size="200 90" bgcolor="'. $this->layout['backgrounds']['content'] .'"/>';
 		}
 		$xml .= '%content%';
 		$xml .= '</frame>';
@@ -628,7 +663,7 @@ class Window extends BaseClass {
 		// Page info
 		if ($this->content['maxpage'] > 0) {
 			$xml .= '<frame pos="188 -3" z-index="0.05">';
-			$xml .= '<label pos="0 0" z-index="0.02" size="35 3.75" class="labels" halign="right" textsize="1" scale="0.9" textcolor="FFFFFFDD" text="'. (new Message('common', 'header_page'))->finish($login) .' '. ($this->content['page'] + 1) .' '. (new Message('common', 'header_of'))->finish($login) .' '. ($this->content['maxpage'] + 1) .'"/>';
+			$xml .= '<label pos="0 0" z-index="0.02" size="35 3.75" class="labels" halign="right" textsize="1" scale="0.9" textcolor="FFFFFFDD" text="'. (new Message('class.window', 'header_page'))->finish($login) .' '. ($this->content['page'] + 1) .' '. (new Message('class.window', 'header_of'))->finish($login) .' '. ($this->content['maxpage'] + 1) .'"/>';
 			$xml .= '</frame>';
 		}
 
@@ -649,10 +684,10 @@ class Window extends BaseClass {
 				else {
 					$attr = 'action';
 				}
-				$xml .= ' focusareacolor1="FFFFFF33" focusareacolor2="0099FFFF" '. $attr .'="'. $this->content['about_link'] .'"';
+				$xml .= ' focusareacolor1="'. $this->layout['backgrounds']['about_button_default'] .'" focusareacolor2="'. $this->layout['backgrounds']['about_button_focus'] .'" '. $attr .'="'. $this->content['about_link'] .'"';
 			}
 			else {
-				$xml .= ' focusareacolor1="FFFFFF33" focusareacolor2="FFFFFF33" action="WindowList?Action=IGNORE"';
+				$xml .= ' focusareacolor1="'. $this->layout['backgrounds']['about_button_default'] .'" focusareacolor2="'. $this->layout['backgrounds']['about_button_disabled'] .'" action="WindowList?Action=IGNORE"';
 			}
 			$xml .= ' text="'. $this->content['about_title'] .'"/>';
 			$xml .= '</frame>';
@@ -673,8 +708,49 @@ class Window extends BaseClass {
 				$attr = 'action';
 			}
 			$xml .= '<frame pos="101.5 -104.4" z-index="0.04">';
-			$xml .= '<label pos="0 0" z-index="0.02" size="75 4.875" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" focusareacolor1="0099FFFF" focusareacolor2="DDDDDDFF" '. $attr .'="'. $this->content['button_link'] .'" text="'. $this->content['button_title'] .'"/>';
+			$xml .= '<label pos="0 0" z-index="0.02" size="75 4.875" class="labels" halign="center" valign="center2" textsize="1" scale="0.8" focusareacolor1="'. $this->layout['backgrounds']['link_button_default'] .'" focusareacolor2="'. $this->layout['backgrounds']['link_button_focus'] .'" '. $attr .'="'. $this->content['button_link'] .'" text="'. $this->content['button_title'] .'"/>';
 			$xml .= '</frame>';
+		}
+
+
+		// Options Button
+		if (is_array($this->content['option_button'])) {
+			$xml .= '<frame pos="155.5 -102" z-index="1.00">';
+			$xml .= ' <frame pos="0 0" z-index="0.05">';
+			$xml .= '  <quad pos="0 0" z-index="0.01" size="5 5" bgcolor="'. $this->layout['backgrounds']['pagination_default'] .'" bgcolorfocus="'. $this->layout['backgrounds']['pagination_focus'] .'" id="ClassWindowButtonOptions" ScriptEvents="1"/>';
+			$xml .= '  <quad pos="0 0" z-index="0.02" size="5 5" image="'. $this->config['MEDIA'][0]['ARROW_UP'][0] .'"/>';
+			$xml .= ' </frame>';
+
+			$line = 0;
+			$gap = 0.5;
+			$height = 3.8;
+			$xml .= ' <frame pos="0 '. ((($height + $gap) * count($this->content['option_button'])) + ($gap * 2)) .'" z-index="0.10" id="ClassWindowFrameButtonOptions" hidden="true">';
+			$xml .= '  <quad pos="0 0" z-index="0.01" size="47 '. ((($height + $gap) * count($this->content['option_button'])) + $gap) .'" bgcolor="'. $this->layout['backgrounds']['option_button_background'] .'"/>';
+			$xml .= '  <frame pos="0 -'. (($height / 2) + $gap) .'" z-index="0.10">';
+			foreach ($this->content['option_button'] as $entry) {
+				$protocol = explode('://', $entry[1]);
+				$attr = 'manialink';
+				if ($protocol[0] === 'manialink') {
+					$attr = 'manialink';
+					$this->content['button_link'] = str_replace(array('manialink://', 'manialink:///:'), $this->content['button_link']);
+				}
+				else if (in_array($protocol[0], array('http', 'https', 'ftp', 'ftps', 'ts3server', 'mumble'))) {
+					$attr = 'url';
+				}
+				else {
+					$attr = 'action';
+				}
+				$xml .= '<label pos="'. $gap .' -'. (($height + $gap) * $line) .'" z-index="0.02" size="46 '. $height .'" class="labels" valign="center2" textsize="1" scale="1" focusareacolor1="'. $this->layout['backgrounds']['option_button_default'] .'" focusareacolor2="'. $this->layout['backgrounds']['option_button_focus'] .'" '. $attr .'="'. $entry[1] .'" text=" '. $entry[0] .'"/>';
+				$line += 1;
+			}
+			$xml .= '  </frame>';
+			$xml .= ' </frame>';
+
+			$xml .= '</frame>';
+		}
+		else {
+			// Required to keep the ManiaScript valid on declare
+			$xml .= ' <frame pos="0 0" z-index="0.10" id="ClassWindowFrameButtonOptions" visible="false"></frame>';
 		}
 
 		// Navigation Buttons
@@ -762,7 +838,9 @@ Void Maximize (Text ChildId) {
 {$this->script['functions']}
 
 main () {
-	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
+	declare CMlFrame ClassWindowFrame		<=> (Page.GetFirstChild("ClassWindow") as CMlFrame);
+	declare CMlFrame ClassWindowFrameButtonOptions	<=> (Page.GetFirstChild("ClassWindowFrameButtonOptions") as CMlFrame);
+
 	declare Boolean ClassWindowMoveWindow = False;
 	declare Boolean ClassWindowIsMinimized = False;
 	declare Real ClassWindowMouseDistanceX = 0.0;
@@ -801,7 +879,16 @@ main () {
 		foreach (Event in PendingEvents) {
 			switch (Event.Type) {
 				case CMlScriptEvent::Type::MouseClick : {
-					if (Event.ControlId == "ClassWindowButtonFirst") {
+					if (Event.ControlId == "ClassWindowButtonOptions") {
+						if (ClassWindowFrameButtonOptions.Visible == True) {
+							ClassWindowFrameButtonOptions.Visible = False;
+						}
+						else {
+							ClassWindowFrameButtonOptions.Visible = True;
+						}
+					}
+
+					if (Event.ControlId == "ClassWindowButtonPrevFirst") {
 						TriggerPageAction("WindowList?Action=ClassWindowPageFirst&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowButtonPrevTwo") {
@@ -816,7 +903,7 @@ main () {
 					else if (Event.ControlId == "ClassWindowButtonNextTwo") {
 						TriggerPageAction("WindowList?Action=ClassWindowPageNextTwo&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
-					else if (Event.ControlId == "ClassWindowButtonLast") {
+					else if (Event.ControlId == "ClassWindowButtonNextEnd") {
 						TriggerPageAction("WindowList?Action=ClassWindowPageLast&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowClose") {
@@ -840,12 +927,12 @@ main () {
 					if (
 						Event.ControlId == "ClassWindowClose" ||
 						Event.ControlId == "ClassWindowMinimize" ||
-						Event.ControlId == "ClassWindowButtonFirst" ||
+						Event.ControlId == "ClassWindowButtonPrevFirst" ||
 						Event.ControlId == "ClassWindowButtonPrevTwo" ||
 						Event.ControlId == "ClassWindowButtonPrev" ||
 						Event.ControlId == "ClassWindowButtonNext" ||
 						Event.ControlId == "ClassWindowButtonNextTwo" ||
-						Event.ControlId == "ClassWindowButtonLast"
+						Event.ControlId == "ClassWindowButtonNextEnd"
 
 					) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::Valid, 2, 1.0);

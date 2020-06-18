@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+
+	<!-- common messages -->
+	<notonrelay>{#server}» {#error}Эта команда недоступна на реле-сервер.</notonrelay>
+	<first_record>{#server}» {#record}Первый локальный рекорд: </first_record>
+	<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}], </ranking_record_new>
+	<last_record>{#server}» {#record}Последний локальный рекорд: </last_record>
+	<diff_record>{#server}» {#record}Разница между {1}{#record} и {2}{#record} рекордами: {#highlite}{3}</diff_record>
+
+
+
+	<!-- plugin messages -->
+	<plugin_description>Показывает рекорды с рангами и их положение на этой карте.</plugin_description>
+	<firstrec>Показывает первый рекорд с рангом на этой карте</firstrec>
+	<lastrec>Показывает последний рекорд с рангом на этой карте</lastrec>
+	<nextrec>Показывает следующий рекорд с рангом</nextrec>
+	<diffrec>Показывает разницу твоего и первого рекорда с рангом</diffrec>
+	<recrange>Показывает разницу первого и последнего рекордов с рангом</recrange>
+</locales>

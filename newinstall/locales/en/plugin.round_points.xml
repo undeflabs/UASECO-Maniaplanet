@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-25
+	Authors:	undef.de
+	//-->
+	<plugin_description>Allows setting common and custom Rounds points systems.</plugin_description>
+	<slash_setrpoints_description>Sets custom Rounds points (see: /setrpoints help)</slash_setrpoints_description>
+	<slash_rpoints_description>Shows current Rounds points system.</slash_rpoints_description>
+	<rpoints_named>{#server}» {1}Custom points system set to {#highlite}{2}{3}: {#highlite}{4},...</rpoints_named>
+	<rpoints_nameless>{#server}» {1}Custom points system set to: {#highlite}{2},...</rpoints_nameless>
+	<no_rpoints>{#server}» {1}No custom Rounds points system defined!</no_rpoints>
+	<set_rpoints_help>Displays this help information</set_rpoints_help>
+	<setrpoints_list>Displays available points systems</setrpoints_list>
+	<setrpoints_show>Shows current points system</setrpoints_show>
+	<setrpoints_xxx>Sets custom points system labelled xxx</setrpoints_xxx>
+	<setrpoints_X_Y_Z>Sets custom points system with specified values;</setrpoints_X_Y_Z>
+	<decreasing_integers>X,Y,...,Z must be decreasing integers and there</decreasing_integers>
+	<no_spaces>must be at least two values with no spaces</no_spaces>
+	<setrpoints_off>Disables custom points system</setrpoints_off>
+	<help_heading_command>Command</help_heading_command>
+	<help_heading_description>Description</help_heading_description>
+	<help_title>Help for /setrpoints</help_title>
+	<list_heading_points>Points</list_heading_points>
+	<list_heading_title>Currently available Rounds points systems</list_heading_title>	
+	<admin_disables>{#server}» {#admin}{1}$z$s{#admin} disables custom rounds points</admin_disables>
+	<admin_sets_custom>{#server}» {#admin}{1}$z$s{#admin} sets custom rounds points: {#highlite}{2},...</admin_sets_custom>
+	<admin_sets>{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#server}: {#highlite}{3}, ...</admin_sets>
+	<unknown_system>{#server}» {#error}Unknown points system {#highlite}$i {1}$z$s {#error}!</unknown_system>	
+</locales>

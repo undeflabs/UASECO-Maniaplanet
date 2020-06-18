@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Displays log of recent chat messages</plugin_description>
+	<info_message>Forgot what someone said? Use "/chatlog" to check the chat history!</info_message>
+	<message_no_history>{#server}» {#error}No chat history found!</message_no_history>
+</locales>

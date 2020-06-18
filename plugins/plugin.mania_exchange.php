@@ -49,8 +49,8 @@ class PluginManiaExchange extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2019-09-15');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2019-09-20');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription(new Message('plugin.mania_exchange', 'plugin_description'));
 
@@ -363,12 +363,12 @@ class PluginManiaExchange extends Plugin {
 		$settings_content = array(
 			'title'			=> (new Message('plugin.mania_exchange', 'window_title_mxlist'))->finish($player->login),
 			'data'			=> $data,
-			'about'			=> 'MANIA-EXCHANGE/'. $this->getVersion(),
 			'mode'			=> 'columns',
+			'add_background'	=> true,
 		);
 		$settings_footer = array(
 			'about_title'		=> 'MANIA-EXCHANGE/'. $this->getVersion(),
-			'about_link'		=> 'PluginManiaExchange?Action=OpenHelpWindow',
+			'about_link'		=> 'PluginManiaExchange?Action=showHelpWindow',
 		);
 
 		$window = new Window();
@@ -398,13 +398,12 @@ class PluginManiaExchange extends Plugin {
 		$settings_content = array(
 			'title'			=> (new Message('plugin.mania_exchange', 'window_title_retrieving'))->finish($player->login),
 			'data'			=> array($content),
-			'about'			=> 'MANIA-EXCHANGE/'. $this->getVersion(),
 			'mode'			=> 'pages',
 			'add_background'	=> true,
 		);
 		$settings_footer = array(
 			'about_title'		=> 'MANIA-EXCHANGE/'. $this->getVersion(),
-			'about_link'		=> 'PluginManiaExchange?Action=OpenHelpWindow',
+			'about_link'		=> 'PluginManiaExchange?Action=showHelpWindow',
 		);
 
 		$window = new Window();

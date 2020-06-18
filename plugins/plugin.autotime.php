@@ -171,7 +171,7 @@ class PluginAutotime extends Plugin {
 					$msg->addPlaceholders(
 						$aseco->stripStyles($map->name),
 						substr($aseco->formatTime($newtime * 1000), 0, -4),
-						new Message('common', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
+						new Message('plugin.autotime', 'medal_'.strtolower($this->config['CALCULATION_BASE'][0])),
 						$aseco->formatTime($basedtime)
 					);
 					$msg->sendChatMessage();

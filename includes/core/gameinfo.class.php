@@ -35,7 +35,6 @@ class Gameinfo extends BaseClass {
 	public $mode;
 	public $script;
 
-	public $matchmaking	= array();
 	public $modebase	= array();
 
 	public $rounds		= array();
@@ -67,8 +66,8 @@ class Gameinfo extends BaseClass {
 	public function __construct ($aseco, $clone = false) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.6');
-		$this->setBuild('2019-08-28');
+		$this->setVersion('1.0.8');
+		$this->setBuild('2019-10-11');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Provides information to the current game which is running.');
 
@@ -170,6 +169,7 @@ class Gameinfo extends BaseClass {
 			$this->time_attack['TimeLimit']			= $modescript['settings']['S_TimeLimit'];
 			$this->time_attack['WarmUpNumber']		= $modescript['settings']['S_WarmUpNb'];
 			$this->time_attack['WarmUpDuration']		= $modescript['settings']['S_WarmUpDuration'];
+			$this->time_attack['ForceLapsNb']		= $modescript['settings']['S_ForceLapsNb'];
 		}
 		else if ($this->mode === self::TEAM) {
 			// Team  (+RoundsBase)

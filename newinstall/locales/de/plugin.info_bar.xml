@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Zeigt eine Informationsleiste mit verschiedenen personalisierten Werten an.</plugin_description>
+	<chat_infobar>Kommando um die Konfiguration der InfoBar neu zu laden: "/infobar reload"</chat_infobar>
+	<message_chat_infobar_reload>{#admin}» Neuladen der Konfiguration "config/info_bar.xml" erfolgreich.</message_chat_infobar_reload>
+	<label_player_count>SPIELER</label_player_count>
+	<label_spectator_count>ZUSCHAUER</label_spectator_count>
+	<label_current_ranking>PLATZIERUNG</label_current_ranking>
+	<label_donate_heading>BITTE</label_donate_heading>
+	<label_donate_description>PLANETS SPENDEN</label_donate_description>
+	<label_donate_intro>Bitte die Menge an Planets eintragen die gespendet werden soll:</label_donate_intro>
+	<label_donate_button>SPENDEN</label_donate_button>
+	<label_donate_minimum_amount>$SMindestbetrag für eine Spende beträgt {1} Planets.</label_donate_minimum_amount>
+	<label_best_time>BESTE RENNZEIT</label_best_time>
+	<label_last_time>LETZTE RENNZEIT</label_last_time>
+	<label_personal_best>EIGENE BESTZEIT</label_personal_best>
+	<label_local_record>1. LOKALER REKORD</label_local_record>
+	<label_dedimania_record>1. DEDIMANIA</label_dedimania_record>
+	<label_mania_exchange>MANIA EXCHANGE</label_mania_exchange>
+	<label_ladder_limits>RANGPUNKTE</label_ladder_limits>
+	<label_clock>LOKALE ZEIT</label_clock>
+</locales>

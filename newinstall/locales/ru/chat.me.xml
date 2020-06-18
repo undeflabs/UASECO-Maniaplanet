@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<!-- common messages -->
+	<muted>{#server}» Игроку {#highlite}{1}{#error} отключен чат, поскольку он находится в мировом списке мьютов!</muted>
+
+	<!-- plugin messages -->
+	<plugin_description>Выводит в чат сообщение от игрока с никнеймом в начале.</plugin_description>
+</locales>

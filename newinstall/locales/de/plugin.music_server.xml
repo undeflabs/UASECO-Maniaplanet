@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+	<plugin_description>Handhabt serverseitige Musik.</plugin_description>
+	<slash_chat_music_description>Handhabt serverseitige Musik (siehe: /music help)</slash_chat_music_description>
+	<no_songs_found>{#server}» {#error}Keine Lieder gefunden, versuche es noch einmal!</no_songs_found>
+	<error_config>{#server}» {#error}Konnte die Musikserver-Konfigurations-Datei nicht (aus-)lesen!</error_config>
+	<no_admin>{#server}» {#error}Du müsstest ein Admin sein, um das zu tun!</no_admin>
+	<override>{#server}» {#music}Überschreiben der Musik (Music override) auf {1} gesetzt</override>
+	<auto_next>{#server}» {#music}Automatisches Weiterlaufen der Musik (Music autonext) auf {1} gesetzt</auto_next>
+	<auto_shuffle>{#server}» {#music}Automatisches Umsortieren der Reihenfolge der Musik (Music autoshuffle) auf {1} gesetzt</auto_shuffle>
+	<allow_jb>{#server}» {#music}Jukebox erlauben (Allow music jukebox) auf {1} gesetzt</allow_jb>
+	<strip_dirs>{#server}» {#music}Unterverzeichnis ausblenden (Strip subdirs) auf {1} gesetzt</strip_dirs>
+	<strip_exts>{#server}» {#music}Erweiterungen ausblenden (Strip extensions) auf {1} gesetzt</strip_exts>
+	<enabled>an</enabled>
+	<disabled>aus</disabled>
+	<unknown_cmd>{#server}» {#error}Unbekannter Befehl oder fehlender Parameter: {#highlite}$i {1}</unknown_cmd>
+	<current>{#server}» {#music}Aktuell laufendes Lied: {#highlite}{1}</current>
+	<next>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} hat als nächstes Lied geladen: {#highlite}{3}</next>
+	<reloaded>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} hat die Musik-Konfiguration neu geladen und die Jukebox geleert!</reloaded>
+	<sorted>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} hat die Lieder-Liste sortiert und die Jukebox geleert!</sorted>
+	<shuffled>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} hat die Reihenfolge der Lieder umsortiert und die Juekbox geleert!</shuffled>
+	<jukebox>{#server}» {#highlite}{1}{#music} hat folgendes Lied in die Jukebox gelegt: {#highlite}{2}</jukebox>
+	<jukebox_already>{#server}» {#music}Du hast bereits ein Lied in der Jukebox! Warte bis es gespielt wurde, bevor Du ein weiteres hinzufügst.</jukebox_already>
+	<jukebox_dupl>{#server}» {#music}Dieses Lied ist bereits in der Jukebox, such Dir ein anderes aus.</jukebox_dupl>
+	<jukebox_notfound>{#server}» {#music}Song_ID nicht gefunden - Schreibe {#highlite}/music list{#music} um alle Lieder zu sehen.</jukebox_notfound>
+	<jukebox_drop>{#server}» {#highlite}{1}{#music} entfernte sein/ihr Lied {#highlite}{2}{#music} aus der Jukebox!</jukebox_drop>
+	<jukebox_nodrop>{#server}» {#music}Du hast kein Lied in der Jukebox, benutze {#highlite}/music Song_ID{#music} um eins hinzuzufügen...</jukebox_nodrop>
+	<jukebox_empty>{#server}» {#music}Keine Lieder in der Jukebox, benutze {#highlite}/music Song_ID{#music} um eins hinzuzufügen...</jukebox_empty>
+	<no_jukebox>{#server}» {#highlite}/music #{#music} ist aktuell auf diesem Server deaktiviert.</no_jukebox>
+	<shutdown>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} deaktiviert Server-Musik!</shutdown>
+</locales>

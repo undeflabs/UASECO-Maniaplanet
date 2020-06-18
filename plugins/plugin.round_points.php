@@ -46,10 +46,11 @@ class PluginRoundPoints extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
-		$this->setDescription('Allows setting common and custom Rounds points systems.');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-25');
+		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setDescription(new Message('plugin.round_points', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0',	null);
 
@@ -57,8 +58,8 @@ class PluginRoundPoints extends Plugin {
 		$this->registerEvent('onPlayerManialinkPageAnswer',	'onPlayerManialinkPageAnswer');
 		$this->registerEvent('onModeScriptChanged',		'onModeScriptChanged');
 
-		$this->registerChatCommand('setrpoints',	'chat_setrpoints',	'Sets custom Rounds points (see: /setrpoints help)',	Player::ADMINS);
-		$this->registerChatCommand('rpoints',		'chat_rpoints',		'Shows current Rounds points system.',			Player::PLAYERS);
+		$this->registerChatCommand('setrpoints',	'chat_setrpoints',	new Message('plugin.round_points', 'slash_setrpoints_description'),	Player::ADMINS);
+		$this->registerChatCommand('rpoints',		'chat_rpoints',		new Message('plugin.round_points', 'slash_rpoints_description'), Player::PLAYERS);
 	}
 
 	/*
@@ -210,25 +211,26 @@ class PluginRoundPoints extends Plugin {
 
 		// check for results
 		if (empty($points)) {
-			$message = $aseco->formatText($this->config['MESSAGES'][0]['NO_RPOINTS'][0], '');
+			$message = new Message('plugin.round_points', 'no_rpoints');
+			$message->addPlaceholders('');
 		}
 		else {
 			if ($system !== false) {
-				$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMED'][0],
-					'',
+				$message = new Message('plugin.round_points', 'rpoints_named');
+				$message->addPlaceholders('',
 					$system,
 					'',
 					implode(',', $points)
 				);
 			}
 			else {
-				$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMELESS'][0],
-					'',
+				$message = new Message('plugin.round_points', 'rpoints_nameless');
+				$message->addPlaceholders('',
 					implode(',', $points)
 				);
 			}
 		}
-		$aseco->sendChatMessage($message, $login);
+		$message->sendChatMessage($login);
 	}
 
 	/*
@@ -244,14 +246,14 @@ class PluginRoundPoints extends Plugin {
 
 		if ($chat_parameter === 'help') {
 			$data = array();
-			$data[] = array('/setrpoints help',		'Displays this help information');
-			$data[] = array('/setrpoints list',		'Displays available points systems');
-			$data[] = array('/setrpoints show',		'Shows current points system');
-			$data[] = array('/setrpoints xxx',		'Sets custom points system labelled xxx');
-			$data[] = array('/setrpoints X,Y,...,Z',	'Sets custom points system with specified values;');
-			$data[] = array('',				'X,Y,...,Z must be decreasing integers and there');
-			$data[] = array('',				'must be at least two values with no spaces');
-			$data[] = array('/setrpoints off',		'Disables custom points system');
+			$data[] = array('/setrpoints help',		(new Message('plugin.round_points', 'set_rpoints_help'))->finish($login));
+			$data[] = array('/setrpoints list',		(new Message('plugin.round_points', 'setrpoints_list'))->finish($login));
+			$data[] = array('/setrpoints show',		(new Message('plugin.round_points', 'setrpoints_show'))->finish($login));
+			$data[] = array('/setrpoints xxx',		(new Message('plugin.round_points', 'setrpoints_xxx'))->finish($login));
+			$data[] = array('/setrpoints X,Y,...,Z',	(new Message('plugin.round_points', 'setrpoints_X_Y_Z'))->finish($login));
+			$data[] = array('',				(new Message('plugin.round_points', 'decreasing_integers'))->finish($login));
+			$data[] = array('',				(new Message('plugin.round_points', 'no_spaces'))->finish($login));
+			$data[] = array('/setrpoints off',		(new Message('plugin.round_points', 'setrpoints_off'))->finish($login));
 
 
 			// Setup settings for Window
@@ -263,10 +265,10 @@ class PluginRoundPoints extends Plugin {
 				'columns'		=> 1,
 				'widths'		=> array(30, 70),
 				'textcolors'		=> array('FF5F', 'FFFF'),
-				'heading'		=> array('Command', 'Description'),
+				'heading'		=> array((new Message('plugin.round_points', 'help_heading_command'))->finish($login), (new Message('plugin.round_points', 'help_heading_description'))->finish($login)),
 			);
 			$settings_content = array(
-				'title'			=> 'Help for /setrpoints',
+				'title'			=> (new Message('plugin.round_points', 'help_title'))->finish($login),
 				'data'			=> $data,
 				'about'			=> 'ROUND POINTS/'. $this->getVersion(),
 				'mode'			=> 'columns',
@@ -301,10 +303,10 @@ class PluginRoundPoints extends Plugin {
 				'columns'		=> 1,
 				'widths'		=> array(10, 20, 5, 65),
 				'textcolors'		=> array('FF5F', 'FF5F', 'FFFF'),
-				'heading'		=> array('ID', 'Label', 'Limit', 'Points'),
+				'heading'		=> array('ID', 'Label', 'Limit', (new Message('plugin.round_points', 'list_heading_points'))->finish($login)),
 			);
 			$settings_content = array(
-				'title'			=> 'Currently available Rounds points systems',
+				'title'			=> (new Message('plugin.round_points', 'list_heading_title'))->finish($login),
 				'data'			=> $data,
 				'about'			=> 'ROUND POINTS/'. $this->getVersion(),
 				'mode'			=> 'columns',
@@ -337,25 +339,26 @@ class PluginRoundPoints extends Plugin {
 
 			// Check for results
 			if (empty($points)) {
-				$message = $aseco->formatText($this->config['MESSAGES'][0]['NO_RPOINTS'][0], '{#admin}');
+				$message = new Message('plugin.round_points','no_rpoints');
+				$message->addPlaceholders('{#admin}');
 			}
 			else {
 				if ($system) {
-					$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMED'][0],
-						'{#admin}',
+					$message =  new Message('plugin.round_points','rpoints_named');
+					$message->addPlaceholders('{#admin}',
 						$system,
 						'{#admin}',
 						implode(',', $points)
 					);
 				}
 				else {
-					$message = $aseco->formatText($this->config['MESSAGES'][0]['RPOINTS_NAMELESS'][0],
-						'{#admin}',
+					$message =  new Message('plugin.round_points','rpoints_nameless');
+					$message->addPlaceholders('{#admin}',
 						implode(',', $points)
 					);
 				}
 			}
-			$aseco->sendChatMessage($message, $login);
+			$message->sendChatMessage($login);
 		}
 		else if ($chat_parameter === 'off') {
 
@@ -374,10 +377,9 @@ class PluginRoundPoints extends Plugin {
 			$aseco->console('[RoundPoints] [{1}] disabled custom points', $login);
 
 			// show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} disables custom rounds points',
-				$player->nickname
-			);
-			$aseco->sendChatMessage($message);
+			$message = new Message('plugin.round_points','admin_disables');
+			$message->addPlaceholders($player->nickname);
+			$message->sendChatMessage();
 		}
 		else if (preg_match('/^\d+,[\d,]*\d+$/', $chat_parameter)) {
 			// Set new custom points as array of strings
@@ -397,11 +399,11 @@ class PluginRoundPoints extends Plugin {
 			}
 
 			// Show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets custom rounds points: {#highlite}{2},...',
-				$player->nickname,
+			$message = new Message('plugin.round_points','admin_sets_custom');
+			$message->addPlaceholders($player->nickname,
 				$chat_parameter
 			);
-			$aseco->sendChatMessage($message);
+			$message->sendChatMessage();
 
 		}
 		else if (array_key_exists(strtolower($chat_parameter), $this->rounds_points)) {
@@ -438,16 +440,17 @@ class PluginRoundPoints extends Plugin {
 			}
 
 			// Show chat message
-			$message = $aseco->formatText('{#server}» {#admin}{1}$z$s{#admin} sets rounds points to {#highlite}{2}{#server}: {#highlite}{3}, ...',
-				$player->nickname,
+			$message = new Message('plugin.round_points','admin_sets');
+			$message->addPlaceholders($player->nickname,
 				$this->rounds_points[$system]['label'],
 				implode(', ', $this->rounds_points[$system]['points'])
 			);
-			$aseco->sendChatMessage($message);
+			$message->sendChatMessage();
 		}
 		else {
-			$message = '{#server}» {#error}Unknown points system {#highlite}$i '. strtoupper($chat_parameter) .'$z$s {#error}!';
-			$aseco->sendChatMessage($message, $login);
+			$message = new Message('plugin.round_points','unknown_system');
+			$message->addPlaceholders(strtoupper($chat_parameter));
+			$message->sendChatMessage($login);
 		}
 	}
 }

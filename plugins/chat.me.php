@@ -70,7 +70,7 @@ class PluginChatMe extends Plugin {
 
 		// Check if on global mute list
 		if (in_array($player->login, $aseco->server->mutelist)) {
-			$msg = new Message('common', 'muted');
+			$msg = new Message('chat.me', 'muted');
 			$msg->addPlaceholders('/me');
 			$msg->sendChatMessage($login);
 			return;

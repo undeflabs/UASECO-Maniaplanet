@@ -18,6 +18,7 @@ Core Class of UASECO with many useful Methods.
 | `UASECO_VERSION`							| 1.0.0
 | `UASECO_BUILD`							| 2017-04-30
 | `UASECO_WEBSITE`							| http://www.UASECO.org/
+| `OPERATING_SYSTEM`							| `WINDOWS` or `POSIX`
 | `MANIAPLANET_BUILD`							| 2017-04-13_23_00
 | `XMLRPC_API_VERSION`							| 2013-04-16
 | `MODESCRIPT_API_VERSION`						| 2.1.0

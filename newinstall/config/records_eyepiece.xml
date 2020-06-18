@@ -1337,5 +1337,12 @@
 				<night>http://maniacdn.net/undef.de/uaseco/records-eyepiece/2017-mp4/mood-night-focus.png</night>
 			</focus>
 		</mood>
+
+		<diffculty>
+			<beginner>http://maniacdn.net/undef.de/uaseco/records-eyepiece/icon-map-difficulty-beginner.png</beginner>
+			<intermediate>http://maniacdn.net/undef.de/uaseco/records-eyepiece/icon-map-difficulty-intermediate.png</intermediate>
+			<advanced>http://maniacdn.net/undef.de/uaseco/records-eyepiece/icon-map-difficulty-advanced.png</advanced>
+			<expert>http://maniacdn.net/undef.de/uaseco/records-eyepiece/icon-map-difficulty-expert.png</expert>
+		</diffculty>
 	</images>
 </settings>

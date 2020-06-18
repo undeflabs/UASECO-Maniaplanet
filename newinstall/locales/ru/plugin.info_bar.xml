@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Отображает информационную панель.</plugin_description>
+	<chat_infobar>Команда перезапуска информационной панели: "/infobar reload"</chat_infobar>
+	<message_chat_infobar_reload>{#admin}» Конфигурация панели "config/info_bar.xml" успешно перезагружена.</message_chat_infobar_reload>
+</locales>

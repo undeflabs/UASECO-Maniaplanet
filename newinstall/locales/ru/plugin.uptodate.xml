@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Проверяет, есть ли более новая версия UASECO при запуске сервера и входе владельца.</plugin_description>
+	<chat_uptodate>Проверяет, есть ли более новая версия UASECO.</chat_uptodate>
+	<uptodate_ok>{#server}» {#message}Установленная версия UASECO {#highlite}{1}{#message} актуальна.</uptodate_ok>
+	<uptodate_new>{#server}» {#message}Новая версия UASECO {#highlite}{1}{#message} доступна на {#highlite}{2}.</uptodate_new>
+	<uptodate_failed>{#server}» {#error}Невозможно проверить версию UASECO, сбой соединения!</uptodate_failed>
+	<admin_merged>{#server}» В черный список добавлено {#highlite}{1}{#server} логинов!</admin_merged>
+	<admin_can_not_parse>{#server}» {#error}Ошибка: невозможно обработать {#highlite}$I{1}{#error}!</admin_can_not_parse>
+	<admin_can_not_access>{#server}» {#error}Ошибка: невозможно открыть {#highlite}$I$L{1}$L{#error}!</admin_can_not_access>
+</locales>

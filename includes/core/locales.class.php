@@ -44,16 +44,17 @@ class Locales extends BaseClass {
 
 		$this->setAuthor('askuri');
 		$this->setCoAuthors('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by Martin Weber (askuri)');
+		$this->setVersion('1.0.4');
+		$this->setBuild('2019-09-25');
+		$this->setCopyright('2014 - 2019 by Martin Weber (askuri)');
 		$this->setDescription('Provides multilanguage support.');
 
 		$aseco->registerEvent('onPlayerConnect',	array($this, 'onPlayerConnect'));
 		$aseco->registerEvent('onPlayerDisconnect',	array($this, 'onPlayerDisconnect'));
 
-		foreach (glob('locales/*.xml') as $filename) {
+		foreach (glob('locales/*/*.xml') as $filename) {
 			$plugin = basename($filename, '.xml');			// Filename without .xml is the plugin identification
+			$language = str_replace('locales/', '', dirname($filename));
 
 			$xml = simplexml_load_file($filename);
 			if (!$xml) {
@@ -64,12 +65,7 @@ class Locales extends BaseClass {
 			unset($xml->comment);
 
 			// Read with simplexml and use a trick to convert it to an array
-			$this->locales[$plugin] = json_decode(json_encode($xml), true);
-
-			// Remove more comments
-			foreach ($this->locales[$plugin] as $id => &$array) {
-				unset($array['comment']);
-			}
+			$this->locales[$plugin][$language] = json_decode(json_encode($xml), true);
 		}
 	}
 
@@ -111,14 +107,14 @@ class Locales extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getSingleTranslation ($sourcefile, $id, $lang) {
+	public function getSingleTranslation ($sourcefile, $id, $language) {
 		global $aseco;
 
-		if (isset($this->locales[$sourcefile]) && isset($this->locales[$sourcefile][$id]) && isset($this->locales[$sourcefile][$id][$lang])) {
-			return $this->locales[$sourcefile][$id][$lang];
+		if (isset($this->locales[$sourcefile]) && isset($this->locales[$sourcefile][$language]) && isset($this->locales[$sourcefile][$language][$id])) {
+			return $this->locales[$sourcefile][$language][$id];
 		}
 		else {
-			$aseco->console('[ClassLocales][ERROR] getSingleTranslation(): Translation file [locales/'. $sourcefile .'.xml] does not contain the requested entry <'. $id .'> or language <'. $lang .'>!');
+			$aseco->console('[ClassLocales][ERROR] getSingleTranslation(): Translation file [locales/'. $language .'/'. $sourcefile .'.xml] does not contain the requested entry <'. $id .'>!');
 		}
 	}
 
@@ -131,11 +127,17 @@ class Locales extends BaseClass {
 	public function getAllTranslations ($sourcefile, $id) {
 		global $aseco;
 
-		if (isset($this->locales[$sourcefile]) && isset($this->locales[$sourcefile][$id])) {
-			return $this->locales[$sourcefile][$id];
+		if (isset($this->locales[$sourcefile])) {
+			$translations = array();
+			foreach ($this->locales[$sourcefile] as $language => $item) {
+				if (isset($this->locales[$sourcefile][$language][$id])) {
+					$translations[$language] = $this->locales[$sourcefile][$language][$id];
+				}
+			}
+			return $translations;
 		}
 		else {
-			$aseco->console('[ClassLocales][ERROR] getAllTranslations(): Translation file [locales/'. $sourcefile .'.xml] does not contain the requested entry <'. $id .'>!');
+			$aseco->console('[ClassLocales][ERROR] getAllTranslations(): Translation file ['. $sourcefile .'.xml] does not exist in any language!');
 		}
 	}
 
@@ -146,7 +148,12 @@ class Locales extends BaseClass {
 	*/
 
 	public function getPlayerLanguage ($login) {
-		return $this->playerlang_cache[$login];
+		if (is_string($login) && isset($this->playerlang_cache[$login])) {
+			return $this->playerlang_cache[$login];
+		}
+		else {
+			return 'en';
+		}
 	}
 
 	/*
@@ -158,7 +165,7 @@ class Locales extends BaseClass {
 	// Used when outputting messages. Sadly not every message is made with Message class, some are still strings
 	// this function ensures backwardcompatibility and avoids errors
 	public function handleMessage ($message, $login) {
-		if ($message instanceof Message) { // Is Message object?
+		if ($message instanceof Message) {				// Is Message object?
 			return $message->finish($login);
 		}
 		else if (is_string($message)) {

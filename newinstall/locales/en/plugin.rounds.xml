@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-29
+	Authors:	undef.de
+	//-->
+	<plugin_description>Reports finishes in each individual round.</plugin_description>
+	<round>{#server}» $n{#message}Round {#highlite}{1}{#message}: {2}</round>
+	<ranking_record_new>{1}{#rank}{2}{#message}.{#highlite}{3}{#message}[{#highlite}{4}{#message}]</ranking_record_new>
+	<ranking_record>{1}{#rank}{2}{#message}.{#timelite}{3}{#message}[{#timelite}{4}{#message}]</ranking_record>
+	<ranking_record2>{1}{#rank}{2}{#message}.{#timelite}{3}{#message}</ranking_record2>	
+</locales>

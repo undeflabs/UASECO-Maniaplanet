@@ -48,10 +48,11 @@ class PluginRounds extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-03-11');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-09-29');
 		$this->setCopyright('2014 - 2019 by undef.de');
-		$this->setDescription('Reports finishes in each individual round.');
+		$this->setDescription(new Message('plugin.rounds', 'plugin_description'));
 
 		$this->addDependence('PluginLocalRecords',	Dependence::REQUIRED,	'1.0.0', null);
 
@@ -115,7 +116,9 @@ class PluginRounds extends Plugin {
 			}
 
 			$pos = 1;
-			$message = $aseco->formatText($aseco->getChatMessage('ROUND'), $this->rounds_count);
+			
+			$rec_msgs = array();
+			$separator = '';
 
 			// Report all new records, first 'show_min_recs' w/ time, rest w/o
 			foreach ($round_scores as $tm) {
@@ -140,38 +143,43 @@ class PluginRounds extends Plugin {
 				}
 
 				if ($new) {
-					$message .= $aseco->formatText($aseco->getChatMessage('RANKING_RECORD_NEW'),
+					$msg = new Message('plugin.rounds', 'ranking_record_new');
+					$msg->addPlaceholders($separator,
 						$pos,
 						$nick,
 						$aseco->formatTime($tm['score'])
 					);
 				}
 				else if ($pos <= $aseco->plugins['PluginLocalRecords']->settings['show_min_recs']) {
-					$message .= $aseco->formatText($aseco->getChatMessage('RANKING_RECORD'),
+					$msg = new Message('plugin.rounds', 'ranking_record');
+					$msg->addPlaceholders($separator,
 						$pos,
 						$nick,
 						$aseco->formatTime($tm['score'])
 					);
 				}
 				else {
-					$message .= $aseco->formatText($aseco->getChatMessage('RANKING_RECORD2'),
+					$msg = new Message('plugin.rounds', 'ranking_record2');
+					$msg->addPlaceholders($separator,
 						$pos,
 						$nick
 					);
 				}
+				$rec_msgs[] = $msg;
+				$separator = ', ';
 				$pos++;
 			}
-
+			$message = new Message('plugin.rounds', 'round');
+			$message->addPlaceholders($this->rounds_count,
+				$rec_msgs
+			);
+			
 			// Show chat message
-			$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
-			$message = $aseco->formatColors($message);
-//			$aseco->console('[Rounds] '. $aseco->stripStyles($message, false));
-
 			if ($aseco->settings['rounds_in_window']) {
-				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+				$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), false));
 			}
 			else {
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 
 			// Reset times

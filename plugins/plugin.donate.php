@@ -177,7 +177,7 @@ class PluginDonate extends Plugin {
 					'widths'		=> array(11, 22, 67),
 					'halign'		=> array('right', 'right', 'left'),
 					'textcolors'		=> array('EEEF', 'EEEF', 'FFFF'),
-					'heading'		=> array('#', 'Planets', (new Message('common', 'player'))->finish($player->login)),
+					'heading'		=> array('#', 'Planets', (new Message('plugin.donate', 'player'))->finish($player->login)),
 				);
 				$settings_content = array(
 					'title'			=> (new Message('plugin.donate', 'message_top_dons_window_title'))->finish($player->login),
@@ -272,11 +272,11 @@ class PluginDonate extends Plugin {
 		// Build the buttons
 		$buttons = array(
 			array(
-				'title'		=> (new Message('common', 'yes'))->finish($player->login),
+				'title'		=> (new Message('plugin.donate', 'yes'))->finish($player->login),
 				'action'	=> 'PluginDonate?Action=Payout&Answer=Confirm',
 			),
 			array(
-				'title'		=> (new Message('common', 'no'))->finish($player->login),
+				'title'		=> (new Message('plugin.donate', 'no'))->finish($player->login),
 				'action'	=> 'PluginDonate?Action=Payout&Answer=Cancel',
 			),
 		);

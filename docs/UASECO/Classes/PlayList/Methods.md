@@ -24,11 +24,11 @@ Adds a map to the play list.
 #### Parameters
 *	`$uid`
 
-	`UID` of a [Class Map](/Development/Classes/Map.php) object
+	`UID` of a [Class Map](/development/classes/map.php) object
 
 *	`$login`
 
-	`login` of a [Class Player](/Development/Classes/Player.php) object
+	`login` of a [Class Player](/development/classes/player.php) object
 
 *	`$method`
 
@@ -55,7 +55,7 @@ xxx
 #### Parameters
 *	`$uid`
 
-	`UID` of a [Class Map](/Development/Classes/Map.php) object
+	`UID` of a [Class Map](/development/classes/map.php) object
 
 
 #### Example
@@ -78,7 +78,7 @@ xxx
 #### Parameters
 *	`$uid`
 
-	`UID` of a [Class Map](/Development/Classes/Map.php) object
+	`UID` of a [Class Map](/development/classes/map.php) object
 
 
 #### Example

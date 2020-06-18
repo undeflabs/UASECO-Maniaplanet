@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+
+	<!-- init messages -->
+	<startup>{#server}» {#highlite}UASECO/{1}{#server} build {#highlite}{2}{#server} running on {#highlite}{3}{#server}:{#highlite}{4}{#server}</startup>
+	<welcome>{#server}» {#welcome}Welcome {#highlite}{1}{#welcome} to {#highlite}{2}$z$s{br}{#server}» {#welcome}This server uses {#highlite}$L[{3}]UASECO/{4}$0$L{#welcome} to manage your records.</welcome>
+
+	<!-- win messages -->
+	<win_multi>{#server}» {#record}Congratulations, {#highlite}{1}{#record} won his/her {#highlite}{2}{#record}. race!</win_multi>
+	<win_new>{#server}» {#record}Congratulations, you won your {#highlite}{1}{#record}. race!</win_new>
+
+	<!-- connection messages -->
+	<banip_error>{#welcome}Could not connect:{br}{br}Your IP was banned from this server!</banip_error>
+	<banip_dialog>{#welcome}Your IP was banned from this server.$z</banip_dialog>
+	<connect_error>{#welcome}$sThis is an administrative notice.$z{br}{br}UASECO encountered a very rare player connection{br}problem. Please re-join the server to correct it.{br}Apologies for the inconvenience.{br}{br}$sThe server administrators.</connect_error>
+	<connect_dialog>{#welcome}Connection problem, please retry.$z</connect_dialog>
+	<client_error>{#welcome}Obsolete client version!{br}Please upgrade to the $l[https://www.maniaplanet.com/download]latest version$l.</client_error>
+	<client_dialog>{#welcome}Obsolete client version, please $l[https://www.maniaplanet.com/download]upgrade$l.$z</client_dialog>
+</locales>

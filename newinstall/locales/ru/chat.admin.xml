@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<!-- common messages -->
+	<insufficient_rights>{#error}У тебя недостаточно прав для этой команды!</insufficient_rights>
+	<player_warning>$s{#welcome}Ты получил предупреждение.{br}{br}$gТо, что ты сделал, противоречит правилам сервера.{br}Неуважение к другим игрокам, {br}ругань в чате могут привести к {#welcome}кику, или бану {#message}в сл. раз.{br}{br}$gНе будь плохишом.</player_warning>
+	<enabled>включён</enabled>
+	<disabled>выключен</disabled>
+	<show_planets>#server}» Баланс {#highlite}{1}$z$s {#server} = {#highlite}{2}.- {#server} планет.</show_planets>
+
+	<!-- plugin messages -->
+	<plugin_description>Плагин предоставляет команды администраторов</plugin_description>
+	<help>Показывает все доступные /admin-команды в чате</help>
+	<helpall>Справка о доступных /admin-командах (в окне).</helpall>
+	<setservername>Изменяет название сервера</setservername>
+	<setcomment>Изменяет описание сервера</setcomment>
+	<setpwd>Устанавливает пароль для входа игроков</setpwd>
+	<setspecpwd>Устанавливает пароль для входа зрителей</setspecpwd>
+	<setrefpwd>Устанавливает пароль рефери</setrefpwd>
+	<setmaxplayers>Устанавливает кол-во игроков на сервере</setmaxplayers>
+	<setmaxspecs>Устанавливает кол-во зрителей на сервере</setmaxspecs>
+	<setgamemode>Устанавливает следуюищй режим игры {На время - timeattack, Раунды - rounds, Команды - team, Круги - laps, Кубок - cup, teamattack, knockout, doppler}</setgamemode>
+	<setrefmode>Устанавливает режим рефери {0 - топ-3, 1 - для всех}</setrefmode>
+	<nextmap>Переход на следующую карту</nextmap>
+	<skipmap>Переход на следующую карту</skipmap>
+	<previous>Переход на предыдущую карту</previous>
+	<nextenv>Переход на следующую карту этого же окружения</nextenv>
+	<restartmap>Перезапуск этой карты</restartmap>
+	<replaymap>Повтор этой карты (через очередь)</replaymap>
+	<dropjukebox>Убирает карту из очереди</dropjukebox>
+	<clearjukebox>Очищает очередь карт</clearjukebox>
+	<add>Добавляет карту из MX по ее идентификатору</add>
+	<addthis>Делает добавленную карту постоянной</addthis>
+	<addlocal>Добаить локальную карту (по имени файла)</addlocal>
+	<warn>Выдать предупреждение игроку</warn>
+	<kick>Кикнуть игрока с сервера</kick>
+	<kickghost>Кикнуть игрока-"призрака"</kickghost>
+	<ban>Забанить игрока</ban>
+	<unban>Разбанить игрока</unban>
+	<banip>Забанить IP адрес</banip>
+	<unbanip>Разбанить IP адрес</unbanip>
+	<black>Занести игрока в чёрный список</black>
+	<unblack>Убрать игрока из чёрного списка</unblack>
+	<addguest>Занести игрока в список гостей</addguest>
+	<removeguest>Убрать игрока из списка гостей</removeguest>
+	<pass>Утвердить голосование в чате</pass>
+	<cancel>Отменить любое голосование</cancel>
+	<endround>Закончить этот раунд</endround>
+	<players>Показать список всех игроков</players>
+	<showbanlist>Показать бан-лист</showbanlist>
+	<showiplist>Показать бан-лист IP-адресов</showiplist>
+	<showblacklist>Показать чёрный список</showblacklist>
+	<showguestlist>Показать список гостей</showguestlist>
+	<writeiplist>Сохранить список забаненых IP-адресов (обычно bannedips.xml)</writeiplist>
+	<readiplist>Загрузить список забаненых IP-адресов (обычно bannedips.xml)</readiplist>
+	<writeblacklist>Сохранить чёрный список (обычно blacklist.txt)</writeblacklist>
+	<readblacklist>Загрузить чёрный список (обычно blacklist.txt)</readblacklist>
+	<writeguestlist>Сохранить список гостей (обычно guestlist.txt)</writeguestlist>
+	<readguestlist>Загрузить список гостей (обычно guestlist.txt)</readguestlist>
+	<cleanbanlist>Очистить бан-лист</cleanbanlist>
+	<cleaniplist>Очистить бан-лист</cleaniplist>
+	<cleanblacklist>Очистить чёрный список</cleanblacklist>
+	<cleanguestlist>Очистить список гостей</cleanguestlist>
+	<mergegbl>Загрузить глобальный чёрный список из Сети: {url}</mergegbl>
+	<access>Управление доступом игроков (см. /admin access help)</access>
+	<writemaplist>Сохранить плейлист (обычно maplist.txt)</writemaplist>
+	<readmaplist>Загрузитьплейлист (обычно maplist.txt)</readmaplist>
+	<shuffle>Перетасовать плейлист</shuffle>
+	<remove>Убрать карту из плейлиста (не удаление)</remove>
+	<erase>Убрать карту из плейлиста и удалить её файл</erase>
+	<removethis>Убрать эту карту из плейлиста (не удаление)</removethis>
+	<erasethis>Убрать эту карту из плейлиста и удалить её файл</erasethis>
+	<mute>Отключить чат игроку</mute>
+	<unmute>Вернуть чат игроку</unmute>
+	<mutelist>Показать список игроков без права писать в чат</mutelist>
+	<cleanmutes>Очистить список игроков без права писать в чат</cleanmutes>
+	<addadmin>Добавить администратора</addadmin>
+	<removeadmin>Убрать администратора</removeadmin>
+	<addop>Добавить оператора</addop>
+	<removeop>Убрать оператора</removeop>
+	<listmasters>Показать список мастерадминов</listmasters>
+	<listadmins>Показать список администраторов</listadmins>
+	<listops>Показать список операторов</listops>
+	<adminability>Показать/изменить разрешения администратора {ON/OFF}</adminability>
+	<opability>Показать/изменить разрешения оператора {ON/OFF}</opability>
+	<listabilities>Показать текущий список возможностей</listabilities>
+	<writeabilities>Сохранить текущий список возможностей (обычно config/adminops.xml)</writeabilities>
+	<readabilities>Загрузить текущий список возможностей (обычно config/adminops.xml)</readabilities>
+	<wall>Отправить всплывающее сообщение всем игрокам</wall>
+	<delrec>Удалить конкретный рекорд на этой карте</delrec>
+	<prunerecs>Очистить рекорды на определенной карте</prunerecs>
+	<amdl>Разрешить скачивать карты? {ON/OFF}</amdl>
+	<autotime>Включить автоматический расчёт времени на раунд? {ON/OFF}</autotime>
+	<disablerespawn>Отключить респаун на чекпоинтах? {ON/OFF}</disablerespawn>
+	<forceshowopp>Отключить возможность скрывать оппонентов? {ON/OFF}</forceshowopp>
+	<scorepanel>Показывать серверную таблицу очков в конце раунда? {ON/OFF}</scorepanel>
+	<roundsfinish>Показывать панель раундов до первого финиша? {ON/OFF}</roundsfinish>
+	<forceteam>Перевести игрока в команду {Blue/Red}</forceteam>
+	<forcespec>Перевести игрока в зрители</forcespec>
+	<specfree>Перевести игрока в режим свободной камеры</specfree>
+	<panel>Выбрать панель администратора (см. /admin panel help)</panel>
+	<admpanel>Выбрать панель администратора по умолчанию</admpanel>
+	<panelbg>Выбрать фон панелей по умолчанию</panelbg>
+	<planets>Показать баланс сервера</planets>
+	<pay>Выплатить планеты игроку (с баланса сервера)</pay>
+	<relays>Показать список подключенных серверов или мастер-сервер (если этот серверподключен к другому)</relays>
+	<server>Показать информацию и настройки сервера</server>
+	<pm>Отправить личное сообщение всем доступным администраторам</pm>
+	<pmlog>Показать историю личных сообщений администраторов</pmlog>
+	<call>Выполнить встроенную команду/метод сервера (см. /admin call help)</call>
+	<unlock>Разблокировать возможности и команды администратора</unlock>
+	<debug>Вывод отладки {ON/OFF}</debug>
+	<shutdown>Отключить контроллер</shutdown>
+	<shutdownall>Отключить сервер и контроллер</shutdownall>
+	<message_setservername>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает название сервера: {#highlite}{3}</message_setservername>
+	<message_setservercomment>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает описание сервера: {#highlite}{3}</message_setservercomment>
+	<message_setplayerpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает пароль для игроков: {#highlite}{3}</message_setplayerpwd>
+	<message_disableplayerpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} отключает пароль игроков</message_disableplayerpwd>
+	<message_setspecpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает пароль для зрителей: {#highlite}{3}</message_setspecpwd>
+	<message_disablespecpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} отключает пароль зрителей</message_disablespecpwd>
+	<message_setmaxplayers>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает лимит игроков: {#highlite}{3}{#admin}</message_setmaxplayers>
+	<message_setmaxspecs>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает лимит зрителей: {#highlite}{3}{#admin}</message_setmaxspecs>
+	<message_setgamemode>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает игровой режим: {#highlite}{3}{#admin}</message_setgamemode>
+	<message_setgamemode_invalid>{#server}» {#error}Неверный режим игры: {#highlite}$i{1}$Z$S{#error}</message_setgamemode_invalid>
+	<message_setrefmode>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} устанавливает режим рефери: {#highlite}{3}{#admin}!</message_setrefmode>
+	<message_setrefmode_invalid>{#server}» {#error}Неверный режим рефери: {#highlite}$i{1}$z$s {#error}!</message_setrefmode_invalid>
+	<message_getrefmode>{#server}» {#admin}Установлен режим рефери: {#highlite}{1}</message_getrefmode>
+	<message_nextmap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} пропускает карту!</message_nextmap>
+	<message_prevmap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} возвращает предыдущую карту!</message_prevmap>
+	<message_prevmap_failed>{#server}» {#admin}Загрузка предыдущей карты недоступна - включите plugin.rasp_jukebox.php в [config/plugins.xml]</message_prevmap_failed>
+	<message_nextenv>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} переходит к следующей карте: {#highlite}{3}{#admin}!</message_nextenv>
+	<message_nextenv_failed>{#server}» {#admin}Загрузка следующей карты в том же окружении недоступна - включите плагины plugin.rasp_jukebox.php и plugin.rasp.php в [config/plugins.xml]</message_nextenv_failed>
+	<message_restartmap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} перезапускает карту!</message_restartmap>
+	<message_replaymap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} заказывает повтор этой карты!</message_replaymap>
+	<message_replaymap_alreadyreplayed>{#server}» {#error}Карта будет повторена!</message_replaymap_alreadyreplayed>
+	<message_replaymap_failed>{#server}» {#admin}Повтор карты недоступен - включите plugin.rasp_jukebox.php в [config/plugins.xml]</message_replaymap_failed>
+	<message_dropjukebox>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} убирает карту {#highlite}{3}{#admin} из очереди!</message_dropjukebox>
+	<message_dropjukebox_notfound>{#server}» {#error}Карта не найдена в очереди! Введите {#highlite}$i /jukebox list{#error} или {#highlite}$i /jukebox display{#error} для просмотра очереди.</message_dropjukebox_notfound>
+	<message_dropjukebox_failed>{#server}» {#admin}Невозможно убрать карту из очереди - включите plugin.rasp_jukebox.php в [config/plugins.xml]</message_dropjukebox_failed>
+	<message_clearjukebox>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} очищает очередь!</message_clearjukebox>
+	<message_clearjukebox_failed>{#server}» {#admin}Очистка очереди карт недоступна - включите plugin.rasp_jukebox.php в [config/plugins.xml]</message_clearjukebox_failed>
+	<message_warn>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} выносит предупреждение {#highlite}{3}$z$s{#admin}!</message_warn>
+	<message_kick>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} выгоняет {#highlite}{3}$z$s{#admin}!</message_kick>
+	<message_kick_ghost>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} выгоняет призрака {#highlite}{3}$z$s{#admin}!</message_kick_ghost>
+	<message_ban_any_admin>{#server}» {#admin}Нельзя забанить Бога!</message_ban_any_admin>
+	<message_ban>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} банит {#highlite}{3}$z$s{#admin}!</message_ban>
+	<message_unban>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} разбанивает {#highlite}{3}</message_unban>
+	<message_unban_notbanned>{#server}» {#highlite}{1}{#error} не забанен!</message_unban_notbanned>
+	<message_banip>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} банит IP-адрес {#highlite}{3}$z$s{#admin}!</message_banip>
+	<message_ip_already_banned>{#server}» {#highlite}{1}{#error} уже забанен!</message_ip_already_banned>
+	<message_ip_invalid>{#server}» {#highlite}{1}{#error} - неверный IP адрес!</message_ip_invalid>
+	<message_unbanip>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} разбанивает IP-адрес {#highlite}{3</message_unbanip>
+	<message_ip_not_banned>{#server}» {#highlite}{1}{#error} - IP-адрес не забанен!</message_ip_not_banned>
+	<message_blacklist_player>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} заносит в чёрный список {#highlite}{3}$z$s{#admin}!</message_blacklist_player>
+	<message_unblack_use_cmd_first>{#server}» {#error}Сначала используйте {#highlite}$i/players {#error}(как вариант, {#highlite}$i/players {строка}{#error})</message_unblack_use_cmd_first>
+	<message_playerid_notfound>{#server}» {#error}ID игрока не найден! Команда {#highlite}$i/players {#error}покажет всех игроков.</message_playerid_notfound>
+	<message_unblack>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} убирает {#highlite}{3} {#admin}из черного списка</message_unblack>
+	<message_not_blacklisted>{#server}» {#highlite}{1}{#error} - не в черном списке!</message_not_blacklisted>
+	<message_add_guest>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} добавляет гостя {#highlite}{3}</message_add_guest>
+	<message_remove_guest>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} удаляет гостя {#highlite}{3}</message_remove_guest>
+	<message_no_guest>{#server}» {#highlite}{1}{#error} - не является гостём!</message_no_guest>
+	<message_no_open_vote>{#server}» {#error}Сейчас нет голосования!</message_no_open_vote>
+	<message_vote_passed>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} заканчивает голосование - решение принято!</message_vote_passed>
+	<message_cancel_vote>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} отменяет голосование - решение принято!</message_cancel_vote>
+	<message_force_end_round>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} заканчивает раунд!</message_force_end_round>
+	<message_failed_writing>{#server}» {#error}Невозможно сохранить {#highlite}$i{1}{#error}!</message_failed_writing>
+	<message_failed_writing_detailed>{#server}» {#error}Невозможно сохранить {#highlite}$i {1} {#error}!</message_failed_writing_detailed>
+	<message_file_written>{#server}» {#highlite}{1} {#admin}сохранён</message_file_written>
+	<message_written_detailed>{#server}» {#admin}Файл {#highlite}{1}{#admin} сохранён!</message_written_detailed>
+	<message_failed_reading>{#server}» Файл {#highlite}{1} {#error}не найден, или ошибка чтения!</message_failed_reading>
+	<message_file_read>{#server}» {#admin}Файл {#highlite}{1} {#admin}считан</message_file_read>
+	<message_clean_banlist>{#server}» {#admin}Бан-лист очищен!</message_clean_banlist>
+	<message_cleaned_bannediplist>{#server}» {#admin}Бан-лист IP-адресов очищен!</message_cleaned_bannediplist>
+	<message_cleaned_blacklist>{#server}» {#admin}Чёрный список очищен!</message_cleaned_blacklist>
+	<message_cleaned_guestlist>{#server}» {#admin}Список "гостей" очищен!</message_cleaned_guestlist>
+	<message_inavlid_url>{#server}» {#error}HTTP-ссылка {#highlite}{1} {#error}не верна!</message_inavlid_url>
+	<message_include_uptodate>{#server}» {#admin}Функция недоступна - включите plugin.uptodate.php в [config/plugins.xml]</message_include_uptodate>
+	<message_access>{#server}» {#admin}Контроль доступа недоступен (вот каламбур!) - включите plugin.access.php в [config/plugins.xml]</message_access>
+	<message_removemap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}убирает карту: {#highlite}{3}</message_removemap>
+	<message_removemap_failed>{#server}» {#error}Ошибка убирания карты {#highlite}$i {1} {#error}!</message_removemap_failed>
+	<message_erasemap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}удаляет карту: {#highlite}{3}</message_erasemap>
+	<message_erasemap_failed>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}не смог удалить карту: {#highlite}{3}</message_erasemap_failed>
+	<message_load_next_map_failed>{#server}» {#error}Ошибка пропуска карты!</message_load_next_map_failed>
+	<message_admin_ignores_player>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} игнорирует {#highlite}{3}$z$s{#admin}!</message_admin_ignores_player>
+	<message_not_an_ignored_player>{#server}» {#highlite}{1}{#error} не находится в списке игнора!</message_not_an_ignored_player>
+	<message_unignore>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} снимает игнорирование {#highlite}{3}</message_unignore>
+	<message_nobody_muted>{#server}» {#error}Нет игнорируемых игроков!</message_nobody_muted>
+	<message_mutelist_cleaned>{#server}» {#error}Список глобальных игнорирований очищен!</message_mutelist_cleaned>
+	<message_add_admin>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} добавляет нового игрока: {3}$z$s{#admin} {#highlite}{4}$z$s{#admin}!</message_add_admin>
+	<message_already_admin>{#server}» {#error}Игрок с логином {#highlite}$i {1}{#error} уже {2}!</message_already_admin>
+	<message_remove_admin>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} убирает права {3}$z$s{#admin}а у {#highlite}{4}$z$s{#admin}!</message_remove_admin>
+	<message_no_admin>{#server}» {#error}Игрок с логином {#highlite}$i {1}{#error} отсутствует в списке {2}ов!</message_no_admin>
+	<message_no_masteradmins_found>{#server}» {#error}Нет мастерадминов!</message_no_masteradmins_found>
+	<message_no_admins_found>{#server}» {#error}Нет администраторов!</message_no_admins_found>
+	<message_no_operators_found>{#server}» {#error}Нет операторов!</message_no_operators_found>
+	<message_invalid_admin_tier>{#server}» {#highlite}{1}{#error} не является верным рангом администратора!</message_invalid_admin_tier>
+	<message_no_message>{#server}» {#error}Нет сообщения.</message_no_message>
+	<message_record_removed>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}удаляет рекорд {#highlite}{3}{#admin} игрока {#highlite}{4}</message_record_removed>
+	<message_invalid_record>{#server}» {#error}Нет такого рекорда: {#highlite}$i {1}{#error}!</message_invalid_record>
+	<message_activate_localrecords>{#server}» {#admin}Локальные рекорды недоступны - включите plugin.local_records.php и plugin.rasp.php в [config/plugins.xml]</message_activate_localrecords>
+	<message_records_on_map_deleted>{#server}» {#admin}Удалены все рекорды и результаты на карте {#highlite}{1}</message_records_on_map_deleted>
+	<message_cant_find_mapid>{#server}» {#error}Невозможно найти идентификатор (MapId) карты: {#highlite}$i {1} / {2}</message_cant_find_mapid>
+	<message_set_allowmapdownload>{#server}» {#admin}Параметр AllowMapDownload установлен в {1}</message_set_allowmapdownload>
+	<message_get_allowmapdownload>{#server}» {#admin}Параметр AllowMapDownload сейчас {1}</message_get_allowmapdownload>
+	<message_set_autotimelimit>{#server}» {#admin}Авторасчёт времени установлен в {1}</message_set_autotimelimit>
+	<message_get_autotimelimit>{#server}» {#admin}Авторасчёт времени сейчас {1}</message_get_autotimelimit>
+	<message_activate_autotime>{#server}» {#admin}Авторасчёт времени сейчас недоступен - включите plugin.autotime.php в [config/plugins.xml]</message_activate_autotime>
+	<message_set_disablerespawn>{#server}» {#admin}Параметр DisableRespawn будет{#highlite} {1} {#admin}на следующей карте!</message_set_disablerespawn>
+	<message_get_disablerespawn>{#server}» {#admin}Параметр DisableRespawn сейчас {#highlite} {1}</message_get_disablerespawn>
+	<message_set_forceshowopp>{#server}» {#admin}Параметр ForceShowAllOpponents будет{#highlite} {1} {#admin}на следующей карте!</message_set_forceshowopp>
+	<message_get_forceshowopp>{#server}» {#admin}Параметр ForceShowAllOpponents сейчас {#highlite} {1}</message_get_forceshowopp>
+	<message_set_autoscorepanel>{#server}» {#admin}"Автоматическая панель очков" установлена в {1}</message_set_autoscorepanel>
+	<message_get_autoscorepanel>{#server}» {#admin}Текущая "Автоматическая панель очков" - {1}</message_get_autoscorepanel>
+	<message_set_roundsfinishpanel>{#server}» {#admin}Включена {1} панель финишей (в раундах).</message_set_roundsfinishpanel>
+	<message_get_roundsfinishpanel>{#server}» {#admin}Панель финишей (в раундах) - {1}</message_get_roundsfinishpanel>
+	<message_forceteam_blue>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} переводит игрока {#highlite}{3}$z$s{#admin} в $00fСинюю{#admin} команду!</message_forceteam_blue>
+	<message_forceteam_already_blue>>{#admin} Игрок уже в $00fСиней {#admin} команде!</message_forceteam_already_blue>
+	<message_forceteam_red>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} переводит игрока {#highlite}{3}$z$s{#admin} в $f00Красную{#admin} команду!</message_forceteam_red>
+	<message_forceteam_already_red>{#admin} Игрок уже в $f00Красной {#admin} команде!</message_forceteam_already_red>
+	<message_invalid_team>{#server}» {#highlite}{1}$z$s{#error} - неверная команда.</message_invalid_team>
+	<message_only_in_teammode>{#server}» {#error}Команда доступна только в игровом режиме {#highlite}$iКоманды {#error}!</message_only_in_teammode>
+	<message_forcespec>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} переводит {#highlite}{3}$z$s{#admin} в режим зрителя!</message_forcespec>
+	<message_is_already_spec>{#server}» {#highlite}{1} {#error} - уже зритель.</message_is_already_spec>
+	<message_force_specfree>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} переводит {#highlite}{3}$z$s{#admin} в режим зрителя (Свободный)!</message_force_specfree>
+	<message_is_not_spec>{#server}» {#highlite}{1} {#error}- не зритель!</message_is_not_spec>
+	<message_activate_donate>{#server}» {#admin}Донаты недоступны - включите plugin.donate.php в [config/plugins.xml]</message_activate_donate>
+	<message_no_other_admins_on>{#server}» {#error}Других администраторов сейчас нет!</message_no_other_admins_on>
+	<message_nomsg>{#server}» {#error}А где текст сообщения..?</message_nomsg>
+	<message_nopmhistory>{#server}» {#error}Архива ЛС пока нет!</message_nopmhistory>
+	<message_password_accepted>{#server}» {#admin}Пароль принят. Команды администратора разблокированы.</message_password_accepted>
+	<message_invalid_password>{#server}» {#error}Неверный пароль!</message_invalid_password>
+	<message_set_debug>{#server}» Отладка - {1} (ON - включена, OFF - отключена). Не забудьте ее отключить, т.к. она замедляет работу и увеличивает объем логов!</message_set_debug>
+	<message_activate_uptodate>{#server}» {#admin}Проверка обновлений отключена - включите plugin.uptodate.php в [config/plugins.xml]</message_activate_uptodate>
+	<message_unknown_cmd>{#server}» {#error}Неизвестная команда администратора или пропущенные параметры: {#highlite}$i {1} {2}</message_unknown_cmd>
+	<message_mxid_required>{#server}» {#error}Вы должны указать MX-идентификатор карты!</message_mxid_required>
+	<message_error_erasing>{#server}» {#error}Невозможно удалить файл {#highlite}$i{1</message_error_erasing>
+	<message_error_create_file>{#server}» {#error}Ошибка создания файла {#highlite}$i{1}</message_error_create_file>
+	<message_error_write_file>{#server}» {#error}Ошибка сохранения файла {#highlite}$i{1}</message_error_write_file>
+	<message_is_no_map>{#server}» {#error}Непохоже, чтобы файл {#highlite}$i{1}{#highlite} был картой!</message_is_no_map>
+	<message_map_added>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}добавляет {3}карту: {#highlite}{4} {#admin}из {5}</message_map_added>
+	<message_map_not_added_incompatible>{#server}» {#error}Карта {#highlite}{1}$Z$S{#error} несовместима с текущими настройками сервера, поэтому не добавлена!</message_map_not_added_incompatible>
+	<message_mx_download_error>{#server}» {#error}Ошибка загрузки, либо MX сейчас не работает!</message_mx_download_error>
+	<message_invalid_mxid>{#server}» {#highlite}{1}{#error} - неверный MX идентификатор карты!</message_invalid_mxid>
+	<message_activate_rasp>{#server}» {#admin}Локальные рекорды недоступны - включите plugin.rasp.php в [config/plugins.xml]</message_activate_rasp>
+	<message_add_permanent>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin} добавляет в плейлист эту карту: {#highlite}{3}</message_add_permanent>
+	<message_no_temp_remove_map>{#server}» {#error}Невозможно удалить временно добавленную карту!</message_no_temp_remove_map>
+	<message_already_perm_added_map>{#server}» {#error}Эта карта ({#highlite}{1}$Z$S{#error}) уже добавлена в плейлист!</message_already_perm_added_map>
+	<message_activate_addthis>{#server}» {#admin}Команда Addthis недоступна - включите плагины plugin.rasp_jukebox.php и plugin.rasp.php в файле [config/plugins.xml]</message_activate_addthis>
+	<message_not_found>{#server}» {#highlite}{1}{#error} не найден(а)!</message_not_found>
+	<message_include_local_file>{#server}» {#error}Укажите имя файла карты!</message_include_local_file>
+	<message_maplist_read>{#server}» {#highlite}{1}{#admin} загружен, в нем {#highlite}{2}{#admin} карт</message_maplist_read>
+	<message_maps_shuffled>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} перемешал плейлист, в котором {#highlite}{3}{#admin} карт!</message_maps_shuffled>
+	<message_cannot_find_autosave_matchsettings>{#server}» {#error}Невозможно найти автосохраненный файл плейлиста {#highlite}$i{1}{#error}!</message_cannot_find_autosave_matchsettings>
+	<message_autosave_matchsettings_not_set_or_jukebox_disabled>{#server}» {#error}Не указан файл автосохранения плейлиста $I{#highlite}config/rasp.xml{#error} или не включен плагин $I{#highlite}plugin.rasp_jukebox.php{#error}!</message_autosave_matchsettings_not_set_or_jukebox_disabled>
+	<message_no_maplist_randomness>{#server}» {#error}Не указан способ перемешивания карт в файле {#highlite}$i [config/UASECO.xml]{#error}!</message_no_maplist_randomness>
+	<message_no_players_found>{#server}» {#error}Игрок(и) не найдены!</message_no_players_found>
+	<message_cannot_get_playerlist>{#server}» {#error}Невозможно получить список игроков на сервере!</message_cannot_get_playerlist>
+	<message_shutdownall>{#server}» {#error}$wСервер и UASECO сейчас будут выключены!</message_shutdownall>
+</locales>

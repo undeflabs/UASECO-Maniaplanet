@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de, aca
+	//-->
+
+	<plugin_description>Saves records into a local database.</plugin_description>
+
+
+	<!-- record messages -->
+	<record_new>{#server}» {#highlite}{1}{#record} secured his/her {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new>
+	<record_equal>{#server}» {#highlite}{1}{#record} equaled his/her {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}</record_equal>
+	<record_new_rank>{#server}» {#highlite}{1}{#record} gained the {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new_rank>
+	<record_first>{#server}» {#highlite}{1}{#record} claimed the {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}</record_first>
+	<record_current>{#server}» {#message}Current record on {#highlite}{1}{#message} is {#highlite}{2}{#message} by {#highlite}{3}</record_current>
+	<record_none>{#server}» {#message}Currently no record on [{#highlite}{1}{#message}] ...</record_none>
+
+
+	<!-- ranking messages -->
+	<ranking>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round: {3}</ranking>
+	<ranking_range>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round (range {#highlite}{3}{#message}): {4}</ranking_range>
+	<ranking_new>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round ({#highlite}{3}{#message} new): {4}</ranking_new>
+	<ranking_no_new>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round: none new so far</ranking_no_new>
+	<ranking_none>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round: no records!</ranking_none>
+
+
+	<!-- no translation, just formatting -->
+	<ranking_record_new_on>{1}{#rank}{2}{#message}.$i{#highlite}{3}{#message}[{#highlite}{4}{#message}]$i</ranking_record_new_on>
+	<ranking_record_new>{1}{#rank}{2}{#message}.{#highlite}{3}{#message}[{#highlite}{4}{#message}]</ranking_record_new>
+	<ranking_record_on>{1}{#rank}{2}{#message}.$i{#timelite}{3}{#message}[{#timelite}{4}{#message}]$i</ranking_record_on>
+	<ranking_record>{1}{#rank}{2}{#message}.{#timelite}{3}{#message}[{#timelite}{4}{#message}]</ranking_record>
+
+
+	<!-- timing messages -->
+	<timing_before>before</timing_before>
+	<timing_during>during</timing_during>
+	<timing_after>after</timing_after>
+</locales>

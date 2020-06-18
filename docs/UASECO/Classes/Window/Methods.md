@@ -25,7 +25,7 @@ Setup the style of the Window.
 
 	Color for the text in [RGBA](http://en.wikipedia.org/wiki/RGBA_color_space) format, e.g. `09FF`.
 
-*	`seperatorcolor`
+*	`backgroundcolor`
 
 	Color for the seperator at the header in [RGBA](http://en.wikipedia.org/wiki/RGBA_color_space) format, e.g. `09FF`.
 
@@ -38,7 +38,7 @@ Setup the style of the Window.
 	// Setup the styles
 	$settings_style = array(
 		'textcolor'		=> '09FF',
-		'seperatorcolor'	=> 'FFFF',
+		'backgroundcolor'	=> 'FFFF',
 		'icon'			=> 'Icons64x64_1,ToolLeague1',
 	);
 
@@ -187,8 +187,24 @@ Setup the footer to display.
 
 	Link for the `button_title`
 
+*	`option_button`
+
+	An array which contains a list of `button labels` and a valid link/action, supported protocols are
+	- `manialink://`
+	- `http://`
+	- `https://`
+	- `ftp://`
+	- `ftps://`
+	- `ts3server://`
+	- `mumble://`
+
 
 #### Example
+
+	$options = array();
+	$options[] = array('Show maplist filter window',	'PluginRecordsEyepiece?Action=showMaplistFilterWindow');
+	$options[] = array('Show maplist sorting window',	'PluginRecordsEyepiece?Action=showMaplistSortingWindow');
+
 
 	// Setup footer
 	$settings_footer = array(
@@ -196,6 +212,7 @@ Setup the footer to display.
 		'about_link'		=> 'http://www.mania-karma.com,
 		'button_title'		=> 'MORE INFO ON MANIA-KARMA.COM',
 		'button_link'		=> 'http://www.mania-karma.com/goto?uid='. $this->karma['data']['uid'],
+		'option_button'		=> $options,
 	);
 
 	// Create the Window
@@ -236,7 +253,7 @@ Build, store and send the Window to the Player.
 	// Setup the styles
 	$settings_style = array(
 		'textcolor'		=> '09FF',
-		'seperatorcolor'	=> 'FFFF',
+		'backgroundcolor'	=> '0099FFDD',
 		'icon'			=> 'Icons64x64_1,ToolLeague1',
 	);
 

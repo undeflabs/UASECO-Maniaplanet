@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Shows the next better ranked player.</plugin_description>
+	<info_msg>Looking for the next better ranked player to beat?  Use "/nextrank"!</info_msg>
+</locales>

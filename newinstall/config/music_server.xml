@@ -49,21 +49,4 @@
 		<song>YOUR_THIRD_SONG.ogg</song>
 		<!-- and so on -->
 	</song_files>
-
-	<messages>
-		<current>{#server}» {#music}The current song is: {#highlite}{1}</current>
-		<next>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} loaded the next song: {#highlite}{3}</next>
-		<reloaded>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} reloaded music config and cleared jukebox!</reloaded>
-		<sorted>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} sorted song list and cleared jukebox!</sorted>
-		<shuffled>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} shuffled song list and cleared jukebox!</shuffled>
-		<jukebox>{#server}» {#highlite}{1}{#music} jukeboxed song: {#highlite}{2}</jukebox>
-		<jukebox_already>{#server}» {#music}You already have a song in the jukebox! Wait till it's been played before adding another.</jukebox_already>
-		<jukebox_dupl>{#server}» {#music}This song has already been added to the jukebox, pick another one.</jukebox_dupl>
-		<jukebox_notfound>{#server}» {#music}Song_ID not found - Type {#highlite}/music list{#music} to see all songs.</jukebox_notfound>
-		<jukebox_drop>{#server}» {#music}Player {#highlite}{1}{#music} dropped his/her song {#highlite}{2}{#music} from jukebox!</jukebox_drop>
-		<jukebox_nodrop>{#server}» {#music}You don't have a song in the jukebox, use {#highlite}/music Song_ID{#music} to add one...</jukebox_nodrop>
-		<jukebox_empty>{#server}» {#music}No songs in the jukebox, use {#highlite}/music Song_ID{#music} to add one...</jukebox_empty>
-		<no_jukebox>{#server}» {#highlite}/music #{#music} is not currently enabled on this server.</no_jukebox>
-		<shutdown>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} disabled server music!</shutdown>
-	</messages>
 </settings>

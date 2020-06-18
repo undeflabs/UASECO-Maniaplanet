@@ -120,11 +120,11 @@ Resets the ranking list.
 
 
 ### [getRankByLogin](_#getRankByLogin)
-Returns a Class Ranking object from the given Player login.
+Returns a [Class Ranking](https://www.uaseco.org/development/classes/ranking.php) object from the given Player login.
 
 
 #### Description
-	Class Ranking object = getRankByLogin ( string $login )
+	[Class Ranking](https://www.uaseco.org/development/classes/ranking.php) object = getRankByLogin ( string $login )
 
 
 #### Parameters
@@ -144,11 +144,11 @@ Returns a Class Ranking object from the given Player login.
 
 
 ### [getRank](_#getRank)
-Returns a Class Ranking object from the given rank.
+Returns a [Class Ranking](https://www.uaseco.org/development/classes/ranking.php) object from the given rank.
 
 
 #### Description
-	Class Ranking object = getRank ( int $rank )
+	[Class Ranking](https://www.uaseco.org/development/classes/ranking.php) object = getRank ( int $rank )
 
 
 #### Parameters
@@ -167,7 +167,7 @@ Returns a Class Ranking object from the given rank.
 
 
 ### [getRange](_#getRange)
-Returns a array with Class Ranking objects from the given amount of rankings.
+Returns a array with [Class Ranking](https://www.uaseco.org/development/classes/ranking.php) objects from the given amount of rankings.
 
 
 #### Description
@@ -197,7 +197,7 @@ Returns a array with Class Ranking objects from the given amount of rankings.
 
 
 ### [getTop3](_#getTop3)
-Returns a array with Class Ranking objects from the TOP 3.
+Returns a array with [Class Ranking](https://www.uaseco.org/development/classes/ranking.php) objects from the TOP 3.
 
 
 #### Description
@@ -214,7 +214,7 @@ Returns a array with Class Ranking objects from the TOP 3.
 
 
 ### [getTop10](_#getTop10)
-Returns a array with Class Ranking objects from the TOP 10.
+Returns a array with [Class Ranking](https://www.uaseco.org/development/classes/ranking.php) objects from the TOP 10.
 
 
 #### Description
@@ -231,7 +231,7 @@ Returns a array with Class Ranking objects from the TOP 10.
 
 
 ### [getTop50](_#getTop50)
-Returns a array with Class Ranking objects from the TOP 50.
+Returns a array with [Class Ranking](https://www.uaseco.org/development/classes/ranking.php) objects from the TOP 50.
 
 
 #### Description

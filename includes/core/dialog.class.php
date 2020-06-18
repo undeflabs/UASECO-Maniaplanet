@@ -46,9 +46,9 @@ class Dialog extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-11-16');
-		$this->setCopyright('2017 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-22');
+		$this->setCopyright('2017 - 2019 by undef.de');
 		$this->setDescription(new Message('class.dialog', 'dialog_description'));
 
 		// Empty content by default
@@ -71,8 +71,8 @@ class Dialog extends BaseClass {
 			),
 			'title' => array(
 				'icon' => array(
-					'style'		=> 'Icons64x64_1',
-					'substyle'	=> 'TrackInfo',
+					'style'		=> 'Icons128x128_1',
+					'substyle'	=> 'Custom',
 				),
 				'textcolor'		=> 'FFFFFFFF',
 			),
@@ -240,7 +240,7 @@ class Dialog extends BaseClass {
 		// Title
 		$xml .= '<quad pos="0 0" z-index="0.04" size="102.5 8" bgcolor="'. $this->layout['backgrounds']['title'] .'" bgcolorfocus="'. $this->layout['backgrounds']['title_hover'] .'" id="ClassDialogTitle" ScriptEvents="1"/>';
 		$xml .= '<quad pos="2.5 -1.075" z-index="0.05" size="5.5 5.5" style="'. $this->layout['title']['icon']['style'] .'" substyle="'. $this->layout['title']['icon']['substyle'] .'"/>';
-		$xml .= '<label pos="10 -2.575" z-index="0.05" size="94.25 3.75" class="labels" textsize="2" scale="0.9" textcolor="FFFFFFFF" text="'. $this->content['title'] .'"/>';
+		$xml .= '<label pos="10 -2.575" z-index="0.05" size="94.25 3.75" class="labels" textsize="2" scale="1" textcolor="FFFFFFFF" textfont="Oswald" text="'. $this->content['title'] .'"/>';
 
 		// Minimize Button
 		$xml .= '<frame pos="93.5 0.125" z-index="0.05">';
@@ -280,13 +280,13 @@ class Dialog extends BaseClass {
 	public function buildManiascript () {
 
 		$buttons = array(
-//			'Event.ControlId === "ClassDialogClose"',
-			'Event.ControlId === "ClassDialogMinimize"',
+//			'Event.ControlId == "ClassDialogClose"',
+			'Event.ControlId == "ClassDialogMinimize"',
 		);
 
 		$count = 1;
 		foreach ($this->content['buttons'] as $item) {
-			$buttons[] = 'Event.ControlId === "ClassDialogButton'. $count .'"';
+			$buttons[] = 'Event.ControlId == "ClassDialogButton'. $count .'"';
 
 			$count += 1;
 		}

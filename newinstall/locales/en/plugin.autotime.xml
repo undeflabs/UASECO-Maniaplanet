@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+<!-- common messages -->
+	<medal_author>author medal</medal_author>
+	<medal_gold>gold medal</medal_gold>
+	<medal_silver>silver medal</medal_silver>
+	<medal_bronze>bronze medal</medal_bronze>	
+
+
+<!-- plugin messages -->
+	<plugin_description>Changes timelimit dynamically depending on the next map\'s author time.</plugin_description>
+	<message_default>{#server}»{#emotic} Set default timelimit for Map {#highlite}{1}{#emotic} to {#highlite}{2}{#emotic}, calculation based upon the {#highlite}{3}{#emotic} of {#highlite}{4}</message_default>
+	<message_new>{#server}»{#emotic} Set new timelimit for Map {#highlite}{1}{#emotic} to {#highlite}{2}{#emotic}, calculation based upon the {#highlite}{3}{#emotic} of {#highlite}{4}</message_new>
+	<message_minimum>{#server}»{#emotic} Set minimum timelimit for Map {#highlite}{1}{#emotic} to {#highlite}{2}{#emotic}, calculation based upon the {#highlite}{3}{#emotic} of {#highlite}{4}</message_minimum>
+	<message_maximum>{#server}»{#emotic} Set maximum timelimit for Map {#highlite}{1}{#emotic} to {#highlite}{2}{#emotic}, calculation based upon the {#highlite}{3}{#emotic} of {#highlite}{4}</message_maximum>
+</locales>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-03
+	Authors:	undef.de
+	//-->
+	<plugin_description>Shows ranked records and their relations on the current map.</plugin_description>
+	<firstrec>Shows first ranked record on current map</firstrec>
+	<lastrec>Shows last ranked record on current map</lastrec>
+	<nextrec>Shows next better ranked record to beat</nextrec>
+	<diffrec>Shows your difference to first ranked record</diffrec>
+	<recrange>Shows difference first to last ranked record</recrange>
+	<notonrelay>{#server}» {#error}Command unavailable on relay server</notonrelay>
+	<first_record>{#server}» {#record}The first Local record is: {1}</first_record>
+	<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}]</ranking_record_new>
+	<last_record>{#server}» {#record}The last Local record is: {1}</last_record>
+	<diff_record>{#server}» {#record}Difference between {1}{#record} and {2}{#record} is: {#highlite}{3}</diff_record>
+</locales>

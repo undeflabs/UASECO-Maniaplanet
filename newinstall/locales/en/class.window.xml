@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<windowlist_description>Handles actions for Manialink windows created with the Class Window.</windowlist_description>
+	<window_description>Provides a comfortable, configurable styled Manialink window.</window_description>
+	<slash_lastwin>Re-opens the last closed window.</slash_lastwin>
+	<header_page>Page</header_page>
+	<header_of>of</header_of>
+</locales>

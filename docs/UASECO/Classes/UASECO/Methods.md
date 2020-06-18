@@ -25,7 +25,7 @@ Checks if the given player is allowed to perform this ability, e.g. `/help`.
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 *	`$ability`
 
@@ -110,7 +110,7 @@ Checks if the given player is in any admin tier with, optionally, an authorized 
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -137,7 +137,7 @@ Checks if the given player login is in any admin tier.
 #### Parameters
 *	`$login`
 
-	The `login` from a [Class Player](/Development/Classes/Player.php) object
+	The `login` from a [Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -164,7 +164,7 @@ Checks if the given player is in admin list with, optionally, an authorized IP.
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -191,7 +191,7 @@ Checks if the given player login is in admin list.
 #### Parameters
 *	`$login`
 
-	The `login` from a [Class Player](/Development/Classes/Player.php) object
+	The `login` from a [Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -218,7 +218,7 @@ Checks if the given player is in masteradmin list with, optionally, an authorize
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -245,7 +245,7 @@ Checks if the given player login is in masteradmin list.
 #### Parameters
 *	`$login`
 
-	The `login` from a [Class Player](/Development/Classes/Player.php) object
+	The `login` from a [Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -273,7 +273,7 @@ Checks if the given player is in operator list with, optionally, an authorized I
 #### Parameters
 *	`$player`
 
-	[Class Player](/Development/Classes/Player.php) object
+	[Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -300,7 +300,7 @@ Checks if the given player login is in operator list.
 #### Parameters
 *	`$login`
 
-	The `login` from a [Class Player](/Development/Classes/Player.php) object
+	The `login` from a [Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -327,7 +327,7 @@ Check login string for LAN postfix (pre/post v2.11.21).
 #### Parameters
 *	`$login`
 
-	The `login` from a [Class Player](/Development/Classes/Player.php) object
+	The `login` from a [Class Player](/development/classes/player.php) object
 
 
 #### Example
@@ -628,7 +628,7 @@ Remove whitespace and empty entries from a csv string, e.g. 'login1, login2, , l
 #### Parameters
 *	`$csv`
 
-	A comma seperated list of [Class Player](/Development/Classes/Player.php) object logins
+	A comma seperated list of [Class Player](/development/classes/player.php) object logins
 
 
 #### Example
@@ -1305,7 +1305,7 @@ Sends one or more Manialinks immediately to the given `$logins`, or all Players.
 ### [sendChatMessage](_#sendChatMessage)
 Sends a chat message to the given `$logins`, or all Players.
 
-> Deprecated, use [Class Message](/Development/Classes/Message.php) for locale support instead!
+> Deprecated, use [Class Message](/development/classes/message.php) for locale support instead!
 
 
 #### Description
@@ -1400,7 +1400,7 @@ Release a chat command from a plugin.
 
 *	`$login`
 
-	A player login from a [Class Player](/Development/Classes/Player.php) object.
+	A player login from a [Class Player](/development/classes/player.php) object.
 
 
 #### Example
@@ -1423,7 +1423,7 @@ Returns a Class Plugin object of the given classname.
 #### Parameters
 *	`$classname`
 
-	Classname of the plugin to receive the [Class Plugin](/Development/Classes/Plugin.php) object.
+	Classname of the plugin to receive the [Class Plugin](/development/classes/plugin.php) object.
 
 
 #### Example

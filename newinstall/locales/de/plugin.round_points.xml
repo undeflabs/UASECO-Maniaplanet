@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-27
+	Authors:	aca
+	//-->
+	<plugin_description>Ermöglicht das Setzen gängiger und eigener Systeme für die Rundenpunkte.</plugin_description>
+	<slash_setrpoints_description>Setzt eigene Rundenpunkte (siehe auch: /setrpoints help)</slash_setrpoints_description>
+	<slash_rpoints_description>Zeigt das akutelle System für die Rundenpunkte.</slash_rpoints_description>
+	<rpoints_named>{#server}» {1}Eigenes System für die Rundenpunkte folgendermaßen gesetzt: {#highlite}{2}{3}: {#highlite}{4},...</rpoints_named>
+	<rpoints_nameless>{#server}» {1}Eigenes System für die Rundenpunkte folgendermaßen gesetzt: {#highlite}{2},...</rpoints_nameless>
+	<no_rpoints>{#server}» {1}Kein eigenes System für die Rundenpunkte definiert!</no_rpoints>
+	<set_rpoints_help>Zeigt diese Hilfe-Info</set_rpoints_help>
+	<setrpoints_list>Zeigt verfügbare Punktesysteme</setrpoints_list>
+	<setrpoints_show>Zeigt aktuelles Punktesystem</setrpoints_show>
+	<setrpoints_xxx>Setzt eigenes System für die Rundenpunkte mit der Bezeichnung xxx</setrpoints_xxx>
+	<setrpoints_X_Y_Z>Setzt eigenes System für die Rundenpunkte mit den angegebenen Werten;</setrpoints_X_Y_Z>
+	<decreasing_integers>X,Y,...,Z müssen angegeben werden und ganze Zahlen in absteigender Reihenfolge sein</decreasing_integers>
+	<no_spaces>muss mindestens zwei Werte ohne Leerzeichen haben</no_spaces>
+	<setrpoints_off>Deaktiviert eigenes Punktesystem</setrpoints_off>
+	<help_heading_command>Befehl</help_heading_command>
+	<help_heading_description>Beschreibung</help_heading_description>
+	<help_title>Hilfe für /setrpoints</help_title>
+	<list_heading_points>Punkte</list_heading_points>
+	<list_heading_title>Aktuell verfügbare Systeme für die Rundenpunkte</list_heading_title>	
+	<admin_disables>{#server}» {#admin}{1}$z$s{#admin} deaktiviert eigene Rundenpunkte</admin_disables>
+	<admin_sets_custom>{#server}» {#admin}{1}$z$s{#admin} setzt eigene Rundenpunkte: {#highlite}{2},...</admin_sets_custom>
+	<admin_sets>{#server}» {#admin}{1}$z$s{#admin} setzt Rundenpunkte auf {#highlite}{2}{#server}: {#highlite}{3}, ...</admin_sets>
+	<unknown_system>{#server}» {#error}Unbekanntes Punktesystem {#highlite}$i {1}$z$s {#error}!</unknown_system>	
+</locales>

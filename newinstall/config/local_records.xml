@@ -37,25 +37,4 @@
 	only be displayed to the pertaining player.
 	//-->
 	<limit>1000</limit>
-
-	<messages>
-		<!-- record messages -->
-		<record_new>{#server}» {#highlite}{1}{#record} secured his/her {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new>
-		<record_equal>{#server}» {#highlite}{1}{#record} equaled his/her {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}</record_equal>
-		<record_new_rank>{#server}» {#highlite}{1}{#record} gained the {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new_rank>
-		<record_first>{#server}» {#highlite}{1}{#record} claimed the {#rank}{2}{#record}. Local Record! Time: {#highlite}{3}</record_first>
-		<record_current>{#server}» {#message}Current record on {#highlite}{1}{#message} is {#highlite}{2}{#message} by {#highlite}{3}</record_current>
-		<record_none>{#server}» {#message}Currently no record on [{#highlite}{1}{#message}] ...</record_none>
-
-		<!-- ranking messages -->
-		<ranking>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round:</ranking>
-		<ranking_range>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round (range {#highlite}{3}{#message}):</ranking_range>
-		<ranking_new>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round ({#highlite}{3}{#message} new):</ranking_new>
-		<ranking_no_new>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round: none new so far</ranking_no_new>
-		<ranking_none>{#server}» {#message}Local Record rankings on {#highlite}{1}{#message} {2} this round: no records!</ranking_none>
-		<ranking_record_new_on>{#rank}{1}{#message}.$i{#highlite}{2}{#message}[{#highlite}{3}{#message}]$i, </ranking_record_new_on>
-		<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}], </ranking_record_new>
-		<ranking_record_on>{#rank}{1}{#message}.$i{#timelite}{2}{#message}[{#timelite}{3}{#message}]$i, </ranking_record_on>
-		<ranking_record>{#rank}{1}{#message}.{#timelite}{2}{#message}[{#timelite}{3}{#message}], </ranking_record>
-	</messages>
 </settings>

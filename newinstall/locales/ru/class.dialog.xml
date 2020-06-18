@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<dialog_description>Выводит легко настраиваемый диалог в стиле Manialink.</dialog_description>
+</locales>

@@ -14,7 +14,7 @@ Provides information to the current game which is running.
 
 | Members								| Example data or description
 |-----------------------------------------------------------------------|----------------------------
-| `$aseco->server->gameinfo->mode`					| The [Gamemode ID](/Development/Classes/Gameinfo.php#Constants) e.g. `2`
+| `$aseco->server->gameinfo->mode`					| The [Gamemode ID](/development/classes/gameinfo.php#Constants) e.g. `2`
 | `$aseco->server->gameinfo->script`					| `array()` with values from [`GetModeScriptInfo`](/Dedicated-Server/List-Methods.php#GetModeScriptInfo)
 | `$aseco->server->gameinfo->matchmaking`				| `array()` with [ModeMatchmaking](http://doc.maniaplanet.com/dedicated-server/settings-list.html#ModeMatchmaking) settings from [`GetModeScriptSettings`](/Dedicated-Server/List-Methods.php#GetModeScriptSettings)
 | `$aseco->server->gameinfo->modebase`					| `array()` with [ModeBase](http://doc.maniaplanet.com/dedicated-server/settings-list.html#All--ModeBase-) settings from [`GetModeScriptSettings`](/Dedicated-Server/List-Methods.php#GetModeScriptSettings)

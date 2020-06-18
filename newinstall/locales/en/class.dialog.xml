@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<dialog_description>Provides a comfortable, configurable styled Manialink dialog.</dialog_description>
+</locales>

@@ -64,8 +64,8 @@ class MapList extends BaseClass {
 	public function __construct ($debug, $force_maplist_update) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2019-06-07');
+		$this->setVersion('1.0.5');
+		$this->setBuild('2019-10-28');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Stores information about all Maps on the dedicated server and provides several functions for sorting.');
 
@@ -217,11 +217,11 @@ class MapList extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getNextMap () {
+	public function getNextMap ($ignore_playlist = false) {
 		global $aseco;
 
 		$uid = false;
-		if (isset($aseco->plugins['PluginRaspJukebox']->jukebox) && count($aseco->plugins['PluginRaspJukebox']->jukebox) > 0) {
+		if ($ignore_playlist === false && isset($aseco->plugins['PluginRaspJukebox']->jukebox) && count($aseco->plugins['PluginRaspJukebox']->jukebox) > 0) {
 			foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $map) {
 				// Need just the next Map UID
 				$uid = $map['uid'];

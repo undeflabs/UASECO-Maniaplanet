@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<chat_records>{#server}» {#record}Мировой рекорд MX: {#highlite}{1}{#record} от {#highlite}{2}</chat_records>
+	<window_title_mxlist>Карты предоставлены mania-exchange.com</window_title_mxlist>
+</locales>

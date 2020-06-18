@@ -44,10 +44,11 @@ class PluginRaspKarma extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2019-06-07');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-10-03');
 		$this->setCopyright('2014 - 2019 by undef.de');
-		$this->setDescription('Votes for a map and displays current score of it.');
+		$this->setDescription(new Message('plugin.rasp_karma', 'plugin_description'));
 
 		$this->registerEvent('onSync',		'onSync');
 		$this->registerEvent('onLoadingMap',	'onLoadingMap');
@@ -55,9 +56,9 @@ class PluginRaspKarma extends Plugin {
 		$this->registerEvent('onPlayerFinish',	'onPlayerFinish');
 		$this->registerEvent('onEndMap',	'onEndMap');
 
-		$this->registerChatCommand('karma',	'chat_karma',		'Shows karma for the current map {Map_ID}',	Player::PLAYERS);
-		$this->registerChatCommand('++',	'chat_playervote',	'Increases karma for the current map',		Player::PLAYERS);
-		$this->registerChatCommand('--',	'chat_playervote',	'Decreases karma for the current map',		Player::PLAYERS);
+		$this->registerChatCommand('karma',	'chat_karma',		new Message('plugin.rasp_karma', 'slash_chat_karma_description'),		Player::PLAYERS);
+		$this->registerChatCommand('++',	'chat_playervote',	new Message('plugin.rasp_karma', 'slash_chat_playervote_plus_description'),	Player::PLAYERS);
+		$this->registerChatCommand('--',	'chat_playervote',	new Message('plugin.rasp_karma', 'slash_chat_playervote_minus_description'),	Player::PLAYERS);
 	}
 
 	/*
@@ -91,8 +92,8 @@ class PluginRaspKarma extends Plugin {
 		// check optional parameter
 		if (is_numeric($chat_parameter) && $chat_parameter >= 0) {
 			if (empty($player->maplist)) {
-				$message = $this->messages['LIST_HELP'][0];
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.rasp_karma', 'list_help');
+				$message->sendChatMessage($player->login);
 				return;
 			}
 			$jid = ltrim($chat_parameter, '0');
@@ -106,28 +107,26 @@ class PluginRaspKarma extends Plugin {
 				$map = $aseco->server->maps->getMapByUid($uid);
 
 				$karma = $this->getKarma($map->id, $player->login);
-				$message = $aseco->formatText($this->messages['KARMA_MAP'][0],
-					$aseco->stripStyles($map->name),
+				$message = new Message('plugin.rasp_karma', 'karma_map');
+				$message->addPlaceholders($aseco->stripStyles($map->name),
 					$karma
 				);
 			}
 			else {
-				$message = $this->messages['JUKEBOX_NOTFOUND'][0];
-				$aseco->sendChatMessage($message, $player->login);
+				$message = new Message('plugin.rasp_karma', 'jukebox_notfound');
+				$message->sendChatMessage($player->login);
 				return;
 			}
 		}
 		else {
 			// get karma info
 			$karma = $this->getKarma($aseco->server->maps->current->id, $player->login);
-			$message = $aseco->formatText($this->messages['KARMA'][0], $karma);
+			$message = new Message('plugin.rasp_karma', 'karma')
+			$message->addPlaceholders($karma);
 		}
 
-		// strip 1 leading '>' to indicate a player message instead of system-wide
-		$message = str_replace('{#server}» ', '{#server}» ', $message);
-
 		// show chat message
-		$aseco->sendChatMessage($message, $player->login);
+		$message->sendChatMessage($player->login);
 	}
 
 	/*
@@ -156,8 +155,8 @@ class PluginRaspKarma extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->sendChatMessage($message, $caller->login);
+			$message = new Message('plugin.rasp_karma', 'notonrelay')
+			$message->sendChatMessage($caller->login);
 			return;
 		}
 
@@ -177,11 +176,9 @@ class PluginRaspKarma extends Plugin {
 				// check whether player finished required number of times
 				if ($res->num_rows < $this->karma_require_finish) {
 					// show chat message
-					$message = $aseco->formatText($this->messages['KARMA_REQUIRE'][0],
-						$this->karma_require_finish,
-						($this->karma_require_finish === 1 ? '' : 's')
-					);
-					$aseco->sendChatMessage($message, $caller->login);
+					$message = new Message('plugin.rasp_karma', 'karma_require');
+					$message->addPlaceholders($this->karma_require_finish);
+					$message->sendChatMessage($caller->login);
 
 					$res->free_result();
 					return;
@@ -204,8 +201,8 @@ class PluginRaspKarma extends Plugin {
 		if ($res->num_rows > 0) {
 			$row = $res->fetch_object();
 			if ($row->Score === $vote) {
-				$message = $this->messages['KARMA_VOTED'][0];
-				$aseco->sendChatMessage($message, $caller->login);
+				$message = new Message('plugin.rasp_karma', 'karma_voted');
+				$message->sendChatMessage($caller->login);
 			}
 			else {
 				$query2 = "
@@ -216,12 +213,12 @@ class PluginRaspKarma extends Plugin {
 				";
 				$aseco->db->query($query2);
 				if ($aseco->db->affected_rows === -1) {
-					$message = $this->messages['KARMA_FAIL'][0];
-					$aseco->sendChatMessage($message, $caller->login);
+					$message = new Message('plugin.rasp_karma', 'karma_fail');
+					$message->sendChatMessage($caller->login);
 				}
 				else {
-					$message = $this->messages['KARMA_CHANGE'][0];
-					$aseco->sendChatMessage($message, $caller->login);
+					$message = new Message('plugin.rasp_karma', 'karma_change');
+					$message->sendChatMessage($caller->login);
 					$this->chat_karma($aseco, $caller->login, 'karma', '');
 					$aseco->releaseEvent('onKarmaChange', $this->getKarmaValues($aseco->server->maps->current->id));
 				}
@@ -242,12 +239,12 @@ class PluginRaspKarma extends Plugin {
 			";
 			$aseco->db->query($query2);
 			if ($aseco->db->affected_rows === -1) {
-				$message = $this->messages['KARMA_FAIL'][0];
-				$aseco->sendChatMessage($message, $caller->login);
+				$message =  new Message('plugin.rasp_karma', 'karma_fail');
+				$message->sendChatMessage($caller->login);
 			}
 			else {
-				$message = $this->messages['KARMA_DONE'][0];
-				$aseco->sendChatMessage($message, $caller->login);
+				$message =  new Message('plugin.rasp_karma', 'karma_done');;
+				$message->sendChatMessage($caller->login);
 				$this->chat_karma($aseco, $caller->login, 'karma', '');
 				$aseco->releaseEvent('onKarmaChange', $this->getKarmaValues($aseco->server->maps->current->id));
 			}
@@ -271,8 +268,8 @@ class PluginRaspKarma extends Plugin {
 			}
 		}
 		else {
-			$message = $this->messages['KARMA_NOPUBLIC'][0];
-			$aseco->sendChatMessage($message);
+			$message = new Message('plugin.rasp_karma', 'karma_nopublic');
+			$message->sendChatMessage();
 		}
 	}
 
@@ -290,15 +287,17 @@ class PluginRaspKarma extends Plugin {
 				// Send individual player messages
 				foreach ($aseco->server->players->player_list as $pl) {
 					$karma = $this->getKarma($map->id, $pl->login);
-					$message = $aseco->formatText($this->messages['KARMA'][0], $karma);
-					$aseco->sendChatMessage($message, $pl->login);
+					$message = new Message('plugin.rasp_karma', 'karma');
+					$message->addPlaceholders($karma);
+					$message->sendChatMessage($pl->login);
 				}
 			}
 			else {
 				// Send more efficient global message
 				$karma = $this->getKarma($map->id, false);
-				$message = $aseco->formatText($this->messages['KARMA'][0], $karma);
-				$aseco->sendChatMessage($message);
+				$message = new Message('plugin.rasp_karma', 'karma');
+				$message->addPlaceholders($karma);
+				$message->sendChatMessage();
 			}
 		}
 	}
@@ -336,8 +335,8 @@ class PluginRaspKarma extends Plugin {
 		$res = $aseco->db->query($query);
 		if ($res->num_rows === 0) {
 			// show reminder message
-			$message = $this->messages['KARMA_REMIND'][0];
-			$aseco->sendChatMessage($message, $player->login);
+			$message = new Message('plugin.rasp_karma', 'karma_remind');
+			$message->sendChatMessage($player->login);
 		}
 		$res->free_result();
 	}
@@ -372,8 +371,8 @@ class PluginRaspKarma extends Plugin {
 				$res = $aseco->db->query($query);
 				if ($res->num_rows === 0) {
 					// show reminder message
-					$message = $this->messages['KARMA_REMIND'][0];
-					$aseco->sendChatMessage($message, $player->login);
+					$message = new Message('plugin.rasp_karma', 'karma_remind');
+					$message->sendChatMessage($player->login);
 				}
 				$res->free_result();
 			}
@@ -478,9 +477,9 @@ class PluginRaspKarma extends Plugin {
 
 		// optionally add vote counts & percentages
 		if ($this->karma_show_details) {
+			$msg = new Message('plugin.rasp_karma', 'karma_details');
 			if ($total > 0) {
-				$karma = $aseco->formatText($this->messages['KARMA_DETAILS'][0],
-					$karma,
+				$msg->addPlaceholders($karma,
 					$plus,
 					round($pluspct),
 					$minus,
@@ -489,14 +488,14 @@ class PluginRaspKarma extends Plugin {
 			}
 			else {
 				// no votes yet
-				$karma = $aseco->formatText($this->messages['KARMA_DETAILS'][0],
-					$karma,
+				$msg->addPlaceholders($karma,
 					0,
 					0,
 					0,
 					0
 				);
 			}
+			$karma = $msg->finish($login);
 		}
 
 		// optionally add player's actual vote
@@ -524,7 +523,9 @@ class PluginRaspKarma extends Plugin {
 				else {
 					$vote = 'none';
 				}
-				$karma .= $aseco->formatText($this->messages['KARMA_VOTE'][0], $vote);
+				$msg = new Message('plugin.rasp_karma', 'karma_vote');
+				$msg->addPlaceholders($vote);
+				$karma .= $msg->finish($login);
 				$res3->free_result();
 			}
 		}
@@ -544,9 +545,6 @@ class PluginRaspKarma extends Plugin {
 		if (file_exists($config_file)) {
 			$aseco->console('[RaspKarma] Loading config file ['. $config_file .']');
 			if ($xml = $aseco->parser->xmlToArray($config_file, true, true)) {
-
-				/***************************** MESSAGES **************************************/
-				$this->messages			= $xml['RASP']['MESSAGES'][0];
 
 				/***************************** FEATURES **************************************/
 				$this->feature_ranks		= $aseco->string2bool($xml['RASP']['FEATURE_RANKS'][0]);

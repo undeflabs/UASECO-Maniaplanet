@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Показывает историю сообщений чата</plugin_description>
+	<info_message>Забыли, что было в чате? Набери "/chatlog" и посмотри историю!</info_message>
+	<message_no_history>{#server}» {#error}В чате еще ничего не происходило.</message_no_history>
+</locales>

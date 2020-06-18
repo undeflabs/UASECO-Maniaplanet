@@ -13,7 +13,7 @@ Stores information about all Maps on the dedicated server and provides several f
 
 
 ### [getMapByUid](_#getMapByUid)
-Returns a [Class Map](/Development/Classes/Map.php) object of the given UID form the current map list from the dedicated server.
+Returns a [Class Map](/development/classes/map.php) object of the given UID form the current map list from the dedicated server.
 
 
 #### Description
@@ -63,7 +63,7 @@ Removes the Map with the given UID form the current map list from the dedicated 
 
 
 ### [getMapById](_#getMapById)
-Returns a [Class Map](/Development/Classes/Map.php) object of the given ID form the current map list from the dedicated server.
+Returns a [Class Map](/development/classes/map.php) object of the given ID form the current map list from the dedicated server.
 
 
 #### Description
@@ -90,7 +90,7 @@ If map can not be found, then a empty map object is returned. When $map->uid is 
 
 
 ### [getMapByFilename](_#getMapByFilename)
-Returns a [Class Map](/Development/Classes/Map.php) object of the given filename form the current map list from the dedicated server.
+Returns a [Class Map](/development/classes/map.php) object of the given filename form the current map list from the dedicated server.
 
 
 #### Description
@@ -140,7 +140,7 @@ Removes the Map with the given Filename form the current map list from the dedic
 
 
 ### [getPreviousMap](_#getPreviousMap)
-Returns a [Class Map](/Development/Classes/Map.php) object of the previous map played.
+Returns a [Class Map](/development/classes/map.php) object of the previous map played.
 
 
 #### Description
@@ -156,7 +156,7 @@ Returns a [Class Map](/Development/Classes/Map.php) object of the previous map p
 
 
 ### [getCurrentMap](_#getCurrentMap)
-Returns a [Class Map](/Development/Classes/Map.php) object of the current map.
+Returns a [Class Map](/development/classes/map.php) object of the current map.
 
 
 #### Description
@@ -173,13 +173,19 @@ Returns a [Class Map](/Development/Classes/Map.php) object of the current map.
 
 
 ### [getNextMap](_#getNextMap)
-Returns a [Class Map](/Development/Classes/Map.php) object of the next map in the dedicated server map list.
+Returns a [Class Map](/development/classes/map.php) object of the next map in the dedicated server map list.
 
 
 #### Description
-	Class Map object = getNextMap ( void )
+	Class Map object = getNextMap ( boolean $ignore_playlist )
 
 If map can not be found, then a empty map object is returned. When $map->uid is false, then the map was not present in the current map list.
+
+
+#### Parameters
+*	`$ignore_playlist`
+
+	If `true`, then the playlist will be ignored and the dedicated server will be asked which map is the next map.
 
 
 #### Example
@@ -196,7 +202,7 @@ Returns the JPEG-Image from the Map of the given UID form the current map list f
 
 
 #### Description
-	JPEG-Image = getThumbnailByUid ( $uid )
+	JPEG-Image = getThumbnailByUid ( string $uid )
 
 If map can not be found or the image does not exists, then false is returned.
 
@@ -243,7 +249,7 @@ Parses a given Map file with the GBXChallMapFetcher Class.
 
 
 #### Description
-	Class GBXChallMapFetcher object = parseMap ( $file )
+	Class GBXChallMapFetcher object = parseMap ( string $file )
 
 Please note that you have to give the filename of the Map with full path informations.
 

@@ -37,9 +37,9 @@ class Message extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('askuri');
-		$this->setCoAuthors('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2019-09-20');
+		$this->setCoAuthors('undef.de', 'aca');
+		$this->setVersion('1.0.5');
+		$this->setBuild('2019-09-24');
 		$this->setCopyright('2014 - 2019 by Martin Weber (askuri)');
 		$this->setDescription('Part of multilanguage support.');
 
@@ -53,7 +53,12 @@ class Message extends BaseClass {
 	#									#
 	#///////////////////////////////////////////////////////////////////////#
 	*/
-
+	/**
+	 *	Set content for the placeholders
+	 *
+	 *	@author	askuri <askuri@uaseco.org>
+	 *	@param mixed $unused 	String or Message-Object or Message-Object-Array
+	 */
 	public function addPlaceholders ($unused) {
 
 		$args = func_get_args();
@@ -108,25 +113,55 @@ class Message extends BaseClass {
 	*/
 
 	/**
-	 * Gets the language of the player, chooses the correct translation, replaces variables and returns the message
+	 * Takes the messages of the Array, lets them get translated via finish() and concatenates them to a single String
 	 *
-	 * @author	askuri <askuri@uaseco.org>
-	 * @param	string $login A Player login
-	 * @return	array List of xxx
+	 * @param 		String $lang 					language-code
+	 * @param 		Message[] $placeholderArray		Array with Message-Objects
+	 * @return 		String							the concatenated messages
+	 *
 	 */
+
+	private function finishPlaceholderArray($lang, $placeholderArray){
+		$message = '';
+		foreach($placeholderArray as $placeholder){
+			if($placeholder instanceof Message){
+				$message .= $placeholder->finish($lang, false);
+			}
+		}
+		return $message;
+	}
+
+	/*
+	#///////////////////////////////////////////////////////////////////////#
+	#									#
+	#///////////////////////////////////////////////////////////////////////#
+	*/
+
+	/**
+	 * Returns the translated message. (If no translation is available, returns the English message)
+	 *
+	 * @param 		String $id 			login of a player or language-code
+	 * @param 		boolean $is_login 	false if language-code is given
+	 * @return 		String
+	 *
+	 */
+
 	public function finish ($id, $is_login = true) {
 		global $aseco;
 
+		//first parameter is login
 		if ($is_login === true) {
-			$lang = $aseco->locales->getPlayerLanguage($id); 			// login was given, get his language
+			$lang = $aseco->locales->getPlayerLanguage($id);
 		}
+		//first parameter is language-code
 		else {
-			$lang = $id;								// language given
+			$lang = $id;
 		}
 
 		$message = $aseco->formatColors($this->chooseTranslation($lang));
-		$message = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
-		$message = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
+		$message = str_replace('»', $aseco->settings['chat_prefix_replacement'], $message);
+		$message = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->settings['chat_prefix_replacement'], $message, 1);
+		$message = str_replace('{br}', LF, $message);									// Replace {br}'s with real LF
 
 		// Placeholders
 		if ($this->placeholders !== false) {
@@ -134,13 +169,16 @@ class Message extends BaseClass {
 				if ($placeholder instanceof Message) {
 					$placeholder = $placeholder->finish($lang, false);
 				}
+				else if(is_array($placeholder)){
+					$placeholder = $this->finishPlaceholderArray($lang, $placeholder);
+				}
 			}
-
 			$message = call_user_func_array(
-				array($aseco, 'formatText'),					// The function $aseco->formatText
-				array_merge(array($message), $this->placeholders)		// Its params
+				array($aseco, 'formatText'),									// The function $aseco->formatText
+				array_merge(array($message), $this->placeholders)						// Its params
 			);
 		}
+
 		return $aseco->decodeEntities($message, $lang);
 	}
 
@@ -151,12 +189,13 @@ class Message extends BaseClass {
 	*/
 
 	/**
-	 * Takes the result of finish() and splits it by {br} to an array
+	 * Returns the translated message as an array, splitted by {br}. (If no translation is available, returns it in English)
 	 *
 	 * @author	askuri <askuri@uaseco.org>
-	 * @param	string $id a string
-	 * @return	array List of xxx
+	 * @param 	String $login 	login of a player
+	 * @return 	String
 	 */
+
 	public function finishMultiline ($login) {
 		global $aseco;
 
@@ -173,15 +212,17 @@ class Message extends BaseClass {
 	 * Sends the multilanguage chat message to the chat
 	 *
 	 * @author	askuri <askuri@uaseco.org>
-	 * @param	string $logins A comma separated list
+	 * @param	string $logins 	a comma separated list
 	 */
+
 	public function sendChatMessage ($logins = null) {
 		global $aseco;
 
 		$messages = array();
 		foreach ($this->translations as $lang => $text) {
-			$text = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
-			$text = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
+			$text = str_replace('»', $aseco->settings['chat_prefix_replacement'], $text);
+			$text = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->settings['chat_prefix_replacement'], $text, 1);
+			$text = str_replace('{br}', LF, $text);									// Replace {br}'s with real LF
 			if ($lang !== 'en') {
 				// Replace all entities back to normal for chat.
 				// $text = $aseco->decodeEntities($this->replacePlaceholders($this->chooseTranslation($lang), $lang));
@@ -196,8 +237,6 @@ class Message extends BaseClass {
 		// Adding english to the end, because the last one is default
 		// $text = $aseco->decodeEntities($this->replacePlaceholders($this->chooseTranslation('en'), 'en'));		// Replace all entities back to normal for chat.
 		$text = $this->finish('en', false);
-		$text = preg_replace('/»/', $aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
-		$text = preg_replace("/(\n{#.*?})»/", '${1}'.$aseco->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $text, 1);
 		$messages[] = array(
 			'Lang' => 'en',
 			'Text' => $aseco->formatColors($text)

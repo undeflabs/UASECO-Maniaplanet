@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	aca
+	//-->
+	<plugin_description>Ermöglicht Privatnachrichten und Ausrufe.</plugin_description>
+	<slash_pm_description>Sendet eine private Nachricht an einen Login oder eine Spieler-ID</slash_pm_description>
+	<slash_pma_description>Sendet eine private Nachricht an Spieler und Admins</slash_pma_description>
+	<slash_pmlog_description>Zeigt kürzliche Privatnachrichten</slash_pmlog_description>
+	<slash_hi_description>Schickt eine Nachricht mit Inhalt "Hallo"</slash_hi_description>
+	<slash_bye_description>Schickt eine Nachricht mit Inhalt "Tschüss"</slash_bye_description>
+	<slash_thx_description>Schickt eine Nachricht mit Inhalt "Danke"</slash_thx_description>
+	<slash_lol_description>Schickt eine Nachricht mit Inhalt "Ich lach mich weg"</slash_lol_description>
+	<slash_lool_description>Schickt eine Nachricht mit Inhalt "Ich lach mich kringelig"</slash_lool_description>
+	<slash_brb_description>Schickt eine Nachricht mit Inhalt "Gleich wieder am Start"</slash_brb_description>
+	<slash_afk_description>Schickt eine Nachricht mit Inhaltn "Weg von der Tasta"</slash_afk_description>
+	<slash_gg_description>Schickt eine Nachricht mit Inhalt "Gut gespielt"</slash_gg_description>
+	<slash_gr_description>Schickt eine Nachricht mit Inhalt "Gutes Rennen"</slash_gr_description>
+	<slash_n1_description>Schickt eine Nachricht mit Inhalt "Sauber, Respekt"</slash_n1_description>
+	<slash_bgm_description>Schickt eine Nachricht mit Inhalt "Schlecht gespielt von mir :("</slash_bgm_description>
+	<slash_dammit_description>Schickt eine Nachricht mit Inhalt "Verflixt"</slash_dammit_description>
+	<slash_bootme_description>Verlasse den Server mit der Nachricht "xxx beschließt, sich dem echten Leben zuzuwenden ;)"</slash_bootme_description>
+	<slash_ragequit_description>Verlasse den Server mit der Nachricht "xxx sagt: '@"#!' und verlässt voller Wut den Server!"</slash_ragequit_description>
+	<pm_info>Hast Du vergessen, was Dir jemand privat schrieb? Benutze "/pmlog" um Deine kürzlichen PNs zu lesen!</pm_info>
+	<pm>{#error}-pm-$g[{1}$z$s$i->{2}$z$s$i]$i {#interact}{3}</pm>
+	<pm_error>{#server}» {#error}Keine Nachricht!</pm_error>
+	<pmlog_head>Deine kürzlichen PNs:</pmlog_head>
+	<pm_no_history>{#server}» {#error}Keine kürzlichen PNs gefunden!</pm_no_history>
+	<hello>$g[{1}$z$s] {#interact}Hallo {2} !</hello>
+	<bye>$g[{1}$z$s] {#interact}Tschüss {2} !</bye>
+	<thx>$g[{1}$z$s] {#interact}Danke {2} !</thx>
+	<gg>$g[{1}$z$s] {#interact}Gut gespielt {2} !</gg>
+	<gr>$g[{1}$z$s] {#interact}Gutes Rennen {2} !</gr>
+	<n1>$g[{1}$z$s] {#interact}Nice One {2} !</n1>
+	<hello_all>$g[{1}$z$s] {#interact}Hallo an alle !</hello_all>
+	<bye_all>$g[{1}$z$s] {#interact}Ich muss los... Tschüss an alle !</bye_all>
+	<thx_all>$g[{1}$z$s] {#interact}Danke an alle !</thx_all>
+	<lol>$g[{1}$z$s] {#interact}Ich lach mich weg !</lol>
+	<lool>$g[{1}$z$s] {#interact}Ich lach mich kringelig !</lool>
+	<brb>$g[{1}$z$s] {#interact}Gleich wieder am Start !</brb>
+	<afk>$g[{1}$z$s] {#interact}Weg von der Tasta !</afk>
+	<gga>$g[{1}$z$s] {#interact}Gut gespielt miteinander !</gga>
+	<gra>$g[{1}$z$s] {#interact}Gutes Rennen miteinander !</gra>
+	<n1a>$g[{1}$z$s] {#interact}Sauber, Respekt !</n1a>
+	<bgm>$g[{1}$z$s] {#interact}Schlecht gespielt von mir :(</bgm>
+	<dammit>$g[{1}$z$s] {#interact}Verflixt!!!</dammit>
+	<bootme>{#server}» {#highlite}{1}$z$s{#message} beschließt, sich dem echten Leben zuzuwenden ;)</bootme>
+	<bootme_dialog>{#message}Danke fürs Spielen, komm doch bald wieder!</bootme_dialog>
+	<ragequit>{#server}» {#highlite}{1}$z$s{#message} sagt: "@"#!" und verlässt voller Wut den Server!</ragequit>
+	<ragequit_dialog>{#message}Danke fürs Spielen, beruhige Dich und komme bald wieder!</ragequit_dialog>
+	<no_admin>{#server}» {#error}Du müsstest Admin sein, um das zu tun!</no_admin>
+	<muted>{#server}» {#highlite}{1}{#error} deaktiviert, weil Du in der globalen Stumschalt-Liste bist!</muted>
+</locales>
+

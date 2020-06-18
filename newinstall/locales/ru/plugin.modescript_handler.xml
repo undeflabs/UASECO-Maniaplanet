@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Управляет Modescript Callbacks и их настройками, посылаемыми сервером.</plugin_description>
+	<message_reload>{#admin}» Конфигурация "config/modescript_settings.xml" успешно перезагружена.</message_reload>
+	<message_help>{#admin}» Используй "/modescript reload", чтобы перезагрузить конфигурацию "config/modescript_settings.xml".</message_help>
+	<window_ui_properties>Настройка пользовательского интерфейса</window_ui_properties>
+</locales>

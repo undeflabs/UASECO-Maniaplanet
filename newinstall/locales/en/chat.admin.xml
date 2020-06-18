@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+<!-- common messages -->
+	<insufficient_rights>{#error}You dont have the required admin rights to do that!</insufficient_rights>	
+	<player_warning>$s{#welcome}This is an administrative warning.{br}{br}$gWhatever you wrote is against our server's policy.{br}Not respecting other players, or{br}using offensive language might result in a {#welcome}kick, or ban {#message}the next time.{br}{br}$gThe server administrators.</player_warning>
+	<enabled>enabled</enabled>
+	<disabled>disabled</disabled>
+	<show_planets>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets</show_planets>
+	
+<!-- plugin messages -->
+	<plugin_description>Provides regular admin commands</plugin_description>
+	<help>Shows all available /admin commands (chat)</help>
+	<helpall>Displays help for available /admin commands (Fenster)</helpall>
+	<setservername>Changes the name of the server</setservername>
+	<setcomment>Changes the server comment</setcomment>
+	<setpwd>Set the player password</setpwd>
+	<setspecpwd>Set the Zuschauer password</setspecpwd>
+	<setrefpwd>Changes the referee password</setrefpwd>
+	<setmaxplayers>Sets a new maximum of players</setmaxplayers>
+	<setmaxspecs>Sets a new maximum of spectators</setmaxspecs>
+	<setgamemode>Sets next mode {timeattack, rounds, team, laps, cup, teamattack, knockout, doppler}</setgamemode>
+	<setrefmode>Sets referee mode {0=top3,1=all}</setrefmode>
+	<nextmap>Forces server to load next map</nextmap>
+	<skipmap>Forces server to load next map</skipmap>
+	<previous>Forces server to load previous map</previous>
+	<nextenv>Loads next map in same environment</nextenv>
+	<restartmap>Restarts currently running map</restartmap>
+	<replaymap>Replays current map (via jukebox)</replaymap>
+	<dropjukebox>Drops a map from the jukebox</dropjukebox>
+	<clearjukebox>Clears the entire jukebox</clearjukebox>
+	<add>Adds maps directly from MX via MX-ID</add>
+	<addthis>Adds current /add-ed map permanently</addthis>
+	<addlocal>Adds a local map (expects filename)</addlocal>
+	<warn>Sends a kick/ban warning to a player</warn>
+	<kick>Kicks a player from server</kick>
+	<kickghost>Kicks a ghost player from server</kickghost>
+	<ban>Bans a player from server</ban>
+	<unban>Unbans a player from server</unban>
+	<banip>Bans an IP address from server</banip>
+	<unbanip>Unbans an IP address from server</unbanip>
+	<black>Blacklists a player from server</black>
+	<unblack>Unblacklists a player from server</unblack>
+	<addguest>Adds a player to the guestlist</addguest>
+	<removeguest>Removes a player from the guestlist</removeguest>
+	<pass>Passes a chat-based or MX /add vote</pass>
+	<cancel>Cancels any running vote</cancel>
+	<endround>Forces end of current round</endround>
+	<players>Displays list of known players</players>
+	<showbanlist>Displays current ban list</showbanlist>
+	<showiplist>Displays current banned IPs list</showiplist>
+	<showblacklist>Displays current black list</showblacklist>
+	<showguestlist>Displays current guest list</showguestlist>
+	<writeiplist>Saves current banned IPs list (default: bannedips.xml)</writeiplist>
+	<readiplist>Loads current banned IPs list (default: bannedips.xml)</readiplist>
+	<writeblacklist>Saves current black list (default: blacklist.txt)</writeblacklist>
+	<readblacklist>Loads current black list (default: blacklist.txt)</readblacklist>
+	<writeguestlist>Saves current guest list (default: guestlist.txt)</writeguestlist>
+	<readguestlist>Loads current guest list (default: guestlist.txt)</readguestlist>
+	<cleanbanlist>Cleans current ban list</cleanbanlist>
+	<cleaniplist>Cleans current banned IPs list</cleaniplist>
+	<cleanblacklist>Cleans current black list</cleanblacklist>
+	<cleanguestlist>Cleans current guest list</cleanguestlist>
+	<mergegbl>Merges a global black list {URL}</mergegbl>
+	<access>Handles player access control (see: /admin access help</access>
+	<writemaplist>Saves current map list (default: maplist.txt)</writemaplist>
+	<readmaplist>Loads the map list (default: maplist.txt)</readmaplist>
+	<shuffle>Randomizes current map list</shuffle>
+	<remove>Removes a map from rotation</remove>
+	<erase>Removes a map from rotation and deletes map file</erase>
+	<removethis>Removes this map from rotation</removethis>
+	<erasethis>Removes this map from rotation and deletes map file</erasethis>
+	<mute>Adds a player to global mute/ignore list</mute>
+	<unmute>Removes a player from global mute/ignore list</unmute>
+	<mutelist>Displays global mute/ignore list</mutelist>
+	<cleanmutes>Cleans global mute/ignore list</cleanmutes>
+	<addadmin>Adds a new admin</addadmin>
+	<removeadmin>Removes an admin</removeadmin>
+	<addop>Adds a new operator</addop>
+	<removeop>Removes an operator</removeop>
+	<listmasters>Displays current masteradmin list</listmasters>
+	<listadmins>Displays current admin list</listadmins>
+	<listops>Displays current operator list</listops>
+	<adminability>Shows/changes admin ability {ON/OFF}</adminability>
+	<opability>Shows/changes operator ability {ON/OFF}</opability>
+	<listabilities>Displays current abilities list</listabilities>
+	<writeabilities>Saves current abilities list file (default: config/adminops.xml)</writeabilities>
+	<readabilities>Loads current abilities list file (def: config/adminops.xml)</readabilities>
+	<wall>Displays popup message to all players</wall>
+	<delrec>Deletes specific record on current map</delrec>
+	<prunerecs>Deletes records for specified map</prunerecs>
+	<amdl>Sets AllowMapDownload {ON/OFF}</amdl>
+	<autotime>Sets Auto TimeLimit {ON/OFF}</autotime>
+	<disablerespawn>Disables respawn at CPs {ON/OFF}</disablerespawn>
+	<forceshowopp>Forces to show opponents {NumberOfOpponents/ALL/OFF}</forceshowopp>
+	<scorepanel>Shows automatic scorepanel {ON/OFF}</scorepanel>
+	<roundsfinish>Shows rounds panel upon first finish {ON/OFF}</roundsfinish>
+	<forceteam>Forces player into {Blue} or {Red} team</forceteam>
+	<forcespec>Forces player into free spectator</forcespec>
+	<specfree>Forces spectator into free camera mode</specfree>
+	<panel>Selects admin panel (see: /admin panel help)</panel>
+	<admpanel>Selects default admin panel</admpanel>
+	<panelbg>Selects default panel background</panelbg>
+	<planets>Shows servers planets amount</planets>
+	<pay>Pays server planets to login</pay>
+	<relays>Displays relays list or shows relay master</relays>
+	<server>Displays servers detailed settings</server>
+	<pm>Sends private message to all available admins</pm>
+	<pmlog>Displays log of recent private admin messages</pmlog>
+	<call>Executes direct server call (see: /admin call help)</call>
+	<unlock>Unlocks admin commands and features</unlock>
+	<debug>Toggles debugging output</debug>
+	<shutdown>Shuts down UASECO</shutdown>
+	<shutdownall>Shuts down Server and UASECO</shutdownall>
+	<message_setservername>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets servername to {#highlite}{3}</message_setservername>
+	<message_setservercomment>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets server comment to {#highlite}{3}</message_setservercomment>
+	<message_setplayerpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets player password to {#highlite}{3}</message_setplayerpwd>
+	<message_disableplayerpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} disables player password</message_disableplayerpwd>
+	<message_setspecpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets spectator password to {#highlite}{3}</message_setspecpwd>
+	<message_disablespecpwd>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} disables spectator password</message_disablespecpwd>
+	<message_setmaxplayers>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets new player maximum to {#highlite}{3}{#admin}</message_setmaxplayers>
+	<message_setmaxspecs>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets new spectator maximum to {#highlite}{3}{#admin}</message_setmaxspecs>
+	<message_setgamemode>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets next game mode to {#highlite}{3}{#admin}</message_setgamemode>
+	<message_setgamemode_invalid>{#server}» {#error}Invalid game mode: {#highlite}$i{1}$Z$S{#error}!</message_setgamemode_invalid>
+	<message_setrefmode>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} sets referee mode to {#highlite}{3}{#admin}!</message_setrefmode>
+	<message_setrefmode_invalid>{#server}» {#error}Invalid referee mode: {#highlite}$i{1}$z$s {#error}!</message_setrefmode_invalid>
+	<message_getrefmode>{#server}» {#admin}Referee mode is set to: {#highlite}{1}</message_getrefmode>
+	<message_nextmap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} skips map!</message_nextmap>
+	<message_prevmap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} revisits previous map!</message_prevmap>
+	<message_prevmap_failed>{#server}» {#admin}Loading previous map unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]</message_prevmap_failed>
+	<message_nextenv>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} skips to next {#highlite}{3}{#admin} map!</message_nextenv>
+	<message_nextenv_failed>{#server}» {#admin}Load next map with same environment unavailable - include plugin.rasp_jukebox.php and plugin.rasp.php in [config/plugins.xml]</message_nextenv_failed>
+	<message_restartmap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} restarts map!</message_restartmap>
+	<message_replaymap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} queues map for replay!</message_replaymap>
+	<message_replaymap_alreadyreplayed>{#server}» {#error}Map is already getting replayed!</message_replaymap_alreadyreplayed>
+	<message_replaymap_failed>{#server}» {#admin}Replay map unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]</message_replaymap_failed>
+	<message_dropjukebox>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} drops map {#highlite}{3}{#admin} from jukebox!</message_dropjukebox>
+	<message_dropjukebox_notfound>{#server}» {#error}Jukebox entry not found! Type {#highlite}$i /jukebox list{#error} or {#highlite}$i /jukebox display{#error} for its contents.</message_dropjukebox_notfound>
+	<message_dropjukebox_failed>{#server}» {#admin}Drop jukebox unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]</message_dropjukebox_failed>
+	<message_clearjukebox>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} clears jukebox!</message_clearjukebox>
+	<message_clearjukebox_failed>{#server}» {#admin}Clear jukebox unavailable - include plugin.rasp_jukebox.php in [config/plugins.xml]</message_clearjukebox_failed>
+	<message_warn>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} warned {#highlite}{3}$z$s{#admin}!</message_warn>
+	<message_kick>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} kicked {#highlite}{3}$z$s{#admin}!</message_kick>
+	<message_kick_ghost>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} kicked ghost player {#highlite}{3}$z$s{#admin}!</message_kick_ghost>
+	<message_ban_any_admin>{#server}» {#admin}MasterAdmins can not be banned!</message_ban_any_admin>
+	<message_ban>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} bans {#highlite}{3}$z$s{#admin}!</message_ban>
+	<message_unban>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-bans {#highlite}{3}</message_unban>
+	<message_unban_notbanned>{#server}» {#highlite}{1}{#error} is not a banned player!</message_unban_notbanned>
+	<message_banip>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} bans IP {#highlite}{3}$z$s{#admin}!</message_banip>
+	<message_ip_already_banned>{#server}» {#highlite}{1}{#error} is already banned!</message_ip_already_banned>
+	<message_ip_invalid>{#server}» {#highlite}{1}{#error} is not a valid IP address!</message_ip_invalid>
+	<message_unbanip>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-bans IP {#highlite}{3}</message_unbanip>
+	<message_ip_not_banned>{#server}» {#highlite}{1}{#error} is not a banned IP address!</message_ip_not_banned>
+	<message_blacklist_player>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} blacklists {#highlite}{3}$z$s{#admin}!</message_blacklist_player>
+	<message_unblack_use_cmd_first>{#server}» {#error}Use {#highlite}$i/players {#error}first (optionally {#highlite}$i/players {string}{#error})</message_unblack_use_cmd_first>
+	<message_playerid_notfound>{#server}» {#error}Player_ID not found! Type {#highlite}$i/players {#error}to see all players.</message_playerid_notfound>
+	<message_unblack>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-blacklists {#highlite}{3}</message_unblack>
+	<message_not_blacklisted>{#server}» {#highlite}{1}{#error} is not a blacklisted player!</message_not_blacklisted>
+	<message_add_guest>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} adds guest {#highlite}{3}</message_add_guest>
+	<message_remove_guest>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} removes guest {#highlite}{3}</message_remove_guest>
+	<message_no_guest>{#server}» {#highlite}{1}{#error} is not a guest player!</message_no_guest>
+	<message_no_open_vote>{#server}» {#error}There is no vote right now!</message_no_open_vote>
+	<message_vote_passed>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} passes vote!</message_vote_passed>
+	<message_cancel_vote>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} cancels vote!</message_cancel_vote>
+	<message_force_end_round>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces round end!</message_force_end_round>
+	<message_failed_writing>{#server}» {#error}Failed writing {#highlite}$i{1}{#error}!</message_failed_writing>
+	<message_failed_writing_detailed>{#server}» {#error}Error writing {#highlite}$i {1} {#error}!</message_failed_writing_detailed>
+	<message_file_written>{#server}» {#highlite}{1} {#admin}written</message_file_written>
+	<message_written_detailed>{#server}» {#admin}Successfully written {#highlite}{1}{#admin}!</message_written_detailed>
+	<message_failed_reading>{#server}» {#highlite}{1} {#error}not found, or error reading!</message_failed_reading>
+	<message_file_read>{#server}» {#highlite}{1} {#admin}read</message_file_read>
+	<message_clean_banlist>{#server}» {#admin}Cleaned ban list!</message_clean_banlist>
+	<message_cleaned_bannediplist>{#server}» {#admin}Cleaned banned IPs list!</message_cleaned_bannediplist>
+	<message_cleaned_blacklist>{#server}» {#admin}Cleaned black list!</message_cleaned_blacklist>
+	<message_cleaned_guestlist>{#server}» {#admin}Cleaned guest list!</message_cleaned_guestlist>
+	<message_inavlid_url>{#server}» {#highlite}{1} {#error}is an invalid HTTP URL!</message_inavlid_url>
+	<message_include_uptodate>{#server}» {#admin}Function unavailable - include plugin.uptodate.php in [config/plugins.xml]</message_include_uptodate>
+	<message_access>{#server}» {#admin}Access control unavailable - include plugin.access.php in [config/plugins.xml]</message_access>
+	<message_removemap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}removes map: {#highlite}{3}</message_removemap>
+	<message_removemap_failed>{#server}» {#error}Error removing map {#highlite}$i {1} {#error}!</message_removemap_failed>
+	<message_erasemap>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}erases map: {#highlite}{3}</message_erasemap>
+	<message_erasemap_failed>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}Delete failed: {#highlite}{3}</message_erasemap_failed>
+	<message_load_next_map_failed>{#server}» {#error}Error skip to next map!</message_load_next_map_failed>
+	<message_admin_ignores_player>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} ignores {#highlite}{3}$z$s{#admin}!</message_admin_ignores_player>
+	<message_not_an_ignored_player>{#server}» {#highlite}{1}{#error} is not an ignored player!</message_not_an_ignored_player>
+	<message_unignore>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} un-ignores {#highlite}{3}</message_unignore>
+	<message_nobody_muted>{#server}» {#error}No muted/ignored players found!</message_nobody_muted>
+	<message_mutelist_cleaned>{#server}» {#admin}Cleaned global mute/ignore list!</message_mutelist_cleaned>
+	<message_add_admin>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} adds new {3}$z$s{#admin}: {#highlite}{4}$z$s{#admin}!</message_add_admin>
+	<message_already_admin>{#server}» {#error}Login {#highlite}$i {1}{#error} is already in {2} list!</message_already_admin>
+	<message_remove_admin>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} removes {3}$z$s{#admin}: {#highlite}{4}$z$s{#admin}!</message_remove_admin>
+	<message_no_admin>{#server}» {#error}Login {#highlite}$i {1}{#error} is not in {2} List!</message_no_admin>
+	<message_no_masteradmins_found>{#server}» {#error}No MasterAdmin(s) found!</message_no_masteradmins_found>
+	<message_no_admins_found>{#server}» {#error}No admin(s) found!</message_no_admins_found>
+	<message_no_operators_found>{#server}» {#error}No operator(s) found!</message_no_operators_found>
+	<message_invalid_admin_tier>{#server}» {#highlite}{1}{#error} is not a valid administrator tier!</message_invalid_admin_tier>
+	<message_no_message>{#server}» {#error}No message!</message_no_message>
+	<message_record_removed>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}removes record {#highlite}{3}{#admin} by {#highlite}{4}</message_record_removed>
+	<message_invalid_record>{#server}» {#error}No such record {#highlite}$i {1}{#error}!</message_invalid_record>
+	<message_activate_localrecords>{#server}» {#admin}Local records unavailable - include plugin.local_records.php and plugin.rasp.php in [config/plugins.xml]</message_activate_localrecords>
+	<message_records_on_map_deleted>{#server}» {#admin}Deleted all records and times for map: {#highlite}{1}</message_records_on_map_deleted>
+	<message_cant_find_mapid>{#server}» {#error}Cant find MapId for map: {#highlite}$i {1} / {2}</message_cant_find_mapid>
+	<message_set_allowmapdownload>{#server}» {#admin}AllowMapDownload set to {1}</message_set_allowmapdownload>
+	<message_get_allowmapdownload>{#server}» {#admin}AllowMapDownload is currently {1}</message_get_allowmapdownload>
+	<message_set_autotimelimit>{#server}» {#admin}Auto TimeLimit set to {1}</message_set_autotimelimit>
+	<message_get_autotimelimit>{#server}» {#admin}Auto TimeLimit is {1}</message_get_autotimelimit>
+	<message_activate_autotime>{#server}» {#admin}Auto TimeLimit unavailable - include plugin.autotime.php in [config/plugins.xml]</message_activate_autotime>
+	<message_set_disablerespawn>{#server}» {#admin}DisableRespawn set to {1} on the next map</message_set_disablerespawn>
+	<message_get_disablerespawn>{#server}» {#admin}DisableRespawn is {1}</message_get_disablerespawn>
+	<message_set_forceshowopp>{#server}» {#admin}ForceShowAllOpponents set to {#highlite} {1} on the next map!</message_set_forceshowopp>
+	<message_get_forceshowopp>{#server}» {#admin}ForceShowAllOpponents is {#highlite} {1}</message_get_forceshowopp>
+	<message_set_autoscorepanel>{#server}» {#admin}Automatic ScorePanel set to {1}</message_set_autoscorepanel>
+	<message_get_autoscorepanel>{#server}» {#admin}Automatic ScorePanel is {1}</message_get_autoscorepanel>
+	<message_set_roundsfinishpanel>{#server}» {#admin}Rounds Finishpanel set to {1}</message_set_roundsfinishpanel>
+	<message_get_roundsfinishpanel>{#server}» {#admin}Rounds Finishpanel is {1}</message_get_roundsfinishpanel>
+	<message_forceteam_blue>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces {#highlite}{3}$z$s{#admin} into $00fBlue{#admin} team!</message_forceteam_blue>
+	<message_forceteam_already_blue>{#admin} Is already in $00fBlue{#admin} team</message_forceteam_already_blue>
+	<message_forceteam_red>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces {#highlite}{3}$z$s{#admin} into $f00Red{#admin} team!</message_forceteam_red>
+	<message_forceteam_already_red>{#admin} Is already in $f00red {#admin} team</message_forceteam_already_red>
+	<message_invalid_team>{#server}» {#highlite}{1}$z$s{#error} is not a valid team!</message_invalid_team>
+	<message_only_in_teammode>{#server}» {#error}Command only available in {#highlite}$iTeam {#error}mode!</message_only_in_teammode>
+	<message_forcespec>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces player {#highlite}{3}$z$s{#admin} into spectator!</message_forcespec>
+	<message_is_already_spec>{#server}» {#highlite}{1} {#error}is already a spectator!</message_is_already_spec>
+	<message_force_specfree>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} forces spectator free mode on {#highlite}{3}$z$s{#admin} !</message_force_specfree>
+	<message_is_not_spec>{#server}» {#highlite}{1} {#error}is not a spectator!</message_is_not_spec>
+	<message_activate_donate>{#server}» {#admin}Server payment unavailable - include plugin.donate.php in [config/plugins.xml]</message_activate_donate>
+	<message_no_other_admins_on>{#server}» {#error}No other admins currectly available!</message_no_other_admins_on>
+	<message_nomsg>{#server}» {#error}No message!</message_nomsg>
+	<message_nopmhistory>{#server}» {#error}No PM history found!</message_nopmhistory>
+	<message_password_accepted>{#server}» {#admin}Password accepted: admin commands unlocked!</message_password_accepted>
+	<message_invalid_password>{#server}» {#error}Invalid password!</message_invalid_password>
+	<message_set_debug>{#server}» Debug is now {1}. Don't forget to turn it of, since it slows down and creates huge logs!</message_set_debug>
+	<message_activate_uptodate>{#server}» {#admin}Version checking unavailable - include plugin.uptodate.php in [config/plugins.xml]</message_activate_uptodate>
+	<message_unknown_cmd>{#server}» {#error}Unknown admin command or missing parameter(s): {#highlite}$i {1} {2}</message_unknown_cmd>
+	<message_mxid_required>{#server}» {#error}You must include a MX map ID!</message_mxid_required>
+	<message_error_erasing>{#server}» {#error}Unable to erase file {#highlite}$i{1}</message_error_erasing>
+	<message_error_create_file>{#server}» {#error}Error creating file{#highlite}$i {1}</message_error_create_file>
+	<message_error_write_file>{#server}» {#error}Error saving file {#highlite}$i{1}</message_error_write_file>
+	<message_is_no_map>{#server}» {#error}File seems not to be a map: {#highlite}$i{1}</message_is_no_map>
+	<message_map_added>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}adds {3}map: {#highlite}{4} {#admin}from {5}</message_map_added>
+	<message_map_not_added_incompatible>{#server}» {#error}Map {#highlite}{1}$Z$S{#error} is not compatible with current server settings, map not added!</message_map_not_added_incompatible>
+	<message_mx_download_error>{#server}» {#error}Error downloading, or MX is down!</message_mx_download_error>
+	<message_invalid_mxid>{#server}» {#highlite}{1}{#error} is not a valid MX map ID!</message_invalid_mxid>
+	<message_activate_rasp>{#server}» {#admin}Local records unavailable - include plugin.rasp.php in [config/plugins.xml]</message_activate_rasp>
+	<message_add_permanent>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s {#admin}permanently adds current map: {#highlite}{3}</message_add_permanent>
+	<message_no_temp_remove_map>{#server}» {#error}Could not remove temporary added Map!</message_no_temp_remove_map>
+	<message_already_perm_added_map>{#server}» {#error}Current map {#highlite}{1}$Z$S{#error} already permanently in map list!</message_already_perm_added_map>
+	<message_activate_addthis>{#server}» {#admin}Addthis unavailable - include plugin.rasp_jukebox.php and plugin.rasp.php in [config/plugins.xml]</message_activate_addthis>
+	<message_not_found>{#server}» {#highlite}{1}{#error} not found!</message_not_found>
+	<message_include_local_file>{#server}» {#error}You must include a local map filename!</message_include_local_file>
+	<message_maplist_read>{#server}» {#highlite}{1}{#admin} read with {#highlite}{2}{#admin} maps</message_maplist_read>
+	<message_maps_shuffled>{#server}» {#admin}{1}$z$s {#highlite}{2}$z$s{#admin} shuffled map list with {#highlite}{3}{#admin} maps</message_maps_shuffled>
+	<message_no_maplist_randomness>{#server}» {#error}No maplist randomization defined in {#highlite}$i [config/UASECO.xml]{#error}!</message_no_maplist_randomness>
+	<message_no_players_found>{#server}» {#error}No player(s) found!</message_no_players_found>
+	<message_cannot_get_playerlist>{#server}» {#error}Can not get the current player list from the dedicated Server!</message_cannot_get_playerlist>
+	<message_shutdownall>{#server}» {#error}$wShutting down dedicated server and UASECO now!</message_shutdownall>
+</locales>

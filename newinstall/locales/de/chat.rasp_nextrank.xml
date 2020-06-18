@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	askuri, undef.de
+	//-->
+
+	<plugin_description>Zeigt den Spieler mit dem nächstbesseren Serverrank an.</plugin_description>
+	<info_msg>Du fragst dich, welcher Spieler den nächstbesseren Serverrang hat? Gebe "/nextrank" ein um es herauszufinden!</info_msg>
+</locales>

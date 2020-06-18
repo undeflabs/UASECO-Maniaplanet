@@ -13,17 +13,20 @@ Part of multilanguage support.
 
 
 ### [addPlaceholders](_#addPlaceholders)
-Set content for the placeholders, which will be replaced.
+Set content for the placeholders
 
 
 #### Description
-	void = addPlaceholders ( string $value1 [, string $value2 ] )
+	void = addPlaceholders (mixed $value1 [, mixed $value2 ])
 
 
 #### Parameters
 *	`$value`
 
-	One or more content for the placeholders.
+	Content for the placeholders. Datatype can be
+	- String
+	- Message
+	- Message[]
 
 
 #### Example
@@ -32,7 +35,6 @@ Set content for the placeholders, which will be replaced.
 		'1.0.0',
 		'$L['. UASECO_WEBSITE .']'. UASECO_WEBSITE .'$L'
 	);
-	$msg->sendChatMessage($login);
 
 
 
@@ -41,31 +43,32 @@ Set content for the placeholders, which will be replaced.
 
 
 ### [finish](_#finish)
-xxx
+Returns the translated message. (If no translation is available, returns the English message)
 
 
 #### Description
-	string = finish ( string $id [, string $is_login = true ] )
+	String = finish ( String $id [, boolean $is_login] )
 
 
 #### Parameters
 *	`$id`
 
-	xxx
+	Can be a Player-Login or a language-code
 
 *	`$is_login`
 
-	A player login.
+	Pass 'false' if language-code is given
 
 
 #### Example
-	new Message('common', 'enabled'))->finish($login)
+	$message = (new Message('plugin.example', 'slash_hello_message'))->finish($login);
+	$message = (new Message('plugin.example', 'slash_hello_message'))->finish('de', false);
 
 
 #### Return Values
-	eingeschaltet
+	Hello dude!		(if language of $login is English)
+	Hallo Freund!
 
-If the player is using `de` (german) for his game.
 
 
 ***
@@ -73,11 +76,11 @@ If the player is using `de` (german) for his game.
 
 
 ### [finishMultiline](_#finishMultiline)
-xxx
+Returns the translated message as an array, splitted by {br}. (If no translation is available, returns it in English)
 
 
 #### Description
-	string = finishMultiline ( string $login )
+	String = finishMultiline ( String $login )
 
 
 #### Parameters
@@ -87,17 +90,7 @@ xxx
 
 
 #### Example
-	$message = (new Message('common', 'player_warning'))->finishMultiline('undef.de');
-
-
-#### Return Values
-	$s$F00This is an administrative warning.
-
-	$gWhatever you wrote is against our server's policy.
-	Not respecting other players, or
-	using offensive language might result in a $F00kick, or ban $39Fthe next time.
-
-	$gThe server administrators.
+	$message = (new Message('plugin.<your_plugin_name>', '<your_xml_tag>'))->finishMultiline($login);
 
 
 
@@ -106,11 +99,11 @@ xxx
 
 
 ### [sendChatMessage](_#sendChatMessage)
-Sends the multilanguage chat message to the chat.
+Sends the multilanguage chat message to the chat, either to all players or to a specific player.
 
 
 #### Description
-	void = sendChatMessage ( string $logins = null )
+	void = sendChatMessage ( [String $logins] )
 
 
 #### Parameters

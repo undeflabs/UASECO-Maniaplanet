@@ -113,10 +113,4 @@
 			<limit>99</limit>
 		</system>
 	</points_systems>
-
-	<messages>
-		<rpoints_named>{#server}» {1}Custom points system set to {#highlite}{2}{3}: {#highlite}{4},...</rpoints_named>
-		<rpoints_nameless>{#server}» {1}Custom points system set to: {#highlite}{2},...</rpoints_nameless>
-		<no_rpoints>{#server}» {1}No custom Rounds points system defined!</no_rpoints>
-	</messages>
 </settings>

@@ -5,4 +5,10 @@
 	2 = in message window, 1 = in chat, 0 = none
 	//-->
 	<show_records>1</show_records>
+
+
+	<!-- URLs of the media -->
+	<media>
+		<progress_indicator>http://maniacdn.net/undef.de/uaseco/mania-exchange/progress_bar_yellow_2D.webm</progress_indicator>
+	</media>
 </settings>

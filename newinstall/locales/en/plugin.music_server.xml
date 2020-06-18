@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-03
+	Authors:	undef.de
+	//-->
+	<plugin_description>Handles all server-controlled music.</plugin_description>
+	<slash_chat_music_description>Handles server music (see: /music help)</slash_chat_music_description>
+	<no_songs_found>{#server}» {#error}No songs found, try again!</no_songs_found>
+	<error_config>{#server}» {#error}Could not read/parse Music server config file!</error_config>
+	<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>
+	<override>{#server}» {#music}Music override set to {1}</override>
+	<auto_next>{#server}» {#music}Music autonext set to {1}</auto_next>
+	<auto_shuffle>{#server}» {#music}Music autoshuffle set to {1}</auto_shuffle>
+	<allow_jb>{#server}» {#music}Allow music jukebox set to {1}</allow_jb>
+	<strip_dirs>{#server}» {#music}Strip subdirs set to {1}</strip_dirs>
+	<strip_exts>{#server}» {#music}Strip extensions set to {1}</strip_exts>
+	<enabled>Enabled</enabled>
+	<disabled>Disabled</disabled>
+	<unknown_cmd>{#server}» {#error}Unknown music command or missing parameter: {#highlite}$i {1}</unknown_cmd>
+	<current>{#server}» {#music}The current song is: {#highlite}{1}</current>
+	<next>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} loaded the next song: {#highlite}{3}</next>
+	<reloaded>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} reloaded music config and cleared jukebox!</reloaded>
+	<sorted>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} sorted song list and cleared jukebox!</sorted>
+	<shuffled>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} shuffled song list and cleared jukebox!</shuffled>
+	<jukebox>{#server}» {#highlite}{1}{#music} jukeboxed song: {#highlite}{2}</jukebox>
+	<jukebox_already>{#server}» {#music}You already have a song in the jukebox! Wait till it's been played before adding another.</jukebox_already>
+	<jukebox_dupl>{#server}» {#music}This song has already been added to the jukebox, pick another one.</jukebox_dupl>
+	<jukebox_notfound>{#server}» {#music}Song_ID not found - Type {#highlite}/music list{#music} to see all songs.</jukebox_notfound>
+	<jukebox_drop>{#server}» {#music}Player {#highlite}{1}{#music} dropped his/her song {#highlite}{2}{#music} from jukebox!</jukebox_drop>
+	<jukebox_nodrop>{#server}» {#music}You don't have a song in the jukebox, use {#highlite}/music Song_ID{#music} to add one...</jukebox_nodrop>
+	<jukebox_empty>{#server}» {#music}No songs in the jukebox, use {#highlite}/music Song_ID{#music} to add one...</jukebox_empty>
+	<no_jukebox>{#server}» {#highlite}/music #{#music} is not currently enabled on this server.</no_jukebox>
+	<shutdown>{#server}» {#music}{1}$z$s {#highlite}{2}$z$s{#music} disabled server music!</shutdown>
+</locales>

@@ -47,10 +47,11 @@ class PluginLocalRecords extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-07-12');
-		$this->setCopyright('2014 - 2018 by undef.de');
-		$this->setDescription('Saves record into a local database.');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2019-09-23');
+		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setDescription(new Message('plugin.local_records', 'plugin_description'));
 
 		$this->addDependence('PluginCheckpoints',	Dependence::REQUIRED,	'1.0.0', null);
 
@@ -79,9 +80,6 @@ class PluginLocalRecords extends Plugin {
 		}
 		$settings = $settings['SETTINGS'];
 		unset($settings['SETTINGS']);
-
-		// Store messages
-		$this->settings['messages'] = $settings['MESSAGES'][0];
 
 		// Display records in game?
 		$this->settings['display'] = $aseco->string2bool($settings['DISPLAY'][0]);
@@ -123,8 +121,8 @@ class PluginLocalRecords extends Plugin {
 		$cur_record = $this->records->getRecord(0);
 		if ($cur_record !== false && $cur_record->score > 0) {
 			// set message to the current record
-			$message = $aseco->formatText($this->settings['messages']['RECORD_CURRENT'][0],
-				$aseco->stripStyles($aseco->server->maps->current->name),
+			$message = new Message('plugin.local_records', 'record_current');
+			$message->addPlaceholders($aseco->stripStyles($aseco->server->maps->current->name),
 				$aseco->formatTime($cur_record->score),
 				$aseco->stripStyles($cur_record->player->nickname)
 			);
@@ -132,9 +130,8 @@ class PluginLocalRecords extends Plugin {
 		else {
 			// If there should be no record to display
 			// display a no-record message
-			$message = $aseco->formatText($this->settings['messages']['RECORD_NONE'][0],
-				$aseco->stripStyles($aseco->server->maps->current->name)
-			);
+			$message = new Message('plugin.local_records', 'record_none');
+			$message->addPlaceholders($aseco->stripStyles($aseco->server->maps->current->name));
 		}
 
 		// Bail out immediately on unsupported gamemodes
@@ -147,8 +144,8 @@ class PluginLocalRecords extends Plugin {
 			$this->show_maprecs($aseco, $player->login, 1, 0);
 		}
 		else if (($this->settings['show_recs_before'] & 1) === 1) {
-			// Or show original record message
-			$aseco->sendChatMessage($message, $player->login);
+			// Or show original record message			
+			$message->sendChatMessage($player->login);
 		}
 	}
 
@@ -267,8 +264,8 @@ class PluginLocalRecords extends Plugin {
 				);
 
 				// Replace parameters
-				$message = $aseco->formatText($this->settings['messages']['RECORD_CURRENT'][0],
-					$aseco->stripStyles($map->name),
+				$message = new Message('plugin.local_records', 'record_current');
+				$message->addPlaceholders($aseco->stripStyles($map->name),
 					$aseco->formatTime($cur_record->score),
 					$aseco->stripStyles($cur_record->player->nickname)
 				);
@@ -282,9 +279,8 @@ class PluginLocalRecords extends Plugin {
 				);
 
 				// Replace parameters
-				$message = $aseco->formatText($this->settings['messages']['RECORD_NONE'][0],
-					$aseco->stripStyles($map->name)
-				);
+				$message = new Message('plugin.local_records', 'record_none');
+				$message->addPlaceholders($aseco->stripStyles($map->name));
 			}
 			$aseco->releaseEvent('onLocalRecordBestLoaded', $score);
 
@@ -292,10 +288,10 @@ class PluginLocalRecords extends Plugin {
 			// If no maprecs, show the original record message to all players
 			if (($this->settings['show_recs_before'] & 1) === 1) {
 				if (($this->settings['show_recs_before'] & 4) === 4) {
-					$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+					$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), false));
 				}
 				else {
-					$aseco->sendChatMessage($message);
+					$message->sendChatMessage();
 				}
 			}
 		}
@@ -351,51 +347,47 @@ class PluginLocalRecords extends Plugin {
 		}
 		else if (($this->settings['show_recs_after'] & 1) === 1) {
 			// fall back on old top-5
-			$records = '';
-
 			if ($this->records->count() === 0) {
 				// display a no-new-record message
-				$message = $aseco->formatText($this->settings['messages']['RANKING_NONE'][0],
-					$aseco->stripStyles($aseco->server->maps->current->name),
-					'after'
+				$message = new Message('plugin.local_records', 'ranking_none');
+				$message->addPlaceholders($aseco->stripStyles($aseco->server->maps->current->name),
+					new Message('plugin.local_records', 'timing_after')
 				);
 			}
 			else {
 				// Display new records set up this round
-				$message = $aseco->formatText($this->settings['messages']['RANKING'][0],
-					$aseco->stripStyles($aseco->server->maps->current->name),
-					'after'
-				);
-
+				$message = new Message('plugin.local_records', 'ranking');
+				
+				$rec_msgs = array();
+				$separator = LF;
 				// Go through each record
 				for ($i = 0; $i < 5; $i++) {
 					$cur_record = $this->records->getRecord($i);
 
-					// If the record is set then display it
+					// If the record is set create its message
 					if ($cur_record !== false && $cur_record->score > 0) {
-						// replace parameters
-						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_NEW'][0],
+						$msg = new Message('plugin.local_records', 'ranking_record_new');
+						$msg->addPlaceholders($separator,
 							$i+1,
 							$aseco->stripStyles($cur_record->player->nickname),
 							$aseco->formatTime($cur_record->score)
 						);
-						$records .= $record_msg;
+						$rec_msgs[] = $msg;
+						$separator = ', ';
 					}
 				}
-			}
-
-			// Append the records if any
-			if ($records !== '') {
-				$records = substr($records, 0, strlen($records)-2);  // strip trailing ", "
-				$message .= LF . $records;
+				$message->addPlaceholders($aseco->stripStyles($aseco->server->maps->current->name),
+					new Message('plugin.local_records', 'timing_after'),
+					$rec_msgs
+				);
 			}
 
 			// Show ranking message to all players
 			if (($this->settings['show_recs_after'] & 4) === 4) {
-				$aseco->releaseEvent('onSendWindowMessage', array($message, true));
+				$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), true));
 			}
 			else {
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 		}
 	}
@@ -488,8 +480,8 @@ class PluginLocalRecords extends Plugin {
 						$this->records->moveRecord($cur_rank, $i);
 
 						// do a player improved his/her LR rank message
-						$message = $aseco->formatText($this->settings['messages']['RECORD_NEW_RANK'][0],
-							$aseco->stripStyles($player->nickname),
+						$message = new Message('plugin.local_records', 'record_new_rank');
+						$message->addPlaceholders($aseco->stripStyles($player->nickname),
 							$i + 1,
 							$finish_time,
 							$cur_rank + 1,
@@ -500,15 +492,14 @@ class PluginLocalRecords extends Plugin {
 						if ($this->settings['display']) {
 							if ($i < $this->settings['limit']) {
 								if ($this->settings['recs_in_window']) {
-									$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+									$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), false));
 								}
 								else {
-									$aseco->sendChatMessage($message);
+									$message->sendChatMessage();
 								}
 							}
 							else {
-								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->sendChatMessage($message, $player->login);
+								$message->sendChatMessage($player->login);
 							}
 						}
 
@@ -517,16 +508,16 @@ class PluginLocalRecords extends Plugin {
 
 						if ($diff === 0) {
 							// do a player equaled his/her record message
-							$message = $aseco->formatText($this->settings['messages']['RECORD_EQUAL'][0],
-								$aseco->stripStyles($player->nickname),
+							$message = new Message('plugin.local_records', 'record_equal');
+							$message->addPlaceholders($aseco->stripStyles($player->nickname),
 								$cur_rank + 1,
 								$finish_time
 							);
 						}
 						else {
 							// do a player secured his/her record message
-							$message = $aseco->formatText($this->settings['messages']['RECORD_NEW'][0],
-								$aseco->stripStyles($player->nickname),
+							$message = new Message('plugin.local_records', 'record_new');
+							$message->addPlaceholders($aseco->stripStyles($player->nickname),
 								$i + 1,
 								$finish_time,
 								$cur_rank + 1,
@@ -538,15 +529,14 @@ class PluginLocalRecords extends Plugin {
 						if ($this->settings['display']) {
 							if ($i < $this->settings['limit']) {
 								if ($this->settings['recs_in_window']) {
-									$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+									$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), false));
 								}
 								else {
-									$aseco->sendChatMessage($message);
+									$message->sendChatMessage();
 								}
 							}
 							else {
-								$message = str_replace('{#server}» ', '{#server}» ', $message);
-								$aseco->sendChatMessage($message, $player->login);
+								$message->sendChatMessage($player->login);
 							}
 						}
 					}
@@ -565,8 +555,8 @@ class PluginLocalRecords extends Plugin {
 					$this->records->addRecord($recordfinish, $i);
 
 					// do a player drove first record message
-					$message = $aseco->formatText($this->settings['messages']['RECORD_FIRST'][0],
-						$aseco->stripStyles($player->nickname),
+					$message = new Message('plugin.local_records', 'record_first');
+					$message->addPlaceholders($aseco->stripStyles($player->nickname),
 						$i + 1,
 						$finish_time
 					);
@@ -575,15 +565,14 @@ class PluginLocalRecords extends Plugin {
 					if ($this->settings['display']) {
 						if ($i < $this->settings['limit']) {
 							if ($this->settings['recs_in_window']) {
-								$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+								$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), false));
 							}
 							else {
-								$aseco->sendChatMessage($message);
+								$message->sendChatMessage();
 							}
 						}
 						else {
-							$message = str_replace('{#server}» ', '{#server}» ', $message);
-							$aseco->sendChatMessage($message, $player->login);
+							$message->sendChatMessage($player->login);
 						}
 					}
 				}
@@ -880,9 +869,9 @@ class PluginLocalRecords extends Plugin {
 	 * top-8 is configurable via 'show_min_recs'; top-6 is show_min_recs-2
 	 */
 	public function show_maprecs ($aseco, $login, $mode, $window) {
-
-		$records = '$n';  // use narrow font
-
+		
+		$records = array();  
+		$separator = LF. '$n';// use narrow font
 		// check for records
 		if (($total = $this->records->count()) === 0) {
 			$totalnew = -1;
@@ -913,22 +902,23 @@ class PluginLocalRecords extends Plugin {
 			for ($i = 0; $i < $total; $i++) {
 				$cur_record = $this->records->getRecord($i);
 
-				// if the record is new then display it
+				// if the record is new create its message
 				if ($cur_record->new) {
 					$totalnew++;
-					$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_NEW_ON'][0],
+					$record_msg = new Message('plugin.local_records', 'ranking_record_new_on');
+					$record_msg->addPlaceholders($separator,
 						$i + 1,
 						$aseco->stripStyles($cur_record->player->nickname),
 						$aseco->formatTime($cur_record->score)
 					);
-
-					// always show new record
-					$records .= $record_msg;
+					$records[]= $record_msg;
+					$separator = ', ';
 				}
 				else {
 					// check if player is online
 					if (in_array($cur_record->player->login, $players)) {
-						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD_ON'][0],
+						$record_msg = new Message('plugin.local_records', 'ranking_record_on');
+						$record_msg->addPlaceholders($separator,
 							$i + 1,
 							$aseco->stripStyles($cur_record->player->nickname),
 							$aseco->formatTime($cur_record->score)
@@ -936,21 +926,25 @@ class PluginLocalRecords extends Plugin {
 
 						if ($mode !== 0 && $i === $total-1) {
 							// check if last ranked record
-							$records .= $record_msg;
+							$records[]= $record_msg;
+							$separator = ', ';
 						}
 						else if ($mode === 1 || $mode === 2) {
 							// check if always show (start of/during map)
-							$records .= $record_msg;
+							$records[]= $record_msg;
+							$separator = ', ';
 						}
 						else {
 							// show record if < show_min_recs (end of map)
 							if ($mode === 3 && $i < $this->settings['show_min_recs']) {
-								$records .= $record_msg;
+								$records[]= $record_msg;
+								$separator = ', ';
 							}
 						}
 					}
 					else {
-						$record_msg = $aseco->formatText($this->settings['messages']['RANKING_RECORD'][0],
+						$record_msg = new Message('plugin.local_records', 'ranking_record');
+						$record_msg->addPlaceholders($separator,
 							$i + 1,
 							$aseco->stripStyles($cur_record->player->nickname),
 							$aseco->formatTime($cur_record->score)
@@ -958,12 +952,12 @@ class PluginLocalRecords extends Plugin {
 
 						if ($mode !== 0 && $i === $total-1) {
 							// check if last ranked record
-							$records .= $record_msg;
+							$records[]= $record_msg;
 						}
 						else if (($mode === 2 && $i < $this->settings['show_min_recs']-2) || (($mode === 1 || $mode === 3) && $i < $this->settings['show_min_recs'])) {
 							// show offline record if < show_min_recs-2 (during map)
 							// show offline record if < show_min_recs (start/end of map)
-							$records .= $record_msg;
+							$records[]= $record_msg;
 						}
 					}
 				}
@@ -973,19 +967,21 @@ class PluginLocalRecords extends Plugin {
 		// define wording of the ranking message
 		switch ($mode) {
 			case 0:
-				$timing = 'during';
+				$timing_txt = 'timing_during';
 				break;
 			case 1:
-				$timing = 'before';
+				$timing_txt = 'timing_before';
 				break;
 			case 2:
-				$timing = 'during';
+				$timing_txt = 'timing_during';
 				break;
 			case 3:
-				$timing = 'after';
+				$timing_txt = 'timing_after';
 				break;
 		}
-
+		$timing = new Message('plugin.local_records', $timing_txt);
+		
+		
 		$name = $aseco->stripStyles($aseco->server->maps->current->name);
 		if (isset($aseco->server->maps->current->mx->error) && $aseco->server->maps->current->mx->error === '') {
 			$name = '$l[http://' . $aseco->server->maps->current->mx->prefix .
@@ -995,60 +991,55 @@ class PluginLocalRecords extends Plugin {
 
 		// define the ranking message
 		if ($totalnew > 0) {
-			$message = $aseco->formatText($this->settings['messages']['RANKING_NEW'][0],
-				$name,
+			$message = new Message('plugin.local_records', 'ranking_new');
+			$message->addPlaceholders($name,
 				$timing,
-				$totalnew
+				$totalnew,
+				$records
 			);
 		}
-		else if ($totalnew === 0 && $records !== '$n') {
+		else if ($totalnew === 0 && !empty($records)) {
 			// check whether to show range
 			if ($this->settings['show_recs_range']) {
-				$message = $aseco->formatText($this->settings['messages']['RANKING_RANGE'][0],
-					$name,
+				$message = new Message('plugin.local_records', 'ranking_range');
+				$message->addPlaceholders($name,
 					$timing,
-					sprintf("%d.%03d", $sec, $ths)
+					sprintf("%d.%03d", $sec, $ths),
+					$records
 				);
 			}
 			else {
-				$message = $aseco->formatText($this->settings['messages']['RANKING'][0],
-					$name,
-					$timing
+				$message = new Message('plugin.local_records', 'ranking');
+				$message->addPlaceholders($name,
+					$timing,
+					$records
 				);
 			}
 		}
-		else if ($totalnew === 0 && $records === '$n') {
-			$message = $aseco->formatText($this->settings['messages']['RANKING_NO_NEW'][0],
-				$name,
+		else if ($totalnew === 0 && empty($records)) {
+			$message = new Message('plugin.local_records', 'ranking_no_new');
+			$message->addPlaceholders($name,
 				$timing
 			);
 		}
 		else {
 			// $totalnew === -1
-			$message = $aseco->formatText($this->settings['messages']['RANKING_NONE'][0],
-				$name,
+			$message = new Message('plugin.local_records', 'ranking_none');
+			$message->addPlaceholders($name,
 				$timing
-				);
-		}
-
-		// append the records if any
-		if ($records !== '$n') {
-			$records = substr($records, 0, strlen($records)-2);  // strip trailing ", "
-			$message .= LF . $records;
+			);
 		}
 
 		// show to player or all
 		if ($login) {
-			// strip 1 leading '>' to indicate a player message instead of system-wide
-			$message = str_replace('{#server}» ', '{#server}» ', $message);
-			$aseco->sendChatMessage($message, $login);
+			$message->sendChatMessage($login);
 		}
 		else {
 			if (($window & 4) === 4) {
-				$aseco->releaseEvent('onSendWindowMessage', array($message, ($mode === 3)));
+				$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), ($mode === 3)));
 			}
 			else {
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 		}
 	}

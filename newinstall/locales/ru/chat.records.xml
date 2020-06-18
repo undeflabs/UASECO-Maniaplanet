@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<!-- common messages -->
+	<notonrelay>{#server}» {#error}Эта команда недоступна на реле-сервер.</notonrelay>
+	<no_records_found>{#server}» {#error}Рекордов пока нет!</no_records_found>
+	<sum_entry> {#highlite}{1} {#record}rec{2} #{#rank}{3}{#record}, </sum_entry>
+	<summary>{#server}» {#highlite}{1} $z$s{#record}поставил {#highlite}{2}{#record} локальных рекордов, из них {3} лучших: </summary>
+
+
+	<!-- plugin messages -->
+	<slash_recs>Показывает все рекорды игрока на этой карте.</slash_recs>
+	<slash_newrecs>Показывает новые рекорды</slash_newrecs>
+	<slash_liverecs>Показывает рекорды тех, кто сейчас играет</slash_liverecs>
+	<slash_best>Показывает твои лучшие рекорды</slash_best>
+	<slash_worst>Показывает твои худшие рекорды</slash_worst>
+	<slash_summary>Показывает сводку твоих рекордов</slash_summary>
+	<slash_topsums>Показывает топ-100 игроков с рекордами в топ-3</slash_topsums>
+	<slash_toprecs>Показывает топ-100 рангов игроков</slash_toprecs>
+</locales>

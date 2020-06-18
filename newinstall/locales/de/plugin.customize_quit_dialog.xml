@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	aca
+	//-->
+
+	<plugin_description>Personalisiere den Auslog-Dialog der gezeigt wird, wenn ein Spieler den Server verlassen möchte.</plugin_description>
+</locales>

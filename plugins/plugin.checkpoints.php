@@ -55,8 +55,9 @@ class PluginCheckpoints extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2019-08-27');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2019-10-07');
 		$this->setCopyright('2014 - 2019 by undef.de');
 		$this->setDescription('Stores Checkpoint timing and displays a Checkpoint Widget with timings from local/dedimania records.');
 
@@ -1106,7 +1107,7 @@ EOL;
 			}
 		}
 
-		// Check for specific record
+		// specific local record tracked and local records available
 		if ($this->checkpoints[$login]->tracking['local_records'] > 0 && isset($aseco->plugins['PluginLocalRecords']) && $aseco->plugins['PluginLocalRecords']->records->count() > 0) {
 			// If specific record unavailable, use last one
 			$record = $this->checkpoints[$login]->tracking['local_records'];
@@ -1115,12 +1116,15 @@ EOL;
 			}
 			$current = $aseco->plugins['PluginLocalRecords']->records->getRecord($record - 1);
 
+			$this->checkpoints[$login]->best['finish'] = (int)$current->score;
+			$this->checkpoints[$login]->best['cps'] = $current->checkpoints;
+/*
 			// Check for valid checkpoints
 			if (!empty($current->checkpoints) && $current->score === end($current->checkpoints)) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current->score;
 				$this->checkpoints[$login]->best['cps'] = $current->checkpoints;
 			}
-
+*/
 			// Send Widget
 			if ($current->player->login === $login) {
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Local Record ($>', false);
@@ -1129,6 +1133,7 @@ EOL;
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
 			}
 		}
+		// local records tracked and available
 		else if ($this->checkpoints[$login]->tracking['local_records'] === 0 && isset($aseco->plugins['PluginLocalRecords']) && $aseco->plugins['PluginLocalRecords']->records->count() > 0) {
 			// Search for own/last record
 			$record = 0;
@@ -1140,12 +1145,15 @@ EOL;
 				}
 			}
 
+			$this->checkpoints[$login]->best['finish'] = (int)$current->score;
+			$this->checkpoints[$login]->best['cps'] = $current->checkpoints;
+/*
 			// Check for valid checkpoints
 			if (!empty($current->checkpoints) && $current->score === end($current->checkpoints)) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current->score;
 				$this->checkpoints[$login]->best['cps'] = $current->checkpoints;
 			}
-
+*/
 			// Send Widget
 			if ($current->player->login === $login) {
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Local Record$>', false);
@@ -1154,6 +1162,7 @@ EOL;
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Local Record$>', false);
 			}
 		}
+		// specific dedimania record tracked and dedimania records available
 		else if ($this->checkpoints[$login]->tracking['dedimania_records'] > 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map']) && isset($aseco->plugins['PluginDedimania']->db['Map']['Records']) && !empty($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
 			// If specific dedimania record unavailable, use last one
 			$record = $this->checkpoints[$login]->tracking['dedimania_records'];
@@ -1162,12 +1171,20 @@ EOL;
 			}
 			$current = $aseco->plugins['PluginDedimania']->db['Map']['Records'][$record - 1];
 
+			// check if Record is String or Array
+			if (!is_array($current['Checks'])) {
+				$current['Checks'] = explode(',', $current['Checks']);
+			}
+
+			$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
+			$this->checkpoints[$login]->best['cps'] = $current['Checks'];
+/*
 			// Check for valid checkpoints
 			if (!empty($current['Checks']) && $current['Best'] === end($current['Checks'])) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
 				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
 			}
-
+*/
 			// Send Widget
 			if ($current['Login'] === $login) {
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Dedimania Record$>', false);
@@ -1176,6 +1193,7 @@ EOL;
 				$this->buildTimeDiffWidget($login, '$<$N'. $record .'. Dedimania Record$>', false);
 			}
 		}
+		// dedimania records tracked and available
 		else if ($this->checkpoints[$login]->tracking['dedimania_records'] === 0 && isset($aseco->plugins['PluginDedimania']) && isset($aseco->plugins['PluginDedimania']->db['Map']) && isset($aseco->plugins['PluginDedimania']->db['Map']['Records']) && !empty($aseco->plugins['PluginDedimania']->db['Map']['Records'])) {
 			// Search for own/last record
 			$record = 0;
@@ -1187,12 +1205,20 @@ EOL;
 				}
 			}
 
+			// check if Record is String or Array
+			if (!is_array($current['Checks'])) {
+				$current['Checks'] = explode(',', $current['Checks']);
+			}
+
+			$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
+			$this->checkpoints[$login]->best['cps'] = $current['Checks'];
+/*
 			// Check for valid checkpoints
-			if (!empty($current['Checks']) && is_array($current['Checks']) && $current['Best'] === end($current['Checks'])) {
+			if (!empty($current['Checks']) && $current['Best'] === end($current['Checks'])) {
 				$this->checkpoints[$login]->best['finish'] = (int)$current['Best'];
 				$this->checkpoints[$login]->best['cps'] = $current['Checks'];
 			}
-
+*/
 			// Send Widget
 			if ($current['Login'] === $login) {
 				$this->buildTimeDiffWidget($login, '$<$NOwn '. $record .'. Dedimania Record$>', false);
@@ -1231,6 +1257,9 @@ EOL;
 		else {
 			$aseco->console('[Checkpoints] Cheat by ['. $login .'] detected! [CheckpointTimes: ('. $cps .'), FinishTime: '. $aseco->formatTime($this->checkpoints[$login]->current['finish']) .']');
 		}
+
+		$aseco->console('Checkpoints on map: '. $this->nb_checkpoints . ', Checkpoint where Cheat occured: '. $cpid .', Cheat-Time: '. $aseco->formatTime($time));
+
 
 		// Check for valid Player
 		if (!$player = $aseco->server->players->getPlayerByLogin($login)) {

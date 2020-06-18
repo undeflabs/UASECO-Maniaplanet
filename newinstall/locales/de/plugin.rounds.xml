@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-27
+	Authors:	aca
+	//-->
+	<plugin_description>Berichtet über Zieleinfahrten in jeder einzelnen Runde.</plugin_description>
+	<round>{#server}» $n{#message}Runde {#highlite}{1}{#message}: {2}</round>
+	
+	<!-- Formatierungen -->
+	<ranking_record_new>{{1}#rank}{2}{#message}.{#highlite}{3}{#message}[{#highlite}{4}{#message}]</ranking_record_new>
+	<ranking_record>{1}{#rank}{2}{#message}.{#timelite}{3}{#message}[{#timelite}{4}{#message}]</ranking_record>
+	<ranking_record2>{1}{#rank}{2}{#message}.{#timelite}{3}{#message}</ranking_record2>	
+</locales>

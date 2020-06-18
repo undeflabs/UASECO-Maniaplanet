@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Beended eine Runde automatisch nach einem berechneten Zeitraum.</plugin_description>
+	<message_round_info>{#server}» Die Runde wird automatisch beendet nach {#highlite}{1}{#server}, basierend auf der Autorenzeit {#highlite}{2}{#server}.</message_round_info>
+	<message_round_end>{#server}» Runde endete automatisch nach {#highlite}{1}{#server}</message_round_end>
+	<message_warmup_round_end>{#server}» Aufwärmrunde endete automatisch nach {#highlite}{1}{#server}</message_warmup_round_end>
+</locales>

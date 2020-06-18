@@ -47,10 +47,9 @@
 	<mask_password>true</mask_password>
 
 	<!--
-	We supports the "stripling" script for controlling the dedicated Server and UASECO,
-	here you can setup the path where the XML-File will be stored.
+	Setup the path where the status XML-File will be stored
 	//-->
-	<stripling_path>cache/stripling.xml</stripling_path>
+	<status_path>cache/status.xml</status_path>
 
 	<!--
 	Full path in where the "ManiaPlanetServer" or "ManiaPlanetServer.exe" is located,
@@ -154,74 +153,8 @@
 		<dedirec>$0B3</dedirec>
 	</colors>
 
-	<messages>
-		<!-- This entry will replace all '»' at the begin of each chat message -->
-		<chat_prefix_replacement></chat_prefix_replacement>
-
-		<!-- init messages -->
-		<startup>{#server}» {#highlite}UASECO/{1}{#server} build {#highlite}{2}{#server} running on {#highlite}{3}{#server}:{#highlite}{4}{#server}</startup>
-		<welcome>{#server}» {#welcome}Welcome {#highlite}{1}{#welcome} to {#highlite}{2}$z$s{br}{#server}» {#welcome}This server uses {#highlite}UASECO/{3}{#welcome} to manage your records.</welcome>
-		<warning>$s{#welcome}This is an administrative warning.{br}{br}$gWhatever you wrote is against our server's{br}policy. Not respecting other players, or{br}using offensive language might result in a{br}{#welcome}kick, or ban {#message}the next time.{br}{br}$gThe server administrators.</warning>
-
-		<!-- record misc. messages -->
-		<ranking_record2>{#rank}{1}{#message}.{#timelite}{2}{#message}, </ranking_record2>
-		<ranking_record>{#rank}{1}{#message}.{#timelite}{2}{#message}[{#timelite}{3}{#message}], </ranking_record>
-
-		<!-- record relation messages -->
-		<first_record>{#server}» {#record}The first Local record is: </first_record>
-		<last_record>{#server}» {#record}The last Local record is: </last_record>
-		<diff_record>{#server}» {#record}Difference between {1}{#record} and {2}{#record} is: {#highlite}{3}</diff_record>
-		<summary>{#server}» {#highlite}{1} $z$s{#record}has {#highlite}{2}{#record} Local record{3}, the top {4} being: </summary>
-		<sum_entry>{#highlite}{1} {#record}rec{2} #{#rank}{3}{#record}, </sum_entry>
-
-		<!-- ranking messages -->
-		<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}], </ranking_record_new>
-
-		<!-- win messages -->
-		<wins>{#server}» {#record}You have already won {#highlite}{1}{#record} race{2}</wins>
-		<wins_other>{#server}» {#record}Player {#highlite}{1}{#record} has won {#highlite}{2}{#record} race{3}</wins_other>
-		<win_new>{#server}» {#record}Congratulations, you won your {#highlite}{1}{#record}. race!</win_new>
-		<win_multi>{#server}» {#record}Congratulations, {#highlite}{1}{#record} won his/her {#highlite}{2}{#record}. race!</win_multi>
-
-		<!-- muting messages -->
-		<mute>{#server}» Player {#highlite}{1}$z$s{#server} is muted!</mute>
-		<unmute>{#server}» Player {#highlite}{1}$z$s{#server} is unmuted!</unmute>
-		<muted>{#server}» {#highlite}{1}{#error} disabled because you are on the global mute list!</muted>
-
-		<!-- playtime/map messages -->
-		<playtime>{#server}» Current map {#highlite}{1}{#server} has been played for {#highlite}{2}</playtime>
-		<playtime_finish>{#server}» Current map {#highlite}{1}{#server} finished after {#highlite}{2}</playtime_finish>
-		<playtime_replay> {#server}({#highlite}{1}{#server} replay{2}, total {#highlite}{3}{#server})</playtime_replay>
-		<map>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3} {#server}Gold: {#highlite}{4} {#server}Silver: {#highlite}{5} {#server}Bronze: {#highlite}{6} {#server}Cost: {#highlite}{7}</map>
-		<current_map>{#server}» Current map {#highlite}{1} {#server}by {#highlite}{2} {#server}Author: {#highlite}{3}</current_map>
-		<next_map>{#server}» The next Map will be: {#timelite}[{1}] {#highlite}{2}</next_map>
-
-		<!-- relay messages -->
-		<no_relays>{#server}» {#error}No relay servers connected</no_relays>
-		<relaymaster>{#server}» This server relays master server: {#highlite}{1}{#server} ({#highlite}{2}{#server})</relaymaster>
-		<notonrelay>{#server}» {#error}Command unavailable on relay server</notonrelay>
-
-		<!-- connection messages -->
-		<banip_dialog>{#welcome}Your IP was banned from this server.$z</banip_dialog>
-		<banip_error>{#welcome}Could not connect:{br}{br}Your IP was banned from this server!</banip_error>
-		<client_dialog>{#welcome}Obsolete client version, please $l[https://www.maniaplanet.com/download]upgrade$l.$z</client_dialog>
-		<client_error>{#welcome}Obsolete client version!{br}Please upgrade to the $l[https://www.maniaplanet.com/download]latest version$l.</client_error>
-		<connect_dialog>{#welcome}Connection problem, please retry.$z</connect_dialog>
-		<connect_error>{#welcome}$sThis is an administrative notice.$z{br}{br}UASECO encountered a very rare player connection{br}problem. Please re-join the server to correct it.{br}Apologies for the inconvenience.{br}{br}$sThe server administrators.</connect_error>
-
-		<!-- miscellaneous messages -->
-		<song>{#server}» Map {#highlite}{1} {#server}plays song: {#highlite}{2}</song>
-		<mod>{#server}» Map {#highlite}{1} {#server}uses mod: {#highlite}{2} {#server}({#highlite}{3}{#server})</mod>
-		<planets>{#server}» Server {#highlite}{1}$z$s {#server}owns {#highlite}{2} {#server}planets!</planets>
-		<round>{#server}» $n{#message}Round {#highlite}{1}{#message}: </round>
-		<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>
-	</messages>
-
-
-
-
-
-
+	<!-- This entry will replace all '»' at the begin of each chat message -->
+	<chat_prefix_replacement></chat_prefix_replacement>
 
 	<!-- Show or hide the load status widget while UASECO startup (slows down start-up a little bit) -->
 	<show_load_status>false</show_load_status>

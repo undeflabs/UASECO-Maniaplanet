@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-03
+	Authors:	undef.de
+	//-->
+	<plugin_description>Provides private messages and a wide variety of shout-outs.</plugin_description>
+	<slash_pm_description>Sends a private message to login or PlayerId</slash_pm_description>
+	<slash_pma_description>Sends a private message to player and admins</slash_pma_description>
+	<slash_pmlog_description>Displays log of your recent private messages</slash_pmlog_description>
+	<slash_hi_description>Sends a Hi message to everyone</slash_hi_description>
+	<slash_bye_description>Sends a Bye message to everyone</slash_bye_description>
+	<slash_thx_description>Sends a Thanks message to everyone</slash_thx_description>
+	<slash_lol_description>Sends a Lol message to everyone</slash_lol_description>
+	<slash_lool_description>Sends a Lool message to everyone</slash_lool_description>
+	<slash_brb_description>Sends a Be Right Back message to everyone</slash_brb_description>
+	<slash_afk_description>Sends an Away From Keyboard message to everyone</slash_afk_description>
+	<slash_gg_description>Sends a Good Game message to everyone</slash_gg_description>
+	<slash_gr_description>Sends a Good Race message to everyone</slash_gr_description>
+	<slash_n1_description>Sends a Nice One message to everyone</slash_n1_description>
+	<slash_bgm_description>Sends a Bad Game message to everyone</slash_bgm_description>
+	<slash_dammit_description>Sends a Dammit message to everyone</slash_dammit_description>
+	<slash_bootme_description>Boot yourself from the server</slash_bootme_description>
+	<slash_ragequit_description>Gets you away from this server in rage!</slash_ragequit_description>
+	<pm_info>Forgot what someone pm-ed you? Use "/pmlog" to check your PM history!</pm_info>
+	<pm>{#error}-pm-$g[{1}$z$s$i->{2}$z$s$i]$i {#interact}{3}</pm>
+	<pm_error>{#server}» {#error}No message!</pm_error>
+	<pmlog_head>Your recent PM history:</pmlog_head>
+	<pm_no_history>{#server}» {#error}No PM history found!</pm_no_history>
+	<hello>$g[{1}$z$s] {#interact}Hello {2} !</hello>
+	<bye>$g[{1}$z$s] {#interact}Bye {2} !</bye>
+	<thx>$g[{1}$z$s] {#interact}Thanks {2} !</thx>
+	<gg>$g[{1}$z$s] {#interact}Good Game {2} !</gg>
+	<gr>$g[{1}$z$s] {#interact}Good Race {2} !</gr>
+	<n1>$g[{1}$z$s] {#interact}Nice One {2} !</n1>
+	<hello_all>$g[{1}$z$s] {#interact}Hello All !</hello_all>
+	<bye_all>$g[{1}$z$s] {#interact}I have to go... Bye All !</bye_all>
+	<thx_all>$g[{1}$z$s] {#interact}Thanks All !</thx_all>
+	<lol>$g[{1}$z$s] {#interact}LoL !</lol>
+	<lool>$g[{1}$z$s] {#interact}LooOOooL !</lool>
+	<brb>$g[{1}$z$s] {#interact}Be Right Back !</brb>
+	<afk>$g[{1}$z$s] {#interact}Away From Keyboard !</afk>
+	<gga>$g[{1}$z$s] {#interact}Good Game All !</gga>
+	<gra>$g[{1}$z$s] {#interact}Good Race !</gra>
+	<n1a>$g[{1}$z$s] {#interact}Nice One !</n1a>
+	<bgm>$g[{1}$z$s] {#interact}Bad Game for Me :(</bgm>
+	<dammit>$g[{1}$z$s] {#interact}Failed Again! DAMMIT!!!</dammit>
+	<bootme>{#server}» {#highlite}{1}$z$s{#message} chooses to boot back to the real world.</bootme>
+	<bootme_dialog>{#message}Thanks for playing, please come back soon!</bootme_dialog>
+	<ragequit>{#server}» {#highlite}{1}$z$s{#message} said: "@"#!" and ragequitted!</ragequit>
+	<ragequit_dialog>{#message}Thanks for playing, please come back soon!</ragequit_dialog>
+	<no_admin>{#server}» {#error}You have to be in admin list to do that!</no_admin>
+	<muted>{#server}» {#highlite}{1}{#error} disabled because you are on the global mute list!</muted>
+</locales>
+

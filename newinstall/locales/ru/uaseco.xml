@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<!-- init messages -->
+	<startup>{#server}» {#highlite}Система UASECO RU/{1}{#server} работает на {#highlite}{2}{#server}:{#highlite}{3}{#server}</startup>
+	<welcome>{#server}» {#highlite}{1}{#welcome}, добро пожаловать на {#highlite}{2}$z$s{br}{#server}» {#welcome}На этом сервере работает {#highlite}UASECO RU/{3}{#welcome} для управления системой. Русификация от $L[http://github.com/Romnickol/UASECO]Romnickol$L.</welcome>
+
+
+	<!-- win messages -->
+	<win_new>{#server}» {#record}Поздравляем, ты выиграл {#highlite}{1}{#record} гонку!</win_new>
+	<win_multi>{#server}» {#record}Поздравляем игрока {#highlite}{1}{#record} с его {#highlite}{2}{#record} победой! Браво!</win_multi>
+
+	<!-- connection messages -->
+	<banip_dialog>{#welcome}Ваш IP-адрес был забанен на этом сервере.$z</banip_dialog>
+	<banip_error>{#welcome}Невозможно соединиться:{br}{br}Ваш IP-адрес заблокирован на этом сервере!</banip_error>
+	<client_dialog>{#welcome}Устаревшая версия клиента, полажуйста, $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]обновитесь$l.$z</client_dialog>
+	<client_error>{#welcome}Устаревшая версия клиента!{br}Обновитесь на $l[http://www.tm-forum.com/viewtopic.php?p=139752#p139752]свежую версию$l.</client_error>
+	<connect_dialog>{#welcome}Проблема с соединением, попробуй еще раз.$z</connect_dialog>
+	<connect_error>{#welcome}$sСистемное уведомление.$z{br}{br}UASECO столкнулось с очень редкой проблемой подключения{br}игрока. Пожалуйста, перезайдите на сервер.{br}Приносим свои извинения.{br}{br}$sАдминистраторы.</connect_error>
+</locales>

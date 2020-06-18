@@ -130,9 +130,9 @@ class Player extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-06-12');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2020-01-15');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
 		if ($data) {
@@ -234,8 +234,11 @@ class Player extends BaseClass {
 			$this->nation			= 'OTH';
 
 			// Work on Player flags...
-			$info['Flags'] = 0;
-			$info['SpectatorStatus'] = 0;
+			$data['NickName']		= 'Unknown';
+			$data['TeamId']			= -1;
+			$data['Flags']			= 0;
+			$data['SpectatorStatus']	= 0;
+			$data['LadderRanking']		= 0;
 			$this->updateInfo($data);
 
 			$this->data			= array();

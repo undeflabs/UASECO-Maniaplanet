@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-03
+	Authors:	undef.de
+	//-->
+	<plugin_description>Votes for a map and displays current score of it.</plugin_description>
+	<slash_chat_karma_description>Shows karma for the current map</slash_chat_karma_description>
+	<slash_chat_playervote_plus_description>Increases karma for the current map</slash_chat_playervote_plus_description>
+	<slash_chat_playervote_minus_description>Decreases karma for the current map</slash_chat_playervote_minus_description>
+	<list_help>{#server}» {#emotic}Use {#highlite}/list{#emotic} first - Type {#highlite}/list help{#emotic} for more info.</list_help>
+	<karma_map>{#server}» {#karma}Map {#highlite}{1}{#karma} Karma: {#highlite}{2}</karma_map>
+	<jukebox_notfound>{#server}» {#emotic}Map_ID not found - Type {#highlite}/list{#emotic} to see all maps.</jukebox_notfound>
+	<karma>{#server}» {#karma}Current Map Karma: {#highlite}{1}</karma>
+	<karma_require>{#server}» {#error}You need to finish this map at least {#highlite}$i {1}{#error} time(s) before voting!</karma_require>
+	<karma_voted>{#server}» {#highlite}You have already voted for this map</karma_voted>
+	<karma_fail>{#server}» {#highlite}Vote Failed!</karma_fail>
+	<karma_change>{#server}» {#highlite}Vote Changed!</karma_change>
+	<karma_done>{#server}» {#highlite}Vote Successful!</karma_done>
+	<karma_nopublic>{#server}» {#error}Public karma votes disabled, use $i{#highlite}/++{#error} or $i{#highlite}/--{#error} instead!</karma_nopublic>
+	<karma_remind>{#server}» {#karma}Remember to vote karma ({#highlite}/++{#karma} or {#highlite}/--{#karma}) for this map</karma_remind>
+	<karma_details>{1} $n{#karma}[++: {#highlite}{2}{#karma} ({#highlite}{3}%{#karma}), --: {#highlite}{4}{#karma} ({#highlite}{5}%{#karma})]</karma_details>
+	<karma_vote> $n{#karma}$i{Your vote:  {#highlite}$i{1}{#karma}$i}</karma_vote>
+</locales>

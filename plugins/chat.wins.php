@@ -70,7 +70,7 @@ class PluginChatWins extends Plugin {
 			}
 			$wins = $player->getWins();
 
-			$msg = new Message('common', 'wins_other');
+			$msg = new Message('chat.wins', 'wins_other');
 			$msg->addPlaceholders($aseco->stripStyles($player->nickname), $wins);
 			$msg->sendChatMessage($login);
 		}
@@ -78,7 +78,7 @@ class PluginChatWins extends Plugin {
 			if ($player = $aseco->server->players->getPlayerByLogin($login)) {
 				$wins = $player->getWins();
 
-				$msg = new Message('common', 'wins');
+				$msg = new Message('chat.wins', 'wins');
 				$msg->addPlaceholders($wins);
 				$msg->sendChatMessage($login);
 			}

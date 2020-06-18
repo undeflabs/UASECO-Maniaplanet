@@ -43,9 +43,9 @@ class Helper extends BaseClass {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2019-06-26');
-		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setVersion('1.0.7');
+		$this->setBuild('2020-10-15');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}
 
@@ -175,8 +175,8 @@ class Helper extends BaseClass {
 
 	public function reportServerInfo () {
 
-		if (!$xml = @file_get_contents($this->settings['stripling_path'])) {
-			$this->logMessage('Could not read "stripling" file ['. $this->settings['stripling_path'] .']!');
+		if (!$xml = @file_get_contents($this->settings['status_path'])) {
+			$this->logMessage('Could not read status file ['. $this->settings['status_path'] .']!');
 		}
 		else {
 			try {
@@ -202,9 +202,9 @@ class Helper extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildStriplingInfo () {
+	public function buildStatusInfo () {
 
-		if (!empty($this->settings['stripling_path'])) {
+		if (!empty($this->settings['status_path'])) {
 			$amount_players = $this->server->players->count();
 			$amount_spectators = 0;
 			foreach ($this->server->players->player_list as $player) {
@@ -295,8 +295,8 @@ class Helper extends BaseClass {
 			$xml .= ' </current>'.LF;
 			$xml .= '</info>'.LF;
 
-			if (!@file_put_contents($this->settings['stripling_path'], $xml)) {
-				$this->logMessage('Could not write into "stripling" file ['. $this->settings['stripling_path'] .']!');
+			if (!@file_put_contents($this->settings['status_path'], $xml)) {
+				$this->logMessage('Could not write into status file ['. $this->settings['status_path'] .']!');
 			}
 		}
 	}
@@ -519,9 +519,8 @@ class Helper extends BaseClass {
 		if ($message !== '') {
 			// Replace all entities back to normal for chat.
 			$message = $this->decodeEntities($message);
-
-			$message = preg_replace('/»/', $this->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
-			$message = preg_replace("/(\n{#.*?})»/", '${1}'.$this->getChatMessage('CHAT_PREFIX_REPLACEMENT'), $message, 1);
+			$message = str_replace('»', $this->settings['chat_prefix_replacement'], $message);
+			$message = preg_replace("/(\n{#.*?})»/", '${1}'.$this->settings['chat_prefix_replacement'], $message, 1);
 			if ($logins !== false) {
 				try {
 					// Remove whitespace and empty entries from the list
@@ -1291,17 +1290,6 @@ class Helper extends BaseClass {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	// Gets the specified chat message out of the settings file, only from "config/UASECO.xml"
-	public function getChatMessage ($name) {
-		return htmlspecialchars_decode($this->chat_messages[$name][0]);
-	}
-
-	/*
-	#///////////////////////////////////////////////////////////////////////#
-	#									#
-	#///////////////////////////////////////////////////////////////////////#
-	*/
-
 	// Checks if an admin is allowed to perform this ability
 	public function allowAdminAbility ($ability) {
 
@@ -1790,7 +1778,7 @@ class Helper extends BaseClass {
 	public function customFatalErrorShutdownHandler () {
 
 		$last_error = error_get_last();
-		if ($last_error['type'] === E_ERROR) {
+		if (isset($last_error['type']) && $last_error['type'] === E_ERROR) {
 			$this->customErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
 		}
 	}

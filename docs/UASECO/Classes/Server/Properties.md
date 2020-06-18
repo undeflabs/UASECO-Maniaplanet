@@ -18,9 +18,9 @@ Stores basic information of the server UASECO is running on.
 | `$aseco->server->xmlrpc['port']`					| Settings from UASECO.xml <dedicated_server>
 | `$aseco->server->xmlrpc['login']`					| Settings from UASECO.xml <dedicated_server>
 | `$aseco->server->xmlrpc['pass']`					| Settings from UASECO.xml <dedicated_server>
-| `$aseco->server->maps`						| Used by [Class MapList](/Development/Classes/MapList.php)
-| `$aseco->server->records`						| Used by [Class RecordList](/Development/Classes/RecordList.php)
-| `$aseco->server->players`						| Used by [Class PlayerList](/Development/Classes/PlayerList.php)
+| `$aseco->server->maps`						| Used by [Class MapList](/development/classes/maplist.php)
+| `$aseco->server->records`						| Used by [Class RecordList](/development/classes/recordlist.php)
+| `$aseco->server->players`						| Used by [Class PlayerList](/development/classes/playerlist.php)
 | `$aseco->server->mutelist`						| Server wide mutelist
 | `$aseco->server->gamestate`						| Holds actual gamestate: [`Server::RACE`](#Constants) or [`Server::SCORE`](#Constants)
 | `$aseco->server->state_names`						| Holds a named representation array of loading states.

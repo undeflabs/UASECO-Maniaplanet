@@ -15,9 +15,9 @@ Structure of ranking.
 | Members								| Example data or description
 |-----------------------------------------------------------------------|----------------------------
 | `$ranking->rank`							| Current Rank
-| `$ranking->pid`							| [Player Id](/Development/Classes/Player.php) at the dedicated Server
-| `$ranking->login`							| [Players Login](/Development/Classes/Player.php)
-| `$ranking->nickname`							| [Players Nickname](/Development/Classes/Player.php)
+| `$ranking->pid`							| [Player Id](/development/classes/player.php) at the dedicated Server
+| `$ranking->login`							| [Players Login](/development/classes/player.php)
+| `$ranking->nickname`							| [Players Nickname](/development/classes/player.php)
 | `$ranking->round_points`						| &nbsp;
 | `$ranking->map_points`						| &nbsp;
 | `$ranking->match_points`						| &nbsp;

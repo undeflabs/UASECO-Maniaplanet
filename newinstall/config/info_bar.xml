@@ -22,7 +22,6 @@
 
 
 	<player_count>
-		<label>PLAYER</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-players.png</icon>
 
 		<!-- RRGGBBAA -->
@@ -35,7 +34,6 @@
 
 
 	<spectator_count>
-		<label>VIEWER</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-spectators.png</icon>
 
 		<!-- RRGGBBAA -->
@@ -48,7 +46,6 @@
 
 
 	<current_ranking>
-		<label>RANKING</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-player-ranking.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
@@ -76,7 +73,6 @@
 
 
 	<best_time>
-		<label>BEST RACE TIME</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-best-race-time.png</icon>
 
 		<!-- RRGGBBAA -->
@@ -89,7 +85,6 @@
 
 
 	<last_time>
-		<label>LAST RACE TIME</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-last-race-time.png</icon>
 
 		<!-- RRGGBBAA -->
@@ -102,7 +97,6 @@
 
 
 	<personal_best>
-		<label>PERSONAL BEST</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-personal-best-time.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
@@ -118,7 +112,6 @@
 
 
 	<local_record>
-		<label>1. LOCAL RECORD</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-local-record.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
@@ -134,7 +127,6 @@
 
 
 	<dedimania_record>
-		<label>1. DEDIMANIA</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-dedimania-record.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
@@ -150,7 +142,6 @@
 
 
 	<mania_exchange>
-		<label>MANIA EXCHANGE</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-maniaexchange.png</icon>
 
 		<!-- Enter here an action id from other Plugins, empty for no action -->
@@ -178,7 +169,6 @@
 
 
 	<ladder_limits>
-		<label>LADDER</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-ladder-limits.png</icon>
 
 		<!-- RRGGBBAA -->
@@ -191,7 +181,6 @@
 
 
 	<clock>
-		<label>LOCAL TIME</label>
 		<icon>http://maniacdn.net/undef.de/uaseco/info-bar/icon-clock.png</icon>
 
 		<!-- RRGGBBAA -->

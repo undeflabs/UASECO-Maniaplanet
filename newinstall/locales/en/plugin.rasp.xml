@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-03
+	Authors:	undef.de
+	//-->
+	<plugin_description>Provides rank and personal best handling, and related chat commands.</plugin_description>
+	<slash_chat_pb_description>Shows your personal best on current map</slash_chat_pb_description>
+	<slash_chat_rank_description>Shows your current server rank</slash_chat_rank_description>
+	<slash_chat_top100_description>Displays top 100 best ranked players</slash_chat_top100_description>
+	<slash_chat_topwins_description>Displays top 100 victorious players</slash_chat_topwins_description>
+	<slash_chat_active_description>Displays top 100 most active players</slash_chat_active_description>
+	<info_message>Who is the most victorious player? Use "/topwins" to find out!</info_message>
+	<notonrelay>{#server}» {#error}Command unavailable on relay server</notonrelay>
+	<no_ranked>{#server}» {#error}No ranked players found!</no_ranked>
+	<topwins_title>Current TOP 100 Victors</topwins_title>
+	<chat_active_title>TOP 100 of the most active Players</chat_active_title>
+	<pb>{#server}» {#record}Personal Best: {#highlite}{1}{#record}({#rank}{2}{#record}) Average: {#highlite}{3}</pb>
+	<pb_none>{#server}» {#error}You don't have a Local Record on this map yet</pb_none>
+	<rank>{#server}» {#record}Your server rank is {#rank}{1}{#record} of {#highlite}{2}{#record} Average: {#highlite}{3}</rank>
+	<rank_none>{#server}» {#record}You must have {#highlite}{1}{#record} Local Records on this server before recieving a rank!</rank_none>
+</locales>

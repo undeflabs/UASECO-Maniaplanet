@@ -50,9 +50,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
-		$this->setVersion('1.1.3');
-		$this->setBuild('2019-08-27');
-		$this->setCopyright('2009 - 2019 by undef.de');
+		$this->setVersion('1.1.6');
+		$this->setBuild('2020-01-24');
+		$this->setCopyright('2009 - 2020 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -1369,7 +1369,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) === 0) {
 				if ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] && $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] !== 0) {
-					$this->sendProgressIndicator($player->login);
+					$this->sendProgressIndicator($player);
 				}
 
 				// Load all local Records from calling Player
@@ -1592,7 +1592,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 
 			// Build the RecordWidgets and ONLY in normal mode send it to each Player (if refresh is required)
-			$this->buildRecordWidgets(false, false);
+			$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => false));
 
 
 			$widgets = '';
@@ -1616,10 +1616,10 @@ class PluginRecordsEyepiece extends Plugin {
 
 		// Required to load the Preloader for external Images
 		if (time() >= $this->config['States']['RefreshTimestampPreload']) {
-			$this->config['States']['RefreshTimestampPreload'] = (time() + 5);
+			$this->config['States']['RefreshTimestampPreload'] = (time() + 6);
 
 			foreach ($aseco->server->players->player_list as $player) {
-				if ( (time() >= $player->data['PluginRecordsEyepiece']['Preload']['Timestamp']) && ($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] !== 5)) {
+				if ( (time() >= $player->data['PluginRecordsEyepiece']['Preload']['Timestamp']) && ($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] !== 6)) {
 					$player->data['PluginRecordsEyepiece']['Preload']['LoadedPart'] += 1;
 					$widgets = $this->buildImagePreload($player->data['PluginRecordsEyepiece']['Preload']['LoadedPart']);
 
@@ -2152,7 +2152,7 @@ class PluginRecordsEyepiece extends Plugin {
 			'showLiveRankingsWindow',
 			'showMusiclistWindow',
 			'dropSongFromPlaylist',
-			'showMaplistWindow',
+//			'showMaplistWindow',
 			'showMaplistFilterWindow',
 			'showMaplistSortingWindow',
 			'showMapAuthorlistWindow',
@@ -2282,7 +2282,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 			if (count($player->data['PluginRecordsEyepiece']['Maplist']['Records']) === 0) {
 				if ($aseco->server->maps->count() > $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] && $this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] !== 0) {
-					$this->sendProgressIndicator($player->login);
+					$this->sendProgressIndicator($player);
 				}
 
 				// Load all local records from calling Player
@@ -2678,9 +2678,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistWindow') {
 
-				$result = $this->buildMaplistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player);
-				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
-				$widgets .= $result['xml'];
+				$this->buildMaplistWindow($player);
 
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMapAuthorlistWindow') {
@@ -2777,12 +2775,12 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistFilterWindow') {
 
-				$widgets .= $this->buildMaplistFilterWindow();
+				$widgets .= $this->buildMaplistFilterWindow($player);
 
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistSortingWindow') {
 
-				$widgets .= $this->buildMaplistSortingWindow();
+				$widgets .= $this->buildMaplistSortingWindow($player);
 
 			}
 		}
@@ -3243,7 +3241,7 @@ class PluginRecordsEyepiece extends Plugin {
 		if ($gamemode === Gameinfo::ROUNDS || $gamemode === Gameinfo::TEAM || $gamemode === Gameinfo::CHASE) {
 
 			// Build the RecordWidgets and ONLY in normal mode send it to each or given Player (if refresh is required)
-			$this->buildRecordWidgets(false, false);
+			$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => false));
 
 			if ($this->config['States']['NiceMode'] === true) {
 				// Display the RecordWidgets to all Players
@@ -3595,7 +3593,7 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 
 		// Build the RecordWidgets and ONLY in normal mode send it to each or given Player (if refresh is required)
-		$this->buildRecordWidgets(false, false);
+		$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => false));
 
 		if ($this->config['States']['NiceMode'] === true) {
 			// Display the RecordWidgets to all Players
@@ -3838,7 +3836,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['States']['LiveRankings']['NoRecordsFound']	= false;
 
 		// Build the RecordWidgets and ONLY in normal mode send it to each or given Player (if refresh is required)
-		$this->buildRecordWidgets(false, false);
+		$this->buildRecordWidgets(false, array('DedimaniaRecords' => false, 'LocalRecords' => false, 'LiveRankings' => false));
 
 		if ($this->config['States']['NiceMode'] === true) {
 			// Display the RecordWidgets to all Players
@@ -4316,6 +4314,13 @@ class PluginRecordsEyepiece extends Plugin {
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['SUNSET'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['NIGHT'][0] .'"/>';
 			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['NIGHT'][0] .'"/>';
+		}
+		else if ($part === 5) {
+			// <diffculty>
+			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['DIFFCULTY'][0]['BEGINNER'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['DIFFCULTY'][0]['INTERMEDIATE'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['DIFFCULTY'][0]['ADVANCED'][0] .'"/>';
+			$xml .= '<quad pos="0 0" z-index="0" size="27.2 10.2" image="'. $this->config['IMAGES'][0]['DIFFCULTY'][0]['EXPERT'][0] .'"/>';
 		}
 
 		$xml .= '</frame>';
@@ -5071,28 +5076,31 @@ class PluginRecordsEyepiece extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function sendProgressIndicator ($login) {
+	public function sendProgressIndicator ($player) {
 
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons128x128_1',
-				'United',
-				'Loading... please wait.',
-				''
-			),
-			$this->templates['WINDOW']['HEADER']
+		$content  = '<quad pos="100.5 -40.35" z-index="0.11" size="55 55" halign="center" valign="center" image="'. $this->config['IMAGES'][0]['PROGRESS_INDICATOR'][0] .'"/>';
+		$content .= '<label pos="100.5 -65.2" z-index="0.12" size="55 55" halign="center" textsize="2" textcolor="FFFF" text="$SLoading... please wait."/>';
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,United',
 		);
-		$xml .= $this->templates['PROGRESS_INDICATOR']['CONTENT'];
-		$xml .= $this->templates['WINDOW']['FOOTER'];
+		$settings_content = array(
+			'title'			=> 'Loading... please wait.',
+			'data'			=> array($content),
+			'mode'			=> 'pages',
+			'add_background'	=> true,
+		);
+		$settings_footer = array(
+			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
+		);
 
-		// Send the progress indicator
-		$this->sendManialink($xml, $login, 0);
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setContent($settings_content);
+		$window->setFooter($settings_footer);
+		$window->send($player, 0, false);
 	}
 
 	/*
@@ -8898,7 +8906,7 @@ EOL;
 			// In Team nobody has a rank
 			$xml .= '<label pos="15 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="13.5 3.1875" halign="right" class="labels" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . ( (isset($item['score'])) ? $item['score'] : $noscore) .'"/>';
 		}
-		$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="'. sprintf("%.02f", ($widgetwidth - 15)) .' 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $aseco->handleSpecialChars($item['nickname']) .'"/>';
+		$xml .= '<label pos="15.5 -'. ($this->config['LineHeight'] * $line + $offset) .'" z-index="0.007" size="'. sprintf("%.02f", ($widgetwidth - 15)) .' 3.1875" class="labels" scale="0.9" text="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['FORMATTING_CODES'][0] . $this->handleSpecialChars($item['nickname']) .'"/>';
 
 		return $xml;
 	}
@@ -8961,7 +8969,7 @@ EOL;
 		foreach ($this->scores['DedimaniaRecords'] as $item) {
 			if (isset($item['login'])) {
 				$data[] = array(
-					$item['rank'],
+					$item['rank'] .'.',
 					$item['score'],
 					array(
 						'login'		=> $item['login'],
@@ -8971,7 +8979,7 @@ EOL;
 			}
 			else {
 				$data[] = array(
-					$item['rank'],
+					$item['rank'] .'.',
 					$item['score'],
 					$item['nickname'],
 				);
@@ -8993,13 +9001,13 @@ EOL;
 		// Setup settings for Window
 		$settings_styles = array(
 			'icon'			=> $this->config['DEDIMANIA_RECORDS'][0]['ICON_STYLE'][0] .','. $this->config['DEDIMANIA_RECORDS'][0]['ICON_SUBSTYLE'][0],
-			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 		);
 		$settings_columns = array(
 			'columns'		=> 4,
 			'widths'		=> array(10, 20, 70),
 			'halign'		=> array('right', 'center', 'left'),
-			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0], 'FFFF'),
 			'heading'		=> array('Rank', 'Score', 'Player'),
 		);
 		$settings_content = array(
@@ -9037,7 +9045,7 @@ EOL;
 		foreach ($this->scores['LocalRecords'] as $item) {
 			if (isset($item['login'])) {
 				$data[] = array(
-					$item['rank'],
+					$item['rank'] .'.',
 					$item['score'],
 					array(
 						'login'		=> $item['login'],
@@ -9047,7 +9055,7 @@ EOL;
 			}
 			else {
 				$data[] = array(
-					$item['rank'],
+					$item['rank'] .'.',
 					$item['score'],
 					$item['nickname'],
 				);
@@ -9058,13 +9066,13 @@ EOL;
 		// Setup settings for Window
 		$settings_styles = array(
 			'icon'			=> $this->config['LOCAL_RECORDS'][0]['ICON_STYLE'][0] .','. $this->config['LOCAL_RECORDS'][0]['ICON_SUBSTYLE'][0],
-			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 		);
 		$settings_columns = array(
 			'columns'		=> 4,
 			'widths'		=> array(10, 20, 70),
 			'halign'		=> array('right', 'center', 'left'),
-			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0], 'FFFF'),
 			'heading'		=> array('Rank', 'Score', 'Player'),
 		);
 		$settings_content = array(
@@ -9121,13 +9129,13 @@ EOL;
 		// Setup settings for Window
 		$settings_styles = array(
 			'icon'			=> $this->config['LIVE_RANKINGS'][0]['ICON_STYLE'][0] .','. $this->config['LIVE_RANKINGS'][0]['ICON_SUBSTYLE'][0],
-			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 		);
 		$settings_columns = array(
 			'columns'		=> 4,
 			'widths'		=> array(10, 20, 70),
 			'halign'		=> array('right', 'center', 'left'),
-			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0], 'FFFF'),
 			'heading'		=> array('Rank', 'Score', 'Player'),
 		);
 		$settings_content = array(
@@ -9185,13 +9193,13 @@ EOL;
 		// Setup settings for Window
 		$settings_styles = array(
 			'icon'			=> $this->config['SCORETABLE_LISTS'][0][$widget][0]['ICON_STYLE'][0] .','. $this->config['SCORETABLE_LISTS'][0][$widget][0]['ICON_SUBSTYLE'][0],
-			'textcolors'		=> array('FF5F', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 		);
 		$settings_columns = array(
 			'columns'		=> 4,
 			'widths'		=> array(10, 20, 70),
 			'halign'		=> array('right', 'center', 'left'),
-			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+			'textcolors'		=> array('FFFF', $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0], 'FFFF'),
 			'heading'		=> array('Rank', 'Score', 'Player'),
 		);
 		$settings_content = array(
@@ -9484,12 +9492,12 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildMaplistWindow ($page, $player) {
+	public function buildMaplistWindow ($player) {
 		global $aseco;
 
 		// Filter activity requested?
 		$maplist = array();
-		$listoptions = '';	// Title addition
+		$listoptions = false;	// Title addition
 		if (is_array($player->data['PluginRecordsEyepiece']['Maplist']['Filter'])) {
 			if (isset($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['environment']) ){
 				// Filter for environment
@@ -9860,7 +9868,7 @@ EOL;
 					{
 						$maplist[] = $map->uid;
 					}
-					$listoptions = '(Search: &apos;'. $this->handleSpecialChars($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key']) .'&apos;)';
+					$listoptions = '(Search: \''. $this->handleSpecialChars($player->data['PluginRecordsEyepiece']['Maplist']['Filter']['key']) .'\')';
 				}
 				unset($map);
 			}
@@ -9873,209 +9881,66 @@ EOL;
 		}
 
 
-		$subwin = '';
 		if (count($maplist) === 0) {
 
-			$subwin = str_replace(
-				array(
-					'%icon_style%',
-					'%icon_substyle%',
-					'%window_title%',
-					'%prev_next_buttons%'
-				),
-				array(
-					'Icons64x64_1',
-					'TrackInfo',
-					'Notice',
-					''
-				),
-				$this->templates['SUBWINDOW']['HEADER']
+			// Setup the styles
+			$settings_style = array(
+				'icon'			=> 'Icons128x128_1,Custom',
+				'textcolor'		=> '09FF',
 			);
-			$subwin .= '<label pos="7.5 -11.25" z-index="0.04" size="105 0" textsize="2" scale="0.8" autonewline="1" maxline="7" text="This filter return an empty result, which means that no Track match your wished filter."/>';
-			$subwin .= '<label pos="49.5 -42" z-index="0.02" size="20 3.75" halign="center" textsize="1" scale="0.8" id="RecordsEyepieceSubWindowClose" ScriptEvents="1" text="OK" style="CardButtonMediumS"/>';
-			$subwin .= $this->templates['SUBWINDOW']['FOOTER'];
 
-			// Filter does not match, show all Tracks
-			foreach ($aseco->server->maps->map_list as $map) {
-				$maplist[] = $map->uid;
-			}
+			// Build the buttons
+			$buttons = array(
+				array(
+					'title'		=> 'Ok',
+					'action'	=> 'PluginRecordsEyepiece?Action=showMaplistWindow&Answer=Ok',
+				),
+			);
 
-			// Reset all Filters/Titles
-			$listoptions = '';
-			$player->data['PluginRecordsEyepiece']['Maplist']['Filter'] = false;
+			// Setup content
+			$settings_content = array(
+				'title'			=> 'Notice',
+				'message'		=> 'This filter return an empty result, which means that no map match your wished filter.',
+				'buttons'		=> $buttons,
+			);
+
+			// Create the Dialog
+			$dialog = new Dialog();
+			$dialog->setStyles($settings_style);
+			$dialog->setContent($settings_content);
+			$dialog->send($player);
+
+			return;
 		}
 
-
-		// Get the total of Maps
-		$totalmaps = count($maplist);
-
-		// Determind the maxpages
-		$maxpages = ceil($totalmaps / 20);
-		if ($page > $maxpages) {
-			$page = $maxpages - 1;
-		}
 
 		// Determine admin ability to drop all jukeboxed and to add recent played Maps
 		$dropall = $aseco->allowAbility($player, 'dropjukebox');
 		$add_recent = $aseco->allowAbility($player, 'chat_jb_recent');
 
 
-
-		$buttons = '';
-
-		// Button "Drop current juke'd Map"
-		if ($aseco->allowAbility($player, 'clearjukebox')) {
-			$buttons .= '<frame pos="127.0625 -101.8125" z-index="0.04">';
-//			$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=askDropMapFromPlaylist" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons128x32_1" substyle="Settings"/>';
-			$buttons .= '<label pos="1.8 -1.3" z-index="0.15" size="20 0" textsize="2" style="TextCardRaceRank" text="$S$W$O$F00/"/>';
-			$buttons .= '</frame>';
-		}
-
-
-		// Filter Buttons
-		$buttons .= '<frame pos="136.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistFilterWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="142.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistSortingWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-		$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="UIConstructionSimple_Buttons" substyle="Validate"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="148.0625 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.28125" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-//		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistWindow" style="Icons64x64_1" substyle="ToolUp"/>';
-		$buttons .= '</frame>';
-
-
-		// Frame for Previous-/Next-Buttons
-		$buttons .= '<frame pos="160.1875 -101.8125" z-index="0.04">';
-
-		// Previous button
-		if ($page > 0) {
-			// First
-			$buttons .= '<frame pos="0 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageFirst" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="1.1 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '<quad pos="1.5 -1.05625" z-index="0.15" size="1 3.1875" bgcolor="CCCF"/>';
-			$buttons .= '</frame>';
-
-			// Previous (-5)
-			$buttons .= '<frame pos="6.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPagePrevTwo" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="-0.35 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '<quad pos="1.1 -0.28125" z-index="0.15" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '</frame>';
-
-			// Previous (-1)
-			$buttons .= '<frame pos="12.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPagePrev" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '</frame>';
-		}
-		else {
-			// First
-			$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Previous (-5)
-			$buttons .= '<quad pos="6.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Previous (-1)
-			$buttons .= '<quad pos="12.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		}
-
-		// Next button (display only if more pages to display)
-		if ( ($totalmaps > 20) && (($page + 1) < $maxpages)) {
-			// Next (+1)
-			$buttons .= '<frame pos="18.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageNext" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '</frame>';
-
-			// Next (+5)
-			$buttons .= '<frame pos="24.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageNextTwo" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="-0.35 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '<quad pos="1.1 -0.28125" z-index="0.15" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '</frame>';
-
-			// Last
-			$buttons .= '<frame pos="30.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageLast" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="-0.25 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '<quad pos="3.275 -1.05625" z-index="0.15" size="1 3.1875" bgcolor="CCCF"/>';
-			$buttons .= '</frame>';
-		}
-		else {
-			// Next (+1)
-			$buttons .= '<quad pos="18.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Next (+5)
-			$buttons .= '<quad pos="24.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Last
-			$buttons .= '<quad pos="30.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		}
-		$buttons .= '</frame>';
-
-
-		// Create Windowtitle depending on the $maplist
-		if (count($maplist) === 0) {
-			$title = 'Maps on this Server';
-		}
-		else {
-			$title = 'Maps on this Server   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalmaps, 0) . (($totalmaps === 1) ? ' Map' : ' Maps') .' '. $listoptions;
-		}
-
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons128x128_1',
-				'Browse',
-				$title,
-				$buttons
-			),
-			$this->templates['WINDOW']['HEADER']
-		);
-
-
-		$line = 0;
-		$offset = 0;
-
-
-		$xml .= '<frame pos="8 -10.6875" z-index="0.05">';
 		if (count($maplist) > 0) {
-			$map_count = 1;
+
+			$line = 0;
+			$page = 0;
+			$offset = 0;
+
+			$pages = array();
+			$xml = '<frame pos="0 0" z-index="0.05">';
 			for ($i = ($page * 20); $i < (($page * 20) + 20); $i ++) {
 
-				// Is there a Map?
+				// Is there a map?
 				if (!isset($maplist[$i])) {
+					$xml .= '</frame>';
+					$pages[] = $xml;
 					break;
 				}
 
-				// Get Map
+				// Get map
 				$map = $aseco->server->maps->getMapByUid($maplist[$i]);
-
 				$in_history = $aseco->server->maps->history->isMapInHistoryByUid($map->uid);
 
-				// Find the Player who has juked this Map
+				// Find the Player who added this map to the Jukebox
 				$login = false;
 				$juked = false;
 				foreach ($aseco->plugins['PluginRaspJukebox']->jukebox as $item) {
@@ -10087,7 +9952,7 @@ EOL;
 				}
 				unset($item);
 
-//				// Find the Player who has juked this Map
+//				// Find the Player who has juked this map
 //				$login = false;
 //				$juked = false;
 //				if ($playlist = $aseco->server->maps->playlist->getPlaylistEntryById($map->id) !== false) {
@@ -10095,81 +9960,71 @@ EOL;
 //					$juked = true;
 //				}
 
-				$xml .= '<frame pos="'. $offset .' -'. (17.71875 * $line) .'" z-index="1">';
+				$xml .= '<frame pos="'. $offset .' -'. (18.4 * $line) .'" z-index="1">';
 				if ($aseco->server->maps->current->uid === $map->uid && $juked === false) {
 					// Current map
-//					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-//					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
-					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="0099FF55"/>';
-					$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
-					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
+					$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="0099FF55"/>';
+					$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="0099FFDD"/>';
+					$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
+					$xml .= '<label pos="1.5 -0.5" z-index="0.05" size="46 3.1" class="labels" textsize="1.4" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
+					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="46 3.1" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
-					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
+					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="44 2.75" class="labels" scale="0.9" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterAuthor&Author='. $map->author .'" focusareacolor1="0000" focusareacolor2="9FCB1A88" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 				else if ($aseco->server->maps->current->uid !== $map->uid && $in_history === false && $juked === false) {
 					// Default (not current, not recent, not juked)
-//					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-//					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="ProgressBar"/>';
-					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-					$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
-					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
+					$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+					$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="0099FFDD"/>';
+					$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
+					$xml .= '<label pos="1.5 -0.5" z-index="0.05" size="46 3.1" class="labels" textsize="1.4" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
+					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="46 3.1" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
-					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
+					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="44 2.75" class="labels" scale="0.9" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterAuthor&Author='. $map->author .'" focusareacolor1="0000" focusareacolor2="9FCB1A88" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 				else if ($aseco->server->maps->current->uid !== $map->uid && $in_history === true && $juked === true) {
-					// This is a recent but juked Map
-//					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-//					$xml .= '<quad pos="0.675 -0.6375" z-index="0.04" size="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
-					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
+					// This is a recent but juked map
+					$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+					$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="00DD00FF"/>';
 					if ($dropall === true || $login === $player->login) {
-						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
-					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" textcolor="000" textfont="Oswald" class="labels" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
-					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
+					$xml .= '<label pos="1.5 -0.5" z-index="0.05" size="46 3.1" class="labels" textcolor="000" textsize="1.4" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
+					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="46 3.1" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
-					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
+					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="44 2.75" class="labels" scale="0.9" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterAuthor&Author='. $map->author .'" focusareacolor1="0000" focusareacolor2="9FCB1A88" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 				else if ($aseco->server->maps->current->uid !== $map->uid && $in_history === true) {
-					// This is a recent Map
-//					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-//					$xml .= '<quad pos="1 -0.6749" z-index="0.04" size="42.375 3.75" style="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
+					// This is a recent map
+					$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+					$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="0099FF55"/>';
 					if ($add_recent) {
-						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addMapToPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
 					}
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" class="labels" textcolor="FFF8" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
-					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
+					$xml .= '<label pos="1.5 -0.5" z-index="0.05" size="46 3.1" class="labels" textcolor="FFF8" textsize="1.4" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
+					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="46 3.1" class="labels" textcolor="FFF8" text="'. $this->handleSpecialChars($map->name_stripped) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds" opacity="0.3"/>';
-					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
+					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="44 2.75" class="labels" scale="0.9" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterAuthor&Author='. $map->author .'" focusareacolor1="0000" focusareacolor2="9FCB1A88" textcolor="FFF8" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 				else {
-					// This is a juked Map
-//					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 17.25" bgcolor="BgsPlayerCard" substyle="BgRacePlayerName"/>';
-//					$xml .= '<quad pos="0.675 -0.6375" z-index="0.04" size="43.5 4.125" style="BgsButtons" substyle="BgButtonMediumSpecial"/>';
+					// This is a juked map
 					if ($aseco->server->maps->current->uid === $map->uid) {
-						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="0099FF55"/>';
+						$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="0099FF55"/>';
 					}
 					else {
-						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
+						$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
 					}
+					$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="00DD00FF"/>';
 					if ($dropall === true || $login === $player->login) {
-						$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=removeMapFromPlaylist&uid='. $map->uid .'" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="00DD00FF"/>';
-					$xml .= '<label pos="1.5 -1.21875" z-index="0.05" size="12.5 2.8125" textcolor="000" textfont="Oswald" class="labels" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
-					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="41.5 3" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
+					$xml .= '<label pos="1.5 -0.5" z-index="0.05" size="46 3.1" class="labels" textcolor="000" textsize="1.4" textfont="Oswald" text="'. strtoupper($map->environment) .' #'. ($i+1) .'"/>';
+					$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="46 3.1" class="labels" text="'. $this->handleSpecialChars($map->name) .'"/>';
 					$xml .= '<quad pos="1.5 -7.975" z-index="0.04" size="3 3" image="file://Media/Flags/'. (strtoupper($map->author_nation) === 'OTH' ? 'other' : $map->author_nation) .'.dds"/>';
-					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="41 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
+					$xml .= '<label pos="6.125 -8.4375" z-index="0.04" size="44 2.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($this->getMapAuthor($map), true) .'"/>';
 				}
 
 				if ($aseco->server->maps->current->uid !== $map->uid && $in_history === true) {
-					// This is a recent Map
+					// This is a recent map
 
 					// Authortime
 					$xml .= '<quad pos="1.2 -12.7" z-index="0.04" size="3 3" style="BgRaceScore2" substyle="ScoreReplay" opacity="0.3"/>';
@@ -10198,30 +10053,60 @@ EOL;
 					$xml .= '<quad pos="28.725 -12.75" z-index="0.04" size="3 3" style="Icons64x64_1" substyle="StateFavourite" modulatecolor="F30"/>';
 					$xml .= '<label pos="32 -13.40625" z-index="0.04" size="5.5 2.8125" class="labels" scale="0.75" text="L'. $map->karma .'"/>';
 				}
-
 				$xml .= '</frame>';
 
 				$line ++;
 
 				// Reset lines
 				if ($line >= 5) {
-					$offset += 47.625;
+					$offset += 50.5;
 					$line = 0;
 				}
 
-				$map_count ++;
+				if (($i + 1) >= 20 && ($i + 1) % 20 === 0) {
+					$xml .= '</frame>';
+					$pages[] = $xml;
+
+					$xml = '<frame pos="0 0" z-index="0.05">';
+
+					$line = 0;
+					$offset = 0;
+					$page += 1;
+				}
 			}
 		}
-		$xml .= '</frame>';
-		$xml .= $this->templates['WINDOW']['FOOTER'];
 
-		// Add the SubWindow (if there is one)
-		$xml .= $subwin;
 
-		return array(
-			'xml'		=> $xml,
-			'maxpage'	=> ($maxpages - 1),
+		$options = array();
+		if ($aseco->allowAbility($player, 'clearjukebox')) {
+			$options[] = array('Clear Jukebox',		'PluginRecordsEyepiece?Action=askDropMapFromPlaylist');
+		}
+		$options[] = array('Show maplist filter window',	'PluginRecordsEyepiece?Action=showMaplistFilterWindow');
+		$options[] = array('Show maplist sorting window',	'PluginRecordsEyepiece?Action=showMaplistSortingWindow');
+		$options[] = array('Show maplist window',		'PluginRecordsEyepiece?Action=showMaplistWindow');
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Browse',
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 		);
+		$settings_content = array(
+			'title'			=> 'Maps on this server  |  '. (count($maplist) === 1 ? count($maplist) . ' Map' : count($maplist) . ' Maps') . ($listoptions !== false ? ' ' . $listoptions : ''),
+			'data'			=> $pages,
+			'mode'			=> 'pages',
+			'add_background'	=> false,
+		);
+		$settings_footer = array(
+			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
+			'option_button'		=> $options,
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setContent($settings_content);
+		$window->setFooter($settings_footer);
+		$window->send($player, 0, false);
 	}
 
 	/*
@@ -10230,299 +10115,282 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildMaplistFilterWindow () {
+	public function buildMaplistFilterWindow ($player) {
 		global $aseco;
 
-		$buttons  = '<frame pos="127.0625 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '</frame>';
 
-		$buttons .= '<frame pos="136.0625 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-//		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistFilterWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="142.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistSortingWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-		$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="UIConstructionSimple_Buttons" substyle="Validate"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="148.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistWindow" style="Icons64x64_1" substyle="ToolUp"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="160.1875 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="6.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="12.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="18.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="24.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="30.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '</frame>';
-
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons128x128_1',
-				'NewTrack',
-				'Filter options for Maplist',
-				$buttons
-			),
-			$this->templates['WINDOW']['HEADER']
-		);
-
-		$xml .= '<frame pos="8 -10.6875" z-index="1">'; // Content Window
+		$xml = '<frame pos="0 0" z-index="0.05">';
 
 		// No Author Time
 		$xml .= '<frame pos="0 0" z-index="0">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoAuthorTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.05" size="3.75 3.75" style="MedalsBig" substyle="MedalNadeo"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="No Author Time"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the author time on."/>';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoAuthorTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="MedalsBig" substyle="MedalNadeo"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="No Author Time"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the author time on."/>';
 		$xml .= '</frame>';
 
 		// Only Recent Maps
-		$xml .= '<frame pos="0 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyRecentMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Only Recent Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that have been played recently."/>';
+		$xml .= '<frame pos="0 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyRecentMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Only Recent Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that have been played recently."/>';
 		$xml .= '</frame>';
 
 		// No Recent Maps
-		$xml .= '<frame pos="0 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterNoRecentMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="No Recent Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that have been played not recently."/>';
+		$xml .= '<frame pos="0 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterNoRecentMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="No Recent Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that have been played not recently."/>';
 		$xml .= '</frame>';
 
 		// No Gold Time
-		$xml .= '<frame pos="47.625 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoGoldTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="MedalsBig" substyle="MedalGold"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="No Gold Time"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the gold time on."/>';
+		$xml .= '<frame pos="50.5 0" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoGoldTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="MedalsBig" substyle="MedalGold"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="No Gold Time"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the gold time on."/>';
 		$xml .= '</frame>';
 
 		// Only Ranked Maps
-		$xml .= '<frame pos="47.625 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsWithRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Only Ranked Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you already have a rank received."/>';
+		$xml .= '<frame pos="50.5 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsWithRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Only Ranked Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you already have a rank received."/>';
 		$xml .= '</frame>';
 
 		// Not Ranked Maps
-		$xml .= '<frame pos="47.625 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsWithoutRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Not Ranked Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you not already have a rank received."/>';
+		$xml .= '<frame pos="50.5 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsWithoutRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Not Ranked Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you not already have a rank received."/>';
 		$xml .= '</frame>';
 
 		// No Silver Time
-		$xml .= '<frame pos="95.25 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoSilverTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="MedalsBig" substyle="MedalSilver"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="No Silver Time"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the silver time on."/>';
+		$xml .= '<frame pos="101 0" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoSilverTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="MedalsBig" substyle="MedalSilver"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="No Silver Time"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the silver time on."/>';
 		$xml .= '</frame>';
 
 		// Only Multilap Maps
-		$xml .= '<frame pos="95.25 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMultilapMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Only Multilap Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that are multilaps Maps."/>';
+		$xml .= '<frame pos="101 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMultilapMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Only Multilap Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that are multilaps Maps."/>';
 		$xml .= '</frame>';
 
 		// No Multilap Maps
-		$xml .= '<frame pos="95.25 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterNoMultilapMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="No Multilap Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that are not multilaps Maps."/>';
+		$xml .= '<frame pos="101 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterNoMultilapMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="No Multilap Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that are not multilaps Maps."/>';
 		$xml .= '</frame>';
 
 		// All Maps
-		$xml .= '<frame pos="95.25 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindow" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Browse"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="All Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display all Maps, that are currently available on this Server."/>';
+		$xml .= '<frame pos="101 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindow" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Browse"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="All Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display all Maps, that are currently available on this Server."/>';
 		$xml .= '</frame>';
 
 		// No Bronze Time
-		$xml .= '<frame pos="142.875 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoBronzeTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="MedalsBig" substyle="MedalBronze"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="No Bronze Time"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the bronze time on."/>';
+		$xml .= '<frame pos="151.5 0" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNoBronzeTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="MedalsBig" substyle="MedalBronze"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="No Bronze Time"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps where you did not beat the bronze time on."/>';
 		$xml .= '</frame>';
 
 		// Not Finished
-		$xml .= '<frame pos="142.875 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNotFinished" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Finish"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons64x64_1" substyle="Close"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Not Finished"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that you did not have finished yet."/>';
+		$xml .= '<frame pos="151.5 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyMapsNotFinished" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="Icons64x64_1" substyle="Finish"/>';
+		$xml .= '<quad pos="-0.6 0.9" z-index="0.06" size="6 6" style="Icons64x64_1" substyle="Close"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Not Finished"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps that you did not have finished yet."/>';
 		$xml .= '</frame>';
 
 		// Select Authorname
-		$xml .= '<frame pos="142.875 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMapAuthorlistWindow" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="ChallengeAuthor"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Select Authorname"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Select an Authorname and display only Maps from this author."/>';
+		$xml .= '<frame pos="151.5 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMapAuthorlistWindow" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="ChallengeAuthor"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Select Authorname"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Select an Authorname and display only Maps from this author."/>';
 		$xml .= '</frame>';
 
 		// Current Jukebox
-		$xml .= '<frame pos="142.875 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterJukeboxedMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Load"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Current Jukebox"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps, that are in the jukebox to get played."/>';
+		$xml .= '<frame pos="151.5 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterJukeboxedMaps" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Load"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Current Jukebox"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display only Maps, that are in the jukebox to get played."/>';
 		$xml .= '</frame>';
 
 
 		// Mood
-		$xml .= '<frame pos="0 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="92 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="91 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.05" size="3.75 3.75" style="Icons128x128_1" substyle="Manialink"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Map mood"/>';
+		$xml .= '<frame pos="0 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="99 16.5" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="99 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.05" size="3.75 3.75" style="Icons128x128_1" substyle="Manialink"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Map mood"/>';
 
 		// Sunrise
 		if ($this->cache['MaplistCounts']['Mood']['SUNRISE'] > 0) {
-			$xml .= '<quad pos="1.5 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodSunrise" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNRISE'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['SUNRISE'][0] .'"/>';
+			$xml .= '<quad pos="1.5 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodSunrise" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNRISE'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['SUNRISE'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="1.5 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNRISE'][0] .'"/>';
+			$xml .= '<quad pos="1.5 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNRISE'][0] .'"/>';
 		}
 
 		// Day
 		if ($this->cache['MaplistCounts']['Mood']['DAY'] > 0) {
-			$xml .= '<quad pos="24.5 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodDay" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['DAY'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['DAY'][0] .'"/>';
+			$xml .= '<quad pos="26.833 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodDay" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['DAY'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['DAY'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="24.5 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['DAY'][0] .'"/>';
+			$xml .= '<quad pos="26.833 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['DAY'][0] .'"/>';
 		}
 
 		// Sunset
 		if ($this->cache['MaplistCounts']['Mood']['SUNSET'] > 0) {
-			$xml .= '<quad pos="47.5 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodSunset" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNSET'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['SUNSET'][0] .'"/>';
+			$xml .= '<quad pos="52.167 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodSunset" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNSET'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['SUNSET'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="47.5 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNSET'][0] .'"/>';
+			$xml .= '<quad pos="52.167 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['SUNSET'][0] .'"/>';
 		}
 
 		// Night
 		if ($this->cache['MaplistCounts']['Mood']['NIGHT'] > 0) {
-			$xml .= '<quad pos="70.5 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodNight" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['NIGHT'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['NIGHT'][0] .'"/>';
+			$xml .= '<quad pos="77.5 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterMapsWithMoodNight" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['NIGHT'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['MOOD'][0]['FOCUS'][0]['NIGHT'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="70.5 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['NIGHT'][0] .'"/>';
+			$xml .= '<quad pos="77.5 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['MOOD'][0]['ENABLED'][0]['NIGHT'][0] .'"/>';
 		}
 		$xml .= '</frame>';
 
 
 		// Map environment
-		$xml .= '<frame pos="0 -70.875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="187.25 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="186.25 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Advanced"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Map environment"/>';
+		$xml .= '<frame pos="0 -73.6" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="200 16.5" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="200 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Advanced"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Map environment"/>';
 
-		// 'Canyon'
+		// Canyon
 		if ($this->cache['MaplistCounts']['Environment']['CANYON'] > 0) {
-			$xml .= '<quad pos="1.5 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyCanyonMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_CANYON'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_CANYON'][0] .'"/>';
+			$xml .= '<quad pos="1.5 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyCanyonMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_CANYON'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_CANYON'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="1.5 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_CANYON'][0] .'"/>';
+			$xml .= '<quad pos="1.5 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_CANYON'][0] .'"/>';
 		}
 
-		// 'Stadium'
+		// Stadium
 		if ($this->cache['MaplistCounts']['Environment']['STADIUM'] > 0) {
-			$xml .= '<quad pos="22.03125 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyStadiumMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_STADIUM'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_STADIUM'][0] .'"/>';
+			$xml .= '<quad pos="23.625 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyStadiumMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_STADIUM'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_STADIUM'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="22.03125 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_STADIUM'][0] .'"/>';
+			$xml .= '<quad pos="23.625 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_STADIUM'][0] .'"/>';
 		}
 
-		// 'Valley'
+		// Valley
 		if ($this->cache['MaplistCounts']['Environment']['VALLEY'] > 0) {
-			$xml .= '<quad pos="42.5625 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyValleyMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_VALLEY'][0] .'"/>';
+			$xml .= '<quad pos="45.75 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyValleyMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_VALLEY'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="42.5625 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'"/>';
+			$xml .= '<quad pos="45.75 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_VALLEY'][0] .'"/>';
 		}
 
-		// 'Lagoon'
+		// Lagoon
 		if ($this->cache['MaplistCounts']['Environment']['LAGOON'] > 0) {
-			$xml .= '<quad pos="63.09375 -5.625" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyLagoonMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_LAGOON'][0] .'"/>';
+			$xml .= '<quad pos="67.875 -5.4" z-index="0.06" size="20 10" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterOnlyLagoonMaps" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['FOCUS'][0]['ICON_LAGOON'][0] .'"/>';
 		}
 		else {
-			$xml .= '<quad pos="63.09375 -5.625" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
+			$xml .= '<quad pos="67.875 -5.4" z-index="0.06" size="20 10" opacity="0.5" colorize="FFF" image="'. $this->config['IMAGES'][0]['ENVIRONMENT'][0]['ENABLED'][0]['ICON_LAGOON'][0] .'"/>';
 		}
 
-		$xml .= '<quad pos="63.09375 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
-		$xml .= '<quad pos="83.625 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
-		$xml .= '<quad pos="104.15625 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
-		$xml .= '<quad pos="124.6875 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
-		$xml .= '<quad pos="145.21875 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
-		$xml .= '<quad pos="165.75 -5.625" z-index="0.06" size="20 10" bgcolor="0003"/>';
+		$xml .= '<quad pos="90 -5.4" z-index="0.06" size="20 10" bgcolor="0003"/>';
+		$xml .= '<quad pos="112.125 -5.4" z-index="0.06" size="20 10" bgcolor="0003"/>';
+		$xml .= '<quad pos="134.25 -5.4" z-index="0.06" size="20 10" bgcolor="0003"/>';
+		$xml .= '<quad pos="156.375 -5.4" z-index="0.06" size="20 10" bgcolor="0003"/>';
+		$xml .= '<quad pos="178.5 -5.4" z-index="0.06" size="20 10" bgcolor="0003"/>';
+		$xml .= '</frame>';
 
 		$xml .= '</frame>';
 
-		$xml .= '</frame>'; // Content Window
 
-		$xml .= $this->templates['WINDOW']['FOOTER'];
-		return $xml;
+		$options = array();
+		if ($aseco->allowAbility($player, 'clearjukebox')) {
+			$options[] = array('Clear Jukebox',		'PluginRecordsEyepiece?Action=askDropMapFromPlaylist');
+		}
+		$options[] = array('Show maplist filter window',	'PluginRecordsEyepiece?Action=showMaplistFilterWindow');
+		$options[] = array('Show maplist sorting window',	'PluginRecordsEyepiece?Action=showMaplistSortingWindow');
+		$options[] = array('Show maplist window',		'PluginRecordsEyepiece?Action=showMaplistWindow');
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Browse',
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+		);
+		$settings_content = array(
+			'title'			=> 'Filter options for maplist',
+			'data'			=> array($xml),
+			'mode'			=> 'pages',
+			'add_background'	=> false,
+		);
+		$settings_footer = array(
+			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
+			'option_button'		=> $options,
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setContent($settings_content);
+		$window->setFooter($settings_footer);
+		$window->send($player, 0, false);
+
 	}
 
 	/*
@@ -10531,277 +10399,261 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildMaplistSortingWindow () {
+	public function buildMaplistSortingWindow ($player) {
 		global $aseco;
 
-		$buttons  = '<frame pos="127.0625 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="136.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistFilterWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="142.0625 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-//		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistSortingWindow" style="Icons64x64_1" substyle="Maximize"/>';
-//		$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-//		$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="UIConstructionSimple_Buttons" substyle="Validate"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="148.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistWindow" style="Icons64x64_1" substyle="ToolUp"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="160.1875 -101.8125" z-index="0.04">';
-		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="6.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="12.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="18.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="24.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="30.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '</frame>';
-
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons128x128_1',
-				'NewTrack',
-				'Sort options for Maplist',
-				$buttons
-			),
-			$this->templates['WINDOW']['HEADER']
-		);
-
-		$xml .= '<frame pos="8 -10.6875" z-index="1">'; // Content Window
+		$xml = '<frame pos="0 0" z-index="0.05">';
 
 		// All Maps
 		$xml .= '<frame pos="0 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindow" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Browse"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="All Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display all Maps, that are currently available on this Server."/>';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.6 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindow" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Browse"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="All Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Display all Maps, that are currently available on this Server."/>';
 		$xml .= '</frame>';
 
 		// Best Ranked Maps
-		$xml .= '<frame pos="0 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingBestPlayerRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Best Ranked Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Rank,'. LF .' from best to worst."/>';
+		$xml .= '<frame pos="0 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.6 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingBestPlayerRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Best Ranked Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Rank,'. LF .'from best to worst."/>';
 		$xml .= '</frame>';
 
 		// Worst Ranked Maps
-		$xml .= '<frame pos="0 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingWorstPlayerRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Worst Ranked Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Rank,'. LF .' from worst to best."/>';
+		$xml .= '<frame pos="0 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.6 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingWorstPlayerRank" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="BgRaceScore2" substyle="LadderRank"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Worst Ranked Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Rank,'. LF .'from worst to best."/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="0 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="0 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.6 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="0 -70.875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="0 -73.6" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.6 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// Sort by Mapname
-		$xml .= '<frame pos="47.625 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByMapname" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="NewTrack"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Sort by Mapname"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort all currently available Maps by Mapname."/>';
+		$xml .= '<frame pos="50.5 0" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByMapname" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="NewTrack"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Sort by Mapname"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort all currently available Maps by Mapname."/>';
 		$xml .= '</frame>';
 
 		// Shortest Maps
-		$xml .= '<frame pos="47.625 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingShortestAuthorTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Race"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Shortest Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Authortime,'. LF .'from shortest to longest."/>';
+		$xml .= '<frame pos="50.5 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingShortestAuthorTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Race"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Shortest Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Authortime,'. LF .'from shortest to longest."/>';
 		$xml .= '</frame>';
 
 		// Longest Maps
-		$xml .= '<frame pos="47.625 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingLongestAuthorTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Race"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Longest Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Authortime,'. LF .'from longest to shortest."/>';
+		$xml .= '<frame pos="50.5 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingLongestAuthorTime" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Race"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Longest Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Authortime,'. LF .'from longest to shortest."/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="47.625 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="50.5 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="47.625 -70.875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<frame pos="50.5 -73.6" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
 //		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// Sort by Authorname
-		$xml .= '<frame pos="95.25 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByAuthorname" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="ChallengeAuthor"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Sort by Authorname"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort all currently available Maps by Authorname."/>';
+		$xml .= '<frame pos="101 0" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByAuthorname" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="ChallengeAuthor"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Sort by Authorname"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort all currently available Maps by Authorname."/>';
 		$xml .= '</frame>';
 
 		// Newest Maps First
-		$xml .= '<frame pos="95.25 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingNewestMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Newest Maps First"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by age,'. LF .'from newest to oldest."/>';
+		$xml .= '<frame pos="101 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingNewestMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Newest Maps First"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by age,'. LF .'from newest to oldest."/>';
 		$xml .= '</frame>';
 
 		// Oldest Maps First
-		$xml .= '<frame pos="95.25 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingOldestMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Oldest Maps First"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by age,'. LF .'from oldest to newest."/>';
+		$xml .= '<frame pos="101 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingOldestMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="LoadTrack"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Oldest Maps First"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by age,'. LF .'from oldest to newest."/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="95.25 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="101 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="95.25 -70.875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="101 -73.6" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// Sort by Authornation
-		$xml .= '<frame pos="142.875 0" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByAuthorNation" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="UIConstructionSimple_Buttons" substyle="Validate"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Sort by Authornation"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort all currently available Maps by Authornation."/>';
+		$xml .= '<frame pos="151.5 0" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByAuthorNation" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="UIConstructionSimple_Buttons" substyle="Validate"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Sort by Authornation"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort all currently available Maps by Authornation."/>';
 		$xml .= '</frame>';
 
 		// Karma Best Maps
-		$xml .= '<frame pos="142.875 -17.71875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByKarmaBestMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Challenge"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Karma Best Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Karma,'. LF .'from best to worst."/>';
+		$xml .= '<frame pos="151.5 -18.4" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByKarmaBestMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Challenge"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Karma Best Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Karma,'. LF .'from best to worst."/>';
 		$xml .= '</frame>';
 
 		// Karma Worst Maps
-		$xml .= '<frame pos="142.875 -35.4375" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByKarmaWorstMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Challenge"/>';
-		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="Karma Worst Maps"/>';
-		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Karma,'. LF .'from worst to best."/>';
+		$xml .= '<frame pos="151.5 -36.8" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingByKarmaWorstMapsFirst" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x128_1" substyle="Challenge"/>';
+		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Karma Worst Maps"/>';
+		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="Sort Maps by Karma,'. LF .'from worst to best."/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="142.875 -53.15625" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="151.5 -55.2" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
 		// FREE
-		$xml .= '<frame pos="142.875 -70.875" z-index="1">';
-		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FF55"/>';
-//		$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="43.375 3.75" bgcolor="0099FFDD"/>';
-//		$xml .= '<quad pos="36.425 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
-//		$xml .= '<quad pos="0.5 -0.5" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
-//		$xml .= '<label pos="5.5 -1.22" z-index="0.05" size="43.25 0" class="labels" text="xxx"/>';
-//		$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
+		$xml .= '<frame pos="151.5 -73.6" z-index="1">';
+		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+//		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFDD"/>';
+//		$xml .= '<quad pos="40.55 -8.6" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action=showMaplistWindowSortingXXX" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
+//		$xml .= '<quad pos="0.5 -0.2" z-index="0.06" size="3.75 3.75" style="Icons128x32_1" substyle="RT_Laps"/>';
+//		$xml .= '<label pos="5.5 -0.5" z-index="0.05" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="xxx"/>';
+//		$xml .= '<label pos="1.5 -5.0625" z-index="0.04" size="40 3.75" scale="0.9" class="labels" autonewline="1" text="xxx"/>';
 		$xml .= '</frame>';
 
-		$xml .= '</frame>'; // Content Window
+		$xml .= '</frame>';
 
-		$xml .= $this->templates['WINDOW']['FOOTER'];
-		return $xml;
+
+		$options = array();
+		if ($aseco->allowAbility($player, 'clearjukebox')) {
+			$options[] = array('Clear Jukebox',		'PluginRecordsEyepiece?Action=askDropMapFromPlaylist');
+		}
+		$options[] = array('Show maplist filter window',	'PluginRecordsEyepiece?Action=showMaplistFilterWindow');
+		$options[] = array('Show maplist sorting window',	'PluginRecordsEyepiece?Action=showMaplistSortingWindow');
+		$options[] = array('Show maplist window',		'PluginRecordsEyepiece?Action=showMaplistWindow');
+
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Browse',
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+		);
+		$settings_content = array(
+			'title'			=> 'Sort options for maplist',
+			'data'			=> array($xml),
+			'mode'			=> 'pages',
+			'add_background'	=> false,
+		);
+		$settings_footer = array(
+			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
+			'option_button'		=> $options,
+		);
+
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setContent($settings_content);
+		$window->setFooter($settings_footer);
+		$window->send($player, 0, false);
+
 	}
 
 	/*
@@ -11000,10 +10852,10 @@ EOL;
 					$ddsfile = 'WOR';
 				}
 				$data[] = array(
-					$item['count'],
 					array(
 						'image'	=> 'file://Media/Flags/'. $ddsfile .'.dds',
 					),
+					$item['count'],
 					$aseco->country->iocToCountry($item['nation']),
 				);
 			}
@@ -11015,9 +10867,9 @@ EOL;
 			);
 			$settings_columns = array(
 				'columns'		=> 4,
-				'widths'		=> array(15, 10, 75),
-				'halign'		=> array('right', 'center', 'left'),
-				'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+				'widths'		=> array(8, 20, 72),
+				'halign'		=> array('left', 'right', 'left'),
+				'textcolors'		=> array('FFFF', $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['SCORES'][0], 'FFFF'),
 			);
 			$settings_content = array(
 				'title'			=> $this->config['SCORETABLE_LISTS'][0]['TOP_NATIONS'][0]['TITLE'][0],
@@ -11559,6 +11411,23 @@ EOL;
 
 			$xml = false;
 			if ($state === 'race') {
+				$mx_difficulty_hidden = true;
+				$mx_difficulty_image = '';
+				if ($aseco->server->maps->current->mx !== false) {
+					$mx_difficulty_hidden = false;
+					if ($aseco->server->maps->current->mx->diffic === 'Beginner') {
+						$mx_difficulty_image = $this->config['IMAGES'][0]['DIFFCULTY'][0]['BEGINNER'][0];
+					}
+					else if ($aseco->server->maps->current->mx->diffic === 'Intermediate') {
+						$mx_difficulty_image = $this->config['IMAGES'][0]['DIFFCULTY'][0]['INTERMEDIATE'][0];
+					}
+					else if ($aseco->server->maps->current->mx->diffic === 'Advanced') {
+						$mx_difficulty_image = $this->config['IMAGES'][0]['DIFFCULTY'][0]['ADVANCED'][0];
+					}
+					else if ($aseco->server->maps->current->mx->diffic === 'Expert') {
+						$mx_difficulty_image = $this->config['IMAGES'][0]['DIFFCULTY'][0]['EXPERT'][0];
+					}
+				}
 
 				// Set the right Icon and Title position
 				$position = (($this->config['MAP_WIDGET'][0]['RACE'][0]['POS_X'][0] < 0) ? 'right' : 'left');
@@ -11587,7 +11456,9 @@ EOL;
 						'%mapname%',
 						'%authortime%',
 						'%author%',
-						'%author_nation%'
+						'%author_nation%',
+						'%mx_map_difficulty_visibility%',
+						'%mx_map_difficulty_image%'
 					),
 					array(
 						$imagex,
@@ -11600,7 +11471,9 @@ EOL;
 						$this->handleSpecialChars($aseco->server->maps->current->name),
 						$aseco->formatTime($aseco->server->maps->current->author_time),
 						$this->getMapAuthor($aseco->server->maps->current),
-						(strtoupper($aseco->server->maps->current->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->current->author_nation)
+						(strtoupper($aseco->server->maps->current->author_nation) === 'OTH' ? 'other' : $aseco->server->maps->current->author_nation),
+						$aseco->bool2string($mx_difficulty_hidden),
+						$mx_difficulty_image
 					),
 					$this->templates['MAP_WIDGET']['RACE']['HEADER']
 				);
@@ -11709,9 +11582,9 @@ EOL;
 		global $aseco;
 
 		$xml = '<quad pos="0 0" z-index="0.02" size="48.5 90" bgcolor="FFFFFF33"/>';
-		$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="47.5 4" bgcolor="0099FFFF"/>';
-		$xml .= '<quad pos="1.5 -0.5" z-index="0.05" size="3.75 3.75" style="'. $data['icon_style'] .'" substyle="'. $data['icon_substyle'] .'"/>';
-		$xml .= '<label pos="6 -1.22" z-index="0.05" size="43.25 0" class="labels" text="'. $data['title'] .'"/>';
+		$xml .= '<quad pos="0 0" z-index="0.04" size="48.5 4" bgcolor="0099FFFF"/>';
+		$xml .= '<quad pos="1.5 0" z-index="0.05" size="3.75 3.75" style="'. $data['icon_style'] .'" substyle="'. $data['icon_substyle'] .'"/>';
+		$xml .= '<label pos="6 -0.72" z-index="0.05" size="43.25 0" class="labels" text="'. $data['title'] .'"/>';
 		$xml .= '<quad pos="40.55 -82.1" z-index="0.03" size="8.75 8.75" action="PluginRecordsEyepiece?Action='. $data['actionid'] .'" image="'. $this->config['IMAGES'][0]['WIDGET_OK_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_OK_FOCUS'][0] .'"/>';
 		if (count($this->scores[$data['list']]) > 0) {
 			$xml .= '<frame pos="0 -6" z-index="0.04">';
@@ -12490,22 +12363,6 @@ EOL;
 
 
 		//--------------------------------------------------------------//
-		// BEGIN: Widget ProgressIndicator				//
-		//--------------------------------------------------------------//
-		$content  = '<quad pos="100.5 -50.35" z-index="0.11" size="55 55" halign="center" valign="center" image="'. $this->config['IMAGES'][0]['PROGRESS_INDICATOR'][0] .'"/>';
-		$content .= '<label pos="100.5 -75.2" z-index="0.12" size="55 55" halign="center" textsize="2" textcolor="FFFF" text="$SLoading... please wait."/>';
-
-		$this->templates['PROGRESS_INDICATOR']['CONTENT'] = $content;
-
-		unset($content);
-		//--------------------------------------------------------------//
-		// END: Widget for ProgressIndicator				//
-		//--------------------------------------------------------------//
-
-
-
-
-		//--------------------------------------------------------------//
 		// BEGIN: Widget Donation (at Score)				//
 		//--------------------------------------------------------------//
 		// %widgetheight%
@@ -12675,6 +12532,7 @@ EOL;
 		//--------------------------------------------------------------//
 		// %image_open_pos_x%, %image_open%
 		// %mapname%, %authortime%, %author%, %author_nation%
+		// %mx_map_difficulty%, %mx_map_difficulty_visibility%
 		$header  = '<manialink id="MapWidget" name="MapWidget" version="3">';
 		$header .= '<stylesheet>';
 		$header .= '<style class="labels" textsize="1" scale="1" textcolor="'. $this->config['STYLE'][0]['WIDGET_RACE'][0]['COLORS'][0]['DEFAULT'][0] .'"/>';
@@ -12700,6 +12558,8 @@ EOL;
 		$header .= '<label pos="7.5 -8.4375" z-index="0.04" size="32.5 3.75" class="labels" scale="0.8" text="by %author%"/>';
 		$header .= '<quad pos="2.5 -11.31875" z-index="0.04" size="3.75 3.75" style="BgRaceScore2" substyle="ScoreReplay"/>';
 		$header .= '<label pos="7.5 -12.28125" z-index="0.04" size="15 3.75" class="labels" scale="0.7" text="%authortime%"/>';
+		$header .= '<label pos="28 -12.28125" z-index="0.04" size="13 3.75" class="labels" halign="right" scale="0.7" text="Difficulty:" hidden="%mx_map_difficulty_visibility%"/>';
+		$header .= '<quad pos="28.5 -11.28125" z-index="0.04" size="6 6" image="%mx_map_difficulty_image%" hidden="%mx_map_difficulty_visibility%"/>';
 
 $maniascript = <<<EOL
 <script><!--

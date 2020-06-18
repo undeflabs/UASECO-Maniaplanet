@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Показывает ближайшего по рангу игрока.</plugin_description>
+	<info_msg>Ищешь, кто выше тебя по рангу? Набери "/nextrank"!</info_msg>
+</locales>

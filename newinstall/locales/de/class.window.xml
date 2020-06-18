@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2109-09-23
+	Authors:	undef.de
+	//-->
+
+	<windowlist_description>Behandelt aktionen für Manialink-Fenster die mit der "Class Window" erstellt wurden.</windowlist_description>
+	<window_description>Bietet ein komfortables und konfigurierbares Manialink-Fenster.</window_description>
+	<slash_lastwin>Öffnet das zuletzt geöffnete Fentser erneut.</slash_lastwin>
+	<header_page>Seite</header_page>
+	<header_of>von</header_of>
+</locales>

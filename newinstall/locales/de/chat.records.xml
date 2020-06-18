@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	askuri
+	//-->
+<!-- common messages -->
+	<notonrelay>{#server}» {#error}Dieses Kommando ist nicht verfügbar auf Relayservern</notonrelay>
+	<no_records_found>{#server}» {#error}Keine Rekorde gefunden!</no_records_found>
+	<sum_entry> {#highlite}{1} {#record}rec{2} #{#rank}{3}{#record},</sum_entry>	
+	<summary>{#server}» {#highlite}{1} $z$s{#record}hat {#highlite}{2}{#record} lokale Rekorde, die Top {3} sind: </summary>
+
+<!-- plugin messages -->
+	<slash_recs>Zeigt alle Rekorde auf der aktuellen Map an</slash_recs>
+	<slash_newrecs>Zeigt neulich gefahrene Rekorde an</slash_newrecs>
+	<slash_liverecs>Zeigt die Rekorde der Spieler an, die gerade online sind</slash_liverecs>
+	<slash_best>Zeigt deine besten Rekorde an</slash_best>
+	<slash_worst>Zeigt deine schlechtesten Rekorde an</slash_worst>
+	<slash_summary>Zeigt eine Zusammenfassung aller deiner Rekorde</slash_summary>
+	<slash_topsums>Zeigt die Top 100 der besten Top3 Rekordhalter</slash_topsums>
+	<slash_toprecs>Zeigt die Spieler mit der größten anzahl Rekorde an</slash_toprecs>
+</locales>

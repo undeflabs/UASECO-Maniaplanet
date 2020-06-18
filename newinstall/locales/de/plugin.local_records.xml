@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	aca
+	//-->
+
+	<plugin_description>Speichert Rekorde in eine lokale Datenbank.</plugin_description>
+
+
+	<!-- record messages -->
+	<record_new>{#server}» {#highlite}{1}{#record} sicherte seinen/ihren {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new>
+	<record_equal>{#server}» {#highlite}{1}{#record} wiederholte seinen/ihren {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}</record_equal>
+	<record_new_rank>{#server}» {#highlite}{1}{#record} verbesserte den {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new_rank>
+	<record_first>{#server}» {#highlite}{1}{#record} erreichte den {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}</record_first>
+	<record_current>{#server}» {#message}Aktueller Rekord auf {#highlite}{1}{#message} ist {#highlite}{2}{#message} von {#highlite}{3}</record_current>
+	<record_none>{#server}» {#message}Aktuell kein Rekord auf [{#highlite}{1}{#message}] ...</record_none>
+
+
+	<!-- ranking messages -->
+	<ranking>{#server}» {#message}Platzierungen in den lokalen Rekorden auf {#highlite}{1}{#message} {2} in dieser Runde: {3}</ranking>
+	<ranking_range>{#server}» {#message}Platzierungen in den lokalen Rekorden auf {#highlite}{1}{#message} {2} in dieser Runde (Diff. {#highlite}{3}{#message}): {4}</ranking_range>
+	<ranking_new>{#server}» {#message}Platzierungen in den lokalen Rekorden auf {#highlite}{1}{#message} {2} in dieser Runde ({#highlite}{3}{#message} neu): {4}</ranking_new>
+	<ranking_no_new>{#server}» {#message}Platzierungen in den lokalen Rekorden auf {#highlite}{1}{#message} {2} in dieser Runde: bisher keine neue Platzierung</ranking_no_new>
+	<ranking_none>{#server}» {#message}Platzierungen in den lokalen Rekorden auf {#highlite}{1}{#message} {2} in dieser Runde: keine Rekorde!</ranking_none>
+
+
+	<!-- no translation, just formatting -->
+	<ranking_record_new_on>{1}{#rank}{2}{#message}.$i{#highlite}{3}{#message}[{#highlite}{4}{#message}]$i</ranking_record_new_on>
+	<ranking_record_new>{1}{#rank}{2}{#message}.{#highlite}{3}{#message}[{#highlite}{4}{#message}]</ranking_record_new>
+	<ranking_record_on>{1}{#rank}{2}{#message}.$i{#timelite}{3}{#message}[{#timelite}{4}{#message}]$i</ranking_record_on>
+	<ranking_record>{1}{#rank}{2}{#message}.{#timelite}{3}{#message}[{#timelite}{4}{#message}]</ranking_record>
+
+
+	<!-- timing messages -->
+	<timing_before>vor</timing_before>
+	<timing_during>während</timing_during>
+	<timing_after>nach</timing_after>
+</locales>

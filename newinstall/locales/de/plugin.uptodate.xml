@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	askuri, undef.de
+	//-->
+
+	<plugin_description>Überprüft die UASECO Version auf eine verfügbare Aktualisierung beim starten von UASECO und beim Beitritt von einem MasterAdmin.</plugin_description>
+	<chat_uptodate>Überprüft die UASECO Version auf eine verfügbare Aktualisierung.</chat_uptodate>
+	<uptodate_ok>{#server}» {#message}Diese UASECO Version {#highlite}{1}{#message} ist auf dem neuesten Stand.</uptodate_ok>
+	<uptodate_new>{#server}» {#message}Neue UASECO Version {#highlite}{1}{#message} verfügbar auf {#highlite}{2}.</uptodate_new>
+	<uptodate_failed>{#server}» {#error}Konnte keine Verbindung herstellen, um zu überprüfen ob eine neue UASECO Version vorliegt!</uptodate_failed>
+	<admin_merged>{#server}» {#highlite}{1}{#server} neue Spieler zur Blacklist hinzugefügt!</admin_merged>
+	<admin_can_not_parse>{#server}» {#error}Error: Konnte {#highlite}$I{1}{#error} nicht analysieren!</admin_can_not_parse>
+	<admin_can_not_access>{#server}» {#error}Error: Konnte {#highlite}$I$L{1}$L{#error} nicht aufrufen!</admin_can_not_access>
+</locales>

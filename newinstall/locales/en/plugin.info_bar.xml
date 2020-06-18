@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Displays a information bar with multiple personalized values.</plugin_description>
+	<chat_infobar>Command for the InfoBar to reload configuration: "/infobar reload"</chat_infobar>
+	<message_chat_infobar_reload>{#admin}» Reload of the configuration "config/info_bar.xml" done.</message_chat_infobar_reload>
+	<label_player_count>PLAYER</label_player_count>
+	<label_spectator_count>VIEWER</label_spectator_count>
+	<label_current_ranking>RANKING</label_current_ranking>
+	<label_donate_heading>DONATE</label_donate_heading>
+	<label_donate_description>PLANETS PLEASE</label_donate_description>
+	<label_donate_intro>Please enter the value you want to Donate:</label_donate_intro>
+	<label_donate_button>SEND DONATION</label_donate_button>
+	<label_donate_minimum_amount>$SThe minimum value for a donation are {1} Planets.</label_donate_minimum_amount>
+	<label_best_time>BEST RACE TIME</label_best_time>
+	<label_last_time>LAST RACE TIME</label_last_time>
+	<label_personal_best>PERSONAL BEST</label_personal_best>
+	<label_local_record>1. LOCAL RECORD</label_local_record>
+	<label_dedimania_record>1. DEDIMANIA</label_dedimania_record>
+	<label_mania_exchange>MANIA EXCHANGE</label_mania_exchange>
+	<label_ladder_limits>LADDER</label_ladder_limits>
+	<label_clock>LOCAL TIME</label_clock>
+</locales>

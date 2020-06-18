@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	askuri
+	//-->
+<!-- common messages -->
+	<medal_author>Autor Medaille</medal_author>
+	<medal_gold>Gold Medaille</medal_gold>
+	<medal_silver>Silber Medaille</medal_silver>
+	<medal_bronze>Bronze Medaille</medal_bronze>	
+
+
+<!-- plugin messages -->
+	<plugin_description>Ändert die Spielzeit abhängig von der Zeit, die der Autor zum Fahren der Map brauchte</plugin_description>
+	<message_default>{#server}»{#emotic} Die standard Spielzeit für die Map {#highlite}{1}{#emotic} wurde auf {#highlite}{2}{#emotic} gesetzt, basierend auf der {#highlite}{3}{#emotic} von {#highlite}{4}</message_default>
+	<message_new>{#server}»{#emotic} Die neue Spielzeit für die Map {#highlite}{1}{#emotic} wurde auf {#highlite}{2}{#emotic} gesetzt, basierend auf der {#highlite}{3}{#emotic} von {#highlite}{4}</message_new>
+	<message_minimum>{#server}»{#emotic} Die mindest Spielzeit für die Map {#highlite}{1}{#emotic} wurde auf {#highlite}{2}{#emotic} gesetzt, basierend auf der {#highlite}{3}{#emotic} von {#highlite}{4}</message_minimum>
+	<message_maximum>{#server}»{#emotic} Die maximal Spielzeit für die Map {#highlite}{1}{#emotic} wurde auf {#highlite}{2}{#emotic} gesetzt, basierend auf der {#highlite}{3}{#emotic} von {#highlite}{4}</message_maximum>
+</locales>

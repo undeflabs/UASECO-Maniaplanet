@@ -46,10 +46,11 @@ class PluginMap extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-09-15');
+		$this->setCoAuthors('aca');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2019-10-03');
 		$this->setCopyright('2014 - 2019 by undef.de');
-		$this->setDescription('Times playing time of a map, provides map and time info and shows (file)names of current map\'s and song mod.');
+		$this->setDescription(new Message('plugin.map', 'plugin_description'));
 
 		$this->addDependence('PluginRaspJukebox',	Dependence::WANTED,	'1.0.0', null);
 
@@ -58,11 +59,11 @@ class PluginMap extends Plugin {
 		$this->registerEvent('onRestartMap',	'onRestartMap');
 		$this->registerEvent('onEndMap',	'onEndMap');
 
-		$this->registerChatCommand('map',	'chat_map',		'Shows info about the current map',		Player::PLAYERS);
-		$this->registerChatCommand('song',	'chat_song',		'Shows filename of current map\'s song',	Player::PLAYERS);
-		$this->registerChatCommand('mod',	'chat_mod',		'Shows (file)name of current map\'s mod',	Player::PLAYERS);
-		$this->registerChatCommand('nextmap',	'chat_nextmap',		'Shows name of the next map',			Player::PLAYERS);
-		$this->registerChatCommand('playtime',	'chat_playtime',	'Shows time current map has been playing',	Player::PLAYERS);
+		$this->registerChatCommand('map',	'chat_map',		new Message('plugin.map','slash_chat_map_description'),		Player::PLAYERS);
+		$this->registerChatCommand('song',	'chat_song',		new Message('plugin.map','slash_chat_song_description'),	Player::PLAYERS);
+		$this->registerChatCommand('mod',	'chat_mod',		new Message('plugin.map','slash_chat_mod_description'),		Player::PLAYERS);
+		$this->registerChatCommand('nextmap',	'chat_nextmap',		new Message('plugin.map','slash_chat_nextmap_description'),	Player::PLAYERS);
+		$this->registerChatCommand('playtime',	'chat_playtime',	new Message('plugin.map','slash_chat_playtime_description'),	Player::PLAYERS);
 	}
 
 	/*
@@ -78,8 +79,8 @@ class PluginMap extends Plugin {
 			$name = '$l[https://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name .'$l';
 		}
 
-		$message = $aseco->formatText($aseco->getChatMessage('MAP'),
-			$name,
+		$message = new Message('plugin.map', 'map');
+		$message->addPlaceholders($name,
 			$aseco->server->maps->current->author,
 			$aseco->formatTime($aseco->server->maps->current->author_time),
 			$aseco->formatTime($aseco->server->maps->current->gold_time),
@@ -89,7 +90,7 @@ class PluginMap extends Plugin {
 		);
 
 		// show chat message
-		$aseco->sendChatMessage($message, $login);
+		$message->sendChatMessage($login);
 	}
 
 	/*
@@ -106,26 +107,30 @@ class PluginMap extends Plugin {
 
 		// Check for map's song
 		if ($aseco->server->maps->current->song_file) {
-			$message = $aseco->formatText($aseco->getChatMessage('SONG'),
-				$aseco->stripStyles($aseco->server->maps->current->name),
-				$aseco->server->maps->current->song_file
-			);
-
+			$info = '';
 			// Use only first parameter
 			$chat_parameter = explode(' ', $chat_parameter, 2);
 			if ((strtolower($chat_parameter[0]) === 'url' || strtolower($chat_parameter[0]) === 'loc') && $aseco->server->maps->current->song_url) {
-				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->song_url .']'. $aseco->server->maps->current->song_url .'$l';
+				$info = LF .'{#highlite}$l['. $aseco->server->maps->current->song_url .']'. $aseco->server->maps->current->song_url .'$l';
 			}
+			$message = new Message('plugin.map', 'song');
+			$message->addPlaceholders($aseco->stripStyles($aseco->server->maps->current->name),
+				$aseco->server->maps->current->song_file . $info
+			);
+
 		}
 		else {
-			$message = '{#server}» {#error}No map song found!';
+			$message = new Message('plugin.map', 'no_song');
 			if ((class_exists('PluginMusicServer')) && (is_callable('PluginMusicServer::chat_music')) ) {
-				$message .= ' Try {#highlite}$i /music current {#error}instead.';
+				$message->addPlaceholders(new Message('plugin.map', 'no_song_proposal'));
+			}
+			else {
+				$message->addPlaceholders('');
 			}
 		}
 
 		// Show chat message
-		$aseco->sendChatMessage($message, $player->login);
+		$message->sendChatMessage($player->login);
 	}
 
 	/*
@@ -142,23 +147,26 @@ class PluginMap extends Plugin {
 
 		// Check for map's mod
 		if ($aseco->server->maps->current->modname) {
-			$message = $aseco->formatText($aseco->getChatMessage('MOD'),
-				$aseco->stripStyles($aseco->server->maps->current->name),
-				$aseco->server->maps->current->mod_name,
-				$aseco->server->maps->current->mod_file
-			);
+			$info = '';
 			// Use only first parameter
 			$chat_parameter = explode(' ', $chat_parameter, 2);
 			if ((strtolower($chat_parameter[0]) === 'url' || strtolower($chat_parameter[0]) === 'loc') && $aseco->server->maps->current->mod_url) {
-				$message .= LF .'{#highlite}$l['. $aseco->server->maps->current->mod_url .']'. $aseco->server->maps->current->mod_url .'$l';
+				$info = LF .'{#highlite}$l['. $aseco->server->maps->current->mod_url .']'. $aseco->server->maps->current->mod_url .'$l';
 			}
+
+			$message = new Message('plugin.map','mod');
+			$message->addPlaceholders($aseco->stripStyles($aseco->server->maps->current->name),
+				$aseco->server->maps->current->mod_name,
+				$aseco->server->maps->current->mod_file,
+				$info
+			);
 		}
 		else {
-			$message = '{#server}» {#error}No map mod found!';
+			$message = new Message('plugin.map', 'no_mod');
 		}
 
 		// Show chat message
-		$aseco->sendChatMessage($message, $player->login);
+		$message->sendChatMessage($player->login);
 	}
 
 	/*
@@ -171,8 +179,8 @@ class PluginMap extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			$message = $aseco->formatText($aseco->getChatMessage('NOTONRELAY'));
-			$aseco->sendChatMessage($message, $login);
+			$message = new Message('plugin.map', 'notonrelay');
+			$message->sendChatMessage($login);
 			return;
 		}
 
@@ -192,11 +200,11 @@ class PluginMap extends Plugin {
 		}
 
 		// Show chat message
-		$message = $aseco->formatText($aseco->getChatMessage('NEXT_MAP'),
-			$env,
+		$message = new Message('plugin.map', 'next_map');
+		$message->addPlaceholders($env,
 			$aseco->stripStyles($next)
 		);
-		$aseco->sendChatMessage($message, $login);
+		$message->sendChatMessage($login);
 	}
 
 	/*
@@ -212,20 +220,23 @@ class PluginMap extends Plugin {
 			$name = '$l[https://'. $aseco->server->maps->current->mx->prefix .'.mania-exchange.com/tracks/view/'. $aseco->server->maps->current->mx->id .']'. $name . '$l';
 		}
 
+		$replaysTotal = '';
 		// show chat message
-		$message = $aseco->formatText($aseco->getChatMessage('PLAYTIME'),
-			$name,
-			$aseco->timeString(time() - $aseco->server->maps->current->starttime, true)
-		);
 		if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->replays_total > 0) {
-			$message .= $aseco->formatText($aseco->getChatMessage('PLAYTIME_REPLAY'),
-				$aseco->plugins['PluginRaspJukebox']->replays_total,
-				($aseco->plugins['PluginRaspJukebox']->replays_total === 1 ? '' : 's'),
+			$msg = new Message('plugin.map', 'playtime_replay');
+			$msg->addPlaceholders($aseco->plugins['PluginRaspJukebox']->replays_total,
 				$aseco->timeString(time() - $aseco->server->starttime, true)
 			);
+			$replaysTotal = ' '. $msg->finish($login);
 		}
 
-		$aseco->sendChatMessage($message, $login);
+		$message = new Message('plugin.map', 'playtime');
+		$message->addPlaceholders($name,
+			$aseco->timeString(time() - $aseco->server->maps->current->starttime, true),
+			$replaysTotal
+		);
+
+		$message->sendChatMessage($login);
 	}
 
 	/*
@@ -262,18 +273,18 @@ class PluginMap extends Plugin {
 			}
 
 			// compile message
-			$message = $aseco->formatText($aseco->getChatMessage('CURRENT_MAP'),
-				$name,
+			$message = new Message('plugin.map', 'current_map');
+			$message->addPlaceholders($name,
 				$map->author,
 				$aseco->formatTime($map->author_time)
 			);
 
 			// show chat message
 			if ($aseco->settings['show_curmap'] === 2) {
-				$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+				$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en', false), false));
 			}
 			else {
-				$aseco->sendChatMessage($message);
+				$message->sendChatMessage();
 			}
 		}
 	}
@@ -313,23 +324,26 @@ class PluginMap extends Plugin {
 		$totaltime = $aseco->timeString(time() - $aseco->server->starttime, true);
 
 		// Show chat message
-		$message = $aseco->formatText($aseco->getChatMessage('PLAYTIME_FINISH'),
-			$name,
-			$playtime
-		);
+		$replaysTotal = '';
 		if (isset($aseco->plugins['PluginRaspJukebox']) && $aseco->plugins['PluginRaspJukebox']->replays_total > 0) {
-			$message .= $aseco->formatText($aseco->getChatMessage('PLAYTIME_REPLAY'),
-				$aseco->plugins['PluginRaspJukebox']->replays_total,
+			$msg = new Message('plugin.map', 'playtime_replay');
+			$msg->addPlaceholders($aseco->plugins['PluginRaspJukebox']->replays_total,
 				($aseco->plugins['PluginRaspJukebox']->replays_total === 1 ? '' : 's'),
 				$totaltime
 			);
+			$replaysTotal = $msg;
 		}
+		$message = new Message('plugin.map', 'playtime_finish');
+		$message->addPlaceholders($name,
+			$playtime,
+			$replaysTotal
+		);
 
 		if ($aseco->settings['show_playtime'] === 2) {
-			$aseco->releaseEvent('onSendWindowMessage', array($message, false));
+			$aseco->releaseEvent('onSendWindowMessage', array($message->finish('en',false), false));
 		}
 		else {
-			$aseco->sendChatMessage($message);
+			$message->sendChatMessage();
 		}
 
 		if ( isset($aseco->plugins['PluginRaspJukebox']) ) {

@@ -15,24 +15,23 @@ Core Class of UASECO with many useful Methods.
 | Members								| Description
 |-----------------------------------------------------------------------|----------------------------
 | `$aseco->client`							| Class GbxRemote (includes/core/XmlRpc/GbxRemote.php)
-| `$aseco->parser`							| [Class XmlParser](/Development/Classes/XmlParser.php) object
-| `$aseco->checkpoints`							| [Class Checkpoint](/Development/Classes/Checkpoint.php) object
-| `$aseco->continent`							| [Class Continent](/Development/Classes/Continent.php) object
-| `$aseco->country`							| [Class Country](/Development/Classes/Country.php) object
-| `$aseco->db`								| [Class Database](/Development/Classes/Database.php) object
-| `$aseco->locales`							| [Class Message](/Development/Classes/Message.php) object
-| `$aseco->webrequest`							| [Class WebRequest](/Development/Classes/WebRequest.php) object
-| `$aseco->windows`							| Class WindowList object, which handles the actions for [Class Window](/Development/Classes/Window.php)
-| `$aseco->server`							| [Class Server](/Development/Classes/Server.php) object
-| `$aseco->server->maps`						| [Class MapList](/Development/Classes/MapList.php) object
-| `$aseco->server->players`						| [Class PlayerList](/Development/Classes/PlayerList.php) object
-| `$aseco->server->rankings`						| [Class RankingList](/Development/Classes/RankingList.php) object
+| `$aseco->parser`							| [Class XmlParser](/development/classes/xmlparser.php) object
+| `$aseco->checkpoints`							| [Class Checkpoint](/development/classes/checkpoint.php) object
+| `$aseco->continent`							| [Class Continent](/development/classes/continent.php) object
+| `$aseco->country`							| [Class Country](/development/classes/country.php) object
+| `$aseco->db`								| [Class Database](/development/classes/database.php) object
+| `$aseco->locales`							| [Class Message](/development/classes/message.php) object
+| `$aseco->webrequest`							| [Class WebRequest](/development/classes/webrequest.php) object
+| `$aseco->windows`							| [Class WindowList](/development/classes/windowlist.php) object, which handles the actions for [Class Window](/development/classes/window.php)
+| `$aseco->server`							| [Class Server](/development/classes/server.php) object
+| `$aseco->server->maps`						| [Class MapList](/development/classes/maplist.php) object
+| `$aseco->server->players`						| [Class PlayerList](/development/classes/playerlist.php) object
+| `$aseco->server->rankings`						| [Class RankingList](/development/classes/rankinglist.php) object
 | `$aseco->server->mutelist`						| &nbsp;
 | `$aseco->debug`							| Holds the boolean status for logging debugging informations
 | `$aseco->registered_events`						| Holds a list of registered events and the callbacks of the listening Plugins
 | `$aseco->registered_chatcmds`						| Holds a list of registered chat commands and the callbacks of the Plugins
 | `$aseco->chat_colors`							| Holds the list of `config/UASECO.xml` at `<colors>`
-| `$aseco->chat_messages`						| Holds the list of `config/UASECO.xml` at `<messages>`
 | `$aseco->logfile`							| array which holds the `$aseco->logfile['handle']` and `$aseco->logfile['file']` of the current logfile.
 | `$aseco->plugins`							| Holds a list of active Plugins
 | `$aseco->settings`							| Holds the whole settings of `config/UASECO.xml`, `config/access.xml`, `config/bannedips.xml`...

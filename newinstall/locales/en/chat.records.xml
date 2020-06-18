@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	undef.de
+	//-->
+<!-- common messages -->
+	<notonrelay>{#server}» {#error}Command unavailable on relay server</notonrelay>
+	<no_records_found>{#server}» {#error}No records found!</no_records_found>
+	<sum_entry> {#highlite}{1} {#record}rec{2} #{#rank}{3}{#record},</sum_entry>	
+	<summary>{#server}» {#highlite}{1} $z$s{#record}has {#highlite}{2}{#record} Local records, the top {3} being: </summary>
+
+<!-- plugin messages -->
+	<slash_recs>Displays all records on the current map.</slash_recs>
+	<slash_newrecs>Shows newly driven records</slash_newrecs>
+	<slash_liverecs>Shows records of online players</slash_liverecs>
+	<slash_best>Displays your best records</slash_best>
+	<slash_worst>Displays your worst records</slash_worst>
+	<slash_summary>Shows summary of all your records</slash_summary>
+	<slash_topsums>Displays top 100 of top-3 record holders</slash_topsums>
+	<slash_toprecs>Displays top 100 ranked records holders</slash_toprecs>
+</locales>

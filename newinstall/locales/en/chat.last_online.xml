@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Shows when a player was last online</plugin_description>
+	<info_message>Wondering when a player was last online? Use "/laston LOGIN" to find out!</info_message>
+	<answer>{#server}» Player {#highlite}{1}$z$s{#server} was last online on: {#highlite}{2}</answer>
+</locales>

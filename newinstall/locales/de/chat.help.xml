@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	askuri
+	//-->
+
+	<plugin_description>Zeigt eine Liste der verfügbaren Chatbefehle</plugin_description>
+	<slash_help_description>Zeigt eine Übersicht über alle Chatbefehle</slash_help_description>
+	<help_window_title>Aktuell unterstützte Chatbefehle</help_window_title>
+</locales>

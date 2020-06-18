@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Checks if there is a more recent version of UASECO at start-up &amp; MasterAdmin connect.</plugin_description>
+	<chat_uptodate>Checks if there is a more recent version of UASECO.</chat_uptodate>
+	<uptodate_ok>{#server}» {#message}This UASECO version {#highlite}{1}{#message} is up to date.</uptodate_ok>
+	<uptodate_new>{#server}» {#message}New UASECO version {#highlite}{1}{#message} available from {#highlite}{2}.</uptodate_new>
+	<uptodate_failed>{#server}» {#error}Can not check UASECO version, connection was failed!</uptodate_failed>
+	<admin_merged>{#server}» {#highlite}{1}{#server} new login(s) merged into blacklist!</admin_merged>
+	<admin_can_not_parse>{#server}» {#error}Error: Can not parse {#highlite}$I{1}{#error}!</admin_can_not_parse>
+	<admin_can_not_access>{#server}» {#error}Error: Can not access {#highlite}$I$L{1}$L{#error}!</admin_can_not_access>
+</locales>

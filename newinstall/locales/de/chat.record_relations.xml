@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-04
+	Authors:	askuri, aca
+	//-->
+	<plugin_description>Zeigt verschiedene Rekorde auf dieser Strecke und vergleicht diese.</plugin_description>
+	<firstrec>Zeigt den Rekord des ersten Platzes auf dieser Strecke an</firstrec>
+	<lastrec>Zeigt den Rekord des letzten Platzes auf dieser Strecke an</lastrec>
+	<nextrec>Zeigt den nächstbesseren Rekord an</nextrec>
+	<diffrec>Zeigt die Differenz zum ersten Rekord an</diffrec>
+	<recrange>Zeigt die Differenz zwischen erstem und letztem Rekord an</recrange>
+	<notonrelay>{#server}» {#error}Befehl nicht verfügbar auf Servern, auf die übertragen wird (relay)</notonrelay>
+	<first_record>{#server}» {#record}Der erste lokale Rekord ist: </first_record>
+	<ranking_record_new>{#rank}{1}{#message}.{#highlite}{2}{#message}[{#highlite}{3}{#message}],</ranking_record_new>
+	<last_record>{#server}» {#record}Der letzte lokale Rekord ist:  </last_record>
+	<diff_record>{#server}» {#record}Differenz zwischen {1}{#record} und {2}{#record} ist: {#highlite}{3}</diff_record>
+</locales>

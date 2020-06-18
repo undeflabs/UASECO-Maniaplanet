@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-10-03
+	Authors:	undef.de
+	//-->
+	<plugin_description>Handles individual and global player muting.</plugin_description>
+	<slash_chat_mute_description>Mute another player\'s chat messages</slash_chat_mute_description>
+	<slash_chat_unmute_description>UnMute another player\'s chat messages</slash_chat_unmute_description>
+	<slash_chat_mutelist_description>Display list of muted players</slash_chat_mutelist_description>
+	<slash_chat_refresh_description>Refresh chat window</slash_chat_refresh_description>
+	<round>{#server}» $n{#message}Round {#highlite}{1}{#message}: {2}</round>
+	<info_message>Use "/mute" and "/unmute" to mute / unmute other players, and "/mutelist" to list them!</info_message>
+	<error>{#server}» {#error}Cannot mute {#logina}$i {1} {#highlite}{2}$z$s{#error} !</error>
+	<mute>{#server}» Player {#highlite}{1}$z$s{#server} is muted!</mute>
+	<already_muted>{#server}» {#error}Player {#highlite}$i {1}$z$s{#error} is already in your mute list!</already_muted>
+	<unmute>{#server}» Player {#highlite}{1}$z$s{#server} is unmuted!</unmute>
+	<not_in_mutelist>{#server}» {#error}Player {#highlite}$i {1}$z$s{#error} is not in your mute list!</not_in_mutelist>
+	<none_muted>{#server}» {#error}No muted players found!</none_muted>
+	<list_head>Currently Muted Players:</list_head>
+</locales>

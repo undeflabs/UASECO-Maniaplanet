@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	aca
+	//-->
+<!-- common messages -->
+	<player>Spieler</player>
+	<yes>Ja</yes>
+	<no>Nein</no>
+
+
+<!-- plugin messages -->
+	<plugin_description>Wickelt das Spenden von Planets an den Server und Auszahlungen vom Server ab.</plugin_description>
+	<slash_donate_description>Spendet Planets an den Server</slash_donate_description>
+	<slash_topdons_description>Zeigt die Top 100 der höchsten Spender an</slash_topdons_description>
+	<message_donation>{#server}» {#donate}Spende {#highlite}{1}{#donate} Planets an {#highlite}{2}$z</message_donation>
+	<message_donation_label>{#donate}Spende {#highlite}{1}{#donate} Planets an {#highlite}{2}$z</message_donation_label>
+	<message_thanks_all>{#server}» {#highlite}{1}$z$s{#donate} erhielt eine Spende von {#highlite}{2}{#donate} Planets von {#highlite}{3}$z$s{#donate}. Dankeschön!</message_thanks_all>
+	<message_thanks_you>{#server}» {#donate}Du hast {#highlite}{1}{#donate} Planets gespendet. Dankeschön!</message_thanks_you>
+	<message_donate_minimum>{#server}» {#error}Minimale Spendensumme beträgt {#highlite}$i {1}{#error} Planets!</message_donate_minimum>
+	<message_donate_help>{#server}» {#error}Verwende den Befehl {#highlite}$i /donate &lt;number&gt;{#error} um Planets an den Server zu spenden</message_donate_help>
+	<message_payment>{#donate}Schicke {#highlite}{1}{#donate} Planets an {#highlite}{2}$z</message_payment>
+	<message_pay_insuff>{#server}» {#error}Nicht genügend Planets auf dem Server: {#highlite}$i {1}{#error}!</message_pay_insuff>
+	<message_pay_server>{#server}» {#error}Der Server kann nicht an sich selbst auszahlen!</message_pay_server>
+	<message_pay_confirm>{#server}» {#donate}Auszahlung von {#highlite}{1}{#donate} Planets an {#highlite}{2}{#donate} bestätigt! Verbleibende Planets: {#highlite}{3}</message_pay_confirm>
+	<message_pay_cancel>{#server}» {#donate}Auszahlung an {#highlite}{1}{#donate} abgebrochen!</message_pay_cancel>
+	<message_pay_help>{#server}» {#error}Verwende den Befehl {#highlite}$i /admin pay &lt;login&gt; $m&lt;number&gt;{#error} um Planets vom Server an einen Login zu schicken</message_pay_help>
+	<message_top_dons_window_title>Aktuelle TOP 100 Spender</message_top_dons_window_title>
+	<message_no_donators_found>{#server}» {#error}Kein(e) Spender gefunden!</message_no_donators_found>
+	<message_transaction_refused>{#server}» {#error}Transaktion abgebrochen!</message_transaction_refused>
+	<message_transaction_failed>{#server}» {#error}Transaktion fehlgeschlagen: {#highlite}$i {1}</message_transaction_failed>
+	<message_init_payment>Zahlung vom Server wird eingeleitet </message_init_payment>
+	<message_confirmation>Möchtest Du jetzt zahlen?</message_confirmation>
+</locales>

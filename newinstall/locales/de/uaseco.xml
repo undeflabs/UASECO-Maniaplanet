@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2109-09-24
+	Authors:	undef.de
+	//-->
+
+	<!-- init messages -->
+	<startup>{#server}» {#highlite}UASECO/{1}{#server} Abbild {#highlite}{2}{#server} läuft auf {#highlite}{3}{#server}:{#highlite}{4}{#server}</startup>
+	<welcome>{#server}» {#welcome}Willkommen {#highlite}{1}{#welcome} auf {#highlite}{2}$z$s{br}{#server}» {#welcome}Dieser Server nutzt {#highlite}$L[{3}]UASECO/{4}$0$L{#welcome} um deine Rekorde zu verwalten.</welcome>
+
+	<!-- win messages -->
+	<win_multi>{#server}» {#record}Glückwunsch! {#highlite}{1}{#record} gewann sein/ihr {#highlite}{2}{#record}. Rennen!</win_multi>
+	<win_new>{#server}» {#record}Glückwunsch! Du hast dein {#highlite}{1}{#record}. Rennen gewonnen!</win_new>
+
+	<!-- connection messages -->
+	<banip_error>{#welcome}Keine Verbindung möglich:{br}{br}Deine IP-Adresse wurde auf diesem Server auf die Verbotsliste gesetzt!</banip_error>
+	<banip_dialog>{#welcome}Deine IP-Adresse wurde auf diesem Server auf die Verbotsliste gesetzt.$z</banip_dialog>
+	<connect_error>{#welcome}$sDies ist ein Hinweis vom System.$z{br}{br}UASECO hat ein seltenes Verbindungsproblem festgestellt. Bitte versuche dich erneut zu diesem server zu verbinden.{br}Entschuldige bitte diese Unannehmlichkeit.{br}{br}$sDie Server Administratoren.</connect_error>
+	<connect_dialog>{#welcome}Verbindungsproblem, bitte erneut versuchen.$z</connect_dialog>
+	<client_error>{#welcome}Veraltete Spielversion!{br}Bitte auf die zuletzt veröffentlichte Version aktualisieren: $l[https://www.maniaplanet.com/download]Aktuelle Version$l.</client_error>
+	<client_dialog>{#welcome}Veraltete Spielversion, bitte $l[https://www.maniaplanet.com/download]aktualisieren$l.$z</client_dialog>
+</locales>

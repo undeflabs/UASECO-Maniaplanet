@@ -144,12 +144,12 @@ class PluginChatRecords extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($login);
 			return;
 		}
 
 		if (!$total = $aseco->plugins['PluginLocalRecords']->records->count()) {
-			(new Message('common', 'no_records_found'))->sendChatMessage($login);
+			(new Message('chat.records', 'no_records_found'))->sendChatMessage($login);
 			return;
 		}
 
@@ -215,7 +215,7 @@ class PluginChatRecords extends Plugin {
 
 		// Check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($login);
 			return;
 		}
 
@@ -233,7 +233,7 @@ class PluginChatRecords extends Plugin {
 
 		// Check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($login);
 			return;
 		}
 
@@ -251,7 +251,7 @@ class PluginChatRecords extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($login);
 			return;
 		}
 
@@ -274,7 +274,7 @@ class PluginChatRecords extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($login);
 			return;
 		}
 
@@ -301,7 +301,7 @@ class PluginChatRecords extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($target->login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($target->login);
 			return;
 		}
 
@@ -343,7 +343,7 @@ class PluginChatRecords extends Plugin {
 						else {
 							// collect next record sum
 							if ($currec > 0) {
-								$message = new Message('common', 'sum_entry');
+								$message = new Message('chat.records', 'sum_entry');
 								$message->addPlaceholders(
 									$cntrec,
 									($cntrec > 1 ? 's' : ''),
@@ -362,7 +362,7 @@ class PluginChatRecords extends Plugin {
 			}
 			// if less than 3 records, add the last one found
 			if ($show > 0 && $currec > 0) {
-				$message = new Message('common', 'sum_entry');
+				$message = new Message('chat.records', 'sum_entry');
 				$message->addPlaceholders(
 					$cntrec,
 					($cntrec > 1 ? 's' : ''),
@@ -393,18 +393,18 @@ class PluginChatRecords extends Plugin {
 				// show chat message
 				$message = substr($message, 0, strlen($message)-2);  // strip trailing ", "
 
-				$msg = new Message('common', 'summary');
+				$msg = new Message('chat.records', 'summary');
 				$msg->addPlaceholders($target->nickname, $total, $show);
 				$message = $msg->finish($target->login) . $message;
 
 				$aseco->sendChatMessage($message, $target->login);
 			}
 			else {
-				(new Message('common', 'no_records_found'))->sendChatMessage($target->login);
+				(new Message('chat.records', 'no_records_found'))->sendChatMessage($target->login);
 			}
 		}
 		else {
-			(new Message('common', 'no_records_found'))->sendChatMessage($target->login);
+			(new Message('chat.records', 'no_records_found'))->sendChatMessage($target->login);
 		}
 	}
 
@@ -422,7 +422,7 @@ class PluginChatRecords extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($player->login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($player->login);
 			return;
 		}
 
@@ -472,7 +472,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		if (empty($recs)) {
-			(new Message('common', 'no_records_found'))->sendChatMessage($player->login);
+			(new Message('chat.records', 'no_records_found'))->sendChatMessage($player->login);
 			return;
 		}
 
@@ -547,7 +547,7 @@ class PluginChatRecords extends Plugin {
 
 		// check for relay server
 		if ($aseco->server->isrelay) {
-			(new Message('common', 'notonrelay'))->sendChatMessage($player->login);
+			(new Message('chat.records', 'notonrelay'))->sendChatMessage($player->login);
 			return;
 		}
 
@@ -583,7 +583,7 @@ class PluginChatRecords extends Plugin {
 		}
 
 		if (empty($recs)) {
-			(new Message('common', 'no_records_found'))->sendChatMessage($player->login);
+			(new Message('chat.records', 'no_records_found'))->sendChatMessage($player->login);
 			return;
 		}
 
@@ -752,11 +752,11 @@ class PluginChatRecords extends Plugin {
 				$aseco->plugins['PluginManialinks']->display_manialink_multi($player);
 			}
 			else {
-				(new Message('common', 'no_records_found'))->sendChatMessage($player->login);
+				(new Message('chat.records', 'no_records_found'))->sendChatMessage($player->login);
 			}
 		}
 		else {
-			(new Message('common', 'no_records_found'))->sendChatMessage($player->login);
+			(new Message('chat.records', 'no_records_found'))->sendChatMessage($player->login);
 		}
 	}
 

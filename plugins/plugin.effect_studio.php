@@ -49,9 +49,9 @@ class PluginEffectStudio extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-09-15');
-		$this->setCopyright('2012 - 2019 by undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2020-01-15');
+		$this->setCopyright('2012 - 2020 by undef.de');
 		$this->setDescription('Plays/Displays several effects on configured events.');
 
 		$this->addDependence('PluginModescriptHandler',	Dependence::REQUIRED,	'1.0.0', null);
@@ -60,8 +60,37 @@ class PluginEffectStudio extends Plugin {
 		$this->registerEvent('onLoadingMap',		'onLoadingMap');
 		$this->registerEvent('onPlayerConnect',		'onPlayerConnect');
 
-//		$this->registerChatCommand('xxx',		'chat_xxx',	'xxx',			Player::PLAYERS);
+//		$this->registerChatCommand('effects',		'chat_effects',	'Reload the config of EffectStudio',			Player::MASTERADMINS);
 	}
+
+//	/*
+//	#///////////////////////////////////////////////////////////////////////#
+//	#									#
+//	#///////////////////////////////////////////////////////////////////////#
+//	*/
+//
+//	public function chat_effects ($aseco, $login, $chat_command, $chat_parameter) {
+//
+//		// Init
+//		$message = false;
+//
+//		// Check optional parameter
+//		if (strtoupper($chat_parameter) === 'RELOAD') {
+//			if ($aseco->server->gamestate === Server::RACE) {
+//				$aseco->console('[EffectStudio] MasterAdmin '. $login .' reloads the configuration.');
+//
+//				// Reload the config
+//				$this->onSync($aseco);
+//
+//				$message = '{#admin}» Reload of the configuration "config/effect_studio.xml" done.';
+//			}
+//		}
+//
+//		// Show message
+//		if ($message !== false) {
+//			$aseco->sendChatMessage($message, $login);
+//		}
+//	}
 
 	/*
 	#///////////////////////////////////////////////////////////////////////#

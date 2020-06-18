@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-23
+	Authors:	undef.de
+	//-->
+
+	<plugin_description>Displays help for public chat commands</plugin_description>
+	<slash_help_description>Displays help for available commands.</slash_help_description>
+	<help_window_title>Currently supported chat commands</help_window_title>
+</locales>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Заканчивает раунд игры после рассчитанного количества времени.</plugin_description>
+	<message_round_info>{#server}» Раунд будет автоматически завершен через {#highlite}{1}{#server}, так как авторское время - {#highlite}{2}{#server}.</message_round_info>
+	<message_round_end>{#server}» Раунд завершился спустя {#highlite}{1}{#server}</message_round_end>
+	<message_warmup_round_end>{#server}» Раунд-разогрев завершился спустя {#highlite}{1}{#server}</message_warmup_round_end>
+</locales>

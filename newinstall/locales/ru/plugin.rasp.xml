@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<rank>{#server}» {#record}Ваш ранг на сервере: {#rank}{1}{#record} из {#highlite}{2}{#record} Среднее: {#highlite}{3}</rank>
+	<rank_none>{#server}» {#record}У тебя должно быть минимум {#highlite}{1}{#record} локальных рекорда, прежде чем ты получишь ранг!</rank_none>
+	<nextrank>{#server}» {#record}Ближайший по рангу - {#highlite}{1}{#record}: {#highlite}{2}</nextrank>
+	<nextrank_rp>$n{#record}[{#highlite}-{1}{#record} RP]</nextrank_rp>
+	<toprank>{#server}» {#record}Над вами никого нет :-)</toprank>
+	<pb>{#server}» {#record}Твое лучшее время: {#highlite}{1}{#record}({#rank}{2}{#record}) Среднее: {#highlite}{3}</pb>
+	<pb_none>{#server}» {#error}Ты пока не поставил локальный рекорд на этой карте...</pb_none>
+	<jukebox>{#server}» {#highlite}{2}{#emotic} добавил в очередь карту {#highlite}{1}</jukebox>
+	<jukebox_already>{#server}» {#emotic}Ты уже поставил карту в очередь! Подожди ее появления, прежде чем заказывать новую.</jukebox_already>
+	<jukebox_dupl>{#server}» {#emotic}Эта карта уже стоит в очереди, выбери другую.</jukebox_dupl>
+	<jukebox_repeat>{#server}» {#emotic}Эту карту недавно играли. Подожди немного, прежде чем добавлять ее.</jukebox_repeat>
+	<jukebox_next>{#server}» {#emotic}Следующая карта: {#highlite}{1}{#emotic} - заказал {#highlite}{2}</jukebox_next>
+	<jukebox_nextenv>{#server}» {#emotic}Следующая карта: {#timelite}[{1}] (в {#highlite}{2}{#emotic}) - заказал {#highlite}{3}</jukebox_nextenv>
+	<jukebox_skipleft>{#server}» {#emotic}Карта {#highlite}{1}{#emotic} пропущена - {#highlite}{2}{#emotic} вышел...</jukebox_skipleft>
+	<jukebox_ignored>{#server}» {#emotic}Карта {#highlite}{1}{#emotic} пропущена: {#error}{2}</jukebox_ignored>
+	<jukebox_drop>{#server}» {#emotic}Игрок {#highlite}{1}{#emotic} убрал карту {#highlite}{2}{#emotic} из очереди!</jukebox_drop>
+	<jukebox_nodrop>{#server}» {#emotic}У тебя нету карты в очереди, используй {#highlite}/elist{#emotic} или список карт, чтобы заказать одну из них.</jukebox_nodrop>
+	<jukebox_add>{#server}» {#highlite}{1}{#emotic} запрашивает карту {#highlite}{2}{#emotic} от {3}.{br}{#emotic}Это потребует {#highlite}{4}{#emotic} голосов. Набери {#highlite}/y{#emotic}, чтобы проголосовать за.</jukebox_add>
+	<jukebox_y>{#server}» Еще {#highlite}{1}{#emotic} голоса требуется для заказа {#highlite}{3}{#emotic}. Набери {#highlite}/y{#emotic}, чтобы проголосовать за.</jukebox_y>
+	<jukebox_pass>{#server}» {#emotic}Голосование прошло! {#highlite}{1}{#emotic} добавлена в очередь.</jukebox_pass>
+	<jukebox_end>{#server}» {#emotic}Голосование за карту {#highlite}{1}{#emotic} {2} от {#highlite}{3}{#emotic}!</jukebox_end>
+	<jukebox_cancel>{#server}» {#emotic}Текущее голосование за команду /add отменено!</jukebox_cancel>
+	<jukebox_notfound>{#server}» {#emotic}Идентификатор карты не найден - набери {#highlite}/list{#emotic}, чтобы посмотреть список карт.</jukebox_notfound>
+	<jukebox_empty>{#server}» {#emotic}Карт в очереди нет! Используй {#highlite}/elist{#emotic} или список карт, чтобы добавить одну из них.</jukebox_empty>
+	<jukebox_help>{#server}» {#emotic}Ты должен указать идентификатор карты, напр. {#highlite}/jukebox 12{#emotic} - набери {#highlite}/jukebox help{#emotic} для справки.</jukebox_help>
+	<jukebox_list>{#server}» {#emotic}Очередь карт: </jukebox_list>
+	<list_help>{#server}» {#emotic}Сначала набери {#highlite}/list{#emotic} - набери {#highlite}/list help{#emotic} для справки.</list_help>
+	<no_jukebox>{#server}» {#highlite}/jukebox{#emotic} отключена на этом сервере.</no_jukebox>
+	<history>{#server}» {#emotic}Недавно играли: </history>
+	<add_present>{#server}» {#highlite}Карта уже есть на сервере.</add_present>
+	<add_dupl>{#server}» {#emotic}Карта уже добавлена в очередь. (/add)</add_dupl>
+	<no_add>{#server}» {#highlite}/add{#emotic} отключена на этом сервере.</no_add>
+	<map_too_large>{#server}» {#error}Карта очень большая ({#highlite}{1}$i{#error} > {2} KB) - не загружена!</map_too_large>
+	<vote_explain>{#server}» {#vote}Встроенное голосование отключено - набери {#highlite}/helpvote{#vote}, чтобы узнать, как проголосовать в чате.</vote_explain>
+	<vote_already>{#server}» {#error}Идет голосование. Дождись его окончания.</vote_already>
+	<vote_limit>{#server}» {#error}Было {#highlite}$i {1}{#error} {2} голосований за эту карту - может, хватит?!</vote_limit>
+	<vote_start>{#server}» {#highlite}{1}{#vote} запрашивает {#highlite}{2}{#vote}.{br}{#vote}Требуется {#highlite}{3}{#vote} голосов. Набери {#highlite}/y{#vote}, чтобы проголосовать за.</vote_start>
+	<vote_y>{#server}» Еще {#highlite}{1}{#vote} голосов за {2} needed to {#highlite}{3}{#vote}. Набери {#highlite}/y{#vote}, чтобы проголосовать за.</vote_y>
+	<vote_pass>{#server}» {#vote}Голосование окончено! Сервер {#highlite}{1}{#vote}.</vote_pass>
+	<vote_end>{#server}» {#vote}Идет голосование на {#highlite}{1}{#vote} {2} от {#highlite}{3}{#vote}!</vote_end>
+	<vote_cancel>{#server}» {#vote}Голосование окончилось неудачей!</vote_cancel>
+	<no_more_replay>{#server}» {#vote}Не более {#highlite}{1}{#vote} повторов на карту!</no_more_replay>
+	<no_admin_kick>{#server}» {#vote}Игрок {#highlite}{1}{#vote} попытался кикнуть {#logina}администратора {#highlite}{2}{#vote} - бесполезно!</no_admin_kick>
+	<no_admin_ignore>{#server}» {#vote}Игрок {#highlite}{1}{#vote} попытался заигнорить {#logina}администратора {#highlite}{2}{#vote} - бесполезно!</no_admin_ignore>
+	<ask_admin>{#server}» {#error}Голосования через чат отключены - попроси доступных администраторов сделать</ask_admin>
+	<no_spectators>{#server}» {#error}Зрители не могут запускать голосования!</no_spectators>
+	<no_sb_vote>{#server}» {#error}Голосования через чат отключены во время подведения итогов!</no_sb_vote>
+	<no_vote>{#server}» {#error}Голосование через чат отключено - используй обычное (встроенное в игру) голосование.</no_vote>
+	<bootme_dialog>{#message}Спасибо за игру, возвращайся ещё!</bootme_dialog>
+	<ragequit>{#server}» {#highlite}{1}$z$s{#message} сказал: "@"#!" и свалил!</ragequit>
+	<ragequit_dialog>{#message}Спасибо за игру, возвращайся ещё! И не кипятись :-)</ragequit_dialog>
+</locales>

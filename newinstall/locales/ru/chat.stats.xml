@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<locales>
+	<!--
+	Version:	2019-09-24
+	Authors:	Romnickol
+	//-->
+
+	<plugin_description>Показывает статистику игрока и настройки.</plugin_description>
+	<slash_stats>Показывает статистику игрока</slash_stats>
+	<slash_settings>Показывает настройки</slash_settings>
+	<info_message>Чтобы узнать статистику игрока, набери "/stats".</info_message>
+</locales>

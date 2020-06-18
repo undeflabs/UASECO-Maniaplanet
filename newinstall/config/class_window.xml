@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<settings>
+	<media>
+		<button_minimize>http://maniacdn.net/undef.de/uaseco/windows/button-minimize-214x214.png</button_minimize>
+		<button_close>http://maniacdn.net/undef.de/uaseco/windows/button-close-214x214.png</button_close>
+
+		<arrow_down>http://maniacdn.net/undef.de/uaseco/windows/arrow-down-214x214.png</arrow_down>
+		<arrow_up>http://maniacdn.net/undef.de/uaseco/windows/arrow-up-214x214.png</arrow_up>
+
+		<arrow_prev>http://maniacdn.net/undef.de/uaseco/windows/arrow-prev-214x214.png</arrow_prev>
+		<arrow_prev_two>http://maniacdn.net/undef.de/uaseco/windows/arrow-prev-two-214x214.png</arrow_prev_two>
+		<arrow_prev_first>http://maniacdn.net/undef.de/uaseco/windows/arrow-prev-last-214x214.png</arrow_prev_first>
+
+		<arrow_next>http://maniacdn.net/undef.de/uaseco/windows/arrow-next-214x214.png</arrow_next>
+		<arrow_next_two>http://maniacdn.net/undef.de/uaseco/windows/arrow-next-two-214x214.png</arrow_next_two>
+		<arrow_next_last>http://maniacdn.net/undef.de/uaseco/windows/arrow-next-last-214x214.png</arrow_next_last>
+	</media>
+</settings>
