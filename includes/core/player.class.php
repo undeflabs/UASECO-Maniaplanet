@@ -130,8 +130,8 @@ class Player extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2020-01-15');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2020-05-08');
 		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription('Structure of a Player, contains information from "GetPlayerInfo" and "GetDetailedPlayerInfo" ListMethods response.');
 
@@ -436,7 +436,7 @@ class Player extends BaseClass {
 		$this->has_joined_game			= (bool)(intval($info['Flags'] / 100000000) % 10);
 
 		$this->is_spectator			= (bool)($info['SpectatorStatus'] % 10);
-		$this->forced_spectator			= $info['Flags'] % 10;					// 0, 1 or 2
+		$this->forced_spectator			= $info['Flags'] % 10;					// 0: user selectable, 1: spectator, 2: player, 3: spectator but keep selectable
 		$this->temporary_spectator		= (bool)(intval($info['SpectatorStatus'] / 10) % 10);
 		$this->pure_spectator			= (bool)(intval($info['SpectatorStatus'] / 100) % 10);
 

@@ -8,6 +8,7 @@
 * Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement [undef]
 * ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login` [undef]
 * ManiaScript: Changed all deprecated `InputPlayer.Login` (which is marked deprecated) to MP4 `InputPlayer.User.Login` [undef]
+* ManiaScript: Changed all deprecated `CurrentLocalDateText` (which is marked deprecated) to MP4 `System.CurrentLocalDateText` [undef]
 * Added a check for a path separator for `<default_maplist>` in `config/UASECO.xml` [undef]
 * Removed dependence from the setup of `<autosave_matchsettings>` from `config/rasp.xml` for the chat command `/admin shuffle` or `/admin shufflemaps` [undef]
 * Added the current `Ladder`-setup into the ABOUT section of the UASECO lofgile [undef]
@@ -118,6 +119,8 @@
 * Fixed [PHP Notice] Trying to access array offset on value of type null on line [413,414,417,426,427,428,429,430,431,432,433,435,436,437,438,440,441] in file `includes/core/player.class.php` [undef]
 * Fixed [PHP Notice] Trying to access array offset on value of type bool on line [4992,5000,5008] in file `plugins/plugin.records_eyepiece.php` (thanks mooseman2099) [undef]
 * Fixed [PHP Warning] fopen(https://api.mania-exchange.com/tm/tracks/list/latest): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error on line 223 in file `includes/maniaexchange/mxinfosearcher.inc.php` [undef]
+* Fixed [PHP Notice] Trying to access array offset on value of type null on line 184 in file `/includes/core/maphistory.class.php` [undef]
+* Fixed HTTPS URLs can not be used for `plugin.music_server.php` (thanks MadMatt01) [undef]
 
 
 

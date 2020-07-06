@@ -50,8 +50,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
-		$this->setVersion('1.1.6');
-		$this->setBuild('2020-01-24');
+		$this->setVersion('1.1.8');
+		$this->setBuild('2020-01-27');
 		$this->setCopyright('2009 - 2020 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -2209,9 +2209,10 @@ class PluginRecordsEyepiece extends Plugin {
 			$aseco->releaseChatCommand('/jukebox 1', $player->login);
 //			$aseco->server->maps->playlist->addMapToPlaylist($params['uid'], $player->login, 'select');
 
-			// Refresh on juke'd map
+			// Show the maplist window on the last visible page
 			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMaplistWindow';
 			$require_action = true;
+
 
 		}
 		else if ($params['Action'] === 'removeMapFromPlaylist') {
@@ -2244,10 +2245,10 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		else if ($params['Action'] === 'askDropMapFromPlaylist') {
 
-			$widgets .= $this->buildAskDropMapFromPlaylist();
+			$this->buildAskDropMapFromPlaylist($player);
 
 		}
-		else if ($params['Action'] === 'dropMapFromPlaylist') {
+		else if ($params['Action'] === 'dropMapFromPlaylist' && $params['Answer'] === 'YES') {
 
 			// Drop all Maps from the Jukebox
 			$aseco->releaseChatCommand('/admin clearjukebox', $player->login);
@@ -2262,20 +2263,16 @@ class PluginRecordsEyepiece extends Plugin {
 		}
 		else if ($params['Action'] === 'askDropSongFromPlaylist') {
 
-			$widgets .= $this->buildAskDropSongFromPlaylist();
+			$this->buildAskDropSongFromPlaylist($player);
 
 		}
-		else if ($params['Action'] === 'dropSongFromPlaylist') {
+		else if ($params['Action'] === 'dropSongFromPlaylist' && $params['Answer'] === 'YES') {
 
 			// Drop song
 			$aseco->releaseChatCommand('/music drop', $player->login);
 
-			// Close SubWindow
-			$widgets .= $this->closeAllSubWindows();
-
 			// Rebuild the MusiclistWindow
-			$player->data['PluginRecordsEyepiece']['Window']['Action'] = 'showMusiclistWindow';
-			$require_action = true;
+			$this->buildMusiclistWindow($player);
 
 		}
 		else if ($params['Action'] === 'showMaplistWindow') {
@@ -2671,9 +2668,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMusiclistWindow') {
 
-				$result = $this->buildMusiclistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player->login);
-				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
-				$widgets .= $result['xml'];
+				$this->buildMusiclistWindow($player);
 
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMaplistWindow') {
@@ -2683,9 +2678,7 @@ class PluginRecordsEyepiece extends Plugin {
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showMapAuthorlistWindow') {
 
-				$result = $this->buildMapAuthorlistWindow($player->data['PluginRecordsEyepiece']['Window']['Page'], $player);
-				$player->data['PluginRecordsEyepiece']['Window']['MaxPage'] = $result['maxpage'];
-				$widgets .= $result['xml'];
+				$this->buildMapAuthorlistWindow($player);
 
 			}
 			else if ($player->data['PluginRecordsEyepiece']['Window']['Action'] === 'showHelpWindow') {
@@ -9457,33 +9450,39 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildAskDropMapFromPlaylist () {
-		global $aseco;
+	public function buildAskDropMapFromPlaylist ($player) {
 
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons64x64_1',
-				'TrackInfo',
-				'Notice',
-				''
-			),
-			$this->templates['SUBWINDOW']['HEADER']
+		// Setup the styles
+		$settings_style = array(
+			'icon'			=> 'Icons64x64_1,TrackInfo',
+			'textcolor'		=> '09FF',
 		);
 
-		// Ask
-		$xml .= '<label pos="8.75 -11.25" z-index="0.04" size="85 0" textsize="2" scale="0.8" autonewline="1" maxline="7" text="Do you really want to drop the complete Jukebox?"/>';
-		$xml .= '<label pos="59.375 -42" z-index="0.02" size="30 3.75" halign="center" textsize="1" scale="0.8" action="PluginRecordsEyepiece?Action=dropMapFromPlaylist" text="YES" style="CardButtonMediumS"/>';
-		$xml .= '<label pos="82.5 -42" z-index="0.02" size="30 3.75" halign="center" textsize="1" scale="0.8" id="RecordsEyepieceSubWindowClose" ScriptEvents="1" text="NO" style="CardButtonMediumS"/>';
+		// Build the buttons
+		$buttons = array(
+			array(
+				'title'		=> 'YES',
+				'action'	=> 'PluginRecordsEyepiece?Action=dropMapFromPlaylist&Answer=YES',
+			),
+			array(
+				'title'		=> 'NO',
+				'action'	=> 'PluginRecordsEyepiece?Action=dropMapFromPlaylist&Answer=NO',
+			),
+		);
 
-		$xml .= $this->templates['SUBWINDOW']['FOOTER'];
+		// Setup content
+		$settings_content = array(
+			'title'			=> 'Notice',
+			'message'		=> 'Do you really want to drop the complete Jukebox?',
+			'buttons'		=> $buttons,
+		);
 
-		return $xml;
+		// Create the Dialog
+		$dialog = new Dialog();
+		$dialog->setStyles($settings_style);
+		$dialog->setContent($settings_content);
+		$dialog->send($player);
+
 	}
 
 	/*
@@ -10094,6 +10093,7 @@ EOL;
 			'title'			=> 'Maps on this server  |  '. (count($maplist) === 1 ? count($maplist) . ' Map' : count($maplist) . ' Maps') . ($listoptions !== false ? ' ' . $listoptions : ''),
 			'data'			=> $pages,
 			'mode'			=> 'pages',
+			'page'			=> (isset($player->data['ClassWindow']['ClassWindow']->content['page']) ? $player->data['ClassWindow']['ClassWindow']->content['page'] : 0),		// Show the last viewed page again (instead of the first one)
 			'add_background'	=> false,
 		);
 		$settings_footer = array(
@@ -10662,173 +10662,59 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildMapAuthorlistWindow ($page, $player) {
+	public function buildMapAuthorlistWindow ($player) {
 		global $aseco;
+
+
+		$data = array();
+		foreach ($this->cache['MapAuthors'] as $authorlogin) {
+			$data[] = array(
+				array(
+					'action'	=> 'PluginRecordsEyepiece?Action=showMaplistWindowFilterAuthor&Author='. $aseco->handleSpecialChars($authorlogin),	// Execute on click
+					'title'		=> ' '. $authorlogin,													// Display name
+				),
+			);
+		}
+
 
 		// Get the total of authors
 		$totalauthors = count($this->cache['MapAuthors']);
 
-		// Determind the maxpages
-		$maxpages = ceil($totalauthors / 80);
-		if ($page > $maxpages) {
-			$page = $maxpages - 1;
+		$options = array();
+		if ($aseco->allowAbility($player, 'clearjukebox')) {
+			$options[] = array('Clear Jukebox',		'PluginRecordsEyepiece?Action=askDropMapFromPlaylist');
 		}
+		$options[] = array('Show maplist filter window',	'PluginRecordsEyepiece?Action=showMaplistFilterWindow');
+		$options[] = array('Show maplist sorting window',	'PluginRecordsEyepiece?Action=showMaplistSortingWindow');
+		$options[] = array('Show maplist window',		'PluginRecordsEyepiece?Action=showMaplistWindow');
 
-		$buttons = '';
-
-		// Filter Buttons
-		$buttons .= '<frame pos="136.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistFilterWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="142.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistSortingWindow" style="Icons64x64_1" substyle="Maximize"/>';
-		$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-		$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="UIConstructionSimple_Buttons" substyle="Validate"/>';
-		$buttons .= '</frame>';
-
-		$buttons .= '<frame pos="148.0625 -101.8125" z-index="0.04">';
-//		$buttons .= '<quad pos="0.1375 -0.28125" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=showMaplistFilterWindow" style="Icons64x64_1" substyle="ToolUp"/>';
-		$buttons .= '</frame>';
-
-
-		// Frame for Previous-/Next-Buttons
-		$buttons .= '<frame pos="160.1875 -101.8125" z-index="0.04">';
-
-		// Previous button
-		if ($page > 0) {
-			// First
-			$buttons .= '<frame pos="0 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageFirst" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="1.1 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '<quad pos="1.5 -1.05625" z-index="0.15" size="1 3.1875" bgcolor="CCCF"/>';
-			$buttons .= '</frame>';
-
-			// Previous (-5)
-			$buttons .= '<frame pos="6.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPagePrevTwo" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="-0.35 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '<quad pos="1.1 -0.28125" z-index="0.15" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '</frame>';
-
-			// Previous (-1)
-			$buttons .= '<frame pos="12.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPagePrev" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-			$buttons .= '</frame>';
-		}
-		else {
-			// First
-			$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Previous (-5)
-			$buttons .= '<quad pos="6.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Previous (-1)
-			$buttons .= '<quad pos="12.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		}
-
-		// Next button (display only if more pages to display)
-		if ( ($totalauthors > 20) && (($page + 1) < $maxpages)) {
-			// Next (+1)
-			$buttons .= '<frame pos="18.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageNext" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '</frame>';
-
-			// Next (+5)
-			$buttons .= '<frame pos="24.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageNextTwo" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="-0.35 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '<quad pos="1.1 -0.28125" z-index="0.15" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '</frame>';
-
-			// Last
-			$buttons .= '<frame pos="30.0625 0" z-index="0.05">';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageLast" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="-0.25 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-			$buttons .= '<quad pos="3.275 -1.05625" z-index="0.15" size="1 3.1875" bgcolor="CCCF"/>';
-			$buttons .= '</frame>';
-		}
-		else {
-			// Next (+1)
-			$buttons .= '<quad pos="18.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Next (+5)
-			$buttons .= '<quad pos="24.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-			// Last
-			$buttons .= '<quad pos="30.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-		}
-		$buttons .= '</frame>';
-
-
-		// Create Windowtitle depending on the $this->cache['MapAuthors']
-		if (count($this->cache['MapAuthors']) === 0) {
-			$title = 'Select Mapauthor for filtering the Maplist';
-		}
-		else {
-			$title = 'Select Mapauthor for filtering the Maplist   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalauthors, 0) . (($totalauthors === 1) ? ' Author' : ' Authors');
-		}
-
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons128x128_1',
-				'NewTrack',
-				$title,
-				$buttons
-			),
-			$this->templates['WINDOW']['HEADER']
+		// Setup settings for Window
+		$settings_styles = array(
+			'icon'			=> 'Icons128x128_1,Browse',
+			'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
+		);
+		$settings_columns = array(
+			'columns'		=> 4,
+			'widths'		=> array(100),
+		);
+		$settings_content = array(
+			'title'			=> 'Select Mapauthor for filtering the Maplist | '. $this->formatNumber($totalauthors, 0) . (($totalauthors === 1) ? ' Author' : ' Authors'),
+			'data'			=> $data,
+			'mode'			=> 'columns',
+		);
+		$settings_footer = array(
+			'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+			'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
+			'option_button'		=> $options,
 		);
 
+		$window = new Window();
+		$window->setStyles($settings_styles);
+		$window->setColumns($settings_columns);
+		$window->setContent($settings_content);
+		$window->setFooter($settings_footer);
+		$window->send($player, 0, false);
 
-		$line_height = 4.38749;
-		$line = 0;
-		$author_count = 1;
-		$offset = 0;
-		$xml .= '<frame pos="7.75 -9.375" z-index="1">';
-		for ($i = ($page * 80); $i < (($page * 80) + 80); $i ++) {
-
-			// Is there a Author?
-			if ( !isset($this->cache['MapAuthors'][$i])) {
-				break;
-			}
-
-			$xml .= '<quad pos="'. (0 + $offset) .' -'. ($line_height * $line + 1.6875) .'" z-index="0.10" size="44.375 4.125" action="PluginRecordsEyepiece?Action=showMaplistWindowFilterAuthor&Author='. $aseco->handleSpecialChars($this->cache['MapAuthors'][$i]) .'" bgcolor="FFFFFFAA" bgcolorfocus="9FCB1ACC"/>';
-			$xml .= '<label pos="'. (2.5 + $offset) .' -'. ($line_height * $line + 2.8125) .'" z-index="0.11" size="41.875 0" class="labels" scale="0.9" textcolor="05CF" text="'. $this->cache['MapAuthors'][$i] .'"/>';
-
-			$line ++;
-
-			// Reset lines
-			if ($line >= 20) {
-				$offset += 47.625;
-				$line = 0;
-			}
-
-			$author_count++;
-		}
-		$xml .= '</frame>';
-
-		$xml .= $this->templates['WINDOW']['FOOTER'];
-		return array(
-			'xml'		=> $xml,
-			'maxpage'	=> ($maxpages - 1),
-		);
 	}
 
 	/*
@@ -11166,33 +11052,39 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildAskDropSongFromPlaylist () {
-		global $aseco;
+	public function buildAskDropSongFromPlaylist ($player) {
 
-		$xml = str_replace(
-			array(
-				'%icon_style%',
-				'%icon_substyle%',
-				'%window_title%',
-				'%prev_next_buttons%'
-			),
-			array(
-				'Icons64x64_1',
-				'TrackInfo',
-				'Notice',
-				''
-			),
-			$this->templates['SUBWINDOW']['HEADER']
+		// Setup the styles
+		$settings_style = array(
+			'icon'			=> 'Icons64x64_1,TrackInfo',
+			'textcolor'		=> '09FF',
 		);
 
-		// Ask
-		$xml .= '<label pos="8.75 -11.25" z-index="0.04" size="85 0" textsize="2" scale="0.8" autonewline="1" maxline="7" text="Do you really want to drop the complete Jukebox?"/>';
-		$xml .= '<label pos="59.375 -42" z-index="0.02" size="30 3.75" halign="center" textsize="1" scale="0.8" action="PluginRecordsEyepiece?Action=dropSongFromPlaylist" text="YES" style="CardButtonMediumS"/>';
-		$xml .= '<label pos="82.5 -42" z-index="0.02" size="30 3.75" halign="center" textsize="1" scale="0.8" id="RecordsEyepieceSubWindowClose" ScriptEvents="1" text="NO" style="CardButtonMediumS"/>';
+		// Build the buttons
+		$buttons = array(
+			array(
+				'title'		=> 'YES',
+				'action'	=> 'PluginRecordsEyepiece?Action=dropSongFromPlaylist&Answer=YES',
+			),
+			array(
+				'title'		=> 'NO',
+				'action'	=> 'PluginRecordsEyepiece?Action=dropSongFromPlaylist&Answer=NO',
+			),
+		);
 
-		$xml .= $this->templates['SUBWINDOW']['FOOTER'];
+		// Setup content
+		$settings_content = array(
+			'title'			=> 'Notice',
+			'message'		=> 'Do you really want to drop the complete Jukebox?',
+			'buttons'		=> $buttons,
+		);
 
-		return $xml;
+		// Create the Dialog
+		$dialog = new Dialog();
+		$dialog->setStyles($settings_style);
+		$dialog->setContent($settings_content);
+		$dialog->send($player);
+
 	}
 
 	/*
@@ -11201,136 +11093,33 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildMusiclistWindow ($page, $caller) {
+	public function buildMusiclistWindow ($player) {
 		global $aseco;
 
-		// Get the total of songs
+		// Get the total of songs (max. 1900 because of the limit in plugin.music_server.php)
 		$totalsongs = ((count($this->cache['MusicServerPlaylist']) < 1900) ? count($this->cache['MusicServerPlaylist']) : 1900);
 
 		if ($totalsongs > 0) {
 
-			// Determind the maxpages
-			$maxpages = ceil($totalsongs / 20);
-			if ($page > $maxpages) {
-				$page = $maxpages - 1;
-			}
-
-			// Button "Drop current juke'd Song"
-			$buttons = '<frame pos="127.0625 -101.8125" z-index="0.04">';
-			$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-			$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=askDropSongFromPlaylist" style="Icons64x64_1" substyle="Maximize"/>';
-			$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-			$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons128x32_1" substyle="Settings"/>';
-			$buttons .= '<label pos="1.8 -1.3" z-index="0.15" size="20 0" textsize="2" style="TextCardRaceRank" text="$S$W$O$F00/"/>';
-			$buttons .= '</frame>';
-
-			// Frame for Previous-/Next-Buttons
-			$buttons .= '<frame pos="160.1875 -101.8125" z-index="0.04">';
-
-			// Previous button
-			if ($page > 0) {
-				// First
-				$buttons .= '<frame pos="0 0" z-index="0.05">';
-				$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageFirst" style="Icons64x64_1" substyle="Maximize"/>';
-				$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-				$buttons .= '<quad pos="1.1 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-				$buttons .= '<quad pos="1.5 -1.05625" z-index="0.15" size="1 3.1875" bgcolor="CCCF"/>';
-				$buttons .= '</frame>';
-
-				// Previous (-5)
-				$buttons .= '<frame pos="6.0625 0" z-index="0.05">';
-				$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPagePrevTwo" style="Icons64x64_1" substyle="Maximize"/>';
-				$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-				$buttons .= '<quad pos="-0.35 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-				$buttons .= '<quad pos="1.1 -0.28125" z-index="0.15" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-				$buttons .= '</frame>';
-
-				// Previous (-1)
-				$buttons .= '<frame pos="12.0625 0" z-index="0.05">';
-				$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPagePrev" style="Icons64x64_1" substyle="Maximize"/>';
-				$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-				$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowLeft2"/>';
-				$buttons .= '</frame>';
-			}
-			else {
-				// First
-				$buttons .= '<quad pos="0.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-				// Previous (-5)
-				$buttons .= '<quad pos="6.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-				// Previous (-1)
-				$buttons .= '<quad pos="12.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-			}
-
-			// Next button (display only if more pages to display)
-			if ( ($page < 95) && ($totalsongs > 20) && (($page + 1) < $maxpages)) {
-				// Next (+1)
-				$buttons .= '<frame pos="18.0625 0" z-index="0.05">';
-				$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageNext" style="Icons64x64_1" substyle="Maximize"/>';
-				$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-				$buttons .= '<quad pos="0.4 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-				$buttons .= '</frame>';
-
-				// Next (+5)
-				$buttons .= '<frame pos="24.0625 0" z-index="0.05">';
-				$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageNextTwo" style="Icons64x64_1" substyle="Maximize"/>';
-				$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-				$buttons .= '<quad pos="-0.35 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-				$buttons .= '<quad pos="1.1 -0.28125" z-index="0.15" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-				$buttons .= '</frame>';
-
-				// Last
-				$buttons .= '<frame pos="30.0625 0" z-index="0.05">';
-				$buttons .= '<quad pos="0 0" z-index="0.12" size="5.625 5.625" action="PluginRecordsEyepiece?Action=WindowPageLast" style="Icons64x64_1" substyle="Maximize"/>';
-				$buttons .= '<quad pos="0.85 -0.8" z-index="0.13" size="3.94 3.94" bgcolor="000F"/>';
-				$buttons .= '<quad pos="-0.25 -0.28125" z-index="0.14" size="4.875 4.875" style="Icons64x64_1" substyle="ShowRight2"/>';
-				$buttons .= '<quad pos="3.275 -1.05625" z-index="0.15" size="1 3.1875" bgcolor="CCCF"/>';
-				$buttons .= '</frame>';
-			}
-			else {
-				// Next (+1)
-				$buttons .= '<quad pos="18.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-				// Next (+5)
-				$buttons .= '<quad pos="24.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-
-				// Last
-				$buttons .= '<quad pos="30.1375 -0.281" z-index="0.12" size="5.0625 5.0625" style="UIConstructionSimple_Buttons" substyle="Item"/>';
-			}
-			$buttons .= '</frame>';
-
-
-			$xml = str_replace(
-				array(
-					'%icon_style%',
-					'%icon_substyle%',
-					'%window_title%',
-					'%prev_next_buttons%'
-				),
-				array(
-					$this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0],
-					$this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0],
-					'Choose the next Song   |   Page '. ($page+1) .'/'. $maxpages .'   |   '. $this->formatNumber($totalsongs, 0) . (($totalsongs === 1) ? ' Song' : ' Songs'),
-					$buttons
-				),
-				$this->templates['WINDOW']['HEADER']
-			);
-
 			$line = 0;
+			$page = 0;
 			$offset = 0;
-			$xml .= '<frame pos="8 -10.6875" z-index="1">';
+
+			$pages = array();
+			$xml = '<frame pos="0 0" z-index="0.05">';
 			for ($i = ($page * 20); $i < (($page * 20) + 20); $i ++) {
 
 				// Is there a song?
 				if ( !isset($this->cache['MusicServerPlaylist'][$i])) {
+					$xml .= '</frame>';
+					$pages[] = $xml;
 					break;
 				}
 
-				// Get filename of Song
+				// Get filename of song
 				$song = &$this->cache['MusicServerPlaylist'][$i];
 
-				// Find the Player who has juked this Song (if it is juked)
+				// Find the player who has juked this song (if it has been juked)
 				$login = false;
 				$juked = false;
 				if (isset($aseco->plugins['PluginMusicServer'])) {
@@ -11344,57 +11133,95 @@ EOL;
 					unset($songid);
 				}
 
-				$xml .= '<frame pos="'. $offset .' -'. (17.71875 * $line) .'" z-index="1">';
+				$xml .= '<frame pos="'. $offset .' -'. (18.4 * $line) .'" z-index="1">';
 				if ($juked === false) {
 					if ( ($this->config['CurrentMusicInfos']['Artist'] === $song['Artist']) && ($this->config['CurrentMusicInfos']['Title'] === $song['Title'])) {
 						// Current Song
-						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="0099FF55"/>';
-						$xml .= '<quad pos="0.5 -0.5" z-index="0.03" size="43.375 3.75" bgcolor="0099FFDD"/>';
-						$xml .= '<quad pos="36.425 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addSongToJukebox&id='. $song['SongId'] .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
+						$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="0099FF55"/>';
+						$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="0099FFDD"/>';
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addSongToJukebox&id='. $song['SongId'] .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
 					}
 					else {
 						// Default
-						$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-						$xml .= '<quad pos="0.5 -0.5" z-index="0.03" size="43.375 3.75" bgcolor="0099FFDD"/>';
-						$xml .= '<quad pos="36.425 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addSongToJukebox&id='. $song['SongId'] .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
+						$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+						$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 3.75" bgcolor="0099FFDD"/>';
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=addSongToJukebox&id='. $song['SongId'] .'" image="'. $this->config['IMAGES'][0]['WIDGET_PLUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_PLUS_FOCUS'][0] .'"/>';
 					}
-					$xml .= '<label pos="5.5 -1.22" z-index="0.04" size="43.25 0" class="labels" text="Song #'. ($i+1) .'"/>';
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="3.75 3.75" style="'. $this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
+					$xml .= '<label pos="5.5 -0.5" z-index="0.04" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" text="Song #'. ($i+1) .'"/>';
+					$xml .= '<quad pos="0.5 -0.2" z-index="0.04" size="3.75 3.75" style="'. $this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
 					$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="39.625 3.75" class="labels" text="'. $song['Title'] .'"/>';
 					$xml .= '<label pos="2.5 -8.4375" z-index="0.04" size="42.875 3.75" class="labels" scale="0.9" text="by '. $song['Artist'] .'"/>';
 				}
 				else {
 					// Juked Song
-					$xml .= '<quad pos="0 0" z-index="0.02" size="44.375 16.5" bgcolor="FFFFFF55"/>';
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.03" size="43.375 3.75" bgcolor="00DD00FF"/>';
-					if ($login === $caller) {
-						$xml .= '<quad pos="36.425 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=dropSongFromPlaylist" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
+					$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
+					$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="00DD00FF"/>';
+					if ($login === $player->login) {
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=dropSongFromPlaylist" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
-					$xml .= '<label pos="5.5 -1.22" z-index="0.04" size="43.25 0" class="labels" textcolor="000F" text="Song #'. ($i+1) .'"/>';
-					$xml .= '<quad pos="0.5 -0.5" z-index="0.04" size="3.75 3.75" style="'. $this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
+					$xml .= '<label pos="5.5 -0.5" z-index="0.04" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" textcolor="000F" text="Song #'. ($i+1) .'"/>';
+					$xml .= '<quad pos="0.5 -0.2" z-index="0.04" size="3.75 3.75" style="'. $this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';
 					$xml .= '<label pos="2.5 -5.0625" z-index="0.04" size="39.625 3.75" class="labels" text="'. $aseco->stripStyles($song['Title'], true) .'"/>';
 					$xml .= '<label pos="2.5 -8.4375" z-index="0.04" size="42.875 3.75" class="labels" scale="0.9" text="by '. $aseco->stripStyles($song['Artist'], true) .'"/>';
 				}
 
-//				// Amazon link
-//				$xml .= '<quad pos="2.25 -12.9375" z-index="0.05" size="13 3.1875" url="http://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripStyles(str_replace('&amp;', '&', $song['Artist']), true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
+				// Amazon link
+				if ($player->nation === 'GER' || $player->nation === 'AUT' || $player->nation === 'CHE') {
+					$xml .= '<quad pos="2.25 -12.9375" z-index="0.05" size="13 3.1875" url="https://www.amazon.de/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripStyles(str_replace('&amp;', '&', $song['Artist']), true)) .'&amp;tag=undefde-21&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
+				}
+				else {
+					$xml .= '<quad pos="2.25 -12.9375" z-index="0.05" size="13 3.1875" url="https://www.amazon.com/gp/search?ie=UTF8&amp;keywords='. urlencode($aseco->stripStyles(str_replace('&amp;', '&', $song['Artist']), true)) .'&amp;tag=undefde-20&amp;index=digital-music&amp;linkCode=ur2&amp;camp=1789&amp;creative=9325" image="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-normal.png" imagefocus="http://maniacdn.net/undef.de/uaseco/records-eyepiece/logo-amazon-focus.png"/>';
+				}
 				$xml .= '</frame>';
 
 				$line ++;
 
 				// Reset lines
 				if ($line >= 5) {
-					$offset += 47.625;
+					$offset += 50.5;
 					$line = 0;
+				}
+
+				if (($i + 1) >= 20 && ($i + 1) % 20 === 0) {
+					$xml .= '</frame>';
+					$pages[] = $xml;
+
+					$xml = '<frame pos="0 0" z-index="0.05">';
+
+					$line = 0;
+					$offset = 0;
+					$page += 1;
 				}
 			}
 			$xml .= '</frame>';
 
-			$xml .= $this->templates['WINDOW']['FOOTER'];
-			return array(
-				'xml'		=> $xml,
-				'maxpage'	=> ($maxpages - 1),
+
+			$options = array();
+			$options[] = array('Drop song from jukebox',		'PluginRecordsEyepiece?Action=askDropSongFromPlaylist');
+
+			// Setup settings for Window
+			$settings_styles = array(
+				'icon'			=> $this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0] .','. $this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0],
+				'textcolors'		=> array('FFFF', 'FFFF', 'FFFF'),
 			);
+			$settings_content = array(
+				'title'			=> 'Songs on this server | '. $this->formatNumber($totalsongs, 0) . (($totalsongs === 1) ? ' Song' : ' Songs'),
+				'data'			=> $pages,
+				'mode'			=> 'pages',
+				'page'			=> (isset($player->data['ClassWindow']['ClassWindow']->content['page']) ? $player->data['ClassWindow']['ClassWindow']->content['page'] : 0),		// Show the last viewed page again (instead of the first one)
+				'add_background'	=> false,
+			);
+			$settings_footer = array(
+				'about_title'		=> 'RECORDS-EYEPIECE/'. $this->getVersion(),
+				'about_link'		=> 'PluginRecordsEyepiece?Action=showHelpWindow',
+				'option_button'		=> $options,
+			);
+
+			$window = new Window();
+			$window->setStyles($settings_styles);
+			$window->setContent($settings_content);
+			$window->setFooter($settings_footer);
+			$window->send($player, 0, false);
 		}
 	}
 
@@ -12707,15 +12534,15 @@ main () {
 	Container.RelativeScale		= %widgetscale%;
 
 	declare LabelLocalTime		<=> (Page.GetFirstChild("RecordsEyepieceLabelLocalTime") as CMlLabel);
-	declare Text PrevTime		= CurrentLocalDateText;
+	declare Text PrevTime		= System.CurrentLocalDateText;
 
 	while (True) {
 		yield;
 
 		// Throttling to work only on every second
-		if (PrevTime != CurrentLocalDateText) {
-			PrevTime = CurrentLocalDateText;
-			LabelLocalTime.Value = TextLib::SubString(CurrentLocalDateText, 11, 20);
+		if (PrevTime != System.CurrentLocalDateText) {
+			PrevTime = System.CurrentLocalDateText;
+			LabelLocalTime.Value = TextLib::SubString(System.CurrentLocalDateText, 11, 20);
 		}
 	}
 }
@@ -13433,268 +13260,6 @@ EOL;
 		unset($header, $footer);
 		//--------------------------------------------------------------//
 		// END: RoundScoreWidget					//
-		//--------------------------------------------------------------//
-
-
-
-
-		//--------------------------------------------------------------//
-		// BEGIN: Window						//
-		//--------------------------------------------------------------//
-		// %icon_style%, %icon_substyle%
-		// %window_title%
-		// %prev_next_buttons%
-		$header  = '<manialink id="SubWindow" name="SubWindow" version="3"></manialink>';		// Always close sub windows
-		$header .= '<manialink id="MainWindow" name="MainWindow" version="3">';
-		$header .= '<stylesheet>';
-		$header .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
-		$header .= '</stylesheet>';
-		if ($this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['ENABLED'][0] === true) {
-			$header .= '<quad pos="-160 90" z-index="18.49" size="320 180" bgcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['LIGHTBOX'][0]['BGCOLOR'][0] .'" id="Lightbox"/>';
-		}
-		else {
-			$header .= '<quad pos="-320 0" z-index="18.49" size="2.5 1.875" bgcolor="FFF0" id="Lightbox"/>';
-		}
-		$header .= '<frame pos="-102 57.28125" z-index="10.50" id="Frame_Window">';	// BEGIN: Window Frame
-		$header .= '<quad pos="-0.5 0.375" z-index="0.01" size="204.5 110.625" style="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_SUBSTYLE'][0] .'" id="WindowBody" ScriptEvents="1"/>';
-		$header .= '<quad pos="4.5 -7.68749" z-index="0.02" size="194.25 93.5625" bgcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['CONTENT_BGCOLOR'][0] .'"/>';
-
-		// Header Line
-		$header .= '<quad pos="-1.5 1.125" z-index="0.02" size="206.5 11.25" style="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_SUBSTYLE'][0] .'"/>';
-		$header .= '<quad pos="-1.5 1.125" z-index="0.03" size="206.5 11.25" style="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_SUBSTYLE'][0] .'" id="WindowTitle" ScriptEvents="1"/>';
-
-		// Title
-		$header .= '<quad pos="2.5 -1.7" z-index="0.04" size="5.5 5.5" style="%icon_style%" substyle="%icon_substyle%"/>';
-		$header .= '<label pos="9.75 -3.1" z-index="0.04" size="188.5 5" class="labels" textsize="2" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['HEADLINE_TEXTCOLOR'][0] .'" text="%window_title%"/>';
-
-		// Minimize Button
-		$header .= '<frame pos="187.5 -0.28125" z-index="0.05">';
-		$header .= '<quad pos="0 0" z-index="0.01" size="8.44 8.44" style="Icons64x64_1" substyle="ArrowUp" id="WindowMinimize" ScriptEvents="1"/>';
-		$header .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="EEEF"/>';
-		$header .= '<label pos="4.3 -4.5" z-index="0.03" size="15 0" class="labels" halign="center" valign="center" textsize="3" textcolor="000F" text="$O-"/>';
-		$header .= '</frame>';
-
-		// Close Button
-		$header .= '<frame pos="193.5 -0.28125" z-index="0.05">';
-		$header .= '<quad pos="0 0" z-index="0.01" size="8.44 8.44" style="Icons64x64_1" substyle="ArrowUp" id="WindowClose" ScriptEvents="1"/>';
-		$header .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="EEEF"/>';
-		$header .= '<quad pos="1.25 -1.3125" z-index="0.03" size="5.82 5.82" style="Icons64x64_1" substyle="Close"/>';
-		$header .= '</frame>';
-
-		$header .= '<label pos="17 -104.625" z-index="0.04" size="40 3.75" class="labels" halign="center" valign="center2" textsize="1" scale="0.7" action="PluginRecordsEyepiece?Action=showHelpWindow" focusareacolor1="0000" focusareacolor2="FFF5" textcolor="000F" text="RECORDS-EYEPIECE/'. $this->getVersion() .'"/>';
-		$header .= '%prev_next_buttons%';
-
-$maniascript = <<<EOL
-<script><!--
- /*
- * ==================================
- * Function:	Window @ plugin.records_eyepiece.php
- * Author:	undef.de
- * License:	GPLv3
- * ==================================
- */
-#Include "TextLib" as TextLib
-Void HideFrame (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	Container.Unload();
-}
-Void WipeOut (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	if (Container != Null) {
-		declare Real EndPosnX = 0.0;
-		declare Real EndPosnY = 0.0;
-		declare Real PosDistanceX = (EndPosnX - Container.RelativePosition_V3.X);
-		declare Real PosDistanceY = (EndPosnY - Container.RelativePosition_V3.Y);
-
-		while (Container.RelativeScale > 0.0) {
-			Container.RelativePosition_V3.X += (PosDistanceX / 20);
-			Container.RelativePosition_V3.Y += (PosDistanceY / 20);
-			Container.RelativeScale -= 0.05;
-			yield;
-		}
-		Container.Unload();
-
-//		// Disable catching ESC key
-//		EnableMenuNavigationInputs = False;
-	}
-}
-Void Minimize (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real EndPosnX = -102.0;
-	declare Real EndPosnY = 57.28125;
-	declare Real PosDistanceX = (EndPosnX - Container.RelativePosition_V3.X);
-	declare Real PosDistanceY = (EndPosnY - Container.RelativePosition_V3.Y);
-
-	while (Container.RelativeScale > 0.2) {
-		Container.RelativePosition_V3.X += (PosDistanceX / 16);
-		Container.RelativePosition_V3.Y += (PosDistanceY / 16);
-		Container.RelativeScale -= 0.05;
-		yield;
-	}
-}
-Void Maximize (Text ChildId) {
-	declare CMlFrame Container <=> (Page.GetFirstChild(ChildId) as CMlFrame);
-	declare Real EndPosnX = -102.0;
-	declare Real EndPosnY = 57.28125;
-	declare Real PosDistanceX = (EndPosnX - Container.RelativePosition_V3.X);
-	declare Real PosDistanceY = (EndPosnY - Container.RelativePosition_V3.Y);
-
-	while (Container.RelativeScale < 1.0) {
-		Container.RelativePosition_V3.X += (PosDistanceX / 16);
-		Container.RelativePosition_V3.Y += (PosDistanceY / 16);
-		Container.RelativeScale += 0.05;
-		yield;
-	}
-}
-main () {
-	declare Boolean RecordsEyepieceSubWindowVisible for UI = True;
-	declare CMlFrame Container <=> (Page.GetFirstChild("Frame_Window") as CMlFrame);
-	declare CMlQuad Quad;
-	declare Boolean MoveWindow = False;
-	declare Boolean IsMinimized = False;
-	declare Real MouseDistanceX = 0.0;
-	declare Real MouseDistanceY = 0.0;
-
-//	// Enable catching ESC key
-//	EnableMenuNavigationInputs = True;
-
-	while (True) {
-		yield;
-		if (MoveWindow == True) {
-			Container.RelativePosition_V3.X = (MouseDistanceX + MouseX);
-			Container.RelativePosition_V3.Y = (MouseDistanceY + MouseY);
-		}
-		if (MouseLeftButton == True) {
-			foreach (Event in PendingEvents) {
-				if (Event.ControlId == "WindowTitle") {
-					MouseDistanceX = (Container.RelativePosition_V3.X - MouseX);
-					MouseDistanceY = (Container.RelativePosition_V3.Y - MouseY);
-					MoveWindow = True;
-				}
-			}
-		}
-		else {
-			MoveWindow = False;
-		}
-		foreach (Event in PendingEvents) {
-			switch (Event.Type) {
-				case CMlScriptEvent::Type::MouseClick : {
-					if (Event.ControlId == "WindowClose") {
-						RecordsEyepieceSubWindowVisible = False;
-						WipeOut("Frame_Window");
-						HideFrame("Lightbox");
-					}
-					else if (Event.ControlId == "WindowMinimize" && IsMinimized == False) {
-						Minimize("Frame_Window");
-						IsMinimized = True;
-					}
-					else if (Event.ControlId == "WindowBody" && IsMinimized == True) {
-						Maximize("Frame_Window");
-						IsMinimized = False;
-					}
-				}
-//				case CMlScriptEvent::Type::KeyPress : {
-//					if (Event.KeyName == "Escape") {
-//						WipeOut("RecordsEyepieceWindow");
-//					}
-//				}
-			}
-		}
-	}
-}
---></script>
-EOL;
-		// Footer
-		$footer  = '</frame>';				// END: Window Frame
-		$footer .= $maniascript;
-		$footer .= '</manialink>';
-
-		$this->templates['WINDOW']['HEADER'] = $header;
-		$this->templates['WINDOW']['FOOTER'] = $footer;
-
-		unset($header, $footer);
-		//--------------------------------------------------------------//
-		// END: Window							//
-		//--------------------------------------------------------------//
-
-
-
-
-		//--------------------------------------------------------------//
-		// BEGIN: SubWindow						//
-		//--------------------------------------------------------------//
-		// %icon_style%, %icon_substyle%
-		// %window_title%
-		// %prev_next_buttons%
-		$header  = '<manialink id="SubWindow" name="SubWindow" version="3">';
-		$header .= '<stylesheet>';
-		$header .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
-		$header .= '</stylesheet>';
-		$header .= '<frame pos="-49.5 30" z-index="21.5" id="Frame_SubWindow">';	// BEGIN: Window Frame
-		$header .= '<quad pos="-0.5 0.375" z-index="0.01" size="99.25 52.21875" style="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['BACKGROUND_SUBSTYLE'][0] .'"/>';
-		$header .= '<quad pos="4.5 -7.68749" z-index="0.02" size="89 33.28125" bgcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['CONTENT_BGCOLOR'][0] .'"/>';
-
-		// Header Line
-		$header .= '<quad pos="-1.5 1.125" z-index="0.02" size="101.25 11.25" style="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_SUBSTYLE'][0] .'"/>';
-		$header .= '<quad pos="-1.5 1.125" z-index="0.03" size="101.25 11.25" style="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_STYLE'][0] .'" substyle="'. $this->config['STYLE'][0]['WINDOW'][0]['TITLE_SUBSTYLE'][0] .'"/>';
-
-		// Title
-		$header .= '<quad pos="2.5 -1.7" z-index="0.04" size="5.5 5.5" style="%icon_style%" substyle="%icon_substyle%"/>';
-		$header .= '<label pos="9.75 -3.1" z-index="0.04" size="92.5 5" class="labels" textsize="2" scale="0.9" textcolor="'. $this->config['STYLE'][0]['WINDOW'][0]['HEADLINE_TEXTCOLOR'][0] .'" text="%window_title%"/>';
-
-		// Close Button
-		$header .= '<frame pos="88.5 -0.28125" z-index="0.05">';
-		$header .= '<quad pos="0 0" z-index="0.01" size="8.44 8.44" style="Icons64x64_1" substyle="ArrowUp" id="RecordsEyepieceSubWindowClose" ScriptEvents="1"/>';
-		$header .= '<quad pos="2.25 -2.4" z-index="0.02" size="3.75 3.75" bgcolor="EEEF"/>';
-		$header .= '<quad pos="1.25 -1.3125" z-index="0.03" size="5.82 5.82" style="Icons64x64_1" substyle="Close"/>';
-		$header .= '</frame>';
-
-		$header .= '%prev_next_buttons%';
-
-$maniascript = <<<EOL
-<script><!--
- /*
- * ==================================
- * Function:	SubWindow @ plugin.records_eyepiece.php
- * Author:	undef.de
- * License:	GPLv3
- * ==================================
- */
-main () {
-	declare Boolean RecordsEyepieceSubWindowVisible for UI = True;
-	declare CMlFrame Container <=> (Page.GetFirstChild("Frame_SubWindow") as CMlFrame);
-	RecordsEyepieceSubWindowVisible = True;
-
-	while (True) {
-		yield;
-		foreach (Event in PendingEvents) {
-			switch (Event.Type) {
-				case CMlScriptEvent::Type::MouseClick : {
-					if (Event.ControlId == "RecordsEyepieceSubWindowClose") {
-						RecordsEyepieceSubWindowVisible = False;
-					}
-				}
-			}
-		}
-		if (RecordsEyepieceSubWindowVisible == False) {
-			Container.Hide();
-		}
-	}
-}
---></script>
-EOL;
-
-		// Footer
-		$footer  = '</frame>';				// END: Window Frame
-		$footer .= $maniascript;
-		$footer .= '</manialink>';
-
-		$this->templates['SUBWINDOW']['HEADER'] = $header;
-		$this->templates['SUBWINDOW']['FOOTER'] = $footer;
-
-		unset($header, $footer);
-		//--------------------------------------------------------------//
-		// END: SubWindow							//
 		//--------------------------------------------------------------//
 	}
 

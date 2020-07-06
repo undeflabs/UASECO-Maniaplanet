@@ -17,9 +17,9 @@ Structure of a Player, contains information from `GetPlayerInfo` and `GetDetaile
 | `$player->id`								| 1188							| ID of the Player in the Database
 | `$player->pid`							| 237							| ID of the Player at the dedicated Server
 | `$player->login`							| puennt_ennel						| &nbsp;
-| `$player->nickname`							| $I$09Fぎтяα¢кєяѕ$AAA|$FFFυηפєғ $W$000'$F00'$FF0'	| &nbsp;
-| `$player->nickname_stripped`						| ぎтяα¢кєяѕ|υηפєғ '''					| &nbsp;
-| `$player->nickname_slug`						| ぎtrackers|undef '''					| &nbsp;
+| `$player->nickname`							| $I$09Fぎтяα¢кєяѕ$AAA\|$FFFυηפєғ $W$000'$F00'$FF0'	| &nbsp;
+| `$player->nickname_stripped`						| ぎтяα¢кєяѕ\|υηפєғ '''					| &nbsp;
+| `$player->nickname_slug`						| ぎtrackers\|undef '''					| &nbsp;
 | `$player->language`							| de							| &nbsp;
 | `$player->avatar`							| Skins/Avatars/my-very-own-avatar.dds			| &nbsp;
 | `$player->clublink`							| http://www.example.com/clublink.xml			| &nbsp;
@@ -37,7 +37,7 @@ Structure of a Player, contains information from `GetPlayerInfo` and `GetDetaile
 | `$player->has_joined_game`						| true							| &nbsp;
 | `$player->has_player_slot`						| true							| &nbsp;
 | `$player->is_spectator`						| false							| &nbsp;
-| `$player->forced_spectator`						| 0							| &nbsp;
+| `$player->forced_spectator`						| 0							| `0`: user selectable, `1`: spectator, `2`: player, `3`: spectator but keep selectable
 | `$player->temporary_spectator`					| false							| &nbsp;
 | `$player->pure_spectator`						| false							| &nbsp;
 | `$player->target_autoselect`						| false							| &nbsp;

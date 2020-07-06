@@ -118,6 +118,11 @@ Setup the content of the title and the main content to display.
 
 	Mode for the window content, supported values are `columns` or `pages`.
 
+*	`page`
+
+	If larger then `0`, then that given page (if exists) will be showed instead of the first one.
+	If the given number is larger then there are existing pages, the number will be reduced to the maximum page number.
+
 *	`data`
 
 	In mode `columns`: An array which each entry reflects a rows in a inner column.<br>

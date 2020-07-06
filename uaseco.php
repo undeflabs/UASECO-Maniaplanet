@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - January 2020 by undef.de
+ * Copyright:	May 2014 - July 2020 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@
 	// Current project name, version and website
 	define('UASECO_NAME',			'UASECO');
 	define('UASECO_VERSION',		'0.9.7');
-	define('UASECO_BUILD',			'2020-01-24');
+	define('UASECO_BUILD',			'2020-07-06');
 	define('UASECO_WEBSITE',		'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version

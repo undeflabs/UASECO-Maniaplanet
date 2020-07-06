@@ -50,9 +50,9 @@ class MapHistory extends BaseClass {
 		$this->debug = $debug;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-09');
-		$this->setCopyright('2015 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2020-07-06');
+		$this->setCopyright('2015 - 2020 by undef.de');
 		$this->setDescription('Map history for the dedicated server and provides several methods for the required handling of the history.');
 
 		$this->settings['max_history_entries'] = $max_history_entries;
@@ -181,9 +181,11 @@ class MapHistory extends BaseClass {
 		$last = $this->map_list;
 		$last = array_shift($last);
 
-		$map = $aseco->server->maps->getMapByUid($last['uid']);
-		if (isset($map->id) && $map->id > 0) {
-			return $map;
+		if (isset($last['uid'])) {
+			$map = $aseco->server->maps->getMapByUid($last['uid']);
+			if (isset($map->id) && $map->id > 0) {
+				return $map;
+			}
 		}
 		return new Map(null, null);
 	}

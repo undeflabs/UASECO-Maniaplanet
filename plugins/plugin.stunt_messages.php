@@ -50,9 +50,9 @@ class PluginStuntMessages extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-07-11');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2020-01-27');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription('Displays Stunt messages at the top of the screen like "Free Style 360!!"...');
 
 		// Register functions for events
@@ -527,7 +527,7 @@ Void StuntsMessageAnimateIn () {
 main() {
 	declare Integer StuntsMessageTimeOut = 5;
 	declare Integer SecondsCounter = 0;
-	declare PrevTime = CurrentLocalDateText;
+	declare PrevTime = System.CurrentLocalDateText;
 
 	StuntsMessageAnimateIn();
 	while (True) {
@@ -535,8 +535,8 @@ main() {
 		if (!PageIsVisible || InputPlayer == Null) {
 			continue;
 		}
-		if (PrevTime != CurrentLocalDateText) {
-			PrevTime = CurrentLocalDateText;
+		if (PrevTime != System.CurrentLocalDateText) {
+			PrevTime = System.CurrentLocalDateText;
 			SecondsCounter += 1;
 		}
 		if (SecondsCounter >= StuntsMessageTimeOut) {

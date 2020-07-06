@@ -48,9 +48,9 @@ class PluginInfoBar extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.2');
-		$this->setBuild('2019-09-22');
-		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2020-01-27');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -462,7 +462,7 @@ $maniascript = <<<EOL
 #Include "TextLib" as TextLib
 main() {
 	declare CMlLabel LabelLocalTime <=> (Page.GetFirstChild("{$this->config['manialinkid']}LabelLocalTime") as CMlLabel);
-	declare Text PrevTime = CurrentLocalDateText;
+	declare Text PrevTime = System.CurrentLocalDateText;
 	while (True) {
 		yield;
 		if (!PageIsVisible || InputPlayer == Null) {
@@ -470,9 +470,9 @@ main() {
 		}
 
 		// Throttling to work only on every second
-		if (PrevTime != CurrentLocalDateText) {
-			PrevTime = CurrentLocalDateText;
-			LabelLocalTime.Value = TextLib::SubString(CurrentLocalDateText, 11, 20);
+		if (PrevTime != System.CurrentLocalDateText) {
+			PrevTime = System.CurrentLocalDateText;
+			LabelLocalTime.Value = TextLib::SubString(System.CurrentLocalDateText, 11, 20);
 		}
 	}
 }
@@ -662,7 +662,7 @@ main() {
 	declare Integer CurrentMaxPlayers = {$aseco->server->options['CurrentMaxPlayers']};
 	declare Integer CurrentMaxSpectators = {$aseco->server->options['CurrentMaxSpectators']};
 	declare Integer SpectatorThreshold = 10;
-	declare PrevTime = CurrentLocalDateText;
+	declare PrevTime = System.CurrentLocalDateText;
 	declare WatchList = Integer[Text];
 	declare SpectatorsList = Integer[Text];
 	declare Integer PlayerCount = 0;
@@ -674,8 +674,8 @@ main() {
 		}
 
 		// Throttling to work only on every second
-		if (PrevTime != CurrentLocalDateText) {
-			PrevTime = CurrentLocalDateText;
+		if (PrevTime != System.CurrentLocalDateText) {
+			PrevTime = System.CurrentLocalDateText;
 
 			foreach (Player in Players) {
 				if (Player.IsSpawned == False) {
@@ -914,7 +914,7 @@ main() {
 	// Turn off some ClientUI parts (we replace)
 	ClientUI.OverlayHidePosition		= True;
 
-	declare Text PrevTime = CurrentLocalDateText;
+	declare Text PrevTime = System.CurrentLocalDateText;
 	declare Integer CurrentPlayerRank = 0;
 	while (True) {
 		yield;
@@ -923,8 +923,8 @@ main() {
 		}
 
 		// Throttling to work only on every second
-		if (PrevTime != CurrentLocalDateText) {
-			PrevTime = CurrentLocalDateText;
+		if (PrevTime != System.CurrentLocalDateText) {
+			PrevTime = System.CurrentLocalDateText;
 
 			CurrentPlayerRank = 0;
 			foreach (Score in Scores) {

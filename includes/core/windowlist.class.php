@@ -44,9 +44,9 @@ class WindowList extends BaseClass {
 	public function __construct ($aseco) {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.4');
+		$this->setBuild('2020-01-26');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('class.window', 'windowlist_description'));
 
 		// Register callbacks for this new Window
@@ -215,9 +215,9 @@ class WindowList extends BaseClass {
 				}
 			}
 
-			$window->settings['timeout'] = $timeout;
-			$window->settings['hideclick'] = $hideclick;
-			$window->settings['login'] = $player->login;
+			$window->settings['timeout']		= $timeout;
+			$window->settings['hideclick']		= $hideclick;
+			$window->settings['login']		= $player->login;
 
 			// Store Window into Player object
 			$this->storePlayerData($player, 'ClassWindow', $window);

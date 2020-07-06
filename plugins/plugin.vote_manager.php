@@ -47,9 +47,9 @@ class PluginVoteManager extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2019-06-09');
-		$this->setCopyright('2012 - 2019 by undef.de');
+		$this->setVersion('1.0.12');
+		$this->setBuild('2020-01-27');
+		$this->setCopyright('2012 - 2020 by undef.de');
 		$this->setDescription('Provides a Widget and handles Skip, Restart, Balance votings.');
 
 		$this->addDependence('PluginRaspVotes',			Dependence::DISALLOWED,	null, null);
@@ -805,15 +805,15 @@ $maniascript = <<<EOL
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
-Void StorePlayerVote (Text _Login, Text _Vote) {
+Void StorePlayerVote (Text _Login, Integer _Vote) {
 	foreach (Player in Players) {
 		if (Player.User.Login == _Login) {
-			declare VoteManager_CurrentVote for Player = "None";
-			if (VoteManager_CurrentVote != _Vote) {
-				VoteManager_CurrentVote = _Vote;
+			declare VoteManager_CurrentVoteInteger for Player = -1;
+			if (VoteManager_CurrentVoteInteger != _Vote) {
+				VoteManager_CurrentVoteInteger = _Vote;
 			}
 		}
-		log(Now ^" VOTE STATUS: "^ Player);
+//		log(Now ^" VOTES: "^ Player);
 	}
 }
 main () {
@@ -837,7 +837,7 @@ main () {
 	declare Text InitiatorLogin		= "%LOGIN%";
 	declare Text MessageCount		= "{$message}";
 	declare Text MessageFinish		= "{$this->config['MESSAGES'][0]['VOTE_FINISHED'][0]}";
-	declare Text PrevTime			= CurrentLocalDateText;
+	declare Text PrevTime			= System.CurrentLocalDateText;
 
 	FrameVoteManager.RelativeScale		= {$this->config['WIDGET'][0]['SCALE'][0]};
 
@@ -867,8 +867,8 @@ main () {
 		}
 
 		// Throttling to work only on every second
-		if (PrevTime != CurrentLocalDateText) {
-			PrevTime = CurrentLocalDateText;
+		if (PrevTime != System.CurrentLocalDateText) {
+			PrevTime = System.CurrentLocalDateText;
 
 			// Countdown
 			Countdown = Countdown - 1;
@@ -880,7 +880,7 @@ main () {
 		}
 
 		if (InputPlayer.User.Login == InitiatorLogin && QuadMarkerThumbUp.Visible != True) {
-			StorePlayerVote(InputPlayer.User.Login, "Yes");
+			StorePlayerVote(InputPlayer.User.Login, 1);
 			QuadMarkerThumbUp.Visible = True;
 			QuadMarkerThumbDown.Visible = False;
 		}
@@ -895,14 +895,14 @@ main () {
 			declare Real VotesNo	= 0.0;
 			declare Real VotesTotal	= 0.0;
 			foreach (Player in Players) {
-				declare VoteManager_CurrentVote for Player = "None";
-				if (VoteManager_CurrentVote == "Yes") {
+				declare VoteManager_CurrentVoteInteger for Player = -1;
+				if (VoteManager_CurrentVoteInteger == 1) {
 					VotesYes += 1.0;
 				}
-				else if (VoteManager_CurrentVote == "No") {
+				else if (VoteManager_CurrentVoteInteger == 0) {
 					VotesNo += 1.0;
 				}
-log(Now ^" VOTE STATUS: "^ Player.User.Login ^" -> "^ VoteManager_CurrentVote);
+log(Now ^" VOTES: "^ Player.User.Login ^" -> "^ VoteManager_CurrentVoteInteger);
 			}
 			VotesTotal = VotesYes + VotesNo;
 			if (VotesTotal == 0.0) {
@@ -932,13 +932,13 @@ log(Now ^" VOTE STATUS: "^ Player.User.Login ^" -> "^ VoteManager_CurrentVote);
 					if (InputPlayer.User.Login != InitiatorLogin) {
 						if (Event.ControlId == "VoteManagerButtonYes") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
-							StorePlayerVote(InputPlayer.User.Login, "Yes");
+							StorePlayerVote(InputPlayer.User.Login, 1);
 							QuadMarkerThumbUp.Visible = True;
 							QuadMarkerThumbDown.Visible = False;
 						}
 						else if (Event.ControlId == "VoteManagerButtonNo") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
-							StorePlayerVote(InputPlayer.User.Login, "No");
+							StorePlayerVote(InputPlayer.User.Login, 0);
 							QuadMarkerThumbUp.Visible = False;
 							QuadMarkerThumbDown.Visible = True;
 						}
@@ -949,13 +949,13 @@ log(Now ^" VOTE STATUS: "^ Player.User.Login ^" -> "^ VoteManager_CurrentVote);
 					if (InputPlayer.User.Login != InitiatorLogin) {
 						if (Event.KeyName == "F5") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=Yes");
-							StorePlayerVote(InputPlayer.User.Login, "Yes");
+							StorePlayerVote(InputPlayer.User.Login, 1);
 							QuadMarkerThumbUp.Visible = True;
 							QuadMarkerThumbDown.Visible = False;
 						}
 						else if (Event.KeyName == "F6") {
 							TriggerPageAction("PluginVoteManager?Action=Vote&Value=No");
-							StorePlayerVote(InputPlayer.User.Login, "No");
+							StorePlayerVote(InputPlayer.User.Login, 0);
 							QuadMarkerThumbUp.Visible = False;
 							QuadMarkerThumbDown.Visible = True;
 						}
@@ -1062,7 +1062,7 @@ EOL;
 	public function handleVote ($login, $type) {
 		global $aseco;
 
-		if ( ($this->config['RunningVote']['Active'] === true) && ($this->config['RunningVote']['Countdown'] > 0) ) {
+		if ($this->config['RunningVote']['Active'] === true && $this->config['RunningVote']['Countdown'] > 0) {
 			// Do not allow to change the own started vote
 			if ($this->config['RunningVote']['StartedFrom']['Login'] === $login) {
 				$aseco->sendChatMessage($this->config['MESSAGES'][0]['VOTE_NO_OWN_VOTE'][0], $login);
@@ -1082,6 +1082,9 @@ EOL;
 
 			// Store the current vote
 			$this->config['RunningVote']['Votes'][$type][$login] = true;
+
+			// Rebuild and show the widget
+			$this->buildWidget();
 		}
 	}
 

@@ -29,12 +29,17 @@ Setup the style of the Dialog.
 
 	Icon for the header, choose one from the Manialink [styles](maniaplanet:///:styles).
 
+*	`height`
+
+	The default height of the content box is `15.0`, you can change it here.
+
 
 #### Example
 	// Setup the styles
 	$settings_style = array(
 		'textcolor'		=> '09FF',
 		'icon'			=> 'Icons64x64_1,ToolLeague1',
+		'height'		=> 20.0,
 	);
 
 	// Create the Dialog
@@ -133,6 +138,7 @@ Build, store and send the Dialog to the Player.
 	$settings_style = array(
 		'textcolor'		=> '09FF',
 		'icon'			=> 'Icons64x64_1,ToolLeague1',
+		'height'		=> 20.0,
 	);
 
 	// Setup title

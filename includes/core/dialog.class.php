@@ -46,8 +46,8 @@ class Dialog extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2019-09-22');
+		$this->setVersion('1.0.3');
+		$this->setBuild('2020-05-08');
 		$this->setCopyright('2017 - 2019 by undef.de');
 		$this->setDescription(new Message('class.dialog', 'dialog_description'));
 
@@ -64,6 +64,9 @@ class Dialog extends BaseClass {
 				'x' 			=> -52.5,
 				'y' 			=> 28.64,
 				'z' 			=> 30.0,
+			),
+			'height' => array(
+				'content' 		=> 15.0,
 			),
 			'position_minimize' => array(
 				'x' 			=> -102.00001,
@@ -153,7 +156,7 @@ class Dialog extends BaseClass {
 		if (isset($param['buttons']) && is_array($param['buttons'])) {
 			$amount = 0;
 			foreach ($param['buttons'] as $button) {
-				if ($amount < 5) {
+				if ($amount < 4) {
 					$this->content['buttons'][] = $button;
 					$amount += 1;
 				}
@@ -180,6 +183,11 @@ class Dialog extends BaseClass {
 		if (isset($param['textcolor']) && $param['textcolor']) {
 			$this->layout['title']['textcolor'] = $param['textcolor'];
 		}
+
+		// Content height
+		if (isset($param['height']) && $param['height']) {
+			$this->layout['height']['content'] = $param['height'];
+		}
 	}
 
 	/*
@@ -191,11 +199,11 @@ class Dialog extends BaseClass {
 	public function buildButtons () {
 
 		// Previous buttons
-		$xml = '<frame pos="11.85 -53" z-index="0.04">';
+		$xml = '<frame pos="14.35 -'. ($this->layout['height']['content'] + 15.5) .'" z-index="0.04">';
 
 		$count = 0;
 		foreach ($this->content['buttons'] as $button) {
-			$xml .= '<label pos="'. (19.7 * $count)  .' 0" z-index="0.01" size="18.7 5" class="labels" halign="center" valign="center2" textsize="1.5" textcolor="FFFFFFFF" focusareacolor1="0099FFFF" focusareacolor2="DDDDDDFF" action="'. $button['action'] .'" text="$O'. $button['title'] .'" id="ClassDialogButton'. $count .'" ScriptEvents="1"/>';
+			$xml .= '<label pos="'. (24.375 * $count)  .' 0" z-index="0.01" size="23.575 5" class="labels" halign="center" valign="center2" textsize="1.5" textcolor="FFFFFFFF" focusareacolor1="0099FFFF" focusareacolor2="DDDDDDFF" action="'. $button['action'] .'" text="$O'. $button['title'] .'" id="ClassDialogButton'. $count .'" ScriptEvents="1"/>';
 			$count += 1;
 		}
 		$xml .= '</frame>';
@@ -211,9 +219,7 @@ class Dialog extends BaseClass {
 
 	public function buildContent () {
 
-		$xml = '<label pos="2.5 -2.5" z-index="0.01" size="97.5 37.5" class="labels" textsize="1" autonewline="1" maxline="10" textcolor="FFFFFFFF" text="'. $this->content['message'] .'"/>';
-
-		return $xml;
+		return '<label pos="2.5 -2.5" z-index="0.01" size="92.5 '. ($this->layout['height']['content'] - 5) .'" class="labels" textsize="1" autonewline="1" maxline="10" textcolor="FFFFFFFF" text="'. $this->content['message'] .'"/>';
 	}
 
 	/*
@@ -235,7 +241,7 @@ class Dialog extends BaseClass {
 		$xml .= '<style class="labels" textsize="1" scale="1" textcolor="FFFF"/>';
 		$xml .= '</stylesheet>';
 		$xml .= '<frame pos="'. $this->layout['position']['x'] .' '. $this->layout['position']['y'] .'" z-index="'. $this->layout['position']['z'] .'" id="ClassDialog">';	// BEGIN: Window Frame
-		$xml .= '<quad pos="0 -8" z-index="0.01" size="102.5 50.25" bgcolor="'. $this->layout['backgrounds']['main'] .'" id="ClassDialogBody" ScriptEvents="1"/>';
+		$xml .= '<quad pos="0 -8" z-index="0.01" size="102.5 '. ($this->layout['height']['content'] + 12.75) .'" bgcolor="'. $this->layout['backgrounds']['main'] .'" id="ClassDialogBody" ScriptEvents="1"/>';
 
 		// Title
 		$xml .= '<quad pos="0 0" z-index="0.04" size="102.5 8" bgcolor="'. $this->layout['backgrounds']['title'] .'" bgcolorfocus="'. $this->layout['backgrounds']['title_hover'] .'" id="ClassDialogTitle" ScriptEvents="1"/>';
@@ -256,7 +262,7 @@ class Dialog extends BaseClass {
 
 		// Content
 		$xml .= '<frame pos="2.5 -10.5" z-index="0.05">';
-		$xml .= '<quad pos="0 0" z-index="0" size="97.5 37.5" bgcolor="FFFFFF33"/>';
+		$xml .= '<quad pos="0 0" z-index="0" size="97.5 '. $this->layout['height']['content'] .'" bgcolor="FFFFFF33"/>';
 		$xml .= '%content%';
 		$xml .= '</frame>';
 

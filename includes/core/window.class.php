@@ -51,8 +51,8 @@ class Window extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.10');
-		$this->setBuild('2020-01-19');
+		$this->setVersion('1.0.11');
+		$this->setBuild('2020-01-26');
 		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -190,6 +190,9 @@ class Window extends BaseClass {
 		}
 		if (isset($param['data']) && $param['data']) {
 			$this->content['data'] = $param['data'];
+		}
+		if (isset($param['page']) && $param['page'] > 0) {
+			$this->content['page'] = $param['page'];
 		}
 
 		if (isset($param['mode']) && in_array($param['mode'], array('columns', 'pages'))) {
@@ -533,6 +536,11 @@ class Window extends BaseClass {
 		}
 		else if ($this->settings['mode'] === 'pages') {
 			$this->content['maxpage']	= count($this->content['data']) - 1;
+		}
+
+		// Check if not more then 'maxpage' are given
+		if ($this->content['page'] > $this->content['maxpage']) {
+			$this->content['page'] = $this->content['maxpage'];
 		}
 
 		// Previous buttons

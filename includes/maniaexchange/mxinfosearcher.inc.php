@@ -1,6 +1,7 @@
 <?php
 /* vim: set noexpandtab tabstop=2 softtabstop=2 shiftwidth=2: */
 
+// 2020-01-15: Updated to match requirements of new API from ManiaExchange
 // 2018-07-17: Updated get_file() and added 'ssl' to the stream_context
 // 2017-05-13: Change $maxpage to 10 at get_file()
 // 2017-05-03: Bugfix at get_file(): Added check for return values of fopen()
