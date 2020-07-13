@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <locales>
 	<!--
-	Version:	2019-10-04
-	Authors:	aca
+	Version:	2020-07-13
+	Authors:	aca .. uBm
+	Language:German
 	//-->
 	<plugin_description>Handhabt Platzierungen und persönliche Bestzeiten, sowie die dazugehörigen Chat-Befehle.</plugin_description>
 	<slash_chat_pb_description>Zeigt Deine persönliche Bestzeit auf der aktuellen Strecke</slash_chat_pb_description>
@@ -19,4 +20,52 @@
 	<pb_none>{#server}» {#error}Du hast noch keinen lokalen Rekord auf dieser Strecke</pb_none>
 	<rank>{#server}» {#record}Deine Platzierung auf dem Server ist {#rank}{1}{#record} von {#highlite}{2}{#record} Durchschnitt: {#highlite}{3}</rank>
 	<rank_none>{#server}» {#record}Du musst mindestens {#highlite}{1}{#record} lokale Rekorde auf diesem Server haben für eine Platzierung!</rank_none>
+	<nextrank> {#server} »{#record} Nächster Rang - {#highlite} {1} {#record}: {#highlite} {2} </nextrank>
+	<nextrank_rp> $n {#record} [{#highlite} - {1} {#record} RP] </nextrank_rp>
+	<toprank> {#server} »{#record} Es ist niemand über dir :-) </toprank>
+	<jukebox> {#server} »{#highlite} {2} {#emotic} hat die Karte {#highlite} {1} zur Warteschlange hinzugefügt </jukebox> 
+	<jukebox_already> {#server} »{#emotic} Sie haben bereits eine Karte in die Warteschlange gestellt! Warten Sie, bis sie kommt, bevor Sie eine neue hinzufügen. </jukebox_already>
+	<jukebox_dupl> {#server} »{#emotic} Diese Karte befindet sich bereits in der Warteschlange. Wählen Sie eine andere aus. </jukebox_dupl>
+	<jukebox_repeat> {#server} »{#emotic} Diese Karte wurde kürzlich gespielt. Warten Sie einen Moment, bevor Sie sie hinzufügen. </jukebox_repeat>
+	<jukebox_next> {#server} »{#emotic} Nächste Karte: {#highlite} {1} {#emotic} - juked {#highlite} {2} </jukebox_next>
+	<jukebox_nextenv> {#server} »{#emotic} Nächste Karte: {#highlite} [{1}] (in {#highlite} {2} {#emotic}) - juked {#highlite} {3} </jukebox_nextenv>
+	<jukebox_skipleft> {#server} »{#emotic} Map {#highlite} {1} {#emotic} fehlt - {#highlite} {2} {#emotic} links ... </jukebox_skipleft>
+	<jukebox_ignored> {#server} »{#emotic} Map {#highlite} {1} {#emotic} fehlt: {#error} {2} </jukebox_ignored>
+	<jukebox_drop> {#server} »{#emotic} Spieler {#highlite} {1} {#emotic} hat die Karte {#highlite} {2} {#emotic} aus der Warteschlange entfernt! </jukebox_drop>
+	<jukebox_nodrop> {#server} »{#emotic} Sie haben keine Karten in der Warteschlange. Verwenden Sie {#highlite} /elist {#emotic} oder eine Liste von Karten, um eine davon zu bestellen. </jukebox_nodrop>
+	<jukebox_add> {#server} »{#highlite} {1} {#emotic} fragt nach der Karte {#highlite} {2} {#emotic} von {3}. {br} {#emotic} Dies erfordert {#highlite} {4} {#emotic} Stimmen. Wählen Sie {#highlite} /y {#emotic}, um abzustimmen. </jukebox_add>
+	<jukebox_y> {#server} »Für die Bestellung von {#highlite} {3} {#emotic} sind weitere {#highlite} {1} {#emotic} -Stimmen erforderlich. Wählen Sie {#highlite} /y {#emotic}, um abzustimmen. </jukebox_y>
+	<jukebox_pass> {#server} »{#emotic} Abstimmung bestanden! {#highlite} {1} {#emotic} wurde der Warteschlange hinzugefügt. </jukebox_pass>
+	<jukebox_end> {#server} »{#emotic} Abstimmung für eine Karte {#highlite} {1} {#emotic} {2} von {#highlite} {3} {#emotic}! </jukebox_end>
+	<jukebox_cancel> {#server} »{#emotic} Die laufende Abstimmung für den Befehl /add wurde abgebrochen! </jukebox_cancel>
+	<jukebox_notfound> {#server} »{#emotic} Karten-ID nicht gefunden - Geben Sie {#highlite} /list {#emotic} ein, um eine Liste der Karten anzuzeigen. </jukebox_notfound>
+	<jukebox_empty> {#server} »{#emotic} Es befinden sich keine Karten in der Warteschlange! Verwenden Sie {#highlite} /elist {#emotic} oder eine Liste von Karten, um eine davon hinzuzufügen. </jukebox_empty>
+	<jukebox_help> {#server} »{#emotic} Sie müssen eine Karten-ID angeben, zb. {#highlite} /jukebox 12 {#emotic} - Geben Sie {#highlite} /jukebox help {#emotic} ein, um Hilfe zu erhalten. </jukebox_help>
+	<jukebox_list> {#server} »{#emotic} Kartenwarteschlange: </jukebox_list>
+	<list_help> {#server} »{#emotic} Geben Sie zuerst {#highlite} /list {#emotic} ein - geben Sie {#highlite} /list help {#emotic} ein, um Hilfe zu erhalten. </list_help>
+	<no_jukebox> {#server} »{#highlite} /jukebox {#emotic} ist auf diesem Server deaktiviert. </no_jukebox>
+	<history> {#server} »{#emotic} Zuletzt gespielt: </history>
+	<add_present> {#server} »{#highlite} Die Karte befindet sich bereits auf dem Server. </add_present>
+	<add_dupl> {#server} »{#emotic} Die Karte wurde bereits zur Warteschlange hinzugefügt. (/add) </add_dupl>
+	<no_add> {#server} »{#highlite} /add {#emotic} ist auf diesem Server deaktiviert. </no_add>
+	<map_too_large> {#server} »{#error} Die Karte ist zu groß ({#highlite} {1} $i {#error}> {2} KB) - nicht geladen! </map_too_large>
+	<vote_explain> {#server} »{#vote} Die integrierte Abstimmung ist deaktiviert. Wählen Sie {#highlite} /helpvote {#vote}, um zu erfahren, wie Sie im Chat abstimmen können. </vote_explain>
+	<vote_already> {#server} »{#error} Abstimmung. Warten Sie, bis es fertig ist. </vote_already>
+	<vote_limit> {#server} »{#error} Es gab {#highlite} $i {1} {#error} {2} Stimmen für diese Karte - vielleicht genug ?! </vote_limit>
+	<vote_start> {#server} »{#highlite} {1} {#stimmen} fragt nach {#highlite} {2} {#stimmen}. {br} {#stimmen} Benötigt {#highlite} {3} {#stimmen } Stimmen. Wählen Sie {#highlite} /y {#vote}, um abzustimmen. </vote_start>
+	<vote_y> {#server} »Mehr {#highlite} {1} {#Abstimmung} von Stimmen für {2} benötigt, um {#highlite} {3} {#Abstimmung}. Wählen Sie {#highlite} /y {#vote}, um abzustimmen. </vote_y>
+	<vote_pass> {#server} »{#vote} Die Abstimmung ist beendet! Server {#highlite} {1} {#vote}. </vote_pass>
+	<vote_end> {#server} »{#vote} Es gibt eine Abstimmung über {#highlite} {1} {#vote} {2} von {#highlite} {3} {#vote}! </vote_end>
+	<vote_cancel> {#server} »{#vote} Abstimmung fehlgeschlagen! </vote_cancel>
+	<no_more_replay> {#server} »{#vote} Nicht mehr als {#highlite} {1} {#vote} Wiederholungen pro Karte! </no_more_replay>
+	<no_admin_kick> {#server} »{#vote} Spieler {#highlite} {1} {#vote} hat versucht, {#highlite} admin {#highlite} {2} {#vote} zu kicken - es ist nutzlos! </no_admin_kick>
+	<no_admin_ignore> {#server} »{#vote} Der Spieler {#highlite} {1} {#vote} hat versucht, den Administrator {#highlite} {2} {#vote} ohne Erfolg zu ignorieren! </no_admin_ignore>
+	<ask_admin> {#server} »{#error} Die Abstimmung über den Chat wurde deaktiviert. Fragen Sie die verfügbaren Administratoren. </ask_admin>
+	<no_spectators> {#server} »{#error} Zuschauer können keine Umfragen durchführen! </no_spectators>
+	<no_sb_vote> {#server} »{#error} Die Chat-Abstimmung wurde abgebrochen! </no_sb_vote>
+	<no_vote> {#server} »{#error} Die Abstimmung über den Chat ist deaktiviert. Verwenden Sie die (im Spiel integrierte) Abstimmung. </no_vote>
+	<bootme_dialog> {#message} Danke für das Spiel, komm wieder! </bootme_dialog>
+	<ragequit> {#server} »{#highlite} {1} $z $s {#message} sagte:" @ "#!" und wurde gelöscht! </ragequit>
+	<ragequit_dialog> {#message} Danke für das Spiel, komm wieder! Und nicht verzweifeln :-) </ragequit_dialog>
 </locales>
+
