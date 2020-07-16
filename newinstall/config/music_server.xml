@@ -34,6 +34,12 @@
 	<music_server>YOUR_SERVER_URL</music_server>
 
 	<!--
+		If you get a "405 - Method not allowed" (like at Google Drive), enter 'false' otherwise 'true' to enable the HTTP-Head-Test
+		Please note, that 'false' also disables <cache_tags>!
+	//-->
+	<enable_url_test>true</enable_url_test>
+
+	<!--
 	For song files which are stored remotely you can setup how many bytes will be transfered to parse for OGG tags,
 	512 bytes will be enough in the most case, but some files have to retrieve full (because the OGG tags are at the end of the file).
 	Adjust this if you miss some Artist/Title entries in <cache_file>. To retrieve the full file, set this to '-1'.

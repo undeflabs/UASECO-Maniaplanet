@@ -89,6 +89,7 @@
 * Added `<media>*` to `newinstall/config/mania_exchange.xml` [undef]
 * Updated `newinstall/config/effect_studio/countdown-3-2-1-GO!.xml`, now you can change the sizes of the 3-2-1-GO! graphics by changing the values at `SizeGfx*` [undef]
 * Added `<images><diffculty>*` to `newinstall/config/records_eyepiece.xml` [undef]
+* Added `<enable_url_test>` to `newinstall/config/music_server.xml` [undef]
 
 
 ### Bug fixes
@@ -121,6 +122,7 @@
 * Fixed [PHP Warning] fopen(https://api.mania-exchange.com/tm/tracks/list/latest): failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error on line 223 in file `includes/maniaexchange/mxinfosearcher.inc.php` [undef]
 * Fixed [PHP Notice] Trying to access array offset on value of type null on line 184 in file `/includes/core/maphistory.class.php` [undef]
 * Fixed HTTPS URLs can not be used for `plugin.music_server.php` (thanks MadMatt01) [undef]
+* Fixed [PHP Notice] Undefined index: Answer on line 2269 in file `plugins/plugin.records_eyepiece.php` [undef]
 
 
 

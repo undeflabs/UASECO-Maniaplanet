@@ -50,8 +50,8 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
-		$this->setVersion('1.1.8');
-		$this->setBuild('2020-01-27');
+		$this->setVersion('1.1.18');
+		$this->setBuild('2020-07-16');
 		$this->setCopyright('2009 - 2020 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
@@ -2119,7 +2119,6 @@ class PluginRecordsEyepiece extends Plugin {
 		// Init
 		$widgets = '';
 		$require_action = false;
-
 
 		// F9 handling
 		if ($params['Action'] === 'switchDedimaniaRecordsWidget') {
@@ -11075,7 +11074,7 @@ EOL;
 		// Setup content
 		$settings_content = array(
 			'title'			=> 'Notice',
-			'message'		=> 'Do you really want to drop the complete Jukebox?',
+			'message'		=> 'Do you really want to drop your song from the Jukebox?',
 			'buttons'		=> $buttons,
 		);
 
@@ -11157,7 +11156,7 @@ EOL;
 					$xml .= '<quad pos="0 0" z-index="0.02" size="48.5 16.4" bgcolor="FFFFFF55"/>';
 					$xml .= '<quad pos="0 0" z-index="0.03" size="48.5 4" bgcolor="00DD00FF"/>';
 					if ($login === $player->login) {
-						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=dropSongFromPlaylist" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
+						$xml .= '<quad pos="40.55 -8.6" z-index="0.04" size="8.75 8.75" action="PluginRecordsEyepiece?Action=askDropSongFromPlaylist" image="'. $this->config['IMAGES'][0]['WIDGET_MINUS_NORMAL'][0] .'" imagefocus="'. $this->config['IMAGES'][0]['WIDGET_MINUS_FOCUS'][0] .'"/>';
 					}
 					$xml .= '<label pos="5.5 -0.5" z-index="0.04" size="43.25 0" class="labels" textsize="1.4" textfont="Oswald" textcolor="000F" text="Song #'. ($i+1) .'"/>';
 					$xml .= '<quad pos="0.5 -0.2" z-index="0.04" size="3.75 3.75" style="'. $this->config['MUSIC_WIDGET'][0]['ICON_STYLE'][0] .'" substyle="'. $this->config['MUSIC_WIDGET'][0]['ICON_SUBSTYLE'][0] .'"/>';

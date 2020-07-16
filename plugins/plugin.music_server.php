@@ -63,8 +63,8 @@ class PluginMusicServer extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setCoAuthors('aca');
-		$this->setVersion('1.0.3');
-		$this->setBuild('2020-07-06');
+		$this->setVersion('1.0.14');
+		$this->setBuild('2020-07-16');
 		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('plugin.music_server', 'plugin_description'));
 
@@ -106,6 +106,7 @@ class PluginMusicServer extends Plugin {
 		$this->stripexts	= $aseco->string2bool($settings['STRIP_EXTS'][0]);
 		$this->cachetags	= $aseco->string2bool($settings['CACHE_TAGS'][0]);
 		$this->cacheread	= $aseco->string2bool($settings['CACHE_READONLY'][0]);
+		$this->enable_url_test	= $aseco->string2bool($settings['ENABLE_URL_TEST'][0]);
 
 		$this->cachefile	= $settings['CACHE_FILE'][0];
 		$this->server		= $settings['MUSIC_SERVER'][0];
@@ -134,18 +135,13 @@ class PluginMusicServer extends Plugin {
 
 
 		// Check for remote or local path
-		if ($this->checkRemoteLocal($this->server)) {
-			// Remote: append / if missing
-			if (substr($this->server, -1) !== '/') {
-				$this->server .= '/';
-			}
-		}
-		else {
+		if ($this->isRemoteFile($this->server) === false) {
 			// Local: append DIRECTORY_SEPARATOR if missing
 			if (substr($this->server, -1) !== DIRECTORY_SEPARATOR) {
 				$this->server .= DIRECTORY_SEPARATOR;
 			}
 		}
+
 
 		$this->songs = array();
 		if (isset($settings['SONG_FILES'][0]['SONG']) === true) {
@@ -225,18 +221,18 @@ class PluginMusicServer extends Plugin {
 
 			// check remote or local song access
 			$song = $this->setNextSong($next);
-			if ($this->checkRemoteLocal($this->server) && !$this->httpHead($this->server . $song)) {
-				$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!!!');
+			if ($this->isRemoteFile($this->server) && ($this->enable_url_test === true && !$this->httpHead($this->server . $song))) {
+				$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!');
 			}
-			else if (!$this->checkRemoteLocal($this->server) && !file_exists($this->localpath . $song)) {
-				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
+			else if (!$this->isRemoteFile($this->server) && !file_exists($this->localpath . $this->server . $song)) {
+				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $this->server . $song .']!');
 			}
 			else {
 				// log console message
 				$aseco->console('[MusicServer] Setting next song to ['. $song .']');
 
 				// load next song
-				$aseco->client->query('SetForcedMusic', $this->override, $this->server . $song);
+				$result = $aseco->client->query('SetForcedMusic', $this->override, $this->server . $song);
 				return;
 			}
 		}
@@ -245,18 +241,18 @@ class PluginMusicServer extends Plugin {
 		if ($this->autonext === true) {
 			// check remote or local song access
 			$song = $this->getNextSong();
-			if ($this->checkRemoteLocal($this->server) && !$this->httpHead($this->server . $song)) {
-				$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!!!');
+			if ($this->isRemoteFile($this->server) && ($this->enable_url_test === true && !$this->httpHead($this->server . $song))) {
+				$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!');
 			}
-			else if (!$this->checkRemoteLocal($this->server) && !file_exists($this->localpath . $song)) {
-				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!!!');
+			else if (!$this->isRemoteFile($this->server) && !file_exists($this->localpath . $this->server . $song)) {
+				$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $this->server . $song .']!');
 			}
 			else {
 				// log console message
 				$aseco->console('[MusicServer] Setting next song to ['. $song .']');
 
 				// load next song
-				$aseco->client->query('SetForcedMusic', $this->override, $this->server . $song);
+				$result = $aseco->client->query('SetForcedMusic', $this->override, $this->server . $song);
 			}
 		}
 		else {
@@ -286,12 +282,12 @@ class PluginMusicServer extends Plugin {
 		}
 
 		// Define full path to server
-		if ($this->checkRemoteLocal($this->server)) {
-			$server = $this->server;
+		if ($this->isRemoteFile($this->server)) {
+			$location = $this->server;
 			$remote_file = true;
 		}
 		else {
-			$server = $this->localpath . $this->server;
+			$location = $this->localpath . $this->server;
 			$remote_file = false;
 		}
 
@@ -303,15 +299,15 @@ class PluginMusicServer extends Plugin {
 		foreach ($this->songs as $song) {
 			if (strtoupper(substr($song, -4)) === '.OGG') {
 				if (!isset($this->tags[$song])) {
-					$aseco->console('[MusicServer] » Parsing "'. $server.$song .'"');
+					$aseco->console('[MusicServer] » Parsing "'. $location . $song .'"');
 					if ($remote_file === true) {
 						$fileparts = false;
 						if ($this->maxlen > 0) {
 							// Get only the configured bytes from the song/file
-							$fileparts = file_get_contents($server.str_replace(' ', '%20', $song), false, $this->stream_context, 0, $this->maxlen);
+							$fileparts = file_get_contents($location . str_replace(' ', '%20', $song), false, $this->stream_context, 0, $this->maxlen);
 						}
 						else {
-							$fileparts = file_get_contents($server.str_replace(' ', '%20', $song), false, $this->stream_context);
+							$fileparts = file_get_contents($location . str_replace(' ', '%20', $song), false, $this->stream_context);
 						}
 						if ($fileparts !== false) {
 							$tmpfname = tempnam('./', $song .'_');
@@ -326,7 +322,7 @@ class PluginMusicServer extends Plugin {
 					}
 					else {
 						// Get the ID3 tag
-						$id3 = $getID3->analyze($server.$song);
+						$id3 = $getID3->analyze($location . $song);
 					}
 
 					$this->tags[$song] = array(
@@ -335,11 +331,11 @@ class PluginMusicServer extends Plugin {
 					);
 				}
 				else {
-					$aseco->console('[MusicServer] » Skip "'. $server.$song .'": already parsed');
+					$aseco->console('[MusicServer] » Skip "'. $location . $song .'": already parsed');
 				}
 			}
 			else {
-				$aseco->console('[MusicServer] » Skip "'. $server.$song .'": not a OGG-File');
+				$aseco->console('[MusicServer] » Skip "'. $location . $song .'": not a OGG-File');
 			}
 		}
 
@@ -650,11 +646,11 @@ class PluginMusicServer extends Plugin {
 			if ($aseco->allowAbility($player, 'chat_musicadmin')) {
 				// check remote or local song access
 				$song = $this->getNextSong();
-				if ($this->checkRemoteLocal($this->server) && !$this->httpHead($this->server . $song)) {
-					$aseco->console('[MusicServer]3 Could not access remote song ['. $this->server . $song .']!!!');
+				if ($this->isRemoteFile($this->server) && ($this->enable_url_test === true && !$this->httpHead($this->server . $song))) {
+					$aseco->console('[MusicServer] Could not access remote song ['. $this->server . $song .']!');
 				}
-				else if (!$this->checkRemoteLocal($this->server) && !file_exists($this->localpath . $song)) {
-					$aseco->console('[MusicServer]3 Could not access local song ['. $this->localpath . $song .']!!!');
+				else if (!$this->isRemoteFile($this->server) && !file_exists($this->localpath . $song)) {
+					$aseco->console('[MusicServer] Could not access local song ['. $this->localpath . $song .']!');
 				}
 				else {
 					// load next song
@@ -1020,7 +1016,7 @@ class PluginMusicServer extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function checkRemoteLocal ($location) {
+	public function isRemoteFile ($location) {
 
 		$result = parse_url($location);
 		if ((isset($result['scheme']) && !empty($result['scheme'])) || (isset($result['host']) && !empty($result['host']))) {
