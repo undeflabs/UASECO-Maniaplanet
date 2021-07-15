@@ -51,8 +51,8 @@ class Window extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.11');
-		$this->setBuild('2020-01-26');
+		$this->setVersion('1.0.13');
+		$this->setBuild('2020-07-20');
 		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('class.window', 'window_description'));
 
@@ -791,7 +791,7 @@ $maniascript = <<<EOL
  */
 #Include "TextLib" as TextLib
 #Include "MathLib" as MathLib
-Void WipeOut (Text ChildId) {
+Void ClassWindowWipeOut (Text ChildId) {
 	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild(ChildId) as CMlFrame);
 	if (ClassWindowFrame != Null) {
 		declare Real EndPosnX = 0.0;
@@ -811,7 +811,7 @@ Void WipeOut (Text ChildId) {
 //		EnableMenuNavigationInputs = False;
 	}
 }
-Void Minimize (Text ChildId) {
+Void ClassWindowMinimize (Text ChildId) {
 	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild(ChildId) as CMlFrame);
 	if (ClassWindowFrame != Null) {
 		declare Real PosnDistanceX = ({$this->layout['position']['x']} - ClassWindowFrame.RelativePosition_V3.X);
@@ -825,7 +825,7 @@ Void Minimize (Text ChildId) {
 		}
 	}
 }
-Void Maximize (Text ChildId) {
+Void ClassWindowMaximize (Text ChildId) {
 	declare CMlFrame ClassWindowFrame <=> (Page.GetFirstChild(ChildId) as CMlFrame);
 	if (ClassWindowFrame != Null) {
 		declare Real EndPosnX = {$this->layout['position']['x']};
@@ -915,16 +915,16 @@ main () {
 						TriggerPageAction("WindowList?Action=ClassWindowPageLast&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.ControlId == "ClassWindowClose") {
-						WipeOut("ClassWindow");
+						ClassWindowWipeOut("ClassWindow");
 					}
 					else if (Event.ControlId == "ClassWindowMinimize" && ClassWindowIsMinimized == False) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::ShowMenu, 0, 1.0);
-						Minimize("ClassWindow");
+						ClassWindowMinimize("ClassWindow");
 						ClassWindowIsMinimized = True;
 					}
 					else if (Event.ControlId == "ClassWindowBody" && ClassWindowIsMinimized == True) {
 						Audio.PlaySoundEvent(CAudioManager::ELibSound::HideMenu, 0, 1.0);
-						Maximize("ClassWindow");
+						ClassWindowMaximize("ClassWindow");
 						ClassWindowIsMinimized = False;
 					}
 
@@ -963,19 +963,19 @@ main () {
 						TriggerPageAction("WindowList?Action=ClassWindowPageNext&X="^ ClassWindowFrame.RelativePosition_V3.X ^"&Y="^ ClassWindowFrame.RelativePosition_V3.Y);
 					}
 					else if (Event.KeyName == "Cut") {		// CTRL + X
-						WipeOut("ClassWindow");
+						ClassWindowWipeOut("ClassWindow");
 					}
 					else if (Event.KeyName == "NumpadSubstract" && ClassWindowIsMinimized == False) {
 						if (ClassWindowFrame != Null) {
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::ShowMenu, 0, 1.0);
-							Minimize("ClassWindow");
+							ClassWindowMinimize("ClassWindow");
 							ClassWindowIsMinimized = True;
 						}
 					}
 					else if (Event.KeyName == "NumpadAdd" && ClassWindowIsMinimized == True) {
 						if (ClassWindowFrame != Null) {
 							Audio.PlaySoundEvent(CAudioManager::ELibSound::HideMenu, 0, 1.0);
-							Maximize("ClassWindow");
+							ClassWindowMaximize("ClassWindow");
 							ClassWindowIsMinimized = False;
 						}
 					}

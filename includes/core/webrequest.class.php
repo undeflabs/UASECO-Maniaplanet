@@ -49,9 +49,9 @@ class WebRequest extends BaseClass {
 		global $aseco;
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.1');
-		$this->setBuild('2018-05-07');
-		$this->setCopyright('2016 - 2018 by undef.de');
+		$this->setVersion('1.0.2');
+		$this->setBuild('2021-07-15');
+		$this->setCopyright('2016 - 2021 by undef.de');
 		$this->setDescription('Provides asynchronous and synchronous communication for HTTP GET-, POST- and HEAD-Requests.');
 
 		$this->timeout		= 20;
@@ -61,7 +61,9 @@ class WebRequest extends BaseClass {
 		$this->path		= 'cache'. DIRECTORY_SEPARATOR .'webrequest'. DIRECTORY_SEPARATOR;
 
 		// Make sure the directory exists
-		@mkdir($this->path, 0755, true);
+		if (!is_dir($this->path)) {
+			mkdir($this->path, 0755, true);
+		}
 
 
 		// Check for instances of the worker process "webrequest.php"
@@ -388,7 +390,9 @@ class WebRequest extends BaseClass {
 						$content = file_get_contents($this->path . $request->id .'.done');
 
 						// Remove the response file
-						@unlink($this->path . $request->id .'.done');
+						if (is_file($this->path . $request->id .'.done')) {
+							unlink($this->path . $request->id .'.done');
+						}
 
 						if ($request->callback !== null) {
 							// Parse the response
@@ -417,24 +421,24 @@ class WebRequest extends BaseClass {
 				if ($entry === '.' || $entry === '..') {
 					continue;
 				}
-				if (@is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.new') !== false) {
-					if (@filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
-						@unlink($this->path.DIRECTORY_SEPARATOR.$entry);
+				if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.new') !== false) {
+					if (filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
+						unlink($this->path.DIRECTORY_SEPARATOR.$entry);
 					}
 				}
-				if (@is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.job') !== false) {
-					if (@filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
-						@unlink($this->path.DIRECTORY_SEPARATOR.$entry);
+				if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.job') !== false) {
+					if (filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
+						unlink($this->path.DIRECTORY_SEPARATOR.$entry);
 					}
 				}
-				if (@is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.working') !== false) {
-					if (@filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
-						@unlink($this->path.DIRECTORY_SEPARATOR.$entry);
+				if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.working') !== false) {
+					if (filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
+						unlink($this->path.DIRECTORY_SEPARATOR.$entry);
 					}
 				}
-				if (@is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.done') !== false) {
-					if (@filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
-						@unlink($this->path.DIRECTORY_SEPARATOR.$entry);
+				if (is_file($this->path.DIRECTORY_SEPARATOR.$entry) === true && strpos($entry, '.done') !== false) {
+					if (filemtime($this->path.DIRECTORY_SEPARATOR.$entry) + 86400 < time()) {
+						unlink($this->path.DIRECTORY_SEPARATOR.$entry);
 					}
 				}
 			}

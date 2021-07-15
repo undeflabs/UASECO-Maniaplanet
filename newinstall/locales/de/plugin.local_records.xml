@@ -9,10 +9,10 @@
 
 
 	<!-- record messages -->
-	<record_new>{#server}» {#highlite}{1}{#record} sicherte seinen/ihren {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new>
-	<record_equal>{#server}» {#highlite}{1}{#record} wiederholte seinen/ihren {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}</record_equal>
-	<record_new_rank>{#server}» {#highlite}{1}{#record} verbesserte den {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new_rank>
-	<record_first>{#server}» {#highlite}{1}{#record} erreichte den {#rank}{2}{#record}. lokalen Rekord! Zeit: {#highlite}{3}</record_first>
+	<record_new>{#server}» {#highlite}{1}{#record} sicherte seinen/ihren {#rank}{2}{#record}. lokalen Rekord! {#highlite}⏰ {3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new>
+	<record_equal>{#server}» {#highlite}{1}{#record} wiederholte seinen/ihren {#rank}{2}{#record}. lokalen Rekord! {#highlite}⏰ {3}</record_equal>
+	<record_new_rank>{#server}» {#highlite}{1}{#record} verbesserte den {#rank}{2}{#record}. lokalen Rekord! {#highlite}⏰ {3}{#record} ({#rank}{4} {#highlite}{5}{#record})</record_new_rank>
+	<record_first>{#server}» {#highlite}{1}{#record} erreichte den {#rank}{2}{#record}. lokalen Rekord! {#highlite}⏰ {3}</record_first>
 	<record_current>{#server}» {#message}Aktueller Rekord auf {#highlite}{1}{#message} ist {#highlite}{2}{#message} von {#highlite}{3}</record_current>
 	<record_none>{#server}» {#message}Aktuell kein Rekord auf [{#highlite}{1}{#message}] ...</record_none>
 

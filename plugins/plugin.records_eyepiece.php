@@ -50,9 +50,9 @@ class PluginRecordsEyepiece extends Plugin {
 
 		$this->setAuthor('undef.de');
 		$this->setContributors('.anDy', 'Bueddl');
-		$this->setVersion('1.1.18');
-		$this->setBuild('2020-07-16');
-		$this->setCopyright('2009 - 2020 by undef.de');
+		$this->setVersion('1.1.20');
+		$this->setBuild('2021-07-15');
+		$this->setCopyright('2009 - 2021 by undef.de');
 		$this->setDescription('A fully configurable HUD for all type of records and gamemodes.');
 
 		$this->addDependence('PluginModescriptHandler',		Dependence::REQUIRED,	'1.0.0', null);
@@ -126,7 +126,7 @@ class PluginRecordsEyepiece extends Plugin {
 		$this->config['LineHeight'] = 3.375;
 
 		$aseco->console('[RecordsEyepiece] ********************************************************');
-		$aseco->console('[RecordsEyepiece] Starting version '. $this->getVersion() .' - Maniaplanet');
+		$aseco->console('[RecordsEyepiece] Starting version '. $this->getVersion() .' - '. UASECO_BRANCH);
 		$aseco->console('[RecordsEyepiece] Parsed "config/records_eyepiece.xml" successfully, starting checks...');
 
 		if ( !isset($this->config['MUSIC_WIDGET'][0]['ADVERTISE'][0])) {
@@ -230,7 +230,6 @@ class PluginRecordsEyepiece extends Plugin {
 				else {
 					// Auto disable this
 					$this->config[$widget][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] = false;
-					$this->config[$widget][0]['WIDTH'][0] = 0;
 					$aseco->console('[RecordsEyepiece] » Auto disable <'. strtolower($widget) .'> in gamemode "'. strtolower($gamemode) .'", missing entry.');
 				}
 			}
@@ -321,20 +320,20 @@ class PluginRecordsEyepiece extends Plugin {
 
 
 		// Check the Widget width's
-		if ( ($this->config['MUSIC_WIDGET'][0]['WIDTH'][0] < 15.5) || (!$this->config['MUSIC_WIDGET'][0]['WIDTH'][0])) {
-			$this->config['MUSIC_WIDGET'][0]['WIDTH'][0] = 15.5;
+		if ($this->config['MUSIC_WIDGET'][0]['WIDTH'][0] < 39.4 || empty($this->config['MUSIC_WIDGET'][0]['WIDTH'][0])) {
+			$this->config['MUSIC_WIDGET'][0]['WIDTH'][0] = 39.4;
 		}
-		if ( ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] < 15.5) || (!$this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0])) {
-			$this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] = 15.5;
+		if ($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] < 39.4 || empty($this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0])) {
+			$this->config['DEDIMANIA_RECORDS'][0]['WIDTH'][0] = 39.4;
 		}
-		if ( ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] < 15.5) || (!$this->config['LOCAL_RECORDS'][0]['WIDTH'][0])) {
-			$this->config['LOCAL_RECORDS'][0]['WIDTH'][0] = 15.5;
+		if ($this->config['LOCAL_RECORDS'][0]['WIDTH'][0] < 39.4 || empty($this->config['LOCAL_RECORDS'][0]['WIDTH'][0])) {
+			$this->config['LOCAL_RECORDS'][0]['WIDTH'][0] = 39.4;
 		}
-		if ( ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] < 15.5) || (!$this->config['LIVE_RANKINGS'][0]['WIDTH'][0])) {
-			$this->config['LIVE_RANKINGS'][0]['WIDTH'][0] = 15.5;
+		if ($this->config['LIVE_RANKINGS'][0]['WIDTH'][0] < 39.4 || empty($this->config['LIVE_RANKINGS'][0]['WIDTH'][0])) {
+			$this->config['LIVE_RANKINGS'][0]['WIDTH'][0] = 39.4;
 		}
-		if ( ($this->config['ROUND_SCORE'][0]['WIDTH'][0] < 15.5) || (!$this->config['ROUND_SCORE'][0]['WIDTH'][0])) {
-			$this->config['ROUND_SCORE'][0]['WIDTH'][0] = 15.5;
+		if ($this->config['ROUND_SCORE'][0]['WIDTH'][0] < 39.4 || empty($this->config['ROUND_SCORE'][0]['WIDTH'][0])) {
+			$this->config['ROUND_SCORE'][0]['WIDTH'][0] = 39.4;
 		}
 
 		if ( (!isset($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0])) || ($this->config['SHOW_PROGRESS_INDICATOR'][0]['MAPLIST'][0] === '')) {
@@ -4992,16 +4991,16 @@ class PluginRecordsEyepiece extends Plugin {
 					$widgets .= $this->buildRecordWidgetContent(
 						$gamemode,
 						$player,
-						$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0],
-						'DEDIMANIA_RECORDS'
+						'DEDIMANIA_RECORDS',
+						$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]
 					);
 				}
 				if ( (($buildLocalRecordsWidget === true) || ($force['LocalRecords'] === true)) && (isset($this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true)) {
 					$widgets .= $this->buildRecordWidgetContent(
 						$gamemode,
 						$player,
-						$this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0],
-						'LOCAL_RECORDS'
+						'LOCAL_RECORDS',
+						$this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]
 					);
 				}
 				if ( (($buildLiveRankingsWidget === true) || ($force['LiveRankings'] === true)) && (isset($this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode]) && $this->config['LIVE_RANKINGS'][0]['GAMEMODE'][0][$gamemode][0]['ENABLED'][0] === true)) {
@@ -5022,8 +5021,8 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->cache['DedimaniaRecords']['NiceMode'] = $this->buildRecordWidgetContent(
 					$gamemode,
 					false,
-					$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0],
-					'DEDIMANIA_RECORDS'
+					'DEDIMANIA_RECORDS',
+					$this->config['DEDIMANIA_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]
 				);
 				$this->config['States']['DedimaniaRecords']['UpdateDisplay'] = true;
 			}
@@ -5031,8 +5030,8 @@ class PluginRecordsEyepiece extends Plugin {
 				$this->cache['LocalRecords']['NiceMode'] = $this->buildRecordWidgetContent(
 					$gamemode,
 					false,
-					$this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0],
-					'LOCAL_RECORDS'
+					'LOCAL_RECORDS',
+					$this->config['LOCAL_RECORDS'][0]['GAMEMODE'][0][$gamemode][0]['ENTRIES'][0]
 				);
 				$this->config['States']['LocalRecords']['UpdateDisplay'] = true;
 			}
@@ -7054,7 +7053,7 @@ class PluginRecordsEyepiece extends Plugin {
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function buildRecordWidgetContent ($gamemode, $player, $limit = 100, $widget) {
+	public function buildRecordWidgetContent ($gamemode, $player, $widget, $limit = 100) {
 
 		// Setup the listname from given $widget, e.g. 'DEDIMANIA_RECORDS' to 'DedimaniaRecords'
 		$list = str_replace(' ', '', ucwords(implode(' ', explode('_', strtolower($widget)))));
@@ -7112,7 +7111,7 @@ class PluginRecordsEyepiece extends Plugin {
 
 				// Mark connected Players with a record
 				if ($this->config['FEATURES'][0]['MARK_ONLINE_PLAYER_RECORDS'][0] === true && $this->config['States']['NiceMode'] === false && $player !== false && $item['login'] !== $player->login) {
-					$xml .= $this->getConnectedPlayerRecord($item['login'], $line, $topcount, $behind_rankings, $this->config[$widget][0]['WIDTH'][0]);
+					$xml .= $this->getConnectedPlayerRecord($item['login'], $line, $topcount, $this->config[$widget][0]['WIDTH'][0], $behind_rankings);
 				}
 
 				// Build record entries
@@ -8909,7 +8908,7 @@ EOL;
 	#///////////////////////////////////////////////////////////////////////#
 	*/
 
-	public function getConnectedPlayerRecord ($login, $line, $topcount, $behind_rank = false, $widgetwidth) {
+	public function getConnectedPlayerRecord ($login, $line, $topcount, $widgetwidth, $behind_rank = false) {
 		global $aseco;
 
 		// Is the given Player currently online? If true, mark her/his Record at other Players.

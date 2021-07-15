@@ -4,6 +4,7 @@
 
 ### General changes
 * Updated to support PHP/7.4.x [undef]
+* Updated to support PHP/8.0.x [undef]
 * Requires a `Maniaplanet Dedicated Server` build `2019-10-24_16_00 (Linux)` / `2019-10-23_20_00 (Windows)` or higher [undef]
 * Redirect chat command "/jukebox display" to "/elist jukebox" which is the replacement [undef]
 * ManiaScript: Changed all deprecated `Player.Login` (which is marked deprecated) to MP4 `Player.User.Login` [undef]
@@ -33,6 +34,11 @@
 * Updated `docs/Dedicated-Server/Modescript-Settings.md` [undef]
 * Added the check for minimum/maximum required version of UASECO for plugins (only Dependence::REQUIRED is used, all other dependencies are ignored) [undef]
 * Added a map difficulty display into the MapWidget from Records-Eyepiece (only shown if the map is available at ManiaExchange) (thanks L3cKy) [undef]
+* Renamed constant `MANIAPLANET_BUILD` to `DEDICATED_SERVER_BUILD` [undef]
+* Renamed constant `MANIAPLANET_BUILD_POSIX` to `DEDICATED_SERVER_BUILD_POSIX` [undef]
+* Renamed constant `MANIAPLANET_BUILD_WINDOWS` to `DEDICATED_SERVER_BUILD_WINDOWS` [undef]
+* Added constant `UASECO_BRANCH` [undef]
+* Renamed Class name `XmlParser` to `XmlParserCustom`, because `XmlParser` is in PHP/8.x a reserved name [undef]
 
 
 ### Changes at config files
@@ -90,6 +96,8 @@
 * Updated `newinstall/config/effect_studio/countdown-3-2-1-GO!.xml`, now you can change the sizes of the 3-2-1-GO! graphics by changing the values at `SizeGfx*` [undef]
 * Added `<images><diffculty>*` to `newinstall/config/records_eyepiece.xml` [undef]
 * Added `<enable_url_test>` to `newinstall/config/music_server.xml` [undef]
+* Replaced all `Zeit:` with `⏰` `newinstall/locales/de/local_records.xml` [undef]
+* Replaced all `Time:` with `⏰` `newinstall/locales/en/local_records.xml` [undef]
 
 
 ### Bug fixes

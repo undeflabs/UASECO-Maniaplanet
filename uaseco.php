@@ -1,7 +1,7 @@
 <?php
 /*
- * Projectname: UASECO
- * ~~~~~~~~~~~~~~~~~~~~
+ * Projectname: UASECO (Maniaplanet)
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * » ASECO is an abbreviation of "Automatic SErver COntrol", the prefix U at UASECO
  *   stays for "undef", which follows the same naming convention initiated by Xymph
  *   for XAseco.
@@ -21,7 +21,7 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	May 2014 - July 2020 by undef.de
+ * Copyright:	May 2014 - July 2021 by undef.de
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify
@@ -42,31 +42,32 @@
  */
 
 	// Current project name, version and website
-	define('UASECO_NAME',			'UASECO');
-	define('UASECO_VERSION',		'0.9.7');
-	define('UASECO_BUILD',			'2020-07-16');
-	define('UASECO_WEBSITE',		'https://www.UASECO.org');
+	define('UASECO_NAME',				'UASECO');
+	define('UASECO_VERSION',			'0.9.7');
+	define('UASECO_BUILD',				'2021-07-15');
+	define('UASECO_BRANCH',				'MANIAPLANET');
+	define('UASECO_WEBSITE',			'https://www.UASECO.org');
 
 	// Setup required official dedicated server build, Api-Version and PHP-Version
-	define('MANIAPLANET_BUILD_POSIX',	'2019-10-24_16_00');
-	define('MANIAPLANET_BUILD_WINDOWS',	'2019-10-23_20_00');
-	define('XMLRPC_API_VERSION',		'2013-04-16');
-	define('MODESCRIPT_API_VERSION',	'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
-	define('MIN_PHP_VERSION',		'7.2.0');
-	define('MIN_MYSQL_VERSION',		'5.1.0');
-	define('MIN_MARIADB_VERSION',		'5.5.20');
+	define('DEDICATED_SERVER_BUILD_POSIX',		'2019-10-24_16_00');
+	define('DEDICATED_SERVER_BUILD_WINDOWS',	'2019-10-23_20_00');
+	define('XMLRPC_API_VERSION',			'2013-04-16');
+	define('MODESCRIPT_API_VERSION',		'2.5.0');				// https://github.com/maniaplanet/script-xmlrpc/releases
+	define('MIN_PHP_VERSION',			'7.2.0');
+	define('MIN_MYSQL_VERSION',			'5.1.0');
+	define('MIN_MARIADB_VERSION',			'5.5.20');
 
 	// Setup misc.
-	define('CRLF',				PHP_EOL);
-	define('LF',				"\n");
+	define('CRLF',					PHP_EOL);
+	define('LF',					"\n");
 
 	if (strtoupper(substr(php_uname('s'), 0, 3)) === 'WIN') {
-		define('OPERATING_SYSTEM',	'WINDOWS');
-		define('MANIAPLANET_BUILD',	MANIAPLANET_BUILD_WINDOWS);
+		define('OPERATING_SYSTEM',		'WINDOWS');
+		define('DEDICATED_SERVER_BUILD',	DEDICATED_SERVER_BUILD_WINDOWS);
 	}
 	else {
-		define('OPERATING_SYSTEM',	'POSIX');
-		define('MANIAPLANET_BUILD',	MANIAPLANET_BUILD_POSIX);
+		define('OPERATING_SYSTEM',		'POSIX');
+		define('DEDICATED_SERVER_BUILD',	DEDICATED_SERVER_BUILD_POSIX);
 	}
 
 	// Report all
@@ -327,7 +328,7 @@ class UASECO extends Helper {
 		$this->registered_chatcmds	= array();
 		$this->locales			= new Locales();
 		$this->client			= new GbxRemote();			// includes/core/XmlRpc/GbxRemote.php
-		$this->parser			= new XmlParser();
+		$this->parser			= new XmlParserCustom();
 		$this->webrequest		= new WebRequest();
 		$this->continent		= new Continent();
 		$this->country			= new Country();
@@ -570,13 +571,13 @@ class UASECO extends Helper {
 		}
 
 		// Check server build
-		if (strlen($this->server->build) === 0 || ($this->server->game === 'ManiaPlanet' && strcmp($this->server->build, MANIAPLANET_BUILD) < 0)) {
-			$this->console('[UASECO][ERROR] Obsolete server build "'. $this->server->build .'" - must be at least "'. MANIAPLANET_BUILD .'"!');
+		if (strlen($this->server->build) === 0 || ($this->server->game === 'ManiaPlanet' && strcmp($this->server->build, DEDICATED_SERVER_BUILD) < 0)) {
+			$this->console('[UASECO][ERROR] Obsolete server build "'. $this->server->build .'" - must be at least "'. DEDICATED_SERVER_BUILD .'"!');
 			die();
 		}
 
 		// Create a USER_AGENT string
-		define('USER_AGENT', UASECO_NAME .'/'. UASECO_VERSION .'_'. UASECO_BUILD .' '. $this->server->game .'/'. $this->server->build .' php/'. phpversion() .' '. php_uname());
+		define('USER_AGENT', UASECO_NAME .'/'. UASECO_VERSION .'_'. UASECO_BUILD .' ('. UASECO_BRANCH .') '. $this->server->game .'/'. $this->server->build .' php/'. phpversion() .' '. php_uname());
 
 		// Get status
 		$status = $this->client->query('GetStatus');
@@ -642,7 +643,7 @@ class UASECO extends Helper {
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» UASECO:        Version {1} build {2}', UASECO_VERSION, UASECO_BUILD);
+		$this->console_text('» UASECO:        Version {1} build {2} ({3})', UASECO_VERSION, UASECO_BUILD, UASECO_BRANCH);
     		$this->console_text('»                Based upon the work of the authors and projects of:');
     		$this->console_text('»                - Xymph (XAseco2),');
     		$this->console_text('»                - Florian Schnell, AssemblerManiac and many others (ASECO),');
@@ -732,7 +733,7 @@ class UASECO extends Helper {
 		$this->console_text('» -----------------------------------------------------------------------------------');
 		$this->console_text('» OS:            {1}', php_uname());
 		$this->console_text('» -----------------------------------------------------------------------------------');
-		$this->console_text('» UASECO:        Version {1} build {2}', UASECO_VERSION, UASECO_BUILD);
+		$this->console_text('» UASECO:        Version {1} build {2} ({3})', UASECO_VERSION, UASECO_BUILD, UASECO_BRANCH);
 		$this->console_text('####[PLUGINS]########################################################################');
 		foreach ($this->plugins as $plugin) {
 			$this->console_text('» {1}{2} ({3})', $plugin->getFilename() . sprintf('%'. (50 - strlen($plugin->getFilename())) .'s', ''), $plugin->getVersion() . sprintf('%'. (8 - strlen($plugin->getVersion())) .'s', ''), $plugin->getBuild());

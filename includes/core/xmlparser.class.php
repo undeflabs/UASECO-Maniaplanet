@@ -1,7 +1,7 @@
 <?php
 /*
- * Class: XmlParser
- * ~~~~~~~~~~~~~~~~
+ * Class: XmlParserCustom
+ * ~~~~~~~~~~~~~~~~~~~~~~
  * » Builds an easy structured array out of a xml file, element names will be the
  *   keys and the data the values.
  * » Based upon xmlparser.inc.php from XAseco2/1.03 written by Xymph and others
@@ -33,7 +33,7 @@
 #///////////////////////////////////////////////////////////////////////#
 */
 
-class XmlParser extends BaseClass {
+class XmlParserCustom extends BaseClass {
 	private $data;
 	private $struct;
 	private $parser;
@@ -50,9 +50,9 @@ class XmlParser extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setContributors('Bueddl');
-		$this->setVersion('1.0.0');
-		$this->setBuild('2018-08-08');
-		$this->setCopyright('2014 - 2018 by undef.de');
+		$this->setVersion('1.0.1');
+		$this->setBuild('2021-07-15');
+		$this->setCopyright('2014 - 2021 by undef.de');
 		$this->setDescription('Builds an easy structured array out of a xml file, element names will be the keys and the data the values.');
 	}
 

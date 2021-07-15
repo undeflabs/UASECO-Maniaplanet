@@ -6,9 +6,9 @@
  *
  * ----------------------------------------------------------------------------------
  * Author:	undef.de
- * Copyright:	2017 - 2019 by undef.de
- * Version:	1.0.2
- * Build:	2019-06-07
+ * Copyright:	2017 - 2021 by undef.de
+ * Version:	1.0.3
+ * Build:	2021-01-05
  * ----------------------------------------------------------------------------------
  *
  * LICENSE: This program is free software: you can redistribute it and/or modify

@@ -48,8 +48,8 @@ class PluginInfoBar extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.3');
-		$this->setBuild('2020-01-27');
+		$this->setVersion('1.0.4');
+		$this->setBuild('2020-07-19');
 		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('plugin.info_bar', 'plugin_description'));
 
@@ -1043,19 +1043,14 @@ main() {
 		if (NextUpdate <= CurrentTime) {
 			NextUpdate = CurrentTime + 500;
 
-			foreach (Player in Players) {
-				if (Player.User.Login == InputPlayer.User.Login) {
-					if (Player.Score != Null) {
-						if (Player.Score.BestRace.Time > 0 && Player.Score.BestRace.Time != LastBestRace) {
-							LastBestRace = Player.Score.BestRace.Time;
-							LabelBestTime.SetText(FormatTime(LastBestRace));
-						}
-						if (Player.Score.PrevRace.Time > 0 && Player.Score.PrevRace.Time != LastPrevRace) {
-							LastPrevRace = Player.Score.PrevRace.Time;
-							LabelLastTime.SetText(FormatTime(LastPrevRace));
-						}
-					}
-					break;
+			if (InputPlayer.Score != Null) {
+				if (InputPlayer.Score.BestRace.Time > 0 && InputPlayer.Score.BestRace.Time != LastBestRace) {
+					LastBestRace = InputPlayer.Score.BestRace.Time;
+					LabelBestTime.SetText(FormatTime(LastBestRace));
+				}
+				if (InputPlayer.Score.PrevRace.Time > 0 && InputPlayer.Score.PrevRace.Time != LastPrevRace) {
+					LastPrevRace = InputPlayer.Score.PrevRace.Time;
+					LabelLastTime.SetText(FormatTime(LastPrevRace));
 				}
 			}
 		}

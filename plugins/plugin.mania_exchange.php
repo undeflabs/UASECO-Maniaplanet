@@ -21,9 +21,9 @@
  *
  * ----------------------------------------------------------------------------------
  *
- * https://api.mania-exchange.com/documents/reference
- * https://api.mania-exchange.com/documents/enums#modes
- * https://api.mania-exchange.com/documents/enums#environments
+ * https://api.mania.exchange/documents/reference
+ * https://api.mania.exchange/documents/enums#modes
+ * https://api.mania.exchange/documents/enums#environments
  *
  */
 
@@ -49,9 +49,9 @@ class PluginManiaExchange extends Plugin {
 	public function __construct () {
 
 		$this->setAuthor('undef.de');
-		$this->setVersion('1.0.3');
-		$this->setBuild('2019-09-20');
-		$this->setCopyright('2014 - 2019 by undef.de');
+		$this->setVersion('1.0.12');
+		$this->setBuild('2020-07-20');
+		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription(new Message('plugin.mania_exchange', 'plugin_description'));
 
 		$this->addDependence('PluginWelcomeCenter',	Dependence::WANTED,	'1.0.0', null);
@@ -153,26 +153,27 @@ class PluginManiaExchange extends Plugin {
 
 
 		// Setup the current environment of the dedicated server
-		if ($aseco->server->title === 'TMCanyon@nadeo') {
-			$params['environments'] = 1;				// Canyon/CanyonCar
-		}
-		else if ($aseco->server->title === 'TMStadium@nadeo') {
+//		if ($aseco->server->title === 'TMCanyon@nadeo') {
+//			$params['environments'] = 1;				// Canyon/CanyonCar
+//		}
+//		else if ($aseco->server->title === 'TMStadium@nadeo') {
 			$params['environments'] = 2;				// Stadium/StadiumCar
-		}
-		else if ($aseco->server->title === 'TMValley@nadeo') {
-			$params['environments'] = 3;				// Valley/ValleyCar
-		}
-		else if ($aseco->server->title === 'TMLagoon@nadeo') {
-			$params['environments'] = 4;				// Lagoon/LagoonCar
-		}
-		else {
-			$params['environments'] = 0;				// Custom Vehicle/Any
-		}
+//		}
+//		else if ($aseco->server->title === 'TMValley@nadeo') {
+//			$params['environments'] = 3;				// Valley/ValleyCar
+//		}
+//		else if ($aseco->server->title === 'TMLagoon@nadeo') {
+//			$params['environments'] = 4;				// Lagoon/LagoonCar
+//		}
+//		else {
+//			$params['environments'] = 0;				// Custom Vehicle/Any
+//		}
 
 
 
 		// Create the URL for the API call
-		$api_url = 'https://tm.mania-exchange.com/tracksearch2/search?api=on&format=json';
+//		$api_url = 'https://tm.mania-exchange.com/tracksearch2/search?api=on&format=json';
+		$api_url = 'https://trackmania.exchange/mapsearch2/search?api=on&format=json';
 		foreach ($params as $name => $value) {
 			$api_url .= '&'. $name .'='. urlencode($value);
 		}
@@ -334,8 +335,8 @@ class PluginManiaExchange extends Plugin {
 		//      bool(false)
 		//    }
 
-		// https://tm.mania-exchange.com/tracks/thumbnail/29523
-		// https://tm.mania-exchange.com/tracks/screenshot/normal/29546
+		// https://tm.trackmania.exchange/tracks/thumbnail/29523
+		// https://tm.trackmania.exchange/tracks/screenshot/normal/29546
 
 
 		// List all found maps

@@ -44,7 +44,7 @@ class Helper extends BaseClass {
 
 		$this->setAuthor('undef.de');
 		$this->setVersion('1.0.7');
-		$this->setBuild('2020-10-15');
+		$this->setBuild('2020-01-15');
 		$this->setCopyright('2014 - 2020 by undef.de');
 		$this->setDescription('Provides several function for use in UASECO and plugins.');
 	}

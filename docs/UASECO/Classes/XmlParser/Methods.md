@@ -37,7 +37,7 @@ Parses a XML structure into an array.
 
 
 #### Example
-	$config = $aseco->xml->xmlToArray('config/my_plugin.xml', true, true);
+	$config = $aseco->parser->xmlToArray('config/my_plugin.xml', true, true);
 
 
 
@@ -60,4 +60,4 @@ Parses an array into an XML structure.
 
 
 #### Example
-	$xml = $aseco->xml->arrayToXml($data);
+	$xml = $aseco->parser->arrayToXml($data);
