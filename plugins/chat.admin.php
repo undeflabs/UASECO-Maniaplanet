@@ -4095,6 +4095,9 @@ class PluginChatAdmin extends Plugin {
 							'url'			=> $remotelink . $trkid,
 							'sync'			=> true,
 							'user_agent'		=> USER_AGENT,
+							'extra_headers'=> 	"X-ManiaPlanet-ServerLogin:" .$aseco->server->login."\r\n".
+										"X-ManiaPlanet-ServerName:" .$aseco->server->name."\r\n".
+										"X-ManiaPlanet-Link:" .$aseco->server->link."\r\n",
 						);
 						$request = $aseco->webrequest->GET($params);
 						if (isset($request->response['header']['code']) && $request->response['header']['code'] === 200) {
